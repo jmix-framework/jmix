@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.model;
+package com.haulmont.cuba.core.model.not_persistent;
 
 import com.haulmont.cuba.core.model.common.ReferenceToEntity;
 import io.jmix.core.entity.BaseUuidEntity;

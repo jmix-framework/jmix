@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright (c) 2008-2018 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,48 +14,32 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.model;
+package com.haulmont.cuba.core.model.not_persistent;
 
 import io.jmix.core.entity.BaseStringIdEntity;
+import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;
-import io.jmix.core.metamodel.annotations.NamePattern;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 
-@Entity(name = "test$StringKeyEntity")
-@Table(name = "TEST_STRING_KEY")
-@NamePattern("%s|code")
-public class StringKeyEntity extends BaseStringIdEntity {
-
-    private static final long serialVersionUID = 871701970234815437L;
+@MetaClass(name = "test$NotPersistentStringIdEntity")
+public class NotPersistentStringIdEntity extends BaseStringIdEntity {
 
     @Id
-    @Column(name = "CODE")
-    private String code;
-
-    @Column(name = "NAME")
-    protected String name;
+    @MetaProperty(mandatory = true)
+    protected String identifier;
 
     @MetaProperty
-    @Transient
-    protected String description;
+    protected String name;
 
     @Override
     public String getId() {
-        return code;
+        return identifier;
     }
 
     @Override
     public void setId(String id) {
-        this.code = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+        this.identifier = id;
     }
 
     public String getName() {
@@ -64,13 +48,5 @@ public class StringKeyEntity extends BaseStringIdEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

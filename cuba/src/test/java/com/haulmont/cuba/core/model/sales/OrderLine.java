@@ -29,6 +29,9 @@ import javax.persistence.*;
 public class OrderLine extends StandardEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 
+    @Column(name = "PRODUCT_NAME")
+    protected String productName;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product;
@@ -62,5 +65,13 @@ public class OrderLine extends StandardEntity {
 
     public Integer getQuantity() {
         return quantity;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

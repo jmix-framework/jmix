@@ -25,6 +25,10 @@
         <property name="substitutions" view="user.edit"/>
     </view>
 
+    <view class="com.haulmont.cuba.core.model.common.User" name="user.locale" extends="_minimal">
+        <property name="language"/>
+    </view>
+
     <view class="com.haulmont.cuba.core.model.common.User" name="user.browse" extends="_local" systemProperties="true">
         <property name="group" view="_minimal"/>
     </view>
@@ -98,6 +102,10 @@
                           view="_minimal"/>
             </property>
         </property>
+    </view>
+
+    <view entity="test_SelfReferencedEntity" name="entityWithChildren" extends="_local">
+        <property name="children" view="_local"/>
     </view>
 
 </views>

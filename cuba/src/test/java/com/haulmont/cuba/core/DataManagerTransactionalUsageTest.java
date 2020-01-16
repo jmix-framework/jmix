@@ -110,36 +110,38 @@ public class DataManagerTransactionalUsageTest {
 
             if (event.getType() == EntityChangedEvent.Type.DELETED) {
                 Id<Product, UUID> productId = changes.getOldReferenceId("product");
-                Integer oldQuantity = changes.getOldValue("quantity");
+                if (productId != null) {
+                    Integer oldQuantity = changes.getOldValue("quantity");
 
-                Product product = txDataManager.load(productId).one();
-                product.setQuantity(product.getQuantity() + oldQuantity);
-                txDataManager.save(product);
-
+                    Product product = txDataManager.load(productId).one();
+                    product.setQuantity(product.getQuantity() + oldQuantity);
+                    txDataManager.save(product);
+                }
             } else {
                 OrderLine orderLine = txDataManager.load(event.getEntityId()).view("with-product").one();
                 Product product = orderLine.getProduct();
+                if (product != null) {
+                    if (event.getType() == EntityChangedEvent.Type.UPDATED) {
+                        if (changes.isChanged("product")) {
+                            Id<Product, UUID> oldProductId = changes.getOldReferenceId("product");
+                            if (oldProductId != null) {
+                                Product oldProduct = txDataManager.load(oldProductId).one();
+                                oldProduct.setQuantity(oldProduct.getQuantity() + orderLine.getQuantity());
+                                txDataManager.save(oldProduct);
+                            }
 
-                if (event.getType() == EntityChangedEvent.Type.UPDATED) {
-                    if (changes.isChanged("product")) {
-                        Id<Product, UUID> oldProductId = changes.getOldReferenceId("product");
-                        if (oldProductId != null) {
-                            Product oldProduct = txDataManager.load(oldProductId).one();
-                            oldProduct.setQuantity(oldProduct.getQuantity() + orderLine.getQuantity());
-                            txDataManager.save(oldProduct);
+                            product.setQuantity(product.getQuantity() - orderLine.getQuantity());
+                            txDataManager.save(product);
+
+                        } else if (changes.isChanged("quantity")) {
+                            product.setQuantity(product.getQuantity() - orderLine.getQuantity());
+                            txDataManager.save(product);
                         }
 
-                        product.setQuantity(product.getQuantity() - orderLine.getQuantity());
-                        txDataManager.save(product);
-
-                    } else if (changes.isChanged("quantity")) {
+                    } else if (event.getType() == EntityChangedEvent.Type.CREATED) {
                         product.setQuantity(product.getQuantity() - orderLine.getQuantity());
                         txDataManager.save(product);
                     }
-
-                } else if (event.getType() == EntityChangedEvent.Type.CREATED) {
-                    product.setQuantity(product.getQuantity() - orderLine.getQuantity());
-                    txDataManager.save(product);
                 }
             }
         }

@@ -16,8 +16,8 @@
  */
 package com.haulmont.cuba.core;
 
-import com.haulmont.cuba.core.model.TestNotPersistentEntity;
 import com.haulmont.cuba.core.model.common.*;
+import com.haulmont.cuba.core.model.not_persistent.TestNotPersistentEntity;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;

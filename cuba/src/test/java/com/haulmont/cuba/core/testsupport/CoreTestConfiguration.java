@@ -21,6 +21,7 @@ import com.haulmont.cuba.core.model.common.UserEntityListener;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.data.JmixDataConfiguration;
+import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.ui.JmixUiConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,5 +52,10 @@ public class CoreTestConfiguration {
     @Bean(name = "cuba_UserSessionSource")
     UserSessionSource userSessionSource() {
         return new TestUserSessionSource();
+    }
+
+    @Bean(name = "cuba_JpqlSortExpressionProvider")
+    JpqlSortExpressionProvider jpqlSortExpressionProvider() {
+        return new TestJpqlSortExpressionProvider();
     }
 }

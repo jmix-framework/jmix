@@ -28,7 +28,6 @@ import spock.lang.Shared
 import javax.inject.Inject
 
 class AllDataEventsTest extends CoreTestSpecification {
-    @Shared
     public TestContainer cont = TestContainer.Common.INSTANCE
 
     private TestEntityChangedEventListener listener

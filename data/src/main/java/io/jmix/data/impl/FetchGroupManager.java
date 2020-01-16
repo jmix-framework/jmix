@@ -346,7 +346,8 @@ public class FetchGroupManager {
                             }
                         }
                         if (result.isEmpty()) {
-                            result.add(toManyField.path() + "." + inverseProp.getName() + ".id");
+                            result.add(toManyField.path() + "." + inverseProp.getName() + "."
+                                    + metadataTools.getPrimaryKeyName(inverseProp.getDomain()));
                         }
                     } else {
                         result.add(toManyField.path() + "." + inverseProp.getName());

@@ -1,0 +1,63 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/**
+ * The font weight of popupbutton indicator.
+ * @group popupbutton
+ */
+$cuba-popupbutton-indicator-font-weight: $v-font-weight !default;
+
+@mixin halo-popupbutton($primary-stylename: v-popupbutton) {
+  @include halo-cuba-contextmenu($primary-stylename + "-popup");
+
+  .#{$primary-stylename}-popup {
+    font-size: $v-font-size;
+    font-family: $v-font-family;
+    font-weight: $v-font-weight;
+  }
+
+  .#{$primary-stylename}.icon-only .v-popup-indicator {
+    padding-left: 0;
+  }
+
+  .v-disabled.c-cm-button.v-selected {
+    background: transparent;
+    color: inherit;
+  }
+
+  .#{$primary-stylename} {
+    .v-popup-indicator {
+      padding-left: round($v-unit-size/4);
+      background: none;
+
+      .v-sa7 &,
+      .v-sa8 & {
+        display: inline;
+      }
+
+      &:before {
+        content: none;
+      }
+
+      &:after {
+        font-family: FontAwesome;
+        font-weight: $cuba-popupbutton-indicator-font-weight;
+        content: "\f107";
+      }
+    }
+  }
+}

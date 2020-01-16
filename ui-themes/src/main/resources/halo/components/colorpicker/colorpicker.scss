@@ -1,0 +1,78 @@
+/*!
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin halo-colorpicker($primary-stylename: v-colorpicker) {
+  .v-colorpicker-popup [class$="sliders"] .v-has-caption {
+    padding-left: 0 !important;
+
+    .v-caption {
+      display: block;
+      margin-left: 0 !important;
+    }
+  }
+
+  .#{$primary-stylename}-popup .v-window-contents {
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+  }
+
+  .#{$primary-stylename}.v-readonly.v-button {
+    background: none;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  .#{$primary-stylename}.v-readonly.v-button:focus:after {
+    box-shadow: none;
+    background: none;
+    border-color: transparent;
+  }
+
+  .#{$primary-stylename}.v-readonly.v-button:active:after,
+  .#{$primary-stylename}.v-readonly.v-button:hover:after {
+    background: none;
+  }
+
+  .#{$primary-stylename}-popup .v-window-footer {
+    padding-bottom: 0;
+  }
+
+  .#{$primary-stylename}-popup .v-filterselect {
+    margin-bottom: round($v-unit-size/4);
+  }
+
+  .c-color-picker-error > .v-colorpicker {
+    @include valo-textfield-error-style;
+
+    &:focus:after {
+      @include valo-error-focus-style;
+
+      border-color: $v-error-indicator-color !important;
+      $bg: scale-color($v-error-indicator-color, $lightness: 98%);
+      @if ($v-error-indicator-use-bg) {
+      background: $bg;
+      }
+      @if ($v-error-indicator-use-color) {
+      color: valo-font-color($bg);
+      }
+    }
+  }
+
+  .color-maxwidth .#{$primary-stylename}-button-color {
+    max-width: none;
+  }
+}

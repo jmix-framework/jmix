@@ -1,0 +1,101 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@mixin halo-cuba-resizabletextarea($primary-stylename: c-resizabletextarea) {
+  $textarea-corner-color: valo-border-color($color: $v-overlay-background-color, $strength: 1.0);
+
+  .#{$primary-stylename}-wrapper {
+    position: relative;
+    overflow: hidden;
+
+    .v-textarea {
+      min-height: $v-unit-size;
+    }
+
+    &.borderless {
+      .v-textarea {
+        @include valo-textfield-borderless-style;
+      }
+    }
+
+    &.align-right {
+      .v-textarea {
+        text-align: right;
+      }
+    }
+
+    &.align-center {
+      .v-textarea {
+        text-align: center;
+      }
+    }
+
+    &.tiny {
+      .v-textarea {
+        @include valo-textarea-style($unit-size: $v-unit-size--tiny, $states: normal, $background-color: null, $border: null, $bevel: null, $shadow: null);
+        font-size: $v-font-size--tiny;
+      }
+    }
+
+    &.small {
+      .v-textarea {
+        @include valo-textarea-style($unit-size: $v-unit-size--small, $states: normal, $background-color: null, $border: null, $bevel: null, $shadow: null);
+        font-size: $v-font-size--small;
+      }
+    }
+
+    &.large {
+      .v-textarea {
+        @include valo-textarea-style($unit-size: $v-unit-size--large, $states: normal, $background-color: null, $border: null, $bevel: null, $shadow: null);
+        font-size: $v-font-size--large;
+      }
+    }
+
+    &.huge {
+      .v-textarea {
+        @include valo-textarea-style($unit-size: $v-unit-size--huge, $states: normal, $background-color: null, $border: null, $bevel: null, $shadow: null);
+        font-size: $v-font-size--huge;
+      }
+    }
+
+    .v-ff & {
+      overflow-x:hidden;
+    }
+  }
+
+  .#{$primary-stylename}-resize-corner {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: transparent;
+    width: round($v-unit-size/2);
+    height: round($v-unit-size/2);
+    cursor: nwse-resize;
+
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: $v-border-radius;
+      right: $v-border-radius;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 0 round($v-unit-size/2) round($v-unit-size/2);
+      border-color: transparent transparent $textarea-corner-color transparent;
+    }
+  }
+}

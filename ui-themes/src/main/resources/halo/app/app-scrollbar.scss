@@ -1,0 +1,92 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/**
+ * The background color of custom scrollbars for webkit/blink browsers.
+ * @group scrollbar
+ */
+$cuba-scrollbar-background-primary-color: $v-background-color !default;
+/**
+ * The border color of custom scrollbars for webkit/blink browsers.
+ * @group scrollbar
+ */
+$cuba-scrollbar-border-color: first-color(valo-border()) !default;
+
+@mixin cuba-scrollbar {
+  .v-win & {
+    @include cuba-scrollbar-body;
+  }
+  .v-lin & {
+    @include cuba-scrollbar-body;
+  }
+}
+
+@mixin cuba-scrollbar-body {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  // ========== track ==========
+
+  ::-webkit-scrollbar-track {
+    @include cuba-scrollbar-secondary-background-color-style($cuba-scrollbar-background-primary-color);
+    border: 1px solid $cuba-scrollbar-border-color;
+  }
+
+  ::-webkit-scrollbar-track:vertical {
+    border-bottom: 0;
+  }
+
+  ::-webkit-scrollbar-track:horizontal {
+    border-right: 0;
+  }
+
+  // ========== thumb ==========
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    border: 1px solid $cuba-scrollbar-border-color;
+    background-color: $cuba-scrollbar-background-primary-color;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    border-color: $v-focus-color;
+    box-shadow: inset 0 0 1px 1px rgba($v-focus-color, 0.5);
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    @include cuba-scrollbar-secondary-background-color-style($cuba-scrollbar-background-primary-color);
+    border-color: $v-focus-color;
+    box-shadow: inset 0 0 1px 1px rgba($v-focus-color, 0.5);
+  }
+
+  // ========== corner ==========
+
+  ::-webkit-scrollbar-corner {
+    @include cuba-scrollbar-secondary-background-color-style($cuba-scrollbar-background-primary-color);
+    border: 1px solid $cuba-scrollbar-border-color;
+  }
+}
+
+@mixin cuba-scrollbar-secondary-background-color-style ($background-color: $cuba-scrollbar-background-primary-color) {
+  $bg: darken($background-color, 5%);
+  @if is-dark-color($background-color) {
+    $bg: lighten($background-color, 5%);
+  }
+  background-color: $bg;
+}

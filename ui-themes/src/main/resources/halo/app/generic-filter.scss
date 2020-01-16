@@ -1,0 +1,159 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/**
+ * Defines whether the filter search button should have "friendly" style.
+ * @group genericfilter
+ */
+$cuba-filter-friendly-search-button: false !default;
+
+@mixin cuba-generic-filter($primary-stylename: c-generic-filter) {
+  .#{$primary-stylename} {
+    outline: 0;
+  }
+
+  .#{$primary-stylename} .filter-control-with-top-border {
+    border-top: valo-border();
+    padding-top: 5px;
+
+    .v-ff & {
+      min-height: $v-unit-size + 6px; // padding + border top
+    }
+  }
+
+  .#{$primary-stylename} > .border-hidden {
+    padding-top: 0!important;
+
+    .c-groupbox-captionwrap {
+      .c-groupbox-caption-start-deco,
+      .c-groupbox-caption-end-deco {
+        div {
+          border: none;
+        }
+      }
+    }
+
+    .c-groupbox-content {
+      border: none;
+      padding: 0;
+    }
+  }
+
+  .#{$primary-stylename} .filter-control-with-bottom-border {
+    border-bottom: valo-border();
+    padding-bottom: 5px;
+  }
+
+  .#{$primary-stylename} .filter-control-no-border {
+    border-top: none;
+    padding-top: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .#{$primary-stylename} .filter-conditions {
+    overflow: hidden;
+  }
+
+  .#{$primary-stylename} .filter-settings-button .v-popup-indicator,
+  .#{$primary-stylename} .filter-conditions .v-popupbutton .v-popup-indicator {
+    display: none;
+  }
+
+  .#{$primary-stylename} .filter-conditions .v-popupbutton {
+    background: transparent;
+  }
+
+  .#{$primary-stylename} .filter-conditions .conditions-grid {
+    .no-operation {
+      height: $v-unit-size !important;
+    }
+
+    .unary-param-type {
+      height: $v-unit-size !important;
+
+      @if $cuba-checkbox-size {
+        .v-checkbox-param-field {
+          line-height: $cuba-checkbox-line-height;
+          height: $cuba-checkbox-line-height + $cuba-checkbox-extra-height;
+        }
+      } @else {
+        .v-checkbox-param-field {
+          line-height: $cuba-checkbox-line-height;
+          height: $cuba-checkbox-line-height;
+        }
+      }
+    }
+  }
+
+  .#{$primary-stylename} .filter-search-button-layout {
+    .v-button.filter-search-button {
+      border-right: 1px solid transparent;
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    .v-button.v-popupbutton {
+      width: $v-unit-size;
+      padding-left: 0;
+      padding-right: 0;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+
+    @if $cuba-filter-friendly-search-button {
+      .v-button.filter-search-button {
+        @include valo-button-style($background-color: $v-friendly-color);
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+      }
+      .v-button.v-popupbutton {
+        @include valo-button-style($background-color: $v-friendly-color, $padding: 0);
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
+      }
+    }
+
+    .v-button.v-popupbutton .v-popup-indicator {
+        padding-left: 0;
+    }
+  }
+
+  .#{$primary-stylename} .filter-control-no-border {
+    height: $v-unit-size !important; // fix for high dpi
+  }
+
+  .#{$primary-stylename}-margin-top {
+    padding-top: $v-layout-margin-top;
+  }
+  .#{$primary-stylename}-margin-bottom {
+    padding-bottom: $v-layout-margin-bottom;
+  }
+  .#{$primary-stylename}-margin-left {
+    padding-left: $v-layout-margin-left;
+  }
+  .#{$primary-stylename}-margin-right {
+    padding-right: $v-layout-margin-right;
+  }
+
+  .c-maxresults {
+    height: $v-unit-size !important; // fix for high dpi
+  }
+  .c-maxresults-label {
+    line-height: $v-unit-size;
+  }
+}

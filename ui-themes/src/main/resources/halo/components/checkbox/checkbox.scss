@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/**
+ * The extra height of checkbox.
+ * @group checkbox
+ */
+$cuba-checkbox-extra-height: ceil($v-unit-size / 10);
+/**
+ * The line height of checkbox.
+ * @group checkbox
+ */
+$cuba-checkbox-line-height: ceil($v-unit-size / 1.9);
+/**
+ * The line height of small checkbox.
+ * @group checkbox
+ */
+$cuba-checkbox-line-height--small: ceil($v-unit-size / 2.1);
+/**
+ * The line height of large checkbox.
+ * @group checkbox
+ */
+$cuba-checkbox-line-height--large: ceil($v-unit-size / 1.6);
+/**
+ * The size of checkbox.
+ * @group checkbox
+ */
+$cuba-checkbox-size: null !default;
+
+@mixin halo-checkbox($primary-stylename: v-checkbox) {
+  .#{$primary-stylename} {
+    line-height: $cuba-checkbox-line-height;
+    height: $cuba-checkbox-line-height + $cuba-checkbox-extra-height;
+
+    label {
+      @include user-select(text);
+    }
+  }
+
+  .v-edge &,
+  .v-ie & {
+    .#{$primary-stylename}.v-disabled {
+      @include opacity($v-disabled-opacity);
+
+      & > label,
+      & > .v-icon {
+        @include opacity(1);
+      }
+    }
+  }
+
+  .#{$primary-stylename}-small {
+    line-height: $cuba-checkbox-line-height--small;
+    height: $cuba-checkbox-line-height--small + $cuba-checkbox-extra-height;
+  }
+
+  .#{$primary-stylename}-large {
+    line-height: $cuba-checkbox-line-height--large;
+    height: $cuba-checkbox-line-height--large + $cuba-checkbox-extra-height;
+  }
+
+  @if $cuba-checkbox-size {
+    .#{$primary-stylename} {
+      @include cuba-checkbox-custom-size($cuba-checkbox-size);
+    }
+
+    .#{$primary-stylename}-small {
+      @include cuba-checkbox-custom-size($cuba-checkbox-size * 0.8);
+    }
+
+    .#{$primary-stylename}-large {
+      @include cuba-checkbox-custom-size($cuba-checkbox-size * 1.2);
+    }
+  }
+}
+
+@mixin cuba-checkbox-custom-size($checkbox-size) {
+  :root & {
+    line-height: $checkbox-size;
+    padding-left: round($checkbox-size * 1.33);
+  }
+
+  :root & > input {
+    & ~ label:before,
+    & ~ label:after {
+      font-size: $checkbox-size - 4;
+      line-height: $checkbox-size;
+      height: round($checkbox-size);
+      width: round($checkbox-size);
+    }
+  }
+}

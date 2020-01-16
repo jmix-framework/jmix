@@ -1,0 +1,156 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@mixin halo-cuba-tokenlist($primary-stylename: c-tokenlist) {
+  .#{$primary-stylename}-label {
+    clear: both;
+    margin: 0 round($v-layout-margin-right/2) 0 0;
+    height: $v-unit-size;
+    cursor: pointer;
+    display: table;
+    padding-left: round($v-layout-margin-left/2);
+    padding-right: $v-unit-size;
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  .#{$primary-stylename}-label-close {
+    height: $v-unit-size;
+    width: $v-unit-size;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    font-size: $v-font-size;
+    line-height: $v-unit-size;
+
+    &:after {
+      font-family: FontAwesome;
+      content: "\f00d";
+    }
+  }
+
+  .#{$primary-stylename}.v-disabled .#{$primary-stylename}-label {
+    @include opacity($v-disabled-opacity);
+  }
+
+  .#{$primary-stylename}.v-readonly .#{$primary-stylename}-label-close {
+    display: none;
+  }
+
+  .#{$primary-stylename}-label .content {
+    white-space: nowrap;
+    cursor: default;
+    overflow: hidden;
+    display: inline-block;
+    line-height: $v-unit-size;
+    font-size: $v-font-size;
+    vertical-align: top;
+    width: 100%;
+  }
+
+  .#{$primary-stylename}-label.noedit {
+    background-image: none;
+    padding-right: $v-layout-margin-right;
+  }
+
+  .#{$primary-stylename}-label.noedit .content {
+    margin-right: 0;
+  }
+
+  .#{$primary-stylename}-label.open .content {
+    cursor: pointer;
+  }
+
+  .#{$primary-stylename}.inline {
+    .#{$primary-stylename}-label {
+      clear: none;
+      margin-right: round($v-layout-margin-right/2);
+      padding-right: 0;
+      float: left;
+      width: auto;
+      display: inline-block;
+
+      .content {
+        width: auto;
+      }
+    }
+  }
+
+  .#{$primary-stylename}-composition {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .#{$primary-stylename}-editor {
+    display: flex;
+
+    .c-pickerfield {
+      display: inline-flex;
+    }
+
+    .c-pickerfield-layout {
+      display: table;
+    }
+
+    .clear-btn {
+      margin-left: $v-layout-spacing-horizontal;
+    }
+  }
+
+  .#{$primary-stylename} {
+    &.v-has-width .#{$primary-stylename}-wrapper {
+      max-width: none;
+    }
+
+    &.v-has-height .#{$primary-stylename}-wrapper {
+      max-height: none;
+    }
+  }
+
+  .#{$primary-stylename}-wrapper {
+    max-width: 400px;
+    max-height: 250px;
+    overflow: auto;
+
+    // Hack to remove redundant vertical scrollbar in IE11, Chrome and Opera
+    .v-ie11 &,
+    .v-sa & {
+      .#{$primary-stylename}-scrollbox {
+        vertical-align: baseline;
+      }
+    }
+  }
+
+  .position-top {
+    margin-bottom: $v-layout-margin-bottom;
+  }
+
+  .position-bottom {
+    margin-top: $v-layout-margin-top;
+  }
+
+  .#{$primary-stylename}-error .c-pickerfield {
+    .v-filterselect-input {
+      @include valo-textfield-error-style;
+    }
+
+    .v-filterselect-button {
+      color: $v-error-indicator-color;
+      border-color: $v-error-indicator-color;
+    }
+  }
+}

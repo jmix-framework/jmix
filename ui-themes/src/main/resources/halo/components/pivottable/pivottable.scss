@@ -1,0 +1,161 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@mixin halo-pivottable($primary-stylename: c-pivot-table) {
+
+  $background-color: $v-table-background-color or valo-table-background-color();
+  $border-color: $v-table-border-color or first-color(valo-border($color: $background-color, $strength: 0.7));
+
+  .#{$primary-stylename} {
+    @include user-select(text);
+
+    overflow: auto;
+
+    table.pvtTable {
+      font-size: $v-font-size;
+
+      tbody tr th,
+      thead tr th {
+        font-size: $v-table-header-font-size;
+      }
+    }
+
+    table.pvtTable tbody tr td,
+    .pvtUi,
+    .pvtTriangle {
+      color: valo-font-color($v-background-color);
+    }
+
+    table.pvtTable tbody tr td,
+    .pvtFilterBox {
+      background-color: $background-color;
+    }
+
+    select.pvtRenderer,
+    select.pvtAggregator,
+    select.pvtAttrDropdown,
+    .pvtAxisContainer li span.pvtAttr {
+      @include valo-nativeselect-select-style;
+      &:focus {
+        border-color: $v-focus-color;
+      }
+    }
+
+    .pvtUi > tbody > tr > td:first-child,
+    .pvtAxisContainer, .pvtVals,
+    table.pvtTable thead tr th,
+    table.pvtTable tbody tr th {
+      $bg-lightness: if(color-luminance($background-color) < 10, 4%, -4%);
+      background-color: scale-color($background-color, $lightness: $bg-lightness);
+    }
+
+    .pvtUi > tbody > tr:first-child > td:first-child {
+      border: 1px solid $border-color;
+    }
+
+    .pvtAxisContainer li.pvtPlaceholder,
+    .pvtAxisContainer li span.pvtAttr {
+      -webkit-border-radius: $v-border-radius;
+      -moz-border-radius: $v-border-radius;
+      border-radius: $v-border-radius;
+    }
+
+    table.pvtTable thead tr th,
+    table.pvtTable tbody tr th,
+    table.pvtTable tbody tr td,
+    .pvtAxisContainer,
+    .pvtVals {
+      border-color: $border-color;
+    }
+
+    select.pvtRenderer {
+      width: 100%;
+    }
+
+    .pvtFilterBox {
+      @include box-shadow( valo-bevel-and-shadow($bevel: null, $shadow: $v-overlay-shadow));
+
+      border-radius: $v-border-radius;
+      border-color: transparent;
+
+      padding-top: $v-layout-spacing-vertical;
+
+      p {
+        margin-top: $v-layout-spacing-vertical;
+      }
+
+      .pvtCheckContainer {
+        margin-top: $v-layout-spacing-vertical;
+      }
+
+      button {
+        @include valo-button-static-style;
+        @include valo-button-style($font-color: $v-button-font-color);
+      }
+
+      input[type="text"] {
+        @include valo-textfield-style;
+        box-sizing: border-box;
+        margin-bottom: $v-layout-spacing-vertical;
+      }
+
+      p > button {
+        margin: 0 $v-layout-spacing-horizontal/2;
+      }
+    }
+
+    select.pvtAttrDropdown {
+      margin: $v-layout-spacing-vertical $v-layout-spacing-horizontal/2 0 $v-layout-spacing-horizontal/2;
+    }
+
+    .pvtAxisContainer li {
+      padding-left: $v-layout-spacing-horizontal/2;
+      padding-right: $v-layout-spacing-horizontal/2;
+    }
+
+    .pvtCheckContainer {
+      overflow: auto;
+    }
+
+    .pvtUi > tbody > tr:first-child > td:first-child,
+    .pvtAxisContainer,
+    .pvtVals {
+      padding: $v-layout-spacing-vertical $v-layout-spacing-horizontal;
+    }
+
+    .pvtRowOrder,
+    .pvtColOrder {
+      text-decoration: none;
+      color: valo-font-color($v-background-color);
+    }
+  }
+
+  .#{$primary-stylename}.v-disabled {
+    @include opacity($v-disabled-opacity);
+    pointer-events: none;
+  }
+
+  .#{$primary-stylename}-empty {
+    &:after {
+      content: attr(empty-data-message);
+    }
+
+    > * {
+      display: none;
+    }
+  }
+}

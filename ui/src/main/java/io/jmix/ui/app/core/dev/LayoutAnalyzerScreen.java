@@ -1,0 +1,82 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+package io.jmix.ui.app.core.dev;
+
+import io.jmix.ui.components.Button;
+import io.jmix.ui.components.TextArea;
+import io.jmix.ui.screen.DialogMode;
+import io.jmix.ui.screen.MapScreenOptions;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.Subscribe;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import java.util.List;
+
+@DialogMode(
+        resizable = true,
+        width = "600",
+        height = "400")
+@UiController("jmix_LayoutAnalyzerScreen")
+@UiDescriptor("layout-analyzer.xml")
+public class LayoutAnalyzerScreen extends Screen {
+
+    public static final String TIPS_LIST_PARAM = "tipsList";
+
+    private static final Logger log = LoggerFactory.getLogger(LayoutAnalyzerScreen.class);
+
+    @Inject
+    protected TextArea<String> analyzeResultBox;
+
+    @Subscribe
+    public void onInit(InitEvent event) {
+        if (event.getOptions() instanceof MapScreenOptions) {
+            MapScreenOptions options = (MapScreenOptions) event.getOptions();
+
+            //noinspection unchecked
+            List<LayoutTip> layoutTips = (List<LayoutTip>) options.getParams()
+                    .get(TIPS_LIST_PARAM);
+
+            if (CollectionUtils.isNotEmpty(layoutTips)) {
+                StringBuilder analysisText = new StringBuilder();
+                for (LayoutTip tip : layoutTips) {
+                    analysisText.append("[")
+                            .append(tip.errorType.name()).append("] ")
+                            .append(tip.componentPath).append("\n")
+                            .append(tip.message).append("\n\n");
+                }
+                String analysisLog = analysisText.toString().trim();
+
+                log.info("Analyze layout\n{}", analysisLog);
+
+                analyzeResultBox.setValue(analysisLog);
+            }
+        }
+
+        analyzeResultBox.setEditable(false);
+    }
+
+    @Subscribe("closeBtn")
+    protected void onCloseButtonClick(Button.ClickEvent event) {
+        close(WINDOW_CLOSE_ACTION);
+    }
+}

@@ -1,0 +1,41 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jmix.ui.widgets;
+
+import com.vaadin.ui.TabSheet;
+
+public class CubaTabSheet extends TabSheet {
+
+    private static final long serialVersionUID = -2956008661221108673L;
+
+    public CubaTabSheet() {
+    }
+
+    public void setTestId(Tab tab, String testId) {
+        int tabPosition = getTabPosition(tab);
+        getState(true).tabs.get(tabPosition).id = testId;
+    }
+
+    public void setCubaId(Tab tab, String id) {
+        int tabPosition = getTabPosition(tab);
+        getState(true).tabs.get(tabPosition).cubaId = id;
+    }
+
+    public String getCubaId(Tab tab) {
+        int tabPosition = getTabPosition(tab);
+        return getState(true).tabs.get(tabPosition).cubaId;
+    }
+}

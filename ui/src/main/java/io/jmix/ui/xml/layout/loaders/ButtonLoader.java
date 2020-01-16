@@ -1,0 +1,115 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jmix.ui.xml.layout.loaders;
+
+import io.jmix.ui.components.Button;
+import io.jmix.ui.xml.layout.loaders.AbstractComponentLoader;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
+
+public class ButtonLoader extends AbstractComponentLoader<Button> {
+
+    protected void loadInvoke(Button component, boolean enabled, boolean visible, Element element) {
+        if (!StringUtils.isBlank(element.attributeValue("action"))) {
+            return;
+        }
+
+        /*
+        final String methodName = element.attributeValue("invoke");
+        if (StringUtils.isBlank(methodName)) {
+            return;
+        }
+
+        String actionBaseId = component.getId();
+        if (StringUtils.isEmpty(actionBaseId)) {
+            actionBaseId = methodName;
+        }
+
+        DeclarativeAction action = new DeclarativeAction(actionBaseId + "_invoke",
+                component.getCaption(), component.getDescription(), component.getIcon(),
+                enabled, visible,
+                methodName,
+                component.getFrame()
+        );
+        component.setAction(action);*/
+    }
+
+    @Override
+    public void createComponent() {
+        resultComponent = factory.create(Button.NAME);
+        loadId(resultComponent, element);
+    }
+
+    @Override
+    public void loadComponent() {
+        assignXmlDescriptor(resultComponent, element);
+        assignFrame(resultComponent);
+
+        boolean enabled = loadEnable(resultComponent, element);
+        boolean visible = loadVisible(resultComponent, element);
+
+        loadStyleName(resultComponent, element);
+
+        loadCaption(resultComponent, element);
+        loadCaptionAsHtml(resultComponent, element);
+        loadDescription(resultComponent, element);
+        loadAction(resultComponent, element);
+        loadIcon(resultComponent, element);
+
+        loadWidth(resultComponent, element);
+        loadHeight(resultComponent, element);
+        loadAlign(resultComponent, element);
+
+        loadTabIndex(resultComponent, element);
+
+        loadInvoke(resultComponent, enabled, visible, element);
+        loadShortcut(resultComponent, element);
+
+        loadFocusable(resultComponent, element);
+        loadDisableOnClick(resultComponent, element);
+        loadResponsive(resultComponent, element);
+        loadCss(resultComponent, element);
+        loadPrimary(resultComponent, element);
+    }
+
+    protected void loadCaptionAsHtml(Button resultComponent, Element element) {
+        String captionAsHtml = element.attributeValue("captionAsHtml");
+        if (StringUtils.isNotEmpty(captionAsHtml)) {
+            resultComponent.setCaptionAsHtml(Boolean.parseBoolean(captionAsHtml));
+        }
+    }
+
+    protected void loadShortcut(Button resultComponent, Element element) {
+        String shortcut = element.attributeValue("shortcut");
+        if (StringUtils.isNotEmpty(shortcut)) {
+            resultComponent.setShortcut(shortcut);
+        }
+    }
+
+    protected void loadDisableOnClick(Button component, Element element) {
+        String disableOnClick = element.attributeValue("disableOnClick");
+        if (StringUtils.isNotEmpty(disableOnClick)) {
+            component.setDisableOnClick(Boolean.parseBoolean(disableOnClick));
+        }
+    }
+
+    private void loadPrimary(Button resultComponent, Element element) {
+        String primary = element.attributeValue("primary");
+        if (Boolean.parseBoolean(primary)) {
+            resultComponent.addStyleName("c-primary-action");
+        }
+    }
+}

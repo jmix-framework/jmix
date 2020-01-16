@@ -1,0 +1,442 @@
+/*!
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * The font weight of datagrid header
+ * @group dataGrid
+ */
+$cuba-datagrid-header-font-weight: $v-font-weight !default;
+/**
+ * Defines whether datagrid row should be colored when it is hovered.
+ * @group dataGrid
+ */
+$cuba-datagrid-highlight-hover-row: false !default;
+
+@mixin halo-datagrid($primary-stylename: v-grid) {
+  $background-color: $v-table-background-color or valo-table-background-color();
+  $border-color: $v-table-border-color or first-color(valo-border($color: $background-color, $strength: 0.8));
+
+  .#{$primary-stylename} {
+    @include user-select(none);
+  }
+
+  .#{$primary-stylename}-header th {
+    font-weight: $cuba-datagrid-header-font-weight;
+  }
+
+  .text-selection-enabled .#{$primary-stylename}-body {
+    @include user-select(text);
+  }
+
+  .#{$primary-stylename}-row  > .#{$primary-stylename}-cell:last-child,
+  .#{$primary-stylename}-editor-cells > div:last-child {
+    border-right: $v-grid-border-size solid $border-color;
+  }
+
+  .#{$primary-stylename}-row-selected  > .#{$primary-stylename}-cell {
+    $font-color: valo-font-color($v-selection-color, 0.9);
+    color: $font-color;
+
+    &:last-child {
+      $selected-border-color: adjust-color($v-grid-row-selected-background-color, $lightness: -8%, $saturation: -8%);
+      border-right: $v-grid-border-size solid $selected-border-color;
+    }
+  }
+
+  .c-data-grid-composition {
+    font-size: 0;
+
+    & > * {
+      font-size: $v-font-size;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &.borderless {
+      .#{$primary-stylename} {
+        .#{$primary-stylename}-scroller,
+        .#{$primary-stylename}-horizontal-scrollbar-deco,
+        .#{$primary-stylename}-header-deco,
+        .#{$primary-stylename}-footer-deco,
+        .#{$primary-stylename}-sidebar.v-contextmenu,
+        .#{$primary-stylename}-tablewrapper {
+          border: none;
+        }
+
+        .#{$primary-stylename}-row  > .#{$primary-stylename}-cell:last-child {
+          border-right: none;
+        }
+
+        .#{$primary-stylename}-editor .#{$primary-stylename}-editor-cells {
+          margin-left: -$v-grid-border-size;
+        }
+      }
+    }
+
+    &.no-vertical-lines {
+      /* force rerendering for Safari as it does not apply style */
+      .v-sa:not(.v-ch) & {
+        .#{$primary-stylename}-body .#{$primary-stylename}-row > td:not(:first-child) {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+        }
+      }
+
+      .#{$primary-stylename}-body .#{$primary-stylename}-row > td:not(:first-child) {
+        border-left: none;
+        padding-left: $v-grid-border-size + $v-grid-cell-padding-horizontal;
+      }
+    }
+
+    &.no-horizontal-lines {
+       /* force rerendering for Safari as it does not apply style */
+      .v-sa:not(.v-ch) & {
+        .#{$primary-stylename}-body .#{$primary-stylename}-row > td {
+          -webkit-transform: scale(1);
+          transform: scale(1);
+         }
+      }
+
+      .#{$primary-stylename}-body .#{$primary-stylename}-row > td {
+       border-bottom: none;
+      }
+    }
+
+    &.no-stripes {
+      .#{$primary-stylename}-body .#{$primary-stylename}-row > td,
+        .#{$primary-stylename}-body .#{$primary-stylename}-row-stripes > td {
+          background: $background-color;
+      }
+
+     .#{$primary-stylename} .#{$primary-stylename}-body .#{$primary-stylename}-row-selected  > .#{$primary-stylename}-cell {
+       $font-color: valo-font-color($v-selection-color, 0.9);
+       color: $font-color;
+
+       @include valo-gradient($v-selection-color);
+     }
+    }
+  }
+
+  .c-data-grid-composition {
+    display:flex;
+    flex-direction: column;
+
+    .c-data-grid-top {
+      display: flex;
+      justify-content: space-between;
+      flex-shrink: 0;
+      overflow: hidden;
+      min-height: $v-unit-size;
+    }
+
+    .v-ie11 &,
+    .v-edge & {
+      .c-buttons-panel {
+        overflow-x: hidden
+      }
+    }
+  }
+
+  @if $cuba-buttonspanel-flow == false {
+    .c-data-grid-composition {
+      .v-csslayout.c-flowlayout {
+        white-space: nowrap;
+      }
+
+      .v-csslayout.c-flowlayout > * {
+        float: none;
+      }
+    }
+
+    .c-data-grid-composition.has-top-panel {
+      $top-panel-height: $v-unit-size + ceil($v-layout-spacing-vertical);
+
+      display: block;
+      padding-top: $top-panel-height;
+
+      .c-data-grid-top {
+        margin-top: -1 * $top-panel-height;
+      }
+    }
+  }
+
+  .#{$primary-stylename}-cell .boolean-value {
+    &:before {
+      color: $v-font-color;
+      font-size: $v-font-size;
+      font-family: FontAwesome;
+    }
+  }
+
+  .#{$primary-stylename}-cell .boolean-value-true {
+    &:before {
+      content: "\f046";
+    }
+  }
+
+  .#{$primary-stylename}-cell .boolean-value-false {
+    &:before {
+      content: "\f096";
+    }
+  }
+
+  .#{$primary-stylename} {
+    .v-link,
+    .v-button-link {
+      -webkit-transition: none;
+      -moz-transition: none;
+      transition: none;
+    }
+  }
+
+  .#{$primary-stylename}-row-selected {
+    $font-color: valo-font-color($v-selection-color, 0.9);
+
+    .#{$primary-stylename}-cell {
+      .v-link,
+      .v-button-link,
+      .boolean-value:before {
+        color: $font-color;
+      }
+    }
+
+    .v-button-link:focus,
+    .v-button:focus:after {
+      border-color: $font-color;
+    }
+  }
+
+  .#{$primary-stylename}-cell.sort-asc,
+  .#{$primary-stylename}-cell.sort-desc {
+    &:after {
+      cursor: pointer;
+    }
+
+    &.c-sort-last:after {
+      // We need to shift the sorting indicator
+      // if the Grid's SideBar button is present.
+      // Unfortunately, this button has no width,
+      // so we can only infer it.
+      margin-right: $v-font-size * 1.5;
+    }
+  }
+
+  .#{$primary-stylename}-body .#{$primary-stylename}-row {
+    cursor: pointer;
+  }
+
+  @if $cuba-datagrid-highlight-hover-row {
+    .#{$primary-stylename}-body .#{$primary-stylename}-row:hover > td {
+      background-color: $cuba-hover-color;
+      color: valo-font-color($cuba-hover-color, 0.9);
+    }
+
+    .#{$primary-stylename}-body .#{$primary-stylename}-row-selected:hover > td {
+      @include valo-gradient($v-selection-color);
+      background-origin: border-box;
+      color: valo-font-color($v-selection-color, 0.9);
+    }
+  }
+
+  .#{$primary-stylename}-editor {
+    @include box-shadow(none);
+  }
+
+  .#{$primary-stylename}-editor-cells > div {
+    .c-maskedfield,
+    .c-maskedfield-focus,
+    .c-timefield,
+    .c-timefield-focus,
+    .c-fileupload .v-button,
+    .c-fileupload-clear.v-button,
+    .v-button.c-pickerfield-button,
+    .v-textfield.c-pickerfield-text:focus {
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      @include box-shadow(none);
+    }
+
+    .c-currencyfield {
+      .c-currencyfield-layout {
+
+        &.currency-visible {
+          &.left,
+          &.right {
+            .c-currencyfield-currency {
+              border: valo-border();
+
+              border-top: 0;
+              border-bottom: 0;
+              
+              border-radius: 0;
+            }
+          }
+        }
+      }
+    }
+
+    .c-maskedfield-focus,
+    .c-timefield-focus {
+      position: relative;
+    }
+
+    .v-button.c-pickerfield-button {
+      border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+    }
+
+    .v-filterselect-button:active:after,
+    .c-datefield [class*="button"]:active:after,
+    .c-pickerfield-layout>.v-button:last-child {
+      border-radius: 0;
+    }
+
+    .c-fileupload-container {
+      .v-spacing {
+        display: none;
+      }
+
+      .c-fileupload .v-button,
+      .c-fileupload-clear.v-button {
+        border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+
+        color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));
+
+        &:hover {
+          color: valo-font-color($background-color);
+        }
+
+        &:after,
+        &:hover:after {
+          background: transparent;
+        }
+
+        &:focus:after {
+          border-color: transparent;
+          @include box-shadow(none);
+        }
+
+        &:active:after,
+        &:active:hover:after {
+          @if type-of($v-textfield-background-color) == color {
+            @include valo-button-active-style($v-textfield-background-color);
+          }
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+        }
+      }
+
+      .c-fileupload .v-button-focus {
+        &:after {
+          border-color: transparent;
+          @include box-shadow(none);
+        }
+      }
+
+      .c-fileupload {
+        &:hover .v-button {
+          color: valo-font-color($background-color);
+        }
+
+        &:active,
+        &:active:hover {
+          .v-button:after {
+            @if type-of($v-textfield-background-color) == color {
+              @include valo-button-active-style($v-textfield-background-color);
+            }
+          }
+        }
+      }
+    }
+
+    .c-datefield-layout.v-has-width {
+      display: table;
+
+      .c-datefield,
+      .c-timefield {
+        display: table-cell;
+      }
+    }
+
+    .c-datefield [class*="button"] {
+      border: none;
+      border-right: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+      left: 1px;
+      right: auto;
+    }
+
+    .c-datefield-layout .c-timefield {
+      border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5);
+      margin-left: 0;
+    }
+
+    .c-datefield-composition-error {
+      .c-timefield {
+        // we need to set up border again because border-color is calculated inside `valo-border` function
+        // and set style as !important to prevent error color
+        border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5) !important;
+        @include box-shadow(none);
+      }
+
+      .v-datefield-button {
+        color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));
+
+        &:hover {
+          color: valo-font-color($background-color);
+        }
+      }
+    }
+
+    .v-filterselect-error .v-filterselect-button {
+      color: mix($v-textfield-background-color, valo-font-color($v-textfield-background-color));
+      // we need to set up border again because border-color is calculated inside `valo-border` function
+      border-left: valo-border($color: $v-textfield-background-color, $border: $v-textfield-border, $strength: 0.5)
+    }
+  }
+
+  .#{$primary-stylename}-sidebar.v-contextmenu .#{$primary-stylename}-sidebar-button:after {
+    content: "\f013";
+  }
+
+  .#{$primary-stylename}-sidebar.v-contextmenu.open .#{$primary-stylename}-sidebar-button:after {
+    content: "\f013";
+  }
+
+  .#{$primary-stylename}-cell > div.component-wrap {
+    display: flex;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+
+    .v-checkbox,
+    .v-progressbar {
+      align-self: center;
+
+      &.v-has-height {
+        align-self: auto;
+      }
+    }
+  }
+
+  .#{$primary-stylename}-sidebar-content .gwt-MenuItemSeparator {
+    border-bottom: valo-border();
+    border-bottom-style: dotted;
+  }
+}

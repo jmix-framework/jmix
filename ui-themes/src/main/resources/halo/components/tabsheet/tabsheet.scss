@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+/**
+ * The color of caption of selected tab.
+ * @group tabsheet
+ */
+$cuba-tabsheet-tab-caption-selected-color: $v-selection-color !default;
+/**
+ * The color of bottom border of selected tab.
+ * @group tabsheet
+ */
+$cuba-tabsheet-tab-border-selected-color: $v-selection-color !default;
+
+@mixin halo-tabsheet($primary-stylename: v-tabsheet) {
+  // we rarely hide first tab but often hide other tabs
+  // unlike Vaadin we always show margin between tabs
+  .#{$primary-stylename}-tabitemcell[aria-hidden="true"] + td .v-caption {
+    margin-left: round($v-unit-size/2);
+  }
+
+  .#{$primary-stylename}-tabitemcell {
+    .v-caption .v-icon + .v-captiontext {
+      margin-left: ceil($v-unit-size/10);
+    }
+
+    .v-caption:hover {
+      color: $cuba-tabsheet-tab-caption-selected-color;
+    }
+
+    .v-tabsheet-tabitem-selected .v-caption.v-caption {
+      border-bottom-color: $cuba-tabsheet-tab-border-selected-color;
+      color: $cuba-tabsheet-tab-caption-selected-color;
+    }
+  }
+}

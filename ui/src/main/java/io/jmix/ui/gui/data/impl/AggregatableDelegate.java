@@ -1,0 +1,156 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.jmix.ui.gui.data.impl;
+
+import io.jmix.core.AppBeans;
+import io.jmix.core.metamodel.datatypes.Datatypes;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.UserSessionSource;
+import io.jmix.ui.components.AggregationInfo;
+import io.jmix.ui.components.data.aggregation.Aggregation;
+import io.jmix.ui.components.data.aggregation.AggregationStrategy;
+import io.jmix.ui.components.data.aggregation.Aggregations;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+public abstract class AggregatableDelegate<K> {
+    public Map<AggregationInfo, String> aggregate(AggregationInfo[] aggregationInfos, Collection<K> itemIds) {
+        if (aggregationInfos == null || aggregationInfos.length == 0) {
+            throw new NullPointerException("Aggregation must be executed at least by one field");
+        }
+
+        return doAggregation(itemIds, aggregationInfos);
+    }
+
+    protected Map<AggregationInfo, String> doAggregation(Collection<K> itemIds, AggregationInfo[] aggregationInfos) {
+        Map<AggregationInfo, String> aggregationResults = new HashMap<>();
+        for (AggregationInfo aggregationInfo : aggregationInfos) {
+            final Object value = doPropertyAggregation(aggregationInfo, itemIds);
+
+            String formattedValue;
+            if (aggregationInfo.getFormatter() != null) {
+                formattedValue = aggregationInfo.getFormatter().apply(value);
+            } else {
+                // propertyPath could be null in case of custom aggregation
+                MetaPropertyPath propertyPath = aggregationInfo.getPropertyPath();
+
+                Range range = propertyPath != null ? propertyPath.getRange() : null;
+                if (range != null && range.isDatatype()) {
+                    if (aggregationInfo.getType() != AggregationInfo.Type.COUNT) {
+                        Class resultClass;
+                        if (aggregationInfo.getStrategy() == null) {
+                            Class rangeJavaClass = propertyPath.getRangeJavaClass();
+                            Aggregation aggregation = Aggregations.get(rangeJavaClass);
+                            resultClass = aggregation.getResultClass();
+                        } else {
+                            resultClass = aggregationInfo.getStrategy().getResultClass();
+                        }
+
+                        UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
+                        Locale locale = userSessionSource.getLocale();
+                        formattedValue = Datatypes.getNN(resultClass).format(value, locale);
+                    } else {
+                        formattedValue = value.toString();
+                    }
+                } else {
+                    if (aggregationInfo.getStrategy() != null) {
+                        Class resultClass = aggregationInfo.getStrategy().getResultClass();
+
+                        UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
+                        Locale locale = userSessionSource.getLocale();
+                        formattedValue = Datatypes.getNN(resultClass).format(value, locale);
+                    } else {
+                        formattedValue = value.toString();
+                    }
+                }
+            }
+
+            aggregationResults.put(aggregationInfo, formattedValue);
+        }
+        return aggregationResults;
+    }
+
+    public Map<AggregationInfo, Object> aggregateValues(AggregationInfo[] aggregationInfos, Collection<K> itemIds) {
+        if (aggregationInfos == null || aggregationInfos.length == 0) {
+            throw new NullPointerException("Aggregation must be executed at least by one field");
+        }
+
+        Map<AggregationInfo, Object> aggregationResults = new HashMap<>();
+
+        for (AggregationInfo aggregationInfo : aggregationInfos) {
+            Object value = doPropertyAggregation(aggregationInfo, itemIds);
+            aggregationResults.put(aggregationInfo, value);
+        }
+
+        return aggregationResults;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Object doPropertyAggregation(AggregationInfo aggregationInfo, Collection<K> itemIds) {
+        List items;
+
+        if (aggregationInfo.getType() == AggregationInfo.Type.CUSTOM
+                && aggregationInfo.getPropertyPath() == null) {
+            // use items in this case;
+            items = itemIds.stream()
+                    .map(this::getItem)
+                    .collect(Collectors.toList());
+        } else {
+            items = valuesByProperty(aggregationInfo.getPropertyPath(), itemIds);
+        }
+
+        if (aggregationInfo.getStrategy() == null) {
+            Class rangeJavaClass = aggregationInfo.getPropertyPath().getRangeJavaClass();
+            Aggregation aggregation = Aggregations.get(rangeJavaClass);
+
+            switch (aggregationInfo.getType()) {
+                case COUNT:
+                    return aggregation.count(items);
+                case AVG:
+                    return aggregation.avg(items);
+                case MAX:
+                    return aggregation.max(items);
+                case MIN:
+                    return aggregation.min(items);
+                case SUM:
+                    return aggregation.sum(items);
+                default:
+                    throw new IllegalArgumentException(String.format("Unknown aggregation type: %s",
+                            aggregationInfo.getType()));
+            }
+        } else {
+            AggregationStrategy strategy = aggregationInfo.getStrategy();
+            return strategy.aggregate(items);
+        }
+    }
+
+    protected List valuesByProperty(MetaPropertyPath propertyPath, Collection<K> itemIds) {
+        final List<Object> values = new ArrayList<>(itemIds.size());
+        for (final K itemId : itemIds) {
+            final Object value = getItemValue(propertyPath, itemId);
+            if (value != null) {
+                values.add(value);
+            }
+        }
+        return values;
+    }
+
+    public abstract Object getItem(K itemId);
+
+    public abstract Object getItemValue(MetaPropertyPath property, K itemId);
+}

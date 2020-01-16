@@ -1,0 +1,248 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+//noinspection ALL
+@mixin halo-cuba-groupbox($primary-stylename: c-groupbox) {
+  @include valo-panel($primary-stylename);
+  @include halo-panel($primary-stylename);
+
+  .#{$primary-stylename} {
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .#{$primary-stylename}-caption {
+    font-size: round($v-font-size * 0.95);
+  }
+
+  .#{$primary-stylename}-content {
+    outline: none;
+    border-left: valo-border();
+    border-right: valo-border();
+    border-bottom: valo-border();
+    border-bottom-left-radius: $v-border-radius;
+    border-bottom-right-radius: $v-border-radius;
+    padding: 0 round($v-unit-size/3) round($v-unit-size/3) round($v-unit-size/3);
+    overflow: visible;
+  }
+
+  .#{$primary-stylename}.collapsed > .#{$primary-stylename}-content,
+  .#{$primary-stylename}-light > .#{$primary-stylename}-content,
+  .#{$primary-stylename}-nocaption.#{$primary-stylename}-light > .#{$primary-stylename}-content {
+    border: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .#{$primary-stylename}.collapsed > .#{$primary-stylename}-content > .v-layout {
+    height: 0px;
+  }
+
+  .#{$primary-stylename}.collapsed,
+  .#{$primary-stylename}-light,
+  .#{$primary-stylename}-nocaption.#{$primary-stylename}-light {
+    .#{$primary-stylename}-caption-start-deco div {
+      border-top-left-radius: 0;
+    }
+
+    .#{$primary-stylename}-caption-end-deco div {
+      border-top-right-radius: 0;
+    }
+  }
+
+  .#{$primary-stylename}-captionwrap {
+    display: block;
+    font-size: 0;
+    height: round(2*$v-unit-size/3 + $v-unit-size/10);
+    width: 100%;
+  }
+
+  .#{$primary-stylename}-caption-start-deco {
+    display: inline-block;
+    height: round(2*$v-unit-size/3 + $v-unit-size/10);
+    padding-top: round($v-unit-size/3);
+
+    div {
+      width: round($v-unit-size/3);
+      height: round($v-unit-size/3 + $v-unit-size/10);
+      border-left: valo-border();
+      border-top: valo-border();
+      border-top-left-radius: $v-border-radius;
+    }
+  }
+
+  .#{$primary-stylename}.collapsed > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-start-deco div,
+  .#{$primary-stylename}-light > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-start-deco div {
+    border-left: 0;
+  }
+
+  .#{$primary-stylename}.collapsed > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-end-deco div,
+  .#{$primary-stylename}-light > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-end-deco div {
+    border-right: 0;
+  }
+
+  .#{$primary-stylename}-caption {
+    display: inline-block;
+    height: round(2*$v-unit-size/3 + $v-unit-size/10);
+    vertical-align: top;
+    padding: 0 round($v-unit-size/6);
+    font-weight: normal;
+    line-height: round(2*$v-unit-size/3);
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    white-space: nowrap;
+  }
+
+  .#{$primary-stylename}.v-disabled {
+    @include opacity($v-disabled-opacity);
+
+    .#{$primary-stylename}-expander {
+      cursor: default;
+    }
+    .#{$primary-stylename}-caption-text {
+      cursor: default;
+    }
+  }
+
+  .#{$primary-stylename}-caption-end-deco {
+    display: inline-block;
+    height: round(2*$v-unit-size/3 + $v-unit-size/10);
+    border: 0;
+    padding-top: round($v-unit-size/3);
+    min-width: round($v-unit-size/3);
+    width: 100%;
+
+    div {
+      width: 100%;
+      height: round($v-unit-size/3 + $v-unit-size/10);
+      border-right: valo-border();
+      border-top: valo-border();
+      border-top-right-radius: $v-border-radius;
+    }
+  }
+
+  .#{$primary-stylename}.collapsed > .#{$primary-stylename}-content {
+    padding-bottom: 0;
+  }
+
+  .#{$primary-stylename}-expander {
+    width: round($v-unit-size/3);
+    height: 100%;
+    cursor: pointer;
+    display: inline-block;
+    margin-right: round($v-unit-size/6);
+
+    &:before {
+      font-family: FontAwesome;
+      content: "\f196";
+    }
+  }
+
+  .#{$primary-stylename}-caption-text {
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .#{$primary-stylename}-nocollapsable > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-expander {
+    display: none;
+  }
+
+  .#{$primary-stylename}-nocollapsable > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-text {
+    cursor: default;
+  }
+
+  .#{$primary-stylename}-expander.expanded {
+    &:before {
+      content: "\f147";
+    }
+  }
+
+  .#{$primary-stylename}-deco {
+    line-height: 0;
+    height: 0;
+    width: 0;
+    display: none;
+  }
+
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-content {
+    border-left: valo-border();
+    border-right: valo-border();
+    border-bottom: valo-border();
+  }
+
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-captionwrap {
+    height: round($v-unit-size/3) + round($v-unit-size/6);
+  }
+
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-start-deco div,
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-end-deco div {
+    height: round($v-unit-size/3);
+  }
+
+  .#{$primary-stylename}-nocaption.#{$primary-stylename}-light > .#{$primary-stylename}-content {
+    background-color: transparent;
+  }
+
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-start-deco ,
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-captionwrap .#{$primary-stylename}-caption-end-deco {
+    height: round($v-unit-size/3) + round($v-unit-size/6);
+    padding-top: round($v-unit-size/6);
+  }
+
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-expander,
+  .#{$primary-stylename}-nocaption > .#{$primary-stylename}-captionwrap > .#{$primary-stylename}-nocaption {
+    display: none;
+  }
+
+  .#{$primary-stylename}-caption,
+  .#{$primary-stylename}-captionwrap,
+  .#{$primary-stylename}-caption-end-deco,
+  .#{$primary-stylename}-caption-end-deco > div,
+  .#{$primary-stylename}-caption-start-deco,
+  .#{$primary-stylename}-caption-start-deco > div {
+    @include box-defaults;
+  }
+
+  .v-scrollable > .#{$primary-stylename} {
+    overflow: auto;
+  }
+
+  // Panel mode
+  .v-panel.c-panel-groupbox > .v-panel-content {
+    padding: $v-layout-margin-top $v-layout-margin-right $v-layout-margin-bottom $v-layout-margin-left;
+  }
+
+  .#{$primary-stylename} {
+    &.c-outer-margin-top {
+      padding-top: $v-layout-margin-top;
+    }
+
+    &.c-outer-margin-right {
+      padding-right: $v-layout-margin-right;
+    }
+
+    &.c-outer-margin-bottom {
+      padding-bottom: $v-layout-margin-bottom;
+    }
+
+    &.c-outer-margin-left {
+      padding-left: $v-layout-margin-left;
+    }
+  }
+}

@@ -1,0 +1,160 @@
+/*
+ * Copyright (c) 2008-2016 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+@mixin halo-common {
+  .v-link > a {
+    white-space: nowrap;
+  }
+
+  .v-errorindicator {
+    display: none;
+  }
+
+  .c-context-help-button {
+    display: inline-block;
+    font-size: 0;
+    width: $v-font-size + $v-font-size * .2; // icon padding = .2em, so we need to add
+                                             // this value to the context-help-button width
+  }
+
+  .c-context-help-button::before {
+    font-family: FontAwesome;
+    content: "\f059";
+    font-size: $v-font-size;
+    padding-left: .2em;
+  }
+
+  .c-context-help-button-clickable {
+    cursor: pointer;
+  }
+
+  .v-disabled .c-context-help-button-clickable {
+    @include opacity($v-disabled-opacity);
+    cursor: default;
+  }
+
+  .v-required-field-indicator {
+    padding: 0 0 0 .2em;
+  }
+
+  .v-tooltip {
+    .c-tooltip-context-help {
+      margin-top: $v-tooltip-padding-vertical * 2;
+      overflow: auto;
+    }
+
+    .v-errormessage[aria-hidden="true"]+.v-tooltip-text[aria-hidden="true"]+.c-tooltip-context-help {
+      margin-top: 0;
+    }
+  }
+
+  @if $v-show-required-indicators == false {
+    .v-required-field-indicator {
+      display: none;
+    }
+  }
+
+  .v-gridlayout.c-shrink-empty {
+    font-size: 0;
+    & > .v-gridlayout-slot > * {
+      font-size: $v-font-size;
+    }
+  }
+  .v-csslayout.c-shrink-empty {
+    font-size: 0;
+    & > * {
+      font-size: $v-font-size;
+    }
+  }
+
+  .v-gridlayout.c-hide-overflow,
+  .v-gridlayout.c-hide-overflow > .v-gridlayout-slot {
+    overflow: hidden;
+  }
+
+  // calendar uses font size in em
+  .v-calendar {
+    font-size: $v-font-size;
+  }
+
+  .v-caption {
+    padding-left: 0;
+    padding-bottom: 0;
+  }
+
+  .v-ios.v-touch &,
+  .v-android.v-touch & {
+    .v-tooltip {
+        display: none !important;
+    }
+  }
+
+  .v-ios.v-webkit & {
+    .v-scrollable div,
+    .v-browserframe div {
+      -webkit-overflow-scrolling: initial;
+    }
+  }
+}
+
+@mixin box-defaults {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+@function valo-border-color($border: $v-border, $color: $v-background-color, $context: null, $strength: 1) {
+  @if type-of($border) != list {
+    @return $border;
+  }
+
+  @if $context {
+    @if color-luminance($color) > color-luminance($context) {
+      $color: $context;
+    }
+  }
+
+  $ret: null;
+  @each $part in $border {
+    @if $part == v-tint or $part == v-shade or $part == v-tone {
+      $part: $part 1;
+    }
+    @if type-of($part) == list {
+      $adjust-type: first-string($part);
+      $adjust-amount: first-number($part);
+
+      $tint: blend-screen(rgba(#fff, $v-bevel-depth/100%*$adjust-amount*$strength), $color);
+      $shade: blend-linearburn(rgba(#000, $v-bevel-depth/100%*$adjust-amount*$strength), $color);
+
+      @if $adjust-type == v-tone {
+        @if is-dark-color($color) {
+          $color: $tint;
+        } @else {
+          $color: $shade;
+        }
+      } @else if $adjust-type == v-tint {
+        $color: $tint;
+      } @else if $adjust-type == v-shade {
+        $color: $shade;
+      }
+
+      $ret: $color;
+    }
+  }
+  @return $ret;
+}

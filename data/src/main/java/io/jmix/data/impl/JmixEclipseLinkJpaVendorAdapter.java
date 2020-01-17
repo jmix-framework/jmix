@@ -56,6 +56,12 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
                 map.put(name, environment.getProperty(name));
             }
         }
+
+        for (String name : EnvironmentUtils.getPropertyNames(environment)) {
+            if (name.startsWith("javax.persistence.")) {
+                map.put(name, environment.getProperty(name));
+            }
+        }
         return map;
     }
 

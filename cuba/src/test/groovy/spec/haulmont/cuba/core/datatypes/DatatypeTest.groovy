@@ -16,7 +16,6 @@
 
 package spec.haulmont.cuba.core.datatypes
 
-
 import com.haulmont.cuba.core.model.LocalDateTimeEntity
 import com.haulmont.cuba.core.model.TestNumberValuesEntity
 import io.jmix.core.AppBeans
@@ -24,6 +23,7 @@ import io.jmix.core.Metadata
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry
 import io.jmix.core.metamodel.datatypes.impl.*
 import spec.haulmont.cuba.core.CoreTestSpecification
+import spock.lang.Ignore
 
 import javax.inject.Inject
 import java.text.ParseException
@@ -117,6 +117,7 @@ class DatatypeTest extends CoreTestSpecification {
         decimalDatatype4.parse('12`345_6789123') instanceof BigDecimal
     }
 
+    @Ignore
     def "adaptive BigDecimal localized datatype"() {
         def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
 

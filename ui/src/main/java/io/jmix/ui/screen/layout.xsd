@@ -789,6 +789,22 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="dataGridStylename">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="no-stripes"/>
+                    <xs:enumeration value="no-vertical-lines"/>
+                    <xs:enumeration value="no-horizontal-lines"/>
+                    <xs:enumeration value="borderless"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="currencyFieldStylename">
         <xs:union>
             <xs:simpleType>

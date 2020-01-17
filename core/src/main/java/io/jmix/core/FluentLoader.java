@@ -218,8 +218,12 @@ public class FluentLoader<E extends Entity<K>, K> {
          * Loads a single instance and wraps it in Optional.
          */
         public Optional<E> optional() {
-            LoadContext<E> loadContext = createLoadContext();
-            return Optional.ofNullable(loader.dataManager.load(loadContext));
+            if (id != null) {
+                LoadContext<E> loadContext = createLoadContext();
+                return Optional.ofNullable(loader.dataManager.load(loadContext));
+            } else {
+                return Optional.empty();
+            }
         }
 
         /**
@@ -228,12 +232,14 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @throws IllegalStateException if nothing was loaded
          */
         public E one() {
-            LoadContext<E> loadContext = createLoadContext();
-            E entity = loader.dataManager.load(loadContext);
-            if (entity != null)
-                return entity;
-            else
-                throw new IllegalStateException("No results");
+            if (id != null) {
+                LoadContext<E> loadContext = createLoadContext();
+                E entity = loader.dataManager.load(loadContext);
+                if (entity != null) {
+                    return entity;
+                }
+            }
+            throw new IllegalStateException("No results");
         }
 
         /**
@@ -519,7 +525,7 @@ public class FluentLoader<E extends Entity<K>, K> {
 
         /**
          * Sets value for a query parameter.
-
+         *
          * @param name  parameter name
          * @param value parameter value
          */
@@ -530,10 +536,10 @@ public class FluentLoader<E extends Entity<K>, K> {
 
         /**
          * Sets value for a parameter of {@code java.util.Date} type.
-
-         * @param name  parameter name
-         * @param value parameter value
-         * @param temporalType  how to interpret the value
+         *
+         * @param name         parameter name
+         * @param value        parameter value
+         * @param temporalType how to interpret the value
          */
         public ByQuery<E, K> parameter(String name, Date value, TemporalType temporalType) {
             parameters.put(name, new TemporalValue(value, temporalType));
@@ -542,11 +548,11 @@ public class FluentLoader<E extends Entity<K>, K> {
 
         /**
          * Sets value for a query parameter.
-
-         * @deprecated implicit conversions are deprecated, do not use this feature
-         * @param name  parameter name
-         * @param value parameter value
+         *
+         * @param name               parameter name
+         * @param value              parameter value
          * @param implicitConversion whether to do parameter value conversions, e.g. convert an entity to its ID
+         * @deprecated implicit conversions are deprecated, do not use this feature
          */
         @Deprecated
         public ByQuery<E, K> parameter(String name, Object value, boolean implicitConversion) {

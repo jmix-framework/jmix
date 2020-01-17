@@ -749,7 +749,7 @@ public class OrmDataStore implements DataStore {
 
     protected View createRestrictedView(LoadContext<?> context) {
         View view = context.getView() != null ? context.getView() :
-                viewRepository.getView(metadata.getClassNN(context.getMetaClass()), View.LOCAL);
+                viewRepository.getView(metadata.getClassNN(context.getMetaClass()), View.BASE);
 
         View copy = View.copy(isAuthorizationRequired(context) ? attributeSecurity.createRestrictedView(view) : view);
         if (context.isLoadPartialEntities()

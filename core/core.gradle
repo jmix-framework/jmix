@@ -36,6 +36,7 @@ dependencies {
     api 'javax.servlet:javax.servlet-api'
     api 'javax.validation:validation-api'
     api 'org.hibernate.validator:hibernate-validator'
+    api 'org.glassfish:javax.el'
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'
     api 'org.springframework.security:spring-security-web'

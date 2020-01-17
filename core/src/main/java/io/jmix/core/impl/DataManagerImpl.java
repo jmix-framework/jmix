@@ -17,9 +17,13 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EmbeddableEntity;
+import io.jmix.core.entity.Entity;
+import io.jmix.core.entity.IdProxy;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.validation.EntityValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +31,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.util.*;
 
 @Component(DataManager.NAME)
@@ -51,6 +57,9 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
 
     @Inject
     protected ApplicationContext applicationContext;
+
+    @Inject
+    protected BeanValidation beanValidation;
 
     protected Map<String, DataStore> dataStores = new HashMap<>();
 
@@ -89,6 +98,8 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
     @Override
     @SuppressWarnings("unchecked")
     public EntitySet commit(CommitContext context) {
+        validate(context);
+
         Map<String, CommitContext> storeToContextMap = new TreeMap<>();
         Set<Entity> toRepeat = new HashSet<>();
         for (Entity entity : context.getCommitInstances()) {
@@ -172,6 +183,8 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
         newCtx.setDiscardCommitted(context.isDiscardCommitted());
         newCtx.setAuthorizationRequired(context.isAuthorizationRequired());
         newCtx.setJoinTransaction(context.isJoinTransaction());
+        newCtx.setValidationMode(context.getValidationMode());
+        newCtx.setValidationGroups(context.getValidationGroups());
         return newCtx;
     }
 
@@ -274,6 +287,27 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
             dataStore.setName(name);
             return dataStore;
         });
+    }
+
+    protected void validate(CommitContext context) {
+        if (CommitContext.ValidationMode.DEFAULT == context.getValidationMode() && serverConfig.getDataManagerBeanValidation()
+                || CommitContext.ValidationMode.ALWAYS_VALIDATE == context.getValidationMode()) {
+            for (Entity entity : context.getCommitInstances()) {
+                validateEntity(entity, context.getValidationGroups());
+            }
+        }
+    }
+
+    protected void validateEntity(Entity entity, List<Class> validationGroups) {
+        Validator validator = beanValidation.getValidator();
+        Set<ConstraintViolation<Entity>> violations;
+        if (validationGroups == null || validationGroups.isEmpty()) {
+            violations = validator.validate(entity);
+        } else {
+            violations = validator.validate(entity, validationGroups.toArray(new Class[0]));
+        }
+        if (!violations.isEmpty())
+            throw new EntityValidationException(String.format("Entity %s validation failed.", entity.toString()), violations);
     }
 
     private static class Secure extends DataManagerImpl {

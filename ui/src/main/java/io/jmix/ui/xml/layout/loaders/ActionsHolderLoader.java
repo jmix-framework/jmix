@@ -19,6 +19,7 @@ package io.jmix.ui.xml.layout.loaders;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.Actions;
+import io.jmix.ui.actions.ListAction;
 import io.jmix.ui.components.ActionsHolder;
 import io.jmix.ui.components.ListComponent;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +62,10 @@ public abstract class ActionsHolderLoader<T extends ActionsHolder> extends Abstr
                 if (StringUtils.isNotEmpty(actionTypeId)) {
                     Actions actions = beanLocator.get(Actions.NAME);
                     Action instance = actions.create(actionTypeId, id);
+
+                    if (instance instanceof ListAction) {
+                        ((ListAction) instance).setTarget((ListComponent) actionsHolder);
+                    }
 
                     loadStandardActionProperties(instance, element);
 

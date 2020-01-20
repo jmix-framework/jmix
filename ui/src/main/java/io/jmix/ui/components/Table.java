@@ -72,6 +72,8 @@ public interface Table<E extends Entity>
 
     /**
      * Adds the given column to Table.
+     * <p>
+     * Note that column id should be an instance of {@link MetaPropertyPath}.
      *
      * @param column the column to add
      * @see #addColumn(Column, int)
@@ -80,6 +82,8 @@ public interface Table<E extends Entity>
 
     /**
      * Adds the given column at the specified index to Table.
+     * <p>
+     * Note that column id should be an instance of {@link MetaPropertyPath}.
      *
      * @param column the column to add
      * @param index  index of a new column

@@ -18,7 +18,6 @@ package spec.haulmont.cuba.core.data_manager
 
 import com.haulmont.cuba.core.model.beanvalidation.EmbeddedValidatedEntity
 import com.haulmont.cuba.core.model.beanvalidation.ValidatedEntity
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.CommitContext
 import io.jmix.core.DataManager
 import io.jmix.core.commons.db.QueryRunner
@@ -29,8 +28,6 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 import javax.inject.Inject
 
 class EntityValidationTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private Persistence persistence
     @Inject

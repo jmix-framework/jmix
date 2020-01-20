@@ -19,7 +19,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.SeveralFetchGroups_Tariff;
 import com.haulmont.cuba.core.model.SeveralFetchGroups_TariffVersion;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
@@ -33,27 +33,25 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
 @CoreTest
 public class SeveralFetchGroupsTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
-    private Metadata metadata;
+    @Inject
     private Persistence persistence;
+    @Inject
+    private Metadata metadata;
+    @Inject
     private DataManager dataManager;
+    
     private UUID tariffId1, tariffId2_1, tariffId3_1, tariffId4_2;
     private UUID tariffVersionId1, tariffVersionId2, tariffVersionId3;
 
     @BeforeEach
     public void setUp() {
-        metadata = cont.metadata();
-        persistence = cont.persistence();
-        dataManager = AppBeans.get(DataManager.class);
-
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
 
@@ -113,10 +111,10 @@ public class SeveralFetchGroupsTest {
 
     @AfterEach
     public void tearDown() throws SQLException {
-        QueryRunner runner = new QueryRunner(cont.persistence().getDataSource());
+        QueryRunner runner = new QueryRunner(persistence.getDataSource());
         runner.update("update TEST_SEVERAL_FETCH_GROUPS_TARIFF set ACTIVE_VERSION_ID = null");
-        cont.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF_VERSION", tariffVersionId3, tariffVersionId2, tariffVersionId1);
-        cont.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF", tariffId4_2, tariffId3_1, tariffId2_1, tariffId1);
+        TestSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF_VERSION", tariffVersionId3, tariffVersionId2, tariffVersionId1);
+        TestSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF", tariffId4_2, tariffId3_1, tariffId2_1, tariffId1);
     }
 
     @Test

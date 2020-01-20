@@ -20,14 +20,17 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.Metadata;
 import io.jmix.core.View;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.UUID;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -35,17 +38,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
 public class OrmBehaviorTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
+    
     private UUID userId, groupId;
 
     private static final Logger log = LoggerFactory.getLogger(OrmBehaviorTest.class);
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord("TEST_GROUP", groupId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord("TEST_GROUP", groupId);
     }
 
     /*
@@ -56,9 +61,9 @@ public class OrmBehaviorTest {
         Group group = new Group();
         groupId = group.getId();
         group.setName("Old Name");
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            cont.persistence().getEntityManager().persist(group);
+            persistence.getEntityManager().persist(group);
             tx.commit();
         } finally {
             tx.end();
@@ -75,12 +80,12 @@ public class OrmBehaviorTest {
         user.setGroup(g);
         user.setName("Test");
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            cont.persistence().getEntityManager().persist(user);
+            persistence.getEntityManager().persist(user);
             tx.commitRetaining();
 
-            user = cont.persistence().getEntityManager().find(User.class, userId,
+            user = persistence.getEntityManager().find(User.class, userId,
                     new View(User.class).addProperty("group"));
             tx.commit();
         } finally {

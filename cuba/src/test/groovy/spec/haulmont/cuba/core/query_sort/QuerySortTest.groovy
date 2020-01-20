@@ -1,6 +1,6 @@
 package spec.haulmont.cuba.core.query_sort
 
-import com.haulmont.cuba.core.testsupport.TestContainer
+
 import com.haulmont.cuba.core.testsupport.TestJpqlSortExpressionProvider
 import io.jmix.core.AppBeans
 import io.jmix.core.Metadata
@@ -10,7 +10,6 @@ import io.jmix.data.persistence.JpqlSortExpressionProvider
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 class QuerySortTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
 
     def "sort"() {
 

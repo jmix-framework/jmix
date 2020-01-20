@@ -18,7 +18,6 @@ package spec.haulmont.cuba.core.tx_listeners
 
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
-import com.haulmont.cuba.core.testsupport.TestContainer
 import com.haulmont.cuba.core.tx_listener.TestBeforeCommitTxListener
 import io.jmix.core.Metadata
 import io.jmix.core.commons.db.QueryRunner
@@ -28,19 +27,17 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
-class UsingTransactionsInBeforeCommitTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class UsingTransactionsInBeforeCommitTest extends CoreTestSpecification {
     @Inject
     private Metadata metadata
     @Inject
     private Persistence persistence
+
     private Group companyGroup
 
     void setup() {
-        metadata = cont.metadata()
-        persistence = cont.persistence()
-
         companyGroup = persistence.callInTransaction { em ->
             Group group = new Group(name: 'Company')
             em.persist(group)
@@ -51,7 +48,7 @@ class UsingTransactionsInBeforeCommitTest extends CoreTestSpecification {
     void cleanup() {
         QueryRunner runner = new QueryRunner(persistence.getDataSource())
         runner.update("delete from TEST_USER")
-        cont.deleteRecord(companyGroup)
+        deleteRecord(companyGroup)
     }
 
     def "create entity in new transaction"() {

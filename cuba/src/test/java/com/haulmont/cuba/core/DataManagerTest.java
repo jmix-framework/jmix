@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.core.entity.Entity;
 import io.jmix.data.EntityManager;
@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.inject.Inject;
 import javax.persistence.TemporalType;
 import java.util.*;
 
@@ -39,12 +40,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class DataManagerTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
+    @Inject
     protected DataManager dataManager;
+    @Inject
     protected MetadataTools metadataTools;
+    @Inject
     protected Persistence persistence;
+    @Inject
     protected Metadata metadata;
 
     protected User user;
@@ -52,11 +54,6 @@ public class DataManagerTest {
 
     @BeforeEach
     public void setUp() {
-        dataManager = AppBeans.get(DataManager.class);
-        metadataTools = AppBeans.get(MetadataTools.class);
-        persistence = cont.persistence();
-        metadata = cont.metadata();
-
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
 
@@ -77,10 +74,10 @@ public class DataManagerTest {
 
     @AfterEach
     public void cleanup() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(cont.persistence().getDataSource());
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_SERVER");
-        cont.deleteRecord(user);
-        cont.deleteRecord(group);
+        TestSupport.deleteRecord(user);
+        TestSupport.deleteRecord(group);
     }
 
     @Test

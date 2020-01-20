@@ -20,9 +20,10 @@ import com.haulmont.cuba.core.model.UserRelatedNews;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,22 +39,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class CheckLoadedStateTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private ViewRepository viewRepository;
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
     private UUID userRelatedNewsId = null;
     private List<UUID> recursiveUserRelatedIds = null;
     private UUID userId, groupId;
 
-    @Inject
-    private ViewRepository viewRepository;
+
 
     @BeforeEach
     public void setUp() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
-            Metadata metadata = cont.metadata();
-
+            EntityManager em = persistence.getEntityManager();
             Group group = metadata.create(Group.class);
             groupId = group.getId();
             group.setName("Group-" + group.getId());
@@ -195,7 +198,7 @@ public class CheckLoadedStateTest {
                 .setId(userId)
                 .setView(View.MINIMAL));
 
-        UserRelatedNews record = cont.metadata().create(UserRelatedNews.class);
+        UserRelatedNews record = metadata.create(UserRelatedNews.class);
 
         userRelatedNewsId = record.getId();
 
@@ -238,14 +241,14 @@ public class CheckLoadedStateTest {
 
         recursiveUserRelatedIds = new ArrayList<>();
 
-        UserRelatedNews parentRecord = cont.metadata().create(UserRelatedNews.class);
+        UserRelatedNews parentRecord = metadata.create(UserRelatedNews.class);
         parentRecord.setName("Test");
         parentRecord.setUser(user);
 
         UserRelatedNews committedParentRecord = dataManager.commit(parentRecord);
         recursiveUserRelatedIds.add(committedParentRecord.getId());
 
-        UserRelatedNews record = cont.metadata().create(UserRelatedNews.class);
+        UserRelatedNews record = metadata.create(UserRelatedNews.class);
         record.setName("Test");
         record.setUser(user);
         record.setParent(committedParentRecord);
@@ -279,7 +282,7 @@ public class CheckLoadedStateTest {
     @AfterEach
     public void tearDown() {
         if (userRelatedNewsId != null) {
-            cont.deleteRecord("TEST_USER_RELATED_NEWS", userRelatedNewsId);
+            TestSupport.deleteRecord("TEST_USER_RELATED_NEWS", userRelatedNewsId);
             userRelatedNewsId = null;
         }
 
@@ -287,10 +290,10 @@ public class CheckLoadedStateTest {
             Collections.reverse(recursiveUserRelatedIds);
 
             for (UUID id : recursiveUserRelatedIds) {
-                cont.deleteRecord("TEST_USER_RELATED_NEWS", id);
+                TestSupport.deleteRecord("TEST_USER_RELATED_NEWS", id);
             }
         }
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord("TEST_GROUP", groupId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord("TEST_GROUP", groupId);
     }
 }

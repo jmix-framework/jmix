@@ -20,7 +20,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -35,8 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class TypedNativeQueryTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private Persistence persistence;
     private UUID groupId, userId;
@@ -44,10 +42,10 @@ public class TypedNativeQueryTest {
     @AfterEach
     public void tearDown() throws Exception {
         if (userId != null) {
-            cont.deleteRecord("TEST_USER", userId);
+            TestSupport.deleteRecord("TEST_USER", userId);
         }
         if (groupId != null) {
-            cont.deleteRecord("TEST_GROUP", groupId);
+            TestSupport.deleteRecord("TEST_GROUP", groupId);
         }
     }
 

@@ -17,16 +17,12 @@
 package spec.haulmont.cuba.core
 
 import com.haulmont.cuba.core.model.self_reference.SelfReferencedEntity
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 
 import javax.inject.Inject
 
 class SelfReferencedEntityTest extends CoreTestSpecification {
-
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private Metadata metadata
     @Inject

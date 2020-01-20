@@ -16,8 +16,8 @@
 
 package spec.haulmont.cuba.core.config
 
-import spec.haulmont.cuba.core.CoreTestSpecification
 import io.jmix.core.ConfigInterfaces
+import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 

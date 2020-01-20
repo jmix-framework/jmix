@@ -20,7 +20,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
@@ -34,9 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
 public class HsqlLikeNullFailTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     private User user;
     private Group group;
 
@@ -58,7 +55,7 @@ public class HsqlLikeNullFailTest {
 
     @AfterEach
     public void tearDown() {
-        cont.deleteRecord(user, group);
+        TestSupport.deleteRecord(user, group);
     }
 
     @Test

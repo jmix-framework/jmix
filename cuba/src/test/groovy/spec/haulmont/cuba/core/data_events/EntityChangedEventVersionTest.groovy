@@ -1,6 +1,8 @@
 package spec.haulmont.cuba.core.data_events
 
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestProduct
+import com.haulmont.cuba.core.model.entitychangedevent.TestProductChangeListener
+import io.jmix.core.*
 
 /*
  * Copyright 2019 Haulmont.
@@ -18,8 +20,6 @@ import com.haulmont.cuba.core.model.entitychangedevent.EceTestProduct
  * limitations under the License.
  */
 
-import com.haulmont.cuba.core.model.entitychangedevent.TestProductChangeListener
-import io.jmix.core.*
 import io.jmix.data.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification

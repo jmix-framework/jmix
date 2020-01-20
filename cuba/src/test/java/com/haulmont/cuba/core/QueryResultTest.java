@@ -20,7 +20,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.View;
@@ -46,9 +46,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CoreTest
 @Disabled
 public class QueryResultTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private Persistence persistence;
     @Inject
@@ -65,9 +62,9 @@ public class QueryResultTest {
     @AfterEach
     public void tearDown() throws Exception {
         for (UUID userId : userIds) {
-            cont.deleteRecord("SEC_USER", userId);
+            TestSupport.deleteRecord("SEC_USER", userId);
         }
-        cont.deleteRecord(group);
+        TestSupport.deleteRecord(group);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from SYS_QUERY_RESULT");
     }
@@ -169,7 +166,7 @@ public class QueryResultTest {
     }
 
     private List<Map<String, Object>> getQueryResults() throws SQLException {
-        QueryRunner queryRunner = new QueryRunner(cont.persistence().getDataSource());
+        QueryRunner queryRunner = new QueryRunner(persistence.getDataSource());
         return queryRunner.query("select * from SYS_QUERY_RESULT", new MapListHandler());
     }
 }

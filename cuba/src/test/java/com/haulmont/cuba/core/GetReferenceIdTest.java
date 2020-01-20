@@ -22,13 +22,15 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.Metadata;
 import io.jmix.core.View;
 import io.jmix.data.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.List;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -36,23 +38,26 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class GetReferenceIdTest {
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
     private User user;
     private Group group;
 
     @BeforeEach
     public void setUp() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
+        try (Transaction tx = persistence.createTransaction()) {
             group = new Group();
             group.setName("test group");
-            cont.entityManager().persist(group);
+            persistence.getEntityManager().persist(group);
 
-            user = cont.metadata().create(User.class);
+            user = metadata.create(User.class);
             user.setName("test user");
             user.setLogin("test login");
             user.setGroup(group);
-            cont.entityManager().persist(user);
+            persistence.getEntityManager().persist(user);
 
             tx.commit();
         }
@@ -60,7 +65,7 @@ public class GetReferenceIdTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord(user, group);
+        TestSupport.deleteRecord(user, group);
     }
 
     @Test
@@ -68,8 +73,8 @@ public class GetReferenceIdTest {
         User user = null;
 
         // not in a view
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setView(
@@ -85,7 +90,7 @@ public class GetReferenceIdTest {
             if (!list.isEmpty()) {
                 user = list.get(0);
 
-                PersistenceTools.RefId refId = cont.persistence().getTools().getReferenceId(user, "group");
+                PersistenceTools.RefId refId = persistence.getTools().getReferenceId(user, "group");
                 assertFalse(refId.isLoaded());
                 try {
                     refId.getValue();
@@ -102,8 +107,8 @@ public class GetReferenceIdTest {
         user.getUserRoles().size();
 
         // in a view
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setView(
@@ -121,7 +126,7 @@ public class GetReferenceIdTest {
             if (!list.isEmpty()) {
                 user = list.get(0);
 
-                PersistenceTools.RefId refId = cont.persistence().getTools().getReferenceId(user, "group");
+                PersistenceTools.RefId refId = persistence.getTools().getReferenceId(user, "group");
                 assertTrue(refId.isLoaded());
                 assertEquals(group.getId(), refId.getValue());
             }
@@ -138,8 +143,8 @@ public class GetReferenceIdTest {
     public void testWithoutFetchGroup() throws Exception {
         User user = null;
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             TypedQuery<User> q = em.createQuery("select u from test$User u where u.id = ?1", User.class);
             q.setParameter(1, this.user.getId());
@@ -147,14 +152,14 @@ public class GetReferenceIdTest {
             if (!list.isEmpty()) {
                 user = list.get(0);
 
-                PersistenceTools.RefId refId = cont.persistence().getTools().getReferenceId(user, "group");
+                PersistenceTools.RefId refId = persistence.getTools().getReferenceId(user, "group");
                 assertTrue(refId.isLoaded());
                 assertEquals(group.getId(), refId.getValue());
             }
             tx.commit();
         }
         try {
-            cont.persistence().getTools().getReferenceId(user, "group");
+            persistence.getTools().getReferenceId(user, "group");
             fail();
         } catch (IllegalStateException e) {
             // ok
@@ -162,7 +167,7 @@ public class GetReferenceIdTest {
         user = reserialize(user);
         assertNotNull(user);
         try {
-            cont.persistence().getTools().getReferenceId(user, "group");
+            persistence.getTools().getReferenceId(user, "group");
             fail();
         } catch (IllegalStateException e) {
             // ok

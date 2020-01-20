@@ -22,25 +22,29 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class DataManagerCommitTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
+    @Inject
     private DataManager dataManager;
+    @Inject
     private EntityStates entityStates;
 
     private UUID userId;
@@ -51,11 +55,8 @@ public class DataManagerCommitTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        dataManager = AppBeans.get(DataManager.class);
-        entityStates = AppBeans.get(EntityStates.class);
-
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             group = new Group();
             group.setName("Group-" + group.getId());
@@ -93,10 +94,10 @@ public class DataManagerCommitTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_USER_ROLE", userRoleId);
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord(role);
-        cont.deleteRecord(group);
+        TestSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord(role);
+        TestSupport.deleteRecord(group);
     }
 
     @Test

@@ -18,18 +18,17 @@ package spec.haulmont.cuba.core.data_events
 
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.*
+import io.jmix.data.Persistence
 import io.jmix.data.Transaction
 import io.jmix.data.TransactionalDataManager
 import spec.haulmont.cuba.core.CoreTestSpecification
-import spock.lang.Shared
 
 import javax.inject.Inject
 
-class AllDataEventsTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class AllDataEventsTest extends CoreTestSpecification {
     private TestEntityChangedEventListener listener
     @Inject
     private Events events
@@ -41,6 +40,9 @@ class AllDataEventsTest extends CoreTestSpecification {
     private Metadata metadata
     @Inject
     private EntityStates entityStates
+    @Inject
+    private Persistence persistence
+
     private Order toDiscard
 
     void setup() {
@@ -56,7 +58,7 @@ class AllDataEventsTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        cont.deleteRecord(toDiscard)
+        deleteRecord(toDiscard)
         listener.clear()
     }
 
@@ -85,7 +87,7 @@ class AllDataEventsTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(order)
+        deleteRecord(order)
     }
 
     def "update sequence"() {
@@ -118,7 +120,7 @@ class AllDataEventsTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(order)
+        deleteRecord(order)
     }
 
     def "delete sequence"() {
@@ -150,13 +152,13 @@ class AllDataEventsTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(order)
+        deleteRecord(order)
     }
 
     def "create/update/delete in one transaction sequence"() {
 
         int i = 0
-        Transaction tx = cont.persistence().createTransaction()
+        Transaction tx = persistence.createTransaction()
 
         when:
 
@@ -228,13 +230,13 @@ class AllDataEventsTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(order)
+        deleteRecord(order)
     }
 
     def "load/update in one transaction sequence"() {
 
         int i = 0
-        Transaction tx = cont.persistence().createTransaction()
+        Transaction tx = persistence.createTransaction()
 
         Order order = metadata.create(Order)
         order.number = '111'
@@ -285,7 +287,7 @@ class AllDataEventsTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(order)
+        deleteRecord(order)
     }
 
 }

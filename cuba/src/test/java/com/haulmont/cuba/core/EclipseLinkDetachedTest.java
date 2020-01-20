@@ -22,14 +22,17 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.Metadata;
 import io.jmix.core.View;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.UUID;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -37,8 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EclipseLinkDetachedTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
 
     private UUID userId;
     private UUID userRoleId;
@@ -47,10 +50,10 @@ public class EclipseLinkDetachedTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
 
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             group = new Group();
             group.setName("Group");
@@ -82,10 +85,10 @@ public class EclipseLinkDetachedTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_USER_ROLE", userRoleId);
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord(group);
-        cont.deleteRecord(role);
+        TestSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord(group);
+        TestSupport.deleteRecord(role);
     }
 
     @Test
@@ -93,9 +96,9 @@ public class EclipseLinkDetachedTest {
         Transaction tx;
         EntityManager em;
         User user;
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             user = em.find(User.class, userId);
             assertNotNull(user);
             tx.commit();
@@ -123,9 +126,9 @@ public class EclipseLinkDetachedTest {
         Transaction tx;
         EntityManager em;
         User user;
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             user = em.find(User.class, userId);
             assertNotNull(user);
             tx.commit();
@@ -152,9 +155,9 @@ public class EclipseLinkDetachedTest {
         Transaction tx;
         EntityManager em;
         User user;
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             View view = new View(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
@@ -184,9 +187,9 @@ public class EclipseLinkDetachedTest {
         Transaction tx;
         EntityManager em;
         User user;
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             View view = new View(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
@@ -222,9 +225,9 @@ public class EclipseLinkDetachedTest {
         Transaction tx;
         EntityManager em;
         User user;
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             View view = new View(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
@@ -257,9 +260,9 @@ public class EclipseLinkDetachedTest {
         user.setLogin("testLogin-1");
 
         // merge
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             user = em.merge(user);
 
             tx.commit();
@@ -284,9 +287,9 @@ public class EclipseLinkDetachedTest {
         }
 
         // find without view
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             user = em.find(User.class, userId);
             assertNotNull(user);
             tx.commit();

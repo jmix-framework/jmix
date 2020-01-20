@@ -19,7 +19,6 @@ import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.*
 import io.jmix.data.Transaction
 import io.jmix.data.TransactionalDataManager
@@ -28,9 +27,9 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
-class EntityChangedEventTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class EntityChangedEventTest extends CoreTestSpecification {
     private TestEntityChangedEventListener listener
     @Inject
     private Events events
@@ -147,7 +146,7 @@ class EntityChangedEventTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(order)
+        deleteRecord(order)
     }
 
     def "old value of collection attribute"() {
@@ -185,6 +184,6 @@ class EntityChangedEventTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(orderLine11, orderLine12, product1, product2, order1)
+        deleteRecord(orderLine11, orderLine12, product1, product2, order1)
     }
 }

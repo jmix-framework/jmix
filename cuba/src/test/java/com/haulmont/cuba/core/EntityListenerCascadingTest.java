@@ -19,7 +19,7 @@ import com.haulmont.cuba.core.listener.TestCascadingEntityListener;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.View;
@@ -31,15 +31,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EntityListenerCascadingTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
-    private Metadata metadata;
+    @Inject
     private Persistence persistence;
+    @Inject
+    private Metadata metadata;
+
 
     private EntityListenerManager entityListenerManager;
 
@@ -48,9 +50,6 @@ public class EntityListenerCascadingTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        persistence = cont.persistence();
-        metadata = cont.metadata();
-
         try (Transaction tx = persistence.createTransaction()) {
             group = metadata.create(Group.class);
             group.setName("Group");
@@ -78,7 +77,7 @@ public class EntityListenerCascadingTest {
     @AfterEach
     public void tearDown() throws Exception {
         entityListenerManager.removeListener(User.class, TestCascadingEntityListener.class);
-        cont.deleteRecord(user, admin, group);
+        TestSupport.deleteRecord(user, admin, group);
     }
 
     @Test

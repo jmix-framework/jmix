@@ -20,7 +20,6 @@ import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.Metadata
 import io.jmix.core.View
 import io.jmix.core.commons.db.QueryRunner
@@ -30,10 +29,9 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
+
 class GetOldValueTest extends CoreTestSpecification {
-
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private PersistenceTools persistenceTools
     @Inject
@@ -234,7 +232,7 @@ class GetOldValueTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(orderLine11, orderLine12)
+        deleteRecord(orderLine11, orderLine12)
     }
 
     def "test enum attribute"() {

@@ -18,18 +18,23 @@ package spec.haulmont.cuba.core.persistence_tools
 
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.AppBeans
+import io.jmix.core.Metadata
 import io.jmix.core.View
 import io.jmix.core.ViewRepository
+import io.jmix.data.Persistence
 import io.jmix.data.PersistenceTools
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
-class GetReferenceIdTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class GetReferenceIdTest extends CoreTestSpecification {
+    @Inject
+    private Persistence persistence
+    @Inject
+    private Metadata metadata
     @Inject
     private PersistenceTools persistenceTools
 
@@ -38,17 +43,17 @@ class GetReferenceIdTest extends CoreTestSpecification {
     private Order order2
 
     void setup() {
-        cont.persistence().runInTransaction({ em ->
-            customer1 = cont.metadata().create(Customer)
+        persistence.runInTransaction({ em ->
+            customer1 = metadata.create(Customer)
             customer1.name = 'a customer'
             em.persist(customer1)
 
-            order1 = cont.metadata().create(Order)
+            order1 = metadata.create(Order)
             order1.setNumber('1')
             order1.setCustomer(customer1)
             em.persist(order1)
 
-            order2 = cont.metadata().create(Order)
+            order2 = metadata.create(Order)
             order2.setNumber('2')
             em.persist(order2)
         })
@@ -56,7 +61,7 @@ class GetReferenceIdTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        cont.deleteRecord(order1, order2, customer1)
+        deleteRecord(order1, order2, customer1)
     }
 
     def "get existing reference id"() {
@@ -65,9 +70,9 @@ class GetReferenceIdTest extends CoreTestSpecification {
 
         when:
 
-        def tx = cont.persistence().createTransaction()
+        def tx = persistence.createTransaction()
         try {
-            order = cont.persistence().getEntityManager().find(Order, order1.id)
+            order = persistence.getEntityManager().find(Order, order1.id)
             refId = persistenceTools.getReferenceId(order, 'customer')
             tx.commit()
         } finally {
@@ -86,12 +91,12 @@ class GetReferenceIdTest extends CoreTestSpecification {
 
         when:
 
-        def tx = cont.persistence().createTransaction()
+        def tx = persistence.createTransaction()
         try {
             def view = AppBeans.get(ViewRepository).getView(Order, View.LOCAL)
             view.setLoadPartialEntities(true)
 
-            order = cont.persistence().getEntityManager().find(Order, order1.id, view)
+            order = persistence.getEntityManager().find(Order, order1.id, view)
             refId = persistenceTools.getReferenceId(order, 'customer')
             tx.commit()
         } finally {
@@ -117,9 +122,9 @@ class GetReferenceIdTest extends CoreTestSpecification {
 
         when:
 
-        def tx = cont.persistence().createTransaction()
+        def tx = persistence.createTransaction()
         try {
-            order = cont.persistence().getEntityManager().find(Order, order2.id)
+            order = persistence.getEntityManager().find(Order, order2.id)
             refId = persistenceTools.getReferenceId(order, 'customer')
             tx.commit()
         } finally {

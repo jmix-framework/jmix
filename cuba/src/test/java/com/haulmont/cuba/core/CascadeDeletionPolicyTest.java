@@ -18,10 +18,11 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.model.CascadeDeletionPolicyEntity;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import io.jmix.data.impl.EntityListenerManager;
 import io.jmix.data.listener.BeforeDeleteEntityListener;
@@ -30,26 +31,29 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class CascadeDeletionPolicyTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
 
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
+    
     protected CascadeDeletionPolicyEntity root, first, second, third;
 
     @BeforeEach
     public void setUp() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
-            Metadata metadata = cont.metadata();
-
+            EntityManager em = persistence.getEntityManager();
+            
             root = metadata.create(CascadeDeletionPolicyEntity.class);
             root.setName("root");
             em.persist(root);
@@ -77,21 +81,21 @@ public class CascadeDeletionPolicyTest {
 
     @AfterEach
     public void tearDown() {
-        cont.deleteRecord(third, second, first, root);
+        TestSupport.deleteRecord(third, second, first, root);
     }
 
     @Test
     public void testRemoveCascade() {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             CascadeDeletionPolicyEntity loadedRoot = em.find(CascadeDeletionPolicyEntity.class, root.getId());
             em.find(CascadeDeletionPolicyEntity.class, first.getId());
             em.remove(loadedRoot);
             tx.commit();
         }
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             List r = em.createQuery("select e from test$CascadeDeletionPolicyEntity e where e.id in ?1")
                     .setParameter(1, Arrays.asList(root, first, second, third))
                     .getResultList();
@@ -104,8 +108,8 @@ public class CascadeDeletionPolicyTest {
     public void testEntityListenerOnCascadeDelete() {
         EntityListenerManager entityListenerManager = AppBeans.get(EntityListenerManager.class);
         entityListenerManager.addListener(CascadeDeletionPolicyEntity.class, DeleteCascadeDeletionPolicyEntityListener.class);
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             CascadeDeletionPolicyEntity loadedSecond = em.find(CascadeDeletionPolicyEntity.class, second.getId());
             em.find(CascadeDeletionPolicyEntity.class, third.getId());
             em.remove(loadedSecond);
@@ -121,8 +125,8 @@ public class CascadeDeletionPolicyTest {
     public void testEntityListenerOnUpdate() {
         EntityListenerManager entityListenerManager = AppBeans.get(EntityListenerManager.class);
         entityListenerManager.addListener(CascadeDeletionPolicyEntity.class, UpdateCascadeDeletionPolicyEntityListener.class);
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             CascadeDeletionPolicyEntity loadedThird = em.find(CascadeDeletionPolicyEntity.class, third.getId());
             CascadeDeletionPolicyEntity loadedSecond = em.find(CascadeDeletionPolicyEntity.class, second.getId());
             loadedThird.setName("third#1");

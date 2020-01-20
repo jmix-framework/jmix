@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.View;
 import io.jmix.data.*;
 import org.junit.jupiter.api.AfterEach;
@@ -37,9 +37,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class PersistenceTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private Persistence persistence;
 
@@ -71,8 +68,8 @@ public class PersistenceTest {
 
     @AfterEach
     public void tearDown() {
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord("TEST_GROUP", groupId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord("TEST_GROUP", groupId);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("DELETE FROM TEST_SERVER");
     }
@@ -84,47 +81,47 @@ public class PersistenceTest {
     @Test
     public void testLoadByCombinedView() {
         User user;
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
             // load by single view
 
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
                     new View(User.class, false).addProperty("login").setLoadPartialEntities(true));
 
-            assertTrue(cont.persistence().getTools().isLoaded(user, "login"));
-            assertFalse(cont.persistence().getTools().isLoaded(user, "name"));
+            assertTrue(persistence.getTools().isLoaded(user, "login"));
+            assertFalse(persistence.getTools().isLoaded(user, "name"));
 
             tx.commitRetaining();
 
             // load by combined view
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
                     new View(User.class, false).addProperty("login").setLoadPartialEntities(true),
                     new View(User.class, false).addProperty("name").setLoadPartialEntities(true)
             );
 
-            assertTrue(cont.persistence().getTools().isLoaded(user, "login"));
-            assertTrue(cont.persistence().getTools().isLoaded(user, "name"));
+            assertTrue(persistence.getTools().isLoaded(user, "login"));
+            assertTrue(persistence.getTools().isLoaded(user, "name"));
 
             tx.commitRetaining();
 
             // load by complex combined view
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
                     new View(User.class, false).addProperty("login").setLoadPartialEntities(true),
                     new View(User.class, false).addProperty("group", new View(Group.class).addProperty("name")).setLoadPartialEntities(true)
             );
 
-            assertTrue(cont.persistence().getTools().isLoaded(user, "login"));
-            assertFalse(cont.persistence().getTools().isLoaded(user, "name"));
-            assertTrue(cont.persistence().getTools().isLoaded(user, "group"));
-            assertTrue(cont.persistence().getTools().isLoaded(user.getGroup(), "name"));
+            assertTrue(persistence.getTools().isLoaded(user, "login"));
+            assertFalse(persistence.getTools().isLoaded(user, "name"));
+            assertTrue(persistence.getTools().isLoaded(user, "group"));
+            assertTrue(persistence.getTools().isLoaded(user.getGroup(), "name"));
 
             tx.commit();
         } finally {
@@ -137,18 +134,18 @@ public class PersistenceTest {
         User user;
         Group group;
 
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
             User transientUser = new User();
             transientUser.setId(userId);
             transientUser.setName("testUser1");
 
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             em.merge(transientUser);
 
             tx.commitRetaining();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             user = em.find(User.class, userId);
             assertNotNull(user);
             group = user.getGroup();
@@ -164,11 +161,11 @@ public class PersistenceTest {
 
     @Test
     public void testDirtyFields() throws Exception {
-        PersistenceTools persistenceTools = cont.persistence().getTools();
+        PersistenceTools persistenceTools = persistence.getTools();
 
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertNotNull(em);
             Server server = new Server();
             UUID id = server.getId();
@@ -181,7 +178,7 @@ public class PersistenceTest {
 
             tx.commitRetaining();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             server = em.find(Server.class, id);
             assertNotNull(server);
             server.setData("testData");
@@ -195,7 +192,7 @@ public class PersistenceTest {
 
             tx.commitRetaining();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             server = em.find(Server.class, id);
             assertNotNull(server);
 
@@ -213,9 +210,9 @@ public class PersistenceTest {
      */
     @Test
     public void testNonNullAttribute() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             User user = em.find(User.class, userId);
             assertNotNull(user);
             user.setLogin(null);
@@ -224,7 +221,7 @@ public class PersistenceTest {
             fail();
 
 // Old OpenJPA behaviour
-//            em = cont.persistence().getEntityManager();
+//            em = persistence.getEntityManager();
 //            user = em.find(User.class, userId);
 //            assertNotNull(user);
 //            assertNotNull(user.getLogin()); // null was not saved
@@ -241,8 +238,8 @@ public class PersistenceTest {
 
     @Test
     public void testFind() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            User user = cont.entityManager().find(User.class, userId);
+        try (Transaction tx = persistence.createTransaction()) {
+            User user = persistence.getEntityManager().find(User.class, userId);
             assertNotNull(user);
 
             tx.commit();
@@ -251,7 +248,7 @@ public class PersistenceTest {
 
     @Test
     public void testRepeatingReloadNoView() throws Exception {
-        cont.persistence().runInTransaction((em) -> {
+        persistence.runInTransaction((em) -> {
             User u = loadUserByName(em, null);
 
             u.setLanguage("ru");
@@ -261,13 +258,13 @@ public class PersistenceTest {
             assertEquals("ru", u.getLanguage());
         });
 
-        User changedUser = cont.persistence().callInTransaction((em) -> em.find(User.class, userId));
+        User changedUser = persistence.callInTransaction((em) -> em.find(User.class, userId));
         assertEquals("ru", changedUser.getLanguage());
     }
 
     @Test
     public void testLostChangeOnReloadWithView1() throws Exception {
-        cont.persistence().runInTransaction((em) -> {
+        persistence.runInTransaction((em) -> {
             User u = loadUserByName(em, View.LOCAL);
 
             u.setLanguage("en");
@@ -280,7 +277,7 @@ public class PersistenceTest {
 
     @Test
     public void testLostChangeOnReloadWithView2() throws Exception {
-        cont.persistence().runInTransaction((em) -> {
+        persistence.runInTransaction((em) -> {
             User u = loadUserByName(em, View.LOCAL);
 
             u.setLanguage("fr");
@@ -288,22 +285,22 @@ public class PersistenceTest {
             u = loadUserByName(em, View.LOCAL);
         });
 
-        User changedUser = cont.persistence().callInTransaction((em) -> em.find(User.class, userId));
+        User changedUser = persistence.callInTransaction((em) -> em.find(User.class, userId));
         assertEquals("fr", changedUser.getLanguage());
     }
 
     @Test
     public void testLostChangesOnEmReload() throws Exception {
-        User user = cont.persistence().callInTransaction((em) -> em.find(User.class, userId));
+        User user = persistence.callInTransaction((em) -> em.find(User.class, userId));
 
-        cont.persistence().runInTransaction((em) -> {
+        persistence.runInTransaction((em) -> {
             User u = em.merge(user);
             u.setEmail("abc@example.com");
 
             u = em.reload(u, View.LOCAL);
         });
 
-        User changedUser = cont.persistence().callInTransaction((em) -> em.find(User.class, userId));
+        User changedUser = persistence.callInTransaction((em) -> em.find(User.class, userId));
         assertEquals("abc@example.com", changedUser.getEmail());
     }
 

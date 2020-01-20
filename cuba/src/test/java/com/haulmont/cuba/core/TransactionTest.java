@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.data.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,13 +35,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class TransactionTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     private static final String TEST_EXCEPTION_MSG = "test exception";
 
     @Inject
     private Persistence persistence;
+
     private User user;
     private Group group;
 
@@ -65,8 +63,8 @@ public class TransactionTest {
     public void cleanup() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_SERVER");
-        cont.deleteRecord(user);
-        cont.deleteRecord(group);
+        TestSupport.deleteRecord(user);
+        TestSupport.deleteRecord(group);
     }
 
     @Test
@@ -97,9 +95,9 @@ public class TransactionTest {
             tx.end();
         }
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             Server server = em.find(Server.class, id);
             assertEquals(id, server.getId());
             server.setRunning(false);
@@ -113,9 +111,9 @@ public class TransactionTest {
     @Test
     public void testCommitRetaining() {
         UUID id;
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertNotNull(em);
             Server server = new Server();
             id = server.getId();
@@ -125,7 +123,7 @@ public class TransactionTest {
 
             tx.commitRetaining();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             server = em.find(Server.class, id);
             assertEquals(id, server.getId());
             server.setRunning(false);
@@ -147,9 +145,9 @@ public class TransactionTest {
     }
 
     private void __testRollback() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertNotNull(em);
             Server server = new Server();
             server.setName("localhost");
@@ -173,9 +171,9 @@ public class TransactionTest {
     }
 
     private void __testRollbackAndCatch() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertNotNull(em);
             Server server = new Server();
             server.setName("localhost");
@@ -203,9 +201,9 @@ public class TransactionTest {
 
     private void __testCommitRetainingAndRollback() {
         UUID id;
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertNotNull(em);
             Server server = new Server();
             id = server.getId();
@@ -215,7 +213,7 @@ public class TransactionTest {
 
             tx.commitRetaining();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             server = em.find(Server.class, id);
             assertEquals(id, server.getId());
             server.setRunning(false);
@@ -231,10 +229,10 @@ public class TransactionTest {
     @Test
     public void testNestedRollback() {
         try {
-            Transaction tx = cont.persistence().createTransaction();
+            Transaction tx = persistence.createTransaction();
             try {
 
-                Transaction tx1 = cont.persistence().getTransaction();
+                Transaction tx1 = persistence.getTransaction();
                 try {
                     throwException();
                     fail();
@@ -257,17 +255,17 @@ public class TransactionTest {
 
     @Test
     public void testSuspend() {
-        Transaction tx = cont.persistence().getTransaction();
+        Transaction tx = persistence.getTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             Server server = new Server();
             server.setName("localhost");
             server.setRunning(true);
             em.persist(server);
 
-            Transaction tx1 = cont.persistence().createTransaction();
+            Transaction tx1 = persistence.createTransaction();
             try {
-                EntityManager em1 = cont.persistence().getEntityManager();
+                EntityManager em1 = persistence.getEntityManager();
                 assertTrue(em != em1);
 
                 Query query = em1.createQuery("select s from test$Server s");
@@ -287,17 +285,17 @@ public class TransactionTest {
 
     @Test
     public void testSuspendRollback() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             Server server = new Server();
             server.setName("localhost");
             server.setRunning(true);
             em.persist(server);
 
-            Transaction tx1 = cont.persistence().createTransaction();
+            Transaction tx1 = persistence.createTransaction();
             try {
-                EntityManager em1 = cont.persistence().getEntityManager();
+                EntityManager em1 = persistence.getEntityManager();
                 assertTrue(em != em1);
                 Server server1 = em1.find(Server.class, server.getId());
                 assertNull(server1);
@@ -317,7 +315,7 @@ public class TransactionTest {
 
     @Test
     public void testRunInTransaction() throws Exception {
-        UUID id = cont.persistence().callInTransaction(em -> {
+        UUID id = persistence.callInTransaction(em -> {
             assertNotNull(em);
             Server server = new Server();
             server.setName("localhost");
@@ -326,7 +324,7 @@ public class TransactionTest {
             return server.getId();
         });
 
-        cont.persistence().runInTransaction(em -> {
+        persistence.runInTransaction(em -> {
             Server server = em.find(Server.class, id);
             assertNotNull(server);
             assertEquals(id, server.getId());

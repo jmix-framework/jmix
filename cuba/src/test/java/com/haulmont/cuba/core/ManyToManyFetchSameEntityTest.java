@@ -21,24 +21,29 @@ import com.haulmont.cuba.core.model.Many2Many_FetchSame1;
 import com.haulmont.cuba.core.model.Many2Many_FetchSame2;
 import com.haulmont.cuba.core.model.Many2Many_FetchSame3;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
 @CoreTest
 public class ManyToManyFetchSameEntityTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
     protected Many2Many_FetchSame1 same1_1, same1_2, same1_3;
     protected Many2Many_FetchSame2 same2_1, same2_2, same2_3, same2_4;
@@ -46,10 +51,9 @@ public class ManyToManyFetchSameEntityTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
-            Metadata metadata = cont.metadata();
+            EntityManager em = persistence.getEntityManager();
 
             same1_1 = metadata.create(Many2Many_FetchSame1.class);
             same1_1.setName("same1_1");
@@ -105,9 +109,8 @@ public class ManyToManyFetchSameEntityTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_MANY2_MANY_FETCH_SAME1_MANY2_MANY_FETCH_SAME2_LINK", "MANY2_MANY__FETCH_SAME1_ID",
-                same1_1.getId(), same1_2.getId(), same1_3.getId());
-        cont.deleteRecord(same2_3, same2_4, same1_1, same1_2, same1_3, same2_1, same2_2, same3_1, same3_2);
+        TestSupport.deleteRecord("TEST_MANY2_MANY_FETCH_SAME1_MANY2_MANY_FETCH_SAME2_LINK", "MANY2_MANY__FETCH_SAME1_ID", same1_1.getId(), same1_2.getId(), same1_3.getId());
+        TestSupport.deleteRecord(same2_3, same2_4, same1_1, same1_2, same1_3, same2_1, same2_2, same3_1, same3_2);
     }
 
     @Test

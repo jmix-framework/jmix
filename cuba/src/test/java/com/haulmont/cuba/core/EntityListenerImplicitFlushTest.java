@@ -19,7 +19,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
 import io.jmix.core.View;
 import io.jmix.data.EntityManager;
@@ -36,9 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
 public class EntityListenerImplicitFlushTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private Persistence persistence;
     @Inject
@@ -49,7 +46,7 @@ public class EntityListenerImplicitFlushTest {
 
     @AfterEach
     public void cleanup() {
-        cont.deleteRecord(user, group);
+        TestSupport.deleteRecord(user, group);
     }
 
     @Test

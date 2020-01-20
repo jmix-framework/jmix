@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.data.EntityManager;
@@ -35,6 +35,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -43,11 +44,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EntityListenerTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
-    private Metadata metadata;
+    @Inject
     private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
     private TestListenerBean listenerBean;
     private TestDetachAttachListener detachAttachListener;
@@ -56,9 +56,6 @@ public class EntityListenerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        persistence = cont.persistence();
-        metadata = cont.metadata();
-
         listenerBean = AppBeans.get("cuba_TestListenerBean");
         listenerBean.events.clear();
 
@@ -84,16 +81,16 @@ public class EntityListenerTest {
         entityListenerManager.removeListener(Server.class, TestListener.class);
         entityListenerManager.removeListener(User.class, TestUserEntityListener.class);
 
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(cont.persistence().getDataSource());
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_SERVER");
     }
 
     @Test
     public void test() {
         UUID id, id1;
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertNotNull(em);
             Server server = new Server();
             id = server.getId();
@@ -123,7 +120,7 @@ public class EntityListenerTest {
             ));
             listenerBean.events.clear();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             server = em.find(Server.class, id);
             server.setName(server.getName() + " - " + new Date());
 
@@ -137,7 +134,7 @@ public class EntityListenerTest {
             assertEquals("onAfterUpdate: " + id, listenerBean.events.get(0));
             listenerBean.events.clear();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             server = em.find(Server.class, id1);
             em.remove(server);
 
@@ -157,9 +154,9 @@ public class EntityListenerTest {
     @Test
     public void testDetachAttach() throws Exception {
         UUID id;
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             Server server = new Server();
             id = server.getId();
             server.setName("localhost");
@@ -173,7 +170,7 @@ public class EntityListenerTest {
             detachAttachListener.events.clear();
 
             server.setName("somehost");
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             em.merge(server);
 
             assertEquals(1, detachAttachListener.events.size());
@@ -194,20 +191,20 @@ public class EntityListenerTest {
     public void testEntityManager() throws Exception {
         Server server;
         UUID serverId;
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
             // create
 
             server = new Server();
             server.setName("server1");
             serverId = server.getId();
-            cont.persistence().getEntityManager().persist(server);
+            persistence.getEntityManager().persist(server);
 
             tx.commitRetaining();
 
             assertNotNull(server.getData());
             UUID relatedId = UUID.fromString(server.getData());
-            FileDescriptor related = cont.persistence().getEntityManager().find(FileDescriptor.class, relatedId);
+            FileDescriptor related = persistence.getEntityManager().find(FileDescriptor.class, relatedId);
             assertNotNull(related);
             assertEquals("Related", related.getName());
 
@@ -215,13 +212,13 @@ public class EntityListenerTest {
 
             // update
 
-            server = cont.persistence().getEntityManager().find(Server.class, serverId);
+            server = persistence.getEntityManager().find(Server.class, serverId);
             assertNotNull(server);
             server.setName("server1 updated");
 
             tx.commitRetaining();
 
-            related = cont.persistence().getEntityManager().find(FileDescriptor.class, relatedId);
+            related = persistence.getEntityManager().find(FileDescriptor.class, relatedId);
             assertNotNull(related);
             assertEquals("Related updated", related.getName());
 
@@ -229,13 +226,13 @@ public class EntityListenerTest {
 
             // remove
 
-            server = cont.persistence().getEntityManager().find(Server.class, serverId);
+            server = persistence.getEntityManager().find(Server.class, serverId);
             assertNotNull(server);
-            cont.persistence().getEntityManager().remove(server);
+            persistence.getEntityManager().remove(server);
 
             tx.commitRetaining();
 
-            related = cont.persistence().getEntityManager().find(FileDescriptor.class, relatedId);
+            related = persistence.getEntityManager().find(FileDescriptor.class, relatedId);
             assertNull(related);
 
             tx.commit();
@@ -312,7 +309,7 @@ public class EntityListenerTest {
             }
         } finally {
             entityListenerManager.removeListener(Server.class, TestListenerThrowing.class);
-            cont.deleteRecord(server);
+            TestSupport.deleteRecord(server);
         }
     }
 }

@@ -18,14 +18,16 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.model.fetchjoin.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,7 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CoreTest
 public class FetchJoinTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
     protected JoinC joinC;
     protected JoinD joinD;
@@ -55,10 +60,9 @@ public class FetchJoinTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
-            Metadata metadata = cont.metadata();
+            EntityManager em = persistence.getEntityManager();
 
             joinF = metadata.create(JoinF.class);
             joinF.setName("joinF");
@@ -146,15 +150,15 @@ public class FetchJoinTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord(joinA, joinB, joinC, joinD, joinE, joinF);
-        cont.deleteRecord(orderLine, order, product, salesPerson, customer, partyCustomer, partyPerson);
-        cont.deleteRecord(classType, type, user);
+        TestSupport.deleteRecord(joinA, joinB, joinC, joinD, joinE, joinF);
+        TestSupport.deleteRecord(orderLine, order, product, salesPerson, customer, partyCustomer, partyPerson);
+        TestSupport.deleteRecord(classType, type, user);
     }
 
     @Test
     public void testNotLoadingJoinB() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             View fView = new View(JoinF.class).addProperty("name");
             View eView = new View(JoinE.class).addProperty("name").addProperty("f", fView, FetchMode.JOIN);
@@ -178,8 +182,8 @@ public class FetchJoinTest {
 
     @Test
     public void testNotLoadingCustomer() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             View partyView = new View(Party.class).addProperty("name");
             View productView = new View(Product.class).addProperty("name");

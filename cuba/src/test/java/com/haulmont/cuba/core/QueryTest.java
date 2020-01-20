@@ -24,16 +24,15 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.RoleType;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.Metadata;
 import io.jmix.core.compatibility.AppContext;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Query;
-import io.jmix.data.Transaction;
-import io.jmix.data.TypedQuery;
+import io.jmix.data.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import javax.persistence.FlushModeType;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,8 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class QueryTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
 
     private UUID userId;
     private UUID user2Id;
@@ -55,8 +54,8 @@ public class QueryTest {
     @BeforeEach
     public void setUp() throws Exception {
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             Group group = new Group();
             group1Id = group.getId();
@@ -94,16 +93,16 @@ public class QueryTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_USER", userId, user2Id);
-        cont.deleteRecord("TEST_GROUP", group1Id, group2Id);
-        cont.deleteRecord("TEST_ROLE", roleId);
+        TestSupport.deleteRecord("TEST_USER", userId, user2Id);
+        TestSupport.deleteRecord("TEST_GROUP", group1Id, group2Id);
+        TestSupport.deleteRecord("TEST_ROLE", roleId);
     }
 
     @Test
     public void testNullParam() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Query query = em.createQuery("select r from test$Role r where r.deleteTs = :dts");
             query.setParameter("dts", null);
@@ -119,9 +118,9 @@ public class QueryTest {
 
     @Test
     public void testUpdate() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Group group = em.find(Group.class, group2Id);
 
@@ -139,9 +138,9 @@ public class QueryTest {
 // This test doesn't pass for some unclarified reason.
 //
 //    public void testFlushBeforeUpdate() {
-//        Transaction tx = cont.persistence().createTransaction();
+//        Transaction tx = persistence.createTransaction();
 //        try {
-//            EntityManager em = cont.persistence().getEntityManager();
+//            EntityManager em = persistence.getEntityManager();
 //
 //            Group group = em.find(Group.class, groupId);
 //            User user = em.find(User.class, userId);
@@ -158,9 +157,9 @@ public class QueryTest {
 //            tx.end();
 //        }
 //
-//        tx = cont.persistence().createTransaction();
+//        tx = persistence.createTransaction();
 //        try {
-//            EntityManager em = cont.persistence().getEntityManager();
+//            EntityManager em = persistence.getEntityManager();
 //            User user = em.find(User.class, userId);
 //            assertNotNull(user);
 //            assertEquals(groupId, user.getGroup().getId());
@@ -174,9 +173,9 @@ public class QueryTest {
 
     @Test
     public void testAssociatedResult() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Query query = em.createQuery("select u.group from test$User u where u.id = :userId");
             query.setParameter("userId", userId);
@@ -192,9 +191,9 @@ public class QueryTest {
 
     @Test
     public void testIgnoreChanges() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             TypedQuery<User> query;
             List<User> list;
@@ -223,8 +222,8 @@ public class QueryTest {
 
     @Test
     public void testFlushModeAuto() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             TypedQuery<User> query;
             List<User> list;
@@ -252,9 +251,9 @@ public class QueryTest {
 
     @Test
     public void testNativeQueryIgnoreChanges() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             TypedQuery<User> query;
             List<User> list;
@@ -283,9 +282,9 @@ public class QueryTest {
 
     @Test
     public void testNativeQuerySelect() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Query query = em.createNativeQuery("select ID, LOGIN from TEST_USER where NAME = ?1");
             query.setParameter(1, "testUser");
@@ -304,9 +303,9 @@ public class QueryTest {
 
     @Test
     public void testNativeQueryFlushBeforeUpdate() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Group group = em.find(Group.class, group2Id);
             User user = em.find(User.class, userId);
@@ -323,9 +322,9 @@ public class QueryTest {
             tx.end();
         }
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             User user = em.find(User.class, userId);
             assertNotNull(user);
             assertEquals(group2Id, user.getGroup().getId());
@@ -339,9 +338,9 @@ public class QueryTest {
 
     @Test
     public void testCaseInsensitiveSearch() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            TypedQuery<User> query = cont.persistence().getEntityManager().createQuery(
+            TypedQuery<User> query = persistence.getEntityManager().createQuery(
                     "select u from test$User u where u.name like :name", User.class);
             query.setParameter("name", "(?i)%user%");
             List<User> list = query.getResultList();
@@ -361,8 +360,8 @@ public class QueryTest {
 
     @Test
     public void testListParameter() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            TypedQuery<User> query = cont.persistence().getEntityManager().createQuery(
+        try (Transaction tx = persistence.createTransaction()) {
+            TypedQuery<User> query = persistence.getEntityManager().createQuery(
                     "select u from test$User u where u.id in :ids order by u.createTs", User.class);
             query.setParameter("ids", Arrays.asList(UUID.fromString("60885987-1b61-4247-94c7-dff348347f93"), userId, user2Id));
             List<User> list = query.getResultList();
@@ -374,15 +373,15 @@ public class QueryTest {
         // Implicit conversion
 
         User user1, user2, user3;
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.persistence().getEntityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             user1 = em.find(User.class, userId);
             user2 = em.find(User.class, user2Id);
             tx.commit();
         }
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            TypedQuery<User> query = cont.persistence().getEntityManager().createQuery(
+        try (Transaction tx = persistence.createTransaction()) {
+            TypedQuery<User> query = persistence.getEntityManager().createQuery(
                     "select u from test$User u where u.id in :ids order by u.createTs", User.class);
             query.setParameter("ids", Arrays.asList(user1, user2));
             List<User> list = query.getResultList();
@@ -393,8 +392,8 @@ public class QueryTest {
 
         // Positional parameters
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            TypedQuery<User> query = cont.persistence().getEntityManager().createQuery(
+        try (Transaction tx = persistence.createTransaction()) {
+            TypedQuery<User> query = persistence.getEntityManager().createQuery(
                     "select u from test$User u where u.id in ?1 order by u.createTs", User.class);
             query.setParameter(1, Arrays.asList(user1.getId(), user2.getId()));
             List<User> list = query.getResultList();
@@ -405,8 +404,8 @@ public class QueryTest {
 
         // Positional parameters with implicit conversion
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            TypedQuery<User> query = cont.persistence().getEntityManager().createQuery(
+        try (Transaction tx = persistence.createTransaction()) {
+            TypedQuery<User> query = persistence.getEntityManager().createQuery(
                     "select u from test$User u where u.id in ?1 order by u.createTs", User.class);
             query.setParameter(1, Arrays.asList(user1, user2));
             List<User> list = query.getResultList();
@@ -418,9 +417,9 @@ public class QueryTest {
 
     @Test
     public void testEmptyCollectionParameter() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Query query = em.createQuery("select u from test$User u where u.id in :ids");
             query.setParameter("ids", Collections.emptyList());
@@ -450,9 +449,9 @@ public class QueryTest {
 
     @Test
     public void testNullCollectionParameter() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Query query = em.createQuery("select u from test$User u where u.id in :ids");
             query.setParameter("ids", null);
@@ -482,9 +481,9 @@ public class QueryTest {
 
     @Test
     public void testNotExistsCollectionParameter() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Query query = em.createQuery("select u from test$User u where u.id in :ids");
             List list = query.getResultList();
@@ -516,7 +515,7 @@ public class QueryTest {
     @Test
     public void testSingleBooleanResult() {
         // works
-        Object[] activeAndName = cont.persistence().callInTransaction((em) -> {
+        Object[] activeAndName = persistence.callInTransaction((em) -> {
             return (Object[]) em.createQuery("select u.active, u.name from test$User u where u.login = :login")
                     .setParameter("login", "testLogin")
                     .getFirstResult();
@@ -525,7 +524,7 @@ public class QueryTest {
         assertEquals("testUser", activeAndName[1]);
 
         //returns null
-        Boolean active = cont.persistence().callInTransaction((em) -> {
+        Boolean active = persistence.callInTransaction((em) -> {
             return em.createQuery("select u.active from test$User u where u.login = :login", Boolean.class)
                     .setParameter("login", "testLogin")
                     .getFirstResult();
@@ -537,7 +536,7 @@ public class QueryTest {
     @Test
     public void testEnumImplicitConversion() throws Exception {
         // explicit enum id value
-        cont.persistence().runInTransaction(em -> {
+        persistence.runInTransaction(em -> {
             TypedQuery<Role> query = em.createQuery("select r from test$Role r where r.type = :roleType", Role.class);
             query.setParameter("roleType", 10);
             List<Role> roles = query.getResultList();
@@ -545,7 +544,7 @@ public class QueryTest {
         });
 
         // enum as a positional parameter
-        cont.persistence().runInTransaction(em -> {
+        persistence.runInTransaction(em -> {
             TypedQuery<Role> query = em.createQuery("select r from test$Role r where r.type = ?1", Role.class);
             query.setParameter(1, RoleType.SUPER);
             List<Role> roles = query.getResultList();
@@ -553,7 +552,7 @@ public class QueryTest {
         });
 
         // enum as a named parameter
-        cont.persistence().runInTransaction(em -> {
+        persistence.runInTransaction(em -> {
             TypedQuery<Role> query = em.createQuery("select r from test$Role r where r.type = :roleType", Role.class);
             query.setParameter("roleType", RoleType.SUPER);
             List<Role> roles = query.getResultList();
@@ -564,7 +563,7 @@ public class QueryTest {
 
     @Test
     public void testNoImplicitConversion() throws Exception {
-        cont.persistence().runInTransaction(em -> {
+        persistence.runInTransaction(em -> {
             Group group = em.find(Group.class, group1Id);
 
             TypedQuery<User> query = em.createQuery("select u from test$User u where u.group = :group", User.class);
@@ -576,9 +575,9 @@ public class QueryTest {
 
     @Test
     public void testNestedEntityGroupBy() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             em.createQuery("select ur.role, count(ur.id) from test$UserRole ur group by ur.role")
                     .getResultList();
             tx.commit();
@@ -589,9 +588,9 @@ public class QueryTest {
 
     @Test
     public void testDeleteQueryWithSoftDeleteTrue() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             try {
                 em.createQuery("delete from test$FileDescriptor f").executeUpdate();
             } catch (UnsupportedOperationException e) {
@@ -626,9 +625,9 @@ public class QueryTest {
 
     @Test
     public void testNewObjectInJPQL() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             UserDTO dto = (UserDTO) em.createQuery("select new com.haulmont.cuba.core.model.UserDTO(u.login) from test$User u where u.id = :id")
                     .setParameter("id", userId)
                     .getFirstResult();

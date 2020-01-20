@@ -20,21 +20,23 @@ import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.Role
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.model.common.UserRole
-import com.haulmont.cuba.core.testsupport.TestContainer
 import com.haulmont.cuba.core.tx_listener.TestAfterCompleteTxListener
 import io.jmix.core.AppBeans
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.View
+import io.jmix.data.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
-class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
     @Inject
     DataManager dataManager
+    @Inject
+    Persistence persistence
 
     User user
     Group group
@@ -51,7 +53,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        cont.deleteRecord(userRole, role, user, group)
+        deleteRecord(userRole, role, user, group)
     }
 
     def "reference CAN be fetched in afterComplete if entity is not partial"() {
@@ -61,7 +63,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = cont.persistence().callInTransaction { em ->
+        def user = persistence.callInTransaction { em ->
             em.find(User, user.id)
         }
 
@@ -84,7 +86,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = cont.persistence().callInTransaction { em ->
+        def user = persistence.callInTransaction { em ->
             em.find(User, user.id)
         }
 
@@ -112,7 +114,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = cont.persistence().callInTransaction { em ->
+        def user = persistence.callInTransaction { em ->
             em.find(User, user.id, view)
         }
 
@@ -142,7 +144,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = cont.persistence().callInTransaction { em ->
+        def user = persistence.callInTransaction { em ->
             em.find(User, user.id, view)
         }
 
@@ -168,7 +170,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = cont.persistence().callInTransaction { em ->
+        def user = persistence.callInTransaction { em ->
             em.find(User, user.id, view)
         }
 

@@ -18,16 +18,14 @@ package spec.haulmont.cuba.core.views
 
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.*
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
+
 class ViewReferenceAttrTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
-
     @Inject
     ViewRepository viewRepository
     @Inject
@@ -44,7 +42,7 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        cont.deleteRecord(user, group)
+        deleteRecord(user, group)
     }
 
     def "Negative (String): PL-9999 Raise exception at the moment of view creation if not reference attribute has view"() {

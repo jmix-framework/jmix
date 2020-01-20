@@ -18,7 +18,7 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.data.EntityManager;
@@ -28,6 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,10 +38,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @CoreTest
 public class DataManagerCommit2Test {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
+    @Inject
+    private EntityStates entityStates;
+    @Inject
     private DataManager dataManager;
+
     private UUID userId;
     private UUID userRoleId;
     private Group group1, group2;
@@ -48,18 +54,8 @@ public class DataManagerCommit2Test {
     private Constraint constraint;
     private View view;
 
-    private Metadata metadata;
-    private EntityStates entityStates;
-    private Persistence persistence;
-
     @BeforeEach
     public void setUp() throws Exception {
-        metadata = cont.metadata();
-        persistence = cont.persistence();
-
-        dataManager = AppBeans.get(DataManager.class);
-        entityStates = AppBeans.get(EntityStates.class);
-
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
 
@@ -110,11 +106,11 @@ public class DataManagerCommit2Test {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_USER_ROLE", userRoleId);
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord(role);
-        cont.deleteRecord(constraint);
-        cont.deleteRecord(group1, group2);
+        TestSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord(role);
+        TestSupport.deleteRecord(constraint);
+        TestSupport.deleteRecord(group1, group2);
     }
 
     @Test
@@ -138,7 +134,7 @@ public class DataManagerCommit2Test {
             User committedUser = dataManager.commit(user, userView);
             assertTrue(entityStates.isLoaded(committedUser.getGroup(), "createTs"));
         } finally {
-            cont.deleteRecord(user);
+            TestSupport.deleteRecord(user);
         }
     }
 
@@ -173,7 +169,7 @@ public class DataManagerCommit2Test {
             assertTrue(entityStates.isLoaded(committedUser.getGroup(), "createTs"));
             assertTrue(entityStates.isLoaded(committedUser.getGroup().getConstraints().iterator().next(), "entityName"));
         } finally {
-            cont.deleteRecord(user);
+            TestSupport.deleteRecord(user);
         }
     }
 

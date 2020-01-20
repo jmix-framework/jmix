@@ -18,22 +18,14 @@ package spec.haulmont.cuba.core.deletepolicy
 
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_ManyToMany_First
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
-import com.haulmont.cuba.core.testsupport.TestContainer
-import io.jmix.core.AppBeans
-import io.jmix.core.DataManager
-import io.jmix.core.LoadContext
-import io.jmix.core.Metadata
-import io.jmix.core.View
+import io.jmix.core.*
 import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
-import spock.lang.Specification
 
 import javax.inject.Inject
 
 class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private Persistence persistence
     @Inject

@@ -20,8 +20,9 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.data.Persistence;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
@@ -30,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
 public class NamePatternTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Metadata metadata;
 
     @Inject
     protected MetadataTools metadataTools;
@@ -50,7 +52,7 @@ public class NamePatternTest {
         role.setLocName("System Role");
         role.setName("system_role");
 
-        String instanceName = cont.metadata().getTools().getInstanceName(role);
+        String instanceName = metadata.getTools().getInstanceName(role);
         assertEquals("System Role [system_role]", instanceName);
         assertEquals("System Role [system_role]", metadataTools.getInstanceName(role));
     }
@@ -61,7 +63,7 @@ public class NamePatternTest {
         user.setName("System Administrator");
         user.setLogin("systemAdmin");
 
-        String instanceName = cont.metadata().getTools().getInstanceName(user);
+        String instanceName = metadata.getTools().getInstanceName(user);
         assertEquals("System Administrator [systemAdmin]", instanceName);
         assertEquals("System Administrator [systemAdmin]", metadataTools.getInstanceName(user));
     }

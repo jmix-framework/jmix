@@ -19,7 +19,6 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.sales.OrderLine;
 import com.haulmont.cuba.core.model.sales.Product;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DataManager;
 import io.jmix.core.Id;
@@ -152,16 +151,10 @@ public class DataManagerTransactionalUsageTest {
         }
     }
 
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
-    protected DataManager dataManager;
+    @Inject
+    private DataManager dataManager;
+    @Inject
     private Persistence persistence;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        dataManager = AppBeans.get(DataManager.class);
-        persistence = cont.persistence();
-    }
 
     @AfterEach
     protected void cleanup() {

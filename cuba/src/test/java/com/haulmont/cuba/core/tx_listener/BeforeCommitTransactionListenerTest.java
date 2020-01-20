@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.tx_listener;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
 import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.Persistence;
@@ -35,8 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CoreTest
 public class BeforeCommitTransactionListenerTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private Persistence persistence;
     @Inject
@@ -57,7 +55,7 @@ public class BeforeCommitTransactionListenerTest {
     public void tearDown() throws Exception {
         QueryRunner runner = new QueryRunner(persistence.getDataSource());
         runner.update("delete from TEST_USER");
-        cont.deleteRecord(companyGroup);
+        TestSupport.deleteRecord(companyGroup);
     }
 
     @Test

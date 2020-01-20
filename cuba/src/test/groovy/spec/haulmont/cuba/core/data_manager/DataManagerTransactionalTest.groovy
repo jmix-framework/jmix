@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.TestCustomerListener
-import com.haulmont.cuba.core.testsupport.TestContainer
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
 import io.jmix.core.entity.BaseEntityInternalAccess
 import io.jmix.data.Persistence
@@ -34,9 +34,8 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
-class DataManagerTransactionalTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
 
+class DataManagerTransactionalTest extends CoreTestSpecification {
     @Inject
     private Persistence persistence
     @Inject
@@ -108,7 +107,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(customer1)
+        TestSupport.deleteRecord(customer1)
 
         entityListenerManager.removeListener(Customer, TestCustomerListener)
     }
@@ -152,7 +151,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(customer1)
+        TestSupport.deleteRecord(customer1)
     }
 
     def "update returns detached entities"() {
@@ -177,7 +176,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(customer1)
+        TestSupport.deleteRecord(customer1)
     }
 
     def "load returns detached entities"() {
@@ -205,7 +204,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(orderLine11, orderLine12, order1, customer1)
+        TestSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
     }
 
     def "load list returns detached entities"() {
@@ -235,7 +234,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(orderLine11, orderLine12, order1, customer1)
+        TestSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
     }
 
     def "load entity with embedded"() {
@@ -261,7 +260,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        cont.deleteRecord(container)
+        TestSupport.deleteRecord(container)
     }
 
     private void checkObjectGraph(Order order) {

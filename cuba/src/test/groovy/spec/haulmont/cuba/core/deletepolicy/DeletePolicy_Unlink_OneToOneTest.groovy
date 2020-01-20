@@ -18,8 +18,10 @@ package spec.haulmont.cuba.core.deletepolicy
 
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_First
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_Second
-import com.haulmont.cuba.core.testsupport.TestContainer
-import io.jmix.core.*
+import io.jmix.core.DataManager
+import io.jmix.core.LoadContext
+import io.jmix.core.Metadata
+import io.jmix.core.View
 import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -27,8 +29,6 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 import javax.inject.Inject
 
 class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private Persistence persistence
     @Inject
@@ -50,7 +50,6 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
             second.setFirst(first)
             em.persist(second)
         })
-        dataManager = AppBeans.get(DataManager.class)
     }
 
     void cleanup() {
@@ -162,6 +161,4 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
 
         entitySecond.first == null
     }
-
-
 }

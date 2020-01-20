@@ -22,7 +22,6 @@ import com.haulmont.cuba.core.model.common.ScheduledTask;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
@@ -43,9 +42,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class PersistenceAttributeLoadedCheckTest {
-
-    public static final TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private DataManager dataManager;
     @Inject
@@ -102,9 +98,9 @@ public class PersistenceAttributeLoadedCheckTest {
 
     @AfterEach
     public void tearDown() {
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord("TEST_GROUP", groupId);
-        cont.deleteRecord("TEST_SCHEDULED_TASK", taskId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord("TEST_GROUP", groupId);
+        TestSupport.deleteRecord("TEST_SCHEDULED_TASK", taskId);
     }
 
     @Test
@@ -149,8 +145,8 @@ public class PersistenceAttributeLoadedCheckTest {
 
     @Test
     public void testManagedInstance() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            User user = cont.entityManager().find(User.class, userId);
+        try (Transaction tx = persistence.createTransaction()) {
+            User user = persistence.getEntityManager().find(User.class, userId);
 
             assertTrue(entityStates.isLoaded(user, "name"));
             assertFalse(entityStates.isLoaded(user, "group"));

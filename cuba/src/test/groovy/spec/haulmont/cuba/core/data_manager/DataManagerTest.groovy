@@ -22,19 +22,21 @@ import com.haulmont.cuba.core.model.primary_keys.CompositeKeyEntity
 import com.haulmont.cuba.core.model.primary_keys.EntityKey
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
-import com.haulmont.cuba.core.testsupport.TestContainer
 import groovy.sql.Sql
 import io.jmix.core.*
 import io.jmix.core.compatibility.AppContext
+import io.jmix.data.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
-class DataManagerTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class DataManagerTest extends CoreTestSpecification {
     @Inject
     private DataManager dataManager
+    @Inject
+    private Persistence persistence
 
     User defaultUser
     Group defaultGroup
@@ -47,7 +49,7 @@ class DataManagerTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        cont.deleteRecord(defaultUser, defaultGroup)
+        deleteRecord(defaultUser, defaultGroup)
     }
 
 
@@ -304,7 +306,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(line, product)
+        deleteRecord(line, product)
     }
 
     def "load by collection of ids"() {
@@ -324,7 +326,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(product1, product2)
+        deleteRecord(product1, product2)
     }
 
     def "load by collection of ids throws exception if some instance not found"() {
@@ -343,7 +345,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(product1)
+        deleteRecord(product1)
     }
 
     def "load by collection of composite ids"() {
@@ -365,7 +367,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        Sql sql = new Sql(cont.persistence().getDataSource())
+        Sql sql = new Sql(persistence.getDataSource())
         sql.execute("delete from TEST_COMPOSITE_KEY where TENANT = $id1.tenant and ENTITY_ID = $id1.entityId")
         sql.execute("delete from TEST_COMPOSITE_KEY where TENANT = $id2.tenant and ENTITY_ID = $id2.entityId")
     }

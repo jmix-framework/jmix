@@ -17,31 +17,34 @@
 package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import io.jmix.core.Metadata;
 import io.jmix.data.EntityManager;
 
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.Test;
+
+import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class SpringPersistenceTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
 
     @Test
     public void test() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             em.setSoftDeletion(false);
             assertFalse(em.isSoftDeletion());
 
             nestedMethod();
             nestedTxMethod();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
             assertFalse(em.isSoftDeletion());
 
             tx.commit();
@@ -51,14 +54,14 @@ public class SpringPersistenceTest {
     }
 
     private void nestedMethod() {
-        EntityManager em = cont.persistence().getEntityManager();
+        EntityManager em = persistence.getEntityManager();
         assertFalse(em.isSoftDeletion());
     }
 
     private void nestedTxMethod() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertTrue(em.isSoftDeletion());
             nestedTxMethod2();
 
@@ -69,9 +72,9 @@ public class SpringPersistenceTest {
     }
 
     private void nestedTxMethod2() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertTrue(em.isSoftDeletion());
 
             tx.commit();

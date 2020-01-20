@@ -19,7 +19,6 @@ package spec.haulmont.cuba.core.setget
 import com.haulmont.cuba.core.model.Many2ManyA
 import com.haulmont.cuba.core.model.Many2ManyB
 import com.haulmont.cuba.core.model.SetGetEntity
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.Metadata
 import io.jmix.core.entity.StandardEntity
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -27,9 +26,6 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 import javax.inject.Inject
 
 class SetGetTest extends CoreTestSpecification {
-
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private Metadata metadata
 
@@ -116,8 +112,8 @@ class SetGetTest extends CoreTestSpecification {
     def "Many to many"() {
         when:
         Set<Many2ManyB> collectionOfB = new HashSet<>()
-        collectionOfB.add(cont.metadata().create(Many2ManyB.class))
-        Many2ManyA many2ManyA = cont.metadata().create(Many2ManyA.class)
+        collectionOfB.add(metadata.create(Many2ManyB.class))
+        Many2ManyA many2ManyA = metadata.create(Many2ManyA.class)
         many2ManyA.setValue("collectionOfB", collectionOfB)
         Set<Many2ManyB> afterCollectionOfB = many2ManyA.getValue("collectionOfB")
 

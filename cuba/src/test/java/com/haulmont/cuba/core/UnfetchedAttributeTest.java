@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.View;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
@@ -41,9 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CoreTest
 public class UnfetchedAttributeTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private Persistence persistence;
 
@@ -144,6 +141,6 @@ public class UnfetchedAttributeTest {
 
     @AfterEach
     public void tearDown() {
-        cont.deleteRecord(user, group, group1);
+        TestSupport.deleteRecord(user, group, group1);
     }
 }

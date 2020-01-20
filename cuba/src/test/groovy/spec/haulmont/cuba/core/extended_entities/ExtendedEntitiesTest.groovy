@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.core.extended_entities
 
-import com.haulmont.cuba.core.testsupport.TestContainer
+
 import io.jmix.core.ExtendedEntities
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass
 import io.jmix.core.impl.keyvalue.KeyValueMetaProperty
@@ -25,8 +25,6 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 import javax.inject.Inject
 
 class ExtendedEntitiesTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private ExtendedEntities extendedEntities
 

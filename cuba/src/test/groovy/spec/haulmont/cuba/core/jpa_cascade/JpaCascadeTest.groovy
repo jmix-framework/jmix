@@ -19,7 +19,6 @@ package spec.haulmont.cuba.core.jpa_cascade
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeBar
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeFoo
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeItem
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.AppBeans
 import io.jmix.core.EntityStates
 import io.jmix.core.Metadata
@@ -31,8 +30,6 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 import javax.inject.Inject
 
 class JpaCascadeTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private Metadata metadata
     @Inject

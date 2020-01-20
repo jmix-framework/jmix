@@ -20,10 +20,11 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.EntityDiff;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
 import io.jmix.core.EntityStates;
+import io.jmix.core.Metadata;
 import io.jmix.core.View;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -37,15 +38,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class PersistenceHelperTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
 
     @Inject
     private EntityStates entityStates;
 
     @AfterEach
     public void tearDown() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(cont.persistence().getDataSource());
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_SERVER");
     }
 
@@ -74,9 +75,9 @@ public class PersistenceHelperTest {
 
         UUID id;
         Server server;
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             assertNotNull(em);
             server = new Server();
 
@@ -101,9 +102,9 @@ public class PersistenceHelperTest {
         assertTrue(entityStates.isDetached(server));
 
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             server = em.find(Server.class, id);
             assertNotNull(server);
             assertEquals(id, server.getId());
@@ -122,9 +123,9 @@ public class PersistenceHelperTest {
         assertFalse(entityStates.isManaged(server));
         assertTrue(entityStates.isDetached(server));
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             server = em.merge(server);
 
             assertFalse(entityStates.isNew(server));
@@ -137,9 +138,9 @@ public class PersistenceHelperTest {
         }
 
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             server = em.find(Server.class, id);
             assertNotNull(server);
             assertEquals(id, server.getId());
@@ -164,13 +165,13 @@ public class PersistenceHelperTest {
     public void testCheckLoaded() {
         Server server = new Server();
 
-        cont.persistence().runInTransaction((em) -> {
+        persistence.runInTransaction((em) -> {
             em.persist(server);
         });
 
         View view = new View(Server.class).addProperty("name").addProperty("data")
                 .setLoadPartialEntities(true);
-        Server reloadedServer = cont.persistence().callInTransaction((em) -> {
+        Server reloadedServer = persistence.callInTransaction((em) -> {
             return em.find(Server.class, server.getId(), view);
         });
 

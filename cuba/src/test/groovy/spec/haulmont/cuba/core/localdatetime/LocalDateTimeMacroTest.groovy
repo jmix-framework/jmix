@@ -17,7 +17,6 @@
 package spec.haulmont.cuba.core.localdatetime
 
 import com.haulmont.cuba.core.model.LocalDateTimeEntity
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.AppBeans
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
@@ -32,9 +31,6 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 class LocalDateTimeMacroTest extends CoreTestSpecification {
-
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private Persistence persistence
     @Inject

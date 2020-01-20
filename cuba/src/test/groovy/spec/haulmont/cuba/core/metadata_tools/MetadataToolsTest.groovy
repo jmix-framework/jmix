@@ -25,16 +25,15 @@ import com.haulmont.cuba.core.model.not_persistent.NotPersistentStringIdEntity
 import com.haulmont.cuba.core.model.not_persistent.TestNotPersistentEntity
 import com.haulmont.cuba.core.model.primary_keys.EntityKey
 import com.haulmont.cuba.core.model.primary_keys.StringKeyEntity
-import com.haulmont.cuba.core.testsupport.TestContainer
+import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
 class MetadataToolsTest extends CoreTestSpecification {
-
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
+    @Inject
+    Metadata metadata
     @Inject
     MetadataTools metadataTools
 
@@ -42,7 +41,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        def primaryKeyName = metadataTools.getPrimaryKeyName(cont.metadata().getClassNN(User))
+        def primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(User))
 
         then:
 
@@ -50,7 +49,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        primaryKeyName = metadataTools.getPrimaryKeyName(cont.metadata().getClassNN(StringKeyEntity))
+        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(StringKeyEntity))
 
         then:
 
@@ -63,7 +62,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        primaryKeyName = metadataTools.getPrimaryKeyName(cont.metadata().getClassNN(UserSessionEntity))
+        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(UserSessionEntity))
 
         then:
 
@@ -71,7 +70,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        primaryKeyName = metadataTools.getPrimaryKeyName(cont.metadata().getClassNN(NotPersistentStringIdEntity))
+        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(NotPersistentStringIdEntity))
 
         then:
 
@@ -80,13 +79,13 @@ class MetadataToolsTest extends CoreTestSpecification {
 
     def "deepCopy supports non-persistent and embedded references"() {
 
-        def entity = cont.metadata().create(CustomerWithNonPersistentRef)
+        def entity = metadata.create(CustomerWithNonPersistentRef)
         entity.name = 'foo'
 
-        def embedded = cont.metadata().create(EntityKey)
+        def embedded = metadata.create(EntityKey)
         entity.entityKey = embedded
 
-        def notPersistentEntity = cont.metadata().create(TestNotPersistentEntity)
+        def notPersistentEntity = metadata.create(TestNotPersistentEntity)
         entity.notPersistentEntity = notPersistentEntity
 
         when:

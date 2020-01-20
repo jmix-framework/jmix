@@ -18,20 +18,22 @@ package spec.haulmont.cuba.core.data_manager
 
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Status
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.*
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 import javax.persistence.TemporalType
 
-class FluentLoaderTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class FluentLoaderTest extends CoreTestSpecification {
     @Inject
     private DataManager dataManager
     @Inject
     private ViewRepository viewRepository
+    @Inject
+    private Metadata metadata
+
     private View baseView
     private Customer customer, customer2
     private UUID customerId, customer2Id
@@ -39,12 +41,12 @@ class FluentLoaderTest extends CoreTestSpecification {
     void setup() {
         baseView = viewRepository.getView(Customer, '_base')
 
-        customer = cont.metadata().create(Customer)
+        customer = metadata.create(Customer)
         customer.name = 'Smith'
         customer.status = Status.OK
         customerId = customer.id
 
-        customer2 = cont.metadata().create(Customer)
+        customer2 = metadata.create(Customer)
         customer2.name = 'Johns'
         customer2Id = customer2.id
 
@@ -52,7 +54,7 @@ class FluentLoaderTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        cont.deleteRecord(customer, customer2)
+        deleteRecord(customer, customer2)
     }
 
     def "usage examples"() {

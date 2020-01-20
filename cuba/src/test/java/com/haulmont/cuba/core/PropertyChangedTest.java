@@ -18,7 +18,6 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.model.EntityWithRelatedProperties;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -28,9 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class PropertyChangedTest {
-
-    public static final TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Test
     public void relatedPropertyChangedTest() {
         EntityWithRelatedProperties testEntity = new EntityWithRelatedProperties();

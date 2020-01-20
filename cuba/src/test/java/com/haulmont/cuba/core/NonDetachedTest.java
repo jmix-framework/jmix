@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.sales.Customer;
 import com.haulmont.cuba.core.model.sales.Order;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.data.EntityManager;
@@ -44,9 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class NonDetachedTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private Persistence persistence;
     @Inject
@@ -112,7 +109,7 @@ public class NonDetachedTest {
 
     @AfterEach
     public void tearDown() {
-        cont.deleteRecord(order, customer, user, companyGroup);
+        TestSupport.deleteRecord(order, customer, user, companyGroup);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_CASCADE_DELETION_POLICY_ENTITY");
     }
@@ -162,7 +159,7 @@ public class NonDetachedTest {
             user = persistence.callInTransaction((em) -> em.find(User.class, userCopy.getId()));
             assertEquals("new name", user.getName());
         } finally {
-            cont.deleteRecord(userCopy);
+            TestSupport.deleteRecord(userCopy);
         }
 
         // check non-versioned entity
@@ -175,7 +172,7 @@ public class NonDetachedTest {
             Server loaded = persistence.callInTransaction(em -> em.find(Server.class, server.getId()));
             assertNotNull(loaded);
         } finally {
-            cont.deleteRecord(server);
+            TestSupport.deleteRecord(server);
         }
     }
 

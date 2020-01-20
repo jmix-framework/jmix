@@ -21,16 +21,19 @@ import com.haulmont.cuba.core.model.common.Constraint;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchMode;
+import io.jmix.core.Metadata;
 import io.jmix.core.View;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import io.jmix.data.TypedQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.List;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -39,8 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @CoreTest
 public class EclipseLinkQueriesTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
     private User user1;
     private User user2;
@@ -49,23 +54,23 @@ public class EclipseLinkQueriesTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        cont.persistence().createTransaction().execute(em -> {
+        persistence.createTransaction().execute(em -> {
             rootGroup = new Group();
             rootGroup.setName("rootGroup");
             em.persist(rootGroup);
 
-            user1 = cont.metadata().create(User.class);
+            user1 = metadata.create(User.class);
             user1.setName("testUser");
             user1.setLogin("testLogin");
             user1.setGroup(rootGroup);
             em.persist(user1);
 
-            group = cont.metadata().create(Group.class);
+            group = metadata.create(Group.class);
             group.setParent(rootGroup);
             group.setName("testGroup" + group.getId());
             em.persist(group);
 
-            user2 = cont.metadata().create(User.class);
+            user2 = metadata.create(User.class);
             user2.setName("testUser2");
             user2.setLogin("testLogin2");
             user2.setGroup(rootGroup);
@@ -77,16 +82,16 @@ public class EclipseLinkQueriesTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_GROUP_HIERARCHY", "GROUP_ID", group.getId());
-        cont.deleteRecord(user1, user2, group, rootGroup);
+        TestSupport.deleteRecord("TEST_GROUP_HIERARCHY", "GROUP_ID", group.getId());
+        TestSupport.deleteRecord(user1, user2, group, rootGroup);
     }
 
     // cross join, view has ToMany reference
     @Test
     public void testCrossJoinWithToManyView() throws Exception {
         List<Group> result;
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.entityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             View view = new View(Group.class).addProperty("constraints");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g, test$User u where u.group = g", Group.class);
             query.setView(view);
@@ -103,8 +108,8 @@ public class EclipseLinkQueriesTest {
     @Test
     public void testCrossJoinViewParentReference() throws Exception {
         List<Group> result;
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.entityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             View view = new View(Group.class).addProperty("parent");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g, test$User u where u.group = g", Group.class);
             query.setView(view);
@@ -123,8 +128,8 @@ public class EclipseLinkQueriesTest {
     // join on, view contains ToMany attribute
     @Test
     public void testJoinOnWithToManyView() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.entityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             View view = new View(Group.class).addProperty("constraints");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g join test$QueryResult qr on qr.entityId = g.id where qr.queryKey = 1", Group.class);
             query.setView(view);
@@ -136,8 +141,8 @@ public class EclipseLinkQueriesTest {
     // join on, view contains parent attribute
     @Test
     public void testJoinOnWithParentReference() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.entityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             View view = new View(Group.class).addProperty("parent");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g join test$QueryResult qr on qr.entityId = g.id where qr.queryKey = 1", Group.class);
             query.setView(view);
@@ -149,8 +154,8 @@ public class EclipseLinkQueriesTest {
     // join on, view contains ToMany attribute, fetch = JOIN
     @Test
     public void testJoinOnWithToManyView2() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.entityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
             View view = new View(Group.class).addProperty("constraints", new View(Constraint.class, View.LOCAL), FetchMode.JOIN);
             TypedQuery<Group> query = em.createQuery("select g from test$Group g join test$QueryResult qr on qr.entityId = g.id where qr.queryKey = 1", Group.class);
             query.setView(view);
@@ -161,7 +166,7 @@ public class EclipseLinkQueriesTest {
 
     @Test
     public void testSeveralEntriesInSelectClause() {
-        Object resultList = cont.persistence().createTransaction().execute((em) -> {
+        Object resultList = persistence.createTransaction().execute((em) -> {
             return em.createQuery("select u.group, u.login from test$User u where u.name like :mask")
                     .setParameter("mask", "%ser")
                     .getResultList();

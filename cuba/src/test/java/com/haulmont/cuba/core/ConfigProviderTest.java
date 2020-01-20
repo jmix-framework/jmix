@@ -22,12 +22,13 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.RoleType;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.DataManager;
 import io.jmix.core.compatibility.AppContext;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Query;
 import io.jmix.data.Transaction;
 import io.jmix.data.entity.ConfigEntity;
@@ -48,9 +49,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class ConfigProviderTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
+    @Inject
+    private Persistence persistence;
     @Inject
     protected DataManager dataManager;
 
@@ -71,9 +71,9 @@ public class ConfigProviderTest {
 
     @AfterEach
     public void cleanup() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             Query query = em.createQuery("select c from sys$Config c where c.name like ?1");
             query.setParameter(1, "cuba.test.%");
             List<ConfigEntity> list = query.getResultList();
@@ -84,8 +84,8 @@ public class ConfigProviderTest {
         } finally {
             tx.end();
         }
-        cont.deleteRecord(user);
-        cont.deleteRecord(group);
+        TestSupport.deleteRecord(user);
+        TestSupport.deleteRecord(group);
     }
 
     @Test

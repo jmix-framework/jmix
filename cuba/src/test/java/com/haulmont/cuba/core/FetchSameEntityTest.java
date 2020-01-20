@@ -21,17 +21,23 @@ import com.haulmont.cuba.core.model.FetchSameLinkAEntity;
 import com.haulmont.cuba.core.model.FetchSameLinkBEntity;
 import com.haulmont.cuba.core.model.FetchSameMainEntity;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
+
 @CoreTest
 public class FetchSameEntityTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
     protected FetchSameMainEntity mainEntity;
     protected FetchSameLinkBEntity linkB1, linkB2;
@@ -39,10 +45,9 @@ public class FetchSameEntityTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
-            Metadata metadata = cont.metadata();
+            EntityManager em = persistence.getEntityManager();
 
             mainEntity = metadata.create(FetchSameMainEntity.class);
             mainEntity.setName("mainEntity");
@@ -81,7 +86,7 @@ public class FetchSameEntityTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord(linkB1, linkB2, linkA1, linkA2, mainEntity);
+        TestSupport.deleteRecord(linkB1, linkB2, linkA1, linkA2, mainEntity);
     }
 
     @Test

@@ -19,26 +19,27 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.Many2ManyA;
 import com.haulmont.cuba.core.model.Many2ManyB;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
-import io.jmix.core.AppBeans;
-import io.jmix.core.CommitContext;
-import io.jmix.core.DataManager;
-import io.jmix.core.DeletePolicyException;
+import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.*;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class SoftDeleteMany2ManyTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private Metadata metadata;
 
     private Many2ManyA many2ManyA, many2ManyA2, a1, a2;
     private Many2ManyB many2ManyB, many2ManyB2, b1, b2, b3;
@@ -47,27 +48,27 @@ public class SoftDeleteMany2ManyTest {
     public void setUp() throws Exception {
         DataManager dataManager = AppBeans.get(DataManager.class);
 
-        many2ManyA = cont.metadata().create(Many2ManyA.class);
-        many2ManyB = cont.metadata().create(Many2ManyB.class);
+        many2ManyA = metadata.create(Many2ManyA.class);
+        many2ManyB = metadata.create(Many2ManyB.class);
 
         many2ManyA.setCollectionOfB(new HashSet<>());
         many2ManyA.getCollectionOfB().add(many2ManyB);
 
         dataManager.commit(new CommitContext(many2ManyA, many2ManyB));
 
-        many2ManyA2 = cont.metadata().create(Many2ManyA.class);
-        many2ManyB2 = cont.metadata().create(Many2ManyB.class);
+        many2ManyA2 = metadata.create(Many2ManyA.class);
+        many2ManyB2 = metadata.create(Many2ManyB.class);
 
         many2ManyA2.setCollectionOfB2(new HashSet<>());
         many2ManyA2.getCollectionOfB2().add(many2ManyB2);
 
         dataManager.commit(new CommitContext(many2ManyA2, many2ManyB2));
 
-        a1 = cont.metadata().create(Many2ManyA.class);
-        a2 = cont.metadata().create(Many2ManyA.class);
-        b1 = cont.metadata().create(Many2ManyB.class);
-        b2 = cont.metadata().create(Many2ManyB.class);
-        b3 = cont.metadata().create(Many2ManyB.class);
+        a1 = metadata.create(Many2ManyA.class);
+        a2 = metadata.create(Many2ManyA.class);
+        b1 = metadata.create(Many2ManyB.class);
+        b2 = metadata.create(Many2ManyB.class);
+        b3 = metadata.create(Many2ManyB.class);
 
         a1.setCollectionOfB(new HashSet<>());
         a1.getCollectionOfB().add(b1);
@@ -81,15 +82,15 @@ public class SoftDeleteMany2ManyTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_MANY2MANY_AB_LINK", "A_ID", many2ManyA.getId(), a1.getId(), a2.getId());
-        cont.deleteRecord("TEST_MANY2MANY_AB_LINK2", "A_ID", many2ManyA2.getId());
-        cont.deleteRecord(many2ManyA, many2ManyB, many2ManyA2, many2ManyB2, a1, a2, b1, b2, b3);
+        TestSupport.deleteRecord("TEST_MANY2MANY_AB_LINK", "A_ID", many2ManyA.getId(), a1.getId(), a2.getId());
+        TestSupport.deleteRecord("TEST_MANY2MANY_AB_LINK2", "A_ID", many2ManyA2.getId());
+        TestSupport.deleteRecord(many2ManyA, many2ManyB, many2ManyA2, many2ManyB2, a1, a2, b1, b2, b3);
     }
 
     @Test
     public void testMany2ManyUnlink() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            Many2ManyA a = cont.entityManager().find(Many2ManyA.class, this.many2ManyA.getId());
+        try (Transaction tx = persistence.createTransaction()) {
+            Many2ManyA a = persistence.getEntityManager().find(Many2ManyA.class, this.many2ManyA.getId());
             assertNotNull(a);
             assertFalse(a.getCollectionOfB().isEmpty());
             assertEquals(many2ManyB, a.getCollectionOfB().iterator().next());
@@ -97,15 +98,15 @@ public class SoftDeleteMany2ManyTest {
             tx.commit();
         }
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            Many2ManyB b = cont.entityManager().find(Many2ManyB.class, this.many2ManyB.getId());
-            cont.entityManager().remove(b);
+        try (Transaction tx = persistence.createTransaction()) {
+            Many2ManyB b = persistence.getEntityManager().find(Many2ManyB.class, this.many2ManyB.getId());
+            persistence.getEntityManager().remove(b);
 
             tx.commit();
         }
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            Many2ManyA a = cont.entityManager().find(Many2ManyA.class, this.many2ManyA.getId());
+        try (Transaction tx = persistence.createTransaction()) {
+            Many2ManyA a = persistence.getEntityManager().find(Many2ManyA.class, this.many2ManyA.getId());
             assertNotNull(a);
             assertTrue(a.getCollectionOfB().isEmpty());
 
@@ -115,8 +116,8 @@ public class SoftDeleteMany2ManyTest {
 
     @Test
     public void testMany2ManyDeny() throws Exception {
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            Many2ManyA a = cont.entityManager().find(Many2ManyA.class, many2ManyA2.getId());
+        try (Transaction tx = persistence.createTransaction()) {
+            Many2ManyA a = persistence.getEntityManager().find(Many2ManyA.class, many2ManyA2.getId());
             assertNotNull(a);
             assertFalse(a.getCollectionOfB2().isEmpty());
             assertEquals(many2ManyB2, a.getCollectionOfB2().iterator().next());
@@ -124,9 +125,9 @@ public class SoftDeleteMany2ManyTest {
             tx.commit();
         }
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            Many2ManyA a = cont.entityManager().find(Many2ManyA.class, many2ManyA2.getId());
-            cont.entityManager().remove(a);
+        try (Transaction tx = persistence.createTransaction()) {
+            Many2ManyA a = persistence.getEntityManager().find(Many2ManyA.class, many2ManyA2.getId());
+            persistence.getEntityManager().remove(a);
 
             tx.commit();
             fail();
@@ -138,8 +139,8 @@ public class SoftDeleteMany2ManyTest {
             assertTrue(rootCause instanceof DeletePolicyException);
         }
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            Many2ManyA a = cont.entityManager().find(Many2ManyA.class, many2ManyA2.getId());
+        try (Transaction tx = persistence.createTransaction()) {
+            Many2ManyA a = persistence.getEntityManager().find(Many2ManyA.class, many2ManyA2.getId());
             assertNotNull(a);
             assertFalse(a.getCollectionOfB2().isEmpty());
             assertEquals(many2ManyB2, a.getCollectionOfB2().iterator().next());
@@ -157,8 +158,8 @@ public class SoftDeleteMany2ManyTest {
         Many2ManyA a2;
         Many2ManyB b1;
 
-        try (Transaction tx = cont.persistence().createTransaction()) {
-            EntityManager em = cont.entityManager();
+        try (Transaction tx = persistence.createTransaction()) {
+            EntityManager em = persistence.getEntityManager();
 
             a1 = em.find(Many2ManyA.class, this.a1.getId());
             assertNotNull(a1);
@@ -169,13 +170,13 @@ public class SoftDeleteMany2ManyTest {
             assertEquals(1, a2.getCollectionOfB().size());
 
             tx.commitRetaining();
-            em = cont.entityManager();
+            em = persistence.getEntityManager();
 
             b1 = em.find(Many2ManyB.class, this.b1.getId());
             em.remove(b1);
 
             tx.commitRetaining();
-            em = cont.entityManager();
+            em = persistence.getEntityManager();
 
             a1 = em.find(Many2ManyA.class, this.a1.getId());
             assertNotNull(a1);

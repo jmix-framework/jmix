@@ -25,7 +25,7 @@ import com.haulmont.cuba.core.model.selfinherited.ChildEntity;
 import com.haulmont.cuba.core.model.selfinherited.RootEntity;
 import com.haulmont.cuba.core.model.selfinherited.RootEntityDetail;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.*;
@@ -46,9 +46,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class ViewTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     @Inject
     private TimeSource timeSource;
     @Inject
@@ -143,8 +140,8 @@ public class ViewTest {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         context.getLogger("com.haulmont.cuba.core.sys.FetchGroupManager").setLevel(Level.DEBUG);
 
-        cont.deleteRecord("TEST_USER", userId);
-        cont.deleteRecord("TEST_GROUP", groupId);
+        TestSupport.deleteRecord("TEST_USER", userId);
+        TestSupport.deleteRecord("TEST_GROUP", groupId);
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
 
@@ -317,7 +314,7 @@ public class ViewTest {
             long ts = timeSource.currentTimeMillis();
             Thread.sleep(1000);
 
-            View minimalView = cont.metadata().getViewRepository().getView(User.class, View.MINIMAL);
+            View minimalView = metadata.getViewRepository().getView(User.class, View.MINIMAL);
             minimalView.setLoadPartialEntities(true);
 
             EntityManager em = persistence.getEntityManager();
@@ -459,14 +456,14 @@ public class ViewTest {
 
     @Test
     public void testNoTransientPropertiesInLocalView() throws Exception {
-        View view = cont.metadata().getViewRepository().getView(EntitySnapshot.class, View.LOCAL);
+        View view = metadata.getViewRepository().getView(EntitySnapshot.class, View.LOCAL);
         ViewProperty prop = view.getProperty("label");
         assertNull(prop);
     }
 
     @Test
     public void testViewCopy() throws Exception {
-        ViewRepository viewRepository = cont.metadata().getViewRepository();
+        ViewRepository viewRepository = metadata.getViewRepository();
         View view = viewRepository.getView(User.class, View.LOCAL);
         view.addProperty("group", viewRepository.getView(Group.class, View.MINIMAL));
 
@@ -476,7 +473,7 @@ public class ViewTest {
 
     @Test
     public void testFetchGroupIsAbsentIfViewIsFull() throws Exception {
-        ViewRepository viewRepository = cont.metadata().getViewRepository();
+        ViewRepository viewRepository = metadata.getViewRepository();
         View view = viewRepository.getView(User.class, View.LOCAL);
         view.addProperty("group", new View(Group.class)
                 .addProperty("name"))
@@ -507,7 +504,7 @@ public class ViewTest {
 
     @Test
     public void testSelfReferenceInView() {
-        ViewRepository viewRepository = cont.metadata().getViewRepository();
+        ViewRepository viewRepository = metadata.getViewRepository();
         View view = viewRepository.getView(RootEntity.class, View.LOCAL);
         view.addProperty("entity", new View(ChildEntity.class)
                 .addProperty("name").addProperty("description"), FetchMode.AUTO);

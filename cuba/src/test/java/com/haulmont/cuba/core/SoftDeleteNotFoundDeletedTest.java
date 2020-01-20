@@ -20,37 +20,38 @@ import com.haulmont.cuba.core.model.SoftDelete_Service;
 import com.haulmont.cuba.core.model.SoftDelete_Task;
 import com.haulmont.cuba.core.model.SoftDelete_TaskValue;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.View;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.UUID;
 
 @CoreTest
 public class SoftDeleteNotFoundDeletedTest {
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
+    @Inject
+    private DataManager dataManager;
 
     private UUID taskId;
     private UUID serviceId;
     private UUID projectId;
     private UUID taskValueId;
-    private DataManager dataManager;
 
     @BeforeEach
     public void setUp() throws Exception {
-        dataManager = AppBeans.get(DataManager.class);
-
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             SoftDelete_Service service = new SoftDelete_Service();
             serviceId = service.getId();
@@ -78,7 +79,7 @@ public class SoftDeleteNotFoundDeletedTest {
 
             tx.commitRetaining();
 
-            em = cont.persistence().getEntityManager();
+            em = persistence.getEntityManager();
 
             task = em.find(SoftDelete_Task.class, taskId);
             em.remove(task);
@@ -91,10 +92,10 @@ public class SoftDeleteNotFoundDeletedTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        cont.deleteRecord("TEST_SOFT_DELETE_PROJECT", projectId);
-        cont.deleteRecord("TEST_SOFT_DELETE_TASK_VALUE", taskValueId);
-        cont.deleteRecord("TEST_SOFT_DELETE_TASK", taskId);
-        cont.deleteRecord("TEST_SOFT_DELETE_SERVICE", serviceId);
+        TestSupport.deleteRecord("TEST_SOFT_DELETE_PROJECT", projectId);
+        TestSupport.deleteRecord("TEST_SOFT_DELETE_TASK_VALUE", taskValueId);
+        TestSupport.deleteRecord("TEST_SOFT_DELETE_TASK", taskId);
+        TestSupport.deleteRecord("TEST_SOFT_DELETE_SERVICE", serviceId);
     }
 
     @Test

@@ -19,21 +19,27 @@ import com.haulmont.cuba.core.listener.TestUserDetachListener
 import com.haulmont.cuba.core.listener.TestUserEntityListener
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
-import com.haulmont.cuba.core.testsupport.TestContainer
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
+import io.jmix.data.Persistence
 import io.jmix.data.impl.EntityListenerManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 import java.util.function.Consumer
 
-class EntityListenerTest extends CoreTestSpecification {
-    public TestContainer cont = TestContainer.Common.INSTANCE
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
+class EntityListenerTest extends CoreTestSpecification {
     @Inject
     private DataManager dataManager
     @Inject
     private EntityStates entityStates
+    @Inject
+    private Persistence persistence
+    @Inject
+    private Metadata metadata
+
     private Group companyGroup
 
     void setup() {
@@ -43,7 +49,7 @@ class EntityListenerTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        cont.deleteRecord(companyGroup)
+        deleteRecord(companyGroup)
     }
 
     def "PL-9350 onBeforeInsert listener fires twice if em.flush() is used"() {
@@ -53,13 +59,13 @@ class EntityListenerTest extends CoreTestSpecification {
         def events = TestUserEntityListener.events
         events.clear()
 
-        def user = cont.metadata().create(User)
+        def user = metadata.create(User)
         user.setLogin("user-" + user.id)
-        user.setGroup(cont.persistence().callInTransaction { em -> em.find(Group, companyGroup.id) })
+        user.setGroup(persistence.callInTransaction { em -> em.find(Group, companyGroup.id) })
 
         when:
 
-        cont.persistence().runInTransaction() { em ->
+        persistence.runInTransaction() { em ->
             em.persist(user)
             em.flush()
             user.setName(user.login)
@@ -77,16 +83,16 @@ class EntityListenerTest extends CoreTestSpecification {
 
         events.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        cont.deleteRecord(user)
+        deleteRecord(user)
     }
 
     def "accessing properties that are not loaded"() {
 
-        def user = cont.metadata().create(User)
+        def user = metadata.create(User)
         user.setLogin("User-$user.id")
         user.setName('test user')
-        user.setGroup(cont.persistence().callInTransaction { em -> em.find(Group, companyGroup.id) })
-        cont.persistence().runInTransaction() { em ->
+        user.setGroup(persistence.callInTransaction { em -> em.find(Group, companyGroup.id) })
+        persistence.runInTransaction() { em ->
             em.persist(user)
         }
 
@@ -99,7 +105,7 @@ class EntityListenerTest extends CoreTestSpecification {
         loadedUser.setName('changed name')
         dataManager.commit(loadedUser)
 
-        loadedUser = cont.persistence().callInTransaction() { em ->
+        loadedUser = persistence.callInTransaction() { em ->
             em.find(User, user.id)
         }
 
@@ -112,19 +118,19 @@ class EntityListenerTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(user)
+        deleteRecord(user)
     }
 
     def "accessing not loaded attributes in BeforeDetach"() {
 
-        def user = cont.metadata().create(User)
+        def user = metadata.create(User)
         user.setLogin("User-$user.id")
         user.setName('test user')
 
-        def group = cont.persistence().callInTransaction { em -> em.find(Group, companyGroup.id) }
+        def group = persistence.callInTransaction { em -> em.find(Group, companyGroup.id) }
         user.setGroup(group)
 
-        cont.persistence().runInTransaction() { em ->
+        persistence.runInTransaction() { em ->
             em.persist(user)
         }
 
@@ -162,7 +168,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         when: "loading entity without view"
 
-        loadedUser = cont.persistence().callInTransaction { em -> em.find(User, user.id) }
+        loadedUser = persistence.callInTransaction { em -> em.find(User, user.id) }
 
         then: "can fetch reference attributes in DetachListener"
 
@@ -171,11 +177,11 @@ class EntityListenerTest extends CoreTestSpecification {
         cleanup:
 
         entityListenerManager.removeListener(User, TestUserDetachListener)
-        cont.deleteRecord(user)
+        deleteRecord(user)
     }
 
     def "in BeforeInsert reference can be detached"() {
-        def user = cont.metadata().create(User)
+        def user = metadata.create(User)
         user.login = "User-$user.id"
         user.name = 'test user'
         user.group = dataManager.load(Group).id(companyGroup.id).one()
@@ -201,14 +207,14 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        cont.deleteRecord(user)
+        deleteRecord(user)
     }
 
     def "in BeforeInsert reference can be new+managed"() {
-        def group = cont.metadata().create(Group)
+        def group = metadata.create(Group)
         group.name = "test group"
 
-        def user = cont.metadata().create(User)
+        def user = metadata.create(User)
         user.login = "User-$user.id"
         user.name = 'test user'
         user.group = group
@@ -235,17 +241,17 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        cont.deleteRecord(user, group)
+        deleteRecord(user, group)
     }
 
     def "in BeforeUpdate reference is managed"() {
-        def user = cont.metadata().create(User)
+        def user = metadata.create(User)
         user.login = "User-$user.id"
         user.name = 'test user'
         user.group = dataManager.load(Group).id(companyGroup.id).one()
         user = dataManager.commit(user)
 
-        def group = cont.metadata().create(Group)
+        def group = metadata.create(Group)
         group.name = "test group"
         group = dataManager.commit(group)
 
@@ -271,11 +277,11 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        cont.deleteRecord(user, group)
+        deleteRecord(user, group)
     }
 
     def "in BeforeUpdate reference is managed even if merged object loaded with local view"() {
-        def user = cont.metadata().create(User)
+        def user = metadata.create(User)
         user.login = "User-$user.id"
         user.name = 'test user'
         user.group = dataManager.load(Group).id(companyGroup.id).one()
@@ -305,7 +311,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        cont.deleteRecord(user)
+        deleteRecord(user)
     }
 
 }

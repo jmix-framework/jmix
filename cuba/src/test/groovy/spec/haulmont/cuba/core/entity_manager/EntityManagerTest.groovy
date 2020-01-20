@@ -19,16 +19,14 @@ package spec.haulmont.cuba.core.entity_manager
 import com.haulmont.cuba.core.model.not_persistent.CustomerWithNonPersistentRef
 import com.haulmont.cuba.core.model.not_persistent.TestNotPersistentEntity
 import com.haulmont.cuba.core.model.primary_keys.EntityKey
-import com.haulmont.cuba.core.testsupport.TestContainer
 import io.jmix.core.DataManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
 
+import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
+
 class EntityManagerTest extends CoreTestSpecification {
-
-    public TestContainer cont = TestContainer.Common.INSTANCE
-
     @Inject
     private DataManager dataManager
 
@@ -69,6 +67,6 @@ class EntityManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        cont.deleteRecord(customer)
+        deleteRecord(customer)
     }
 }

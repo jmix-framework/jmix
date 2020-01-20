@@ -20,14 +20,16 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.entity.BaseEntityInternalAccess;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Query;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import javax.inject.Inject;
 import java.util.UUID;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -35,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EntityStateTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
+    @Inject
+    private Persistence persistence;
 
     private UUID userId;
     private Group group;
@@ -44,9 +46,9 @@ public class EntityStateTest {
     @AfterEach
     public void tearDown() throws Exception {
         if (userId != null)
-            cont.deleteRecord("TEST_USER", userId);
+            TestSupport.deleteRecord("TEST_USER", userId);
         if (group != null) {
-            cont.deleteRecord(group);
+            TestSupport.deleteRecord(group);
         }
     }
 
@@ -57,9 +59,9 @@ public class EntityStateTest {
 
         // create and persist
 
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             user = new User();
             assertTrue(BaseEntityInternalAccess.isNew(user));
@@ -91,9 +93,9 @@ public class EntityStateTest {
 
         // load from DB
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             // find
             user = em.find(User.class, userId);
             assertNotNull(user);
@@ -114,9 +116,9 @@ public class EntityStateTest {
             tx.end();
         }
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             // query
             Query query = em.createQuery("select u from test$User u where u.id = ?1").setParameter(1, userId);
             user = (User) query.getFirstResult();
@@ -150,9 +152,9 @@ public class EntityStateTest {
 
         // merge changed
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             user = em.merge(user);
 
             assertFalse(BaseEntityInternalAccess.isNew(user));
@@ -188,9 +190,9 @@ public class EntityStateTest {
 
         // serialize managed
 
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             group = new Group();
             group.setName("group");
@@ -209,10 +211,10 @@ public class EntityStateTest {
             tx.end();
         }
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
 
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             user = em.find(User.class, userId);
             assertNotNull(user);
 
@@ -242,9 +244,9 @@ public class EntityStateTest {
 
         // merge changed and serialize
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             user = em.merge(user);
 
             assertFalse(BaseEntityInternalAccess.isNew(user));
@@ -273,7 +275,7 @@ public class EntityStateTest {
 
         // create and persist
 
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
             user = new User();
             assertTrue(BaseEntityInternalAccess.isNew(user));
@@ -282,7 +284,7 @@ public class EntityStateTest {
 
             userId = user.getId();
 
-            cont.persistence().getEntityManager().persist(user);
+            persistence.getEntityManager().persist(user);
 
             assertTrue(BaseEntityInternalAccess.isNew(user));
             assertTrue(BaseEntityInternalAccess.isManaged(user));
@@ -306,9 +308,9 @@ public class EntityStateTest {
     public void testTransactionRollback_loaded() {
         User user;
 
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             user = new User();
             assertTrue(BaseEntityInternalAccess.isNew(user));
@@ -331,9 +333,9 @@ public class EntityStateTest {
         }
 
 
-        tx = cont.persistence().createTransaction();
+        tx = persistence.createTransaction();
         try {
-            user = cont.persistence().getEntityManager().find(User.class, userId);
+            user = persistence.getEntityManager().find(User.class, userId);
 
             assertFalse(BaseEntityInternalAccess.isNew(user));
             assertTrue(BaseEntityInternalAccess.isManaged(user));

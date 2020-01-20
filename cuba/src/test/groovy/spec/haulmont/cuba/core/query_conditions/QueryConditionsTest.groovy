@@ -1,14 +1,12 @@
 package spec.haulmont.cuba.core.query_conditions
 
-import com.haulmont.cuba.core.testsupport.TestContainer
+
 import io.jmix.core.AppBeans
 import io.jmix.core.queryconditions.*
 import org.dom4j.Element
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 class QueryConditionsTest extends CoreTestSpecification {
-
-    public TestContainer cont = TestContainer.Common.INSTANCE
 
     private ConditionXmlLoader xmlSerializer
     private ConditionJpqlGenerator jpqlGenerator

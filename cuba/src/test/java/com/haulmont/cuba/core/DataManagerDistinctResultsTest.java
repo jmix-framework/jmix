@@ -23,9 +23,9 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import com.haulmont.cuba.core.testsupport.TestContainer;
 import io.jmix.core.*;
 import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
 import io.jmix.data.Query;
 import io.jmix.data.Transaction;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.inject.Inject;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
@@ -42,9 +43,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
 public class DataManagerDistinctResultsTest {
-
-    public static TestContainer cont = TestContainer.Common.INSTANCE;
-
     public static final int QTY = 17;
 
     public static final String QUERY =
@@ -53,15 +51,18 @@ public class DataManagerDistinctResultsTest {
     public static final String DISTINCT_QUERY =
             "select distinct u from test$User u left join u.userRoles r where u.group.id = :groupId order by u.loginLowerCase";
 
+    @Inject
+    private Persistence persistence;
+
     private UUID groupId;
     private UUID role1Id;
     private UUID role2Id;
 
     @BeforeEach
     public void setUp() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
 
             Group group = new Group();
             groupId = group.getId();
@@ -104,9 +105,9 @@ public class DataManagerDistinctResultsTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            JdbcTemplate runner = new JdbcTemplate(cont.persistence().getDataSource());
+            JdbcTemplate runner = new JdbcTemplate(persistence.getDataSource());
 
             String sql = "delete from TEST_USER_ROLE where ROLE_ID = '" + role1Id.toString() + "'";
             runner.update(sql);
@@ -201,9 +202,9 @@ public class DataManagerDistinctResultsTest {
     }
 
     private void checkSetup() {
-        Transaction tx = cont.persistence().createTransaction();
+        Transaction tx = persistence.createTransaction();
         try {
-            EntityManager em = cont.persistence().getEntityManager();
+            EntityManager em = persistence.getEntityManager();
             Query query = em.createQuery("select u from test$User u left join u.userRoles r where u.group.id = ?1");
             query.setParameter(1, groupId);
             List list = query.getResultList();

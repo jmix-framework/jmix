@@ -16,6 +16,7 @@
 
 package io.jmix.core
 
+import com.sample.app.AppContextTestExecutionListener
 import com.sample.singlerun.AppContextLifecycleListener
 import com.sample.addon1.TestAddon1Configuration
 import com.sample.singlerun.TestSingleRunConfiguration
@@ -24,11 +25,14 @@ import io.jmix.core.event.AppContextInitializedEvent
 import io.jmix.core.event.AppContextStartedEvent
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 import javax.inject.Inject
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestSingleRunConfiguration])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class AppContextLifecycleEventsTest extends Specification {
 
     @Inject

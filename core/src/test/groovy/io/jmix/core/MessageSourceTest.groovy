@@ -17,17 +17,21 @@
 package io.jmix.core
 
 import com.sample.addon1.TestAddon1Configuration
+import com.sample.app.AppContextTestExecutionListener
 import com.sample.app.TestAppConfiguration
 import io.jmix.core.JmixCoreConfiguration
 import org.springframework.context.MessageSource
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 import javax.inject.Inject
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MessageSourceTest extends Specification {
 
     static final LOC_EN = Locale.ENGLISH

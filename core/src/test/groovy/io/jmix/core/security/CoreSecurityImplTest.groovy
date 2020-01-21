@@ -17,6 +17,7 @@
 package io.jmix.core.security
 
 import com.sample.addon1.TestAddon1Configuration
+import com.sample.app.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.security.impl.CoreSecurityImpl
 import org.springframework.context.ApplicationContext
@@ -25,6 +26,7 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -33,6 +35,8 @@ import javax.inject.Inject
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class CoreSecurityImplTest extends Specification {
 
     @Inject

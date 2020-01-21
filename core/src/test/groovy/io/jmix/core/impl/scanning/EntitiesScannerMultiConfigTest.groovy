@@ -17,13 +17,17 @@
 package io.jmix.core.impl.scanning
 
 import com.sample.addon1.TestAddon1Configuration
+import com.sample.app.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class EntitiesScannerMultiConfigTest extends Specification {
 
     @Autowired

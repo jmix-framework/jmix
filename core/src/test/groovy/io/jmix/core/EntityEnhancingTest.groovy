@@ -18,15 +18,17 @@ package io.jmix.core
 
 import com.sample.addon1.TestAddon1Configuration
 import com.sample.addon1.entity.TestAddon1Entity
+import com.sample.app.AppContextTestExecutionListener
 import com.sample.app.TestAppConfiguration
 import com.sample.app.entity.Pet
 import io.jmix.core.metamodel.model.Instance
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 @ContextConfiguration(classes = [TestAppConfiguration, TestAddon1Configuration, JmixCoreConfiguration])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class EntityEnhancingTest extends Specification {
 
     def "JPA entity is enhanced"() {

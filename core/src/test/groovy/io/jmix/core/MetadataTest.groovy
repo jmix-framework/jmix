@@ -18,6 +18,7 @@ package io.jmix.core
 
 import com.sample.addon1.TestAddon1Configuration
 import com.sample.addon1.entity.TestAddon1Entity
+import com.sample.app.AppContextTestExecutionListener
 import com.sample.app.TestAppConfiguration
 import com.sample.app.entity.Pet
 import io.jmix.core.entity.BaseGenericIdEntity
@@ -26,11 +27,14 @@ import io.jmix.core.entity.StandardEntity
 import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.core.metamodel.model.MetaProperty
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 import javax.inject.Inject
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MetadataTest extends Specification {
 
     @Inject

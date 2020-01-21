@@ -16,11 +16,13 @@
 
 package io.jmix.core.security
 
+import com.sample.app.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.security.impl.AuthenticatorImpl
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 
@@ -28,6 +30,8 @@ import javax.inject.Inject
 
 @ContextConfiguration(classes = [JmixCoreConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class AuthenticatorTest extends Specification {
 
     @Inject

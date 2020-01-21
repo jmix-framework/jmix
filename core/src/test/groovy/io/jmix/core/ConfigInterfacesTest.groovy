@@ -17,15 +17,19 @@
 package io.jmix.core
 
 import com.sample.addon1.TestAddon1Configuration
+import com.sample.app.AppContextTestExecutionListener
 import com.sample.app.TestAppConfiguration
 import com.sample.app.TestConfig
 import io.jmix.core.compatibility.AppProperties
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class ConfigInterfacesTest extends Specification {
 
     @Autowired

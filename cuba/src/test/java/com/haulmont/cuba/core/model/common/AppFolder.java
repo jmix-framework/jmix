@@ -21,8 +21,8 @@ import io.jmix.core.metamodel.annotations.MetaProperty;
 
 import javax.persistence.*;
 
-@Entity(name = "sys$AppFolder")
-@Table(name = "SYS_APP_FOLDER")
+@Entity(name = "test$AppFolder")
+@Table(name = "TEST_APP_FOLDER")
 @PrimaryKeyJoinColumn(name = "FOLDER_ID", referencedColumnName = "ID")
 @DiscriminatorValue("A")
 @EnableRestore

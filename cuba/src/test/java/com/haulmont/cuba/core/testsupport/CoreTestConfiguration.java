@@ -58,4 +58,9 @@ public class CoreTestConfiguration {
     JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
     }
+
+    @Bean
+    TestEventsListener testEventsListener() {
+        return new TestEventsListener();
+    }
 }

@@ -16,18 +16,15 @@
 
 package com.haulmont.cuba.core.testsupport;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import io.jmix.core.compatibility.AppContext;
+import org.springframework.context.event.EventListener;
+import org.springframework.test.context.event.BeforeTestClassEvent;
 
-import java.lang.annotation.*;
-
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Inherited
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CoreEntityCacheTestConfiguration.class})
-public @interface CoreEntityCacheTest {
+public class TestEventsListener {
+    @EventListener
+    protected void beforeTestClassEvent(BeforeTestClassEvent event) {
+        if (event.getTestContext().hasApplicationContext()) {
+            AppContext.Internals.setApplicationContext(event.getTestContext().getApplicationContext(), false);
+        }
+    }
 }

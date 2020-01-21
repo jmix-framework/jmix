@@ -23,9 +23,10 @@ import com.haulmont.cuba.core.model.entitycache_unfetched.CompositeOne;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositePropertyOne;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositePropertyTwo;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositeTwo;
-import com.haulmont.cuba.core.testsupport.CoreEntityCacheTest;
+import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestAppender;
 import com.haulmont.cuba.core.testsupport.TestNamePrinter;
+
 import io.jmix.core.*;
 import io.jmix.data.*;
 import io.jmix.data.impl.QueryImpl;
@@ -37,6 +38,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.rules.TestRule;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
@@ -51,8 +54,9 @@ import static org.junit.Assert.*;
 /**
  * Tests of EclipseLink shared cache.
  */
-@CoreEntityCacheTest
-@Disabled
+@CoreTest
+@TestPropertySource("classpath:/com/haulmont/cuba/core/test-entitycache-app.properties")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class EntityCacheTestClass {
     @RegisterExtension
     public TestRule testNamePrinter = new TestNamePrinter();
@@ -61,6 +65,8 @@ public class EntityCacheTestClass {
     private Persistence persistence;
     @Inject
     private Metadata metadata;
+    @Inject
+    private MetadataTools metadataTools;
 
     private JpaCache cache;
 
@@ -83,7 +89,7 @@ public class EntityCacheTestClass {
         appender = new TestAppender();
         appender.start();
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger logger = context.getLogger("eclipselink.sql");
+        Logger logger = context.getLogger("eclipselink.logging.sql");
         logger.addAppender(appender);
     }
 
@@ -93,8 +99,8 @@ public class EntityCacheTestClass {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManagerFactory emf = persistence.getEntityManager().getDelegate().getEntityManagerFactory();
 
-            assertTrue(metadata.getTools().isCacheable(metadata.getClassNN(User.class)));
-            assertFalse(metadata.getTools().isCacheable(metadata.getClassNN(UserSubstitution.class)));
+            assertTrue(metadataTools.isCacheable(metadata.getClassNN(User.class)));
+            assertFalse(metadataTools.isCacheable(metadata.getClassNN(UserSubstitution.class)));
 
             ServerSession serverSession = ((EntityManagerFactoryDelegate) emf).getServerSession();
             ClassDescriptor descriptor = serverSession.getDescriptor(User.class);
@@ -367,8 +373,8 @@ public class EntityCacheTestClass {
 
         loadUser();
         assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // User, Group
-        assertEquals(1, appender.filterMessages(m -> m.contains("FROM SEC_USER")).count());
-        assertEquals(1, appender.filterMessages(m -> m.contains("FROM SEC_GROUP")).count());
+        assertEquals(1, appender.filterMessages(m -> m.contains("FROM TEST_USER")).count());
+        assertEquals(1, appender.filterMessages(m -> m.contains("FROM TEST_GROUP")).count());
         appender.clearMessages();
 
         loadUser();
@@ -384,7 +390,7 @@ public class EntityCacheTestClass {
         }
 
         loadUser();
-        assertEquals(0, appender.filterMessages(m -> m.contains("FROM SEC_USER")).count()); // inserting new entities does not affect existing in cache
+        assertEquals(0, appender.filterMessages(m -> m.contains("FROM TEST_USER")).count()); // inserting new entities does not affect existing in cache
 
         deleteRecord(newUser);
     }
@@ -534,10 +540,12 @@ public class EntityCacheTestClass {
             tx.commit(); // User should be evicted from cache to update collection of UserRoles - see OrmCacheSupport.evictMasterEntity()
         }
 
+        appender.clearMessages();
+
         User u = loadUserWithRoles();
         assertEquals(0, u.getUserRoles().size());
 
-        assertEquals(3, appender.filterMessages(m -> m.contains("> SELECT")).count()); // Default Roles, User, UserRoles
+        assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // Default Roles, User, UserRoles
     }
 
     @Test
@@ -796,7 +804,7 @@ public class EntityCacheTestClass {
         appender.clearMessages();
 
         try (Transaction tx = persistence.createTransaction()) {
-            Query query = persistence.getEntityManager().createNativeQuery("update sec_user set position_ = ? where login_lc = ?");
+            Query query = persistence.getEntityManager().createNativeQuery("update test_user set position_ = ? where login_lc = ?");
             query.setParameter(1, "new position");
             query.setParameter(2, this.user.getLoginLowerCase());
             query.executeUpdate(); // all evicted here
@@ -882,7 +890,7 @@ public class EntityCacheTestClass {
         }
 
         assertEquals(3, appender.filterMessages(selectsOnly).count()); // UserSubstitution, User, User
-        assertTrue(appender.filterMessages(selectsOnly).noneMatch(s -> s.contains("JOIN SEC_USER"))); // User must not be joined because it is cached
+        assertTrue(appender.filterMessages(selectsOnly).noneMatch(s -> s.contains("JOIN TEST_USER"))); // User must not be joined because it is cached
 
         appender.clearMessages();
 
@@ -892,7 +900,7 @@ public class EntityCacheTestClass {
         }
 
         assertEquals(1, appender.filterMessages(selectsOnly).count()); // UserSubstitution only, User is cached
-        assertTrue(appender.filterMessages(selectsOnly).noneMatch(s -> s.contains("JOIN SEC_USER"))); // User must not be joined because it is cached
+        assertTrue(appender.filterMessages(selectsOnly).noneMatch(s -> s.contains("JOIN TEST_USER"))); // User must not be joined because it is cached
     }
 
     @Test

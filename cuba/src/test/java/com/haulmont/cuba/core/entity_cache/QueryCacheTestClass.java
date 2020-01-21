@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.entity_cache;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.haulmont.cuba.core.model.common.*;
-import com.haulmont.cuba.core.testsupport.CoreEntityCacheTest;
+import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestAppender;
 import com.haulmont.cuba.core.testsupport.TestNamePrinter;
 import io.jmix.core.*;
@@ -36,6 +36,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.rules.TestRule;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
@@ -50,8 +52,9 @@ import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord;
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.Assert.*;
 
-@CoreEntityCacheTest
-@Disabled
+@CoreTest
+@TestPropertySource("classpath:/com/haulmont/cuba/core/test-entitycache-app.properties")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class QueryCacheTestClass {
     @RegisterExtension
     public TestRule testNamePrinter = new TestNamePrinter();
@@ -79,7 +82,7 @@ public class QueryCacheTestClass {
         appender = new TestAppender();
         appender.start();
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        Logger logger = context.getLogger("eclipselink.sql");
+        Logger logger = context.getLogger("eclipselink.logging.sql");
         logger.addAppender(appender);
     }
 
@@ -157,8 +160,8 @@ public class QueryCacheTestClass {
         if (user3 != null)
             deleteRecord(user3);
         if (appFolder != null) {
-            deleteRecord("SYS_APP_FOLDER", "FOLDER_ID", appFolder.getId());
-            deleteRecord("SYS_FOLDER", "ID", appFolder.getId());
+            deleteRecord("TEST_APP_FOLDER", "FOLDER_ID", appFolder.getId());
+            deleteRecord("TEST_FOLDER", "ID", appFolder.getId());
         }
         deleteRecord(group);
     }
@@ -355,7 +358,7 @@ public class QueryCacheTestClass {
         assertEquals(0, queryCache.size());
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            TypedQuery<User> query = em.createNativeQuery("select * from SEC_USER", User.class);
+            TypedQuery<User> query = em.createNativeQuery("select * from TEST_USER", User.class);
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -602,7 +605,7 @@ public class QueryCacheTestClass {
 
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from sys$Folder f");
+            Query query = em.createQuery("select f from test$Folder f");
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -621,7 +624,7 @@ public class QueryCacheTestClass {
         assertEquals(0, queryCache.size());
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from sys$Folder f");
+            Query query = em.createQuery("select f from test$Folder f");
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -634,7 +637,7 @@ public class QueryCacheTestClass {
     public void testWarningInLog() throws Exception {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from sys$Folder f", User.class);
+            Query query = em.createQuery("select f from test$Folder f", User.class);
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -642,7 +645,7 @@ public class QueryCacheTestClass {
 
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from sys$Folder f", User.class);
+            Query query = em.createQuery("select f from test$Folder f", User.class);
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -881,7 +884,7 @@ public class QueryCacheTestClass {
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
-        assertEquals(1, appender.filterMessages(m -> m.contains("> SELECT") && m.contains("SEC_GROUP")).count());
+        assertEquals(1, appender.filterMessages(m -> m.contains("> SELECT") && m.contains("TEST_GROUP")).count());
 
         appender.clearMessages();
 
@@ -1037,7 +1040,7 @@ public class QueryCacheTestClass {
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
-        assertEquals(1, appender.filterMessages(m -> m.contains("> SELECT") && m.contains("SEC_GROUP")).count());
+        assertEquals(1, appender.filterMessages(m -> m.contains("> SELECT") && m.contains("TEST_GROUP")).count());
 
         appender.clearMessages();
 

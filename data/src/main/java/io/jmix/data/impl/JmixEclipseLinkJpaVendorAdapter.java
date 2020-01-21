@@ -50,6 +50,10 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
         Map<String, Object> map = super.getJpaPropertyMap();
 
         map.put("eclipselink.session-event-listener", EclipseLinkSessionEventListener.class.getName());
+        map.put("eclipselink.logging.logger", "org.eclipse.persistence.logging.slf4j.SLF4JLogger");
+        map.put("eclipselink.cache.coordination.protocol", "io.jmix.data.impl.entitycache.EntityCacheTransportManager");
+        map.put("eclipselink.cache.coordination.propagate-asynchronously", "false");
+        map.put("javax.persistence.validation.mode", "NONE");
 
         for (String name : EnvironmentUtils.getPropertyNames(environment)) {
             if (name.startsWith("eclipselink.")) {
@@ -62,6 +66,7 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
                 map.put(name, environment.getProperty(name));
             }
         }
+
         return map;
     }
 

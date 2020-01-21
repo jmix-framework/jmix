@@ -109,10 +109,21 @@ public class AppContext {
          * @param applicationContext initialized Spring's context
          */
         public static void setApplicationContext(@Nullable ApplicationContext applicationContext) {
-            context = applicationContext;
+            setApplicationContext(applicationContext, true);
+        }
 
-            Events events = getApplicationContext().getBean(Events.NAME, Events.class);
-            events.publish(new AppContextInitializedEvent(context));
+        /**
+         * Called by the framework to set Spring's context.
+         *
+         * @param applicationContext initialized Spring's context
+         * @param publishEvent - fire AppContextInitializedEvent event if true
+         */
+        public static void setApplicationContext(@Nullable ApplicationContext applicationContext, boolean publishEvent) {
+            context = applicationContext;
+            if (publishEvent) {
+                Events events = getApplicationContext().getBean(Events.NAME, Events.class);
+                events.publish(new AppContextInitializedEvent(context));
+            }
         }
 
         /**

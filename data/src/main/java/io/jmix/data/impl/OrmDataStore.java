@@ -191,7 +191,7 @@ public class OrmDataStore implements DataStore {
         if (log.isDebugEnabled())
             log.debug("loadList: metaClass=" + context.getMetaClass() + ", view=" + context.getView()
                     + (context.getPrevQueries().isEmpty() ? "" : ", from selected")
-                    + ", query=" + (context.getQuery() == null ? null : JpqlQueryBuilder.printQuery(context.getQuery().getQueryString()))
+                    + ", query=" + context.getQuery()
                     + (context.getQuery() == null || context.getQuery().getFirstResult() == 0 ? "" : ", first=" + context.getQuery().getFirstResult())
                     + (context.getQuery() == null || context.getQuery().getMaxResults() == 0 ? "" : ", max=" + context.getQuery().getMaxResults()));
 
@@ -325,7 +325,7 @@ public class OrmDataStore implements DataStore {
         if (log.isDebugEnabled())
             log.debug("getCount: metaClass=" + context.getMetaClass()
                     + (context.getPrevQueries().isEmpty() ? "" : ", from selected")
-                    + ", query=" + (context.getQuery() == null ? null : JpqlQueryBuilder.printQuery(context.getQuery().getQueryString())));
+                    + ", query=" + context.getQuery());
 
         MetaClass metaClass = metadata.getClassNN(context.getMetaClass());
 

@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import io.jmix.core.commons.util.StringHelper;
 import io.jmix.core.queryconditions.Condition;
 
 import javax.annotation.Nullable;
@@ -344,11 +345,14 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
         @Override
         public String toString() {
-            return "Query{" +
-                    "queryString='" + queryString + '\'' +
+            String stringResult = "{" +
+                    "'" + queryString + '\'' +
+                    ", condition=" + condition +
+                    ", sort=" + sort +
                     ", firstResult=" + firstResult +
                     ", maxResults=" + maxResults +
-                    '}';
+                    "}";
+            return StringHelper.removeExtraSpaces(stringResult.replace('\n', ' '));
         }
     }
 }

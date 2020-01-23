@@ -80,6 +80,6 @@ public abstract class PropertyCondition implements Condition {
 
     @Override
     public String toString() {
-        return "PropertyCondition{" + entries.toString() + "}";
+        return entries.toString();
     }
 }

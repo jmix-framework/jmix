@@ -15,61 +15,188 @@
  */
 package io.jmix.core.metamodel.model.utils;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.invoke.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class MethodsCache {
 
-    private final transient Map<String, Method> getters = new HashMap<>();
-    private final transient Map<String, Method> setters = new HashMap<>();
+    private final Map<String, Function> getters = new HashMap<>();
+    private final Map<String, BiConsumer> setters = new HashMap<>();
+    private String className;
+
+    private static final Map<Class, Class> primitivesToObjects = new ImmutableMap.Builder<Class, Class>()
+            .put(byte.class, Byte.class)
+            .put(char.class, Character.class)
+            .put(short.class, Short.class)
+            .put(int.class, Integer.class)
+            .put(long.class, Long.class)
+            .put(float.class, Float.class)
+            .put(double.class, Double.class)
+            .put(boolean.class, Boolean.class)
+            .build();
+
 
     public MethodsCache(Class clazz) {
         final Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             String name = method.getName();
-            if (name.startsWith("get") && method.getParameterTypes().length == 0) {
+            if (name.startsWith("get") && method.getParameterTypes().length == 0
+                    && !Modifier.isStatic(method.getModifiers())) {
+                Function getter = createGetter(clazz, method);
                 name = StringUtils.uncapitalize(name.substring(3));
-                method.setAccessible(true);
-                getters.put(name, method);
-            } else if (name.startsWith("is") && method.getParameterTypes().length == 0) {
-                name = StringUtils.uncapitalize(name.substring(2));
-                method.setAccessible(true);
-                getters.put(name, method);
-            } else if (name.startsWith("set") && method.getParameterTypes().length == 1) {
-                name = StringUtils.uncapitalize(name.substring(3));
-                method.setAccessible(true);
-                setters.put(name, method);
+                getters.put(name, getter);
+            } else if (name.startsWith("is") && method.getParameterTypes().length == 0
+                    && !Modifier.isStatic(method.getModifiers())) {
+                Function getter = createGetter(clazz, method);
+                Field isField = ReflectionUtils.findField(clazz, name);
+                if (isField != null) {
+                    // for Kotlin entity with a property which name starts with "is*" the getter name will be the same as property name,
+                    // e.g "isApproved"
+                    getters.put(name, getter);
+                } else {
+                    name = StringUtils.uncapitalize(name.substring(2));
+                    getters.put(name, getter);
+                }
+            } else if (name.startsWith("set") && method.getParameterTypes().length == 1
+                    && !Modifier.isStatic(method.getModifiers())) {
+                BiConsumer setter = createSetter(clazz, method);
+                Field isField = ReflectionUtils.findField(clazz, "is" + name.substring(3));
+                if (isField != null) {
+                    name = "is" + name.substring(3);
+                } else {
+                    name = StringUtils.uncapitalize(name.substring(3));
+                }
+                if (setters.containsKey(name)) {
+                    BiConsumer containedSetter = setters.get(name);
+                    Class valueType = method.getParameterTypes()[0];
+                    ((SettersHolder) containedSetter).addSetter(valueType.isPrimitive() ?
+                            primitivesToObjects.get(valueType) : valueType, setter);
+                } else {
+                    Class valueType = method.getParameterTypes()[0];
+                    SettersHolder settersHolder = new SettersHolder(name,
+                            valueType.isPrimitive() ? primitivesToObjects.get(valueType) : valueType,
+                            setter);
+                    setters.put(name, settersHolder);
+                }
             }
         }
+        className = clazz.toString();
     }
 
-    public void invokeSetter(Object object, String property, Object value) {
-        final Method method = setters.get(property);
-        if (method == null) {
-            throw new IllegalArgumentException(
-                    String.format("Can't find setter for property '%s' at %s", property, object.getClass()));
-        }
+    protected Function createGetter(Class clazz, Method method) {
+        Function getter;
         try {
-            method.invoke(object, value);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            MethodHandles.Lookup caller = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(caller,
+                    "apply",
+                    MethodType.methodType(Function.class),
+                    MethodType.methodType(Object.class, Object.class),
+                    caller.findVirtual(clazz, method.getName(), MethodType.methodType(method.getReturnType())),
+                    MethodType.methodType(method.getReturnType(), clazz));
+            MethodHandle factory = site.getTarget();
+            getter = (Function) factory.invoke();
+        } catch (Throwable t) {
+            throw new RuntimeException("Can not create getter", t);
         }
+
+        return getter;
     }
 
-    public Object invokeGetter(Object object, String property) {
-        final Method method = getters.get(property);
-        if (method == null) {
-            throw new IllegalArgumentException(
-                    String.format("Can't find getter for property '%s' at %s", property, object.getClass()));
-        }
+    protected BiConsumer createSetter(Class clazz, Method method) {
+        Class valueType = method.getParameterTypes()[0];
+        BiConsumer setter;
         try {
-            return method.invoke(object);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+            MethodHandles.Lookup caller = MethodHandles.lookup();
+            CallSite site = LambdaMetafactory.metafactory(caller,
+                    "accept",
+                    MethodType.methodType(BiConsumer.class),
+                    MethodType.methodType(void.class, Object.class, Object.class),
+                    caller.findVirtual(clazz, method.getName(), MethodType.methodType(method.getReturnType(), method.getParameterTypes()[0])),
+                    MethodType.methodType(void.class, clazz, valueType.isPrimitive() ? primitivesToObjects.get(valueType) : valueType));
+            MethodHandle factory = site.getTarget();
+            setter = (BiConsumer) factory.invoke();
+        } catch (Throwable t) {
+            throw new RuntimeException("Can not create setter", t);
+        }
+
+        return setter;
+    }
+
+    /**
+     * @param property name of property associated with getter
+     * @return lambda {@link Function} which represents getter
+     * @throws IllegalArgumentException if getter for property not found
+     */
+    public Function getGetterNN(String property) {
+        Function getter = getters.get(property);
+        if (getter == null) {
+            throw new IllegalArgumentException(
+                    String.format("Can't find getter for property '%s' at %s", property, className));
+        }
+        return getter;
+    }
+
+    /**
+     * @param property name of property associated with setter
+     * @return lambda {@link BiConsumer} which represents setter
+     * @throws IllegalArgumentException if setter for property not found
+     */
+    public BiConsumer getSetterNN(String property) {
+        BiConsumer setter = setters.get(property);
+        if (setter == null) {
+            throw new IllegalArgumentException(
+                    String.format("Can't find setter for property '%s' at %s", property, className));
+        }
+        return setter;
+    }
+
+    protected class SettersHolder implements BiConsumer {
+
+        protected Map<Class, BiConsumer> setters = new HashMap<>();
+        protected BiConsumer defaultSetter;
+        protected String property;
+
+        SettersHolder(String property, Class defaultArgType, BiConsumer defaultSetter) {
+            this.property = property;
+            this.defaultSetter = defaultSetter;
+            this.setters.put(defaultArgType, defaultSetter);
+        }
+
+        public void addSetter(Class argType, BiConsumer setter) {
+            setters.put(argType, setter);
+        }
+
+        @Override
+        public void accept(Object object, Object value) {
+            if (setters.size() == 1 || value == null) {
+                defaultSetter.accept(object, value);
+                return;
+            }
+            boolean setterNotFound = true;
+            for (Map.Entry<Class, BiConsumer> entry : setters.entrySet()) {
+                if (entry.getKey().isInstance(value)) {
+                    setterNotFound = false;
+                    entry.getValue().accept(object, value);
+                }
+            }
+            if (setterNotFound) {
+                throw new IllegalArgumentException(String.format(
+                        "Can't find setter for property '%s' at %s for value class: %s",
+                        property,
+                        className,
+                        value.getClass().getSimpleName()
+                ));
+            }
         }
     }
 }

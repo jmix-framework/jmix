@@ -35,6 +35,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import org.eclipse.persistence.config.CascadePolicy;
 import org.eclipse.persistence.config.HintValues;
 import org.eclipse.persistence.config.QueryHints;
+import org.eclipse.persistence.internal.helper.ClassConstants;
+import org.eclipse.persistence.internal.helper.ConversionManager;
 import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.eclipse.persistence.internal.jpa.EJBQueryImpl;
 import org.eclipse.persistence.jpa.JpaQuery;
@@ -50,6 +52,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.Parameter;
 import javax.persistence.TemporalType;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -783,6 +786,8 @@ public class QueryImpl<T> implements TypedQuery<T> {
         protected Object value;
         protected TemporalType temporalType;
 
+        private Class<?> actualParamType;
+
         public Param(Object name, Object value) {
             this.name = name;
             this.value = value;
@@ -801,6 +806,9 @@ public class QueryImpl<T> implements TypedQuery<T> {
                 else
                     query.setParameter((String) name, (Date) value, temporalType);
             } else {
+                if (value instanceof Date && !isValidParamType(query))
+                    convertValue();
+
                 if (name instanceof Integer)
                     query.setParameter((int) name, value);
                 else
@@ -810,6 +818,44 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
         public boolean isNamedParam() {
             return name instanceof String;
+        }
+
+        protected boolean isValidParamType(JpaQuery query) {
+            if (value == null || query.getDatabaseQuery() == null)
+                return true;
+
+            int index = query.getDatabaseQuery().getArguments().indexOf(String.valueOf(name));
+            if (index == -1)
+                return true;
+            actualParamType = query.getDatabaseQuery().getArgumentTypes().get(index);
+
+            if (actualParamType == null)
+                return true;
+
+            return actualParamType.isAssignableFrom(value.getClass());
+        }
+
+        protected void convertValue() {
+            if (value == null || actualParamType == null || actualParamType.isAssignableFrom(value.getClass()))
+                return;
+
+            // Since ConversionManager incorrectly converts Date into LocalDate or LocalDateTime
+            if (value instanceof java.util.Date) {
+                if (actualParamType == ClassConstants.TIME_LDATE) {
+                    java.util.Date date = (java.util.Date) value;
+                    value = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                } else if (actualParamType == ClassConstants.TIME_LDATETIME) {
+                    java.util.Date date = (java.util.Date) value;
+                    value = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                }
+            } else {
+                ConversionManager conversionManager = ConversionManager.getDefaultManager();
+                try {
+                    value = conversionManager.convertObject(value, actualParamType);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
         }
 
         @Override

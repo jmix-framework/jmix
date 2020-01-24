@@ -22,9 +22,10 @@ import java.util.Arrays;
 /**
  * Executes SQL queries with pluggable factories for handling
  * {@code ResultSet}s.  This class is thread safe.
- *
+ * @deprecated Use Spring JdbcTemplate instead
  * @see ResultSetHandler
  */
+@Deprecated
 public class QueryRunner {
 
     /**

@@ -42,6 +42,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-spring'
     testImplementation project(':modules:data')
     testImplementation 'org.apache.commons:commons-dbcp2'
+    testImplementation 'org.springframework:spring-orm'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
 }

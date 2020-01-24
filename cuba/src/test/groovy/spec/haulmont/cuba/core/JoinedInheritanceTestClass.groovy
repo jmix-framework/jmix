@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.model.selfinherited.ChildEntityDetail
 import com.haulmont.cuba.core.model.selfinherited.ChildEntityReferrer
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
+import org.springframework.jdbc.core.JdbcTemplate
 
 import javax.inject.Inject
 
@@ -35,12 +35,12 @@ class JoinedInheritanceTestClass extends CoreTestSpecification {
 
 
     void cleanup() {
-        def runner = new QueryRunner(persistence.dataSource)
-        runner.update('delete from TEST_CHILD_ENTITY_DETAIL')
-        runner.update('delete from TEST_ROOT_ENTITY_DETAIL')
-        runner.update('delete from TEST_CHILD_ENTITY_REFERRER')
-        runner.update('delete from TEST_CHILD_ENTITY')
-        runner.update('delete from TEST_ROOT_ENTITY')
+        def jdbcTemplate = new JdbcTemplate(persistence.dataSource)
+        jdbcTemplate.update('delete from TEST_CHILD_ENTITY_DETAIL')
+        jdbcTemplate.update('delete from TEST_ROOT_ENTITY_DETAIL')
+        jdbcTemplate.update('delete from TEST_CHILD_ENTITY_REFERRER')
+        jdbcTemplate.update('delete from TEST_CHILD_ENTITY')
+        jdbcTemplate.update('delete from TEST_ROOT_ENTITY')
     }
 
     def "store master-detail"() {

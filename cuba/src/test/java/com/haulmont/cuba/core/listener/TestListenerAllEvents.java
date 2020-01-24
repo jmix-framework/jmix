@@ -19,14 +19,13 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.Server;
 import io.jmix.core.AppBeans;
-import io.jmix.core.commons.db.ArrayHandler;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.listener.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,16 +44,8 @@ public class TestListenerAllEvents implements
     public static final List<String> events = new ArrayList<>();
 
     private Object[] selectObjectFromDb(String sql, Server entity) {
-        QueryRunner queryRunner = new QueryRunner();
-        try {
-            return queryRunner.query(persistence.getEntityManager().getConnection(),
-                    sql,
-                    new Object[]{entity.getId().toString()},
-                    new ArrayHandler()
-            );
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        return jdbcTemplate.queryForObject(sql, Object[].class, entity.getId().toString());
     }
 
     @Override

@@ -21,12 +21,12 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.inject.Inject;
 
@@ -54,8 +54,8 @@ public class AfterCompleteTransactionListenerTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        runner.update("delete from TEST_USER");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        jdbcTemplate.update("delete from TEST_USER");
         TestSupport.deleteRecord(companyGroup);
     }
 

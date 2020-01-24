@@ -18,14 +18,13 @@ package com.haulmont.cuba.core.tx_listener;
 
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.EntityStates;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.core.entity.Entity;
 import io.jmix.data.Persistence;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.Collection;
 
 import static org.junit.Assert.assertFalse;
@@ -76,12 +75,8 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
         }
 
         if (user != null) {
-            try {
-                QueryRunner runner = new QueryRunner(persistence.getDataSource());
-                runner.update("update TEST_USER set NAME = 'updated by TestAfterCompleteTxListener' where ID = ?", user.getId().toString());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+            jdbcTemplate.update("update TEST_USER set NAME = 'updated by TestAfterCompleteTxListener' where ID = ?", user.getId().toString());
         }
     }
 
@@ -96,12 +91,8 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
 
         if (user != null) {
             assertEquals("updated by testRollback", user.getName());
-            try {
-                QueryRunner runner = new QueryRunner(persistence.getDataSource());
-                runner.update("update TEST_USER set NAME = 'updated by TestAfterCompleteTxListener' where ID = ?", user.getId().toString());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+            jdbcTemplate.update("update TEST_USER set NAME = 'updated by TestAfterCompleteTxListener' where ID = ?", user.getId().toString());
         }
     }
 

@@ -18,9 +18,12 @@ package spec.haulmont.cuba.core.deletepolicy
 
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_ManyToMany_First
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
-import io.jmix.core.*
-import io.jmix.core.commons.db.QueryRunner
+import io.jmix.core.DataManager
+import io.jmix.core.LoadContext
+import io.jmix.core.Metadata
+import io.jmix.core.View
 import io.jmix.data.Persistence
+import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -56,14 +59,13 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
 
             root.setManytomany(list)
         })
-        dataManager = AppBeans.get(DataManager.class)
     }
 
     void cleanup() {
-        def runner = new QueryRunner(persistence.dataSource)
-        runner.update('delete from TEST_DELETE_POLICY_ROOT_DELETE_POLICY_MANY_TO_MANY_FIRST_LINK')
-        runner.update('delete from TEST_DELETE_POLICY_MANY_TO_MANY_FIRST')
-        runner.update('delete from TEST_DELETE_POLICY_ROOT')
+        def jdbcTemplate = new JdbcTemplate(persistence.dataSource)
+        jdbcTemplate.update('delete from TEST_DELETE_POLICY_ROOT_DELETE_POLICY_MANY_TO_MANY_FIRST_LINK')
+        jdbcTemplate.update('delete from TEST_DELETE_POLICY_MANY_TO_MANY_FIRST')
+        jdbcTemplate.update('delete from TEST_DELETE_POLICY_ROOT')
     }
 
     def "unlink @ManyToMany property if it is owning side and is loaded"() {

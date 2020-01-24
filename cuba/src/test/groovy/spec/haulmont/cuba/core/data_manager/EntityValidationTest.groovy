@@ -20,9 +20,9 @@ import com.haulmont.cuba.core.model.beanvalidation.EmbeddedValidatedEntity
 import com.haulmont.cuba.core.model.beanvalidation.ValidatedEntity
 import io.jmix.core.CommitContext
 import io.jmix.core.DataManager
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.core.validation.EntityValidationException
 import io.jmix.data.Persistence
+import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -39,8 +39,8 @@ class EntityValidationTest extends CoreTestSpecification {
 
 
     void cleanup() {
-        def runner = new QueryRunner(persistence.dataSource)
-        runner.update('delete from TEST_VALIDATED_ENTITY')
+        def jdbcTemplate = new JdbcTemplate(persistence.dataSource)
+        jdbcTemplate.update('delete from TEST_VALIDATED_ENTITY')
     }
 
     def "ALWAYS_VALIDATE test"() {

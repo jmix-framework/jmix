@@ -22,9 +22,9 @@ import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeItem
 import io.jmix.core.AppBeans
 import io.jmix.core.EntityStates
 import io.jmix.core.Metadata
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
 import io.jmix.data.impl.EntityListenerManager
+import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -51,10 +51,10 @@ class JpaCascadeTest extends CoreTestSpecification {
         AppBeans.get(EntityListenerManager).removeListener(JpaCascadeBar, TestJpaCascadeBarListener)
         AppBeans.get(EntityListenerManager).removeListener(JpaCascadeItem, TestJpaCascadeItemListener)
 
-        def runner = new QueryRunner(persistence.getDataSource())
-        runner.update('delete from TEST_JPA_CASCADE_ITEM')
-        runner.update('delete from TEST_JPA_CASCADE_FOO')
-        runner.update('delete from TEST_JPA_CASCADE_BAR')
+        def jdbcTemplate = new JdbcTemplate(persistence.getDataSource())
+        jdbcTemplate.update('delete from TEST_JPA_CASCADE_ITEM')
+        jdbcTemplate.update('delete from TEST_JPA_CASCADE_FOO')
+        jdbcTemplate.update('delete from TEST_JPA_CASCADE_BAR')
     }
 
     def "many-to-one reference with cascade"() {

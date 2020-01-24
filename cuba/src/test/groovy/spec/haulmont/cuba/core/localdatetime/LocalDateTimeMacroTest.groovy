@@ -21,8 +21,8 @@ import io.jmix.core.AppBeans
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.View
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
+import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -67,8 +67,8 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        def runner = new QueryRunner(persistence.dataSource)
-        runner.update('delete from TEST_LOCAL_DATE_TIME_ENTITY')
+        def jdbcTemplate = new JdbcTemplate(persistence.dataSource)
+        jdbcTemplate.update('delete from TEST_LOCAL_DATE_TIME_ENTITY')
     }
 
     //----------@between--------

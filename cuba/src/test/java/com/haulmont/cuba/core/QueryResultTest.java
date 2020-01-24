@@ -24,8 +24,6 @@ import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.View;
-import io.jmix.core.commons.db.MapListHandler;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.core.entity.Entity;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
@@ -165,8 +163,8 @@ public class QueryResultTest {
         assertEquals(5, entities.size());
     }
 
-    private List<Map<String, Object>> getQueryResults() throws SQLException {
-        QueryRunner queryRunner = new QueryRunner(persistence.getDataSource());
-        return queryRunner.query("select * from SYS_QUERY_RESULT", new MapListHandler());
+    private List<Map<String, Object>> getQueryResults() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        return jdbcTemplate.queryForList("select * from SYS_QUERY_RESULT");
     }
 }

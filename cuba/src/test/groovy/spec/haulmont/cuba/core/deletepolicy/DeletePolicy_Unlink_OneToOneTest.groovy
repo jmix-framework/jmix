@@ -22,8 +22,8 @@ import io.jmix.core.DataManager
 import io.jmix.core.LoadContext
 import io.jmix.core.Metadata
 import io.jmix.core.View
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
+import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -53,9 +53,9 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        def runner = new QueryRunner(persistence.dataSource)
-        runner.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_SECOND')
-        runner.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_FIRST')
+        def jdbcTemplate = new JdbcTemplate(persistence.dataSource)
+        jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_SECOND')
+        jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_FIRST')
     }
 
     def "unlink @OneToOny property if it isn't owning side"() {

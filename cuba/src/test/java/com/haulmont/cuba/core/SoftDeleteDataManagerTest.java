@@ -21,13 +21,12 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
-import io.jmix.core.commons.db.ArrayHandler;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.inject.Inject;
 
@@ -70,8 +69,8 @@ public class SoftDeleteDataManagerTest {
         commitContext.setSoftDeletion(false);
         dataManager.commit(commitContext);
 
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        Object[] row = runner.query("select count(*) from test_user where id = ?", user.getId().toString(), new ArrayHandler());
-        assertEquals(0, ((Number) row[0]).intValue());
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        Long count = jdbcTemplate.queryForObject("select count(*) from test_user where id = ?", Long.class, user.getId().toString());
+        assertEquals(0, count);
     }
 }

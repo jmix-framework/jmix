@@ -23,7 +23,6 @@ import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchMode;
 import io.jmix.core.Metadata;
 import io.jmix.core.View;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Query;
@@ -35,6 +34,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.inject.Inject;
 import java.sql.SQLException;
@@ -209,16 +210,16 @@ public class SoftDeleteTest {
             em.remove(constraint);
 
             //remove from db to prevent cascade delete user role
-            QueryRunner queryRunner = new QueryRunner();
-            queryRunner.update(em.getConnection(), "update TEST_ROLE set DELETE_TS = CREATE_TS, DELETED_BY = CREATED_BY where name = 'roleToBeDeleted3'");
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+            jdbcTemplate.update("update TEST_ROLE set DELETE_TS = CREATE_TS, DELETED_BY = CREATED_BY where name = 'roleToBeDeleted3'");
 
             tx.commit();
         } finally {
             tx.end();
         }
 
-        QueryRunner queryRunner = new QueryRunner(persistence.getDataSource());
-        queryRunner.update("update TEST_USER set DELETE_TS = current_timestamp, DELETED_BY = 'admin' where ID = ?", new Object[]{user2Id.toString()});
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        jdbcTemplate.update("update TEST_USER set DELETE_TS = current_timestamp, DELETED_BY = 'admin' where ID = ?", user2Id.toString());
     }
 
     @AfterEach
@@ -308,8 +309,8 @@ public class SoftDeleteTest {
     public void testManyToOne() throws SQLException {
         System.out.println("===================== BEGIN testManyToOne =====================");
 
-        QueryRunner queryRunner = new QueryRunner(persistence.getDataSource());
-        queryRunner.update("update TEST_GROUP set DELETE_TS = current_timestamp, DELETED_BY = 'admin' where ID = ?", new Object[]{groupId.toString()});
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        jdbcTemplate.update("update TEST_GROUP set DELETE_TS = current_timestamp, DELETED_BY = 'admin' where ID = ?", groupId.toString());
 
         // test without view
         try (Transaction tx = persistence.createTransaction()) {
@@ -380,8 +381,8 @@ public class SoftDeleteTest {
     public void testManyToOne_InnerJoinOnClause() throws SQLException {
         System.out.println("===================== BEGIN testManyToOne =====================");
 
-        QueryRunner queryRunner = new QueryRunner(persistence.getDataSource());
-        queryRunner.update("update TEST_GROUP set DELETE_TS = current_timestamp, DELETED_BY = 'admin' where ID = ?", new Object[]{groupId.toString()});
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        jdbcTemplate.update("update TEST_GROUP set DELETE_TS = current_timestamp, DELETED_BY = 'admin' where ID = ?", groupId.toString());
 
         // test without view
         try (Transaction tx = persistence.createTransaction()) {

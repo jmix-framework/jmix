@@ -63,8 +63,7 @@ public class TestListener implements
 //            q.setParameter(1, "some other");
 //            q.setParameter(2, entity.getId());
 //            q.executeUpdate();
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(
-                new SingleConnectionDataSource(connection, true));
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("update TEST_SERVER set NAME = ? where ID = ?",
                 "some other", persistence.getDbTypeConverter().getSqlObject(entity.getId()));
     }

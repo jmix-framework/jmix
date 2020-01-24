@@ -22,9 +22,9 @@ import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
 import io.jmix.core.Metadata
 import io.jmix.core.View
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
 import io.jmix.data.PersistenceTools
+import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -63,10 +63,10 @@ class GetOldValueTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        def runner = new QueryRunner(persistence.dataSource)
-        runner.update('delete from TEST_ORDER_LINE')
-        runner.update('delete from TEST_ORDER')
-        runner.update('delete from TEST_CUSTOMER')
+        def jdbcTemplate = new JdbcTemplate(persistence.dataSource)
+        jdbcTemplate.update('delete from TEST_ORDER_LINE')
+        jdbcTemplate.update('delete from TEST_ORDER')
+        jdbcTemplate.update('delete from TEST_CUSTOMER')
     }
 
     def "test not changed attribute"() {

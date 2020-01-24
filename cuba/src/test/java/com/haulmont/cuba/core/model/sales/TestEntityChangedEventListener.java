@@ -17,8 +17,6 @@
 package com.haulmont.cuba.core.model.sales;
 
 import io.jmix.core.Id;
-import io.jmix.core.commons.db.ArrayHandler;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.core.entity.Entity;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
@@ -26,12 +24,12 @@ import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.event.EntityPersistingEvent;
 import io.jmix.data.listener.*;
 import org.springframework.context.event.EventListener;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.inject.Inject;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -160,15 +158,10 @@ public class TestEntityChangedEventListener implements
     private boolean isCommitted(Id<Order, UUID> entityId) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Boolean> future = executor.submit(() -> {
-            QueryRunner runner = new QueryRunner(persistence.getDataSource());
-            try {
-                Object[] row = runner.query("select id from TEST_ORDER where id = ?",
-                        entityId.getValue().toString(),
-                        new ArrayHandler());
-                return row != null;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+            List<Map<String, Object>> row = jdbcTemplate.queryForList("select id from TEST_ORDER where id = ?",
+                    entityId.getValue().toString());
+            return !row.isEmpty();
         });
         try {
             return future.get(200L, TimeUnit.MILLISECONDS);

@@ -20,11 +20,9 @@ import com.haulmont.cuba.core.model.SeveralFetchGroups_Tariff;
 import com.haulmont.cuba.core.model.SeveralFetchGroups_TariffVersion;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.AppBeans;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -32,6 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.inject.Inject;
 import java.sql.SQLException;
@@ -46,7 +45,7 @@ public class SeveralFetchGroupsTest {
     private Metadata metadata;
     @Inject
     private DataManager dataManager;
-    
+
     private UUID tariffId1, tariffId2_1, tariffId3_1, tariffId4_2;
     private UUID tariffVersionId1, tariffVersionId2, tariffVersionId3;
 
@@ -111,8 +110,8 @@ public class SeveralFetchGroupsTest {
 
     @AfterEach
     public void tearDown() throws SQLException {
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        runner.update("update TEST_SEVERAL_FETCH_GROUPS_TARIFF set ACTIVE_VERSION_ID = null");
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        jdbcTemplate.update("update TEST_SEVERAL_FETCH_GROUPS_TARIFF set ACTIVE_VERSION_ID = null");
         TestSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF_VERSION", tariffVersionId3, tariffVersionId2, tariffVersionId1);
         TestSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF", tariffId4_2, tariffId3_1, tariffId2_1, tariffId1);
     }

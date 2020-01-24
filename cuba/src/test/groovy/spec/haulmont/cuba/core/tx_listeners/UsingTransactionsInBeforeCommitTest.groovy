@@ -20,9 +20,9 @@ import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.tx_listener.TestBeforeCommitTxListener
 import io.jmix.core.Metadata
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.data.Persistence
 import io.jmix.data.Transaction
+import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -46,8 +46,8 @@ class UsingTransactionsInBeforeCommitTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        QueryRunner runner = new QueryRunner(persistence.getDataSource())
-        runner.update("delete from TEST_USER")
+        def jdbcTemplate = new JdbcTemplate(persistence.getDataSource())
+        jdbcTemplate.update("delete from TEST_USER")
         deleteRecord(companyGroup)
     }
 

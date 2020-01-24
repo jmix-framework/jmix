@@ -27,7 +27,6 @@ import com.haulmont.cuba.core.model.selfinherited.RootEntityDetail;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.data.*;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.junit.jupiter.api.AfterEach;
@@ -37,8 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -443,15 +442,8 @@ public class ViewTest {
 
     private long getCurrentUpdateTs() {
         String sql = "select UPDATE_TS from TEST_USER where ID = '" + userId.toString() + "'";
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        try {
-            return runner.query(sql, rs -> {
-                rs.next();
-                return rs.getTimestamp("UPDATE_TS").getTime();
-            });
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        return Objects.requireNonNull(jdbcTemplate.queryForObject(sql, Date.class)).getTime();
     }
 
     @Test

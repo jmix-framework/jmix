@@ -20,7 +20,6 @@ import io.jmix.core.AppBeans
 import io.jmix.core.EntityStates
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.TimeSource
-import io.jmix.core.commons.db.QueryRunner
 import io.jmix.core.entity.*
 import io.jmix.data.JmixDataConfiguration
 import io.jmix.data.Persistence
@@ -29,6 +28,7 @@ import io.jmix.ui.test.entity.TestNullableIdEntity
 import io.jmix.ui.test.entity.TestNullableIdItemEntity
 import org.eclipse.persistence.internal.queries.EntityFetchGroup
 import org.eclipse.persistence.queries.FetchGroupTracker
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -40,8 +40,10 @@ import static io.jmix.core.impl.StandardSerialization.serialize
 @ContextConfiguration(classes = [JmixCoreConfiguration, JmixUiConfiguration, JmixDataConfiguration, DataContextTestConfiguration])
 class DataContextSpec extends Specification {
 
-    @Inject EntityStates entityStates
-    @Inject Persistence persistence
+    @Inject
+    EntityStates entityStates
+    @Inject
+    Persistence persistence
 
     void setup() {
         persistence.createTransaction().commit()
@@ -51,23 +53,23 @@ class DataContextSpec extends Specification {
         TestNullableIdEntity.sequence.set(0L)
         TestNullableIdItemEntity.sequence.set(0L)
 
-        def runner = new QueryRunner(persistence.getDataSource())
-        runner.update('delete from TEST_NULLABLE_ID_ITEM_ENTITY')
-        runner.update('delete from TEST_NULLABLE_ID_ENTITY')
-        runner.update('delete from TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY')
-        runner.update('delete from TEST_IDENTITY_ID_ENTITY')
-        runner.update('delete from TEST_STRING_ID_ENTITY')
-        runner.update('delete from TEST_ORDER_LINE_PARAM')
-        runner.update('delete from TEST_ORDER_LINE')
-        runner.update('delete from TEST_PRODUCT_TAG_LINK')
-        runner.update('delete from TEST_PRODUCT')
-        runner.update('delete from TEST_PRODUCT_TAG')
-        runner.update('delete from TEST_ORDER')
-        runner.update('delete from TEST_CUSTOMER')
-        runner.update('delete from SEC_USER_ROLE')
-        runner.update('delete from SEC_USER')
-        runner.update('delete from SEC_ROLE')
-        runner.update('delete from SEC_GROUP')
+        def jdbcTemplate = new JdbcTemplate(persistence.getDataSource())
+        jdbcTemplate.update('delete from TEST_NULLABLE_ID_ITEM_ENTITY')
+        jdbcTemplate.update('delete from TEST_NULLABLE_ID_ENTITY')
+        jdbcTemplate.update('delete from TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY')
+        jdbcTemplate.update('delete from TEST_IDENTITY_ID_ENTITY')
+        jdbcTemplate.update('delete from TEST_STRING_ID_ENTITY')
+        jdbcTemplate.update('delete from TEST_ORDER_LINE_PARAM')
+        jdbcTemplate.update('delete from TEST_ORDER_LINE')
+        jdbcTemplate.update('delete from TEST_PRODUCT_TAG_LINK')
+        jdbcTemplate.update('delete from TEST_PRODUCT')
+        jdbcTemplate.update('delete from TEST_PRODUCT_TAG')
+        jdbcTemplate.update('delete from TEST_ORDER')
+        jdbcTemplate.update('delete from TEST_CUSTOMER')
+        jdbcTemplate.update('delete from SEC_USER_ROLE')
+        jdbcTemplate.update('delete from SEC_USER')
+        jdbcTemplate.update('delete from SEC_ROLE')
+        jdbcTemplate.update('delete from SEC_GROUP')
     }
 
     void makeDetached(def entity) {

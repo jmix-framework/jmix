@@ -15,26 +15,26 @@
  */
 package io.jmix.data.impl;
 
+import io.jmix.core.Metadata;
+import io.jmix.core.cluster.ClusterListenerAdapter;
+import io.jmix.core.cluster.ClusterManager;
+import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.impl.ConfigStorage;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import io.jmix.data.TypedQuery;
 import io.jmix.data.entity.ConfigEntity;
-import io.jmix.core.Metadata;
-import io.jmix.core.cluster.ClusterListenerAdapter;
-import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.commons.db.QueryRunner;
-import io.jmix.core.commons.db.ResultSetHandler;
-import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.impl.ConfigStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.Serializable;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +44,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Supports configuration parameters framework functionality.
- *
  */
 @Component(ConfigStorage.NAME)
 public class ConfigStorageImpl implements ConfigStorage {
@@ -68,7 +67,7 @@ public class ConfigStorageImpl implements ConfigStorage {
     private static class InvalidateCacheMsg implements Serializable {
         private static final long serialVersionUID = -3116358584797500962L;
     }
-    
+
     @Inject
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
@@ -79,7 +78,7 @@ public class ConfigStorageImpl implements ConfigStorage {
             }
         });
     }
-    
+
     @Override
     public void clearCache() {
         internalClearCache();
@@ -126,20 +125,18 @@ public class ConfigStorageImpl implements ConfigStorage {
                     log.info("Loading DB-stored app properties cache");
                     persistence.runInTransaction(em -> {
                         // Don't use transactions here because of loop possibility from EntityLog
-                        QueryRunner queryRunner = new QueryRunner();
                         try {
-                            cache = queryRunner.query(em.getConnection(),"select NAME, VALUE_ from SYS_CONFIG",
-                                    new ResultSetHandler<Map<String, String>>() {
-                                        @Override
-                                        public Map<String, String> handle(ResultSet rs) throws SQLException {
-                                            HashMap<String, String> map = new HashMap<>();
-                                            while (rs.next()) {
-                                                map.put(rs.getString(1), rs.getString(2));
-                                            }
-                                            return map;
+                            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+                            cache = jdbcTemplate.query("select NAME, VALUE_ from SYS_CONFIG", new Object[]{},
+                                    (ResultSetExtractor<Map<String, String>>) rs -> {
+                                        HashMap<String, String> map = new HashMap<>();
+                                        while (rs.next()) {
+                                            map.put(rs.getString(1), rs.getString(2));
                                         }
-                                    });
-                        } catch (SQLException e) {
+                                        return map;
+                                    }
+                            );
+                        } catch (DataAccessException e) {
                             throw new RuntimeException("Error loading DB-stored app properties cache", e);
                         }
                     });

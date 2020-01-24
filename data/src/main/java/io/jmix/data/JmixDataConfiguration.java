@@ -19,6 +19,7 @@ package io.jmix.data;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.impl.DataPersistentAttributesLoadChecker;
+import io.jmix.data.impl.EclipseLinkTransactionManager;
 import io.jmix.data.impl.JmixEclipseLinkJpaVendorAdapter;
 import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
@@ -60,7 +61,7 @@ public class JmixDataConfiguration {
 
     @Bean
     protected JpaTransactionManager transactionManager(DataSource dataSource, EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        JpaTransactionManager transactionManager = new EclipseLinkTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         transactionManager.setDataSource(dataSource);
         return transactionManager;

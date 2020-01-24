@@ -15,11 +15,7 @@
  */
 package io.jmix.data.impl;
 
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Query;
 import io.jmix.core.*;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.OnDelete;
@@ -27,13 +23,18 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.data.EntityManager;
+import io.jmix.data.Persistence;
+import io.jmix.data.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.*;
 
 @Component(DeletePolicyProcessor.NAME)
@@ -203,23 +204,23 @@ public class DeletePolicyProcessor {
 
     protected void hardDeleteNotLoadedReference(Entity entity, MetaProperty property, Entity reference) {
         ((PersistenceImpl) persistence).addBeforeCommitAction(() -> {
-            QueryRunner queryRunner = new QueryRunner();
             try {
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
                 String column = metadataTools.getDatabaseColumn(property);
                 if (column != null) { // is null for mapped-by property
                     String updateMasterSql = "update " + metadataTools.getDatabaseTable(metaClass)
                             + " set " + column + " = null where "
                             + metadataTools.getPrimaryKeyName(metaClass) + " = ?";
                     log.debug("Hard delete un-fetched reference: {}, bind: [{}]", updateMasterSql, entity.getId());
-                    queryRunner.update(entityManager.getConnection(), updateMasterSql, persistence.getDbTypeConverter().getSqlObject(entity.getId()));
+                    jdbcTemplate.update(updateMasterSql, persistence.getDbTypeConverter().getSqlObject(entity.getId()));
                 }
 
                 MetaClass refMetaClass = property.getRange().asClass();
                 String deleteRefSql = "delete from " + metadataTools.getDatabaseTable(refMetaClass) + " where "
                         + metadataTools.getPrimaryKeyName(refMetaClass) + " = ?";
                 log.debug("Hard delete un-fetched reference: {}, bind: [{}]", deleteRefSql, reference.getId());
-                queryRunner.update(entityManager.getConnection(), deleteRefSql, persistence.getDbTypeConverter().getSqlObject(reference.getId()));
-            } catch (SQLException e) {
+                jdbcTemplate.update(deleteRefSql, persistence.getDbTypeConverter().getSqlObject(reference.getId()));
+            } catch (DataAccessException e) {
                 throw new RuntimeException("Error processing deletion of " + entity, e);
             }
         });
@@ -255,9 +256,9 @@ public class DeletePolicyProcessor {
                     metadataTools.getPrimaryKeyName(entityMetaClass));
             try {
                 log.debug("Set reference to null: {}, bind: [{}]", sql, entity.getId());
-                QueryRunner queryRunner = new QueryRunner();
-                queryRunner.update(entityManager.getConnection(), sql, persistence.getDbTypeConverter().getSqlObject(entity.getId()));
-            } catch (SQLException e) {
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+                jdbcTemplate.update(sql, persistence.getDbTypeConverter().getSqlObject(entity.getId()));
+            } catch (DataAccessException e) {
                 throw new RuntimeException("Error processing deletion of " + entity, e);
             }
         });

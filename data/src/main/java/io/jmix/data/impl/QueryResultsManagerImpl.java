@@ -16,21 +16,22 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
-import io.jmix.data.*;
-import io.jmix.data.persistence.DbTypeConverter;
 import io.jmix.core.*;
 import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.commons.db.QueryRunner;
 import io.jmix.core.compatibility.AppContext;
+import io.jmix.core.security.UserSession;
+import io.jmix.core.security.UserSessionSource;
 import io.jmix.core.security.UserSessions;
+import io.jmix.data.*;
+import io.jmix.data.persistence.DbTypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -177,23 +178,22 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             } else {
                 columnName = "ENTITY_ID";
             }
-            QueryRunner runner = new QueryRunner();
-            try {
-                String userSessionIdStr = converter.getSqlObject(userSessionId).toString(); // assuming that UUID can be passed to query as string in all databases
-                String sql = String.format("insert into SYS_QUERY_RESULT (SESSION_ID, QUERY_KEY, %s) values ('%s', %s, ?)",
-                        columnName, userSessionIdStr, queryKey);
-                int[] paramTypes = new int[]{converter.getSqlType(idFromList.getClass())};
-                for (int i = 0; i < idList.size(); i += BATCH_SIZE) {
-                    @SuppressWarnings("unchecked")
-                    List<UUID> sublist = idList.subList(i, Math.min(i + BATCH_SIZE, idList.size()));
-                    Object[][] params = new Object[sublist.size()][1];
-                    for (int j = 0; j < sublist.size(); j++) {
-                        params[j][0] = converter.getSqlObject(sublist.get(j));
-                    }
-                    runner.batch(em.getConnection(), sql, params, paramTypes);
+
+            String userSessionIdStr = converter.getSqlObject(userSessionId).toString(); // assuming that UUID can be passed to query as string in all databases
+            String sql = String.format("insert into SYS_QUERY_RESULT (SESSION_ID, QUERY_KEY, %s) values ('%s', %s, ?)",
+                    columnName, userSessionIdStr, queryKey);
+            int[] paramTypes = new int[]{converter.getSqlType(idFromList.getClass())};
+            for (int i = 0; i < idList.size(); i += BATCH_SIZE) {
+                @SuppressWarnings("unchecked")
+                List<UUID> sublist = idList.subList(i, Math.min(i + BATCH_SIZE, idList.size()));
+                List<Object[]> params = new ArrayList<>(sublist.size());
+                for (int j = 0; j < sublist.size(); j++) {
+                    Object[] row = new Object[1];
+                    row[0] = sublist.get(j);
+                    params.add(row);
                 }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+                jdbcTemplate.batchUpdate(sql, params, paramTypes);
             }
             log.debug("Done in " + (System.currentTimeMillis() - start) + "ms: " + logMsg);
 
@@ -215,27 +215,20 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
         String sql = "delete from SYS_QUERY_RESULT where SESSION_ID = '"
                 + userSessionIdStr + "' and QUERY_KEY = " + queryKey;
 
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        try {
-            runner.update(sql);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        jdbcTemplate.update(sql);
+
         log.debug("Done in " + (System.currentTimeMillis() - start) + "ms : " + logMsg);
     }
 
     @Override
     public void deleteForCurrentSession() {
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
-        try {
-            DbTypeConverter converter = persistence.getDbTypeConverter();
-            UUID userSessionId = userSessionSource.getUserSession().getId();
-            String userSessionIdStr = converter.getSqlObject(userSessionId).toString();
-            runner.update("delete from SYS_QUERY_RESULT where SESSION_ID = '"
-                    + userSessionIdStr + "'");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        DbTypeConverter converter = persistence.getDbTypeConverter();
+        UUID userSessionId = userSessionSource.getUserSession().getId();
+        String userSessionIdStr = converter.getSqlObject(userSessionId).toString();
+        jdbcTemplate.update("delete from SYS_QUERY_RESULT where SESSION_ID = '"
+                + userSessionIdStr + "'");
     }
 
     @Override
@@ -283,10 +276,10 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     protected void delete(List<Long> ids) {
         log.debug("Deleting " + ids.size() + " records");
         String str = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
-        QueryRunner runner = new QueryRunner(persistence.getDataSource());
         try {
-            runner.update("delete from SYS_QUERY_RESULT where ID in (" + str + ")");
-        } catch (SQLException e) {
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+            jdbcTemplate.update("delete from SYS_QUERY_RESULT where ID in (" + str + ")");
+        } catch (DataAccessException e) {
             throw new RuntimeException("Error deleting query result records", e);
         }
     }

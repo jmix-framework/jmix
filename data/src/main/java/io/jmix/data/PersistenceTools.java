@@ -16,19 +16,18 @@
 
 package io.jmix.data;
 
+import io.jmix.core.EntityStates;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.commons.db.QueryRunner;
+import io.jmix.core.View;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.entity.BaseEntityInternalAccess;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.SoftDelete;
-import io.jmix.core.EntityStates;
-import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
@@ -45,13 +44,13 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.changesets.ChangeRecord;
 import org.eclipse.persistence.sessions.changesets.CollectionChangeRecord;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -381,19 +380,15 @@ public class PersistenceTools {
      * <p>
      * Should be used only in tests or in other non-standard situations.
      *
-     * @param table table name
+     * @param table         table name
      * @param primaryKeyCol PK column name
-     * @param ids PK values of the records to delete
+     * @param ids           PK values of the records to delete
      */
     public void deleteRecord(String table, String primaryKeyCol, Object... ids) {
         for (Object id : ids) {
             String sql = "delete from " + table + " where " + primaryKeyCol + " = '" + id.toString() + "'";
-            QueryRunner runner = new QueryRunner(persistence.getDataSource());
-            try {
-                runner.update(sql);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+            jdbcTemplate.update(sql);
         }
     }
 

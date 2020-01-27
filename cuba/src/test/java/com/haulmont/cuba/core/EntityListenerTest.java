@@ -83,6 +83,8 @@ public class EntityListenerTest {
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_SERVER");
+        jdbcTemplate.update("delete from TEST_USER");
+        jdbcTemplate.update("delete from TEST_GROUP");
     }
 
     @Test

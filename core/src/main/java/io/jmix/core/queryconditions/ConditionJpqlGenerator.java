@@ -19,6 +19,7 @@ package io.jmix.core.queryconditions;
 import com.google.common.base.Strings;
 import io.jmix.core.QueryTransformer;
 import io.jmix.core.QueryTransformerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -85,20 +86,17 @@ public class ConditionJpqlGenerator {
             else {
                 StringBuilder sb = new StringBuilder();
 
-                if (conditions.size() > 1)
-                    sb.append("(");
-
                 String op = logical.getType() == LogicalCondition.Type.AND ? " and " : " or ";
 
-                for (Iterator<Condition> it = conditions.iterator(); it.hasNext(); ) {
-                    Condition nextCondition = it.next();
-                    sb.append(generateWhere(nextCondition));
-                    if (it.hasNext())
-                        sb.append(op);
-                }
+                String where = conditions.stream().map(this::generateWhere)
+                        .filter(StringUtils::isNotBlank)
+                        .collect(Collectors.joining(op));
 
-                if (conditions.size() > 1)
-                    sb.append(")");
+                if (StringUtils.isNotBlank(where)) {
+                    sb.append("(")
+                            .append(where)
+                            .append(")");
+                }
 
                 return sb.toString();
             }

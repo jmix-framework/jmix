@@ -16,10 +16,13 @@
 
 package io.jmix.data.impl;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.Entity;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -137,8 +140,8 @@ public class OrmDataStore implements DataStore {
 
             // If maxResults=1 and the query is not by ID we should not use getSingleResult() for backward compatibility
             boolean singleResult = !(context.getQuery() != null
-                        && context.getQuery().getMaxResults() == 1
-                        && context.getQuery().getQueryString() != null)
+                    && context.getQuery().getMaxResults() == 1
+                    && context.getQuery().getQueryString() != null)
                     && context.getId() != null;
 
             View view = createRestrictedView(context);
@@ -274,7 +277,7 @@ public class OrmDataStore implements DataStore {
         return pkProperty == null || pkProperty.getRange().isClass();
     }
 
-    protected  <E extends Entity> List<E> loadListBySingleIds(LoadContext<E> context, EntityManager em, View view) {
+    protected <E extends Entity> List<E> loadListBySingleIds(LoadContext<E> context, EntityManager em, View view) {
         LoadContext<?> contextCopy = context.copy();
         contextCopy.setIds(Collections.emptyList());
 
@@ -404,148 +407,152 @@ public class OrmDataStore implements DataStore {
 //        List<BaseGenericIdEntity> identityEntitiesToStoreDynamicAttributes = new ArrayList<>();
 //        List<CategoryAttributeValue> attributeValuesToRemove = new ArrayList<>();
 
-        SavedEntitiesHolder savedEntitiesHolder;
+        SavedEntitiesHolder savedEntitiesHolder = null;
 
-        try (Transaction tx = getSaveTransaction(storeName, context.isJoinTransaction())) {
-            EntityManager em = persistence.getEntityManager(storeName);
+        try {
+            try (Transaction tx = getSaveTransaction(storeName, context.isJoinTransaction())) {
+                EntityManager em = persistence.getEntityManager(storeName);
 
-            checkPermissions(context);
+                checkPermissions(context);
 
-            if (!context.isSoftDeletion())
-                em.setSoftDeletion(false);
+                if (!context.isSoftDeletion())
+                    em.setSoftDeletion(false);
 
-            // todo dynamic attributes
-//            List<BaseGenericIdEntity> entitiesToStoreDynamicAttributes = new ArrayList<>();
+                // todo dynamic attributes
+                //            List<BaseGenericIdEntity> entitiesToStoreDynamicAttributes = new ArrayList<>();
 
-            // persist new
-            for (Entity entity : context.getCommitInstances()) {
-                if (entityStates.isNew(entity)) {
+                // persist new
+                for (Entity entity : context.getCommitInstances()) {
+                    if (entityStates.isNew(entity)) {
 
-                    if (isAuthorizationRequired(context)) {
-                        attributeSecurity.beforePersist(entity);
+                        if (isAuthorizationRequired(context)) {
+                            attributeSecurity.beforePersist(entity);
+                        }
+                        em.persist(entity);
+                        saved.add(entity);
+                        persisted.add(entity);
+
+                        if (isAuthorizationRequired(context))
+                            checkOperationPermitted(entity, ConstraintOperationType.CREATE);
+
+                        if (!context.isDiscardCommitted()) {
+                            View view = getViewFromContextOrNull(context, entity);
+                            entityFetcher.fetch(entity, view, true);
+                        }
+
+                        // todo dynamic attributes
+                        //                    if (entityHasDynamicAttributes(entity)) {
+                        //                        if (entity instanceof BaseDbGeneratedIdEntity) {
+                        //                            identityEntitiesToStoreDynamicAttributes.add((BaseGenericIdEntity) entity);
+                        //                        } else {
+                        //                            entitiesToStoreDynamicAttributes.add((BaseGenericIdEntity) entity);
+                        //                        }
+                        //                    }
                     }
-                    em.persist(entity);
-                    saved.add(entity);
-                    persisted.add(entity);
-
-                    if (isAuthorizationRequired(context))
-                        checkOperationPermitted(entity, ConstraintOperationType.CREATE);
-
-                    if (!context.isDiscardCommitted()) {
-                        View view = getViewFromContextOrNull(context, entity);
-                        entityFetcher.fetch(entity, view, true);
-                    }
-
-                    // todo dynamic attributes
-//                    if (entityHasDynamicAttributes(entity)) {
-//                        if (entity instanceof BaseDbGeneratedIdEntity) {
-//                            identityEntitiesToStoreDynamicAttributes.add((BaseGenericIdEntity) entity);
-//                        } else {
-//                            entitiesToStoreDynamicAttributes.add((BaseGenericIdEntity) entity);
-//                        }
-//                    }
                 }
-            }
 
-            // merge the rest - instances can be detached or not
-            for (Entity entity : context.getCommitInstances()) {
-                if (!entityStates.isNew(entity)) {
+                // merge the rest - instances can be detached or not
+                for (Entity entity : context.getCommitInstances()) {
+                    if (!entityStates.isNew(entity)) {
+
+                        if (isAuthorizationRequired(context)) {
+                            persistenceSecurity.assertToken(entity);
+                        }
+                        persistenceSecurity.restoreSecurityStateAndFilteredData(entity);
+                        if (isAuthorizationRequired(context)) {
+                            attributeSecurity.beforeMerge(entity);
+                        }
+
+                        Entity merged = em.merge(entity);
+                        saved.add(merged);
+
+                        entityFetcher.fetch(merged, getViewFromContext(context, entity));
+
+                        if (isAuthorizationRequired(context))
+                            checkOperationPermitted(merged, ConstraintOperationType.UPDATE);
+
+                        // todo dynamic attributes
+                        //                    if (entityHasDynamicAttributes(entity)) {
+                        //                        BaseGenericIdEntity originalBaseGenericIdEntity = (BaseGenericIdEntity) entity;
+                        //                        BaseGenericIdEntity mergedBaseGenericIdEntity = (BaseGenericIdEntity) merged;
+                        //
+                        //                        mergedBaseGenericIdEntity.setDynamicAttributes(originalBaseGenericIdEntity.getDynamicAttributes());
+                        //                        entitiesToStoreDynamicAttributes.add(mergedBaseGenericIdEntity);
+                        //                    }
+                    }
+                }
+
+                // todo dynamic attributes
+                //            for (BaseGenericIdEntity entity : entitiesToStoreDynamicAttributes) {
+                //                dynamicAttributesManagerAPI.storeDynamicAttributes(entity);
+                //            }
+
+                // remove
+                for (Entity entity : context.getRemoveInstances()) {
 
                     if (isAuthorizationRequired(context)) {
                         persistenceSecurity.assertToken(entity);
                     }
                     persistenceSecurity.restoreSecurityStateAndFilteredData(entity);
-                    if (isAuthorizationRequired(context)) {
+
+                    Entity e;
+                    if (entity instanceof SoftDelete) {
                         attributeSecurity.beforeMerge(entity);
+
+                        e = em.merge(entity);
+                        entityFetcher.fetch(e, getViewFromContext(context, entity));
+
+                    } else {
+                        e = em.merge(entity);
                     }
 
-                    Entity merged = em.merge(entity);
-                    saved.add(merged);
-
-                    entityFetcher.fetch(merged, getViewFromContext(context, entity));
-
                     if (isAuthorizationRequired(context))
-                        checkOperationPermitted(merged, ConstraintOperationType.UPDATE);
+                        checkOperationPermitted(e, ConstraintOperationType.DELETE);
+
+                    em.remove(e);
+                    saved.add(e);
 
                     // todo dynamic attributes
-//                    if (entityHasDynamicAttributes(entity)) {
-//                        BaseGenericIdEntity originalBaseGenericIdEntity = (BaseGenericIdEntity) entity;
-//                        BaseGenericIdEntity mergedBaseGenericIdEntity = (BaseGenericIdEntity) merged;
-//
-//                        mergedBaseGenericIdEntity.setDynamicAttributes(originalBaseGenericIdEntity.getDynamicAttributes());
-//                        entitiesToStoreDynamicAttributes.add(mergedBaseGenericIdEntity);
-//                    }
-                }
-            }
-
-            // todo dynamic attributes
-//            for (BaseGenericIdEntity entity : entitiesToStoreDynamicAttributes) {
-//                dynamicAttributesManagerAPI.storeDynamicAttributes(entity);
-//            }
-
-            // remove
-            for (Entity entity : context.getRemoveInstances()) {
-
-                if (isAuthorizationRequired(context)) {
-                    persistenceSecurity.assertToken(entity);
-                }
-                persistenceSecurity.restoreSecurityStateAndFilteredData(entity);
-
-                Entity e;
-                if (entity instanceof SoftDelete) {
-                    attributeSecurity.beforeMerge(entity);
-
-                    e = em.merge(entity);
-                    entityFetcher.fetch(e, getViewFromContext(context, entity));
-
-                } else {
-                    e = em.merge(entity);
+                    //                if (entityHasDynamicAttributes(entity)) {
+                    //                    Map<String, CategoryAttributeValue> dynamicAttributes = ((BaseGenericIdEntity) entity).getDynamicAttributes();
+                    //
+                    //                    // old values of dynamic attributes on deleted entity are used in EntityChangedEvent
+                    //                    ((BaseGenericIdEntity) e).setDynamicAttributes(dynamicAttributes);
+                    //
+                    //                    //dynamicAttributes checked for null in entityHasDynamicAttributes()
+                    //                    //noinspection ConstantConditions
+                    //                    for (CategoryAttributeValue categoryAttributeValue : dynamicAttributes.values()) {
+                    //                        if (!entityStates.isNew(categoryAttributeValue)) {
+                    //                            if (Stores.isMain(storeName)) {
+                    //                                em.remove(categoryAttributeValue);
+                    //                            } else {
+                    //                                attributeValuesToRemove.add(categoryAttributeValue);
+                    //                            }
+                    //                            saved.add(categoryAttributeValue);
+                    //                        }
+                    //                    }
+                    //                }
                 }
 
-                if (isAuthorizationRequired(context))
-                    checkOperationPermitted(e, ConstraintOperationType.DELETE);
-
-                em.remove(e);
-                saved.add(e);
-
-                // todo dynamic attributes
-//                if (entityHasDynamicAttributes(entity)) {
-//                    Map<String, CategoryAttributeValue> dynamicAttributes = ((BaseGenericIdEntity) entity).getDynamicAttributes();
-//
-//                    // old values of dynamic attributes on deleted entity are used in EntityChangedEvent
-//                    ((BaseGenericIdEntity) e).setDynamicAttributes(dynamicAttributes);
-//
-//                    //dynamicAttributes checked for null in entityHasDynamicAttributes()
-//                    //noinspection ConstantConditions
-//                    for (CategoryAttributeValue categoryAttributeValue : dynamicAttributes.values()) {
-//                        if (!entityStates.isNew(categoryAttributeValue)) {
-//                            if (Stores.isMain(storeName)) {
-//                                em.remove(categoryAttributeValue);
-//                            } else {
-//                                attributeValuesToRemove.add(categoryAttributeValue);
-//                            }
-//                            saved.add(categoryAttributeValue);
-//                        }
-//                    }
-//                }
-            }
-
-            if (!context.isDiscardCommitted() && isAuthorizationRequired(context) && security.hasConstraints()) {
-                persistenceSecurity.calculateFilteredData(saved);
-            }
-
-            savedEntitiesHolder = SavedEntitiesHolder.setEntities(saved);
-
-            if (context.isJoinTransaction()) {
-                List<EntityChangedEvent> events = entityChangedEventManager.collect(saved);
-                em.flush();
-                for (Entity entity : saved) {
-                    em.detach(entity);
+                if (!context.isDiscardCommitted() && isAuthorizationRequired(context) && security.hasConstraints()) {
+                    persistenceSecurity.calculateFilteredData(saved);
                 }
-                entityChangedEventManager.publish(events);
-            }
 
-            tx.commit();
+                savedEntitiesHolder = SavedEntitiesHolder.setEntities(saved);
+
+                if (context.isJoinTransaction()) {
+                    List<EntityChangedEvent> events = entityChangedEventManager.collect(saved);
+                    em.flush();
+                    for (Entity entity : saved) {
+                        em.detach(entity);
+                    }
+                    entityChangedEventManager.publish(events);
+                }
+
+                tx.commit();
+            }
+        } catch (IllegalStateException e) {
+            handleCascadePersistException(e);
         }
 
         Set<Entity> resultEntities = savedEntitiesHolder.getEntities(saved);
@@ -1063,7 +1070,7 @@ public class OrmDataStore implements DataStore {
     protected boolean needToApplyInMemoryReadConstraints(LoadContext context) {
         return isAuthorizationRequired(context) && security.hasConstraints()
                 && needToApplyByPredicate(context, metaClass ->
-                    security.hasInMemoryConstraints(metaClass, ConstraintOperationType.READ, ConstraintOperationType.ALL));
+                security.hasInMemoryConstraints(metaClass, ConstraintOperationType.READ, ConstraintOperationType.ALL));
     }
 
     protected boolean needToApplyByPredicate(LoadContext context, Predicate<MetaClass> hasConstraints) {
@@ -1142,5 +1149,17 @@ public class OrmDataStore implements DataStore {
                 }
             }
         });
+    }
+
+    protected void handleCascadePersistException(IllegalStateException e) throws IllegalStateException {
+        IllegalStateException exception = e;
+        if (!Strings.isNullOrEmpty(e.getMessage())
+                && e.getMessage().contains("cascade PERSIST")) {
+            exception = new IllegalStateException("An attempt to save an entity with reference to some not persisted entity. " +
+                    "All newly created entities must be saved in the same transaction. " +
+                    "Put all these objects to the CommitContext before commit.");
+            exception.addSuppressed(e);
+        }
+        throw exception;
     }
 }

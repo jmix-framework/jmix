@@ -25,9 +25,6 @@ targetCompatibility = rootProject.targetCompatibility
 
 test {
     useJUnitPlatform()
-    testLogging {
-        events "passed", "skipped", "failed", "standardError"
-    }
 }
 
 dependencies {

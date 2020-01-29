@@ -17,10 +17,10 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.BulkEditor;
-import com.haulmont.cuba.gui.components.actions.LegacyBulkEditAction;
+import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.components.actions.BulkEditAction;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.components.Field;
-import io.jmix.ui.components.ListComponent;
 import io.jmix.ui.components.impl.WebButton;
 import io.jmix.ui.gui.OpenType;
 
@@ -33,7 +33,7 @@ public class WebBulkEditor extends WebButton implements BulkEditor {
     protected String exclude;
     protected List<String> includeProperties = Collections.emptyList();
     protected OpenType openType = OpenType.DIALOG;
-    protected LegacyBulkEditAction bulkEditAction;
+    protected BulkEditAction bulkEditAction;
     protected ListComponent listComponent;
     protected Map<String, Field.Validator> fieldValidators;
     protected List<Field.Validator> modelValidators;
@@ -98,7 +98,7 @@ public class WebBulkEditor extends WebButton implements BulkEditor {
             boolean enabled = isEnabled();
             boolean visible = isVisible();
 
-            bulkEditAction = LegacyBulkEditAction.create(listComponent);
+            bulkEditAction = BulkEditAction.create(listComponent);
             setAction(bulkEditAction);
 
             if (openType != null) {

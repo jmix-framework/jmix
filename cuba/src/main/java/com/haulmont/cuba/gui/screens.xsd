@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2008-2016 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<xs:schema targetNamespace="http://schemas.haulmont.com/cuba/screens.xsd"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://schemas.haulmont.com/cuba/screens.xsd"
+        elementFormDefault="qualified">
+
+    <xs:element name="screen-config" type="screenConfigType"/>
+
+    <xs:complexType name="screenConfigType">
+        <xs:sequence>
+            <xs:element type="includeType" name="include" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="screenType" name="screen" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="screenType">
+        <xs:sequence>
+            <xs:element type="paramType" name="param" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="class" type="xs:string"/>
+        <xs:attribute name="template" type="xs:string"/>
+        <xs:attribute name="multipleOpen" type="xs:boolean"/>
+
+        <!-- Route annotation replacement -->
+        <xs:attribute name="route" type="xs:string"/>
+        <xs:attribute name="routeParentPrefix" type="xs:string"/>
+        <xs:attribute name="rootRoute" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="includeType">
+        <xs:attribute name="file" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="paramType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
+</xs:schema>

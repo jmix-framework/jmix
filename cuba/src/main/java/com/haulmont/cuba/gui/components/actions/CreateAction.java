@@ -15,6 +15,7 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -30,9 +31,7 @@ import io.jmix.core.security.Security;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.ListAction;
 import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ListComponent;
 import io.jmix.ui.components.Tree;
 import io.jmix.ui.components.Window;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
@@ -62,7 +61,7 @@ import java.util.function.Supplier;
  */
 @org.springframework.stereotype.Component("cuba_CreateAction")
 @Scope("prototype")
-public class LegacyCreateAction extends ListAction
+public class CreateAction extends ListAction
         implements Action.HasOpenType, Action.HasBeforeActionPerformedHandler, Action.DisabledWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.CREATE.getId();
@@ -109,7 +108,7 @@ public class LegacyCreateAction extends ListAction
      * Creates an action with default id, opening the editor screen in THIS tab.
      * @param target    component containing this action
      */
-    public static LegacyCreateAction create(ListComponent target) {
+    public static CreateAction create(io.jmix.ui.components.ListComponent target) {
         return AppBeans.getPrototype("cuba_CreateAction", target);
     }
 
@@ -118,7 +117,7 @@ public class LegacyCreateAction extends ListAction
      * @param target    component containing this action
      * @param openType  how to open the editor screen
      */
-    public static LegacyCreateAction create(ListComponent target, OpenType openType) {
+    public static CreateAction create(io.jmix.ui.components.ListComponent target, OpenType openType) {
         return AppBeans.getPrototype("cuba_CreateAction", target, openType);
     }
 
@@ -128,7 +127,7 @@ public class LegacyCreateAction extends ListAction
      * @param openType  how to open the editor screen
      * @param id        action name
      */
-    public static LegacyCreateAction create(ListComponent target, OpenType openType, String id) {
+    public static CreateAction create(io.jmix.ui.components.ListComponent target, OpenType openType, String id) {
         return AppBeans.getPrototype("cuba_CreateAction", target, openType, id);
     }
 
@@ -136,7 +135,7 @@ public class LegacyCreateAction extends ListAction
      * The simplest constructor. The action has default name and opens the editor screen in THIS tab.
      * @param target    component containing this action
      */
-    public LegacyCreateAction(ListComponent target) {
+    public CreateAction(ListComponent target) {
         this(target, OpenType.THIS_TAB, ACTION_ID);
     }
 
@@ -145,7 +144,7 @@ public class LegacyCreateAction extends ListAction
      * @param target    component containing this action
      * @param openType  how to open the editor screen
      */
-    public LegacyCreateAction(ListComponent target, OpenType openType) {
+    public CreateAction(ListComponent target, OpenType openType) {
         this(target, openType, ACTION_ID);
     }
 
@@ -155,7 +154,7 @@ public class LegacyCreateAction extends ListAction
      * @param openType  how to open the editor screen
      * @param id        action name
      */
-    public LegacyCreateAction(ListComponent target, OpenType openType, String id) {
+    public CreateAction(ListComponent target, OpenType openType, String id) {
         super(id, null);
 
         this.primary = true;
@@ -179,8 +178,6 @@ public class LegacyCreateAction extends ListAction
      */
     @Override
     protected boolean isPermitted() {
-        /*
-        TODO: legacy-ui
         if (target == null || target.getDatasource() == null) {
             return false;
         }
@@ -202,7 +199,7 @@ public class LegacyCreateAction extends ListAction
             if (!attrPermitted) {
                 return false;
             }
-        }*/
+        }
 
         return super.isPermitted();
     }
@@ -220,7 +217,7 @@ public class LegacyCreateAction extends ListAction
                 return;
         }
 
-        final CollectionDatasource datasource = null/*target.getDatasource() TODO: legacy-ui*/;
+        final CollectionDatasource datasource = target.getDatasource();
 
         Entity item = createEntity();
 
@@ -270,7 +267,7 @@ public class LegacyCreateAction extends ListAction
     }
 
     protected Entity createEntity() {
-        CollectionDatasource datasource = null/*target.getDatasource() TODO: legacy-ui*/;
+        CollectionDatasource datasource = target.getDatasource();
         DataSupplier dataSupplier = datasource.getDataSupplier();
         return dataSupplier.newInstance(datasource.getMetaClass());
     }
@@ -373,7 +370,7 @@ public class LegacyCreateAction extends ListAction
         if (windowId != null) {
             return windowId;
         } else {
-            MetaClass metaClass = null/*target.getDatasource().getMetaClass() TODO: legacy-ui*/;
+            MetaClass metaClass = target.getDatasource().getMetaClass();
             WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
             return windowConfig.getEditorScreenId(metaClass);
         }

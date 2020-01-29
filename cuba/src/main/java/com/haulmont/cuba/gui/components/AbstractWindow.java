@@ -61,8 +61,8 @@ import java.util.stream.Stream;
 /**
  * Base class for simple screen controllers.
  */
-public class AbstractWindow extends Screen implements Window, LegacyFrame, Component.HasXmlDescriptor, Window.Wrapper,
-        SecuredActionsHolder, ChangeTracker {
+public class AbstractWindow extends Screen
+        implements Window, Window.Wrapper, LegacyFrame, Component.HasXmlDescriptor, SecuredActionsHolder, ChangeTracker {
 
     public static final String UNKNOWN_CLOSE_ACTION_ID = "unknown";
 

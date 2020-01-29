@@ -15,15 +15,15 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ListComponent;
 import io.jmix.ui.components.data.meta.EmptyDataUnit;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.Icons;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Collections;
@@ -43,9 +43,10 @@ import java.util.function.Supplier;
  * </pre>
  * Also, use {@code create()} static methods instead of constructors when creating the action programmatically.
  */
+@SuppressWarnings({"deprecation", "rawtypes"})
 @org.springframework.stereotype.Component("cuba_RefreshAction")
 @Scope("prototype")
-public class LegacyRefreshAction extends BaseAction {
+public class RefreshAction extends BaseAction {
 
     public static final String ACTION_ID = ListActionType.REFRESH.getId();
 
@@ -61,7 +62,7 @@ public class LegacyRefreshAction extends BaseAction {
      * Creates an action with default id.
      * @param target    component containing this action
      */
-    public static LegacyRefreshAction create(ListComponent target) {
+    public static RefreshAction create(ListComponent target) {
         return AppBeans.getPrototype("cuba_RefreshAction", target);
     }
 
@@ -69,7 +70,7 @@ public class LegacyRefreshAction extends BaseAction {
      * Creates an action with the given id.
      * @param target    component containing this action
      */
-    public static LegacyRefreshAction create(ListComponent target, String id) {
+    public static RefreshAction create(ListComponent target, String id) {
         return AppBeans.getPrototype("cuba_RefreshAction", target, id);
     }
 
@@ -77,7 +78,7 @@ public class LegacyRefreshAction extends BaseAction {
      * The simplest constructor. The action has default name.
      * @param target    component containing this action
      */
-    public LegacyRefreshAction(ListComponent target) {
+    public RefreshAction(ListComponent target) {
         this(target, ACTION_ID);
     }
 
@@ -86,7 +87,7 @@ public class LegacyRefreshAction extends BaseAction {
      * @param target        component containing this action
      * @param id            action's identifier
      */
-    public LegacyRefreshAction(ListComponent target, String id) {
+    public RefreshAction(ListComponent target, String id) {
         super(id);
         this.owner = target;
 
@@ -108,7 +109,7 @@ public class LegacyRefreshAction extends BaseAction {
             beforeRefreshHandler.run();
         }
 
-        CollectionDatasource datasource = null/*owner.getDatasource() TODO: legacy-ui*/;
+        CollectionDatasource datasource = owner.getDatasource();
         if (datasource == null) {
             // In case of using the 'metaClass' attribute, no datasource is created, but EmptyDataUnit.
             if (owner.getItems() instanceof EmptyDataUnit) {

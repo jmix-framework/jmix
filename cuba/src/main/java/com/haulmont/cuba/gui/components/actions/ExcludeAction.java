@@ -15,6 +15,11 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.NestedDatasource;
+import com.haulmont.cuba.gui.data.PropertyDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Messages;
@@ -25,13 +30,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ListComponent;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.Icons;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.NestedDatasource;
-import com.haulmont.cuba.gui.data.PropertyDatasource;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Set;
@@ -46,9 +46,11 @@ import java.util.Set;
  * </pre>
  * Also, use {@code create()} static methods instead of constructors when creating the action programmatically.
  */
+@SuppressWarnings({"rawtypes", "deprecation"})
 @org.springframework.stereotype.Component("cuba_ExcludeAction")
 @Scope("prototype")
-public class LegacyExcludeAction extends LegacyRemoveAction implements Action.DisabledWhenScreenReadOnly {
+public class ExcludeAction extends RemoveAction
+        implements Action.DisabledWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.EXCLUDE.getId();
 
@@ -58,7 +60,7 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
      * Creates an action with default id. Autocommit and Confirm properties are set to false.
      * @param target    component containing this action
      */
-    public static LegacyExcludeAction create(ListComponent target) {
+    public static ExcludeAction create(ListComponent target) {
         return AppBeans.getPrototype("cuba_ExcludeAction", target);
     }
 
@@ -68,7 +70,7 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
      * @param autocommit    whether to commit datasource immediately
      * @param confirm       whether to show the confirmation dialog to user
      */
-    public static LegacyExcludeAction create(ListComponent target, boolean autocommit, boolean confirm) {
+    public static ExcludeAction create(ListComponent target, boolean autocommit, boolean confirm) {
         return AppBeans.getPrototype("cuba_ExcludeAction", target, autocommit, confirm);
     }
 
@@ -79,7 +81,7 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
      * @param confirm       whether to show the confirmation dialog to user
      * @param id            action's name
      */
-    public static LegacyExcludeAction create(ListComponent target, boolean autocommit, boolean confirm, String id) {
+    public static ExcludeAction create(ListComponent target, boolean autocommit, boolean confirm, String id) {
         return AppBeans.getPrototype("cuba_ExcludeAction", target, autocommit, confirm, id);
     }
 
@@ -87,7 +89,7 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
      * The simplest constructor. Autocommit and Confirm properties are set to false, the action has default name.
      * @param target     component containing this action
      */
-    public LegacyExcludeAction(ListComponent target) {
+    public ExcludeAction(ListComponent target) {
         this(target, false, false, ACTION_ID);
     }
 
@@ -97,7 +99,7 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
      * @param autocommit    whether to commit datasource immediately
      * @param confirm       whether to show the confirmation dialog to user
      */
-    public LegacyExcludeAction(ListComponent target, boolean autocommit, boolean confirm) {
+    public ExcludeAction(ListComponent target, boolean autocommit, boolean confirm) {
         this(target, autocommit, confirm, ACTION_ID);
     }
 
@@ -108,7 +110,7 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
      * @param confirm       whether to show the confirmation dialog to user
      * @param id            action's name
      */
-    public LegacyExcludeAction(ListComponent target, boolean autocommit, boolean confirm, String id) {
+    public ExcludeAction(ListComponent target, boolean autocommit, boolean confirm, String id) {
         super(target, autocommit, id);
 
         this.confirm = confirm;
@@ -122,17 +124,14 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
 
     @Override
     protected boolean checkRemovePermission() {
-        CollectionDatasource ds = null/*target.getDatasource() TODO: legacy-ui*/;
+        CollectionDatasource ds = target.getDatasource();
         if (ds instanceof PropertyDatasource) {
             PropertyDatasource propertyDatasource = (PropertyDatasource) ds;
 
             MetaClass parentMetaClass = propertyDatasource.getMaster().getMetaClass();
             MetaProperty metaProperty = propertyDatasource.getProperty();
 
-            boolean attrPermitted = security.isEntityAttrPermitted(parentMetaClass, metaProperty.getName(), EntityAttrAccess.MODIFY);
-            if (!attrPermitted) {
-                return false;
-            }
+            return security.isEntityAttrPermitted(parentMetaClass, metaProperty.getName(), EntityAttrAccess.MODIFY);
         }
 
         return true;
@@ -167,7 +166,7 @@ public class LegacyExcludeAction extends LegacyRemoveAction implements Action.Di
     @SuppressWarnings("unchecked")
     @Override
     protected void doRemove(Set<Entity> selected, boolean autocommit) {
-        CollectionDatasource ds = null/*target.getDatasource() TODO: legacy-ui*/;
+        CollectionDatasource ds = target.getDatasource();
         if (ds instanceof NestedDatasource) {
             // Clear reference to master entity
             Datasource masterDs = ((NestedDatasource) ds).getMaster();

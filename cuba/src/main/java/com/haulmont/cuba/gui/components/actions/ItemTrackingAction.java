@@ -16,29 +16,16 @@
 
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.Entity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
 import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.ListAction;
-import io.jmix.ui.components.ListComponent;
 
-/**
- * Standard action that changes enabled property depending on selection of a bound {@link ListComponent}.
- * <br>
- * You can use fluent API to create instances of ItemTrackingAction and assign handlers to them:
- * <pre>{@code
- *     Action action = new ItemTrackingAction("moveToTrash")
- *             .withCaption("Move to trash")
- *             .withIcon("icons/trash.png")
- *             .withHandler(event -> {
- *                 // action logic here
- *             });
- *     docsTable.addAction(action);
- * }</pre>
- */
-public class ItemTrackingAction extends ListAction implements Action.HasSecurityConstraint {
+import javax.annotation.Nullable;
+
+public class ItemTrackingAction extends ListAction
+        implements Action.HasSecurityConstraint {
 
     protected ConstraintOperationType constraintOperationType;
     protected String constraintCode;
@@ -46,45 +33,17 @@ public class ItemTrackingAction extends ListAction implements Action.HasSecurity
     protected Security security = AppBeans.get(Security.NAME);
 
     public ItemTrackingAction(String id) {
-        this(null, id);
+        super(id);
+    }
+
+    public ItemTrackingAction(String id, @Nullable String shortcut) {
+        super(id, shortcut);
     }
 
     public ItemTrackingAction(ListComponent target, String id) {
         super(id, null);
 
         this.target = target;
-    }
-
-    @Override
-    protected boolean isApplicable() {
-        return target != null
-                && target.getSingleSelected() != null;
-    }
-
-    @Override
-    protected boolean isPermitted() {
-        if (target == null) {
-            return false;
-        }
-
-        Entity singleSelected = target.getSingleSelected();
-        if (singleSelected == null) {
-            return false;
-        }
-
-        if (constraintOperationType != null) {
-            boolean isPermitted;
-            if (constraintCode != null) {
-                isPermitted = security.isPermitted(singleSelected, constraintCode);
-            } else {
-                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
-            }
-            if (!isPermitted) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     @Override

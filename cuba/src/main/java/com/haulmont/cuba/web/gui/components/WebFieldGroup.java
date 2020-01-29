@@ -18,6 +18,7 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
+import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.AppBeans;
@@ -902,8 +903,7 @@ public class WebFieldGroup extends WebAbstractComponent<CubaFieldGroupLayout> im
         @Override
         public Datasource getTargetDatasource() {
             if (component instanceof DatasourceComponent) {
-                // TODO: legacy-ui
-                // return ((DatasourceComponent) component).getDatasource();
+                return ((DatasourceComponent) component).getDatasource();
             }
             if (targetDatasource != null) {
                 return targetDatasource;
@@ -1143,9 +1143,7 @@ public class WebFieldGroup extends WebAbstractComponent<CubaFieldGroupLayout> im
         @Override
         public void setOptionsDatasource(CollectionDatasource optionsDatasource) {
             if (component instanceof OptionsField) {
-                /*
-                TODO: legacy-ui
-                ((OptionsField) component).setOptionsDatasource(optionsDatasource);*/
+                ((OptionsField) component).setOptionsDatasource(optionsDatasource);
             } else {
                 this.targetOptionsDatasource = optionsDatasource;
             }
@@ -1153,11 +1151,9 @@ public class WebFieldGroup extends WebAbstractComponent<CubaFieldGroupLayout> im
 
         @Override
         public CollectionDatasource getOptionsDatasource() {
-            /*
-            TODO: legacy-ui
             if (component instanceof OptionsField) {
                 return ((OptionsField) component).getOptionsDatasource();
-            }*/
+            }
             return targetOptionsDatasource;
         }
 

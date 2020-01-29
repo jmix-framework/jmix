@@ -15,9 +15,9 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.ui.Actions;
 import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.ListComponent;
 
 /**
  * Enumerates standard list action types. Can create a corresponding action instance with default parameters.
@@ -30,42 +30,42 @@ public enum ListActionType {
     CREATE("create") {
         @Override
         public Action createAction(ListComponent holder) {
-            return LegacyCreateAction.create(holder);
+            return CreateAction.create(holder);
         }
     },
 
     EDIT("edit") {
         @Override
         public Action createAction(ListComponent holder) {
-            return LegacyEditAction.create(holder);
+            return EditAction.create(holder);
         }
     },
 
     REMOVE("remove") {
         @Override
         public Action createAction(ListComponent holder) {
-            return LegacyRemoveAction.create(holder);
+            return RemoveAction.create(holder);
         }
     },
 
     REFRESH("refresh") {
         @Override
         public Action createAction(ListComponent holder) {
-            return LegacyRefreshAction.create(holder);
+            return RefreshAction.create(holder);
         }
     },
 
     ADD("add") {
         @Override
         public Action createAction(ListComponent holder) {
-            return LegacyAddAction.create(holder);
+            return AddAction.create(holder);
         }
     },
 
     EXCLUDE("exclude") {
         @Override
         public Action createAction(ListComponent holder) {
-            return LegacyExcludeAction.create(holder);
+            return ExcludeAction.create(holder);
         }
     };
 

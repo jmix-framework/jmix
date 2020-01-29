@@ -148,7 +148,6 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     }
 
     @Nullable
-    // @Override TODO: legacy-ui
     public Datasource getParentDs() {
         Datasource ds = getDatasourceInternal();
         return ((DatasourceImplementation) ds).getParent();
@@ -343,7 +342,6 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
         }
     }
 
-    // @Override TODO: legacy-ui
     public void setParentDs(Datasource parentDs) {
         Datasource ds = getDatasourceInternal();
         ((DatasourceImplementation) ds).setParent(parentDs);

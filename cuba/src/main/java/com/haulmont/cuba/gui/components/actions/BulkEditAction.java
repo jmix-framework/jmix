@@ -16,7 +16,9 @@
 
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.BulkEditor;
+import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.util.ParamsMap;
@@ -27,8 +29,9 @@ import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.*;
-import com.haulmont.cuba.gui.WindowManager;
+import io.jmix.ui.components.Component;
+import io.jmix.ui.components.Field;
+import io.jmix.ui.components.Window;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.Icons;
@@ -54,7 +57,8 @@ import static io.jmix.ui.components.ComponentsHelper.getScreenContext;
  */
 @org.springframework.stereotype.Component("cuba_BulkEditAction")
 @Scope("prototype")
-public class LegacyBulkEditAction extends ItemTrackingAction implements Action.HasBeforeActionPerformedHandler {
+public class BulkEditAction extends ItemTrackingAction
+        implements Action.HasBeforeActionPerformedHandler {
 
     protected OpenType openType = OpenType.DIALOG;
     protected String exclude;
@@ -71,11 +75,11 @@ public class LegacyBulkEditAction extends ItemTrackingAction implements Action.H
      * Creates an action with default id.
      * @param target    component containing this action
      */
-    public static LegacyBulkEditAction create(ListComponent target) {
+    public static BulkEditAction create(ListComponent target) {
         return AppBeans.getPrototype("cuba_BulkEditAction", target);
     }
 
-    public LegacyBulkEditAction(ListComponent target) {
+    public BulkEditAction(ListComponent target) {
         super(target, "bulkEdit");
 
         this.icon = AppBeans.get(Icons.class).get(CubaIcon.BULK_EDIT_ACTION);
@@ -197,8 +201,7 @@ public class LegacyBulkEditAction extends ItemTrackingAction implements Action.H
         }
 
         Map<String, Object> params = ParamsMap.of()
-                // TODO: legacy-ui
-                // .pair("metaClass", target.getDatasource().getMetaClass())
+                .pair("metaClass", target.getDatasource().getMetaClass())
                 .pair("selected", target.getSelected())
                 .pair("exclude", exclude)
                 .pair("includeProperties", includeProperties != null ? includeProperties : Collections.EMPTY_LIST)
@@ -215,8 +218,7 @@ public class LegacyBulkEditAction extends ItemTrackingAction implements Action.H
         Window bulkEditor = wm.openWindow(windowInfo, openType, params);
         bulkEditor.addCloseListener(actionId -> {
             if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                // TODO: legacy-ui
-                // target.getDatasource().refresh();
+                target.getDatasource().refresh();
             }
             if (target instanceof Component.Focusable) {
                 ((Component.Focusable) target).focus();

@@ -17,8 +17,9 @@
 package com.haulmont.cuba.gui.components.factories;
 
 import com.haulmont.cuba.gui.components.FieldGroup;
+import com.haulmont.cuba.gui.components.ComponentGenerationContext;
+import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.components.ComponentGenerationContext;
 import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
 import io.jmix.ui.components.UiComponentsGenerator;
 import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
@@ -28,15 +29,15 @@ import javax.inject.Inject;
 @org.springframework.stereotype.Component(FieldGroupFieldFactory.NAME)
 public class FieldGroupFieldFactoryImpl implements FieldGroupFieldFactory {
 
-//    @Inject
-//    protected DynamicAttributes dynamicAttributes;
+    // @Inject
+    // protected DynamicAttributes dynamicAttributes;
 
     @Inject
     protected UiComponentsGenerator uiComponentsGenerator;
 
     // todo dynamic attributes
-//    @Inject
-//    protected DynamicAttributeComponentsGenerator dynamicAttributeComponentsGenerator;
+    // @Inject
+    // protected DynamicAttributeComponentsGenerator dynamicAttributeComponentsGenerator;
 
     @Override
     public GeneratedField createField(FieldGroup.FieldConfig fc) {
@@ -44,7 +45,7 @@ public class FieldGroupFieldFactoryImpl implements FieldGroupFieldFactory {
     }
 
     protected GeneratedField createFieldComponent(FieldGroup.FieldConfig fc) {
-        MetaClass metaClass = null /* resolveMetaClass(fc.getTargetDatasource()) TODO: legacy-ui */;
+        MetaClass metaClass = resolveMetaClass(fc.getTargetDatasource());
 
         if (DynamicAttributesUtils.isDynamicAttribute(fc.getProperty())) {
             // todo dynamic attributes
@@ -58,21 +59,20 @@ public class FieldGroupFieldFactoryImpl implements FieldGroupFieldFactory {
         }
 
         ComponentGenerationContext context = new ComponentGenerationContext(metaClass, fc.getProperty())
-                /*
-                TODO: legacy-ui
                 .setDatasource(fc.getTargetDatasource())
-                .setOptionsDatasource(fc.getOptionsDatasource())*/
-                .setXmlDescriptor(fc.getXmlDescriptor())
-                .setComponentClass(FieldGroup.class);
+                .setOptionsDatasource(fc.getOptionsDatasource());
+
+        context.setXmlDescriptor(fc.getXmlDescriptor());
+        context.setComponentClass(FieldGroup.class);
 
         return new GeneratedField(uiComponentsGenerator.generate(context));
     }
 
-    /*
-    TODO: legacy-ui
+
     protected MetaClass resolveMetaClass(Datasource datasource) {
         // todo dynamic attributes
-        return *//* datasource instanceof RuntimePropsDatasource ?
-                ((RuntimePropsDatasource) datasource).resolveCategorizedEntityClass() : *//* datasource.getMetaClass();
-    }*/
+        return /*datasource instanceof RuntimePropsDatasource ?
+                ((RuntimePropsDatasource) datasource).resolveCategorizedEntityClass()
+                :*/ datasource.getMetaClass();
+    }
 }

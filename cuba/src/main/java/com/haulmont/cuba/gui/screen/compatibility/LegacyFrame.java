@@ -28,15 +28,26 @@ import com.haulmont.cuba.gui.components.HasWindowManager;
 import io.jmix.ui.components.OrderedContainer;
 import io.jmix.ui.components.Validatable;
 import io.jmix.ui.components.ValidationException;
+import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public interface LegacyFrame extends Component.HasXmlDescriptor,
-        Component.HasCaption, Component.HasIcon, Component.Wrapper, Component.BelongToFrame, Frame.Wrapper,
-        ActionsHolder, HasSpacing, HasMargin,
-        OrderedContainer, ExpandingLayout, HasWindowManager {
+public interface LegacyFrame extends
+        CubaLegacyFrame,
+        Component.HasXmlDescriptor,
+        Component.HasCaption,
+        Component.HasIcon,
+        Component.Wrapper,
+        Component.BelongToFrame,
+        Frame.Wrapper,
+        ActionsHolder,
+        HasSpacing,
+        HasMargin,
+        OrderedContainer,
+        ExpandingLayout,
+        HasWindowManager {
 
     @Nullable
     <T> T getCompanion();

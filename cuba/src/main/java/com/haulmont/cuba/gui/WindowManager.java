@@ -43,7 +43,7 @@ import java.util.Map;
  * @deprecated Use {@link Screens}, {@link Dialogs} and {@link Notifications} APIs instead.
  */
 @Deprecated
-public interface WindowManager extends Screens {
+public interface WindowManager {
 
     /**
      * @deprecated Use {@link Screens#getOpenedScreens()} instead.
@@ -54,7 +54,7 @@ public interface WindowManager extends Screens {
     /**
      * Select tab with window in main tabsheet.
      *
-     * @deprecated Use {@link Screens#getOpenedScreens()} and {@link WindowStack#select()} instead.
+     * @deprecated Use {@link Screens#getOpenedScreens()} and {@code WindowStack#select()} instead TODO: legacy-ui.
      */
     @Deprecated
     void selectWindowTab(Window window);
@@ -102,9 +102,11 @@ public interface WindowManager extends Screens {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /*
+    TODO: legacy-ui
     default void close(Window window) {
         remove(window.getFrameOwner());
-    }
+    }*/
 
     /**
      * Opens default screen. Implemented only for the web module.

@@ -21,15 +21,13 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Field;
 import io.jmix.ui.components.HasHtmlCaption;
 import io.jmix.ui.components.HasHtmlDescription;
-import io.jmix.ui.components.ListComponent;
 import io.jmix.ui.gui.OpenType;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: legacy-ui
- * Use {@code io.jmix.ui.actions.list.BulkEditAction} in new screens instead.
+ * Use {@code BulkEditAction} in new screens instead.
  *
  * see io.jmix.ui.BulkEditors
  */

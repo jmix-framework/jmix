@@ -43,7 +43,7 @@ import javax.inject.Inject;
  */
 @org.springframework.stereotype.Component("cuba_RelatedAction")
 @Scope("prototype")
-public class LegacyRelatedAction extends ListAction implements Action.HasBeforeActionPerformedHandler {
+public class RelatedAction extends ListAction implements Action.HasBeforeActionPerformedHandler {
 
     public static final String ACTION_ID = "related";
 
@@ -64,11 +64,11 @@ public class LegacyRelatedAction extends ListAction implements Action.HasBeforeA
      * Creates an action with the given id.
      * @param target    component containing this action
      */
-    public static LegacyRelatedAction create(String id, ListComponent target, MetaClass metaClass, MetaProperty metaProperty) {
+    public static RelatedAction create(String id, ListComponent target, MetaClass metaClass, MetaProperty metaProperty) {
         return AppBeans.getPrototype("cuba_RelatedAction", id, target, metaClass, metaProperty);
     }
 
-    public LegacyRelatedAction(String id, ListComponent target, MetaClass metaClass, MetaProperty metaProperty) {
+    public RelatedAction(String id, ListComponent target, MetaClass metaClass, MetaProperty metaProperty) {
         super(id);
 
         this.target = target;

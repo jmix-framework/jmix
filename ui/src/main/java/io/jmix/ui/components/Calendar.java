@@ -21,7 +21,6 @@ import io.jmix.core.entity.Entity;
 import io.jmix.ui.components.calendar.CalendarEvent;
 import io.jmix.ui.components.calendar.CalendarEventProvider;
 import io.jmix.ui.components.calendar.ContainerCalendarEventProvider;
-import io.jmix.ui.components.calendar.EntityCalendarEventProvider;
 
 import javax.annotation.Nullable;
 import java.time.DayOfWeek;
@@ -66,28 +65,6 @@ public interface Calendar extends Component.BelongToFrame, Component.HasCaption,
      * @return timezone.
      */
     TimeZone getTimeZone();
-
-    /**
-     * Set collection datasource for the calendar component with a collection of events.
-     *
-     * @param datasource a datasource to set
-     * @deprecated @deprecated Use {@link #setEventProvider(CalendarEventProvider)}
-     * with {@link EntityCalendarEventProvider} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    void setDatasource(CollectionDatasource datasource);*/
-
-    /**
-     * @return a datasource
-     * @deprecated Use {@link #getEventProvider()} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Nullable
-    @Deprecated
-    CollectionDatasource getDatasource();*/
 
     /**
      * Set format for time. 12H/24H.
@@ -160,7 +137,6 @@ public interface Calendar extends Component.BelongToFrame, Component.HasCaption,
      *
      * @param calendarEventProvider an event provider with events
      * @see ContainerCalendarEventProvider
-     * @see EntityCalendarEventProvider
      */
     void setEventProvider(CalendarEventProvider calendarEventProvider);
     /**

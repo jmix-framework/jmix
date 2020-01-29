@@ -148,15 +148,15 @@ public class WebCalendar extends WebAbstractComponent<CubaCalendar>
             setEventProvider(null);
         } else {
             CollectionDsHelper.autoRefreshInvalid(datasource, true);
-            setEventProvider(new io.jmix.ui.components.calendar.EntityCalendarEventProvider(datasource));
+            setEventProvider(new com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider(datasource));
         }
     }
 
     @Nullable
     @Override
     public CollectionDatasource getDatasource() {
-        return (calendarEventProvider instanceof io.jmix.ui.components.calendar.EntityCalendarEventProvider)
-                ? ((io.jmix.ui.components.calendar.EntityCalendarEventProvider) calendarEventProvider)
+        return (calendarEventProvider instanceof com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider)
+                ? ((com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider) calendarEventProvider)
                 .getDatasource()
                 : null;
     }*/

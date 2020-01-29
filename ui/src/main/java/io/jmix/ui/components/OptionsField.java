@@ -90,41 +90,6 @@ public interface OptionsField<V, I> extends Field<V>, HasOptionCaptionProvider<I
         setOptions(new EnumOptions(optionsEnum));
     }
 
-    /*
-     * Deprecated API
-     */
-    /**
-     * @return options datasource
-     * @deprecated Use {@link #getOptions()} instead.
-     */
-    /*
-    TODO: legacy-ui`
-    @Deprecated
-    default CollectionDatasource getOptionsDatasource() {
-        Options<I> options = getOptions();
-        if (options instanceof DatasourceOptions) {
-            return ((DatasourceOptions) options).getDatasource();
-        }
-        return null;
-    }*/
-
-    /**
-     * @param datasource datasource
-     * @deprecated set options using {@link #setOptions(Options)} with {@link DatasourceOptions}.
-     */
-    /*
-    TODO: legacy-ui
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    default void setOptionsDatasource(CollectionDatasource datasource) {
-        if (datasource == null) {
-            setOptions(null);
-        } else {
-            setOptions(new DatasourceOptions<>(datasource));
-        }
-    }*/
-
-
     /**
      * @return options list
      * @deprecated Use {@link #getOptions()} instead.

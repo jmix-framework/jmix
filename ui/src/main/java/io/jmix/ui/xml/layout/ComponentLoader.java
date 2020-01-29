@@ -59,10 +59,7 @@ public interface ComponentLoader<T extends Component> {
         void addInitTask(InitTask task);
         void executeInitTasks();
 
-        /* old API todo vm*/
-
         Map<String, Object> getParams();
-        // DsContext getDsContext(); TODO: legacy-ui
         Map<String, String> getAliasesMap();
     }
 
@@ -117,7 +114,19 @@ public interface ComponentLoader<T extends Component> {
     UiComponents getFactory();
     void setFactory(UiComponents factory);
 
+    LoaderResolver getLoaderResolver();
+    void setLoaderResolver(LoaderResolver loaderResolver);
+
+    /**
+     * @deprecated use {@link #getLoaderResolver()} instead
+     */
+    @Deprecated
     LayoutLoaderConfig getLayoutLoaderConfig();
+
+    /**
+     * @deprecated use {@link #setLoaderResolver(LoaderResolver)} instead
+     */
+    @Deprecated
     void setLayoutLoaderConfig(LayoutLoaderConfig config);
 
     Element getElement(Element element);

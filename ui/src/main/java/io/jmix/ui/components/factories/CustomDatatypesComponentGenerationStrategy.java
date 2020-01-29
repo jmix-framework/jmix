@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentGenerationContext;
+import io.jmix.ui.components.actions.GuiActionSupport;
 import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
 import org.springframework.core.Ordered;
 
@@ -39,8 +40,9 @@ public class CustomDatatypesComponentGenerationStrategy extends AbstractComponen
     public static final String NAME = "cuba_CustomDatatypesComponentGenerationStrategy";
 
     @Inject
-    public CustomDatatypesComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools) {
-        super(messages, dynamicAttributesTools);
+    public CustomDatatypesComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,
+                                                      GuiActionSupport guiActionSupport) {
+        super(messages, dynamicAttributesTools, guiActionSupport);
     }
 
     @Inject

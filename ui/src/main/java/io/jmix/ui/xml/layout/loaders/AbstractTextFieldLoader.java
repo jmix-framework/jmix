@@ -17,8 +17,6 @@ package io.jmix.ui.xml.layout.loaders;
 
 import io.jmix.core.entity.annotation.CaseConversion;
 import io.jmix.core.entity.annotation.ConversionType;
-import io.jmix.core.entity.annotation.CaseConversion;
-import io.jmix.core.entity.annotation.ConversionType;
 import io.jmix.ui.components.HasConversionErrorMessage;
 import io.jmix.ui.components.TextInputField;
 import org.apache.commons.collections4.MapUtils;
@@ -58,8 +56,6 @@ public abstract class AbstractTextFieldLoader<T extends TextInputField> extends 
             return;
         }
 
-        /*
-        TODO: legacy-ui
         if (resultComponent.getMetaPropertyPath() != null) {
             Map<String, Object> annotations = resultComponent.getMetaPropertyPath().getMetaProperty().getAnnotations();
 
@@ -70,7 +66,7 @@ public abstract class AbstractTextFieldLoader<T extends TextInputField> extends 
                 TextInputField.CaseConversion tfCaseConversion = TextInputField.CaseConversion.valueOf(conversionType.name());
                 component.setCaseConversion(tfCaseConversion);
             }
-        }*/
+        }
     }
 
     protected void loadTextChangeEventProperties(TextInputField.TextChangeNotifier component, Element element) {

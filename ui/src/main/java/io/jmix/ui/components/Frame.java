@@ -40,7 +40,6 @@ public interface Frame
                 ActionsHolder,
                 Component.HasIcon,
                 Component.HasCaption,
-                /*HasWindowManager, TODO: legacy-ui*/
                 SupportsExpandRatio {
 
     /**

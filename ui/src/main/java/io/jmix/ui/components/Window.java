@@ -193,7 +193,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     /**
      * Close the screen.
      * <br>
-     * If the screen has uncommitted changes in its {@code DsContext}, // TODO: legacy-ui
+     * If the screen has uncommitted changes in its {@code DsContext},
      * the confirmation dialog will be shown.
      * <br>
      * Don't override this method in subclasses, use hook {@code AbstractWindow#preClose(String)}

@@ -28,6 +28,7 @@ import io.jmix.core.security.Security;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
+import io.jmix.ui.actions.ItemTrackingAction;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.Component.Alignment;
 import io.jmix.ui.components.data.value.ContainerValueSource;
@@ -49,6 +50,7 @@ import io.jmix.ui.xml.DeclarativeAction;
 import io.jmix.ui.xml.DeclarativeTrackingAction;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
+import io.jmix.ui.xml.layout.LoaderResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Attribute;
@@ -90,7 +92,10 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected Context context;
 
     protected UiComponents factory;
+    @Deprecated
     protected LayoutLoaderConfig layoutLoaderConfig;
+    protected LoaderResolver loaderResolver;
+
     protected Element element;
 
     protected T resultComponent;
@@ -155,10 +160,22 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     @Override
+    public LoaderResolver getLoaderResolver() {
+        return loaderResolver;
+    }
+
+    @Override
+    public void setLoaderResolver(LoaderResolver loaderResolver) {
+        this.loaderResolver = loaderResolver;
+    }
+
+    @Deprecated
+    @Override
     public LayoutLoaderConfig getLayoutLoaderConfig() {
         return layoutLoaderConfig;
     }
 
+    @Deprecated
     @Override
     public void setLayoutLoaderConfig(LayoutLoaderConfig layoutLoaderConfig) {
         this.layoutLoaderConfig = layoutLoaderConfig;
@@ -663,14 +680,11 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected Action loadStubAction(Element element, String id, boolean shouldTrackSelection) {
         Action targetAction;
 
-        /*
-        TODO: legacy-ui
         if (shouldTrackSelection) {
             targetAction = new ItemTrackingAction(id);
         } else {
             targetAction = new BaseAction(id);
-        }*/
-        targetAction = new BaseAction(id);
+        }
 
         initAction(element, targetAction);
 
@@ -970,7 +984,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected String getParentDataContainer(Element element) {
         Element parent = element.getParent();
         while (parent != null) {
-            if (layoutLoaderConfig.getLoader(parent.getName()) != null) {
+            if (loaderResolver.getLoader(parent) != null) {
                 return parent.attributeValue("dataContainer");
             }
             parent = parent.getParent();

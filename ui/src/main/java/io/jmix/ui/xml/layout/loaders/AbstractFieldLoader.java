@@ -86,14 +86,6 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
             }
 
         }
-        //todo vm legacy
-//        else if (component.getDatasource() != null) {
-//            MetaProperty property = component.getMetaProperty();
-//            Consumer<?> validator = getDefaultValidator(property);
-//            if (validator != null) {
-//                component.addValidator(validator);
-//            }
-//        }
     }
 
     @SuppressWarnings("unchecked")

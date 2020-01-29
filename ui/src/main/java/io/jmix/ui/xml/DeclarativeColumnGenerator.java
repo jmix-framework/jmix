@@ -20,7 +20,7 @@ import io.jmix.core.entity.Entity;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.Table;
-import io.jmix.ui.components.compatibility.LegacyFragmentAdapter;
+import io.jmix.ui.components.compatibility.CubaFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.context.annotation.Scope;
@@ -57,9 +57,8 @@ public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
             throw new IllegalStateException("Table should be attached to frame");
         }
         FrameOwner controller = frame.getFrameOwner();
-        if (controller instanceof LegacyFragmentAdapter) {
-            // TODO: legacy-ui
-            // controller = ((LegacyFragmentAdapter) controller).getRealScreen();
+        if (controller instanceof CubaFragmentAdapter) {
+            controller = ((CubaFragmentAdapter) controller).getRealScreen();
         }
 
         if (method == null) {

@@ -99,16 +99,7 @@ public abstract class ComponentsHelper {
 //                return window.getTimer(id);
         } else {
             Component innerComponent = frameImpl.getRegisteredComponent(elements[0]);
-            /*
-            TODO: legacy-ui
-            if (innerComponent instanceof FieldGroup) {
-                String subPath = ValuePathHelper.pathSuffix(elements);
-
-                FieldGroup fieldGroup = (FieldGroup) innerComponent;
-                FieldGroup.FieldConfig field = fieldGroup.getField(subPath);
-
-                return field != null ? field.getComponent() : null;
-            } else */if (innerComponent instanceof ComponentContainer) {
+            if (innerComponent instanceof ComponentContainer) {
 
                 String subPath = ValuePathHelper.pathSuffix(elements);
                 return ((ComponentContainer) innerComponent).getComponent(subPath);
@@ -134,16 +125,7 @@ public abstract class ComponentsHelper {
             return component;
         } else {
             Component innerComponent = frameImpl.getRegisteredComponent(elements[0]);
-            /*
-            TODO: legacy-ui
-            if (innerComponent instanceof FieldGroup) {
-                String subPath = ValuePathHelper.pathSuffix(elements);
-
-                FieldGroup fieldGroup = (FieldGroup) innerComponent;
-                FieldGroup.FieldConfig field = fieldGroup.getField(subPath);
-
-                return field != null ? field.getComponent() : null;
-            } else */if (innerComponent instanceof ComponentContainer) {
+            if (innerComponent instanceof ComponentContainer) {
 
                 String subPath = ValuePathHelper.pathSuffix(elements);
                 return ((ComponentContainer) innerComponent).getComponent(subPath);
@@ -175,17 +157,7 @@ public abstract class ComponentsHelper {
             if (innerComponent == null) {
                 return getComponentByIteration(container, id);
             } else {
-                /*
-                TODO: legacy-ui
-                if (innerComponent instanceof FieldGroup) {
-                    String subPath = ValuePathHelper.pathSuffix(elements);
-
-                    FieldGroup fieldGroup = (FieldGroup) innerComponent;
-                    FieldGroup.FieldConfig field = fieldGroup.getField(subPath);
-
-                    return field != null ? field.getComponent() : null;
-                } else */if (innerComponent instanceof ComponentContainer) {
-
+                if (innerComponent instanceof ComponentContainer) {
                     String subPath = ValuePathHelper.pathSuffix(elements);
                     return ((ComponentContainer) innerComponent).getComponent(subPath);
                 } else if (innerComponent instanceof HasNamedComponents) {
@@ -548,42 +520,6 @@ public abstract class ComponentsHelper {
     }
 
     /**
-     * Creates standard Create, Edit and Remove actions for the component
-     *
-     * @param owner List, Table or Tree component
-     */
-    /*
-    TODO: lagacy-ui
-    @Deprecated
-    public static void createActions(ListComponent owner) {
-        createActions(owner, EnumSet.of(ListActionType.CREATE, ListActionType.EDIT, ListActionType.REMOVE));
-    }*/
-
-    /**
-     * Creates standard actions for the component
-     *
-     * @param owner   List, Table or Tree component
-     * @param actions set of actions to create
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    public static void createActions(ListComponent owner, EnumSet<ListActionType> actions) {
-        if (actions.contains(ListActionType.CREATE)) {
-            owner.addAction(LegacyCreateAction.create(owner));
-        }
-        if (actions.contains(ListActionType.EDIT)) {
-            owner.addAction(LegacyEditAction.create(owner));
-        }
-        if (actions.contains(ListActionType.REMOVE)) {
-            owner.addAction(LegacyRemoveAction.create(owner));
-        }
-        if (actions.contains(ListActionType.REFRESH)) {
-            owner.addAction(LegacyRefreshAction.create(owner));
-        }
-    }*/
-
-    /**
      * Place component with error message to validation errors container.
      *
      * @param component validatable component
@@ -598,62 +534,10 @@ public abstract class ComponentsHelper {
             for (CompositeValidationException.ViolationCause cause : ((CompositeValidationException) e).getCauses()) {
                 errors.add((Component) component, cause.getMessage());
             }
-        } /*
-        TODO: legacy-ui
-        else if (e instanceof FieldGroup.FieldsValidationException) {
-            FieldGroup.FieldsValidationException fve = (FieldGroup.FieldsValidationException) e;
-            Map<Validatable, ValidationException> fields = fve.getProblemFields();
-            for (Map.Entry<Validatable, ValidationException> problem : fields.entrySet()) {
-                ValidationException exception = problem.getValue();
-
-                fillErrorMessages(problem.getKey(), exception, errors);
-            }
-        } */else {
+        } else {
             errors.add((Component) component, e.getMessage());
         }
     }
-
-    /**
-     * Set field's "required" flag to false if the value has been filtered by Row Level Security
-     * This is necessary to allow user to submit form with filtered attribute even if attribute is required.
-     *
-     * @deprecated Is not required anymore. Implemented in {@link ValueBinder}.
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    public static void handleFilteredAttributes(Field component, Datasource datasource, MetaPropertyPath mpp) {
-        if (component.isRequired()
-                && datasource.getState() == Datasource.State.VALID
-                && datasource.getItem() != null
-                && mpp.getMetaProperty().getRange().isClass()) {
-
-            Entity targetItem = datasource.getItem();
-
-            MetaProperty[] propertiesChain = mpp.getMetaProperties();
-            if (propertiesChain.length > 1) {
-                String basePropertyItem = Arrays.stream(propertiesChain)
-                        .limit(propertiesChain.length - 1)
-                        .map(MetadataObject::getName)
-                        .collect(Collectors.joining("."));
-
-                targetItem = datasource.getItem().getValueEx(basePropertyItem);
-            }
-
-            if (targetItem instanceof BaseGenericIdEntity) {
-                String metaPropertyName = mpp.getMetaProperty().getName();
-                Object value = targetItem.getValue(metaPropertyName);
-
-                BaseGenericIdEntity baseGenericIdEntity = (BaseGenericIdEntity) targetItem;
-                String[] filteredAttributes = getFilteredAttributes(baseGenericIdEntity);
-
-                if (value == null && filteredAttributes != null
-                        && ArrayUtils.contains(filteredAttributes, metaPropertyName)) {
-                    component.setRequired(false);
-                }
-            }
-        }
-    }*/
 
     public static int findActionById(List<Action> actionList, String actionId) {
         int oldIndex = -1;
@@ -665,36 +549,6 @@ public abstract class ComponentsHelper {
             }
         }
         return oldIndex;
-    }
-
-    /**
-     * INTERNAL.
-     * Adds actions specified in {@link Lookup} annotation on entity attribute to the given PickerField.
-     *
-     * @deprecated Use {@code GuiActionSupport#createActionsByMetaAnnotations(PickerField)} instead.
-     */
-    @Deprecated
-    public static boolean createActionsByMetaAnnotations(PickerField pickerField) {
-        MetaPropertyPath mpp = null/*pickerField.getMetaPropertyPath() TODO: legacy-ui*/;
-        if (mpp == null) {
-            return false;
-        }
-
-        String[] actions = (String[]) AppBeans.get(MetadataTools.class)
-                .getMetaAnnotationAttributes(mpp.getMetaProperty().getAnnotations(), Lookup.class)
-                .get("actions");
-        if (actions != null && actions.length > 0) {
-            for (String actionId : actions) {
-                for (PickerField.ActionType actionType : PickerField.ActionType.values()) {
-                    if (actionType.getId().equals(actionId.trim())) {
-                        pickerField.addAction(actionType.createAction(pickerField));
-                        break;
-                    }
-                }
-            }
-            return true;
-        }
-        return false;
     }
 
     @Deprecated

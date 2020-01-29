@@ -37,6 +37,7 @@ import io.jmix.ui.components.impl.WebTabWindow;
 import io.jmix.ui.components.impl.WebWindow;
 import io.jmix.ui.components.impl.WindowImplementation;
 import io.jmix.ui.gui.OpenType;
+import io.jmix.ui.gui.data.compatibility.DsSupport;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
@@ -45,6 +46,7 @@ import io.jmix.ui.logging.UserActionsLogger;
 import io.jmix.ui.model.impl.ScreenDataImpl;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
+import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
@@ -101,6 +103,8 @@ public class WebScreens implements Screens {
     protected Icons icons;
     @Inject
     protected WindowCreationHelper windowCreationHelper;
+    @Inject
+    protected ScreenViewsLoader screenViewsLoader;
 
     // todo implement
     /*@Inject
@@ -187,7 +191,10 @@ public class WebScreens implements Screens {
 
         StopWatch loadStopWatch = createStopWatch(ScreenLifeCycle.LOAD, windowInfo.getId());
 
-        ComponentLoaderContext componentLoaderContext = new ComponentLoaderContext(options);
+        ComponentLoaderContext componentLoaderContext = !(controller instanceof CubaLegacyFrame)
+                ? new ComponentLoaderContext(options)
+                : beanLocator.get(DsSupport.class).createComponentLoaderContext(options); // TODO refactor
+
         componentLoaderContext.setFullFrameId(windowInfo.getId());
         componentLoaderContext.setCurrentFrameId(windowInfo.getId());
         componentLoaderContext.setMessagesPack(getPackage(resolvedScreenClass));
@@ -315,6 +322,13 @@ public class WebScreens implements Screens {
 
         LayoutLoader layoutLoader = beanLocator.getPrototype(LayoutLoader.NAME, componentLoaderContext);
         ComponentLoader<Window> windowLoader = layoutLoader.createWindowContent(window, element);
+
+        if (controller instanceof CubaLegacyFrame) {
+            screenViewsLoader.deployViews(element);
+
+            beanLocator.get(DsSupport.class)
+                    .initDsContext(controller, element, componentLoaderContext);
+        }
 
         windowLoader.loadComponent();
     }
@@ -493,6 +507,17 @@ public class WebScreens implements Screens {
         // todo settings
         /*if (!WindowParams.DISABLE_APPLY_SETTINGS.getBool(windowContext)) {
             applySettings(screen, getSettingsImpl(screen.getId()));
+        }*/
+
+        /*
+        TODO: legacy-ui
+        if (screen instanceof LegacyFrame) {
+            if (!WindowParams.DISABLE_RESUME_SUSPENDED.getBool(windowContext)) {
+                DsContext dsContext = ((LegacyFrame) screen).getDsContext();
+                if (dsContext != null) {
+                    ((DsContextImplementation) dsContext).resumeSuspended();
+                }
+            }
         }*/
 
         // todo attributeAccessSupport

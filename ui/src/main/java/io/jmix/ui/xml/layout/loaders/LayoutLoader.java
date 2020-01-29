@@ -22,6 +22,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
+import io.jmix.ui.xml.layout.LoaderResolver;
 import org.dom4j.Element;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -39,7 +40,9 @@ public class LayoutLoader {
 
     protected ComponentLoader.Context context;
     protected UiComponents factory;
+    @Deprecated
     protected LayoutLoaderConfig config;
+    protected LoaderResolver loaderResolver;
 
     protected BeanLocator beanLocator;
 
@@ -62,8 +65,13 @@ public class LayoutLoader {
         this.config = config;
     }
 
+    @Inject
+    public void setLoaderResolver(LoaderResolver loaderResolver) {
+        this.loaderResolver = loaderResolver;
+    }
+
     protected ComponentLoader getLoader(Element element) {
-        Class<? extends ComponentLoader> loaderClass = config.getLoader(element.getName());
+        Class<? extends ComponentLoader> loaderClass = loaderResolver.getLoader(element);
         if (loaderClass == null) {
             throw new GuiDevelopmentException("Unknown component: " + element.getName(), context);
         }
@@ -104,6 +112,7 @@ public class LayoutLoader {
 
         loader.setContext(context);
         loader.setLayoutLoaderConfig(config);
+        loader.setLoaderResolver(loaderResolver);
         loader.setFactory(factory);
         loader.setElement(element);
 

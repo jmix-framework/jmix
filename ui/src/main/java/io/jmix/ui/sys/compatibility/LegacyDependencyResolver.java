@@ -14,32 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.components.compatibility;
+package io.jmix.ui.sys.compatibility;
 
-import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.FrameOwner;
 
-/**
- * Wrapper object for compatibility with legacy code.
- */
-@Deprecated
-public class ScreenFragmentWrapper /*extends AbstractFrame */{
+import javax.annotation.Nullable;
 
-    private ScreenFragment screen;
+public interface LegacyDependencyResolver {
 
-    public ScreenFragmentWrapper(ScreenFragment screen) {
-        this.screen = screen;
-    }
-
-    /*
-    TODO: legacy-ui
-    @Override
-    public Frame getWrappedFrame() {
-        return screen.getFragment();
-    }
+    String NAME = "jmix_LegacyDependencyResolver";
 
     @Nullable
-    @Override
-    public Component getComponent(String id) {
-        return screen.getFragment().getComponent(id);
-    }*/
+    Object resolveDependency(FrameOwner frameOwner, Class<?> type, String name);
 }

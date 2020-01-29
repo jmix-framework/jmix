@@ -1,0 +1,53 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.ui.xml.layout;
+
+import org.dom4j.Element;
+
+/**
+ * Marker interface for component loaders.
+ */
+public interface LoaderConfig {
+
+    /**
+     * Checks whether the config contains a loader that supports the given {@code element}.
+     *
+     * @param element element
+     * @return true if the config contains suitable loader, of false otherwise
+     */
+    boolean supports(Element element);
+
+    /**
+     * @param element element to load
+     *
+     * @return {@link ComponentLoader} instance
+     */
+    @SuppressWarnings("rawtypes")
+    Class<? extends ComponentLoader> getLoader(Element element);
+
+    /**
+     * Defines the highest precedence for {@link org.springframework.core.Ordered} or
+     * {@link org.springframework.core.annotation.Order} icon providers.
+     */
+    int HIGHEST_PLATFORM_PRECEDENCE = 100;
+
+    /**
+     * Defines the lowest precedence for {@link org.springframework.core.Ordered} or
+     * {@link org.springframework.core.annotation.Order} icon providers.
+     */
+    int LOWEST_PLATFORM_PRECEDENCE = 1000;
+}

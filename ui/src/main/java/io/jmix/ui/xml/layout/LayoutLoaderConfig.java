@@ -19,22 +19,52 @@ import io.jmix.ui.components.AppWorkArea;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.mainwindow.*;
 import io.jmix.ui.xml.layout.loaders.*;
+import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@SuppressWarnings("rawtypes")
 @Component(LayoutLoaderConfig.NAME)
-public class LayoutLoaderConfig {
+public class LayoutLoaderConfig implements LoaderConfig {
 
     public static final String NAME = "jmix_LayoutLoaderConfig";
+
+    private static final Logger log = LoggerFactory.getLogger(LayoutLoaderConfig.class);
 
     protected Map<String, Class<? extends ComponentLoader>> loaders = new ConcurrentHashMap<>();
 
     protected Class<? extends WindowLoader> windowLoader = WindowLoader.class;
+    protected Class<? extends FragmentLoader> fragmentLoader = FragmentLoader.class;
 
     public LayoutLoaderConfig() {
         initStandardLoaders();
+    }
+
+    @Override
+    public boolean supports(Element element) {
+        return isNotLegacyScreen(element)
+                && loaders.containsKey(element.getName());
+    }
+
+    @Override
+    public Class<? extends ComponentLoader> getLoader(Element element) {
+        return getLoader(element.getName());
+    }
+
+    protected boolean isNotLegacyScreen(Element element) {
+        Element parent = element.getParent();
+
+        while (parent != null
+                && !"window".equals(parent.getName())) {
+            parent = parent.getParent();
+        }
+
+        return parent != null
+                && parent.attribute("class") == null;
     }
 
     protected void initStandardLoaders() {
@@ -95,18 +125,16 @@ public class LayoutLoaderConfig {
         loaders.put(Embedded.NAME, EmbeddedLoader.class);
         loaders.put(Image.NAME, ImageLoader.class);
         loaders.put(BrowserFrame.NAME, BrowserFrameLoader.class);
-//        loaders.put(Filter.NAME, FilterLoader.class); // todo filer
+//        loaders.put(Filter.NAME, FilterLoader.class); // todo filter
         loaders.put(ButtonsPanel.NAME, ButtonsPanelLoader.class);
         loaders.put(PopupButton.NAME, PopupButtonLoader.class);
         loaders.put(PopupView.NAME, PopupViewLoader.class);
-//        loaders.put(FieldGroup.NAME, FieldGroupLoader.class); // todo fieldGroup
         loaders.put(TokenList.NAME, TokenListLoader.class);
         loaders.put(TwinColumn.NAME, TwinColumnLoader.class);
         loaders.put(ProgressBar.NAME, ProgressBarLoader.class);
         loaders.put(SearchField.NAME, SearchFieldLoader.class);
         loaders.put(RelatedEntities.NAME, RelatedEntitiesLoader.class);
-        // TODO: legacy-ui
-        // loaders.put(BulkEditor.NAME, BulkEditorLoader.class);
+
         loaders.put(CapsLockIndicator.NAME, CapsLockIndicatorLoader.class);
 
         loaders.put(Form.NAME, FormLoader.class);
@@ -120,12 +148,18 @@ public class LayoutLoaderConfig {
         loaders.put(NewWindowButton.NAME, NewWindowButtonLoader.class);
         loaders.put(UserIndicator.NAME, UserIndicatorLoader.class);
         loaders.put(FoldersPane.NAME, FoldersPaneLoader.class);
-//        loaders.put(FtsField.NAME, FtsFieldLoader.class);
+//        loaders.put(FtsField.NAME, FtsFieldLoader.class); // todo fts field
         loaders.put(TimeZoneIndicator.NAME, TimeZoneIndicatorLoader.class);
         loaders.put(SideMenu.NAME, SideMenuLoader.class);
     }
 
+    /**
+     * @deprecated use custom implementation of {@link LoaderConfig} that will be resolved by {@link LoaderResolver}.
+     */
+    @Deprecated
     public void registerLoader(String tagName, Class<? extends ComponentLoader> aClass) {
+        log.debug("LayoutLoaderConfig#registerLoader is deprecated. Use your own implementation of LoaderConfig");
+
         loaders.put(tagName, aClass);
     }
 
@@ -146,10 +180,9 @@ public class LayoutLoaderConfig {
         windowLoader = loader;
     }
 
-    // todo fragments
-    /*public void registerFragmentLoader(Class<? extends FragmentLoader> loader) {
+    public void registerFragmentLoader(Class<? extends FragmentLoader> loader) {
         fragmentLoader = loader;
-    }*/
+    }
 
     protected void register(String tagName, Class<? extends ComponentLoader> loaderClass) {
         loaders.put(tagName, loaderClass);

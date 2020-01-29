@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.*;
+import io.jmix.ui.components.actions.GuiActionSupport;
 import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.value.ContainerValueSource;
@@ -55,8 +56,10 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Messages messages;
     protected UiComponents uiComponents;
     protected DynamicAttributesTools dynamicAttributesTools;
+    protected GuiActionSupport guiActionSupport;
 
-    public AbstractComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools) {
+    public AbstractComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,
+                                               GuiActionSupport guiActionSupport) {
         this.messages = messages;
         this.dynamicAttributesTools = dynamicAttributesTools;
     }
@@ -402,7 +405,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 //                        getDynamicAttributesGuiTools().initEntityPickerField(pickerField,
 //                                dynamicAttributesMetaProperty.getAttribute());
                     }
-                    boolean actionsByMetaAnnotations = ComponentsHelper.createActionsByMetaAnnotations(pickerField);
+                    boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(pickerField);
                     if (!actionsByMetaAnnotations) {
                         pickerField.addClearAction();
                     }
@@ -429,7 +432,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
                 pickerField = lookupPickerField;
 
-                ComponentsHelper.createActionsByMetaAnnotations(pickerField);
+                guiActionSupport.createActionsByMetaAnnotations(pickerField);
             }
 
             if (xmlDescriptor != null) {

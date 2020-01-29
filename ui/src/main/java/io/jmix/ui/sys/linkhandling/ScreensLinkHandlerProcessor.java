@@ -16,17 +16,27 @@
 
 package io.jmix.ui.sys.linkhandling;
 
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.EntityAccessException;
+import io.jmix.core.LoadContext;
+import io.jmix.core.Metadata;
+import io.jmix.core.ReferenceToEntitySupport;
+import io.jmix.core.View;
+import io.jmix.core.ViewRepository;
 import io.jmix.core.compatibility.EntityLoadInfo;
 import io.jmix.core.entity.Entity;
-import io.jmix.core.security.AccessDeniedException;
 import io.jmix.ui.App;
-import io.jmix.ui.NoSuchScreenException;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.exception.AccessDeniedHandler;
 import io.jmix.ui.exception.EntityAccessExceptionHandler;
 import io.jmix.ui.exception.NoSuchScreenHandler;
+import io.jmix.ui.gui.OpenType;
+import io.jmix.ui.screen.EditorScreen;
+import io.jmix.ui.screen.MapScreenOptions;
+import io.jmix.ui.screen.Screen;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -102,8 +112,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
 
         String itemStr = requestParams.get("item");
         String openTypeParam = requestParams.get("openType");
-        /*
-        TODO: legacy-ui
+
         OpenType openType = OpenType.NEW_TAB;
 
         if (StringUtils.isNotEmpty(openTypeParam)) {
@@ -114,20 +123,34 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
             }
         }
 
+        Screens screens = AppUI.getCurrent().getScreens();
         if (itemStr == null) {
-            app.getWindowManager().openWindow(windowInfo, openType, getParamsMap(requestParams));
+            Screen screen = screens.create(
+                    windowInfo.getId(),
+                    openType.getOpenMode(),
+                    new MapScreenOptions(getParamsMap(requestParams)));
+            screen.show();
         } else {
             EntityLoadInfo info = EntityLoadInfo.parse(itemStr);
             if (info == null) {
                 log.warn("Invalid item definition: {}", itemStr);
             } else {
                 Entity entity = loadEntityInstance(info);
-                if (entity != null)
-                    app.getWindowManager().openEditor(windowInfo, entity, openType, getParamsMap(requestParams));
-                else
+                if (entity == null) {
                     throw new EntityAccessException();
+                }
+
+                Screen screen = screens.create(
+                        windowInfo.getId(),
+                        openType.getOpenMode(),
+                        new MapScreenOptions(getParamsMap(requestParams)));
+
+                EditorScreen editorScreen = (EditorScreen) screen;
+                editorScreen.setEntityToEdit(entity);
+
+                screen.show();
             }
-        }*/
+        }
     }
 
     protected Map<String, Object> getParamsMap(Map<String, String> requestParams) {

@@ -15,7 +15,11 @@
  */
 package io.jmix.ui.components;
 
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.data.HasValueSource;
+import io.jmix.ui.components.data.ValueSource;
+import io.jmix.ui.components.data.value.ContainerValueSource;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -77,5 +81,32 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
         default void accept(T t) {
             validate(t);
         }
+    }
+
+    /**
+     * @return datasource property
+     * @deprecated Use {@link #getValueSource()} instead
+     */
+    @Deprecated
+    default MetaProperty getMetaProperty() {
+        ValueSource<V> valueSource = getValueSource();
+        if (valueSource instanceof ContainerValueSource) {
+            return ((ContainerValueSource) valueSource).getMetaPropertyPath().getMetaProperty();
+        }
+        return null;
+    }
+
+    /**
+     * @return datasource property path
+     *
+     * @deprecated Use {@link #getValueSource()} instead
+     */
+    @Deprecated
+    default MetaPropertyPath getMetaPropertyPath() {
+        ValueSource<V> valueSource = getValueSource();
+        if (valueSource instanceof ContainerValueSource) {
+            return ((ContainerValueSource) valueSource).getMetaPropertyPath();
+        }
+        return null;
     }
 }

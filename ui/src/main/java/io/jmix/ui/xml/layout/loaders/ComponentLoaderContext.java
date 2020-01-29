@@ -45,7 +45,6 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
     protected List<InjectTask> injectTasks = new ArrayList<>();
     protected List<InitTask> initTasks = new ArrayList<>();
 
-    // protected DsContext dsContext; TODO: legacy-ui
     protected Map<String, Object> parameters;
     protected Map<String, String> aliasesMap = new HashMap<>();
 
@@ -70,17 +69,6 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
     public void setScreenData(ScreenData screenData) {
         this.screenData = screenData;
     }
-
-    /*
-    TODO: legacy-ui
-    @Override
-    public DsContext getDsContext() {
-        return dsContext;
-    }
-
-    public void setDsContext(DsContext dsContext) {
-        this.dsContext = dsContext;
-    }*/
 
     @Override
     public Frame getFrame() {

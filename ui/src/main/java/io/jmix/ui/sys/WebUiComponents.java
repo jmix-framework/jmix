@@ -32,6 +32,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Primary;
 
 import javax.inject.Inject;
 import java.lang.reflect.Constructor;
@@ -41,6 +42,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Primary
 @org.springframework.stereotype.Component(UiComponents.NAME)
 public class WebUiComponents implements UiComponents {
 

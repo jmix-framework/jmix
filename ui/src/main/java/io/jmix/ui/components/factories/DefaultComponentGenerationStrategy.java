@@ -20,6 +20,7 @@ import io.jmix.core.Messages;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentGenerationContext;
+import io.jmix.ui.components.actions.GuiActionSupport;
 import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
 import org.springframework.core.Ordered;
 
@@ -31,8 +32,9 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
     public static final String NAME = "cuba_DefaultMetaComponentStrategy";
 
     @Inject
-    public DefaultComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools) {
-        super(messages, dynamicAttributesTools);
+    public DefaultComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,
+                                              GuiActionSupport guiActionSupport) {
+        super(messages, dynamicAttributesTools, guiActionSupport);
     }
 
     @Inject

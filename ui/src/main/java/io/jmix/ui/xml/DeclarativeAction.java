@@ -20,7 +20,7 @@ import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.components.ActionsHolder;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.compatibility.LegacyFragmentAdapter;
+import io.jmix.ui.components.compatibility.CubaFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 
@@ -78,9 +78,8 @@ public class DeclarativeAction extends BaseAction {
         }
 
         FrameOwner controller = frame.getFrameOwner();
-        if (controller instanceof LegacyFragmentAdapter) {
-            // TODO: legacy-ui
-            // controller = ((LegacyFragmentAdapter) controller).getRealScreen();
+        if (controller instanceof CubaFragmentAdapter) {
+            controller = ((CubaFragmentAdapter) controller).getRealScreen();
         }
 
         Method method;

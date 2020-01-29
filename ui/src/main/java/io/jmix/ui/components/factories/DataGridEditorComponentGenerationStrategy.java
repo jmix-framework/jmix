@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.*;
+import io.jmix.ui.components.actions.GuiActionSupport;
 import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.options.ContainerOptions;
 import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
@@ -43,6 +44,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     public static final String NAME = "cuba_DataGridEditorMetaComponentStrategy";
 
     protected DataComponents dataComponents;
+    protected GuiActionSupport guiActionSupport;
 
     @Inject
     public void setDataComponents(DataComponents dataComponents) {
@@ -50,8 +52,14 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     }
 
     @Inject
-    public DataGridEditorComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools) {
-        super(messages, dynamicAttributesTools);
+    public void setGuiActionSupport(GuiActionSupport guiActionSupport) {
+        this.guiActionSupport = guiActionSupport;
+    }
+
+    @Inject
+    public DataGridEditorComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,
+                                                     GuiActionSupport guiActionSupport) {
+        super(messages, dynamicAttributesTools, guiActionSupport);
     }
 
     @Inject
@@ -127,7 +135,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
             // lookupAction.setLookupScreenOpenType(OpenType.DIALOG); TODO: legacy-ui
             // In case of adding special logic for lookup screen opened from DataGrid editor
             lookupAction.setLookupScreenParams(ParamsMap.of("dataGridEditor", true));
-            boolean actionsByMetaAnnotations = ComponentsHelper.createActionsByMetaAnnotations(pickerField);
+            boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(pickerField);
             if (!actionsByMetaAnnotations) {
                 pickerField.addClearAction();
             }
@@ -138,7 +146,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
 
             pickerField = lookupPickerField;
 
-            ComponentsHelper.createActionsByMetaAnnotations(pickerField);
+            guiActionSupport.createActionsByMetaAnnotations(pickerField);
         }
 
         return pickerField;

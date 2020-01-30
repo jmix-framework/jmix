@@ -16,6 +16,7 @@
 package io.jmix.ui.components.formatters;
 
 import io.jmix.core.AppBeans;
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
@@ -61,7 +62,8 @@ public class NumberFormatter implements Function<Number, String> {
             }
             FormatStrings formatStrings = Datatypes.getFormatStrings(userSessionSource.getLocale());
             if (formatStrings == null)
-                throw new IllegalStateException("FormatStrings are not defined for " + userSessionSource.getLocale());
+                throw new IllegalStateException("FormatStrings are not defined for " +
+                        LocaleResolver.localeToString(userSessionSource.getLocale()));
             DecimalFormat format = new DecimalFormat(pattern, formatStrings.getFormatSymbols());
             return format.format(value);
         }

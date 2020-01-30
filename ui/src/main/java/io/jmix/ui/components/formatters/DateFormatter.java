@@ -16,6 +16,7 @@
 package io.jmix.ui.components.formatters;
 
 import io.jmix.core.AppBeans;
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.datatypes.FormatStrings;
@@ -64,7 +65,8 @@ public class DateFormatter implements Function<Date, String> {
             if (type != null) {
                 FormatStrings formatStrings = Datatypes.getFormatStrings(userSessionSource.getLocale());
                 if (formatStrings == null)
-                    throw new IllegalStateException("FormatStrings are not defined for " + userSessionSource.getLocale());
+                    throw new IllegalStateException("FormatStrings are not defined for " +
+                            LocaleResolver.localeToString(userSessionSource.getLocale()));
                 switch (type) {
                     case "DATE":
                         format = formatStrings.getDateFormat();

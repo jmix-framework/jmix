@@ -378,7 +378,8 @@ public class MessageTools {
         if (useLocaleLanguageOnly == null) {
             boolean found = false;
             for (Locale locale : globalConfig.getAvailableLocales().values()) {
-                if (!StringUtils.isEmpty(locale.getCountry()) || !StringUtils.isEmpty(locale.getVariant())) {
+                if (!StringUtils.isEmpty(locale.getCountry()) || !StringUtils.isEmpty(locale.getVariant())
+                        || !StringUtils.isEmpty(locale.getScript())) {
                     useLocaleLanguageOnly = false;
                     found = true;
                     break;
@@ -399,7 +400,7 @@ public class MessageTools {
     public String localeToString(Locale locale) {
         Preconditions.checkNotNullArgument(locale);
 
-        return useLocaleLanguageOnly() ? locale.getLanguage() : locale.toString();
+        return useLocaleLanguageOnly() ? locale.getLanguage() : LocaleResolver.localeToString(locale);
     }
 
     /**
@@ -410,7 +411,7 @@ public class MessageTools {
     public Locale trimLocale(Locale locale) {
         Preconditions.checkNotNullArgument(locale);
 
-        return useLocaleLanguageOnly() ? Locale.forLanguageTag(locale.getLanguage()) : locale;
+        return useLocaleLanguageOnly() ? Locale.forLanguageTag(locale.getLanguage()) : locale.stripExtensions();
     }
 
     /**

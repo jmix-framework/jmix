@@ -16,8 +16,8 @@
 package io.jmix.core.impl;
 
 import com.google.common.base.Splitter;
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.config.type.TypeFactory;
-import org.apache.commons.lang3.LocaleUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -33,7 +33,7 @@ public class AvailableLocalesFactory extends TypeFactory {
         Map<String, Locale> result = new LinkedHashMap<>();
         for (String item : Splitter.on(';').trimResults().omitEmptyStrings().split(string)) {
             String[] parts = item.split("\\|");
-            result.put(parts[0], LocaleUtils.toLocale(parts[1]));
+            result.put(parts[0], LocaleResolver.resolve(parts[1]));
         }
         return result;
     }

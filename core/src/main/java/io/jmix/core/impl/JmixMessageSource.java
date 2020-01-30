@@ -18,10 +18,14 @@ package io.jmix.core.impl;
 
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
+import io.jmix.core.LocaleResolver;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 public class JmixMessageSource extends ReloadableResourceBundleMessageSource {
 
@@ -48,5 +52,14 @@ public class JmixMessageSource extends ReloadableResourceBundleMessageSource {
     public void setResourceLoader(ResourceLoader resourceLoader) {
         // Always use the resource loader provided in constructor. Otherwise it gets overridden by ApplicationContext.
         super.setResourceLoader(this.resourceLoader);
+    }
+
+    @Override
+    protected List<String> calculateFilenamesForLocale(String basename, Locale locale) {
+        List<String> result = super.calculateFilenamesForLocale(basename, locale);
+        if (!StringUtils.isEmpty(locale.getScript())) {
+            result.add(0, basename + '_' + LocaleResolver.localeToString(locale));
+        }
+        return result;
     }
 }

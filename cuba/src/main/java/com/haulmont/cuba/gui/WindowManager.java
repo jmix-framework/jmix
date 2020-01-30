@@ -70,17 +70,23 @@ public interface WindowManager {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    @Deprecated
     Window openWindow(WindowInfo windowInfo, OpenType openType, Map<String, Object> params);
 
+    @Deprecated
     Window openWindow(WindowInfo windowInfo, OpenType openType);
 
+    @Deprecated
     Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType,
                              Datasource parentDs);
 
+    @Deprecated
     Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType);
 
+    @Deprecated
     Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params);
 
+    @Deprecated
     Window.Editor openEditor(WindowInfo windowInfo, Entity item,
                              OpenType openType, Map<String, Object> params,
                              Datasource parentDs);
@@ -88,15 +94,20 @@ public interface WindowManager {
     // used only for legacy screens
     Screen createEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params);
 
+    @Deprecated
     Window.Lookup openLookup(WindowInfo windowInfo, Window.Lookup.Handler handler,
                              OpenType openType, Map<String, Object> params);
 
+    @Deprecated
     Window.Lookup openLookup(WindowInfo windowInfo, Window.Lookup.Handler handler, OpenType openType);
 
+    @Deprecated
     Frame openFrame(Frame parentFrame, Component parent, WindowInfo windowInfo);
 
+    @Deprecated
     Frame openFrame(Frame parentFrame, Component parent, WindowInfo windowInfo, Map<String, Object> params);
 
+    @Deprecated
     Frame openFrame(Frame parentFrame, Component parent, @Nullable String id,
                     WindowInfo windowInfo, Map<String, Object> params);
 
@@ -123,6 +134,7 @@ public interface WindowManager {
      *
      * @param caption text
      */
+    @Deprecated
     void showNotification(String caption);
 
     /**
@@ -133,6 +145,7 @@ public interface WindowManager {
      * @param type    defines how to display the notification.
      *                Don't forget to escape data from the database in case of {@code *_HTML} types!
      */
+    @Deprecated
     void showNotification(String caption, Frame.NotificationType type);
 
     /**
@@ -144,6 +157,7 @@ public interface WindowManager {
      * @param type        defines how to display the notification.
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
      */
+    @Deprecated
     void showNotification(String caption, String description, Frame.NotificationType type);
 
     /**
@@ -155,6 +169,7 @@ public interface WindowManager {
      * @param messageType defines how to display the dialog.
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
      */
+    @Deprecated
     void showMessageDialog(String title, String message, Frame.MessageType messageType);
 
     /**
@@ -167,6 +182,7 @@ public interface WindowManager {
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
      * @param actions     available actions
      */
+    @Deprecated
     void showOptionDialog(String title, String message, Frame.MessageType messageType, Action[] actions);
 
     /**
@@ -174,6 +190,7 @@ public interface WindowManager {
      *
      * @param throwable throwable
      */
+    @Deprecated
     void showExceptionDialog(Throwable throwable);
 
     /**
@@ -183,6 +200,7 @@ public interface WindowManager {
      * @param caption   dialog caption
      * @param message   dialog message
      */
+    @Deprecated
     void showExceptionDialog(Throwable throwable, @Nullable String caption, @Nullable String message);
 
     /**
@@ -205,5 +223,6 @@ public interface WindowManager {
      *               Desktop client doesn't support any parameters and just ignores them.
      * @see WebBrowserTools#showWebPage(String, Map)
      */
+    @Deprecated
     void showWebPage(String url, @Nullable Map<String, Object> params);
 }

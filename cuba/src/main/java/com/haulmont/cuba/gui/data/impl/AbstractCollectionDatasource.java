@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
  * @param <T> type of entity
  * @param <K> type of entity ID
  */
+@Deprecated
 public abstract class AbstractCollectionDatasource<T extends Entity<K>, K>
         extends DatasourceImpl<T>
         implements CollectionDatasource<T, K>,

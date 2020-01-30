@@ -39,7 +39,10 @@ import java.util.stream.Stream;
 
 /**
  * Base class for frame controllers.
+ *
+ * @deprecated Use {@link ScreenFragment} APIs instead.
  */
+@Deprecated
 public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrapper, LegacyFrame {
 
     protected Frame frame;

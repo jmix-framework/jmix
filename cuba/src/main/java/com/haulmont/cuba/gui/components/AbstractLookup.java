@@ -33,7 +33,10 @@ import java.util.function.Predicate;
 
 /**
  * Base class for lookup screen controllers.
+ *
+ * @deprecated Use {@link io.jmix.ui.screen.StandardLookup} APIs instead.
  */
+@Deprecated
 public class AbstractLookup extends AbstractWindow implements Window.Lookup {
 
     private Predicate<ValidationContext> lookupValidator;

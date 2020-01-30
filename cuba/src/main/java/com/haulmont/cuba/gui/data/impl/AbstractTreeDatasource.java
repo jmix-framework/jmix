@@ -31,6 +31,7 @@ import java.util.*;
  * @param <T> Entity
  * @param <K> Key
  */
+@Deprecated
 public abstract class AbstractTreeDatasource<T extends Entity<K>, K>
         extends CollectionDatasourceImpl<T, K>
         implements HierarchicalDatasource<T, K> {

@@ -16,11 +16,12 @@
 package com.haulmont.cuba.gui.components;
 
 import com.google.common.collect.Iterables;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.DataSupplier;
-import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.DsContext;
-import com.haulmont.cuba.gui.data.NestedDatasource;
+import com.haulmont.cuba.gui.WindowParams;
+import com.haulmont.cuba.gui.data.*;
+import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
+import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
+import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
+import com.haulmont.cuba.gui.data.impl.EntityCopyUtils;
 import io.jmix.core.*;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
@@ -31,16 +32,14 @@ import io.jmix.core.security.Security;
 import io.jmix.core.validation.groups.UiCrossFieldChecks;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.GuiDevelopmentException;
-import com.haulmont.cuba.gui.WindowParams;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.actions.DialogAction;
-import io.jmix.ui.components.*;
+import io.jmix.ui.components.Component;
+import io.jmix.ui.components.ComponentsHelper;
+import io.jmix.ui.components.ValidationErrors;
+import io.jmix.ui.components.Window;
 import io.jmix.ui.dynamicattributes.DynamicAttributesGuiTools;
-import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
-import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
-import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
-import com.haulmont.cuba.gui.data.impl.EntityCopyUtils;
 import io.jmix.ui.screen.ReadOnlyAwareScreen;
 import io.jmix.ui.screen.ReadOnlyScreensSupport;
 import io.jmix.ui.sys.PersistenceHelper;
@@ -59,7 +58,10 @@ import java.util.Set;
 
 /**
  * Base class for edit screen controllers.
+ *
+ * @deprecated Use {@link io.jmix.ui.screen.StandardEditor} APIs instead.
  */
+@Deprecated
 public class AbstractEditor<T extends Entity> extends AbstractWindow
         implements Window.Editor<T>, ReadOnlyAwareScreen {
 
@@ -158,7 +160,8 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
      * {@link #init(java.util.Map)}.
      * <p>Don't override this method in subclasses, use hooks {@link #initNewItem(Entity)}
      * and {@link #postInit()} instead.</p>
-     * @param item  entity instance
+     *
+     * @param item entity instance
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -530,7 +533,8 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
      * Hook to be implemented in subclasses. Called by {@link #setItem(Entity)} when
      * the editor is opened for a new entity instance. Allows to additionally initialize the new entity instance
      * before setting it into the datasource.
-     * @param item  entity instance
+     *
+     * @param item entity instance
      */
     protected void initNewItem(T item) {
     }
@@ -559,7 +563,8 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     /**
      * Hook to be implemented in subclasses. Called by the framework when all validation is done and datasources are
      * going to be committed.
-     * @return  true to continue, false to abort
+     *
+     * @return true to continue, false to abort
      */
     protected boolean preCommit() {
         return true;

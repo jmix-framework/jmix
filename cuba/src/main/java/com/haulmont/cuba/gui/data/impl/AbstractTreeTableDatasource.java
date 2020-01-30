@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Comparator;
 import java.util.List;
 
+@Deprecated
 public abstract class AbstractTreeTableDatasource<T extends Entity<K>, K>
         extends AbstractTreeDatasource<T, K>
         implements HierarchicalDatasource<T, K> {

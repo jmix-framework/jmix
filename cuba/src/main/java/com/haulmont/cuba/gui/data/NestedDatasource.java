@@ -23,7 +23,9 @@ import io.jmix.core.entity.Entity;
  * <p>Usually defined in XML descriptor inside the parent datasource element.
  * @param <T> type of enclosed entity
  *
+ * @deprecated Use {@link io.jmix.ui.model.Nested} APIs instead.
  */
+@Deprecated
 public interface NestedDatasource<T extends Entity> extends Datasource<T> {
 
     /**

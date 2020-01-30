@@ -25,7 +25,9 @@ import javax.annotation.Nullable;
  * Root of datasources abstraction layer. Contains one entity instance.
  * @param <T> type of entity this datasource is working with
  *
+ * @deprecated Use {@link io.jmix.ui.model.InstanceContainer} APIs instead.
  */
+@Deprecated
 public interface Datasource<T extends Entity> {
 
     /** Where to commit changes */

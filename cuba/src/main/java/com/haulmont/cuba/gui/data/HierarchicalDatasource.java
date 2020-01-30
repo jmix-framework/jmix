@@ -24,7 +24,10 @@ import java.util.Collection;
  * CollectionDatasource supporting hierarchy of items.
  * @param <T> type of entity
  * @param <K> type of entity ID
+ *
+ * @deprecated Use {@link io.jmix.ui.model.CollectionContainer} APIs instead.
  */
+@Deprecated
 public interface HierarchicalDatasource<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
 
     /** Property of entity which forms the hierarchy */

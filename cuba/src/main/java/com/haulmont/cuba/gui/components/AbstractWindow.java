@@ -15,7 +15,9 @@
  */
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
@@ -25,21 +27,7 @@ import io.jmix.ui.ClientConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
-import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.ui.components.ActionsPermissions;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Facet;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.MarginInfo;
-import io.jmix.ui.components.SecuredActionsHolder;
-import io.jmix.ui.components.SizeUnit;
-import io.jmix.ui.components.TabWindow;
-import io.jmix.ui.components.Validatable;
-import io.jmix.ui.components.ValidationErrors;
-import io.jmix.ui.components.ValidationException;
-import io.jmix.ui.components.Window;
-import io.jmix.ui.components.WindowContext;
-import com.haulmont.cuba.gui.WindowManager;
+import io.jmix.ui.components.*;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.screen.*;
@@ -60,7 +48,10 @@ import java.util.stream.Stream;
 
 /**
  * Base class for simple screen controllers.
+ *
+ * @deprecated Use {@link Screen} APIs instead.
  */
+@Deprecated
 public class AbstractWindow extends Screen
         implements Window, Window.Wrapper, LegacyFrame, Component.HasXmlDescriptor, SecuredActionsHolder, ChangeTracker {
 
@@ -473,7 +464,9 @@ public class AbstractWindow extends Screen
         return (T) _companion;
     }
 
-    /** INTERNAL. Don't call from application code. */
+    /**
+     * INTERNAL. Don't call from application code.
+     */
     public void setCompanion(Object companion) {
         this._companion = companion;
     }
@@ -726,7 +719,8 @@ public class AbstractWindow extends Screen
 
     /**
      * Set the screen caption. If called in {@link #init(Map)}, overrides the value from XML.
-     * @param caption   caption
+     *
+     * @param caption caption
      */
     @Override
     public void setCaption(String caption) {
@@ -751,7 +745,9 @@ public class AbstractWindow extends Screen
         frame.setDescription(description);
     }
 
-    /** INTERNAL. Don't call from application code. */
+    /**
+     * INTERNAL. Don't call from application code.
+     */
     @Override
     public Window getWrappedWindow() {
         return ((Window) frame);
@@ -769,6 +765,7 @@ public class AbstractWindow extends Screen
      *         hintBox.setVisible(Boolean.valueOf(visible));
      * }
      * </pre>
+     *
      * @param settings settings object loaded from the database for the current user
      */
     @Override
@@ -828,8 +825,9 @@ public class AbstractWindow extends Screen
 
     /**
      * Hook to be implemented in subclasses. Called by {@link #validateAll()} at the end of standard validation.
+     *
      * @param errors the list of validation errors. Caller fills it by errors found during the default validation.
-     * Overridden method should add into it errors found by custom validation.
+     *               Overridden method should add into it errors found by custom validation.
      */
     protected void postValidate(ValidationErrors errors) {
     }

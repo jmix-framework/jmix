@@ -21,7 +21,10 @@ import io.jmix.core.metamodel.model.MetaClass;
 
 /**
  * Base interface of datasources that work with {@link io.jmix.core.entity.KeyValueEntity}.
+ *
+ * @deprecated Use {@link io.jmix.ui.model.KeyValueContainer} APIs instead.
  */
+@Deprecated
 public interface ValueDatasource {
 
     /**

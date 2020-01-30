@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.core.global.impl;
 
-import io.jmix.core.MessageTools;
 import com.haulmont.cuba.core.global.Messages;
+import io.jmix.core.MessageTools;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -54,15 +54,21 @@ public class MessagesImpl extends io.jmix.core.impl.MessagesImpl implements Mess
     @Override
     protected String fallbackMessageOrKey(@Nullable String group, String key, Locale locale) {
         return group == null ?
-                cubaMessages.getMainMessage(key, locale) :
+                key :
                 cubaMessages.getMessage(group, key, locale);
+    }
+
+    @Override
+    public void clearCache() {
+        super.clearCache();
+        cubaMessages.clearCache();
     }
 
     @Override
     @Nullable
     protected String fallbackMessageOrNull(@Nullable String group, String key, Locale locale) {
         return group == null ?
-                cubaMessages.findMainMessage(key, locale) :
+                null :
                 cubaMessages.findMessage(group, key, locale);
     }
 }

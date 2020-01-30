@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.global.impl;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import io.jmix.core.LocaleResolver;
 import io.jmix.core.security.UserSessionSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -60,8 +61,6 @@ public class CubaMessages {
 
     protected String confDir;
 
-    protected String mainMessagePack;
-
     protected Map<String, String> strCache = new ConcurrentHashMap<>();
 
     // Using ConcurrentHashMap instead of synchronized Set for better parallelism
@@ -83,10 +82,6 @@ public class CubaMessages {
 
     protected Locale getDefaultLocale() {
         return Locale.getDefault();
-    }
-
-    public String getMainMessagePack() {
-        return mainMessagePack;
     }
 
     public String getMessage(Class caller, String key) {
@@ -130,25 +125,11 @@ public class CubaMessages {
         return getMessage(pack, key, loc);
     }
 
-    public String getMainMessage(String key) {
-        return getMainMessage(key, getUserLocale());
-    }
-
-    public String getMainMessage(String key, Locale locale) {
-        checkNotNullArgument(key, "Message key is null");
-        return internalGetMessage(mainMessagePack, key, locale, key, false);
-    }
-
     public String getMessage(String packs, String key, Locale locale) {
         checkNotNullArgument(packs, "Messages pack name is null");
         checkNotNullArgument(key, "Message key is null");
 
-        String compositeKey = packs + "/" + key;
-        String msg = internalGetMessage(mainMessagePack, compositeKey, locale, null, false);
-        if (msg != null)
-            return msg;
-
-        return internalGetMessage(packs, key, locale, key, true);
+        return internalGetMessage(packs, key, locale, key);
     }
 
     @Nullable
@@ -159,24 +140,7 @@ public class CubaMessages {
         if (locale == null)
             locale = getUserLocale();
 
-        String compositeKey = packs + "/" + key;
-        String[] split = mainMessagePack.split(" ");
-        String lastMainMessagePack = split[split.length - 1];
-        String msg = internalGetMessage(lastMainMessagePack, compositeKey, locale, null, false);
-        if (msg != null)
-            return msg;
-
-        return internalGetMessage(packs, key, locale, null, true);
-    }
-
-    @Nullable
-    public String findMainMessage(String key, @Nullable Locale locale) {
-        checkNotNullArgument(key, "Message key is null");
-
-        if (locale == null)
-            locale = getUserLocale();
-
-        return internalGetMessage(mainMessagePack, key, locale, null, false);
+        return internalGetMessage(packs, key, locale, null);
     }
 
     public void clearCache() {
@@ -186,8 +150,7 @@ public class CubaMessages {
         notFoundCache.clear();
     }
 
-    protected String internalGetMessage(String packs, String key, Locale locale, String defaultValue,
-                                        boolean searchMainIfNotFound) {
+    protected String internalGetMessage(String packs, String key, Locale locale, String defaultValue) {
 //        locale = messageTools.trimLocale(locale);
 
         String cacheKey = makeCacheKey(packs, key, locale, locale);
@@ -204,15 +167,6 @@ public class CubaMessages {
         if (msg != null) {
             cache(cacheKey, msg);
             return msg;
-        }
-
-        if (searchMainIfNotFound) {
-            String tmpCacheKey = makeCacheKey(mainMessagePack, key, locale, locale);
-            msg = searchMessage(tmpCacheKey, key, locale, locale, new HashSet<>());
-            if (msg != null) {
-                cache(cacheKey, msg);
-                return msg;
-            }
         }
 
         notFoundCache.put(cacheKey, key);
@@ -249,7 +203,8 @@ public class CubaMessages {
     }
 
     private Locale truncateLocale(Locale locale) {
-        if (locale == null || StringUtils.isEmpty(locale.getCountry()))
+        if (locale == null
+                || StringUtils.isEmpty(locale.getCountry()) && StringUtils.isEmpty(locale.getScript()))
             return null;
         return Locale.forLanguageTag(locale.getLanguage());
     }
@@ -257,7 +212,7 @@ public class CubaMessages {
     protected boolean enterPack(String pack, Locale locale, Locale truncatedLocale, Set<String> passedPacks) {
         String k = truncatedLocale == null ?
                 pack + "/default" :
-                pack + "/" + (locale == null ? "default" : locale);
+                pack + "/" + (locale == null ? "default" : LocaleResolver.localeToString(locale));
         return passedPacks.add(k);
     }
 
@@ -417,14 +372,14 @@ public class CubaMessages {
     }
 
     protected String getLocaleSuffix(Locale locale) {
-        return (locale != null ? "_" + locale : "");
+        return (locale != null ? "_" + LocaleResolver.localeToString(locale) : "");
     }
 
     protected String makeCacheKey(String pack, String key, @Nullable Locale locale, @Nullable Locale truncatedLocale) {
         if (truncatedLocale == null)
             return pack + "/default/" + key;
 
-        return pack + "/" + (locale == null ? "default" : locale) + "/" + key;
+        return pack + "/" + (locale == null ? "default" : LocaleResolver.localeToString(locale)) + "/" + key;
     }
 
     protected String getPackName(Class c) {

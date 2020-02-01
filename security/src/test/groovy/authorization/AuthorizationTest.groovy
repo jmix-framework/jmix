@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.security.impl
+package authorization
 
 import io.jmix.core.DataManager
 import io.jmix.core.JmixCoreConfiguration
@@ -27,7 +27,8 @@ import io.jmix.data.JmixDataConfiguration
 import io.jmix.data.PersistenceTools
 import io.jmix.security.JmixSecurityConfiguration
 import io.jmix.security.entity.*
-import io.jmix.security.test.JmixSecurityTestConfiguration
+import io.jmix.security.impl.StandardUserSession
+import test_support.JmixSecurityTestConfiguration
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource

@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.security.impl
+package user_details_service
 
 import io.jmix.core.DataManager
 import io.jmix.core.JmixCoreConfiguration
-import io.jmix.core.compatibility.AppContext
-import io.jmix.core.security.CurrentUserSession
-import io.jmix.core.security.UserSessionManager
 import io.jmix.data.JmixDataConfiguration
 import io.jmix.data.PersistenceTools
 import io.jmix.security.JmixSecurityConfiguration
 import io.jmix.security.entity.User
-import io.jmix.security.test.JmixSecurityTestConfiguration
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import test_support.JmixSecurityTestConfiguration
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
@@ -35,7 +33,10 @@ import javax.inject.Inject
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixSecurityConfiguration, JmixSecurityTestConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = standard"])
-class AuthenticationTest extends Specification {
+class StandardUserDetailsServiceTest extends Specification {
+
+    @Inject
+    UserDetailsService userDetailsService
 
     @Inject
     DataManager dataManager
@@ -43,35 +44,21 @@ class AuthenticationTest extends Specification {
     @Inject
     PersistenceTools persistenceTools
 
-    @Inject
-    UserSessionManager userSessionManager
+    def "load user"() {
 
-    def "create and remove session"() {
-
-        def user = new User(login: 'user1', password: '{noop}123')
+        def user = new User(login: 'user1', password: '123')
         dataManager.commit(user)
 
         when:
 
-        def token = new UsernamePasswordAuthenticationToken('user1', '123')
-        def session = userSessionManager.createSession(token)
+        UserDetails userDetails = userDetailsService.loadUserByUsername('user1')
 
         then:
 
-        CurrentUserSession.get() == session
-        session.user == user
-
-        when:
-
-        userSessionManager.removeSession()
-
-        then:
-
-        CurrentUserSession.get() == null
+        userDetails.username == 'user1'
 
         cleanup:
 
         persistenceTools.deleteRecord(user)
     }
-
 }

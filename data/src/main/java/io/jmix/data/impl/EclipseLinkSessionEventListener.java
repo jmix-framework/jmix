@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
@@ -53,6 +54,8 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
 
     private Metadata metadata = AppBeans.get(Metadata.NAME);
 
+    private MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+
     private EntityStates entityStates = AppBeans.get(EntityStates.NAME);
 
     private DescriptorEventListener descriptorEventListener = AppBeans.get(EclipseLinkDescriptorEventListener.NAME);
@@ -66,7 +69,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
         Map<Class, ClassDescriptor> descriptorMap = session.getDescriptors();
         boolean hasMultipleTableConstraintDependency = hasMultipleTableConstraintDependency();
         for (Map.Entry<Class, ClassDescriptor> entry : descriptorMap.entrySet()) {
-            MetaClass metaClass = metadata.getSession().getClassNN(entry.getKey());
+            MetaClass metaClass = metadata.getSession().getClass(entry.getKey());
             ClassDescriptor desc = entry.getValue();
 
             setCacheable(metaClass, desc, session);
@@ -92,7 +95,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
             for (DatabaseMapping mapping : mappings) {
                 // support UUID
                 String attributeName = mapping.getAttributeName();
-                MetaProperty metaProperty = metaClass.getPropertyNN(attributeName);
+                MetaProperty metaProperty = metaClass.getProperty(attributeName);
                 if (metaProperty.getRange().isDatatype()) {
                     if (metaProperty.getJavaType().equals(UUID.class)) {
                         ((DirectToFieldMapping) mapping).setConverter(UuidConverter.getInstance());
@@ -100,7 +103,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
                     }
                 } else if (metaProperty.getRange().isClass() && !metaProperty.getRange().getCardinality().isMany()) {
                     MetaClass refMetaClass = metaProperty.getRange().asClass();
-                    MetaProperty refPkProperty = metadata.getTools().getPrimaryKeyProperty(refMetaClass);
+                    MetaProperty refPkProperty = metadataTools.getPrimaryKeyProperty(refMetaClass);
                     if (refPkProperty != null && refPkProperty.getJavaType().equals(UUID.class)) {
                         for (DatabaseField field : ((OneToOneMapping) mapping).getForeignKeyFields()) {
                             setDatabaseFieldParameters(session, field);
@@ -162,7 +165,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
         InheritancePolicy policy = desc.getInheritancePolicyOrNull();
         if (policy != null && policy.isJoinedStrategy() && policy.getParentClass() != null) {
             boolean hasOneToMany = metaClass.getOwnProperties().stream().anyMatch(metaProperty ->
-                    metadata.getTools().isPersistent(metaProperty)
+                    metadataTools.isPersistent(metaProperty)
                             && metaProperty.getRange().isClass()
                             && metaProperty.getRange().getCardinality() == Range.Cardinality.ONE_TO_MANY);
             if (hasOneToMany) {

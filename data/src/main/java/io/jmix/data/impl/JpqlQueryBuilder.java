@@ -28,13 +28,11 @@ import io.jmix.core.queryconditions.ConditionJpqlGenerator;
 import io.jmix.data.EntityManager;
 import io.jmix.data.PersistenceSecurity;
 import io.jmix.data.Query;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -288,7 +286,7 @@ public class JpqlQueryBuilder {
     }
 
     protected MetaProperty getPrimaryKeyProperty() {
-        MetaClass metaClass = metadata.getClassNN(entityName);
+        MetaClass metaClass = metadata.getClass(entityName);
         MetaProperty property = metadataTools.getPrimaryKeyProperty(metaClass);
         if (property == null) {
             throw new IllegalStateException(String.format("Entity %s has no primary key", entityName));

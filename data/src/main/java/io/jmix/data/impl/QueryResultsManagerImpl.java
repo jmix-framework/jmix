@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -95,7 +94,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             em.setSoftDeletion(loadContext.isSoftDeletion());
 
             QueryTransformer transformer = QueryTransformerFactory.createTransformer(contextQuery.getQueryString());
-            transformer.replaceWithSelectId(metadataTools.getPrimaryKeyName(metadata.getClassNN(entityName)));
+            transformer.replaceWithSelectId(metadataTools.getPrimaryKeyName(metadata.getClass(entityName)));
             transformer.removeOrderBy();
             String queryString = transformer.getResult();
 

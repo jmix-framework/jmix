@@ -18,7 +18,9 @@ package io.jmix.data.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.jmix.core.Id;
 import io.jmix.data.EntityFetcher;
+import io.jmix.data.Query;
 import io.jmix.data.TypedQuery;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.impl.entitycache.QueryKey;
@@ -50,8 +52,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.persistence.Parameter;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
@@ -60,7 +61,7 @@ import java.util.stream.Collectors;
 /**
  * Implementation of {@link TypedQuery} interface based on EclipseLink.
  */
-@Component(io.jmix.data.Query.NAME)
+@Component(Query.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class QueryImpl<T> implements TypedQuery<T> {
 
@@ -70,6 +71,10 @@ public class QueryImpl<T> implements TypedQuery<T> {
     protected Metadata metadata;
     @Inject
     protected MetadataTools metadataTools;
+    @Inject
+    private ExtendedEntities extendedEntities;
+    @Inject
+    private ViewRepository viewRepository;
     @Inject
     protected PersistenceSupport support;
     @Inject
@@ -85,7 +90,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     @Inject
     protected ServerConfig serverConfig;
 
-    protected javax.persistence.EntityManager emDelegate;
+    protected EntityManager emDelegate;
     protected JpaQuery query;
     protected EntityManagerImpl entityManager;
     protected boolean isNative;
@@ -94,13 +99,13 @@ public class QueryImpl<T> implements TypedQuery<T> {
     protected Class resultClass;
     protected Set<Param> params = new HashSet<>();
     protected Map<String, Object> hints;
-    protected javax.persistence.LockModeType lockMode;
+    protected LockModeType lockMode;
     protected List<View> views = new ArrayList<>();
     protected Integer maxResults;
     protected Integer firstResult;
     protected boolean singleResultExpected;
     protected boolean cacheable;
-    protected javax.persistence.FlushModeType flushMode;
+    protected FlushModeType flushMode;
 
     protected DbmsSpecifics dbmsSpecifics;
     protected Collection<QueryMacroHandler> macroHandlers;
@@ -128,7 +133,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
                         throw new IllegalArgumentException("Non-entity result class for native query is not supported" +
                                 " by EclipseLink: " + resultClass);
                     }
-                    Class effectiveClass = metadata.getExtendedEntities().getEffectiveClass(resultClass);
+                    Class effectiveClass = extendedEntities.getEffectiveClass(resultClass);
                     query = (JpaQuery) emDelegate.createNativeQuery(queryString, effectiveClass);
                 }
             } else {
@@ -139,7 +144,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
                 Class effectiveClass = getEffectiveResultClass();
                 query = buildJPAQuery(transformedQueryString, effectiveClass);
                 if (view != null) {
-                    MetaClass metaClass = metadata.getClassNN(view.getEntityClass());
+                    MetaClass metaClass = metadata.getClass(view.getEntityClass());
                     if (!metadataTools.isCacheable(metaClass) || !singleResultExpected) {
                         query.setHint(QueryHints.REFRESH, HintValues.TRUE);
                         query.setHint(QueryHints.REFRESH_CASCADE, CascadePolicy.CascadeByMapping);
@@ -149,9 +154,9 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
             if (flushMode == null) {
                 if (view != null && !view.loadPartialEntities()) {
-                    query.setFlushMode(javax.persistence.FlushModeType.AUTO);
+                    query.setFlushMode(FlushModeType.AUTO);
                 } else {
-                    query.setFlushMode(javax.persistence.FlushModeType.COMMIT);
+                    query.setFlushMode(FlushModeType.COMMIT);
                 }
             } else {
                 query.setFlushMode(flushMode);
@@ -202,7 +207,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
             return null;
         }
         if (Entity.class.isAssignableFrom(resultClass)) {
-            return metadata.getExtendedEntities().getEffectiveClass(resultClass);
+            return extendedEntities.getEffectiveClass(resultClass);
         }
         return resultClass;
     }
@@ -246,8 +251,8 @@ public class QueryImpl<T> implements TypedQuery<T> {
         QueryParser parser = queryTransformerFactory.parser(result);
 
         String entityName = parser.getEntityName();
-        Class effectiveClass = metadata.getExtendedEntities().getEffectiveClass(entityName);
-        MetaClass effectiveMetaClass = metadata.getClassNN(effectiveClass);
+        Class effectiveClass = extendedEntities.getEffectiveClass(entityName);
+        MetaClass effectiveMetaClass = metadata.getClass(effectiveClass);
         String effectiveEntityName = effectiveMetaClass.getName();
         if (!effectiveEntityName.equals(entityName)) {
             QueryTransformer transformer = queryTransformerFactory.transformer(result);
@@ -257,11 +262,11 @@ public class QueryImpl<T> implements TypedQuery<T> {
         }
 
         if (firstResult != null && firstResult > 0) {
-            String storeName = metadata.getTools().getStoreName(effectiveMetaClass);
+            String storeName = metadataTools.getStoreName(effectiveMetaClass);
             DbmsFeatures dbmsFeatures = dbmsSpecifics.getDbmsFeatures(storeName);
             if (dbmsFeatures.useOrderByForPaging()) {
                 QueryTransformer transformer = queryTransformerFactory.transformer(result);
-                transformer.addOrderByIdIfNotExists(metadata.getTools().getPrimaryKeyName(effectiveMetaClass));
+                transformer.addOrderByIdIfNotExists(metadataTools.getPrimaryKeyName(effectiveMetaClass));
                 result = transformer.getResult();
                 rebuildParser = true;
             }
@@ -489,7 +494,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
         }
         // In some cache configurations (in particular, when shared cache is on, but for some entities cache is set to ISOLATED),
         // EclipseLink does not evict updated entities from cache automatically.
-        javax.persistence.Cache cache = jpaQuery.getEntityManager().getEntityManagerFactory().getCache();
+        Cache cache = jpaQuery.getEntityManager().getEntityManagerFactory().getCache();
         if (referenceClass != null) {
             cache.evict(referenceClass);
             queryCacheMgr.invalidate(referenceClass, true);
@@ -622,7 +627,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setLockMode(javax.persistence.LockModeType lockMode) {
+    public TypedQuery<T> setLockMode(LockModeType lockMode) {
         checkState();
         this.lockMode = lockMode;
         return this;
@@ -644,13 +649,13 @@ public class QueryImpl<T> implements TypedQuery<T> {
         if (resultClass == null)
             throw new IllegalStateException("resultClass is null");
 
-        setView(metadata.getViewRepository().getView(resultClass, viewName));
+        setView(viewRepository.getView(resultClass, viewName));
         return this;
     }
 
     @Override
     public TypedQuery<T> setView(Class<? extends Entity> entityClass, String viewName) {
-        setView(metadata.getViewRepository().getView(entityClass, viewName));
+        setView(viewRepository.getView(entityClass, viewName));
         return this;
     }
 
@@ -669,13 +674,13 @@ public class QueryImpl<T> implements TypedQuery<T> {
         if (resultClass == null)
             throw new IllegalStateException("resultClass is null");
 
-        addView(metadata.getViewRepository().getView(resultClass, viewName));
+        addView(viewRepository.getView(resultClass, viewName));
         return this;
     }
 
     @Override
     public TypedQuery<T> addView(Class<? extends Entity> entityClass, String viewName) {
-        addView(metadata.getViewRepository().getView(entityClass, viewName));
+        addView(viewRepository.getView(entityClass, viewName));
         return this;
     }
 
@@ -703,7 +708,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setFlushMode(javax.persistence.FlushModeType flushMode) {
+    public TypedQuery<T> setFlushMode(FlushModeType flushMode) {
         this.flushMode = flushMode;
         return this;
     }
@@ -725,7 +730,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
         // copying behaviour of org.eclipse.persistence.internal.jpa.QueryImpl.executeReadQuery()
         DatabaseQuery elDbQuery = ((EJBQueryImpl) jpaQuery).getDatabaseQueryInternal();
         boolean isObjectLevelReadQuery = elDbQuery.isObjectLevelReadQuery();
-        if (jpaQuery.getFlushMode() == javax.persistence.FlushModeType.AUTO
+        if (jpaQuery.getFlushMode() == FlushModeType.AUTO
                 && (!isObjectLevelReadQuery || !((ObjectLevelReadQuery) elDbQuery).isReadOnly())) {
             // flush is expected
             support.processFlush(entityManager, true);
@@ -751,7 +756,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
             }
             try {
                 result = singleResult ? jpaQuery.getSingleResult() : jpaQuery.getResultList();
-            } catch (javax.persistence.NoResultException | javax.persistence.NonUniqueResultException ex) {
+            } catch (NoResultException | NonUniqueResultException ex) {
                 if (useQueryCache && singleResult) {
                     queryCacheMgr.putResultToCache(queryKey, null, entityName, parser.getAllEntityNames(), ex);
                 }
@@ -840,12 +845,12 @@ public class QueryImpl<T> implements TypedQuery<T> {
                 return;
 
             // Since ConversionManager incorrectly converts Date into LocalDate or LocalDateTime
-            if (value instanceof java.util.Date) {
+            if (value instanceof Date) {
                 if (actualParamType == ClassConstants.TIME_LDATE) {
-                    java.util.Date date = (java.util.Date) value;
+                    Date date = (Date) value;
                     value = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 } else if (actualParamType == ClassConstants.TIME_LDATETIME) {
-                    java.util.Date date = (java.util.Date) value;
+                    Date date = (Date) value;
                     value = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 }
             } else {

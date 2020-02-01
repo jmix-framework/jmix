@@ -80,7 +80,7 @@ public class EntityChangedEventManager {
         for (Entity entity : entities) {
 
             PublishingInfo info = infoCache.computeIfAbsent(entity.getClass(), aClass -> {
-                MetaClass metaClass = metadata.getClassNN(entity.getClass());
+                MetaClass metaClass = metadata.getClass(entity.getClass());
                 Map attrMap = (Map) metaClass.getAnnotations().get(PublishEntityChangedEvents.class.getName());
                 if (attrMap != null) {
                     if (!(entity instanceof BaseGenericIdEntity)) {
@@ -247,7 +247,7 @@ public class EntityChangedEventManager {
         Set<AttributeChanges.Change> changes = new HashSet<>();
         Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
 
-        for (MetaProperty property : metadata.getClassNN(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             Object value = entity.getValue(property.getName());
             if (deleted) {
                 if (value instanceof EmbeddableEntity) {

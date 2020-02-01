@@ -92,11 +92,11 @@ public class QueryCacheManager {
         List<T> resultList = null;
         QueryResult queryResult = queryCache.get(queryKey);
         if (queryResult != null) {
-            MetaClass metaClass = metadata.getClassNN(queryResult.getType());
+            MetaClass metaClass = metadata.getClass(queryResult.getType());
             String storeName = metadataTools.getStoreName(metaClass);
             EntityManager em = persistence.getEntityManager(storeName);
             resultList = new ArrayList<>(queryResult.getResult().size());
-            if (!metadata.getTools().isCacheable(metaClass)) {
+            if (!metadataTools.isCacheable(metaClass)) {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
             }
             for (Object id : queryResult.getResult()) {
@@ -117,8 +117,8 @@ public class QueryCacheManager {
         log.debug("Looking for query in cache: {}", queryKey.printDescription());
         QueryResult queryResult = queryCache.get(queryKey);
         if (queryResult != null) {
-            MetaClass metaClass = metadata.getClassNN(queryResult.getType());
-            if (!metadata.getTools().isCacheable(metaClass)) {
+            MetaClass metaClass = metadata.getClass(queryResult.getType());
+            if (!metadataTools.isCacheable(metaClass)) {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
             }
             if (queryResult.getException() != null) {
@@ -186,7 +186,7 @@ public class QueryCacheManager {
      */
     public void invalidate(Class typeClass, boolean sendInCluster) {
         if (isEnabled()) {
-            MetaClass metaClass = metadata.getClassNN(typeClass);
+            MetaClass metaClass = metadata.getClass(typeClass);
             invalidate(metaClass.getName(), sendInCluster);
         }
     }
@@ -200,8 +200,8 @@ public class QueryCacheManager {
         if (isEnabled()) {
             queryCache.invalidate(typeName);
             if (sendInCluster) {
-                MetaClass metaClass = metadata.getClass(typeName);
-                if (metaClass != null && metadata.getTools().isCacheable(metaClass)) {
+                MetaClass metaClass = metadata.findClass(typeName);
+                if (metaClass != null && metadataTools.isCacheable(metaClass)) {
                     clusterManager.send(new InvalidateQueryCacheMsg(Sets.newHashSet(typeName)));
                 }
             }
@@ -219,8 +219,8 @@ public class QueryCacheManager {
                 queryCache.invalidate(typeNames);
                 if (sendInCluster) {
                     boolean hasCacheable = typeNames.stream().anyMatch(typeName -> {
-                        MetaClass metaClass = metadata.getClass(typeName);
-                        return metaClass != null && metadata.getTools().isCacheable(metaClass);
+                        MetaClass metaClass = metadata.findClass(typeName);
+                        return metaClass != null && metadataTools.isCacheable(metaClass);
                     });
                     if (hasCacheable) {
                         clusterManager.send(new InvalidateQueryCacheMsg(typeNames));
@@ -264,7 +264,7 @@ public class QueryCacheManager {
         Set<String> newRelatedTypes = new HashSet<>();
         relatedTypes.forEach(type -> {
             newRelatedTypes.add(type);
-            MetaClass metaClass = metadata.getClassNN(type);
+            MetaClass metaClass = metadata.getClass(type);
             if (metaClass.getDescendants() != null) {
                 Set<String> descendants = metaClass.getDescendants().stream()
                         .filter(it -> it.getJavaClass() != null && !it.getJavaClass().isAnnotationPresent(MappedSuperclass.class))

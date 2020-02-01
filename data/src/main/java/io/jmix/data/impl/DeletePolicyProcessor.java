@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -69,7 +68,7 @@ public class DeletePolicyProcessor {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
-        this.metaClass = metadata.getClassNN(entity.getClass());
+        this.metaClass = metadata.getClass(entity.getClass());
         primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
 
         String storeName = metadataTools.getStoreName(metaClass);
@@ -239,7 +238,7 @@ public class DeletePolicyProcessor {
 
     protected void hardSetReferenceNull(Entity entity, MetaProperty property) {
         ((PersistenceImpl) persistence).addBeforeCommitAction(() -> {
-            MetaClass entityMetaClass = metadata.getClassNN(entity.getClass());
+            MetaClass entityMetaClass = metadata.getClass(entity.getClass());
             while (!entityMetaClass.equals(property.getDomain())) {
                 MetaClass ancestor = entityMetaClass.getAncestor();
                 if (ancestor == null)
@@ -269,7 +268,7 @@ public class DeletePolicyProcessor {
             return entity.getValue(property.getName());
         else {
             Query query = entityManager.createQuery(
-                    "select e." + property.getName() + " from " + metadata.getClassNN(entity.getClass()).getName()
+                    "select e." + property.getName() + " from " + metadata.getClass(entity.getClass()).getName()
                             + " e where e." + primaryKeyName + " = ?1");
             query.setParameter(1, entity.getId());
             Object refEntity = query.getFirstResult();

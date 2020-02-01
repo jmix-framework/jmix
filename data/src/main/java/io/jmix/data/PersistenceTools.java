@@ -93,7 +93,7 @@ public class PersistenceTools {
 
         HashSet<String> result = new HashSet<>();
         if (entityStates.isNew(entity)) {
-            for (MetaProperty property : metadata.getClassNN(entity.getClass()).getProperties()) {
+            for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
                 if (metadataTools.isPersistent(property))
                     result.add(property.getName());
             }
@@ -184,7 +184,7 @@ public class PersistenceTools {
                 ChangeRecord changeRecord = objectChanges.getChangesForAttributeNamed(attribute);
                 if (changeRecord instanceof CollectionChangeRecord) {
                     if (persistence.getEntityManager().isSoftDeletion() && changeRecord.getOldValue() != null) {
-                        MetaProperty metaProperty = metadata.getClass(entity).getPropertyNN(attribute);
+                        MetaProperty metaProperty = metadata.getClass(entity).getProperty(attribute);
                         if (SoftDelete.class.isAssignableFrom(metaProperty.getRange().asClass().getJavaClass())) {
                             Collection oldValue = (Collection) changeRecord.getOldValue();
                             Collection<SoftDelete> filteredValue;
@@ -230,8 +230,8 @@ public class PersistenceTools {
         if (value == null)
             return null;
 
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
-        MetaProperty metaProperty = metaClass.getPropertyNN(attribute);
+        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaProperty metaProperty = metaClass.getProperty(attribute);
         if (metaProperty.getRange().isEnum()) {
             for (Object o : metaProperty.getRange().asEnumeration().getValues()) {
                 EnumClass enumValue = (EnumClass) o;
@@ -276,8 +276,8 @@ public class PersistenceTools {
      * @throws RuntimeException         if anything goes wrong when retrieving the ID
      */
     public RefId getReferenceId(BaseGenericIdEntity entity, String property) {
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
-        MetaProperty metaProperty = metaClass.getPropertyNN(property);
+        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaProperty metaProperty = metaClass.getProperty(property);
 
         if (!metaProperty.getRange().isClass() || metaProperty.getRange().getCardinality().isMany())
             throw new IllegalArgumentException("Property is not a reference");
@@ -364,7 +364,7 @@ public class PersistenceTools {
             if (entity == null)
                 continue;
 
-            MetaClass metaClass = metadata.getClassNN(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity.getClass());
 
             String table = metadataTools.getDatabaseTable(metaClass);
             String primaryKey = metadataTools.getPrimaryKeyName(metaClass);

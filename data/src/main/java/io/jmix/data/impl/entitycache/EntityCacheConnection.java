@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl.entitycache;
 
+import io.jmix.core.ExtendedEntities;
 import io.jmix.core.cluster.ClusterListenerAdapter;
 import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.AppBeans;
@@ -35,12 +36,14 @@ import java.util.Set;
 public class EntityCacheConnection extends BroadcastRemoteConnection {
 
     protected Metadata metadata;
+    protected ExtendedEntities extendedEntities;
     protected QueryCacheManager queryCacheManager;
     protected ClusterManager clusterManager;
 
     public EntityCacheConnection(RemoteCommandManager rcm, ClusterManager clusterManager) {
         super(rcm);
         this.metadata = AppBeans.get(Metadata.NAME);
+        this.extendedEntities = AppBeans.get((ExtendedEntities.NAME));
         this.queryCacheManager = AppBeans.get(QueryCacheManager.NAME);
         this.clusterManager = clusterManager;
         rcm.logDebug("creating_broadcast_connection", getInfo());
@@ -127,9 +130,9 @@ public class EntityCacheConnection extends BroadcastRemoteConnection {
             if (changeSet != null && changeSet.getAllChangeSets() != null) {
                 Set<String> typeNames = new HashSet<>();
                 changeSet.getAllChangeSets().values().stream().filter(obj -> obj.getClassName() != null).forEach(obj -> {
-                    MetaClass metaClass = metadata.getClass(ReflectionHelper.getClass(obj.getClassName()));
+                    MetaClass metaClass = metadata.findClass(ReflectionHelper.getClass(obj.getClassName()));
                     if (metaClass != null) {
-                        metaClass = metadata.getExtendedEntities().getOriginalOrThisMetaClass(metaClass);
+                        metaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                         typeNames.add(metaClass.getName());
                     }
                 });

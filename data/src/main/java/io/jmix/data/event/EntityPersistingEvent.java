@@ -74,7 +74,7 @@ public class EntityPersistingEvent<E extends Entity> extends ApplicationEvent im
     public ResolvableType getResolvableType() {
         Metadata metadata = AppBeans.get(Metadata.NAME);
         ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
-        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClassNN(entity.getClass()));
+        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity.getClass()));
         return ResolvableType.forClassWithGenerics(getClass(), ResolvableType.forClass(metaClass.getJavaClass()));
     }
 

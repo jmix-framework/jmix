@@ -54,7 +54,7 @@ public class OrmCacheSupport {
      * @param changes   changes in the entity. Null when creating and removing the entity.
      */
     public void evictMasterEntity(BaseGenericIdEntity entity, @Nullable EntityAttributeChanges changes) {
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass() || property.getRange().getCardinality().isMany())
                 continue;

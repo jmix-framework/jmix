@@ -62,7 +62,7 @@ public class SortJpqlGenerator {
         List<String> sortExpressions = new ArrayList<>();
 
         if (entityName != null) {
-            MetaClass metaClass = metadata.getClassNN(entityName);
+            MetaClass metaClass = metadata.getClass(entityName);
             for (Sort.Order order : sort.getOrders()) {
                 MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(order.getProperty());
                 checkNotNullArgument(metaPropertyPath, "Could not resolve property path '%s' in '%s'", order.getProperty(), metaClass);
@@ -155,7 +155,7 @@ public class SortJpqlGenerator {
         if (!related.isEmpty()) {
             List<String> sortExpressions = new ArrayList<>(related.size());
             for (String item : related) {
-                MetaProperty metaProperty = propertyMetaClass.getPropertyNN(item);
+                MetaProperty metaProperty = propertyMetaClass.getProperty(item);
                 if (metadataTools.isPersistent(metaProperty)) {
                     List<MetaProperty> metaProperties = Arrays.asList(metaPropertyPath.getMetaProperties());
                     metaProperties.set(metaProperties.size() - 1, metaProperty);

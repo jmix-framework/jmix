@@ -16,11 +16,8 @@
 
 package io.jmix.data.event;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.entity.Entity;
-import io.jmix.core.Id;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.context.ApplicationEvent;
@@ -110,9 +107,10 @@ public class EntityChangedEvent<E extends Entity<K>, K> extends ApplicationEvent
     @Override
     public ResolvableType getResolvableType() {
         Metadata metadata = AppBeans.get(Metadata.NAME);
-        ExtendedEntities extendedEntities = metadata.getExtendedEntities();
-        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClassNN(entityId.getEntityClass()));
-        MetaProperty pkProperty = metadata.getTools().getPrimaryKeyProperty(metaClass);
+        ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
+        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entityId.getEntityClass()));
+        MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(metaClass);
         if (pkProperty == null) {
             throw new IllegalStateException("Unable to send EntityChangedEvent for " + metaClass + " because it has no primary key");
         }

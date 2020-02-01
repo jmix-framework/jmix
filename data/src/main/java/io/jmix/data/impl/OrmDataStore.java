@@ -124,7 +124,7 @@ public class OrmDataStore implements DataStore {
             log.debug("load: metaClass={}, id={}, view={}", context.getMetaClass(), context.getId(), context.getView());
         }
 
-        final MetaClass metaClass = metadata.getSession().getClassNN(context.getMetaClass());
+        final MetaClass metaClass = metadata.getSession().getClass(context.getMetaClass());
         if (isAuthorizationRequired(context) && !isEntityOpPermitted(metaClass, EntityOp.READ)) {
             log.debug("reading of {} not permitted, returning null", metaClass);
             return null;
@@ -198,7 +198,7 @@ public class OrmDataStore implements DataStore {
                     + (context.getQuery() == null || context.getQuery().getFirstResult() == 0 ? "" : ", first=" + context.getQuery().getFirstResult())
                     + (context.getQuery() == null || context.getQuery().getMaxResults() == 0 ? "" : ", max=" + context.getQuery().getMaxResults()));
 
-        MetaClass metaClass = metadata.getClassNN(context.getMetaClass());
+        MetaClass metaClass = metadata.getClass(context.getMetaClass());
 
         if (isAuthorizationRequired(context) && !isEntityOpPermitted(metaClass, EntityOp.READ)) {
             log.debug("reading of {} not permitted, returning empty list", metaClass);
@@ -330,7 +330,7 @@ public class OrmDataStore implements DataStore {
                     + (context.getPrevQueries().isEmpty() ? "" : ", from selected")
                     + ", query=" + context.getQuery());
 
-        MetaClass metaClass = metadata.getClassNN(context.getMetaClass());
+        MetaClass metaClass = metadata.getClass(context.getMetaClass());
 
         if (isAuthorizationRequired(context) && !isEntityOpPermitted(metaClass, EntityOp.READ)) {
             log.debug("reading of {} not permitted, returning 0", metaClass);
@@ -756,7 +756,7 @@ public class OrmDataStore implements DataStore {
 
     protected View createRestrictedView(LoadContext<?> context) {
         View view = context.getView() != null ? context.getView() :
-                viewRepository.getView(metadata.getClassNN(context.getMetaClass()), View.BASE);
+                viewRepository.getView(metadata.getClass(context.getMetaClass()), View.BASE);
 
         View copy = View.copy(isAuthorizationRequired(context) ? attributeSecurity.createRestrictedView(view) : view);
         if (context.isLoadPartialEntities()
@@ -923,7 +923,7 @@ public class OrmDataStore implements DataStore {
         queryParser.getQueryPaths().stream()
                 .filter(path -> !path.isSelectedPath())
                 .forEach(path -> {
-                    MetaClass metaClass = metadata.getClassNN(path.getEntityName());
+                    MetaClass metaClass = metadata.getClass(path.getEntityName());
                     MetaPropertyPath propertyPath = metaClass.getPropertyPath(path.getPropertyPath());
                     if (propertyPath == null) {
                         throw new IllegalStateException(String.format("query path '%s' is unresolved", path.getFullPath()));
@@ -934,7 +934,7 @@ public class OrmDataStore implements DataStore {
                     }
                 });
 
-        MetaClass metaClass = metadata.getClassNN(queryParser.getEntityName());
+        MetaClass metaClass = metadata.getClass(queryParser.getEntityName());
         if (!isEntityOpPermitted(metaClass, EntityOp.READ)) {
             log.debug("reading of {} not permitted, returning empty list", metaClass);
             return false;
@@ -950,7 +950,7 @@ public class OrmDataStore implements DataStore {
         Set<String> entityNames = queryParser.getAllEntityNames();
         entityNames.remove(metaClass.getName());
         for (String entityName : entityNames) {
-            MetaClass entityMetaClass = metadata.getClassNN(entityName);
+            MetaClass entityMetaClass = metadata.getClass(entityName);
             if (!isEntityOpPermitted(entityMetaClass, EntityOp.READ)) {
                 log.debug("reading of {} not permitted, returning empty list", entityMetaClass);
                 return false;
@@ -998,7 +998,7 @@ public class OrmDataStore implements DataStore {
         int index = 0;
         for (QueryParser.QueryPath path : queryParser.getQueryPaths()) {
             if (path.isSelectedPath()) {
-                MetaClass metaClass = metadata.getClassNN(path.getEntityName());
+                MetaClass metaClass = metadata.getClass(path.getEntityName());
                 if (!Objects.equals(path.getPropertyPath(), path.getVariableName())
                         && !isEntityAttrViewPermitted(metaClass.getPropertyPath(path.getPropertyPath()))) {
                     indexes.add(index);
@@ -1063,7 +1063,7 @@ public class OrmDataStore implements DataStore {
     }
 
     protected boolean needToFilterByInMemoryReadConstraints(LoadContext context) {
-        return security.hasConstraints() && security.hasInMemoryConstraints(metadata.getClassNN(context.getMetaClass()),
+        return security.hasConstraints() && security.hasInMemoryConstraints(metadata.getClass(context.getMetaClass()),
                 ConstraintOperationType.READ, ConstraintOperationType.ALL);
     }
 
@@ -1075,12 +1075,12 @@ public class OrmDataStore implements DataStore {
 
     protected boolean needToApplyByPredicate(LoadContext context, Predicate<MetaClass> hasConstraints) {
         if (context.getView() == null) {
-            MetaClass metaClass = metadata.getSession().getClassNN(context.getMetaClass());
+            MetaClass metaClass = metadata.getSession().getClass(context.getMetaClass());
             return hasConstraints.test(metaClass);
         }
 
         for (Class aClass : collectEntityClasses(context.getView(), new HashSet<>())) {
-            if (hasConstraints.test(metadata.getClassNN(aClass))) {
+            if (hasConstraints.test(metadata.getClass(aClass))) {
                 return true;
             }
         }

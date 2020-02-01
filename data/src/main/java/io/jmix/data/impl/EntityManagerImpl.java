@@ -133,7 +133,7 @@ public class EntityManagerImpl implements EntityManager {
     public <T extends Entity> T merge(T entity, @Nullable View view) {
         T managed = merge(entity);
         if (view != null) {
-            metadata.getTools().traverseAttributesByView(view, managed, (e, p) -> { /* do nothing, just fetch */ });
+            metadataTools.traverseAttributesByView(view, managed, (e, p) -> { /* do nothing, just fetch */ });
         }
         return managed;
     }
@@ -142,7 +142,7 @@ public class EntityManagerImpl implements EntityManager {
     @Deprecated
     public <T extends Entity> T merge(T entity, @Nullable String viewName) {
         if (viewName != null) {
-            return merge(entity, metadata.getViewRepository().getView(entity.getClass(), viewName));
+            return merge(entity, viewRepository.getView(entity.getClass(), viewName));
         } else {
             return merge(entity);
         }
@@ -449,7 +449,7 @@ public class EntityManagerImpl implements EntityManager {
             }
 
             // copy non-persistent attributes to the resulting merged instance
-            for (MetaProperty property : metadata.getClassNN(entity.getClass()).getProperties()) {
+            for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
                 if (metadataTools.isNotPersistent(property) && !property.isReadOnly()) {
                     // copy using reflection to avoid executing getter/setter code
                     Field field = FieldUtils.getField(entity.getClass(), property.getName(), true);

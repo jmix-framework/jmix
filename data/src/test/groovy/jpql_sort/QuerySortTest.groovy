@@ -116,7 +116,7 @@ class QuerySortTest extends DataSpec {
         JpqlQueryBuilder queryBuilder
 
         setup:
-        ((TestJpqlSortExpressionProvider)sortExpressionProvider).addToUpperPath(metadata.getClassNN('sales_Order').getPropertyPath('number'))
+        ((TestJpqlSortExpressionProvider)sortExpressionProvider).addToUpperPath(metadata.getClass('sales_Order').getPropertyPath('number'))
 
         when:
 

@@ -59,6 +59,9 @@ public class FetchGroupManager {
     @Inject
     private ViewRepository viewRepository;
 
+    @Inject
+    private ExtendedEntities extendedEntities;
+
     public void setView(JpaQuery query, String queryString, @Nullable View view, boolean singleResultExpected) {
         Preconditions.checkNotNullArgument(query, "query is null");
         if (view != null) {
@@ -106,7 +109,7 @@ public class FetchGroupManager {
             attrGroup.addAttribute(attribute);
         }
 
-        MetaClass metaClass = metadata.getClassNN(view.getEntityClass());
+        MetaClass metaClass = metadata.getClass(view.getEntityClass());
         if (!metadataTools.isCacheable(metaClass)) {
             query.setHint(useFetchGroup ? QueryHints.FETCH_GROUP : QueryHints.LOAD_GROUP, attrGroup);
         }
@@ -146,7 +149,7 @@ public class FetchGroupManager {
                 refFields.add(field);
         }
 
-        MetaClass metaClass = metadata.getClassNN(view.getEntityClass());
+        MetaClass metaClass = metadata.getClass(view.getEntityClass());
         if (!refFields.isEmpty()) {
             String alias = QueryTransformerFactory.createParser(queryString).getEntityAlias();
 
@@ -340,8 +343,8 @@ public class FetchGroupManager {
                     if (useFetchGroup) {
                         for (FetchGroupField fetchGroupField : fetchGroupFields) {
                             // compare with original class, because in case of entity extension properties are remapped to extended entities
-                            MetaClass inversePropRangeClass = metadata.getExtendedEntities()
-                                    .getOriginalOrThisMetaClass(inverseProp.getRange().asClass());
+                            MetaClass inversePropRangeClass = extendedEntities.getOriginalOrThisMetaClass(
+                                    inverseProp.getRange().asClass());
                             if (fetchGroupField.metaClass.equals(toManyField.metaClass)
                                     // add only local properties
                                     && !fetchGroupField.metaProperty.getRange().isClass()
@@ -377,7 +380,7 @@ public class FetchGroupManager {
             // Always add uuid property if the entity has primary key not of type UUID
             if (!BaseUuidEntity.class.isAssignableFrom(entityClass)
                     && !EmbeddableEntity.class.isAssignableFrom(entityClass)) {
-                MetaProperty uuidProp = metadata.getClassNN(entityClass).getProperty("uuid");
+                MetaProperty uuidProp = metadata.getClass(entityClass).findProperty("uuid");
                 if (uuidProp != null && metadataTools.isPersistent(uuidProp)) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, "uuid"));
                 }
@@ -386,8 +389,8 @@ public class FetchGroupManager {
 
         for (ViewProperty property : view.getProperties()) {
             String propertyName = property.getName();
-            MetaClass metaClass = metadata.getClassNN(entityClass);
-            MetaProperty metaProperty = metaClass.getPropertyNN(propertyName);
+            MetaClass metaClass = metadata.getClass(entityClass);
+            MetaProperty metaProperty = metaClass.getProperty(propertyName);
 
             if (metadataTools.isPersistent(metaProperty) && (metaProperty.getRange().isClass() || useFetchGroup)) {
                 FetchGroupField field = createFetchGroupField(entityClass, parentField, propertyName, property.getFetchMode());
@@ -414,7 +417,7 @@ public class FetchGroupManager {
 
             List<String> relatedProperties = metadataTools.getRelatedProperties(entityClass, propertyName);
             for (String relatedProperty : relatedProperties) {
-                MetaProperty relatedMetaProp = metaClass.getPropertyNN(relatedProperty);
+                MetaProperty relatedMetaProp = metaClass.getProperty(relatedProperty);
                 if (!view.containsProperty(relatedProperty) && (relatedMetaProp.getRange().isClass() || useFetchGroup)) {
                     FetchGroupField field = createFetchGroupField(entityClass, parentField, relatedProperty);
                     fetchGroupFields.add(field);
@@ -447,9 +450,9 @@ public class FetchGroupManager {
                                                   FetchGroupField parentField,
                                                   String property,
                                                   FetchMode fetchMode) {
-        MetaClass metaClass = metadata.getClassNN(entityClass);
+        MetaClass metaClass = metadata.getClass(entityClass);
 
-        MetaProperty metaProperty = metaClass.getPropertyNN(property);
+        MetaProperty metaProperty = metaClass.getProperty(property);
         MetaClass fetchMetaClass = metaProperty.getRange().isClass() ? metaProperty.getRange().asClass() : metaClass;
 
         return new FetchGroupField(metaClass, parentField, property, getFetchMode(fetchMetaClass, fetchMode), metadataTools.isCacheable(metaClass));
@@ -469,7 +472,7 @@ public class FetchGroupManager {
         public FetchGroupField(MetaClass metaClass, FetchGroupField parentField, String property, FetchMode fetchMode, boolean cacheable) {
             this.metaClass = metaClass;
             this.fetchMode = fetchMode;
-            this.metaProperty = metaClass.getPropertyNN(property);
+            this.metaProperty = metaClass.getProperty(property);
             this.metaPropertyPath = parentField == null ?
                     new MetaPropertyPath(metaClass, metaProperty) :
                     new MetaPropertyPath(parentField.metaPropertyPath, metaProperty);

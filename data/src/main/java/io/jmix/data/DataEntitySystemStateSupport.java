@@ -71,7 +71,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
     }
 
     protected FetchGroup suggestFetchGroup(BaseGenericIdEntity entity) {
-        Set<String> attributes = metadata.getClassNN(entity.getClass()).getProperties().stream()
+        Set<String> attributes = metadata.getClass(entity.getClass()).getProperties().stream()
                 .filter(metaProperty ->
                         !metaProperty.getRange().isClass() || entityStates.isLoaded(entity, metaProperty.getName()))
                 .map(MetadataObject::getName)

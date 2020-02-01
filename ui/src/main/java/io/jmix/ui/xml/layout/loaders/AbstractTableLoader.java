@@ -36,7 +36,6 @@ import io.jmix.ui.components.data.table.EmptyTableItems;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.xml.DeclarativeColumnGenerator;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -179,7 +178,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                         context, "Table ID", element.attributeValue("id"));
             }
 
-            metaClass = getMetadata().getClassNN(metaClassStr);
+            metaClass = getMetadata().getClass(metaClassStr);
         }
 
         List<Table.Column> availableColumns;

@@ -216,7 +216,7 @@ public class LookupBuilderProcessor {
             String property = ((Nested) collectionDc).getProperty();
             masterItem = masterDc.getItem();
 
-            MetaProperty metaProperty = metadata.getClass(masterItem).getPropertyNN(property);
+            MetaProperty metaProperty = metadata.getClass(masterItem).getProperty(property);
             inverseMetaProperty = metaProperty.getInverse();
 
             if (inverseMetaProperty != null

@@ -18,6 +18,7 @@ package io.jmix.ui.components.compatibility;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.Entity;
 import io.jmix.ui.components.CaptionMode;
 import io.jmix.ui.components.HasItemCaptionProvider;
@@ -39,6 +40,7 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
     protected String captionProperty;
 
     protected Metadata metadata = AppBeans.get(Metadata.NAME);
+    protected MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
 
     public LegacyCaptionAdapter(CaptionMode captionMode, String captionProperty) {
         this.captionMode = captionMode;
@@ -65,7 +67,7 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
                     : " ";
         }
 
-        return metadata.getTools().getInstanceName(entity);
+        return metadataTools.getInstanceName(entity);
     }
 
     public CaptionMode getCaptionMode() {

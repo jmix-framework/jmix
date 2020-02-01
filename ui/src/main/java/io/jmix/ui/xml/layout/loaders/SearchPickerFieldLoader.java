@@ -38,7 +38,7 @@ public class SearchPickerFieldLoader extends SearchFieldLoader {
 
         String metaClass = element.attributeValue("metaClass");
         if (!StringUtils.isEmpty(metaClass)) {
-            searchPickerField.setMetaClass(getMetadata().getClass(metaClass));
+            searchPickerField.setMetaClass(getMetadata().findClass(metaClass));
         }
 
         loadActions(searchPickerField, element);

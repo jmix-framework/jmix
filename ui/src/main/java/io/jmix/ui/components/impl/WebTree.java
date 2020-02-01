@@ -218,7 +218,7 @@ public class WebTree<E extends Entity>
             return itemCaptionProvider.apply(item);
         }
 
-        return metadata.getTools().getInstanceName(item);
+        return metadataTools.getInstanceName(item);
     }
 
     protected void initContextMenu() {

@@ -208,7 +208,7 @@ public class ScreenDataXmlLoader {
             }
             String idProperty = propsEl.attributeValue("idProperty");
             if (idProperty != null) {
-                if (container.getEntityMetaClass().getProperty(idProperty) == null)
+                if (container.getEntityMetaClass().findProperty(idProperty) == null)
                     throw new DevelopmentException(String.format("Property '%s' is not defined", idProperty));
                 container.setIdName(idProperty);
             }
@@ -224,7 +224,7 @@ public class ScreenDataXmlLoader {
         String containerId = getRequiredAttr(element, "id");
 
         String property = getRequiredAttr(element, "property");
-        MetaProperty metaProperty = masterContainer.getEntityMetaClass().getPropertyNN(property);
+        MetaProperty metaProperty = masterContainer.getEntityMetaClass().getProperty(property);
 
         InstanceContainer nestedContainer = null;
 

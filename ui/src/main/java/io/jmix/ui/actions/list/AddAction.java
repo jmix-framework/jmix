@@ -240,7 +240,7 @@ public class AddAction<E extends Entity> extends ListAction implements Action.Di
             Nested nestedContainer = (Nested) containerDataUnit.getContainer();
 
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
-            MetaProperty metaProperty = masterMetaClass.getPropertyNN(nestedContainer.getProperty());
+            MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
             boolean attrPermitted = security.isEntityAttrUpdatePermitted(masterMetaClass, metaProperty.getName());
             if (!attrPermitted) {

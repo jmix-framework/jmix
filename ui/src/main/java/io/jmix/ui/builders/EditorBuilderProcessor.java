@@ -297,7 +297,7 @@ public class EditorBuilderProcessor {
         String property = container.getProperty();
 
         MetaClass masterMetaClass = masterContainer.getEntityMetaClass();
-        MetaProperty metaProperty = masterMetaClass.getPropertyNN(property);
+        MetaProperty metaProperty = masterMetaClass.getProperty(property);
 
         MetaProperty inverseProp = metaProperty.getInverse();
         if (inverseProp != null) {
@@ -318,7 +318,7 @@ public class EditorBuilderProcessor {
             String property = ((Nested) container).getProperty();
 
             MetaClass masterMetaClass = masterContainer.getEntityMetaClass();
-            MetaProperty metaProperty = masterMetaClass.getPropertyNN(property);
+            MetaProperty metaProperty = masterMetaClass.getProperty(property);
 
             if (metaProperty.getType() == MetaProperty.Type.COMPOSITION) {
                 dataContext = UiControllerUtils.getScreenData(origin).getDataContext();

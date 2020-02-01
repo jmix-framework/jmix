@@ -101,7 +101,7 @@ public class SuggestionPickerFieldLoader extends SuggestionFieldQueryLoader<Sugg
     protected void loadMetaClass(SuggestionPickerField suggestionField, Element element) {
         String metaClass = element.attributeValue("metaClass");
         if (!StringUtils.isEmpty(metaClass)) {
-            suggestionField.setMetaClass(getMetadata().getClass(metaClass));
+            suggestionField.setMetaClass(getMetadata().findClass(metaClass));
         }
     }
 

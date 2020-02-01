@@ -161,7 +161,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
                         context, "DataGrid ID", element.attributeValue("id"));
             }
 
-            metaClass = getMetadata().getClassNN(metaClassStr);
+            metaClass = getMetadata().getClass(metaClassStr);
         }
 
         List<Column> availableColumns;

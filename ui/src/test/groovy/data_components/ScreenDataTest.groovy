@@ -183,16 +183,16 @@ class ScreenDataTest extends DataContextSpec {
         userInfoLoader.container == userInfoCont
         userInfoCont instanceof HasLoader
         ((HasLoader) userInfoCont).loader == userInfoLoader
-        userInfoCont.getEntityMetaClass().getProperty('login') != null
-        userInfoCont.getEntityMetaClass().getProperty('name') != null
+        userInfoCont.getEntityMetaClass().findProperty('login') != null
+        userInfoCont.getEntityMetaClass().findProperty('name') != null
         userInfoLoader.getContainer() == userInfoCont
         userInfoLoader.getQuery() == 'select u.login, u.name from sec$User u where u.login like :login'
 
         userInfoInstanceLoader.container == userInfoInstanceCont
         userInfoInstanceCont instanceof HasLoader
         ((HasLoader) userInfoInstanceCont).loader == userInfoInstanceLoader
-        userInfoInstanceCont.getEntityMetaClass().getProperty('login') != null
-        userInfoInstanceCont.getEntityMetaClass().getProperty('name') != null
+        userInfoInstanceCont.getEntityMetaClass().findProperty('login') != null
+        userInfoInstanceCont.getEntityMetaClass().findProperty('name') != null
         userInfoInstanceLoader.getContainer() == userInfoInstanceCont
         userInfoInstanceLoader.getQuery() == 'select u.login, u.name from sec$User u where u.id = 1'
     }

@@ -47,7 +47,7 @@ public class PickerFieldLoader extends AbstractFieldLoader<PickerField> {
 
         final String metaClass = element.attributeValue("metaClass");
         if (!StringUtils.isEmpty(metaClass)) {
-            resultComponent.setMetaClass(getMetadata().getClassNN(metaClass));
+            resultComponent.setMetaClass(getMetadata().getClass(metaClass));
         }
 
         loadActions(resultComponent, element);

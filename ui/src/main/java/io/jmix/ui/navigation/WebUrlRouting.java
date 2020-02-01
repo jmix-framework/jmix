@@ -475,7 +475,7 @@ public class WebUrlRouting implements UrlRouting {
             checkNotNullArgument(entity, "Entity cannot be null");
             checkNotNullArgument(urlParams, "URL params cannot be null");
 
-            String editorId = windowConfig.getEditorScreenId(metadata.getClassNN(entity.getClass()));
+            String editorId = windowConfig.getEditorScreenId(metadata.getClass(entity.getClass()));
             Map<String, String> params = prepareEditorUrlParams(entity, urlParams);
 
             return getRoute(editorId, params);

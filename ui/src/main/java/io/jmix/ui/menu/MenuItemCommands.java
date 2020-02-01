@@ -74,6 +74,8 @@ public class MenuItemCommands {
     @Inject
     protected Metadata metadata;
     @Inject
+    protected MetadataTools metadataTools;
+    @Inject
     protected ScreenBuilders screenBuilders;
 
     @Inject
@@ -189,7 +191,7 @@ public class MenuItemCommands {
             throw new IllegalStateException(String.format("Screen entity property '%s' doesn't have entity id", propertyName));
         }
 
-        MetaClass metaClass = metadata.getClassNN(ReflectionHelper.getClass(entityClass));
+        MetaClass metaClass = metadata.getClass(ReflectionHelper.getClass(entityClass));
 
         Object id = parseEntityId(metaClass, entityId);
         if (id == null) {
@@ -217,7 +219,7 @@ public class MenuItemCommands {
 
     @Nullable
     protected Object parseEntityId(MetaClass entityMetaClass, String entityId) {
-        MetaProperty pkProperty = metadata.getTools().getPrimaryKeyProperty(entityMetaClass);
+        MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(entityMetaClass);
         if (pkProperty == null) {
             return null;
         }

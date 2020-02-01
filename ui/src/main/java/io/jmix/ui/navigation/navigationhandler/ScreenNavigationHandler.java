@@ -321,7 +321,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
             return null;
         }
 
-        MetaClass metaClass = metadata.getClassNN(entityClass);
+        MetaClass metaClass = metadata.getClass(entityClass);
 
         if (!security.isEntityOpPermitted(metaClass, EntityOp.READ)) {
             urlChangeHandler.revertNavigationState();
@@ -336,7 +336,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
             return ParamsMap.of("item", metadata.create(entityClass));
         }
 
-        Class<?> idType = metaClass.getPropertyNN("id")
+        Class<?> idType = metaClass.getProperty("id")
                 .getJavaType();
         Object id = UrlIdSerializer.deserializeId(idType, idParam);
 

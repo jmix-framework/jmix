@@ -261,7 +261,7 @@ public class DataContextImpl implements DataContext {
 
         mergeSystemState(srcEntity, dstEntity, isRoot);
 
-        MetaClass metaClass = getMetadata().getClassNN(srcEntity.getClass());
+        MetaClass metaClass = getMetadata().getClass(srcEntity.getClass());
         MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(metaClass);
 
         for (MetaProperty property : metaClass.getProperties()) {
@@ -477,7 +477,7 @@ public class DataContextImpl implements DataContext {
         for (Map.Entry<Class<?>, Map<Object, Entity>> entry : content.entrySet()) {
             Class<?> entityClass = entry.getKey();
 
-            MetaClass metaClass = getMetadata().getClassNN(entityClass);
+            MetaClass metaClass = getMetadata().getClass(entityClass);
             for (MetaProperty metaProperty : metaClass.getProperties()) {
                 if (metaProperty.getRange().isClass()
                         && metaProperty.getRange().getCardinality().isMany()
@@ -707,8 +707,8 @@ public class DataContextImpl implements DataContext {
     }
 
     protected boolean entityHasReference(Entity entity, Entity refEntity) {
-        MetaClass metaClass = getMetadata().getClassNN(entity.getClass());
-        MetaClass refMetaClass = getMetadata().getClassNN(refEntity.getClass());
+        MetaClass metaClass = getMetadata().getClass(entity.getClass());
+        MetaClass refMetaClass = getMetadata().getClass(refEntity.getClass());
 
         return metaClass.getProperties().stream()
                 .anyMatch(metaProperty ->
@@ -766,7 +766,7 @@ public class DataContextImpl implements DataContext {
         }
         visited.add(entity);
 
-        for (MetaProperty property : getMetadata().getClassNN(entity.getClass()).getProperties()) {
+        for (MetaProperty property : getMetadata().getClass(entity.getClass()).getProperties()) {
             if (!property.getRange().isClass() || !getEntityStates().isLoaded(entity, property.getName()))
                 continue;
             Object value = entity.getValue(property.getName());

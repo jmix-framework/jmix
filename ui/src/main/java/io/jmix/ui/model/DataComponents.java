@@ -63,7 +63,7 @@ public class DataComponents implements ApplicationContextAware {
      * Creates {@code InstanceContainer}.
      */
     public <E extends Entity> InstanceContainer<E> createInstanceContainer(Class<E> entityClass) {
-        return new InstanceContainerImpl<>(applicationContext, metadata.getClassNN(entityClass));
+        return new InstanceContainerImpl<>(applicationContext, metadata.getClass(entityClass));
     }
 
     /**
@@ -74,7 +74,7 @@ public class DataComponents implements ApplicationContextAware {
                                                                                    InstanceContainer<? extends Entity> masterContainer,
                                                                                    String property) {
         InstancePropertyContainerImpl<E> container = new InstancePropertyContainerImpl<>(
-                applicationContext, metadata.getClassNN(entityClass), masterContainer, property);
+                applicationContext, metadata.getClass(entityClass), masterContainer, property);
 
         if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)
                 && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
@@ -98,7 +98,7 @@ public class DataComponents implements ApplicationContextAware {
      */
     public <E extends Entity> CollectionContainer<E> createCollectionContainer(Class<E> entityClass) {
         CollectionContainerImpl<E> container = new CollectionContainerImpl<>(
-                applicationContext, metadata.getClassNN(entityClass));
+                applicationContext, metadata.getClass(entityClass));
         container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
         return container;
     }
@@ -111,7 +111,7 @@ public class DataComponents implements ApplicationContextAware {
                                                                                        InstanceContainer<? extends Entity> masterContainer,
                                                                                        String property) {
         CollectionPropertyContainerImpl<E> container = new CollectionPropertyContainerImpl<>(
-                applicationContext, metadata.getClassNN(entityClass), masterContainer, property);
+                applicationContext, metadata.getClass(entityClass), masterContainer, property);
         container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
 
         if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)

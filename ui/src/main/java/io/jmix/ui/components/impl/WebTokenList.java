@@ -18,6 +18,7 @@ package io.jmix.ui.components.impl;
 
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.Entity;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
@@ -78,6 +79,7 @@ public class WebTokenList<V extends Entity>
     protected UiComponents uiComponents;
     protected Messages messages;
     protected Metadata metadata;
+    protected MetadataTools metadataTools;
     protected WindowConfig windowConfig;
     protected ScreenBuilders screenBuilders;
     protected Icons icons;
@@ -115,6 +117,11 @@ public class WebTokenList<V extends Entity>
     @Inject
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+    }
+
+    @Inject
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
     }
 
     @Inject
@@ -725,7 +732,7 @@ public class WebTokenList<V extends Entity>
             return optionCaptionProvider.apply(instance);
         }
 
-        return metadata.getTools().getInstanceName(instance);
+        return metadataTools.getInstanceName(instance);
     }
 
     @Override

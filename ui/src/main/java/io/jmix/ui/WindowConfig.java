@@ -415,7 +415,7 @@ public class WindowConfig {
         if (primaryEditorAnnotation != null) {
             Class entityClass = (Class) primaryEditorAnnotation.get("value");
             if (entityClass != null) {
-                MetaClass metaClass = metadata.getClass(entityClass);
+                MetaClass metaClass = metadata.findClass(entityClass);
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                 primaryEditors.put(originalMetaClass.getJavaClass(), windowInfo);
             }
@@ -428,7 +428,7 @@ public class WindowConfig {
         if (primaryEditorAnnotation != null) {
             Class entityClass = (Class) primaryEditorAnnotation.get("value");
             if (entityClass != null) {
-                MetaClass metaClass = metadata.getClass(entityClass);
+                MetaClass metaClass = metadata.findClass(entityClass);
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                 primaryLookups.put(originalMetaClass.getJavaClass(), windowInfo);
             }
@@ -470,7 +470,7 @@ public class WindowConfig {
             if (windowInfo == null) {
                 Matcher matcher = ENTITY_SCREEN_PATTERN.matcher(id);
                 if (matcher.matches()) {
-                    MetaClass metaClass = metadata.getClass(matcher.group(1));
+                    MetaClass metaClass = metadata.findClass(matcher.group(1));
                     if (metaClass == null)
                         return null;
                     MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
@@ -601,7 +601,7 @@ public class WindowConfig {
      * @throws NoSuchScreenException if the screen with specified ID is not registered
      */
     public WindowInfo getLookupScreen(Class<? extends Entity> entityClass) {
-        MetaClass metaClass = metadata.getSession().getClass(entityClass);
+        MetaClass metaClass = metadata.getSession().findClass(entityClass);
 
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         WindowInfo windowInfo = primaryLookups.get(originalMetaClass.getJavaClass());

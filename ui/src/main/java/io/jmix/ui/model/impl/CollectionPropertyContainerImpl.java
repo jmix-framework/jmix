@@ -94,7 +94,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
 
     protected MetaProperty getMasterProperty() {
         MetaClass masterMetaClass = master.getEntityMetaClass();
-        MetaProperty masterProperty = masterMetaClass.getPropertyNN(property);
+        MetaProperty masterProperty = masterMetaClass.getProperty(property);
         if (!masterProperty.getRange().getCardinality().isMany()) {
             throw new IllegalStateException(String.format("Property '%s' is not a collection", property));
         }

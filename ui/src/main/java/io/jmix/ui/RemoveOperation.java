@@ -204,7 +204,7 @@ public class RemoveOperation {
             String property = ((Nested) container).getProperty();
 
             MetaClass masterMetaClass = masterContainer.getEntityMetaClass();
-            MetaProperty metaProperty = masterMetaClass.getPropertyNN(property);
+            MetaProperty metaProperty = masterMetaClass.getProperty(property);
 
             needCommit = needCommit && (metaProperty.getType() != MetaProperty.Type.COMPOSITION);
         }
@@ -238,7 +238,7 @@ public class RemoveOperation {
         String property = ((Nested) container).getProperty();
         Entity masterItem = masterDc.getItem();
 
-        MetaProperty metaProperty = metadata.getClass(masterItem).getPropertyNN(property);
+        MetaProperty metaProperty = metadata.getClass(masterItem).getProperty(property);
         MetaProperty inverseMetaProperty = metaProperty.getInverse();
 
         if (inverseMetaProperty != null

@@ -111,7 +111,7 @@ public class AbstractBeanValidator implements Consumer {
     }
 
     public String getDefaultErrorMessage() {
-        MetaClass metaClass = metadata.getClass(beanClass);
+        MetaClass metaClass = metadata.findClass(beanClass);
 
         return messages.formatMessage("validation.defaultMsg",
                 messageTools.getPropertyCaption(metaClass, beanProperty));

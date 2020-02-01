@@ -56,8 +56,8 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
         } else if (o1 instanceof Comparable && o2 instanceof Comparable) {
             c = ((Comparable) o1).compareTo(o2);
         } else if (o1 instanceof Instance && o2 instanceof Instance) {
-            MetaClass metaClass = metadata.getClassNN(o1.getClass());
-            Collection<MetaProperty> namePatternProperties = metadata.getTools().getNamePatternProperties(metaClass, true);
+            MetaClass metaClass = metadata.getClass(o1.getClass());
+            Collection<MetaProperty> namePatternProperties = metadataTools.getNamePatternProperties(metaClass, true);
             if (namePatternProperties.isEmpty()) {
                 String instanceName1 = metadataTools.getInstanceName((Instance) o1);
                 String instanceName2 = metadataTools.getInstanceName((Instance) o2);

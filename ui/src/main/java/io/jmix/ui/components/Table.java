@@ -902,7 +902,7 @@ public interface Table<E extends Entity>
         // todo provide Table instance method as replacement
         @Deprecated
         public Column(Class<T> entityClass, String propertyPath) {
-            MetaClass metaClass = AppBeans.get(Metadata.class).getClassNN(entityClass);
+            MetaClass metaClass = AppBeans.get(Metadata.class).getClass(entityClass);
             MetaPropertyPath mpp = metaClass.getPropertyPath(propertyPath);
 
             if (mpp == null) {

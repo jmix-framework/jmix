@@ -186,7 +186,7 @@ public class ExcludeAction extends SecuredListAction implements Action.DisabledW
             Nested nestedContainer = (Nested) containerDataUnit.getContainer();
 
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
-            MetaProperty metaProperty = masterMetaClass.getPropertyNN(nestedContainer.getProperty());
+            MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
             boolean attrPermitted = security.isEntityAttrUpdatePermitted(masterMetaClass, metaProperty.getName());
             if (!attrPermitted) {

@@ -200,7 +200,7 @@ public class RemoveAction extends SecuredListAction implements Action.DisabledWh
             Nested nestedContainer = (Nested) containerDataUnit.getContainer();
 
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
-            MetaProperty metaProperty = masterMetaClass.getPropertyNN(nestedContainer.getProperty());
+            MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
             boolean attrPermitted = security.isEntityAttrUpdatePermitted(masterMetaClass, metaProperty.getName());
             if (!attrPermitted) {

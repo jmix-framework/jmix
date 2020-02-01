@@ -83,7 +83,7 @@ public class SecurityTokenManager {
                 }
                 setFilteredAttributes(securityState, filteredAttributes);
             }
-            MetaClass metaClass = metadata.getClassNN(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity.getClass());
             jsonObject.put(ENTITY_NAME_KEY, metaClass.getName());
             if (!metadataTools.hasCompositePrimaryKey(metaClass)) {
                 jsonObject.put(ENTITY_ID_KEY, getEntityId(entity));
@@ -121,7 +121,7 @@ public class SecurityTokenManager {
                 if (!SYSTEM_ATTRIBUTE_KEYS.contains(key)) {
                     String elementName = String.valueOf(key);
                     JSONArray jsonArray = jsonObject.getJSONArray(elementName);
-                    MetaProperty metaProperty = metaClass.getPropertyNN(elementName);
+                    MetaProperty metaProperty = metaClass.getProperty(elementName);
                     for (int i = 0; i < jsonArray.length(); i++) {
                         Object id = jsonArray.get(i);
                         filteredData.put(elementName, convertId(id, metaProperty.getRange().asClass(), true));

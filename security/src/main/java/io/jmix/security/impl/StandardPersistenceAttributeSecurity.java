@@ -16,11 +16,9 @@
 
 package io.jmix.security.impl;
 
-import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.BaseEntityInternalAccess;
-import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -78,7 +76,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
     }
 
     private void copyViewConsideringPermissions(View srcView, View dstView) {
-        MetaClass metaClass = metadata.getClassNN(srcView.getEntityClass());
+        MetaClass metaClass = metadata.getClass(srcView.getEntityClass());
         for (ViewProperty property : srcView.getProperties()) {
             if (security.isEntityAttrReadPermitted(metaClass, property.getName())) {
                 View viewCopy = null;
@@ -131,7 +129,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
             return;
         }
         // check only immediate attributes, otherwise persisted entity can be unusable for calling code
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (!metadataTools.isSystem(metaProperty)
                     && !metaProperty.isReadOnly()
@@ -181,7 +179,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         if (entity == null) {
             return;
         }
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
         FetchGroupTracker fetchGroupTracker = (FetchGroupTracker) entity;
         FetchGroup fetchGroup = fetchGroupTracker._persistence_getFetchGroup();
         if (fetchGroup != null) {
@@ -194,7 +192,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
                         attributesToRemove.add(attrName);
                         break;
                     }
-                    MetaProperty metaProperty = currentMetaClass.getPropertyNN(part);
+                    MetaProperty metaProperty = currentMetaClass.getProperty(part);
                     if (metaProperty.getRange().isClass()) {
                         currentMetaClass = metaProperty.getRange().asClass();
                     }
@@ -257,7 +255,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
 
         @Override
         public void visit(Entity entity, MetaProperty property) {
-            MetaClass metaClass = metadata.getClassNN(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity.getClass());
             if (!security.isEntityAttrReadPermitted(metaClass, property.getName())) {
                 addInaccessibleAttribute(entity, property.getName());
                 if (!metadataTools.isSystem(property) && !property.isReadOnly()) {
@@ -270,7 +268,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
     protected class ClearInaccessibleAttributesVisitor implements EntityAttributeVisitor {
         @Override
         public void visit(Entity entity, MetaProperty property) {
-            MetaClass metaClass = metadata.getClassNN(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity.getClass());
             String propertyName = property.getName();
             if (!security.isEntityAttrReadPermitted(metaClass, propertyName)) {
                 addInaccessibleAttribute(entity, propertyName);

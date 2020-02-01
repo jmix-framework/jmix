@@ -131,9 +131,9 @@ public class StandardUserSessionFactory implements UserSessionFactory {
             int pos = target.indexOf(Permission.TARGET_PATH_DELIMETER);
             if (pos > -1) {
                 String entityName = target.substring(0, pos);
-                Class extendedClass = extendedEntities.getExtendedClass(metadata.getClassNN(entityName));
+                Class extendedClass = extendedEntities.getExtendedClass(metadata.getClass(entityName));
                 if (extendedClass != null) {
-                    MetaClass extMetaClass = metadata.getClassNN(extendedClass);
+                    MetaClass extMetaClass = metadata.getClass(extendedClass);
                     return extMetaClass.getName() + Permission.TARGET_PATH_DELIMETER + target.substring(pos + 1);
                 }
             }

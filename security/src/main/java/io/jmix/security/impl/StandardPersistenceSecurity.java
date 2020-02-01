@@ -83,7 +83,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
         QueryParser parser = QueryTransformerFactory.createParser(query.getQueryString());
         String entityName = parser.getEntityName();
 
-        List<ConstraintData> constraints = ((StandardSecurity) security).getConstraints(metadata.getClassNN(entityName),
+        List<ConstraintData> constraints = ((StandardSecurity) security).getConstraints(metadata.getClass(entityName),
                 constraint ->
                         constraint.getCheckType().database()
                                 && (constraint.getOperationType() == ConstraintOperationType.READ
@@ -193,7 +193,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     @Override
     @SuppressWarnings("unchecked")
     public void restoreFilteredData(Entity entity) {
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
         String storeName = metadataTools.getStoreName(metaClass);
         EntityManager entityManager = persistence.getEntityManager(storeName);
 
@@ -203,7 +203,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
         }
 
         for (Map.Entry<String, Collection<Object>> entry : filtered.asMap().entrySet()) {
-            MetaProperty property = metaClass.getPropertyNN(entry.getKey());
+            MetaProperty property = metaClass.getProperty(entry.getKey());
             Collection filteredIds = entry.getValue();
 
             if (property.getRange().isClass() && CollectionUtils.isNotEmpty(filteredIds)) {
@@ -249,7 +249,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     protected void assertSecurityConstraints(Entity entity, BiPredicate<Entity, MetaProperty> predicate) {
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty)) {
                 if (predicate.test(entity, metaProperty)) {

@@ -86,7 +86,7 @@ public class StandardSecurity implements Security {
 
     @Override
     public boolean isEntityOpPermitted(Class<?> entityClass, EntityOp entityOp) {
-        return isEntityOpPermitted(metadata.getClassNN(entityClass), entityOp);
+        return isEntityOpPermitted(metadata.getClass(entityClass), entityOp);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class StandardSecurity implements Security {
 
     @Override
     public boolean isEntityAttrPermitted(Class<?> entityClass, String property, EntityAttrAccess access) {
-        return isEntityAttrPermitted(metadata.getClassNN(entityClass), property, access);
+        return isEntityAttrPermitted(metadata.getClass(entityClass), property, access);
     }
 
     @Override
@@ -213,7 +213,7 @@ public class StandardSecurity implements Security {
     }
 
     protected boolean isPermitted(Entity entity, ConstraintData constraint) {
-        String metaClassName = metadata.getClassNN(entity.getClass()).getName();
+        String metaClassName = metadata.getClass(entity.getClass()).getName();
         String groovyScript = constraint.getGroovyScript();
         if (constraint.getCheckType().memory() && StringUtils.isNotBlank(groovyScript)) {
             try {

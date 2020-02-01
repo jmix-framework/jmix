@@ -112,7 +112,7 @@ class AuthorizationTest extends Specification {
         session.getConstraints('test_Foo').size() == 1
 
         security.hasConstraints()
-        security.hasConstraints(metadata.getClassNN('test_Foo'))
+        security.hasConstraints(metadata.getClass('test_Foo'))
 
         cleanup:
 

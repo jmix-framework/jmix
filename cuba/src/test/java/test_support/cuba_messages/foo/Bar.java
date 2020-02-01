@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.sample.app.foo;
+package test_support.cuba_messages.foo;
 
 public class Bar {
 }

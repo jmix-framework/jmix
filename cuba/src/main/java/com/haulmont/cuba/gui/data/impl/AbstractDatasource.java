@@ -15,8 +15,8 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
 import io.jmix.core.View;
 import io.jmix.core.commons.events.EventRouter;
 import io.jmix.core.entity.Entity;

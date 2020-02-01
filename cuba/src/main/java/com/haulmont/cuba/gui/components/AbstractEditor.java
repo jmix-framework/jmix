@@ -16,6 +16,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.google.common.collect.Iterables;
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
@@ -325,7 +326,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
      */
     protected void handlePreviouslyDeletedCompositionItems(Entity entity, DatasourceImplementation parentDs) {
         Metadata metadata = getBeanLocator().get(Metadata.NAME);
-        for (MetaProperty property : metadata.getClassNN(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (!PersistenceHelper.isLoaded(entity, property.getName()))
                 return;
 

@@ -16,13 +16,12 @@
  */
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.data.Persistence;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;

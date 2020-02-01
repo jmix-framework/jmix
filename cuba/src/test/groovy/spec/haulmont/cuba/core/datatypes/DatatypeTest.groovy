@@ -79,12 +79,12 @@ class DatatypeTest extends CoreTestSpecification {
     }
 
     def "adaptive BigDecimal datatype"() {
-        def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
+        def metaClass = metadata.getClass(TestNumberValuesEntity.class)
 
-        def decimalDatatype1 = metaClass.getPropertyNN('decimalField1').getRange().asDatatype()
-        def decimalDatatype2 = metaClass.getPropertyNN('decimalField2').getRange().asDatatype()
-        def decimalDatatype3 = metaClass.getPropertyNN('decimalField3').getRange().asDatatype()
-        def decimalDatatype4 = metaClass.getPropertyNN('decimalField4').getRange().asDatatype()
+        def decimalDatatype1 = metaClass.getProperty('decimalField1').getRange().asDatatype()
+        def decimalDatatype2 = metaClass.getProperty('decimalField2').getRange().asDatatype()
+        def decimalDatatype3 = metaClass.getProperty('decimalField3').getRange().asDatatype()
+        def decimalDatatype4 = metaClass.getProperty('decimalField4').getRange().asDatatype()
 
         expect:
 
@@ -119,10 +119,10 @@ class DatatypeTest extends CoreTestSpecification {
 
     @Ignore
     def "adaptive BigDecimal localized datatype"() {
-        def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
+        def metaClass = metadata.getClass(TestNumberValuesEntity.class)
 
-        def decimalDatatype1 = metaClass.getPropertyNN('decimalField1').getRange().asDatatype()
-        def decimalDatatype4 = metaClass.getPropertyNN('decimalField4').getRange().asDatatype()
+        def decimalDatatype1 = metaClass.getProperty('decimalField1').getRange().asDatatype()
+        def decimalDatatype4 = metaClass.getProperty('decimalField4').getRange().asDatatype()
 
         def locale = Locale.forLanguageTag("ru")
 
@@ -144,11 +144,11 @@ class DatatypeTest extends CoreTestSpecification {
     }
 
     def "adaptive Double datatype"() {
-        def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
+        def metaClass = metadata.getClass(TestNumberValuesEntity.class)
 
-        def doubleDatatype1 = metaClass.getPropertyNN('doubleField1').getRange().asDatatype()
-        def doubleDatatype2 = metaClass.getPropertyNN('doubleField2').getRange().asDatatype()
-        def doubleDatatype3 = metaClass.getPropertyNN('doubleField3').getRange().asDatatype()
+        def doubleDatatype1 = metaClass.getProperty('doubleField1').getRange().asDatatype()
+        def doubleDatatype2 = metaClass.getProperty('doubleField2').getRange().asDatatype()
+        def doubleDatatype3 = metaClass.getProperty('doubleField3').getRange().asDatatype()
 
         expect:
 
@@ -175,11 +175,11 @@ class DatatypeTest extends CoreTestSpecification {
     }
 
     def "adaptive Float datatype"() {
-        def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
+        def metaClass = metadata.getClass(TestNumberValuesEntity.class)
 
-        def floatDatatype1 = metaClass.getPropertyNN('floatField1').getRange().asDatatype()
-        def floatDatatype2 = metaClass.getPropertyNN('floatField2').getRange().asDatatype()
-        def floatDatatype3 = metaClass.getPropertyNN('floatField3').getRange().asDatatype()
+        def floatDatatype1 = metaClass.getProperty('floatField1').getRange().asDatatype()
+        def floatDatatype2 = metaClass.getProperty('floatField2').getRange().asDatatype()
+        def floatDatatype3 = metaClass.getProperty('floatField3').getRange().asDatatype()
 
         expect:
 
@@ -206,10 +206,10 @@ class DatatypeTest extends CoreTestSpecification {
     }
 
     def "adaptive Integer datatype"() {
-        def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
+        def metaClass = metadata.getClass(TestNumberValuesEntity.class)
 
-        def intDatatype1 = metaClass.getPropertyNN('intField1').getRange().asDatatype()
-        def intDatatype2 = metaClass.getPropertyNN('intField2').getRange().asDatatype()
+        def intDatatype1 = metaClass.getProperty('intField1').getRange().asDatatype()
+        def intDatatype2 = metaClass.getProperty('intField2').getRange().asDatatype()
 
         expect:
 
@@ -231,10 +231,10 @@ class DatatypeTest extends CoreTestSpecification {
     }
 
     def "adaptive Long datatype"() {
-        def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
+        def metaClass = metadata.getClass(TestNumberValuesEntity.class)
 
-        def longDatatype1 = metaClass.getPropertyNN('longField1').getRange().asDatatype()
-        def longDatatype2 = metaClass.getPropertyNN('longField2').getRange().asDatatype()
+        def longDatatype1 = metaClass.getProperty('longField1').getRange().asDatatype()
+        def longDatatype2 = metaClass.getProperty('longField2').getRange().asDatatype()
 
         expect:
 
@@ -256,9 +256,9 @@ class DatatypeTest extends CoreTestSpecification {
     }
 
     def "adaptive percent datatype"() {
-        def metaClass = metadata.getClassNN(TestNumberValuesEntity.class)
+        def metaClass = metadata.getClass(TestNumberValuesEntity.class)
 
-        def percentDatatype = metaClass.getPropertyNN('percentField').getRange().asDatatype()
+        def percentDatatype = metaClass.getProperty('percentField').getRange().asDatatype()
 
         expect:
 
@@ -279,13 +279,13 @@ class DatatypeTest extends CoreTestSpecification {
     }
 
     def "LocalDate/LocalDateTime/LocalTime/OffsetDateTime/OffsetTime datatypes"() {
-        def metaClass = metadata.getClassNN(LocalDateTimeEntity.class)
+        def metaClass = metadata.getClass(LocalDateTimeEntity.class)
 
-        def localDateDatatype = metaClass.getPropertyNN('localDate').getRange().asDatatype()
-        def localTimeDatatype = metaClass.getPropertyNN('localTime').getRange().asDatatype()
-        def localDateTimeDatatype = metaClass.getPropertyNN('localDateTime').getRange().asDatatype()
-        def offsetDateTimeDatatype = metaClass.getPropertyNN('offsetDateTime').getRange().asDatatype()
-        def offsetTimeDatatype = metaClass.getPropertyNN('offsetTime').getRange().asDatatype()
+        def localDateDatatype = metaClass.getProperty('localDate').getRange().asDatatype()
+        def localTimeDatatype = metaClass.getProperty('localTime').getRange().asDatatype()
+        def localDateTimeDatatype = metaClass.getProperty('localDateTime').getRange().asDatatype()
+        def offsetDateTimeDatatype = metaClass.getProperty('offsetDateTime').getRange().asDatatype()
+        def offsetTimeDatatype = metaClass.getProperty('offsetTime').getRange().asDatatype()
 
         expect:
 

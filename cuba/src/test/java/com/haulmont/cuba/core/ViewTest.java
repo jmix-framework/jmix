@@ -18,6 +18,7 @@ package com.haulmont.cuba.core;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.model.LinkEntity;
 import com.haulmont.cuba.core.model.MultiLinkEntity;
 import com.haulmont.cuba.core.model.common.*;

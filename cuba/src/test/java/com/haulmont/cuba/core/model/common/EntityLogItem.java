@@ -16,9 +16,9 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
 import io.jmix.core.entity.BaseDbGeneratedIdEntity;
 import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
@@ -160,7 +160,7 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
     public String getDisplayedEntityName() {
         Metadata metadata = AppBeans.get(Metadata.NAME);
         Messages messages = AppBeans.get(Messages.NAME);
-        MetaClass metaClass = metadata.getSession().getClass(entity);
+        MetaClass metaClass = metadata.getSession().findClass(entity);
         if (metaClass != null) {
             metaClass = metadata.getExtendedEntities().getEffectiveMetaClass(metaClass);
             return messages.getTools().getEntityCaption(metaClass);

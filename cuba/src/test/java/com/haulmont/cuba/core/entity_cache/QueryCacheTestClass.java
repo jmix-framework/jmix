@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.entity_cache;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestAppender;
@@ -92,8 +93,8 @@ public class QueryCacheTestClass {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManagerFactory emf = persistence.getEntityManager().getDelegate().getEntityManagerFactory();
 
-            assertTrue(metadata.getTools().isCacheable(metadata.getClassNN(User.class)));
-            assertFalse(metadata.getTools().isCacheable(metadata.getClassNN(UserSubstitution.class)));
+            assertTrue(metadata.getTools().isCacheable(metadata.getClass(User.class)));
+            assertFalse(metadata.getTools().isCacheable(metadata.getClass(UserSubstitution.class)));
 
             ServerSession serverSession = ((EntityManagerFactoryDelegate) emf).getServerSession();
             ClassDescriptor descriptor = serverSession.getDescriptor(User.class);

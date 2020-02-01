@@ -15,13 +15,15 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.ListComponent;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.DataSupplier;
-import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.NestedDatasource;
-import com.haulmont.cuba.gui.data.PropertyDatasource;
-import io.jmix.core.*;
+import com.haulmont.cuba.gui.data.*;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
+import io.jmix.core.AppBeans;
+import io.jmix.core.ConfigInterfaces;
+import io.jmix.core.ExtendedEntities;
+import io.jmix.core.Messages;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -34,11 +36,9 @@ import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Tree;
 import io.jmix.ui.components.Window;
-import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.Icons;
-import com.haulmont.cuba.gui.components.AbstractEditor;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Collections;

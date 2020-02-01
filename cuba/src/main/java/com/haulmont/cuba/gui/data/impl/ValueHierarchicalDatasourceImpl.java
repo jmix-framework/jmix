@@ -78,7 +78,7 @@ public class ValueHierarchicalDatasourceImpl
     public void setHierarchyPropertyName(String hierarchyPropertyName) {
         super.setHierarchyPropertyName(hierarchyPropertyName);
         KeyValueMetaClass metaClass = (KeyValueMetaClass) this.metaClass;
-        if (metaClass.getProperty(hierarchyPropertyName) == null) {
+        if (metaClass.findProperty(hierarchyPropertyName) == null) {
             throw new IllegalStateException("Hierarchy property must be added to the datasource as property first");
         }
     }

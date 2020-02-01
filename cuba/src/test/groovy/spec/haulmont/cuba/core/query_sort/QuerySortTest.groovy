@@ -95,7 +95,7 @@ class QuerySortTest extends CoreTestSpecification {
         setup:
         sortExpressionProvider = AppBeans.get(JpqlSortExpressionProvider)
         Metadata metadata = AppBeans.get(Metadata)
-        sortExpressionProvider.addToUpperPath(metadata.getClassNN('test$Order').getPropertyPath('number'))
+        sortExpressionProvider.addToUpperPath(metadata.getClass('test$Order').getPropertyPath('number'))
 
         when:
 

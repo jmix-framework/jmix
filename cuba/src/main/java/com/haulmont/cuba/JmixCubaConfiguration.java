@@ -16,10 +16,13 @@
 
 package com.haulmont.cuba;
 
+import com.haulmont.cuba.core.global.impl.CubaMetadata;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
+import io.jmix.core.impl.MetadataLoader;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.ui.JmixUiConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +46,10 @@ public class JmixCubaConfiguration {
     @Bean(Messages.NAME)
     protected Messages messages() {
         return new MessagesImpl();
+    }
+
+    @Bean(Metadata.NAME)
+    protected Metadata metadata(MetadataLoader metadataLoader) {
+        return new CubaMetadata(metadataLoader);
     }
 }

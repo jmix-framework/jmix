@@ -296,7 +296,7 @@ public class DsContextLoader {
     private void initPropertyDatasourceAttributes(Element element, Datasource ds, String property) {
         String id = getDatasourceId(element);
         MetaClass metaClass = ds.getMetaClass();
-        metaClass.getPropertyNN(property); // check property existence
+        metaClass.getProperty(property); // check property existence
 
         builder.reset()
                 .setMetaClass(metaClass)
@@ -353,7 +353,7 @@ public class DsContextLoader {
             return null;
 
         final Class<?> aClass = ReflectionHelper.getClass(className);
-        final MetaClass metaClass = metadata.getSession().getClass(aClass);
+        final MetaClass metaClass = metadata.getSession().findClass(aClass);
 
         if (metaClass == null)
             throw new IllegalStateException(String.format("Can't find metaClass '%s'", className));
@@ -463,7 +463,7 @@ public class DsContextLoader {
 
     private ValueCollectionDatasourceImpl loadValueCollectionDatasource(Element element) {
         String id = getDatasourceId(element);
-        builder.reset().setMetaClass(metadata.getClassNN(KeyValueEntity.class)).setId(id);
+        builder.reset().setMetaClass(metadata.getClass(KeyValueEntity.class)).setId(id);
 
         ValueCollectionDatasourceImpl datasource = builder
                 .setDsClass(getDatasourceClass(element))
@@ -486,7 +486,7 @@ public class DsContextLoader {
 
     private ValueGroupDatasourceImpl loadValueGroupDatasource(Element element) {
         String id = getDatasourceId(element);
-        builder.reset().setMetaClass(metadata.getClassNN(KeyValueEntity.class)).setId(id);
+        builder.reset().setMetaClass(metadata.getClass(KeyValueEntity.class)).setId(id);
 
         ValueGroupDatasourceImpl datasource = builder
                 .setDsClass(getDatasourceClass(element))
@@ -509,7 +509,7 @@ public class DsContextLoader {
 
     private ValueHierarchicalDatasourceImpl loadValueHierarchicalDatasource(Element element) {
         String id = getDatasourceId(element);
-        builder.reset().setMetaClass(metadata.getClassNN(KeyValueEntity.class)).setId(id);
+        builder.reset().setMetaClass(metadata.getClass(KeyValueEntity.class)).setId(id);
 
         ValueHierarchicalDatasourceImpl datasource = builder
                 .setDsClass(getDatasourceClass(element))
@@ -551,7 +551,7 @@ public class DsContextLoader {
             }
             String idProperty = propsEl.attributeValue("idProperty");
             if (idProperty != null) {
-                if (datasource.getMetaClass().getProperty(idProperty) == null)
+                if (datasource.getMetaClass().findProperty(idProperty) == null)
                     throw new DevelopmentException(String.format("Property '%s' is not defined", idProperty));
                 datasource.setIdName(idProperty);
             }

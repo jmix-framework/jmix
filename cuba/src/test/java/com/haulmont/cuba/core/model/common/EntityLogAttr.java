@@ -18,8 +18,8 @@ package com.haulmont.cuba.core.model.common;
 
 import com.google.common.base.Strings;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
 import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaClass;
@@ -113,7 +113,7 @@ public class EntityLogAttr extends BaseUuidEntity {
         final String entityName = getLogItem().getEntity();
         io.jmix.core.metamodel.model.MetaClass metaClass = getClassFromEntityName(entityName);
         if (metaClass != null) {
-            io.jmix.core.metamodel.model.MetaProperty property = metaClass.getProperty(getName());
+            io.jmix.core.metamodel.model.MetaProperty property = metaClass.findProperty(getName());
             if (property != null) {
                 if (property.getRange().isDatatype()) {
                     return value;
@@ -190,7 +190,7 @@ public class EntityLogAttr extends BaseUuidEntity {
 
     private io.jmix.core.metamodel.model.MetaClass getClassFromEntityName(String entityName) {
         Metadata metadata = AppBeans.get(Metadata.NAME);
-        io.jmix.core.metamodel.model.MetaClass metaClass = metadata.getSession().getClass(entityName);
+        io.jmix.core.metamodel.model.MetaClass metaClass = metadata.getSession().findClass(entityName);
         return metaClass == null ? null : metadata.getExtendedEntities().getEffectiveMetaClass(metaClass);
     }
 
@@ -210,7 +210,7 @@ public class EntityLogAttr extends BaseUuidEntity {
         String entityName = getLogItem().getEntity();
         io.jmix.core.metamodel.model.MetaClass metaClass = getClassFromEntityName(entityName);
         if (metaClass != null) {
-            io.jmix.core.metamodel.model.MetaProperty property = metaClass.getProperty(name);
+            io.jmix.core.metamodel.model.MetaProperty property = metaClass.findProperty(name);
             if (property != null && property.getRange().isEnum()) {
                 try {
                     Enum caller = Enum.valueOf((Class<Enum>) property.getJavaType(), value);

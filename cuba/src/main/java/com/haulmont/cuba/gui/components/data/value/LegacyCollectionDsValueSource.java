@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.gui.components.data.value;
 
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.ExtendedEntities;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;

@@ -43,7 +43,7 @@ public class PropertyDatasourceImpl<T extends Entity>
     public void setup(String id, Datasource masterDs, String property) {
         this.id = id;
         this.masterDs = masterDs;
-        metaProperty = masterDs.getMetaClass().getProperty(property);
+        metaProperty = masterDs.getMetaClass().findProperty(property);
         initParentDsListeners();
     }
 

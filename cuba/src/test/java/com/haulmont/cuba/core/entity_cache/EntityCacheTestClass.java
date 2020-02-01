@@ -99,8 +99,8 @@ public class EntityCacheTestClass {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManagerFactory emf = persistence.getEntityManager().getDelegate().getEntityManagerFactory();
 
-            assertTrue(metadataTools.isCacheable(metadata.getClassNN(User.class)));
-            assertFalse(metadataTools.isCacheable(metadata.getClassNN(UserSubstitution.class)));
+            assertTrue(metadataTools.isCacheable(metadata.getClass(User.class)));
+            assertFalse(metadataTools.isCacheable(metadata.getClass(UserSubstitution.class)));
 
             ServerSession serverSession = ((EntityManagerFactoryDelegate) emf).getServerSession();
             ClassDescriptor descriptor = serverSession.getDescriptor(User.class);
@@ -835,7 +835,7 @@ public class EntityCacheTestClass {
         try (Transaction tx = persistence.createTransaction()) {
             persistence.getEntityManager().getConnection();
             ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-            View view = viewRepository.getView(metadata.getClassNN(User.class), "user.browse");
+            View view = viewRepository.getView(metadata.getClass(User.class), "user.browse");
             persistence.getEntityManager().find(User.class, this.user.getId(), view);
             tx.commit();
         }
@@ -846,7 +846,7 @@ public class EntityCacheTestClass {
         try (Transaction tx = persistence.createTransaction()) {
             persistence.getEntityManager().getConnection();
             ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-            View view = viewRepository.getView(metadata.getClassNN(User.class), "user.browse");
+            View view = viewRepository.getView(metadata.getClass(User.class), "user.browse");
             persistence.getEntityManager().find(User.class, this.user.getId(), view);
             tx.commit();
         }
@@ -862,7 +862,7 @@ public class EntityCacheTestClass {
                 tx1.commit();
             }
             ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-            View view = viewRepository.getView(metadata.getClassNN(User.class), "user.browse");
+            View view = viewRepository.getView(metadata.getClass(User.class), "user.browse");
 
             Query query = persistence.getEntityManager().createQuery("select u from test$User u where u.id = :id")
                     .setParameter("id", user.getId());
@@ -882,7 +882,7 @@ public class EntityCacheTestClass {
         appender.clearMessages();
 
         ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-        View view = viewRepository.getView(metadata.getClassNN(UserSubstitution.class), "usersubst.edit");
+        View view = viewRepository.getView(metadata.getClass(UserSubstitution.class), "usersubst.edit");
 
         try (Transaction tx = persistence.createTransaction()) {
             persistence.getEntityManager().find(UserSubstitution.class, this.userSubstitution.getId(), view);

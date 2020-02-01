@@ -41,7 +41,7 @@ public class CollectionDsHelper {
             for (ViewProperty property : view.getProperties()) {
                 final String name = property.getName();
 
-                final MetaProperty metaProperty = metaClass.getProperty(name);
+                final MetaProperty metaProperty = metaClass.findProperty(name);
                 if (metaProperty == null) {
                     String message = String.format("Unable to find property %s for entity %s", name, metaClass.getName());
                     throw new DevelopmentException(message);

@@ -41,7 +41,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        def primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(User))
+        def primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(User))
 
         then:
 
@@ -49,7 +49,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(StringKeyEntity))
+        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(StringKeyEntity))
 
         then:
 
@@ -62,7 +62,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(UserSessionEntity))
+        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(UserSessionEntity))
 
         then:
 
@@ -70,7 +70,7 @@ class MetadataToolsTest extends CoreTestSpecification {
 
         when:
 
-        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClassNN(NotPersistentStringIdEntity))
+        primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(NotPersistentStringIdEntity))
 
         then:
 

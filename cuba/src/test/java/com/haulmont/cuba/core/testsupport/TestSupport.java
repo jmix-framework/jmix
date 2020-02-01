@@ -17,8 +17,8 @@
 
 package com.haulmont.cuba.core.testsupport;
 
+import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.impl.StandardSerialization;
@@ -68,7 +68,7 @@ public class TestSupport {
 
             Metadata metadata = AppBeans.get(Metadata.class);
             MetadataTools metadataTools = metadata.getTools();
-            MetaClass metaClass = metadata.getClassNN(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity.getClass());
 
             String table = metadataTools.getDatabaseTable(metaClass);
             String primaryKey = metadataTools.getPrimaryKeyName(metaClass);

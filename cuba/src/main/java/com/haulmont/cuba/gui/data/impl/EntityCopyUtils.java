@@ -64,7 +64,7 @@ public class EntityCopyUtils {
 
         for (MetaProperty srcProperty : metadata.getClass(source).getProperties()) {
             String name = srcProperty.getName();
-            MetaProperty dstProperty = metadata.getClass(dest).getProperty(name);
+            MetaProperty dstProperty = metadata.getClass(dest).findProperty(name);
             if (dstProperty != null && !dstProperty.isReadOnly()) {
                 try {
                     Object value = source.getValue(name);
@@ -120,7 +120,7 @@ public class EntityCopyUtils {
         Metadata metadata = AppBeans.get(Metadata.class);
         for (MetaProperty srcProperty : metadata.getClass(source).getProperties()) {
             String name = srcProperty.getName();
-            MetaProperty dstProperty = metadata.getClass(dest).getProperty(name);
+            MetaProperty dstProperty = metadata.getClass(dest).findProperty(name);
             if (dstProperty != null && !dstProperty.isReadOnly()) {
                 try {
                     Object value = source.getValue(name);

@@ -55,60 +55,60 @@ public class MetadataTest {
     public void testPersistentAndTransientProperties() {
 
         // User
-        MetaClass metaClass = metadata.getSession().getClassNN(User.class);
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("id")));
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("id")));
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("createTs")));
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("login")));
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("group")));
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("userRoles")));
+        MetaClass metaClass = metadata.getSession().getClass(User.class);
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("id")));
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("id")));
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("createTs")));
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("login")));
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("group")));
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("userRoles")));
 
         // EntityLogItem
-        metaClass = metadata.getSession().getClassNN(EntityLogItem.class);
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("user")));
-        assertFalse(metadataTools.isPersistent(metaClass.getPropertyNN("attributes")));
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("attributes")));
+        metaClass = metadata.getSession().getClass(EntityLogItem.class);
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("user")));
+        assertFalse(metadataTools.isPersistent(metaClass.getProperty("attributes")));
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("attributes")));
 
         // Folder
-        metaClass = metadata.getSession().getClassNN(Folder.class);
-        assertTrue(metadataTools.isPersistent(metaClass.getPropertyNN("name")));
+        metaClass = metadata.getSession().getClass(Folder.class);
+        assertTrue(metadataTools.isPersistent(metaClass.getProperty("name")));
         assertTrue(metadataTools.isNotPersistent(new Folder(), "itemStyle"));
 
         // UserSessionEntity
-        metaClass = metadata.getSession().getClassNN(UserSessionEntity.class);
-        assertFalse(metadataTools.isPersistent(metaClass.getPropertyNN("id")));
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("id")));
+        metaClass = metadata.getSession().getClass(UserSessionEntity.class);
+        assertFalse(metadataTools.isPersistent(metaClass.getProperty("id")));
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("id")));
         assertTrue(metadataTools.isNotPersistent(metadata.create(metaClass), "id"));
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("login")));
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("login")));
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("login")));
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("login")));
 
         // TestTransientEntity
-        metaClass = metadata.getSession().getClassNN(TestNotPersistentEntity.class);
-        assertFalse(metadataTools.isPersistent(metaClass.getPropertyNN("id")));
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("id")));
+        metaClass = metadata.getSession().getClass(TestNotPersistentEntity.class);
+        assertFalse(metadataTools.isPersistent(metaClass.getProperty("id")));
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("id")));
         assertTrue(metadataTools.isNotPersistent(metadata.create(metaClass), "id"));
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("name")));
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("info")));
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("name")));
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("info")));
     }
 
     @Test
     @Disabled
     public void testEmbeddedProperty() {
         // TestTransientEntity
-        MetaClass metaClass = metadata.getSession().getClassNN(TestNotPersistentEntity.class);
-        assertTrue(metadataTools.isNotPersistent(metaClass.getPropertyNN("embeddedRef")));
-        assertFalse(metadataTools.isEmbedded(metaClass.getPropertyNN("embeddedRef")));
+        MetaClass metaClass = metadata.getSession().getClass(TestNotPersistentEntity.class);
+        assertTrue(metadataTools.isNotPersistent(metaClass.getProperty("embeddedRef")));
+        assertFalse(metadataTools.isEmbedded(metaClass.getProperty("embeddedRef")));
     }
 
     @Test
     public void testSystemLevel() {
-        assertTrue(metadataTools.isSystemLevel(metadata.getClassNN(UserRole.class)));
+        assertTrue(metadataTools.isSystemLevel(metadata.getClass(UserRole.class)));
 
-        assertFalse(metadataTools.isSystemLevel(metadata.getClassNN(TestNotPersistentEntity.class)));
+        assertFalse(metadataTools.isSystemLevel(metadata.getClass(TestNotPersistentEntity.class)));
 
-        MetaClass metaClass = metadata.getClassNN(User.class);
-        assertTrue(metadataTools.isSystemLevel(metaClass.getPropertyNN("password")));
+        MetaClass metaClass = metadata.getClass(User.class);
+        assertTrue(metadataTools.isSystemLevel(metaClass.getProperty("password")));
 
-        assertTrue(metadataTools.isSystemLevel(metadata.getClassNN(SearchFolder.class)));
+        assertTrue(metadataTools.isSystemLevel(metadata.getClass(SearchFolder.class)));
     }
 }

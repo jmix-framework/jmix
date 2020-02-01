@@ -357,7 +357,7 @@ public class DsBuilder {
                 boolean isEmbedded = false;
                 if (master != null) {
                     MetaClass metaClass = master.getMetaClass();
-                    MetaProperty metaProperty = metaClass.getProperty(property);
+                    MetaProperty metaProperty = metaClass.findProperty(property);
                     MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
                     isEmbedded = metadataTools.isEmbedded(metaProperty);
                 }

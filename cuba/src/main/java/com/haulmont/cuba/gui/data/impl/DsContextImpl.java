@@ -15,10 +15,10 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.*;
 import io.jmix.core.AppBeans;
 import io.jmix.core.CommitContext;
-import io.jmix.core.Metadata;
 import io.jmix.core.View;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -280,8 +280,8 @@ public class DsContextImpl implements DsContextImplementation {
 
     @SuppressWarnings("unchecked")
     protected void repairReferences(Entity entity, Entity contextEntity) {
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
-        MetaClass contextEntityMetaClass = metadata.getClassNN(contextEntity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass contextEntityMetaClass = metadata.getClass(contextEntity.getClass());
 
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass()

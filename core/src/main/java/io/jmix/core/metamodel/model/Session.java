@@ -20,8 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * Metadata model entry point.
- * <br>Metadata consists of a set of interrelated {@link MetaClass} instances.
+ * Meta-model entry point.
  */
 public interface Session {
 
@@ -31,29 +30,29 @@ public interface Session {
      * @return      MetaClass instance or null if not found
      */
     @Nullable
-    MetaClass getClass(String name);
+    MetaClass findClass(String name);
 
     /**
      * Search MetaClass by its name in the whole metamodel.
      * @param name  entity name
      * @return      MetaClass instance. Throws exception if not found.
      */
-    MetaClass getClassNN(String name);
+    MetaClass getClass(String name);
 
     /**
      * Search MetaClass by the corresponding Java class in the whole metamodel.
-     * @param clazz Java class defining the entity
+     * @param javaClass Java class defining the entity
      * @return      MetaClass instance or null if not found
      */
     @Nullable
-    MetaClass getClass(Class<?> clazz);
+    MetaClass findClass(Class<?> javaClass);
 
     /**
      * Search MetaClass by the corresponding Java class in the whole metamodel.
-     * @param clazz Java class defining the entity
+     * @param javaClass Java class defining the entity
      * @return      MetaClass instance. Throws exception if not found.
      */
-    MetaClass getClassNN(Class<?> clazz);
+    MetaClass getClass(Class<?> javaClass);
 
     /**
      * @return collection of all MetaClasses in the whole metamodel

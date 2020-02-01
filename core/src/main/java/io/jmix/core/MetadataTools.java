@@ -200,7 +200,7 @@ public class MetadataTools {
     public String getInstanceName(Instance instance) {
         checkNotNullArgument(instance, "instance is null");
 
-        MetaClass metaClass = metadata.getClassNN(instance.getClass());
+        MetaClass metaClass = metadata.getClass(instance.getClass());
 
         NamePatternRec rec = parseNamePattern(metaClass);
         if (rec == null) {
@@ -220,7 +220,7 @@ public class MetadataTools {
         Object[] values = new Object[rec.fields.length];
         for (int i = 0; i < rec.fields.length; i++) {
             String fieldName = rec.fields[i];
-            MetaProperty property = metaClass.getPropertyNN(fieldName);
+            MetaProperty property = metaClass.getProperty(fieldName);
 
             Object value = instance.getValue(fieldName);
             values[i] = format(value, property);
@@ -317,7 +317,7 @@ public class MetadataTools {
     @Nullable
     public MetaProperty getPrimaryKeyProperty(MetaClass metaClass) {
         String primaryKeyName = getPrimaryKeyName(metaClass);
-        return primaryKeyName == null ? null : metaClass.getPropertyNN(primaryKeyName);
+        return primaryKeyName == null ? null : metaClass.getProperty(primaryKeyName);
     }
 
     /**
@@ -326,7 +326,7 @@ public class MetadataTools {
      */
     @Nullable
     public MetaProperty getPrimaryKeyProperty(Class<?> entityClass) {
-        return getPrimaryKeyProperty(metadata.getClassNN(entityClass));
+        return getPrimaryKeyProperty(metadata.getClass(entityClass));
     }
 
     /**
@@ -420,10 +420,10 @@ public class MetadataTools {
      */
     public boolean isNotPersistent(Object object, String property) {
         Objects.requireNonNull(object, "object is null");
-        MetaClass metaClass = metadata.getSession().getClass(object.getClass());
+        MetaClass metaClass = metadata.getSession().findClass(object.getClass());
         if (metaClass == null)
             return true;
-        MetaProperty metaProperty = metaClass.getProperty(property);
+        MetaProperty metaProperty = metaClass.findProperty(property);
         return metaProperty == null || !isPersistent(metaProperty);
     }
 
@@ -569,7 +569,7 @@ public class MetadataTools {
      */
     public boolean isPersistent(Class aClass) {
         checkNotNullArgument(aClass, "class is null");
-        return isPersistent(metadata.getClassNN(aClass));
+        return isPersistent(metadata.getClass(aClass));
     }
 
     /**
@@ -594,7 +594,7 @@ public class MetadataTools {
      */
     public boolean isNotPersistent(Class aClass) {
         checkNotNullArgument(aClass, "class is null");
-        return isNotPersistent(metadata.getClassNN(aClass));
+        return isNotPersistent(metadata.getClass(aClass));
     }
 
     /**
@@ -611,7 +611,7 @@ public class MetadataTools {
      */
     public boolean isEmbeddable(Class<?> aClass) {
         checkNotNullArgument(aClass, "Class is null");
-        return isEmbeddable(metadata.getClassNN(aClass));
+        return isEmbeddable(metadata.getClass(aClass));
     }
 
     public boolean isCacheable(MetaClass metaClass) {
@@ -673,9 +673,9 @@ public class MetadataTools {
             for (String field : fields) {
                 String fieldName = StringUtils.trim(field);
 
-                MetaProperty property = metaClass.getProperty(fieldName);
+                MetaProperty property = metaClass.findProperty(fieldName);
                 if (property != null) {
-                    properties.add(metaClass.getProperty(fieldName));
+                    properties.add(metaClass.findProperty(fieldName));
                 } else {
                     throw new DevelopmentException(
                             String.format("Property '%s' is not found in %s", field, metaClass.toString()),
@@ -850,8 +850,8 @@ public class MetadataTools {
     public List<String> getRelatedProperties(Class<?> entityClass, String property) {
         checkNotNullArgument(entityClass, "entityClass is null");
 
-        MetaClass metaClass = metadata.getClassNN(entityClass);
-        return getRelatedProperties(metaClass.getPropertyNN(property));
+        MetaClass metaClass = metadata.getClass(entityClass);
+        return getRelatedProperties(metaClass.getProperty(property));
     }
 
     /**
@@ -1007,11 +1007,11 @@ public class MetadataTools {
         checkNotNullArgument(source, "source is null");
         checkNotNullArgument(dest, "dest is null");
 
-        MetaClass sourceMetaClass = metadata.getClassNN(source.getClass());
-        MetaClass destMetaClass = metadata.getClassNN(dest.getClass());
+        MetaClass sourceMetaClass = metadata.getClass(source.getClass());
+        MetaClass destMetaClass = metadata.getClass(dest.getClass());
         for (MetaProperty srcProperty : sourceMetaClass.getProperties()) {
             String name = srcProperty.getName();
-            MetaProperty dstProperty = destMetaClass.getProperty(name);
+            MetaProperty dstProperty = destMetaClass.findProperty(name);
             if (dstProperty != null && !dstProperty.isReadOnly() && persistentAttributesLoadChecker.isLoaded(source, name)) {
                 try {
                     dest.setValue(name, source.getValue(name));
@@ -1171,7 +1171,7 @@ public class MetadataTools {
             return;
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClassNN(entity.getClass()).getProperties()) {
+        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (visitor.skip(property))
                 continue;
 
@@ -1204,10 +1204,10 @@ public class MetadataTools {
         }
         views.add(view);
 
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
 
         for (ViewProperty property : view.getProperties()) {
-            MetaProperty metaProperty = metaClass.getPropertyNN(property.getName());
+            MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (visitor.skip(metaProperty))
                 continue;
 

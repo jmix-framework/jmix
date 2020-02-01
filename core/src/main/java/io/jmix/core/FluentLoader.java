@@ -53,7 +53,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         LoadContext<E> loadContext = LoadContext.create(entityClass);
         initCommonLoadContextParameters(loadContext);
 
-        String entityName = AppBeans.get(Metadata.class).getClassNN(entityClass).getName();
+        String entityName = AppBeans.get(Metadata.class).getClass(entityClass).getName();
         String queryString = String.format("select e from %s e", entityName);
         loadContext.setQuery(LoadContext.createQuery(queryString));
 

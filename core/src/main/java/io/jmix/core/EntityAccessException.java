@@ -40,7 +40,7 @@ public class EntityAccessException extends RuntimeException {
     }
 
     protected static String getEntityName(Class entityClass) {
-        MetaClass metaClass = AppBeans.get(Metadata.class).getClass(entityClass);
+        MetaClass metaClass = AppBeans.get(Metadata.class).findClass(entityClass);
         return metaClass != null ? metaClass.getName() : "<not an entity>";
     }
 }

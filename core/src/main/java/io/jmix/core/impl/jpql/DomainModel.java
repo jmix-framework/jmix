@@ -61,7 +61,7 @@ public class DomainModel {
 
     public JpqlEntityModel getEntityByName(String requiredEntityName) throws UnknownEntityNameException {
         if (extendedEntities != null) {
-            if (metadata.getSession().getClass(requiredEntityName) == null) {
+            if (metadata.getSession().findClass(requiredEntityName) == null) {
                 throw new UnknownEntityNameException(requiredEntityName);
             }
             MetaClass effectiveMetaClass = extendedEntities.getEffectiveMetaClass(requiredEntityName);

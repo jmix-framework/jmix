@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.print.attribute.standard.MediaSize;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -61,7 +60,7 @@ public class ViewBuilder {
 
     @PostConstruct
     protected void postConstruct() {
-        metaClass = metadata.getClassNN(entityClass);
+        metaClass = metadata.getClass(entityClass);
     }
 
     public View build() {
@@ -90,7 +89,7 @@ public class ViewBuilder {
     public ViewBuilder add(String property) {
         String[] parts = property.split("\\.");
         String propName = parts[0];
-        MetaProperty metaProperty = metaClass.getPropertyNN(propName);
+        MetaProperty metaProperty = metaClass.getProperty(propName);
         properties.add(propName);
         if (metaProperty.getRange().isClass()) {
             if (!builders.containsKey(propName)) {
@@ -110,7 +109,7 @@ public class ViewBuilder {
 
     public ViewBuilder add(String property, Consumer<ViewBuilder> consumer) {
         properties.add(property);
-        Class<Entity> refClass = metaClass.getPropertyNN(property).getRange().asClass().getJavaClass();
+        Class<Entity> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
         ViewBuilder builder = beanLocator.getPrototype(ViewBuilder.class, refClass);
         consumer.accept(builder);
         builders.put(property, builder);
@@ -119,7 +118,7 @@ public class ViewBuilder {
 
     public ViewBuilder add(String property, String viewName) {
         properties.add(property);
-        View view = viewRepository.getView(metaClass.getPropertyNN(property).getRange().asClass(), viewName);
+        View view = viewRepository.getView(metaClass.getProperty(property).getRange().asClass(), viewName);
         views.put(property, view);
         return this;
     }

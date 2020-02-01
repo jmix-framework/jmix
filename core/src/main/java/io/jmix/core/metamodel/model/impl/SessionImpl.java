@@ -31,13 +31,13 @@ public class SessionImpl implements Session {
 
     @Nullable
     @Override
-    public MetaClass getClass(String name) {
+    public MetaClass findClass(String name) {
         return classByName.get(name);
     }
 
     @Override
-    public MetaClass getClassNN(String name) {
-        MetaClass metaClass = getClass(name);
+    public MetaClass getClass(String name) {
+        MetaClass metaClass = findClass(name);
         if (metaClass == null) {
             throw new IllegalArgumentException("MetaClass not found for " + name);
         }
@@ -46,15 +46,15 @@ public class SessionImpl implements Session {
 
     @Nullable
     @Override
-    public MetaClass getClass(Class<?> clazz) {
-        return classByClass.get(clazz);
+    public MetaClass findClass(Class<?> javaClass) {
+        return classByClass.get(javaClass);
     }
 
     @Override
-    public MetaClass getClassNN(Class<?> clazz) {
-        MetaClass metaClass = getClass(clazz);
+    public MetaClass getClass(Class<?> javaClass) {
+        MetaClass metaClass = findClass(javaClass);
         if (metaClass == null) {
-            throw new IllegalArgumentException("MetaClass not found for " + clazz);
+            throw new IllegalArgumentException("MetaClass not found for " + javaClass);
         }
         return metaClass;
     }

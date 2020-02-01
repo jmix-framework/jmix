@@ -184,7 +184,7 @@ public class EntityStates {
 
         for (ViewProperty property : view.getProperties()) {
             MetaClass metaClass = metadata.getClass(entity);
-            MetaProperty metaProperty = metaClass.getPropertyNN(property.getName());
+            MetaProperty metaProperty = metaClass.getProperty(property.getName());
 
             if (!isLoaded(entity, property.getName())) {
                 String errorMessage = String.format("%s.%s is not loaded",
@@ -258,7 +258,7 @@ public class EntityStates {
 
         for (ViewProperty property : view.getProperties()) {
             MetaClass metaClass = metadata.getClass(entity);
-            MetaProperty metaProperty = metaClass.getPropertyNN(property.getName());
+            MetaProperty metaProperty = metaClass.getProperty(property.getName());
 
             if (!isLoaded(entity, property.getName())) {
                 return false;

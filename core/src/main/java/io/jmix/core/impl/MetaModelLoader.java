@@ -125,7 +125,7 @@ public class MetaModelLoader {
         if (ancestor != null) {
             List<Class<?>> superclasses = ClassUtils.getAllSuperclasses(metaClass.getJavaClass());
             for (Class<?> superclass : superclasses) {
-                MetaClass ancestorClass = session.getClass(superclass);
+                MetaClass ancestorClass = session.findClass(superclass);
                 if (ancestorClass != null) {
                     ((MetaClassImpl) metaClass).addAncestor(ancestorClass);
                 }
@@ -135,7 +135,7 @@ public class MetaModelLoader {
 
     @Nullable
     protected MetadataObjectInfo<MetaClass> loadClass(Session session, Class<?> javaClass) {
-        MetaClassImpl metaClass = (MetaClassImpl) session.getClass(javaClass);
+        MetaClassImpl metaClass = (MetaClassImpl) session.findClass(javaClass);
         if (metaClass == null)
             return null;
 
@@ -182,7 +182,7 @@ public class MetaModelLoader {
             return null;
         }
 
-        MetaClassImpl metaClass = (MetaClassImpl) session.getClass(javaClass);
+        MetaClassImpl metaClass = (MetaClassImpl) session.findClass(javaClass);
         if (metaClass != null) {
             return metaClass;
 
@@ -237,7 +237,7 @@ public class MetaModelLoader {
             final String fieldName = field.getName();
 
             if (isMetaPropertyField(field)) {
-                MetaPropertyImpl property = (MetaPropertyImpl) metaClass.getProperty(fieldName);
+                MetaPropertyImpl property = (MetaPropertyImpl) metaClass.findProperty(fieldName);
                 if (property == null) {
                     MetadataObjectInfo<MetaProperty> info;
                     if (isCollection(field) || isMap(field)) {
@@ -273,7 +273,7 @@ public class MetaModelLoader {
             if (isMetaPropertyMethod(method)) {
                 String name = StringUtils.uncapitalize(methodName.substring(3));
 
-                MetaPropertyImpl property = (MetaPropertyImpl) metaClass.getProperty(name);
+                MetaPropertyImpl property = (MetaPropertyImpl) metaClass.findProperty(name);
                 if (property == null) {
                     MetadataObjectInfo<MetaProperty> info;
                     if (isCollection(method) || isMap(method)) {
@@ -877,7 +877,7 @@ public class MetaModelLoader {
             throw new IllegalArgumentException("Range of class type expected");
 
         MetaClass metaClass = range.asClass();
-        MetaProperty inverseProp = metaClass.getProperty(inverseField);
+        MetaProperty inverseProp = metaClass.findProperty(inverseField);
         if (inverseProp == null)
             throw new RuntimeException(String.format(
                     "Unable to assign inverse property '%s' for '%s'", inverseField, property));
@@ -910,7 +910,7 @@ public class MetaModelLoader {
         }
 
         public void execute() {
-            MetaClass rangeClass = session.getClass(this.rangeClass);
+            MetaClass rangeClass = session.findClass(this.rangeClass);
             if (rangeClass == null) {
                 throw new IllegalStateException(
                         String.format("Can't find range class '%s' for property '%s.%s'",

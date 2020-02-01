@@ -72,13 +72,13 @@ public class KeyValueMetaClass extends MetadataObjectImpl implements MetaClass {
     }
 
     @Override
-    public MetaProperty getProperty(String name) {
+    public MetaProperty findProperty(String name) {
         return properties.get(name);
     }
 
     @Override
-    public MetaProperty getPropertyNN(String name) {
-        MetaProperty property = getProperty(name);
+    public MetaProperty getProperty(String name) {
+        MetaProperty property = findProperty(name);
         if (property == null)
             throw new IllegalArgumentException("Property '" + name + "' not found in " + getName());
         return property;
@@ -88,7 +88,7 @@ public class KeyValueMetaClass extends MetadataObjectImpl implements MetaClass {
     public MetaPropertyPath getPropertyPath(String propertyPath) {
         MetaProperty currentProperty;
 
-        currentProperty = this.getProperty(propertyPath);
+        currentProperty = this.findProperty(propertyPath);
         if (currentProperty == null) return null;
 
         return new MetaPropertyPath(this, currentProperty);

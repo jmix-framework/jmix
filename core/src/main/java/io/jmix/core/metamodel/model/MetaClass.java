@@ -59,13 +59,13 @@ public interface MetaClass extends MetadataObject {
      * @return MetaProperty instance, or null if no such property found
      */
     @Nullable
-    MetaProperty getProperty(String name);
+    MetaProperty findProperty(String name);
 
     /**
      * Get MetaProperty by its name.
      * @return MetaProperty instance. Throws exception if not found.
      */
-    MetaProperty getPropertyNN(String name);
+    MetaProperty getProperty(String name);
 
     /**
      * Returns MetaPropertyPath object, representing path to the property from the current class

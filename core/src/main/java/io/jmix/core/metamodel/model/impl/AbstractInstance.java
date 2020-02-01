@@ -120,7 +120,7 @@ public abstract class AbstractInstance implements Instance {
         Class cls = getClass();
         RelatedPropertiesCache cache = relatedPropertiesCacheMap.get(cls);
         if (cache == null) {
-            MetaClass metaClass = AppBeans.get(Metadata.class).getClassNN(cls);
+            MetaClass metaClass = AppBeans.get(Metadata.class).getClass(cls);
             cache = new RelatedPropertiesCache(metaClass);
             relatedPropertiesCacheMap.put(cls, cache);
         }

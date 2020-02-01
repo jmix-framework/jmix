@@ -72,7 +72,7 @@ public class ExtendedEntities {
      * @return extended or original entity
      */
     public Class getEffectiveClass(Class originalClass) {
-        return getEffectiveClass(metadata.getSession().getClassNN(originalClass));
+        return getEffectiveClass(metadata.getSession().getClass(originalClass));
     }
 
     /**
@@ -82,7 +82,7 @@ public class ExtendedEntities {
      * @return extended or original entity
      */
     public Class getEffectiveClass(String entityName) {
-        return getEffectiveClass(metadata.getSession().getClassNN(entityName));
+        return getEffectiveClass(metadata.getSession().getClass(entityName));
     }
 
     /**
@@ -94,7 +94,7 @@ public class ExtendedEntities {
     public MetaClass getEffectiveMetaClass(MetaClass originalMetaClass) {
         if (originalMetaClass instanceof KeyValueMetaClass)
             return originalMetaClass;
-        return metadata.getSession().getClassNN(getEffectiveClass(originalMetaClass));
+        return metadata.getSession().getClass(getEffectiveClass(originalMetaClass));
     }
 
     /**
@@ -104,7 +104,7 @@ public class ExtendedEntities {
      * @return extended or original entity
      */
     public MetaClass getEffectiveMetaClass(Class originalClass) {
-        return metadata.getSession().getClassNN(getEffectiveClass(originalClass));
+        return metadata.getSession().getClass(getEffectiveClass(originalClass));
     }
 
     /**
@@ -114,7 +114,7 @@ public class ExtendedEntities {
      * @return extended or original entity
      */
     public MetaClass getEffectiveMetaClass(String entityName) {
-        return getEffectiveMetaClass(metadata.getSession().getClassNN(entityName));
+        return getEffectiveMetaClass(metadata.getSession().getClass(entityName));
     }
 
     /**
@@ -157,7 +157,7 @@ public class ExtendedEntities {
             return metaClass;
         }
 
-        return metadata.getSession().getClassNN(originalClass);
+        return metadata.getSession().getClass(originalClass);
     }
 
     /**
@@ -168,7 +168,7 @@ public class ExtendedEntities {
      */
     @Nullable
     public MetaClass getOriginalMetaClass(String extendedEntityName) {
-        return getOriginalMetaClass(metadata.getSession().getClassNN(extendedEntityName));
+        return getOriginalMetaClass(metadata.getSession().getClass(extendedEntityName));
     }
 
     /**

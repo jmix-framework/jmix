@@ -41,8 +41,8 @@ class MetadataLoaderTest extends Specification {
 
         def session = metadataLoader.getSession()
 
-        session.getClass(BaseUuidEntity) != null
-        session.getClass(TestAddon1Entity) != null
+        session.findClass(BaseUuidEntity) != null
+        session.findClass(TestAddon1Entity) != null
 
         metadataLoader.getRootPackages() == ['io.jmix.core', 'test_support.addon1']
     }

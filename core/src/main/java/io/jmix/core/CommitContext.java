@@ -232,7 +232,8 @@ public class CommitContext implements Serializable {
 
     private View getViewFromRepository(Entity entity, String viewName) {
         Metadata metadata = AppBeans.get(Metadata.NAME);
-        return metadata.getViewRepository().getView(metadata.getClass(entity.getClass()), viewName);
+        ViewRepository viewRepository = AppBeans.get(ViewRepository.NAME);
+        return viewRepository.getView(metadata.findClass(entity.getClass()), viewName);
     }
 
     /**

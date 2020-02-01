@@ -44,16 +44,16 @@ class MetadataTest extends Specification {
     def "entities are in metadata"() {
         expect:
 
-        metadata.getClass(StandardEntity) != null
-        metadata.getClass(TestAddon1Entity) != null
+        metadata.findClass(StandardEntity) != null
+        metadata.findClass(TestAddon1Entity) != null
     }
 
     def "ancestors and descendants are collected recursively"() {
 
-        def pet = metadata.getClassNN(Pet)
-        def standardEntity = metadata.getClassNN(StandardEntity)
-        def baseUuidEntity = metadata.getClassNN(BaseUuidEntity)
-        def baseGenericIdEntity = metadata.getClassNN(BaseGenericIdEntity)
+        def pet = metadata.getClass(Pet)
+        def standardEntity = metadata.getClass(StandardEntity)
+        def baseUuidEntity = metadata.getClass(BaseUuidEntity)
+        def baseGenericIdEntity = metadata.getClass(BaseGenericIdEntity)
 
         expect:
 
@@ -69,13 +69,13 @@ class MetadataTest extends Specification {
 
     def "inherited properties"() {
 
-        def baseMetaClass = metadata.getClassNN(StandardEntity)
-        def baseProp = baseMetaClass.getPropertyNN('createTs')
-        def baseIdProp = baseMetaClass.getPropertyNN('id')
+        def baseMetaClass = metadata.getClass(StandardEntity)
+        def baseProp = baseMetaClass.getProperty('createTs')
+        def baseIdProp = baseMetaClass.getProperty('id')
 
-        def entityMetaClass = metadata.getClassNN(TestAddon1Entity)
-        def entityProp = entityMetaClass.getPropertyNN('createTs')
-        def entityIdProp = entityMetaClass.getPropertyNN('id')
+        def entityMetaClass = metadata.getClass(TestAddon1Entity)
+        def entityProp = entityMetaClass.getProperty('createTs')
+        def entityIdProp = entityMetaClass.getProperty('id')
 
         expect:
 
@@ -99,7 +99,7 @@ class MetadataTest extends Specification {
 
     def "store of entity is NOOP"() {
 
-        def metaClass = metadata.getClassNN(TestAddon1Entity)
+        def metaClass = metadata.getClass(TestAddon1Entity)
 
         expect:
 
@@ -109,7 +109,7 @@ class MetadataTest extends Specification {
 
     def "store of mapped superclass is UNDEFINED"() {
 
-        def metaClass = metadata.getClassNN(StandardEntity)
+        def metaClass = metadata.getClass(StandardEntity)
 
         expect:
 
@@ -119,7 +119,7 @@ class MetadataTest extends Specification {
 
     def "store of entity property is NOOP"() {
 
-        def metaProperty = metadata.getClassNN(TestAddon1Entity).getPropertyNN('name')
+        def metaProperty = metadata.getClass(TestAddon1Entity).getProperty('name')
 
         expect:
 
@@ -129,7 +129,7 @@ class MetadataTest extends Specification {
 
     def "store of mapped superclass property is UNDEFINED"() {
 
-        def metaProperty = metadata.getClassNN(StandardEntity).getPropertyNN('createTs')
+        def metaProperty = metadata.getClass(StandardEntity).getProperty('createTs')
 
         expect:
 
@@ -139,8 +139,8 @@ class MetadataTest extends Specification {
 
     def "store of entity property inherited from mapped superclass is NOOP"() {
 
-        def idProp = metadata.getClassNN(TestAddon1Entity).getPropertyNN('id')
-        def createTsProp = metadata.getClassNN(TestAddon1Entity).getPropertyNN('createTs')
+        def idProp = metadata.getClass(TestAddon1Entity).getProperty('id')
+        def createTsProp = metadata.getClass(TestAddon1Entity).getProperty('createTs')
 
         expect:
 
@@ -150,9 +150,9 @@ class MetadataTest extends Specification {
 
     def "store of entity annotated with @Entity is MAIN"() {
 
-        def metaClass = metadata.getClassNN(Pet)
-        def idProp = metaClass.getPropertyNN('id')
-        def nameProp = metaClass.getPropertyNN('name')
+        def metaClass = metadata.getClass(Pet)
+        def idProp = metaClass.getProperty('id')
+        def nameProp = metaClass.getProperty('name')
 
         expect:
 
@@ -162,8 +162,8 @@ class MetadataTest extends Specification {
 
     def "store of non-mapped property of entity annotated with @Entity is UNDEFINED"() {
 
-        def metaClass = metadata.getClassNN(Pet)
-        def nickProp = metaClass.getPropertyNN('nick')
+        def metaClass = metadata.getClass(Pet)
+        def nickProp = metaClass.getProperty('nick')
 
         expect:
 
@@ -172,8 +172,8 @@ class MetadataTest extends Specification {
 
     def "store of method-based property of entity annotated with @Entity is UNDEFINED"() {
 
-        def metaClass = metadata.getClassNN(Pet)
-        def descriptionProp = metaClass.getPropertyNN('description')
+        def metaClass = metadata.getClass(Pet)
+        def descriptionProp = metaClass.getProperty('description')
 
         expect:
 

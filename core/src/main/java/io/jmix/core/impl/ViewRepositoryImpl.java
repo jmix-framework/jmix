@@ -205,7 +205,7 @@ public class ViewRepositoryImpl implements ViewRepository {
      */
     @Override
     public View getView(Class<? extends Entity> entityClass, String name) {
-        return getView(metadata.getClassNN(entityClass), name);
+        return getView(metadata.getClass(entityClass), name);
     }
 
     /**
@@ -296,7 +296,7 @@ public class ViewRepositoryImpl implements ViewRepository {
     @Override
     public Collection<String> getViewNames(Class<? extends Entity> entityClass) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
-        MetaClass metaClass = metadata.getClassNN(entityClass);
+        MetaClass metaClass = metadata.getClass(entityClass);
         return getViewNames(metaClass);
     }
 
@@ -347,7 +347,7 @@ public class ViewRepositoryImpl implements ViewRepository {
             } else {
                 List<String> relatedProperties = metadataTools.getRelatedProperties(metaProperty);
                 for (String relatedPropertyName : relatedProperties) {
-                    MetaProperty relatedProperty = metaClass.getPropertyNN(relatedPropertyName);
+                    MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);
                     if (metadataTools.isPersistent(relatedProperty)) {
                         addPersistentAttributeToMinimalView(metaClass, visited, info, view, relatedProperty);
                     } else {
@@ -575,7 +575,7 @@ public class ViewRepositoryImpl implements ViewRepository {
     }
 
     protected void loadView(Element rootElem, Element viewElem, View view, boolean systemProperties, Set<ViewInfo> visited) {
-        final MetaClass metaClass = metadata.getClassNN(view.getEntityClass());
+        final MetaClass metaClass = metadata.getClass(view.getEntityClass());
         final String viewName = view.getName();
 
         Set<String> propertyNames = new HashSet<>();
@@ -589,7 +589,7 @@ public class ViewRepositoryImpl implements ViewRepository {
             }
             propertyNames.add(propertyName);
 
-            MetaProperty metaProperty = metaClass.getProperty(propertyName);
+            MetaProperty metaProperty = metaClass.findProperty(propertyName);
             if (metaProperty == null) {
                 throw new DevelopmentException(String.format("View %s/%s definition error: property %s doesn't exist",
                         metaClass.getName(), viewName, propertyName));
@@ -681,18 +681,18 @@ public class ViewRepositoryImpl implements ViewRepository {
             if (StringUtils.isBlank(className))
                 throw new DevelopmentException("Invalid view definition: no 'entity' or 'class' attribute present");
             Class entityClass = ReflectionHelper.getClass(className);
-            metaClass = metadata.getClassNN(entityClass);
+            metaClass = metadata.getClass(entityClass);
         } else {
-            metaClass = metadata.getClassNN(entity);
+            metaClass = metadata.getClass(entity);
         }
         return metaClass;
     }
 
     protected MetaClass getMetaClass(String entityName, String entityClass) {
         if (entityName != null) {
-            return metadata.getClassNN(entityName);
+            return metadata.getClass(entityName);
         } else {
-            return metadata.getClassNN(ReflectionHelper.getClass(entityClass));
+            return metadata.getClass(ReflectionHelper.getClass(entityClass));
         }
     }
 
@@ -702,7 +702,7 @@ public class ViewRepositoryImpl implements ViewRepository {
         if (refEntityName == null) {
             refMetaClass = range.asClass();
         } else {
-            refMetaClass = metadata.getClassNN(refEntityName);
+            refMetaClass = metadata.getClass(refEntityName);
         }
         return refMetaClass;
     }

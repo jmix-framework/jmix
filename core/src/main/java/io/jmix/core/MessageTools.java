@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.metamodel.model.Instance;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -31,8 +30,6 @@ import javax.inject.Inject;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -340,7 +337,7 @@ public class MessageTools {
      * @return              message key in the form {@code msg://message_pack/message_id}
      */
     public String getMessageRef(MetaClass metaClass, String propertyName) {
-        MetaProperty property = metaClass.getProperty(propertyName);
+        MetaProperty property = metaClass.findProperty(propertyName);
         if (property == null) {
             throw new RuntimeException("Property " + propertyName + " is wrong for metaclass " + metaClass);
         }

@@ -59,12 +59,6 @@ public class MetadataImpl implements Metadata {
     protected volatile List<String> rootPackages;
 
     @Inject
-    protected DatatypeRegistry datatypeRegistry;
-
-    @Inject
-    protected ViewRepository viewRepository;
-
-    @Inject
     protected ExtendedEntities extendedEntities;
 
     @Inject
@@ -122,29 +116,9 @@ public class MetadataImpl implements Metadata {
     }
 
     @Override
-    public ViewRepository getViewRepository() {
-        return viewRepository;
-    }
-
-    @Override
-    public ExtendedEntities getExtendedEntities() {
-        return extendedEntities;
-    }
-
-    @Override
-    public MetadataTools getTools() {
-        return tools;
-    }
-
-    @Override
-    public DatatypeRegistry getDatatypes() {
-        return datatypeRegistry;
-    }
-
-    @Override
     public MetaClass getClass(Entity entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
-        return session.getClassNN(entity.getClass());
+        return session.getClass(entity.getClass());
     }
 
     protected <T extends Entity> T __create(Class<T> entityClass) {
@@ -167,7 +141,7 @@ public class MetadataImpl implements Metadata {
         if (!(entity instanceof BaseGenericIdEntity))
             return;
 
-        MetaClass metaClass = getClassNN(entity.getClass());
+        MetaClass metaClass = getClass(entity.getClass());
 
         MetaProperty primaryKeyProperty = tools.getPrimaryKeyProperty(metaClass);
         if (primaryKeyProperty != null && tools.isEmbedded(primaryKeyProperty)) {
@@ -212,7 +186,7 @@ public class MetadataImpl implements Metadata {
     }
 
     protected void createEmbedded(Entity entity) {
-        MetaClass metaClass = getClassNN(entity.getClass());
+        MetaClass metaClass = getClass(entity.getClass());
         for (MetaProperty property : metaClass.getProperties()) {
             if (property.getRange().isClass() && tools.isEmbedded(property)) {
                 EmbeddedParameters embeddedParameters = property.getAnnotatedElement().getAnnotation(EmbeddedParameters.class);
@@ -310,7 +284,7 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public Entity create(String entityName) {
-        MetaClass metaClass = getSession().getClassNN(entityName);
+        MetaClass metaClass = getSession().getClass(entityName);
         return (Entity) __create(metaClass.getJavaClass());
     }
 
@@ -321,24 +295,24 @@ public class MetadataImpl implements Metadata {
 
     @Nullable
     @Override
-    public MetaClass getClass(String name) {
-        return getSession().getClass(name);
+    public MetaClass findClass(String name) {
+        return getSession().findClass(name);
     }
 
     @Override
-    public MetaClass getClassNN(String name) {
-        return getSession().getClassNN(name);
+    public MetaClass getClass(String name) {
+        return getSession().findClass(name);
     }
 
     @Nullable
     @Override
-    public MetaClass getClass(Class<?> clazz) {
-        return getSession().getClass(clazz);
+    public MetaClass findClass(Class<?> javaClass) {
+        return getSession().findClass(javaClass);
     }
 
     @Override
-    public MetaClass getClassNN(Class<?> clazz) {
-        return getSession().getClassNN(clazz);
+    public MetaClass getClass(Class<?> javaClass) {
+        return getSession().getClass(javaClass);
     }
 
     @Override

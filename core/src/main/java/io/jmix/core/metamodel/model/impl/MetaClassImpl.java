@@ -86,13 +86,13 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
     }
 
     @Override
-    public MetaProperty getProperty(String name) {
+    public MetaProperty findProperty(String name) {
 		return propertyByName.get(name);
 	}
 
     @Override
-    public MetaProperty getPropertyNN(String name) {
-        MetaProperty property = getProperty(name);
+    public MetaProperty getProperty(String name) {
+        MetaProperty property = findProperty(name);
         if (property == null) {
             throw new IllegalArgumentException(String.format("Property '%s' not found in %s", name, getName()));
         }
@@ -113,7 +113,7 @@ public class MetaClassImpl extends MetadataObjectImpl implements MetaClass {
             if (currentClass == null) {
                 return null;
             }
-            currentProperty = currentClass.getProperty(properties[i]);
+            currentProperty = currentClass.findProperty(properties[i]);
             if (currentProperty == null) {
                 return null;
             }

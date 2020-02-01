@@ -50,7 +50,7 @@ public class OriginalEntityLoadInfo extends EntityLoadInfo {
         Metadata metadata = AppBeans.get(Metadata.NAME);
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
         ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
-        MetaClass metaClass = metadata.getSession().getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
 
         MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
         if (originalMetaClass != null) {

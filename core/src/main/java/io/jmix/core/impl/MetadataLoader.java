@@ -16,29 +16,17 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.commons.datastruct.Pair;
-import io.jmix.core.commons.util.Dom4j;
-import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.impl.scanning.EntitiesScanner;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.metamodel.model.impl.*;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.annotation.*;
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Stores;
 import io.jmix.core.impl.MetadataBuildSupport.XmlAnnotation;
-import io.jmix.core.impl.MetadataBuildSupport.XmlAnnotations;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -205,7 +193,7 @@ public class MetadataLoader {
             for (Class superClass : superClasses) {
                 metaClass.getAnnotations().put(Extends.class.getName(), superClass);
 
-                MetaClass superMetaClass = session.getClassNN(superClass);
+                MetaClass superMetaClass = session.getClass(superClass);
 
                 Class<?> extendedByClass = (Class) superMetaClass.getAnnotations().get(ExtendedBy.class.getName());
                 if (extendedByClass != null && !javaClass.equals(extendedByClass)) {

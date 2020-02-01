@@ -197,7 +197,7 @@ public class MetaPropertyImpl extends MetadataObjectImpl implements MetaProperty
 
     protected void withClones(Consumer<MetaPropertyImpl> consumer) {
         for (MetaClass descendant : domain.getDescendants()) {
-            MetaPropertyImpl clone = (MetaPropertyImpl) descendant.getPropertyNN(name);
+            MetaPropertyImpl clone = (MetaPropertyImpl) descendant.getProperty(name);
             consumer.accept(clone);
         }
     }

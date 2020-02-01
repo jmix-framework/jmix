@@ -38,37 +38,6 @@ public interface Metadata extends Session {
     Session getSession();
 
     /**
-     * Convenient access to {@link ViewRepository} bean.
-     * @return  ViewRepository instance
-     * @deprecated Use DI.
-     */
-    @Deprecated
-    ViewRepository getViewRepository();
-
-    /**
-     * Convenient access to {@link ExtendedEntities} bean.
-     * @return ExtendedEntities instance
-     * @deprecated Use DI.
-     */
-    @Deprecated
-    ExtendedEntities getExtendedEntities();
-
-    /**
-     * Convenient access to {@link MetadataTools} bean.
-     * @return  MetadataTools instance
-     * @deprecated Use DI.
-     */
-    @Deprecated
-    MetadataTools getTools();
-
-    /**
-     * Convenient access to {@link DatatypeRegistry} bean.
-     * @deprecated Use DI.
-     */
-    @Deprecated
-    DatatypeRegistry getDatatypes();
-
-    /**
      * Returns MetaClass of the given entity.
      * @param entity entity instance
      * @return      MetaClass instance

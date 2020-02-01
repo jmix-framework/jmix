@@ -54,9 +54,9 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
     public boolean isLoaded(Object entity, String property) {
         if (entity instanceof KeyValueEntity) {
             KeyValueEntity keyValue = (KeyValueEntity) entity;
-            return keyValue.getInstanceMetaClass() != null && keyValue.getInstanceMetaClass().getProperty(property) != null;
+            return keyValue.getInstanceMetaClass() != null && keyValue.getInstanceMetaClass().findProperty(property) != null;
         }
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
 
         // todo dynamic attributes
 //        if (isDynamicAttribute(property)) {
@@ -73,7 +73,7 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
 //                    dynamicAttributes.getAttributeForMetaClass(metaClass, property) != null;
 //        }
 
-        MetaProperty metaProperty = metaClass.getPropertyNN(property);
+        MetaProperty metaProperty = metaClass.getProperty(property);
 
         if (!metadataTools.isPersistent(metaProperty)) {
             List<String> relatedProperties = metadataTools.getRelatedProperties(metaProperty);

@@ -70,7 +70,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
     @Nullable
     @Override
     public <E extends Entity> E load(LoadContext<E> context) {
-        MetaClass metaClass = metadata.getClassNN(context.getMetaClass());
+        MetaClass metaClass = metadata.getClass(context.getMetaClass());
         DataStore storage = getDataStore(getStoreName(metaClass));
         E entity = storage.load(context);
         if (entity != null)
@@ -81,7 +81,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
     @Override
     @SuppressWarnings("unchecked")
     public <E extends Entity> List<E> loadList(LoadContext<E> context) {
-        MetaClass metaClass = metadata.getClassNN(context.getMetaClass());
+        MetaClass metaClass = metadata.getClass(context.getMetaClass());
         DataStore storage = getDataStore(getStoreName(metaClass));
         List<E> entities = storage.loadList(context);
         readCrossDataStoreReferences(entities, context.getView(), metaClass, context.isJoinTransaction());
@@ -90,7 +90,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
 
     @Override
     public long getCount(LoadContext<? extends Entity> context) {
-        MetaClass metaClass = metadata.getClassNN(context.getMetaClass());
+        MetaClass metaClass = metadata.getClass(context.getMetaClass());
         DataStore storage = getDataStore(getStoreName(metaClass));
         return storage.getCount(context);
     }
@@ -103,7 +103,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
         Map<String, CommitContext> storeToContextMap = new TreeMap<>();
         Set<Entity> toRepeat = new HashSet<>();
         for (Entity entity : context.getCommitInstances()) {
-            MetaClass metaClass = metadata.getClassNN(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity.getClass());
             String storeName = getStoreName(metaClass);
 
             boolean repeatRequired = writeCrossDataStoreReferences(entity, context.getCommitInstances());
@@ -122,7 +122,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
                 cc.getViews().put(entity, view);
         }
         for (Entity entity : context.getRemoveInstances()) {
-            MetaClass metaClass = metadata.getClassNN(entity.getClass());
+            MetaClass metaClass = metadata.getClass(entity.getClass());
             String storeName = getStoreName(metaClass);
 
             CommitContext cc = storeToContextMap.get(storeName);
@@ -213,7 +213,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
             return false;
 
         boolean repeatRequired = false;
-        MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty property : metaClass.getProperties()) {
             if (property.getRange().isClass() && !property.getRange().getCardinality().isMany()) {
                 MetaClass propertyMetaClass = property.getRange().asClass();
@@ -245,7 +245,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
                                     entity.setValue(relatedPropertyName, realId);
                                 }
                             } else if (refEntityId instanceof EmbeddableEntity) {
-                                MetaProperty relatedProperty = metaClass.getPropertyNN(relatedPropertyName);
+                                MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);
                                 if (!relatedProperty.getRange().isClass()) {
                                     log.warn("PK of entity referenced by {} is a EmbeddableEntity, but related property {} is not", property, relatedProperty);
                                 } else {

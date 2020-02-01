@@ -84,7 +84,7 @@ public class CrossDataStoreReferenceLoader {
 
         Class<? extends Entity> entityClass = view.getEntityClass();
         for (ViewProperty viewProperty : view.getProperties()) {
-            MetaProperty metaProperty = metadata.getClassNN(entityClass).getPropertyNN(viewProperty.getName());
+            MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(viewProperty.getName());
             if (metaProperty.getRange().isClass()) {
                 MetaClass propertyMetaClass = metaProperty.getRange().asClass();
                 if (!Objects.equals(metadataTools.getStoreName(propertyMetaClass), storeName)) {

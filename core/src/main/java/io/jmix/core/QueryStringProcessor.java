@@ -50,7 +50,7 @@ public class QueryStringProcessor {
     }
 
     protected String processJpaQuery(String queryString, Class<? extends Entity> entityClass) {
-        MetaClass metaClass = metadata.getClassNN(entityClass);
+        MetaClass metaClass = metadata.getClass(entityClass);
         String entityName = metaClass.getName();
 
         String query = queryString.trim();

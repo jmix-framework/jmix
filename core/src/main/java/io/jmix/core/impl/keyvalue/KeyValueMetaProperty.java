@@ -57,7 +57,7 @@ public class KeyValueMetaProperty extends MetadataObjectImpl implements MetaProp
         Metadata metadata = AppBeans.get(Metadata.NAME);
         Session metadataSession = metadata.getSession();
         if (Entity.class.isAssignableFrom(javaClass)) {
-            range = new ClassRange(metadataSession.getClass(javaClass));
+            range = new ClassRange(metadataSession.findClass(javaClass));
             this.type = Type.ASSOCIATION;
         } else if (EnumClass.class.isAssignableFrom(javaClass)) {
             @SuppressWarnings("unchecked")

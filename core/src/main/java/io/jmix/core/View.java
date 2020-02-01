@@ -320,7 +320,7 @@ public class View implements Serializable {
 
         Metadata metadata = AppBeans.get(Metadata.NAME);
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-        MetaClass metaClass = metadata.getClassNN(entityClass);
+        MetaClass metaClass = metadata.getClass(entityClass);
 
         String pkName = metadataTools.getPrimaryKeyName(metaClass);
         if (pkName != null) {
@@ -339,7 +339,7 @@ public class View implements Serializable {
                                            MetadataTools metadataTools, Set<String> result) {
         if (baseClass.isAssignableFrom(entityClass)) {
             for (String property : getInterfaceProperties(baseClass)) {
-                MetaProperty metaProperty = metaClass.getProperty(property);
+                MetaProperty metaProperty = metaClass.findProperty(property);
                 if (metaProperty != null && metadataTools.isPersistent(metaProperty)) {
                     result.add(property);
                 }

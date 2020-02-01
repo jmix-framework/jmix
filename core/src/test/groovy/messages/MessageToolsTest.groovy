@@ -56,17 +56,17 @@ class MessageToolsTest extends Specification {
     def "test getEntityCaption"() {
         expect:
 
-        messageTools.getEntityCaption(metadata.getClassNN(Pet), LOC_EN) == 'Domestic Animal'
-        messageTools.getEntityCaption(metadata.getClassNN(Pet), LOC_RU) == 'Домашнее животное'
+        messageTools.getEntityCaption(metadata.getClass(Pet), LOC_EN) == 'Domestic Animal'
+        messageTools.getEntityCaption(metadata.getClass(Pet), LOC_RU) == 'Домашнее животное'
     }
 
     def "test getPropertyCaption"() {
         expect:
 
-        messageTools.getPropertyCaption(metadata.getClassNN(Pet), 'nick', LOC_EN) == 'Nickname'
-        messageTools.getPropertyCaption(metadata.getClassNN(Pet), 'nick', LOC_RU) == 'Кличка'
+        messageTools.getPropertyCaption(metadata.getClass(Pet), 'nick', LOC_EN) == 'Nickname'
+        messageTools.getPropertyCaption(metadata.getClass(Pet), 'nick', LOC_RU) == 'Кличка'
 
-        messageTools.getPropertyCaption(metadata.getClassNN(Pet).getPropertyNN('nick'), LOC_EN) == 'Nickname'
-        messageTools.getPropertyCaption(metadata.getClassNN(Pet).getPropertyNN('nick'), LOC_RU) == 'Кличка'
+        messageTools.getPropertyCaption(metadata.getClass(Pet).getProperty('nick'), LOC_EN) == 'Nickname'
+        messageTools.getPropertyCaption(metadata.getClass(Pet).getProperty('nick'), LOC_RU) == 'Кличка'
     }
 }

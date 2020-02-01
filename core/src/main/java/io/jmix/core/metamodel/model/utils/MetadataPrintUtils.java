@@ -16,19 +16,18 @@
 package io.jmix.core.metamodel.model.utils;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaModel;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
-public final class PrintUtils {
+public final class MetadataPrintUtils {
 
-    private PrintUtils() {
+    private MetadataPrintUtils() {
     }
 
-    public static String printClassHierarchy(MetaModel model) {
+    public static String printClassHierarchy(Session model) {
         StringBuilder builder = new StringBuilder();
 
         Collection<MetaClass> topLevelClasses = new LinkedList<>();

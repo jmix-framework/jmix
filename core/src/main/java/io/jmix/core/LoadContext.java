@@ -85,7 +85,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
      */
     public LoadContext(MetaClass metaClass) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
-        this.metaClass = AppBeans.get(Metadata.class).getExtendedEntities().getEffectiveMetaClass(metaClass).getName();
+        this.metaClass = AppBeans.get(ExtendedEntities.class).getEffectiveMetaClass(metaClass).getName();
     }
 
     /**
@@ -93,7 +93,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
      */
     public LoadContext(Class<E> javaClass) {
         Preconditions.checkNotNullArgument(javaClass, "javaClass is null");
-        this.metaClass = AppBeans.get(Metadata.class).getExtendedEntities().getEffectiveMetaClass(javaClass).getName();
+        this.metaClass = AppBeans.get(ExtendedEntities.class).getEffectiveMetaClass(javaClass).getName();
     }
 
     protected LoadContext() {
@@ -162,7 +162,8 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
      */
     public LoadContext<E> setView(String viewName) {
         Metadata metadata = AppBeans.get(Metadata.NAME);
-        this.view = metadata.getViewRepository().getView(metadata.getSession().getClass(metaClass), viewName);
+        ViewRepository viewRepository = AppBeans.get(ViewRepository.NAME);
+        this.view = viewRepository.getView(metadata.getSession().findClass(metaClass), viewName);
         return this;
     }
 

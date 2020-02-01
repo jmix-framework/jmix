@@ -55,7 +55,7 @@ public abstract class DataManagerSupport implements DataManager {
     @Override
     public <E extends Entity> E reload(E entity, View view, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
         if (metaClass == null) {
-            metaClass = metadata.getSession().getClass(entity.getClass());
+            metaClass = metadata.getSession().findClass(entity.getClass());
         }
         LoadContext<E> context = new LoadContext<>(metaClass);
         context.setId(entity.getId());
@@ -90,7 +90,7 @@ public abstract class DataManagerSupport implements DataManager {
     @Override
     public <E extends Entity> E commit(E entity, @Nullable String viewName) {
         if (viewName != null) {
-            View view = viewRepository.getView(metadata.getClassNN(entity.getClass()), viewName);
+            View view = viewRepository.getView(metadata.getClass(entity.getClass()), viewName);
             return commit(entity, view);
         } else {
             return commit(entity, (View) null);

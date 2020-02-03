@@ -26,10 +26,9 @@ import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.ValueSource;
-import io.jmix.ui.widgets.CubaDatePicker;
 import com.vaadin.shared.ui.datefield.DateResolution;
 import com.vaadin.ui.InlineDateField;
-import io.jmix.ui.widgets.CubaDatePicker;
+import io.jmix.ui.widgets.CubaInlineDateField;
 
 import javax.inject.Inject;
 import java.time.*;
@@ -47,9 +46,13 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
     public WebDatePicker() {
-        this.component = new CubaDatePicker();
+        this.component = createComponent();
 
         attachValueChangeListener(component);
+    }
+
+    protected InlineDateField createComponent() {
+        return new CubaInlineDateField();
     }
 
     @Inject

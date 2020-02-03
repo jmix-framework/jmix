@@ -316,4 +316,19 @@ public interface ServerConfig extends Config {
     @Source(type = SourceType.DATABASE)
     @DefaultBoolean(false)
     boolean getDataManagerBeanValidation();
+
+    /**
+     * Deactivating switch for {@code EntityNotEnhancedException}. By default on application start entities
+     * will be checked for Cuba and EclipseLink enhancing interfaces. If any interfaces are missing,
+     * an exception will be thrown.
+     * If true, detected problems will be logged instead of throwing {@code EntityNotEnhancedException}.
+     * <p>
+     * List of checked interfaces:
+     * {@link io.jmix.core.entity.JmixEnhanced}
+     * {@link org.eclipse.persistence.internal.descriptors.PersistenceObject}
+     * {@link org.eclipse.persistence.internal.weaving.PersistenceWeaved}
+     * {@link org.eclipse.persistence.internal.weaving.PersistenceWeavedFetchGroups}
+     */
+    @Property("cuba.disableEntityEnhancementCheck")
+    boolean getDisableEntityEnhancementCheck();
 }

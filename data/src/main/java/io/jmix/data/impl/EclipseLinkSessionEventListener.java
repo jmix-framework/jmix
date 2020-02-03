@@ -20,13 +20,20 @@ import com.google.common.base.Strings;
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
+import io.jmix.core.commons.datastruct.Pair;
+import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.Entity;
+import io.jmix.core.entity.JmixEnhanced;
+import io.jmix.core.entity.JmixEnhancingDisabled;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.metamodel.model.impl.AbstractInstance;
+import io.jmix.data.persistence.EntityNotEnhancedException;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.annotations.CacheCoordinationType;
 import org.eclipse.persistence.config.CacheIsolationType;
@@ -34,16 +41,22 @@ import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
 import org.eclipse.persistence.descriptors.InheritancePolicy;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
+import org.eclipse.persistence.internal.descriptors.PersistenceObject;
 import org.eclipse.persistence.internal.helper.DatabaseField;
+import org.eclipse.persistence.internal.weaving.PersistenceWeaved;
+import org.eclipse.persistence.internal.weaving.PersistenceWeavedFetchGroups;
 import org.eclipse.persistence.mappings.*;
 import org.eclipse.persistence.platform.database.*;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.SessionEvent;
 import org.eclipse.persistence.sessions.SessionEventAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import javax.persistence.OneToOne;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -60,17 +73,24 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
 
     private DescriptorEventListener descriptorEventListener = AppBeans.get(EclipseLinkDescriptorEventListener.NAME);
 
+    private static final Logger log = LoggerFactory.getLogger(EclipseLinkSessionEventListener.class);
+
     @Override
     public void preLogin(SessionEvent event) {
 
         Session session = event.getSession();
         setPrintInnerJoinOnClause(session);
 
+        List<String> wrongFetchTypes = new ArrayList<>();
+        List<Pair<Class, String>> missingEnhancements = new ArrayList<>();
+
         Map<Class, ClassDescriptor> descriptorMap = session.getDescriptors();
         boolean hasMultipleTableConstraintDependency = hasMultipleTableConstraintDependency();
         for (Map.Entry<Class, ClassDescriptor> entry : descriptorMap.entrySet()) {
             MetaClass metaClass = metadata.getSession().getClass(entry.getKey());
             ClassDescriptor desc = entry.getValue();
+
+            enhancementCheck(entry.getKey(), missingEnhancements);
 
             setCacheable(metaClass, desc, session);
 
@@ -93,6 +113,9 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
 
             List<DatabaseMapping> mappings = desc.getMappings();
             for (DatabaseMapping mapping : mappings) {
+                //Fetch type check
+                fetchTypeCheck(mapping, entry.getKey(), wrongFetchTypes);
+
                 // support UUID
                 String attributeName = mapping.getAttributeName();
                 MetaProperty metaProperty = metaClass.getProperty(attributeName);
@@ -145,6 +168,75 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
                         }
                     }
                 }
+            }
+        }
+        logCheckResult(wrongFetchTypes, missingEnhancements);
+    }
+
+    protected void enhancementCheck(Class entityClass, List<Pair<Class, String>> missingEnhancements) {
+        boolean jmixEnhanced = ArrayUtils.contains(entityClass.getInterfaces(), JmixEnhanced.class)
+                || !(AbstractInstance.class.isAssignableFrom(entityClass))
+                || ArrayUtils.contains(entityClass.getInterfaces(), JmixEnhancingDisabled.class);
+        boolean persistenceObject = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceObject.class);
+        boolean persistenceWeaved = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeaved.class);
+        boolean persistenceWeavedFetchGroups = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeavedFetchGroups.class);
+        if (!jmixEnhanced || !persistenceObject || !persistenceWeaved || !persistenceWeavedFetchGroups) {
+            String message = String.format("Entity class %s is missing some of enhancing interfaces:%s%s%s%s",
+                    entityClass.getSimpleName(),
+                    jmixEnhanced ? "" : " JmixEnhanced;",
+                    persistenceObject ? "" : " PersistenceObject;",
+                    persistenceWeaved ? "" : " PersistenceWeaved;",
+                    persistenceWeavedFetchGroups ? "" : " PersistenceWeavedFetchGroups;");
+            missingEnhancements.add(new Pair<>(entityClass, message));
+        }
+    }
+
+    protected void fetchTypeCheck(DatabaseMapping mapping, Class entityClass, List<String> wrongFetchTypes) {
+        if ((mapping.isOneToOneMapping() || mapping.isOneToManyMapping()
+                || mapping.isManyToOneMapping() || mapping.isManyToManyMapping())) {
+            if (!mapping.isLazy()) {
+                mapping.setIsLazy(true);
+                wrongFetchTypes.add(String.format("EAGER fetch type detected for reference field %s of entity %s; Set to LAZY",
+                        mapping.getAttributeName(), entityClass.getSimpleName()));
+            }
+        } else {
+            if (mapping.isLazy()) {
+                mapping.setIsLazy(false);
+                wrongFetchTypes.add(String.format("LAZY fetch type detected for basic field %s of entity %s; Set to EAGER",
+                        mapping.getAttributeName(), entityClass.getSimpleName()));
+            }
+        }
+    }
+
+    protected void logCheckResult(List<String> wrongFetchTypes, List<Pair<Class, String>> missingEnhancements) {
+        if (!wrongFetchTypes.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            message.append("\n=================================================================");
+            message.append("\nIncorrectly defined fetch types detected:");
+            for (String wft : wrongFetchTypes) {
+                message.append("\n");
+                message.append(wft);
+            }
+            message.append("\n=================================================================");
+            log.warn(message.toString());
+        }
+        if (!missingEnhancements.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            message.append("\n=================================================================");
+            message.append("\nProblems with entity enhancement detected:");
+            for (Pair me : missingEnhancements) {
+                message.append("\n");
+                message.append(me.getSecond());
+            }
+            message.append("\n=================================================================");
+            log.error(message.toString());
+            if (!Boolean.parseBoolean(AppContext.getProperty("cuba.disableEntityEnhancementCheck"))) {
+                StringBuilder exceptionMessage = new StringBuilder();
+                for (Pair me : missingEnhancements) {
+                    exceptionMessage.append(me.getFirst());
+                    exceptionMessage.append("; ");
+                }
+                throw new EntityNotEnhancedException(exceptionMessage.toString());
             }
         }
     }

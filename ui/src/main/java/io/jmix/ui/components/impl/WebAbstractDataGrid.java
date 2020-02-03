@@ -262,6 +262,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         initEditor(component);
 
         initContextMenu();
+
+        initSidebarMenu();
     }
 
     @Inject
@@ -554,6 +556,11 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
                 setSelected(event.getItem());
             }
         });
+    }
+
+    protected void initSidebarMenu() {
+        component.setSelectAllLabel(messages.getMessage("tableColumnSelector.selectAll"));
+        component.setDeselectAllLabel(messages.getMessage("tableColumnSelector.deselectAll"));
     }
 
     protected void refreshActionsState() {

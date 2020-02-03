@@ -60,4 +60,12 @@ public interface CubaEnhancedGrid<T> {
      * without changing its value.
      */
     void updateFooterVisibility();
+
+    String getSelectAllLabel();
+
+    void setSelectAllLabel(String selectAllLabel);
+
+    String getDeselectAllLabel();
+
+    void setDeselectAllLabel(String deselectAllLabel);
 }

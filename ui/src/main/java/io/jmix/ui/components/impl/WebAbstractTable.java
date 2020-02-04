@@ -18,6 +18,7 @@ package io.jmix.ui.components.impl;
 import com.google.common.base.Strings;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Resource;
+import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.*;
@@ -840,8 +841,10 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
         if (rowsCount != null) {
             if (topPanel == null) {
                 topPanel = createTopPanel();
+                topPanel.setWidth(100, Sizeable.Unit.PERCENTAGE);
                 componentComposition.addComponentAsFirst(topPanel);
             }
+            rowsCount.setWidthAuto();
             com.vaadin.ui.Component rc = rowsCount.unwrap(com.vaadin.ui.Component.class);
             topPanel.addComponent(rc);
 
@@ -2357,9 +2360,13 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
 
             if (topPanel == null) {
                 topPanel = createTopPanel();
+                topPanel.setWidth(100, Sizeable.Unit.PERCENTAGE);
                 componentComposition.addComponentAsFirst(topPanel);
             }
-            topPanel.addComponent(panel.unwrap(Component.class));
+            Component bp = panel.unwrap(Component.class);
+            topPanel.addComponent(bp);
+            topPanel.setExpandRatio(bp, 1);
+
             if (panel instanceof VisibilityChangeNotifier) {
                 ((VisibilityChangeNotifier) panel).addVisibilityChangeListener(event ->
                         updateCompositionStylesTopPanelVisible()

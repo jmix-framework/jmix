@@ -55,3 +55,8 @@ $v-window-animations-enabled: false !default;
  * @group field
  */
 $v-show-required-indicators: false !default;
+/**
+ * Whether buttons should be placed in one row or can wrap onto multiple rows.
+ * @group buttonspanel
+ */
+$cuba-buttonspanel-flow: true !default;

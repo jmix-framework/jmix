@@ -2061,9 +2061,13 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
             if (topPanel == null) {
                 topPanel = createTopPanel();
+                topPanel.setWidth(100, Sizeable.Unit.PERCENTAGE);
                 componentComposition.addComponentAsFirst(topPanel);
             }
-            topPanel.addComponent(WebComponentsHelper.unwrap(panel));
+            Component bp = panel.unwrap(Component.class);
+            topPanel.addComponent(bp);
+            topPanel.setExpandRatio(bp, 1);
+
             if (panel instanceof VisibilityChangeNotifier) {
                 ((VisibilityChangeNotifier) panel).addVisibilityChangeListener(event ->
                         updateCompositionStylesTopPanelVisible()
@@ -2094,8 +2098,10 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
             if (topPanel == null) {
                 topPanel = createTopPanel();
+                topPanel.setWidth(100, Sizeable.Unit.PERCENTAGE);
                 componentComposition.addComponentAsFirst(topPanel);
             }
+            rowsCount.setWidthAuto();
             Component rc = WebComponentsHelper.unwrap(rowsCount);
             topPanel.addComponent(rc);
 

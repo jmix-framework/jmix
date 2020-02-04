@@ -15,10 +15,12 @@
  */
 package io.jmix.ui.components.impl;
 
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.AbstractOrderedLayout;
+import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.HtmlAttributes.CSS;
@@ -30,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class WebScrollBoxLayout extends WebAbstractComponent<CubaScrollBoxLayout> implements ScrollBoxLayout {
@@ -38,6 +41,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<CubaScrollBoxLayout
     protected static final String SCROLLBOX_STYLENAME = "c-scrollbox";
 
     protected List<Component> ownComponents = new ArrayList<>();
+    protected LayoutEvents.LayoutClickListener layoutClickListener;
 
     protected Orientation orientation = Orientation.VERTICAL;
     protected ScrollBarPolicy scrollBarPolicy = ScrollBarPolicy.VERTICAL;
@@ -319,6 +323,57 @@ public class WebScrollBoxLayout extends WebAbstractComponent<CubaScrollBoxLayout
     public String getContentMaxHeight() {
         return HtmlAttributesExtension.get(getContent())
                 .getCssProperty(CSS.MAX_HEIGHT);
+    }
+
+    @Override
+    public Subscription addLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+        if (layoutClickListener == null) {
+            layoutClickListener = event -> {
+                // scrollBoxLayout always has vertical or horizontal layout as first child element
+                // choose vertical or horizontal layout as a parent to find the correct child
+                com.vaadin.ui.Component child = findChildComponent(event.getClickedComponent());
+
+                Component childComponent = findExistingComponent(child);
+                Component clickedComponent = findExistingComponent(event.getClickedComponent());
+                MouseEventDetails mouseEventDetails = WebWrapperUtils.toMouseEventDetails(event);
+
+                LayoutClickNotifier.LayoutClickEvent layoutClickEvent =
+                        new LayoutClickNotifier.LayoutClickEvent(this, childComponent, clickedComponent, mouseEventDetails);
+
+                publish(LayoutClickNotifier.LayoutClickEvent.class, layoutClickEvent);
+            };
+            component.addLayoutClickListener(layoutClickListener);
+        }
+
+        getEventHub().subscribe(LayoutClickNotifier.LayoutClickEvent.class, listener);
+        return () -> removeLayoutClickListener(listener);
+    }
+
+    protected com.vaadin.ui.Component findChildComponent(com.vaadin.ui.Component vComponent) {
+        while (vComponent != null
+                && vComponent.getParent() != component.getComponent(0)) {
+            vComponent = vComponent.getParent();
+        }
+        return vComponent;
+    }
+
+    protected Component findExistingComponent(com.vaadin.ui.Component vComponent) {
+        for (Component component : getComponents()) {
+            if (component.unwrapComposition(com.vaadin.ui.Component.class) == vComponent) {
+                return component;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+        unsubscribe(LayoutClickEvent.class, listener);
+
+        if (!hasSubscriptions(LayoutClickEvent.class)) {
+            component.removeLayoutClickListener(layoutClickListener);
+            layoutClickListener = null;
+        }
     }
 
     protected void applyScrollBarsPolicy(ScrollBarPolicy scrollBarPolicy) {

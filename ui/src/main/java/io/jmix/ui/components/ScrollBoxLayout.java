@@ -21,7 +21,7 @@ package io.jmix.ui.components;
 public interface ScrollBoxLayout
         extends OrderedContainer, Component.BelongToFrame, HasMargin, HasSpacing, HasOrientation,
                 Component.HasIcon, Component.HasCaption, ShortcutNotifier, HasContextHelp,
-                HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator {
+                HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator, LayoutClickNotifier {
 
     String NAME = "scrollBox";
 

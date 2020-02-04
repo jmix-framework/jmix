@@ -31,12 +31,14 @@ import io.jmix.ui.AppUI;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.ActionsPermissions;
+import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.KeyCombination;
 import io.jmix.ui.components.PickerField;
 import io.jmix.ui.components.SecuredActionsHolder;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.valueproviders.EntityNameValueProvider;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.HaloTheme;
 import io.jmix.ui.widgets.CubaButton;
@@ -96,6 +98,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         checkValueType(value);
 
         super.setValue(value);
+
+        refreshActionsState();
     }
 
     @Override
@@ -111,6 +115,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
             ValueChangeEvent<V> event = new ValueChangeEvent<>(this, oldValue, value, true);
             publish(ValueChangeEvent.class, event);
         }
+
+        refreshActionsState();
     }
 
     protected void checkValueType(V value) {
@@ -298,6 +304,12 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         }
 
         actionsPermissions.apply(action);
+
+        refreshActionsState();
+    }
+
+    protected void refreshActionsState() {
+        getActions().forEach(Action::refreshState);
     }
 
     protected void setPickerButtonAction(CubaButton button, Action action) {
@@ -420,6 +432,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
     protected void onFieldValueChange(CubaPickerField.FieldValueChangeEvent<V> e) {
         FieldValueChangeEvent<V> event = new FieldValueChangeEvent<>(this, e.getText(), e.getPrevValue());
         publish(FieldValueChangeEvent.class, event);
+
+        refreshActionsState();
     }
 
     @Override
@@ -512,6 +526,15 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
     @Override
     public boolean isModified() {
         return super.isModified();
+    }
+
+    @Override
+    public void setFrame(Frame frame) {
+        super.setFrame(frame);
+
+        UiControllerUtils.getScreen(frame.getFrameOwner())
+                .addAfterShowListener(afterShowEvent ->
+                        refreshActionsState());
     }
 
     public class WebPickerFieldActionHandler implements com.vaadin.event.Action.Handler {

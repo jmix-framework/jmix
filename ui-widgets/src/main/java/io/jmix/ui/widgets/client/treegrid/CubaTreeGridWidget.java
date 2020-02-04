@@ -7,6 +7,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.widget.grid.selection.SelectionModel;
+import com.vaadin.client.widget.grid.selection.SelectionModelWithSelectionColumn;
 import io.jmix.ui.widgets.client.grid.CubaEditorEventHandler;
 import io.jmix.ui.widgets.client.grid.CubaGridEmptyState;
 import io.jmix.ui.widgets.client.grid.HasClickSettings;
@@ -27,6 +29,7 @@ public class CubaTreeGridWidget extends TreeGrid {
     public static final String CUBA_ID_COLUMN_PREFIX = "column_";
     public static final String CUBA_ID_COLUMN_HIDING_TOGGLE_PREFIX = "cc_";
     public static final String COLUMN_HIDING_TOGGLE_STYLENAME = "column-hiding-toggle";
+    public static final String MULTI_CHECK_STYLENAME = "multi-check";
 
     protected Map<Column<?, JsonObject>, String> columnIds = null;
 
@@ -35,6 +38,15 @@ public class CubaTreeGridWidget extends TreeGrid {
 
     protected String selectAllLabel;
     protected String deselectAllLabel;
+
+    @Override
+    public void setSelectionModel(SelectionModel<JsonObject> selectionModel) {
+        super.setSelectionModel(selectionModel);
+
+        boolean multiCheck = getSelectionModel() instanceof SelectionModelWithSelectionColumn
+                && ((SelectionModelWithSelectionColumn) getSelectionModel()).getRenderer() != null;
+        getEscalator().setStyleName(MULTI_CHECK_STYLENAME, multiCheck);
+    }
 
     public Map<Column<?, JsonObject>, String> getColumnIds() {
         return columnIds;

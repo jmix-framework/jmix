@@ -172,11 +172,12 @@ public class WebAbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends
         if (layoutClickListener == null) {
             layoutClickListener = event -> {
                 Component childComponent = findChildComponent(this, event.getChildComponent());
-//                Component clickedComponent = findChildComponent(this, event.getClickedComponent());
+                Component clickedComponent = findChildComponent(this, event.getClickedComponent());
                 MouseEventDetails mouseEventDetails = WebWrapperUtils.toMouseEventDetails(event);
 
                 LayoutClickEvent layoutClickEvent =
-                        new LayoutClickEvent(this, childComponent, mouseEventDetails);
+                        new LayoutClickEvent(this, childComponent, clickedComponent, mouseEventDetails);
+
 
                 publish(LayoutClickEvent.class, layoutClickEvent);
             };

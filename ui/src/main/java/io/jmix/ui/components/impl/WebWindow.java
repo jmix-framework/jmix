@@ -32,7 +32,7 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.events.UiEventsMulticaster;
 import io.jmix.ui.widgets.HtmlAttributesExtension;
-import io.jmix.ui.widgets.JmixVerticalActionsLayout;
+import io.jmix.ui.widgets.JmixWindowVerticalLayout;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -144,7 +144,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
     }
 
     protected AbstractOrderedLayout createLayout() {
-        JmixVerticalActionsLayout layout = new JmixVerticalActionsLayout();
+        JmixWindowVerticalLayout layout = new JmixWindowVerticalLayout();
         layout.setStyleName(C_WINDOW_LAYOUT);
         layout.setSizeFull();
 

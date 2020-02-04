@@ -270,6 +270,11 @@ $c-table-drag-indicator-color: $v-focus-color;
       min-height: $v-unit-size;
     }
 
+    // The caption of ButtonsPanel inside of Table will be ignored
+    .v-caption-c-buttons-panel {
+      display: none;
+    }
+
     .v-ie11 &,
     .v-edge & {
       .c-table-top {

@@ -144,6 +144,11 @@ $cuba-datagrid-highlight-hover-row: false !default;
       min-height: $v-unit-size;
     }
 
+    // The caption of ButtonsPanel inside of DataGrid will be ignored
+    .v-caption-c-buttons-panel {
+      display: none;
+    }
+
     .v-ie11 &,
     .v-edge & {
       .c-buttons-panel {

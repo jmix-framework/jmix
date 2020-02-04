@@ -460,6 +460,20 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="dataGridColumnGeneratedType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="java.lang.Boolean"/>
+            <xs:enumeration value="java.lang.Integer"/>
+            <xs:enumeration value="java.lang.Double"/>
+            <xs:enumeration value="java.lang.String"/>
+            <xs:enumeration value="java.util.Date"/>
+            <xs:enumeration value="java.time.LocalDate"/>
+            <xs:enumeration value="java.time.LocalDateTime"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.icons.Icons.Icon"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.Component"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- Style names -->
 
     <xs:simpleType name="labelStylename">
@@ -1242,6 +1256,28 @@
         <xs:attribute name="type" type="xs:string"/>
         <xs:attribute name="useUserTimezone" type="xs:boolean"/>
     </xs:complexType>
+
+    <xs:complexType name="rendererType">
+        <xs:attribute name="type" type="rendererTypes" use="required"/>
+    </xs:complexType>
+
+    <xs:simpleType name="rendererTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$ButtonRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$CheckBoxRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$ComponentRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$IconRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$ImageRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$DateRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$HtmlRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$TextRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$ClickableTextRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$LocalDateRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$LocalDateTimeRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$NumberRenderer"/>
+            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$ProgressBarRenderer"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="baseValidatorType">
         <xs:all>
@@ -2510,6 +2546,7 @@
     <xs:complexType name="dataGridColumnComponent">
         <xs:sequence>
             <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+            <xs:element name="renderer" minOccurs="0" type="rendererType"/>
         </xs:sequence>
 
         <xs:attributeGroup ref="hasId"/>
@@ -2527,6 +2564,8 @@
         <xs:attributeGroup ref="hasWidthProp"/>
         <xs:attribute name="minimumWidth" type="xs:string"/>
         <xs:attribute name="maximumWidth" type="xs:string"/>
+
+        <xs:attribute name="generatedType" type="dataGridColumnGeneratedType"/>
     </xs:complexType>
 
     <!-- DataGrid -->

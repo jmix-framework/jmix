@@ -44,11 +44,10 @@ import java.util.List;
  */
 public class TableAggregationRow extends Panel {
 
-    protected static final String SCROLLBAR_SPACER_STYLENAME = "scrollbar-spacer";
-
     protected boolean initialized = false;
 
     protected char[] aligns;
+    protected Element container;
     protected Element tr;
 
     protected TableWidget tableWidget;
@@ -59,10 +58,18 @@ public class TableAggregationRow extends Panel {
     public TableAggregationRow(TableWidget tableWidget) {
         this.tableWidget = tableWidget;
 
-        setElement(Document.get().createDivElement());
+        String primaryStyleName = tableWidget.getStylePrimaryName();
 
-        getElement().setClassName(tableWidget.getStylePrimaryName() + "-arow");
-        getElement().getStyle().setOverflow(Overflow.HIDDEN);
+        DivElement wrapElement = Document.get().createDivElement();
+        wrapElement.setClassName(primaryStyleName + "-arow-wrap");
+        setElement(wrapElement);
+
+        container = Document.get().createDivElement();
+
+        container.setClassName(primaryStyleName + "-arow");
+        container.getStyle().setOverflow(Overflow.HIDDEN);
+
+        wrapElement.appendChild(container);
     }
 
     @Override
@@ -116,8 +123,8 @@ public class TableAggregationRow extends Panel {
     }
 
     public void updateFromUIDL(UIDL uidl) {
-        if (getElement().hasChildNodes()) {
-            getElement().removeAllChildren();
+        if (container.hasChildNodes()) {
+            container.removeAllChildren();
         }
 
         aligns = tableWidget.getHead().getColumnAlignments();
@@ -140,7 +147,10 @@ public class TableAggregationRow extends Panel {
 
             tBody.appendChild(tr);
             table.appendChild(tBody);
-            getElement().appendChild(table);
+
+            DivElement tableWrapper = Document.get().createDivElement();
+            tableWrapper.appendChild(table);
+            container.appendChild(tableWrapper);
 
             // set focus to input if we pressed `ENTER`
             String focusColumnKey = uidl.getStringAttribute("focusInput");
@@ -154,9 +164,7 @@ public class TableAggregationRow extends Panel {
             }
         }
 
-        initialized = getElement().hasChildNodes();
-
-        toggleScrollbarSpacer(tableWidget.hasVerticalScrollbar());
+        initialized = container.hasChildNodes();
     }
 
     public void setCellWidth(int cellIx, int width) {
@@ -187,11 +195,7 @@ public class TableAggregationRow extends Panel {
     }
 
     public void setHorizontalScrollPosition(int scrollLeft) {
-        getElement().setPropertyInt("scrollLeft", scrollLeft);
-    }
-
-    public TableWidget getTableWidget() {
-        return tableWidget;
+        container.setScrollLeft(scrollLeft);
     }
 
     public void setTotalAggregationInputHandler(TotalAggregationInputListener totalAggregationInputHandler) {
@@ -212,38 +216,6 @@ public class TableAggregationRow extends Panel {
         ComputedStyle cs = new ComputedStyle(cell);
 
         return cs.getWidth() + cs.getPaddingWidth() + cs.getBorderWidth();
-    }
-
-    public void toggleScrollbarSpacer(boolean scrollbarEnabled) {
-        if (!isInitialized()) {
-            return;
-        }
-
-        if (scrollbarEnabled) {
-            com.google.gwt.user.client.Element lastChild = DOM.getChild(tr, DOM.getChildCount(tr) - 1);
-            if (lastChild.hasClassName(SCROLLBAR_SPACER_STYLENAME)) {
-                return;
-            }
-
-            com.google.gwt.user.client.Element spacer = DOM.createTD();
-            spacer.addClassName(SCROLLBAR_SPACER_STYLENAME);
-
-            int scrollbarWidth = WidgetUtil.getNativeScrollbarSize();
-
-            spacer.getStyle().setPropertyPx("width", scrollbarWidth);
-            spacer.getStyle().setPropertyPx("minWidth", scrollbarWidth);
-            spacer.getStyle().setPropertyPx("maxWidth", scrollbarWidth);
-
-            tr.appendChild(spacer);
-        } else {
-            int cellsCount = DOM.getChildCount(tr);
-            for (int i = 0; i < cellsCount; i++) {
-                com.google.gwt.user.client.Element cell = DOM.getChild(tr, i);
-                if (cell.hasClassName(SCROLLBAR_SPACER_STYLENAME)) {
-                    tr.removeChild(cell);
-                }
-            }
-        }
     }
 
     protected void addCellsFromUIDL(UIDL uidl) {

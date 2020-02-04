@@ -79,4 +79,7 @@ public class CubaTableState extends TableState {
 
     @NoLayout
     public String deselectAllLabel;
+
+    @NoLayout
+    public boolean aggregatable = false;
 }

@@ -79,4 +79,7 @@ public class CubaTreeTableState extends TreeTableState {
 
     @NoLayout
     public String deselectAllLabel;
+
+    @NoLayout
+    public boolean aggregatable = false;
 }

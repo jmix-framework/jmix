@@ -81,6 +81,10 @@ public class CubaCheckBoxConnector extends CheckBoxConnector {
 
             getWidget().setAriaInvalid(false);
         }
+
+        if (stateChangeEvent.hasPropertyChanged("readOnly")) {
+            getWidget().setReadOnly(getState().readOnly);
+        }
     }
 
     @Override
@@ -93,5 +97,10 @@ public class CubaCheckBoxConnector extends CheckBoxConnector {
                 contextHelpIconClick(event);
             }
         }
+    }
+
+    @Override
+    protected void updateWidgetReadOnlyState() {
+        getWidget().setReadOnly(isReadOnly());
     }
 }

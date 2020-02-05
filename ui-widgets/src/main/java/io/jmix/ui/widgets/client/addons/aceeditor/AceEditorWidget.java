@@ -17,6 +17,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsArrayInteger;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FocusWidget;
+import com.vaadin.client.StyleConstants;
 import io.jmix.ui.widgets.client.addons.aceeditor.AceAnnotation.MarkerAnnotation;
 import io.jmix.ui.widgets.client.addons.aceeditor.AceAnnotation.RowAnnotation;
 import io.jmix.ui.widgets.client.addons.aceeditor.AceMarker.OnTextChange;
@@ -621,6 +622,7 @@ public class AceEditorWidget extends FocusWidget implements
 		}
 		this.enabled = enabled;
 		updateEditorReadOnlyState();
+		setStyleName(StyleConstants.DISABLED, !enabled);
 	}
 
 	public void setPropertyReadOnly(boolean propertyReadOnly) {
@@ -637,6 +639,7 @@ public class AceEditorWidget extends FocusWidget implements
 		}
 		this.readOnly = readOnly;
 		updateEditorReadOnlyState();
+		setStyleName("v-readonly", readOnly);
 	}
 
 	private void updateEditorReadOnlyState() {

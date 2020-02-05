@@ -16,11 +16,15 @@
 
 package io.jmix.ui.navigation.navigationhandler;
 
+import io.jmix.core.Messages;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
+import io.jmix.ui.components.RootWindow;
+import io.jmix.ui.components.Window;
 import io.jmix.ui.components.impl.WebWindow;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlChangeHandler;
@@ -39,7 +43,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.Collections;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -50,6 +53,9 @@ public class RootNavigationHandler implements NavigationHandler {
 
     @Inject
     protected WindowConfig windowConfig;
+
+    @Inject
+    protected Messages messages;
 
     @Override
     public boolean doHandle(NavigationState requestedState, AppUI ui) {
@@ -69,6 +75,7 @@ public class RootNavigationHandler implements NavigationHandler {
 
         if (windowInfo == null) {
             log.info("No registered screen found for route: '{}'", rootRoute);
+
             urlChangeHandler.revertNavigationState();
 
             handle404(rootRoute, ui);
@@ -118,15 +125,21 @@ public class RootNavigationHandler implements NavigationHandler {
     }
 
     protected void handle404(String route, AppUI ui) {
-        MapScreenOptions options = new MapScreenOptions(ParamsMap.of("requestedRoute", route));
+        RootWindow topWindow = ui.getTopLevelWindow();
+        Screen rootScreen = topWindow != null ? topWindow.getFrameOwner() : null;
 
-        NotFoundScreen notFoundScreen = ui.getScreens()
-                .create(NotFoundScreen.class, OpenMode.NEW_TAB, options);
+        if (rootScreen instanceof Window.HasWorkArea) {
+            MapScreenOptions options = new MapScreenOptions(
+                    ParamsMap.of("requestedRoute", route));
 
-        NavigationState state = new NavigationState(route, "", "", Collections.emptyMap());
-        ((WebWindow) notFoundScreen.getWindow())
-                .setResolvedState(state);
-
-        notFoundScreen.show();
+            ui.getScreens()
+                    .create(NotFoundScreen.class, OpenMode.NEW_TAB, options)
+                    .show();
+        } else {
+            ui.getNotifications()
+                    .create(Notifications.NotificationType.TRAY)
+                    .withCaption(messages.formatMessage("navigation.screenNotFound", route))
+                    .show();
+        }
     }
 }

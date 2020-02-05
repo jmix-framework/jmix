@@ -15,12 +15,12 @@
  */
 package io.jmix.ui.xml.layout.loaders;
 
-import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.DateField;
+import io.jmix.ui.components.TimeField;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import org.apache.commons.lang3.StringUtils;
@@ -90,6 +90,7 @@ public class DateFieldLoader extends AbstractFieldLoader<DateField> {
 
         loadRangeStart(resultComponent, element);
         loadRangeEnd(resultComponent, element);
+        loadTimeMode(resultComponent, element);
 
         loadAutofill(resultComponent, element);
     }
@@ -119,6 +120,13 @@ public class DateFieldLoader extends AbstractFieldLoader<DateField> {
                 throw new GuiDevelopmentException("'rangeEnd' parsing error for date picker: " +
                         rangeEnd, context, "DateField ID", resultComponent.getId());
             }
+        }
+    }
+
+    protected void loadTimeMode(DateField resultComponent, Element element) {
+        String timeMode = element.attributeValue("timeMode");
+        if (StringUtils.isNotEmpty(timeMode)) {
+            resultComponent.setTimeMode(TimeField.TimeMode.valueOf(timeMode));
         }
     }
 

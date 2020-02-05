@@ -15,18 +15,19 @@
  */
 package io.jmix.ui.components.impl;
 
+import com.vaadin.data.HasValue;
+import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.components.TimeField;
 import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.widgets.CubaTimeField;
-import io.jmix.ui.widgets.client.timefield.TimeResolution;
+import io.jmix.ui.widgets.CubaTimeFieldWrapper;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.inject.Inject;
@@ -34,22 +35,23 @@ import java.time.LocalTime;
 import java.util.Date;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.ui.components.impl.WebWrapperUtils.fromVaadinTimeMode;
+import static io.jmix.ui.components.impl.WebWrapperUtils.fromVaadinTimeResolution;
+import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinTimeMode;
+import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinTimeResolution;
 
-public class WebTimeField<V> extends WebV8AbstractField<CubaTimeField, LocalTime, V>
+public class WebTimeField<V> extends WebV8AbstractField<CubaTimeFieldWrapper, LocalTime, V>
         implements TimeField<V>, InitializingBean {
 
     @Inject
     protected DateTimeTransformations dateTimeTransformations;
-
-    protected Resolution resolution = Resolution.MIN;
-    protected Datatype<V> datatype;
-
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
-    public WebTimeField() {
-        component = new CubaTimeField();
+    protected Datatype<V> datatype;
 
-        attachValueChangeListener(component);
+    public WebTimeField() {
+        component = createComponent();
+        component.addValueChangeListener(this::componentValueChanged);
     }
 
     @Inject
@@ -66,32 +68,6 @@ public class WebTimeField<V> extends WebV8AbstractField<CubaTimeField, LocalTime
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected V convertToModel(LocalTime componentRawValue) throws ConversionException {
-        if (componentRawValue == null) {
-            return null;
-        }
-
-        ValueSource<V> valueSource = getValueSource();
-        if (valueSource instanceof EntityValueSource) {
-            MetaProperty metaProperty = ((EntityValueSource) valueSource).getMetaPropertyPath().getMetaProperty();
-            return (V) dateTimeTransformations.transformFromLocalTime(componentRawValue,
-                    metaProperty.getRange().asDatatype().getJavaClass());
-        }
-
-        return (V) dateTimeTransformations.transformFromLocalTime(componentRawValue,
-                datatype == null ? Date.class : datatype.getJavaClass());
-    }
-
-    @Override
-    protected LocalTime convertToPresentation(V modelValue) throws ConversionException {
-        if (modelValue == null) {
-            return null;
-        }
-        return dateTimeTransformations.transformToLocalTime(modelValue);
-    }
-
-    @Override
     public void setFormat(String format) {
         component.setTimeFormat(format);
     }
@@ -103,17 +79,16 @@ public class WebTimeField<V> extends WebV8AbstractField<CubaTimeField, LocalTime
 
     @Override
     public Resolution getResolution() {
-        return resolution;
+        return fromVaadinTimeResolution(component.getResolution());
     }
 
     @Override
     public void setResolution(Resolution resolution) {
         checkNotNullArgument(resolution);
 
-        this.resolution = resolution;
-        TimeResolution vResolution = WebWrapperUtils.convertTimeResolution(resolution);
-        component.setResolution(vResolution);
+        component.setResolution(toVaadinTimeResolution(resolution));
     }
+
 
     @Override
     public Datatype<V> getDatatype() {
@@ -129,7 +104,7 @@ public class WebTimeField<V> extends WebV8AbstractField<CubaTimeField, LocalTime
 
     @Override
     public boolean getShowSeconds() {
-        return resolution == Resolution.SEC;
+        return fromVaadinTimeResolution(component.getResolution()) == Resolution.SEC;
     }
 
     @Override
@@ -150,6 +125,18 @@ public class WebTimeField<V> extends WebV8AbstractField<CubaTimeField, LocalTime
     @Override
     public void setTabIndex(int tabIndex) {
         component.setTabIndex(tabIndex);
+    }
+
+    @Override
+    public void setTimeMode(TimeMode timeMode) {
+        checkNotNullArgument("Time mode cannot be null");
+
+        component.setTimeMode(toVaadinTimeMode(timeMode));
+    }
+
+    @Override
+    public TimeMode getTimeMode() {
+        return fromVaadinTimeMode(component.getTimeMode());
     }
 
     @Override
@@ -175,5 +162,65 @@ public class WebTimeField<V> extends WebV8AbstractField<CubaTimeField, LocalTime
     @Override
     public boolean isModified() {
         return super.isModified();
+    }
+
+    @Override
+    protected LocalTime convertToPresentation(V modelValue) throws ConversionException {
+        if (modelValue == null) {
+            return null;
+        }
+        return dateTimeTransformations.transformToLocalTime(modelValue);
+    }
+
+    protected CubaTimeFieldWrapper createComponent() {
+        return new CubaTimeFieldWrapper();
+    }
+
+    protected void componentValueChanged(HasValue.ValueChangeEvent<LocalTime> e) {
+        if (e.isUserOriginated()) {
+            V value;
+
+            try {
+                value = constructModelValue();
+
+                setValueToPresentation(convertToPresentation(value));
+            } catch (ConversionException ce) {
+                LoggerFactory.getLogger(WebDateField.class)
+                        .trace("Unable to convert presentation value to model", ce);
+
+                setValidationError(ce.getLocalizedMessage());
+                return;
+            }
+
+            V oldValue = internalValue;
+            internalValue = value;
+
+            if (!fieldValueEquals(value, oldValue)) {
+                ValueChangeEvent<V> event = new ValueChangeEvent<>(this, oldValue, value, true);
+                publish(ValueChangeEvent.class, event);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected V constructModelValue() {
+        LocalTime timeValue = component.getValue() != null
+                ? component.getValue()
+                : LocalTime.MIDNIGHT;
+
+        ValueSource<V> valueSource = getValueSource();
+        if (valueSource instanceof EntityValueSource) {
+            MetaProperty metaProperty = ((EntityValueSource) valueSource)
+                    .getMetaPropertyPath().getMetaProperty();
+            return (V) convertFromLocalTime(timeValue,
+                    metaProperty.getRange().asDatatype().getJavaClass());
+        }
+
+        return (V) convertFromLocalTime(timeValue,
+                datatype == null ? Date.class : datatype.getJavaClass());
+    }
+
+    protected Object convertFromLocalTime(LocalTime localTime, Class javaType) {
+        return dateTimeTransformations.transformFromLocalTime(localTime, javaType);
     }
 }

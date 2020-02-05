@@ -36,6 +36,7 @@ import io.jmix.ui.components.DataGrid.DataGridStaticCellType;
 import io.jmix.ui.components.LookupField.FilterMode;
 import io.jmix.ui.widgets.client.popupview.PopupPosition;
 import io.jmix.ui.widgets.client.resizabletextarea.ResizeDirection;
+import io.jmix.ui.widgets.client.timefield.TimeMode;
 import io.jmix.ui.widgets.client.timefield.TimeResolution;
 import io.jmix.ui.widgets.data.AggregationContainer;
 
@@ -483,7 +484,7 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static TimeResolution convertTimeResolution(TimeField.Resolution resolution) {
+    public static TimeResolution toVaadinTimeResolution(TimeField.Resolution resolution) {
         switch (resolution) {
             case SEC:
                 return TimeResolution.SECOND;
@@ -495,7 +496,7 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static TimeResolution convertTimeResolution(DateField.Resolution resolution) {
+    public static TimeResolution toVaadinTimeResolution(DateField.Resolution resolution) {
         switch (resolution) {
             case HOUR:
                 return TimeResolution.HOUR;
@@ -505,6 +506,19 @@ public final class WebWrapperUtils {
                 return TimeResolution.SECOND;
             default:
                 throw new IllegalArgumentException("Can't be converted to TimeResolution: " + resolution);
+        }
+    }
+
+    public static TimeField.Resolution fromVaadinTimeResolution(TimeResolution timeResolution) {
+        switch (timeResolution) {
+            case HOUR:
+                return TimeField.Resolution.HOUR;
+            case MINUTE:
+                return TimeField.Resolution.MIN;
+            case SECOND:
+                return TimeField.Resolution.SEC;
+            default:
+                throw new IllegalArgumentException("Can't be converted to TimeField.Resolution: " + timeResolution);
         }
     }
 
@@ -696,6 +710,26 @@ public final class WebWrapperUtils {
         for (PopupView.PopupPosition position : PopupView.PopupPosition.values()) {
             if (position.name().equals(popupPosition.name())) {
                 return position;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static TimeMode toVaadinTimeMode(TimeField.TimeMode timeMode) {
+        for (TimeMode mode : TimeMode.values()) {
+            if (mode.name().equals(timeMode.name())) {
+                return mode;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public static TimeField.TimeMode fromVaadinTimeMode(TimeMode timeMode) {
+        for (TimeField.TimeMode mode : TimeField.TimeMode.values()) {
+            if (mode.name().equals(timeMode.name())) {
+                return mode;
             }
         }
         return null;

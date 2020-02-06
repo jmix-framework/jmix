@@ -25,7 +25,6 @@ import io.jmix.ui.components.calendar.ContainerCalendarEventProvider;
 import javax.annotation.Nullable;
 import java.time.DayOfWeek;
 import java.time.Month;
-import java.util.Date;
 import java.util.EventObject;
 import java.util.Map;
 import java.util.TimeZone;
@@ -258,6 +257,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     class CalendarEventMoveEvent<V> extends EventObject {
         protected CalendarEvent<V> calendarEvent;
         protected V newStart;
+        protected V newEnd;
         protected Entity entity;
 
         @Deprecated
@@ -273,6 +273,16 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
 
             this.calendarEvent = calendarEvent;
             this.newStart = newStart;
+            this.entity = entity;
+        }
+
+        public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart, V newEnd,
+                                      @Nullable Entity entity) {
+            super(calendar);
+
+            this.calendarEvent = calendarEvent;
+            this.newStart = newStart;
+            this.newEnd = newEnd;
             this.entity = entity;
         }
 
@@ -297,6 +307,10 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
 
         public V getNewStart() {
             return newStart;
+        }
+
+        public V getNewEnd() {
+            return newEnd;
         }
 
         /**

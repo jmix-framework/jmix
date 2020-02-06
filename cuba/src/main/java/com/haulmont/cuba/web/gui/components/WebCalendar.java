@@ -18,8 +18,11 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.components.calendar.CalendarEventProvider;
 import com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider;
+import io.jmix.ui.components.calendar.ContainerCalendarEventProvider;
 
 import javax.annotation.Nullable;
 
@@ -54,5 +57,26 @@ public class WebCalendar extends io.jmix.ui.components.impl.WebCalendar {
                 ? ((EntityCalendarEventProvider) calendarEventProvider)
                 .getDatasource()
                 : null;
+    }
+
+    @Nullable
+    @Override
+    protected MetaProperty getMetaProperty() {
+        if (getEventProvider() instanceof io.jmix.ui.components.data.calendar.EntityCalendarEventProvider) {
+            io.jmix.ui.components.data.calendar.EntityCalendarEventProvider eventProvider = (io.jmix.ui.components.data.calendar.EntityCalendarEventProvider) getEventProvider();
+            String property = eventProvider.getStartDateProperty().isEmpty()
+                    ? eventProvider.getEndDateProperty()
+                    : eventProvider.getStartDateProperty();
+
+            if (!property.isEmpty()) {
+                CollectionDatasource datasource = getDatasource();
+                MetaClass metaClass = datasource != null
+                        ? datasource.getMetaClass()
+                        : ((ContainerCalendarEventProvider) eventProvider).getContainer().getEntityMetaClass();
+
+                return metaClass.getProperty(property);
+            }
+        }
+        return null;
     }
 }

@@ -20,8 +20,8 @@ import io.jmix.core.entity.Entity;
 import io.jmix.ui.components.data.HasValueSource;
 import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.ValueSource;
-import io.jmix.ui.components.data.options.ListOptions;
-import io.jmix.ui.components.data.options.MapOptions;
+import io.jmix.ui.components.data.options.ListEntityOptions;
+import io.jmix.ui.components.data.options.MapEntityOptions;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.LookupScreen;
 import io.jmix.ui.screen.Screen;
@@ -187,11 +187,12 @@ public interface TokenList<V extends Entity> extends Field<Collection<V>>,
      *
      * @deprecated use {@link TokenList#getOptions()} instead
      */
+    @SuppressWarnings("rawtypes")
     @Deprecated
     default List getOptionsList() {
         Options<V> options = getOptions();
-        if (options instanceof ListOptions) {
-            return (List) ((ListOptions<V>) options).getItemsCollection();
+        if (options instanceof ListEntityOptions) {
+            return ((ListEntityOptions<V>) options).getItemsCollection();
         }
         return null;
     }
@@ -199,22 +200,21 @@ public interface TokenList<V extends Entity> extends Field<Collection<V>>,
     /**
      * @param optionsList options list
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default void setOptionsList(List optionsList) {
-        setOptions(new ListOptions<>(optionsList));
+        setOptions(new ListEntityOptions<>(optionsList));
     }
 
     /**
      * @return options map
-     *
      * @deprecated use {@link TokenList#getOptions()} instead
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Deprecated
     default Map<String, ?> getOptionsMap() {
         Options options = getOptions();
-        if (options instanceof MapOptions) {
-            return ((MapOptions) options).getItemsCollection();
+        if (options instanceof MapEntityOptions) {
+            return ((MapEntityOptions) options).getItemsCollection();
         }
         return null;
     }
@@ -222,9 +222,9 @@ public interface TokenList<V extends Entity> extends Field<Collection<V>>,
     /**
      * @param optionsMap options map
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default void setOptionsMap(Map<String, ?> optionsMap) {
-        setOptions(new MapOptions(optionsMap));
+        setOptions(new MapEntityOptions(optionsMap));
     }
 
     /**

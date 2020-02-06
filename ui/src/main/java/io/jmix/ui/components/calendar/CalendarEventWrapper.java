@@ -19,15 +19,19 @@ package io.jmix.ui.components.calendar;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
-public class CalendarEventWrapper implements com.vaadin.v7.ui.components.calendar.event.CalendarEvent,
+public class CalendarEventWrapper<V> implements com.vaadin.v7.ui.components.calendar.event.CalendarEvent,
         com.vaadin.v7.ui.components.calendar.event.CalendarEvent.EventChangeNotifier {
 
-    protected CalendarEvent calendarEvent;
+    protected Function<V, Date> modelToPresentationConverter;
+
+    protected CalendarEvent<V> calendarEvent;
     protected List<EventChangeListener> eventChangeListeners;
 
-    public CalendarEventWrapper(CalendarEvent calendarEvent) {
+    public CalendarEventWrapper(CalendarEvent<V> calendarEvent, Function<V, Date> modelToPresentationConverter) {
         this.calendarEvent = calendarEvent;
+        this.modelToPresentationConverter = modelToPresentationConverter;
 
         calendarEvent.addEventChangeListener(eventChangeEvent -> fireItemChanged());
     }
@@ -44,12 +48,16 @@ public class CalendarEventWrapper implements com.vaadin.v7.ui.components.calenda
 
     @Override
     public Date getStart() {
-        return calendarEvent.getStart();
+        return modelToPresentationConverter != null
+                ? modelToPresentationConverter.apply(calendarEvent.getStart())
+                : (Date) calendarEvent.getStart();
     }
 
     @Override
     public Date getEnd() {
-        return calendarEvent.getEnd();
+        return modelToPresentationConverter != null
+                ? modelToPresentationConverter.apply(calendarEvent.getEnd())
+                : (Date) calendarEvent.getEnd();
     }
 
     @Override
@@ -91,7 +99,7 @@ public class CalendarEventWrapper implements com.vaadin.v7.ui.components.calenda
         return calendarEvent.hashCode();
     }
 
-    public CalendarEvent getCalendarEvent() {
+    public CalendarEvent<V> getCalendarEvent() {
         return calendarEvent;
     }
 

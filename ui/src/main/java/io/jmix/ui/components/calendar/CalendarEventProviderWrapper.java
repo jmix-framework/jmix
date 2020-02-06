@@ -21,8 +21,9 @@ import com.vaadin.v7.ui.components.calendar.event.CalendarEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
-public class CalendarEventProviderWrapper
+public class CalendarEventProviderWrapper<V>
         implements
             com.vaadin.v7.ui.components.calendar.event.CalendarEditableEventProvider,
             com.vaadin.v7.ui.components.calendar.event.CalendarEventProvider.EventSetChangeNotifier {
@@ -31,8 +32,11 @@ public class CalendarEventProviderWrapper
     protected List<CalendarEvent> itemsCache = new ArrayList<>();
     protected List<EventSetChangeListener> listeners = new ArrayList<>();
 
-    public CalendarEventProviderWrapper(CalendarEventProvider calendarEventProvider) {
+    protected Function<V, Date> modelToPresentationConverter;
+
+    public CalendarEventProviderWrapper(CalendarEventProvider calendarEventProvider, Function<V, Date> modelToPresentationConverter) {
         this.calendarEventProvider = calendarEventProvider;
+        this.modelToPresentationConverter = modelToPresentationConverter;
         calendarEventProvider.addEventSetChangeListener(changeEvent -> fireEventSetChange());
     }
 
@@ -63,7 +67,7 @@ public class CalendarEventProviderWrapper
     public List<CalendarEvent> getEvents(Date startDate, Date endDate) {
         if (itemsCache.isEmpty()) {
             for (io.jmix.ui.components.calendar.CalendarEvent  calendarEvent : calendarEventProvider.getEvents()) {
-                CalendarEventWrapper calendarEventWrapper = new CalendarEventWrapper(calendarEvent);
+                CalendarEventWrapper calendarEventWrapper = new CalendarEventWrapper<>(calendarEvent, modelToPresentationConverter);
                 itemsCache.add(calendarEventWrapper);
             }
 

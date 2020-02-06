@@ -17,8 +17,11 @@
 package io.jmix.ui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
+import io.jmix.core.DateTimeTransformations;
+import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.Calendar;
+import io.jmix.ui.components.HasDatatype;
 import io.jmix.ui.components.calendar.ContainerCalendarEventProvider;
 import io.jmix.ui.components.data.calendar.EntityCalendarEventProvider;
 import io.jmix.ui.model.CollectionContainer;
@@ -66,6 +69,8 @@ public class CalendarLoader extends AbstractComponentLoader<Calendar> {
         loadIcon(resultComponent, element);
 
         loadData(resultComponent, element);
+
+        loadDatatype(resultComponent, element);
 
         loadEditable(resultComponent, element);
         loadTimeFormat(resultComponent, element);
@@ -169,28 +174,48 @@ public class CalendarLoader extends AbstractComponentLoader<Calendar> {
         }
     }
 
+    protected void loadDatatype(HasDatatype component, Element element) {
+        String datatypeAttribute = element.attributeValue("datatype");
+        if (StringUtils.isNotEmpty(datatypeAttribute)) {
+            component.setDatatype(Datatypes.get(datatypeAttribute));
+        }
+    }
+
     protected void loadStartDate(Calendar resultComponent, Element element) {
-        String startDate = element.attributeValue("startDate");
-        if (StringUtils.isNotEmpty(startDate)) {
+        String startDateAttribute = element.attributeValue("startDate");
+        if (StringUtils.isNotEmpty(startDateAttribute)) {
             try {
-                resultComponent.setStartDate(parseDateOrDateTime(startDate));
+                Date date = parseDateOrDateTime(startDateAttribute);
+                Object startDate = convertToType(date, resultComponent.getDatatype().getJavaClass());
+                resultComponent.setStartDate(startDate);
             } catch (ParseException e) {
                 throw new GuiDevelopmentException("'startDate' parsing error for calendar: " +
-                        startDate, context, "Calendar ID", resultComponent.getId());
+                        startDateAttribute, context, "Calendar ID", resultComponent.getId());
             }
         }
     }
 
     protected void loadEndDate(Calendar resultComponent, Element element) {
-        String endDate = element.attributeValue("endDate");
-        if (StringUtils.isNotEmpty(endDate)) {
+        String endDateAttribute = element.attributeValue("endDate");
+        if (StringUtils.isNotEmpty(endDateAttribute)) {
             try {
-                resultComponent.setEndDate(parseDateOrDateTime(endDate));
+                Date date = parseDateOrDateTime(endDateAttribute);
+                Object endDate = convertToType(date, resultComponent.getDatatype().getJavaClass());
+                resultComponent.setEndDate(endDate);
             } catch (ParseException e) {
                 throw new GuiDevelopmentException("'endDate' parsing error for calendar: " +
-                        endDate, context, "Calendar ID", resultComponent.getId());
+                        endDateAttribute, context, "Calendar ID", resultComponent.getId());
             }
         }
+    }
+
+    protected DateTimeTransformations getDateTimeTransformations() {
+        return beanLocator.get(DateTimeTransformations.NAME);
+    }
+
+    protected Object convertToType(Date date, Class javaType) {
+        return getDateTimeTransformations()
+                .transformToType(date, javaType, null);
     }
 
     protected Date parseDateOrDateTime(String value) throws ParseException {

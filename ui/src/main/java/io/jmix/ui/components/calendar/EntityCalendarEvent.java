@@ -23,10 +23,9 @@ import io.jmix.core.metamodel.model.Instance;
 import org.apache.commons.lang3.BooleanUtils;
 import io.jmix.ui.components.data.calendar.EntityCalendarEventProvider;
 
-import java.util.Date;
 import java.util.function.Consumer;
 
-public class EntityCalendarEvent<E extends Entity> implements CalendarEvent {
+public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V> {
 
     protected final E entity;
     protected final EntityCalendarEventProvider provider;
@@ -42,7 +41,7 @@ public class EntityCalendarEvent<E extends Entity> implements CalendarEvent {
     }
 
     protected void onPropertyChanged(Instance.PropertyChangeEvent event) {
-        events.publish(EventChangeEvent.class, new EventChangeEvent(this));
+        events.publish(EventChangeEvent.class, new EventChangeEvent<>(this));
     }
 
     public E getEntity() {
@@ -50,7 +49,7 @@ public class EntityCalendarEvent<E extends Entity> implements CalendarEvent {
     }
 
     @Override
-    public Date getStart() {
+    public V getStart() {
         if (provider.getStartDateProperty() != null) {
             return entity.getValue(provider.getStartDateProperty());
         } else {
@@ -59,12 +58,12 @@ public class EntityCalendarEvent<E extends Entity> implements CalendarEvent {
     }
 
     @Override
-    public void setStart(Date start) {
+    public void setStart(V start) {
         entity.setValue(provider.getStartDateProperty(), start);
     }
 
     @Override
-    public Date getEnd() {
+    public V getEnd() {
         if (provider.getEndDateProperty() != null) {
             return entity.getValue(provider.getEndDateProperty());
         } else {
@@ -73,7 +72,7 @@ public class EntityCalendarEvent<E extends Entity> implements CalendarEvent {
     }
 
     @Override
-    public void setEnd(Date end) {
+    public void setEnd(V end) {
         entity.setValue(provider.getEndDateProperty(), end);
     }
 
@@ -133,13 +132,15 @@ public class EntityCalendarEvent<E extends Entity> implements CalendarEvent {
         entity.setValue(provider.getIsAllDayProperty(), isAllDay);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public Subscription addEventChangeListener(Consumer<EventChangeEvent> listener) {
-        return events.subscribe(EventChangeEvent.class, listener);
+    public Subscription addEventChangeListener(Consumer<EventChangeEvent<V>> listener) {
+        return events.subscribe(EventChangeEvent.class, (Consumer) listener);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public void removeEventChangeListener(Consumer<EventChangeEvent> listener) {
-        events.unsubscribe(EventChangeEvent.class, listener);
+    public void removeEventChangeListener(Consumer<EventChangeEvent<V>> listener) {
+        events.unsubscribe(EventChangeEvent.class, (Consumer) listener);
     }
 }

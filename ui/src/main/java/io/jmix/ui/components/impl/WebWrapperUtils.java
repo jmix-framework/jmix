@@ -34,6 +34,7 @@ import io.jmix.ui.components.*;
 import io.jmix.ui.components.Component.Alignment;
 import io.jmix.ui.components.DataGrid.DataGridStaticCellType;
 import io.jmix.ui.components.LookupField.FilterMode;
+import io.jmix.ui.widgets.client.fieldgrouplayout.CaptionAlignment;
 import io.jmix.ui.widgets.client.popupview.PopupPosition;
 import io.jmix.ui.widgets.client.resizabletextarea.ResizeDirection;
 import io.jmix.ui.widgets.client.timefield.TimeMode;
@@ -640,6 +641,32 @@ public final class WebWrapperUtils {
                 return SliderOrientation.HORIZONTAL;
             default:
                 throw new IllegalArgumentException("Can't be converted to SliderOrientation: " + orientation);
+        }
+    }
+
+    public static CaptionAlignment toVaadinFieldGroupCaptionAlignment(Form.CaptionAlignment alignment) {
+        checkNotNullArgument(alignment);
+
+        switch (alignment) {
+            case LEFT:
+                return CaptionAlignment.LEFT;
+            case RIGHT:
+                return CaptionAlignment.RIGHT;
+            default:
+                throw new IllegalArgumentException("Can't be converted to CaptionAlignment " + alignment);
+        }
+    }
+
+    public static Form.CaptionAlignment fromVaadinFieldGroupCaptionAlignment(CaptionAlignment alignment) {
+        checkNotNullArgument(alignment);
+
+        switch (alignment) {
+            case LEFT:
+                return Form.CaptionAlignment.LEFT;
+            case RIGHT:
+                return Form.CaptionAlignment.RIGHT;
+            default:
+                throw new IllegalArgumentException("Can't be converted to CaptionAlignment " + alignment);
         }
     }
 

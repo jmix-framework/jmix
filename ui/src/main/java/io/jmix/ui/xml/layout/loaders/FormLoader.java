@@ -25,21 +25,31 @@ import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.components.*;
+import io.jmix.ui.components.Component;
+import io.jmix.ui.components.ComponentGenerationContext;
+import io.jmix.ui.components.Field;
+import io.jmix.ui.components.Form;
+import io.jmix.ui.components.UiComponentsGenerator;
 import io.jmix.ui.components.data.HasValueSource;
 import io.jmix.ui.components.data.ValueSourceProvider;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.options.ContainerOptions;
 import io.jmix.ui.components.data.value.ContainerValueSource;
 import io.jmix.ui.components.data.value.ContainerValueSourceProvider;
+import io.jmix.ui.components.form.ComponentPosition;
 import io.jmix.ui.dynamicattributes.CategoryAttribute;
 import io.jmix.ui.dynamicattributes.DynamicAttributesGuiTools;
-import io.jmix.ui.model.*;
+import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.model.HasLoader;
+import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.model.InstanceLoader;
+import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -79,6 +89,7 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         loadAlign(resultComponent, element);
 
         loadCaptionPosition(resultComponent, element);
+        loadChildrenCaptionAlignment(resultComponent, element);
         loadChildrenCaptionWidth(resultComponent, element);
 
         loadDataContainer(resultComponent, element);
@@ -100,10 +111,12 @@ public class FormLoader extends AbstractComponentLoader<Form> {
     protected void loadColumns(Form resultComponent, Element element) {
         ValueSourceProvider valueSourceProvider = resultComponent.getValueSourceProvider();
         if (element.elements("column").isEmpty()) {
-            Iterable<Component> rootComponents = loadComponents(element, null);
-            Iterable<Component> dynamicAttributeComponents = loadDynamicAttributeComponents(valueSourceProvider, null);
-            for (Component component : Iterables.concat(rootComponents, dynamicAttributeComponents)) {
-                resultComponent.add(component);
+            Iterable<ComponentPosition> rootComponents = loadComponents(element, null);
+            Iterable<ComponentPosition> dynamicAttributeComponents =
+                    loadDynamicAttributeComponents(valueSourceProvider, null);
+            for (ComponentPosition component : Iterables.concat(rootComponents, dynamicAttributeComponents)) {
+                resultComponent.add(component.getComponent(), 0,
+                        component.getColSpan(), component.getRowSpan());
             }
         } else {
             List<Element> columnElements = element.elements("column");
@@ -121,15 +134,17 @@ public class FormLoader extends AbstractComponentLoader<Form> {
             int colIndex = 0;
             for (Element columnElement : columnElements) {
                 String columnWidth = loadThemeString(columnElement.attributeValue("width"));
-                Iterable<Component> columnComponents = loadComponents(columnElement, columnWidth);
+                Iterable<ComponentPosition> columnComponents = loadComponents(columnElement, columnWidth);
                 if (colIndex == 0) {
                     columnComponents = Iterables.concat(columnComponents,
                             loadDynamicAttributeComponents(valueSourceProvider, columnWidth));
                 }
-                for (Component component : columnComponents) {
-                    resultComponent.add(component, colIndex);
+                for (ComponentPosition component : columnComponents) {
+                    resultComponent.add(component.getComponent(), colIndex,
+                            component.getColSpan(), component.getRowSpan());
                 }
 
+                loadChildrenCaptionAlignment(resultComponent, columnElement, colIndex);
                 loadChildrenCaptionWidth(resultComponent, columnElement, colIndex);
 
                 colIndex++;
@@ -137,21 +152,21 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         }
     }
 
-    protected List<Component> loadComponents(Element element, @Nullable String columnWidth) {
+    protected List<ComponentPosition> loadComponents(Element element, @Nullable String columnWidth) {
         List<Element> elements = element.elements();
         if (elements.isEmpty()) {
             return Collections.emptyList();
         } else {
-            List<Component> components = new ArrayList<>(elements.size());
+            List<ComponentPosition> components = new ArrayList<>(elements.size());
             for (Element componentElement : elements) {
-                Component component = loadComponent(componentElement, columnWidth);
+                ComponentPosition component = loadComponent(componentElement, columnWidth);
                 components.add(component);
             }
             return components;
         }
     }
 
-    protected Component loadComponent(Element element, @Nullable String columnWidth) {
+    protected ComponentPosition loadComponent(Element element, @Nullable String columnWidth) {
         Component component;
         if ("field".equals(element.getName())) {
             component = loadField(element);
@@ -199,7 +214,28 @@ public class FormLoader extends AbstractComponentLoader<Form> {
             }
         }
 
-        return component;
+        int colspan = loadSpan(element, "colspan");
+        int rowspan = loadSpan(element, "rowspan");
+
+        return new ComponentPosition(component, colspan, rowspan);
+    }
+
+    protected int loadSpan(Element element, String spanName) {
+        String spanValue = element.attributeValue(spanName);
+        if (!Strings.isNullOrEmpty(spanValue)) {
+            int span = Integer.parseInt(spanValue);
+            if (span < 1) {
+                throw new GuiDevelopmentException("Form " + spanName + " can not be less than 1",
+                        context, spanName, span);
+            }
+            if (span == 1) {
+                LoggerFactory.getLogger(FormLoader.class).warn("Do not use " + spanName +
+                        "=\"1\", it will have no effect");
+            }
+            return span;
+        }
+
+        return 1;
     }
 
     protected Field loadField(Element element) {
@@ -258,8 +294,8 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         return (Field) component;
     }
 
-    protected List<Component> loadDynamicAttributeComponents(ValueSourceProvider provider,
-                                                             @Nullable String columnWidth) {
+    protected List<ComponentPosition> loadDynamicAttributeComponents(ValueSourceProvider provider,
+                                                                     @Nullable String columnWidth) {
         if (provider instanceof ContainerValueSourceProvider
                 && getMetadataTools().isPersistent(
                 ((ContainerValueSourceProvider) provider).getContainer().getEntityMetaClass())) {
@@ -273,7 +309,7 @@ public class FormLoader extends AbstractComponentLoader<Form> {
                             metaClass, windowId, resultComponent.getId());
 
             if (!attributesToShow.isEmpty()) {
-                List<Component> components = new ArrayList<>();
+                List<ComponentPosition> components = new ArrayList<>();
 
                 if (instanceContainer instanceof HasLoader) {
                     DataLoader dataLoader = ((HasLoader) instanceContainer).getLoader();
@@ -324,7 +360,7 @@ public class FormLoader extends AbstractComponentLoader<Form> {
 //                                    ? columnWidth : attribute.getWidth();
 //                    loadWidth(dynamicAttrComponent, defaultWidth);
 //
-//                    components.add(dynamicAttrComponent);
+//                    components.add(new ComponentPosition(dynamicAttrComponent, 1, 1));
                 }
                 return components;
             }
@@ -392,6 +428,30 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         String childrenCaptionWidth = loadChildrenCaptionWidth(element);
         if (childrenCaptionWidth != null) {
             resultComponent.setChildrenCaptionWidth(colIndex, Integer.parseInt(childrenCaptionWidth));
+        }
+    }
+
+    @Nullable
+    protected Form.CaptionAlignment loadChildrenCaptionAlignment(Element element) {
+        String childrenCaptionAlignment = element.attributeValue("childrenCaptionAlignment");
+        if (!Strings.isNullOrEmpty(childrenCaptionAlignment)) {
+            return Form.CaptionAlignment.valueOf(childrenCaptionAlignment);
+        }
+
+        return null;
+    }
+
+    protected void loadChildrenCaptionAlignment(Form resultComponent, Element element) {
+        Form.CaptionAlignment childrenCaptionAlignment = loadChildrenCaptionAlignment(element);
+        if (childrenCaptionAlignment != null) {
+            resultComponent.setChildrenCaptionAlignment(childrenCaptionAlignment);
+        }
+    }
+
+    protected void loadChildrenCaptionAlignment(Form resultComponent, Element element, int colIndex) {
+        Form.CaptionAlignment childrenCaptionAlignment = loadChildrenCaptionAlignment(element);
+        if (childrenCaptionAlignment != null) {
+            resultComponent.setChildrenCaptionAlignment(colIndex, childrenCaptionAlignment);
         }
     }
 }

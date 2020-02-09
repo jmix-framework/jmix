@@ -21,15 +21,15 @@ import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Element;
-import io.jmix.ui.widgets.CubaFieldGroupLayout;
-import io.jmix.ui.widgets.client.caption.CubaCaptionWidget;
-import io.jmix.ui.widgets.client.gridlayout.CubaGridLayoutConnector;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
 import com.vaadin.client.VCaption;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.VGridLayout;
 import com.vaadin.shared.ui.Connect;
+import io.jmix.ui.widgets.CubaFieldGroupLayout;
+import io.jmix.ui.widgets.client.caption.CubaCaptionWidget;
+import io.jmix.ui.widgets.client.gridlayout.CubaGridLayoutConnector;
 
 import javax.annotation.Nullable;
 
@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 public class CubaFieldGroupLayoutConnector extends CubaGridLayoutConnector {
 
     protected static final String CAPTIONTEXT_STYLENAME = "v-captiontext";
+    protected static final String ALIGN_RIGHT_STYLENAME = "v-align-right";
 
     protected boolean initialStateChangePerformed = false;
 
@@ -65,6 +66,7 @@ public class CubaFieldGroupLayoutConnector extends CubaGridLayoutConnector {
 
         if (getState().useInlineCaption && initialStateChangePerformed) {
             updateCaptionSizes();
+            updateCaptionAlignments();
 
             // always relayout after caption changes
             getLayoutManager().setNeedsLayout(this);
@@ -77,6 +79,7 @@ public class CubaFieldGroupLayoutConnector extends CubaGridLayoutConnector {
 
         if (getState().useInlineCaption) {
             updateCaptionSizes();
+            updateCaptionAlignments();
         }
 
         if (stateChangeEvent.isInitialStateChange()) {
@@ -96,6 +99,38 @@ public class CubaFieldGroupLayoutConnector extends CubaGridLayoutConnector {
 
             // always relayout after caption changes
             getLayoutManager().setNeedsLayout(this);
+        }
+    }
+
+    protected void updateCaptionAlignments() {
+        int index = 0;
+        for (VGridLayout.Cell[] column : getWidget().getCellMatrix()) {
+            if (column != null) {
+                updateCaptionAlignments(index, column);
+            }
+            index++;
+        }
+    }
+
+    protected void updateCaptionAlignments(int index, VGridLayout.Cell[] column) {
+        CaptionAlignment alignment = getState().columnsCaptionAlignment;
+        CaptionAlignment[] captionAlignments = getState().columnsCaptionAlignments;
+        if (captionAlignments != null
+                && index < captionAlignments.length
+                && captionAlignments[index] != null) {
+            alignment = captionAlignments[index];
+        }
+
+        for (VGridLayout.Cell cell : column) {
+            if (cell != null && isCaptionInlineApplicable(cell)) {
+                VCaption caption = cell.slot.getCaption();
+
+                if (alignment == CaptionAlignment.RIGHT) {
+                    caption.addStyleName(ALIGN_RIGHT_STYLENAME);
+                } else {
+                    caption.removeStyleName(ALIGN_RIGHT_STYLENAME);
+                }
+            }
         }
     }
 
@@ -194,7 +229,7 @@ public class CubaFieldGroupLayoutConnector extends CubaGridLayoutConnector {
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.getItem(i);
             if (child instanceof com.google.gwt.dom.client.Element
-                && ((com.google.gwt.dom.client.Element) child).getClassName().contains(CAPTIONTEXT_STYLENAME)) {
+                    && ((com.google.gwt.dom.client.Element) child).getClassName().contains(CAPTIONTEXT_STYLENAME)) {
                 return (com.google.gwt.dom.client.Element) child;
             }
         }

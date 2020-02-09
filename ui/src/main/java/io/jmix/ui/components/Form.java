@@ -182,6 +182,22 @@ public interface Form extends Component, Component.BelongToFrame, Component.HasC
     void setColumns(int columns);
 
     /**
+     * Returns the flex layout ratio for column with a given index.
+     *
+     * @param column a column index
+     * @return flex layout ratio for column with a given index
+     */
+    float getColumnFlex(int column);
+
+    /**
+     * Sets flex layout ratio for column with a given index.
+     *
+     * @param column a column index
+     * @param flex   the flex ration for the column
+     */
+    void setColumnFlex(int column, float flex);
+
+    /**
      * Caption position of form child components.
      */
     enum CaptionPosition {

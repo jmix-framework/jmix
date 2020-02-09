@@ -571,6 +571,16 @@ public class WebForm extends WebAbstractComponent<CubaFieldGroupLayout> implemen
     }
 
     @Override
+    public void setColumnFlex(int column, float flex) {
+        component.setColumnExpandRatio(column, flex);
+    }
+
+    @Override
+    public float getColumnFlex(int column) {
+        return component.getColumnExpandRatio(column);
+    }
+
+    @Override
     public ValueSourceProvider getValueSourceProvider() {
         return valueSourceProvider;
     }

@@ -21,6 +21,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.*;
+import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.ComponentContainer;
 import io.jmix.ui.components.*;
 import io.jmix.ui.widgets.CubaGroupBox;
@@ -114,6 +115,42 @@ public class WebComponentsHelper {
     public static boolean isHorizontalLayout(AbstractOrderedLayout layout) {
         return (layout instanceof HorizontalLayout)
                 || (layout instanceof CubaHorizontalActionsLayout);
+    }
+
+    /**
+     * Searches for action with the given {@code actionId} inside of {@code frame}.
+     *
+     * @param frame    frame
+     * @param actionId action id
+     *
+     * @return action instance or null if action not found
+     */
+    @Nullable
+    public static Action findAction(Frame frame, String actionId) {
+        Action action = frame.getAction(actionId);
+
+        if (action == null) {
+            String postfixActionId = null;
+            int dotIdx = actionId.indexOf('.');
+            if (dotIdx > 0) {
+                postfixActionId = actionId.substring(dotIdx + 1);
+            }
+
+            for (io.jmix.ui.components.Component c : frame.getComponents()) {
+                if (c instanceof ActionsHolder) {
+                    ActionsHolder actionsHolder = (ActionsHolder) c;
+                    action = actionsHolder.getAction(actionId);
+                    if (action == null) {
+                        action = actionsHolder.getAction(postfixActionId);
+                    }
+                    if (action != null) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return action;
     }
 
     /**

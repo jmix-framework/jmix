@@ -49,6 +49,6 @@ public class DataGridEditorFieldFactoryImpl implements DataGridEditorFieldFactor
             return (Field) component;
         }
 
-        throw new IllegalStateException("Editor field must implement com.haulmont.cuba.gui.components.Field");
+        throw new IllegalStateException("Editor field must implement com.haulmont.cuba.web.components.Field");
     }
 }

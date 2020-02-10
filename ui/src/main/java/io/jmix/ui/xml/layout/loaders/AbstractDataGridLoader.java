@@ -137,7 +137,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
         loadRowsCount(resultComponent, element); // must be before datasource setting
 
-        MetaClass metaClass;
+        MetaClass metaClass = null;
         CollectionContainer collectionContainer = null;
         DataLoader dataLoader = null;
         // Datasource datasource = null; TODO: legacy-ui
@@ -178,16 +178,15 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         }
 
         List<Column> availableColumns;
-        /*
-        TODO: legacy-ui
+
         if (columnsElement != null) {
             View view = collectionContainer != null ? collectionContainer.getView()
-                    : datasource != null ? datasource.getView()
+                    /*: datasource != null ? datasource.getView()*/
                     : getViewRepository().getView(metaClass.getJavaClass(), View.LOCAL);
             availableColumns = loadColumns(resultComponent, columnsElement, metaClass, view);
         } else {
             availableColumns = new ArrayList<>();
-        }*/
+        }
 
         if (collectionContainer != null) {
             // todo dynamic attributes

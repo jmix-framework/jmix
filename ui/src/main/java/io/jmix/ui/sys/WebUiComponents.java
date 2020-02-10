@@ -42,7 +42,6 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Primary
 @org.springframework.stereotype.Component(UiComponents.NAME)
 public class WebUiComponents implements UiComponents {
 
@@ -123,15 +122,11 @@ public class WebUiComponents implements UiComponents {
         classes.put(PopupButton.NAME, WebPopupButton.class);
         classes.put(PopupView.NAME, WebPopupView.class);
 
-        // TODO: legacy-ui
-        // classes.put(FieldGroup.NAME, WebFieldGroup.class);
         classes.put(TokenList.NAME, WebTokenList.class);
         classes.put(TwinColumn.NAME, WebTwinColumn.class);
         classes.put(ProgressBar.NAME, WebProgressBar.class);
         classes.put(RowsCount.NAME, WebRowsCount.class);
-//        classes.put(RelatedEntities.NAME, WebRelatedEntities.class); // todo dynamic attributes
-        // TODO: legacy-ui
-        // classes.put(BulkEditor.NAME, WebBulkEditor.class);
+//        classes.put(RelatedEntities.NAME, WebRelatedEntities.class); todo dynamic attributes
         classes.put(DatePicker.NAME, WebDatePicker.class);
 //        classes.put(ListEditor.NAME, WebListEditor.class); // todo
         classes.put(CapsLockIndicator.NAME, WebCapsLockIndicator.class);

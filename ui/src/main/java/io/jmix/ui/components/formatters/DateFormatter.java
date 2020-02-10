@@ -40,7 +40,7 @@ import java.util.function.Function;
  * </ul>
  * <br> Example usage:
  * <pre>
- * &lt;formatter class=&quot;com.haulmont.cuba.gui.components.formatters.DateFormatter&quot; format=&quot;msg://dateFormat&quot;
+ * &lt;formatter class=&quot;com.haulmont.cuba.web.components.formatters.DateFormatter&quot; format=&quot;msg://dateFormat&quot;
  * </pre>
  */
 public class DateFormatter implements Function<Date, String> {

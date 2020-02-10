@@ -27,11 +27,12 @@ import java.util.regex.Pattern;
  * parsing such pairs from a string.
  */
 public class SizeWithUnit implements Serializable {
+
     public static final String SIZE_PATTERN_STRING = "^(-?\\d*(?:\\.\\d+)?)(%|px)?$";
+    public static final Pattern SIZE_PATTERN = Pattern.compile(SIZE_PATTERN_STRING);
 
     protected float size;
     protected SizeUnit unit;
-    protected static final Pattern SIZE_PATTERN = Pattern.compile(SIZE_PATTERN_STRING);
 
     /**
      * Constructs a new SizeWithUnit object representing the pair (size, unit).

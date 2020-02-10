@@ -22,10 +22,13 @@ import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.components.AggregationInfo;
+import io.jmix.ui.components.data.AggregatableDataGridItems;
 import io.jmix.ui.components.data.BindingState;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
 import io.jmix.ui.components.data.DataGridItems;
 import io.jmix.ui.components.data.meta.EntityDataGridItems;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.HasLoader;
@@ -34,18 +37,22 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class ContainerDataGridItems<E extends Entity>
-        implements EntityDataGridItems<E>, DataGridItems.Sortable<E>, ContainerDataUnit<E> {
+        implements EntityDataGridItems<E>, AggregatableDataGridItems<E>, DataGridItems.Sortable<E>, ContainerDataUnit<E> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerDataGridItems.class);
 
     protected CollectionContainer<E> container;
 
     protected boolean suppressSorting;
+
+    protected AggregatableDelegate aggregatableDelegate;
 
     protected EventHub events = new EventHub();
 
@@ -54,6 +61,8 @@ public class ContainerDataGridItems<E extends Entity>
         this.container.addItemChangeListener(this::containerItemChanged);
         this.container.addCollectionChangeListener(this::containerCollectionChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
+
+        this.aggregatableDelegate = createAggregatableDelegate();
     }
 
     @Override
@@ -209,5 +218,32 @@ public class ContainerDataGridItems<E extends Entity>
     @Override
     public void enableSorting() {
         suppressSorting = false;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<AggregationInfo, String> aggregate(AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
+        return aggregatableDelegate.aggregate(aggregationInfos, itemIds);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Map<AggregationInfo, Object> aggregateValues(AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
+        return aggregatableDelegate.aggregateValues(aggregationInfos, itemIds);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected AggregatableDelegate createAggregatableDelegate() {
+        return new AggregatableDelegate() {
+            @Override
+            public Object getItem(Object itemId) {
+                return container.getItem(itemId);
+            }
+
+            @Override
+            public Object getItemValue(MetaPropertyPath property, Object itemId) {
+                return container.getItem(itemId).getValueEx(property);
+            }
+        };
     }
 }

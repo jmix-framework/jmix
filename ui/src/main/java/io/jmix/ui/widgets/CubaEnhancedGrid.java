@@ -20,6 +20,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.GridSelectionModel;
 import io.jmix.ui.widgets.grid.CubaEditorField;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -68,4 +69,26 @@ public interface CubaEnhancedGrid<T> {
     String getDeselectAllLabel();
 
     void setDeselectAllLabel(String deselectAllLabel);
+
+    boolean isAggregatable();
+
+    void setAggregatable(boolean aggregatable);
+
+    AggregationPosition getAggregationPosition();
+
+    void setAggregationPosition(AggregationPosition position);
+
+    void addAggregationPropertyId(String propertyId);
+
+    void removeAggregationPropertyId(String propertyId);
+
+    Collection<String> getAggregationPropertyIds();
+
+    /**
+     * Defines the position of aggregation row.
+     */
+    enum AggregationPosition {
+        TOP,
+        BOTTOM
+    }
 }

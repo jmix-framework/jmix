@@ -21,20 +21,23 @@ import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.ui.components.AggregationInfo;
+import io.jmix.ui.components.data.AggregatableDataGridItems;
 import io.jmix.ui.components.data.BindingState;
-import io.jmix.ui.components.data.DataGridItems;
 import io.jmix.ui.components.data.meta.DatasourceDataUnit;
 import io.jmix.ui.components.data.meta.EntityDataGridItems;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 // TODO: legacy-ui
-public class DatasourceDataGridItems<E extends Entity<K>, K> implements EntityDataGridItems<E>, DatasourceDataUnit {
+public class DatasourceDataGridItems<E extends Entity<K>, K>
+        implements EntityDataGridItems<E>, AggregatableDataGridItems<E>, DatasourceDataUnit {
 
 //    protected CollectionDatasource.Indexed<E, K> datasource;
 
@@ -196,5 +199,17 @@ public class DatasourceDataGridItems<E extends Entity<K>, K> implements EntityDa
     @Override
     public Subscription addSelectedItemChangeListener(Consumer<SelectedItemChangeEvent<E>> listener) {
         return events.subscribe(SelectedItemChangeEvent.class, (Consumer) listener);
+    }
+
+    @Override
+    public Map<AggregationInfo, String> aggregate(AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
+        return Collections.emptyMap();
+        // return ((CollectionDatasource.Aggregatable) datasource).aggregate(aggregationInfos, itemIds);
+    }
+
+    @Override
+    public Map<AggregationInfo, Object> aggregateValues(AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
+        return Collections.emptyMap();
+        // return ((CollectionDatasource.Aggregatable) datasource).aggregateValues(aggregationInfos, itemIds);
     }
 }

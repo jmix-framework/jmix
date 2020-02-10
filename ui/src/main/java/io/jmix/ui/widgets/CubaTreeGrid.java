@@ -30,10 +30,7 @@ import io.jmix.ui.widgets.grid.CubaEditorField;
 import io.jmix.ui.widgets.grid.CubaEditorImpl;
 import io.jmix.ui.widgets.grid.CubaGridColumn;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class CubaTreeGrid<T> extends TreeGrid<T> implements CubaEnhancedGrid<T> {
@@ -41,6 +38,10 @@ public class CubaTreeGrid<T> extends TreeGrid<T> implements CubaEnhancedGrid<T> 
     protected CubaGridEditorFieldFactory<T> editorFieldFactory;
 
     protected Runnable emptyStateLinkClickHandler;
+
+    protected boolean aggregatable = false;
+    protected AggregationPosition aggregationPosition = AggregationPosition.TOP;
+    protected Collection<String> aggregationPropertyIds;
 
     public CubaTreeGrid() {
         registerRpc((CubaGridServerRpc) () -> {
@@ -212,5 +213,53 @@ public class CubaTreeGrid<T> extends TreeGrid<T> implements CubaEnhancedGrid<T> 
     @Override
     public void setDeselectAllLabel(String deselectAllLabel) {
         getState(true).deselectAllLabel = deselectAllLabel;
+    }
+
+    @Override
+    public boolean isAggregatable() {
+        return aggregatable;
+    }
+
+    @Override
+    public void setAggregatable(boolean aggregatable) {
+        this.aggregatable = aggregatable;
+    }
+
+    @Override
+    public AggregationPosition getAggregationPosition() {
+        return aggregationPosition;
+    }
+
+    @Override
+    public void setAggregationPosition(AggregationPosition position) {
+        this.aggregationPosition = position;
+    }
+
+    @Override
+    public Collection<String> getAggregationPropertyIds() {
+        if (aggregationPropertyIds == null) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableCollection(aggregationPropertyIds);
+    }
+
+    @Override
+    public void addAggregationPropertyId(String propertyId) {
+        if (aggregationPropertyIds == null) {
+            aggregationPropertyIds = new ArrayList<>();
+        } else if (aggregationPropertyIds.contains(propertyId)) {
+            throw new IllegalStateException(String.format("Aggregation property %s already exists", propertyId));
+        }
+        aggregationPropertyIds.add(propertyId);
+    }
+
+    @Override
+    public void removeAggregationPropertyId(String propertyId) {
+        if (aggregationPropertyIds != null) {
+            aggregationPropertyIds.remove(propertyId);
+            if (aggregationPropertyIds.isEmpty()) {
+                aggregationPropertyIds = null;
+            }
+        }
     }
 }

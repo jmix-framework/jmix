@@ -19,12 +19,9 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.web.gui.CubaUiComponents;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.Buffered;
 import io.jmix.ui.components.HasDatatype;
 import io.jmix.ui.components.validation.AbstractValidator;
@@ -37,23 +34,10 @@ import org.dom4j.Element;
 import java.util.List;
 import java.util.function.Consumer;
 
-@SuppressWarnings({"rawtypes", "DeprecatedIsStillUsed"})
+@SuppressWarnings({"rawtypes"})
 @Deprecated
 public abstract class AbstractFieldLoader<T extends Field>
         extends io.jmix.ui.xml.layout.loaders.AbstractFieldLoader<T> {
-
-    @Override
-    public void setFactory(UiComponents factory) {
-        // do nothing
-    }
-
-    @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
-        super.setBeanLocator(beanLocator);
-
-        // initialize with custom factory
-        factory = beanLocator.get(CubaUiComponents.class);
-    }
 
     @Override
     public void loadComponent() {

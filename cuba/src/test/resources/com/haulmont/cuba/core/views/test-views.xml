@@ -143,4 +143,10 @@
         <property name="endDate"/>
     </view>
 
+    <view entity="sec_Group"
+          name="group.browse">
+        <property name="name"/>
+        <property name="parent"/>
+        <property name="constraints" view="_local"/>
+    </view>
 </views>

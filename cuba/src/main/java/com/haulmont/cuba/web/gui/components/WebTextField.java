@@ -16,8 +16,10 @@
 
 package com.haulmont.cuba.web.gui.components;
 
-import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.web.components.TextField;
 
 @Deprecated
-public class WebTextField<V> extends io.jmix.ui.components.impl.WebTextField<V> implements Field<V> {
+public class WebTextField<V>
+        extends io.jmix.ui.components.impl.WebTextField<V>
+        implements TextField<V> {
 }

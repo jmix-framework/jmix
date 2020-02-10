@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.data.options.DatasourceOptions;
 import io.jmix.ui.components.data.Options;
 
 @SuppressWarnings("rawtypes")
-public interface OptionsField<V, I> extends io.jmix.ui.components.OptionsField<V, I> {
+public interface OptionsField<V, I> extends Field<V>, io.jmix.ui.components.OptionsField<V, I> {
 
     /**
      * @return options datasource

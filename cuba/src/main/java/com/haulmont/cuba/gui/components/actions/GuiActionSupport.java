@@ -18,7 +18,6 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.EntityStates;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.View;
 import io.jmix.core.ViewRepository;
 import io.jmix.core.entity.BaseGenericIdEntity;

@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.screen.compatibility;
 
+import com.haulmont.cuba.gui.components.HasWindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import io.jmix.ui.components.ActionsHolder;
 import io.jmix.ui.components.Component;
@@ -24,7 +25,6 @@ import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.FrameContext;
 import io.jmix.ui.components.HasMargin;
 import io.jmix.ui.components.HasSpacing;
-import com.haulmont.cuba.gui.components.HasWindowManager;
 import io.jmix.ui.components.OrderedContainer;
 import io.jmix.ui.components.Validatable;
 import io.jmix.ui.components.ValidationException;

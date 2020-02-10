@@ -17,6 +17,7 @@
 package com.haulmont.cuba;
 
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
+import com.haulmont.cuba.web.gui.CubaUiComponents;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -25,6 +26,7 @@ import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import io.jmix.core.impl.MetadataLoader;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.ui.JmixUiConfiguration;
+import io.jmix.ui.UiComponents;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -51,5 +53,10 @@ public class JmixCubaConfiguration {
     @Bean(Metadata.NAME)
     protected Metadata metadata(MetadataLoader metadataLoader) {
         return new CubaMetadata(metadataLoader);
+    }
+
+    @Bean(UiComponents.NAME)
+    protected UiComponents uiComponents() {
+        return new CubaUiComponents();
     }
 }

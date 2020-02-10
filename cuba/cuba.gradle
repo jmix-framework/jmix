@@ -33,6 +33,7 @@ dependencies {
     api project(':modules:core')
     api project(':modules:data')
     api project(':modules:ui')
+    api project(':modules:security')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
@@ -41,6 +42,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-orm'
     testImplementation 'ch.qos.logback:logback-classic'
+    testImplementation 'commons-codec:commons-codec:1.13'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'

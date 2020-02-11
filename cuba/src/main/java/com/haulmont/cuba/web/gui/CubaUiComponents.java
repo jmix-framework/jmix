@@ -17,6 +17,7 @@
 package com.haulmont.cuba.web.gui;
 
 import com.haulmont.cuba.gui.components.FieldGroup;
+import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.web.components.CheckBox;
 import com.haulmont.cuba.web.components.DateField;
 import com.haulmont.cuba.web.components.DatePicker;
@@ -49,5 +50,7 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(PickerField.NAME, WebPickerField.class);
         classes.put(SearchField.NAME, WebSearchField.class);
         classes.put(FieldGroup.NAME, WebFieldGroup.class);
+
+        classes.put(Filter.NAME, WebFilter.class);
     }
 }

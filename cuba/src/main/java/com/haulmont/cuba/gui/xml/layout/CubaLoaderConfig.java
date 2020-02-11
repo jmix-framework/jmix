@@ -18,10 +18,13 @@ package com.haulmont.cuba.gui.xml.layout;
 
 import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.FieldGroup;
+import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.xml.layout.loaders.BulkEditorLoader;
 import com.haulmont.cuba.gui.xml.layout.loaders.FieldGroupLoader;
 import com.haulmont.cuba.gui.xml.layout.loaders.CubaTextFieldLoader;
+import com.haulmont.cuba.gui.xml.layout.loaders.FilterLoader;
 import io.jmix.ui.components.TextField;
+import io.jmix.ui.xml.layout.BaseLoaderConfig;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;
 import org.dom4j.Element;
@@ -32,15 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("rawtypes")
 @Component(CubaLoaderConfig.NAME)
-public class CubaLoaderConfig implements LoaderConfig {
+public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
     public static final String NAME = "cuba_LegacyLoaderConfig";
-
-    protected Map<String, Class<? extends ComponentLoader>> loaders = new ConcurrentHashMap<>();
-
-    public CubaLoaderConfig() {
-        initStandardLoaders();
-    }
 
     @Override
     public boolean supports(Element element) {
@@ -53,10 +50,14 @@ public class CubaLoaderConfig implements LoaderConfig {
         return loaders.get(element.getName());
     }
 
+    @Override
     protected void initStandardLoaders() {
+        super.initStandardLoaders();
+
         loaders.put(TextField.NAME, CubaTextFieldLoader.class);
         loaders.put(FieldGroup.NAME, FieldGroupLoader.class);
         loaders.put(BulkEditor.NAME, BulkEditorLoader.class);
+        loaders.put(Filter.NAME, FilterLoader.class);
     }
 
     protected boolean isLegacyScreen(Element element) {

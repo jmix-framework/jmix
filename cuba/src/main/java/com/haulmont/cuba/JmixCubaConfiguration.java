@@ -23,6 +23,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.JmixModule;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
+import io.jmix.core.annotation.JmixProperty;
 import io.jmix.core.impl.MetadataLoader;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.ui.JmixUiConfiguration;
@@ -35,7 +36,17 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixUiConfiguration.class})
+@JmixModule(
+        dependsOn = {
+                JmixCoreConfiguration.class,
+                JmixDataConfiguration.class,
+                JmixUiConfiguration.class},
+        properties = {
+                @JmixProperty(
+                        name = "jmix.viewsConfig",
+                        value = "/com/haulmont/cuba/cuba-views.xml",
+                        append = true)
+        })
 public class JmixCubaConfiguration {
 
     protected Environment environment;

@@ -15,10 +15,10 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.LoadContext;
 import io.jmix.ui.filter.QueryFilter;
+import io.jmix.core.LoadContext;
+import io.jmix.core.entity.Entity;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;

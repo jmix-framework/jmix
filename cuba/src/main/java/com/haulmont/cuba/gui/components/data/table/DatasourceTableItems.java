@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.components.data.AggregatableTableItems;
 import io.jmix.ui.components.data.BindingState;
-import io.jmix.ui.components.data.meta.DatasourceDataUnit;
+import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import io.jmix.ui.components.data.meta.EntityTableItems;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
 

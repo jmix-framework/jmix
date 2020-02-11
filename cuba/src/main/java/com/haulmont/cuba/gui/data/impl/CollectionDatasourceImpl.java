@@ -16,6 +16,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.google.common.base.Preconditions;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.LoadContext;
@@ -33,14 +34,19 @@ import io.jmix.ui.filter.LogicalCondition;
 import io.jmix.ui.filter.LogicalOp;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.logging.UIPerformanceLogger;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.ui.sys.PersistenceHelper;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 

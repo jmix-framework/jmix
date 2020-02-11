@@ -309,25 +309,6 @@ public abstract class ComponentsHelper {
         return false;
     }
 
-    // todo filter
-    /*public static String getFilterComponentPath(Filter filter) {
-        StringBuilder sb = new StringBuilder(filter.getId() != null ? filter.getId() : "filterWithoutId");
-        Frame frame = filter.getFrame();
-        while (frame != null) {
-            sb.insert(0, ".");
-            String s = frame.getId() != null ? frame.getId() : "frameWithoutId";
-            if (s.contains(".")) {
-                s = "[" + s + "]";
-            }
-            sb.insert(0, s);
-            if (frame instanceof Window) {
-                break;
-            }
-            frame = frame.getFrame();
-        }
-        return sb.toString();
-    }*/
-
     /**
      * Get the topmost window for the specified component.
      *

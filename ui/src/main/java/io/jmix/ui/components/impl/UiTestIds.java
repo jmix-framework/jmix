@@ -19,7 +19,6 @@ package io.jmix.ui.components.impl;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.data.DataUnit;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
-import io.jmix.ui.components.data.meta.DatasourceDataUnit;
 import io.jmix.ui.components.data.value.ContainerValueSource;
 import io.jmix.ui.components.data.ValueSource;
 import org.apache.commons.lang3.StringUtils;

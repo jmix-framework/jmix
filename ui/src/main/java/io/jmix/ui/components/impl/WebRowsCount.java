@@ -22,14 +22,12 @@ import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.data.DataUnit;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
-import io.jmix.ui.components.data.meta.DatasourceDataUnit;
 import io.jmix.ui.executors.BackgroundTask;
 import io.jmix.ui.executors.BackgroundTaskHandler;
 import io.jmix.ui.executors.BackgroundWorker;
 import io.jmix.ui.executors.TaskLifeCycle;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.model.*;
-import io.jmix.ui.model.impl.WeakCollectionChangeListener;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widgets.CubaRowsCount;
@@ -187,10 +185,10 @@ public class WebRowsCount extends WebAbstractComponent<CubaRowsCount> implements
     protected Adapter createAdapter(RowsCountTarget target) {
         if (target instanceof ListComponent) {
             DataUnit items = ((ListComponent) target).getItems();
-            if (items instanceof DatasourceDataUnit) {
+            /*if (items instanceof DatasourceDataUnit) {
                 // TODO: legacy-ui
                 // return createDatasourceAdapter(((DatasourceDataUnit) items).getDatasource());
-            } else if (items instanceof ContainerDataUnit) {
+            } else */ if (items instanceof ContainerDataUnit) {
                 return createLoaderAdapter(((ContainerDataUnit) items).getContainer());
             }
 

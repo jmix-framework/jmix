@@ -24,7 +24,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.components.data.AggregatableDataGridItems;
 import io.jmix.ui.components.data.BindingState;
-import io.jmix.ui.components.data.meta.DatasourceDataUnit;
 import io.jmix.ui.components.data.meta.EntityDataGridItems;
 
 import javax.annotation.Nullable;
@@ -37,7 +36,7 @@ import java.util.stream.Stream;
 
 // TODO: legacy-ui
 public class DatasourceDataGridItems<E extends Entity<K>, K>
-        implements EntityDataGridItems<E>, AggregatableDataGridItems<E>, DatasourceDataUnit {
+        implements EntityDataGridItems<E>, AggregatableDataGridItems<E>/*, DatasourceDataUnit*/ {
 
 //    protected CollectionDatasource.Indexed<E, K> datasource;
 

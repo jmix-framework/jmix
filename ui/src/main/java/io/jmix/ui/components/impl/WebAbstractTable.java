@@ -54,7 +54,6 @@ import io.jmix.ui.components.data.*;
 import io.jmix.ui.components.data.aggregation.Aggregation;
 import io.jmix.ui.components.data.aggregation.Aggregations;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
-import io.jmix.ui.components.data.meta.DatasourceDataUnit;
 import io.jmix.ui.components.data.meta.EmptyDataUnit;
 import io.jmix.ui.components.data.meta.EntityTableItems;
 import io.jmix.ui.components.presentations.TablePresentations;
@@ -1575,8 +1574,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }
 
-        if (entityTableSource instanceof DatasourceDataUnit) {
-            /*
+        /*if (entityTableSource instanceof DatasourceDataUnit) {
+
             TODO: legacy-ui
             CollectionDatasource datasource = ((DatasourceDataUnit) entityTableSource).getDatasource();
 
@@ -1584,8 +1583,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
                     // if a view is specified - use view properties
                     metadataTools.getViewPropertyPaths(datasource.getView(), datasource.getMetaClass()) :
                     // otherwise use all properties from meta-class
-                    metadataTools.getPropertyPaths(datasource.getMetaClass());*/
-        }
+                    metadataTools.getPropertyPaths(datasource.getMetaClass());
+        }*/
 
         if (entityTableSource instanceof EmptyDataUnit) {
             return metadataTools.getPropertyPaths(entityTableSource.getEntityMetaClass());

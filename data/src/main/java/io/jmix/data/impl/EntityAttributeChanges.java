@@ -172,6 +172,15 @@ public class EntityAttributeChanges {
         }
     }
 
+    @Override
+    public String toString() {
+        return "EntityAttributeChanges{"
+                + getAttributes().stream()
+                .map(name -> name + ": " + getOldValueEx(name))
+                .collect(Collectors.joining(","))
+                + '}';
+    }
+
     private static class Change {
 
         public final String name;

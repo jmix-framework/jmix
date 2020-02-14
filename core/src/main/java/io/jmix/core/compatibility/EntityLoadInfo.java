@@ -25,14 +25,14 @@ import javax.annotation.Nullable;
  * Class that encapsulates an information needed to load an entity instance.
  * <br>
  * This information has the following string representation:
- * {@code metaclassName-id[-viewName]}, e.g.:
+ * {@code metaclassName-id[-fetchPlanName]}, e.g.:
  * <pre>
  * sec$User-60885987-1b61-4247-94c7-dff348347f93
  * sec$Role-0c018061-b26f-4de2-a5be-dff348347f93-role.browse
  * ref$Seller-101
  * ref$Currency-{usd}
  * </pre>
- * <br> viewName part is optional.
+ * <br> fetch plan name part is optional.
  * <br> id part should be:
  * <ul>
  *     <li>For UUID keys: canonical UUID representation with 5 groups of hex digits delimited by dashes</li>
@@ -47,18 +47,18 @@ public class EntityLoadInfo {
 
     private MetaClass metaClass;
     private Object id;
-    private String viewName;
+    private String fetchPlanName;
     private boolean newEntity;
     private boolean stringKey;
 
-    protected EntityLoadInfo(Object id, MetaClass metaClass, String viewName, boolean stringKey) {
-        this(id, metaClass, viewName, stringKey, false);
+    protected EntityLoadInfo(Object id, MetaClass metaClass, String fetchPlanName, boolean stringKey) {
+        this(id, metaClass, fetchPlanName, stringKey, false);
     }
 
-    protected EntityLoadInfo(Object id, MetaClass metaClass, String viewName, boolean stringKey, boolean newEntity) {
+    protected EntityLoadInfo(Object id, MetaClass metaClass, String fetchPlanName, boolean stringKey, boolean newEntity) {
         this.id = id;
         this.metaClass = metaClass;
-        this.viewName = viewName;
+        this.fetchPlanName = fetchPlanName;
         this.newEntity = newEntity;
         this.stringKey = stringKey;
     }
@@ -72,8 +72,13 @@ public class EntityLoadInfo {
     }
 
     @Nullable
+    @Deprecated
     public String getViewName() {
-        return viewName;
+        return getFetchPlanName();
+    }
+
+    public String getFetchPlanName() {
+        return fetchPlanName;
     }
 
     public boolean isNewEntity() {
@@ -84,16 +89,16 @@ public class EntityLoadInfo {
      * Create a new info instance.
      * <p>Consider using {@link EntityLoadInfoBuilder} for better performance.</p>
      * @param entity    entity instance
-     * @param viewName  view name, can be null
+     * @param fetchPlanName  fetch plan name, can be null
      * @return          info instance
      */
-    public static EntityLoadInfo create(Entity entity, @Nullable String viewName) {
+    public static EntityLoadInfo create(Entity entity, @Nullable String fetchPlanName) {
         EntityLoadInfoBuilder builder = AppBeans.get(EntityLoadInfoBuilder.NAME);
-        return builder.create(entity, viewName);
+        return builder.create(entity, fetchPlanName);
     }
 
     /**
-     * Create a new info instance with empty view name.
+     * Create a new info instance with empty fetch plan.
      * <p>Consider using {@link EntityLoadInfoBuilder} for better performance.</p>
      * @param entity    entity instance
      * @return          info instance
@@ -117,6 +122,6 @@ public class EntityLoadInfo {
     @Override
     public String toString() {
         String key = stringKey ? "{" + id + "}" : id.toString();
-        return metaClass.getName() + "-" + key + (viewName == null ? "" : "-" + viewName);
+        return metaClass.getName() + "-" + key + (fetchPlanName == null ? "" : "-" + fetchPlanName);
     }
 }

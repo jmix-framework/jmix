@@ -16,7 +16,7 @@
 
 package io.jmix.data;
 
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
 
 import java.util.Collection;
@@ -109,7 +109,7 @@ public interface PersistenceSecurity {
      * @param entity - entity to check security token
      * @param view - view for entity
      */
-    void assertTokenForREST(Entity entity, View view);
+    void assertTokenForREST(Entity entity, FetchPlan view);
 
     /**
      * Calculate filtered data

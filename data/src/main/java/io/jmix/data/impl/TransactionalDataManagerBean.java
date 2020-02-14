@@ -97,7 +97,7 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     }
 
     @Override
-    public <E extends Entity> E save(E entity, @Nullable View view) {
+    public <E extends Entity> E save(E entity, @Nullable FetchPlan view) {
         CommitContext cc = new CommitContext();
         cc.addInstanceToCommit(entity, view);
         cc.setJoinTransaction(true);

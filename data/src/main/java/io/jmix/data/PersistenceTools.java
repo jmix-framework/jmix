@@ -19,7 +19,7 @@ package io.jmix.data;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.BaseEntityInternalAccess;
 import io.jmix.core.entity.BaseGenericIdEntity;
@@ -257,7 +257,7 @@ public class PersistenceTools {
     /**
      * Returns an ID of directly referenced entity without loading it from DB.
      * <p>
-     * If the view does not contain the reference and {@link View#loadPartialEntities()} is true,
+     * If the view does not contain the reference and {@link FetchPlan#loadPartialEntities()} is true,
      * the returned {@link RefId} will have {@link RefId#isLoaded()} = false.
      *
      * <p>Usage example:

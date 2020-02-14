@@ -16,7 +16,7 @@
 package io.jmix.data;
 
 import io.jmix.core.entity.Entity;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 
 import javax.annotation.Nullable;
 import javax.persistence.FlushModeType;
@@ -205,7 +205,7 @@ public interface Query {
      * @param view view instance. If null, eager fetching is performed according to JPA mappings.
      * @return the same query instance
      */
-    Query setView(@Nullable View view);
+    Query setView(@Nullable FetchPlan view);
 
     /**
      * Set View for this Query instance.
@@ -224,7 +224,7 @@ public interface Query {
      * @param view view instance - must not be null
      * @return the same query instance
      */
-    Query addView(View view);
+    Query addView(FetchPlan view);
 
     /**
      * Adds View for this Query instance.

@@ -16,9 +16,8 @@
 
 package io.jmix.data;
 
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.MetaClass;
 
 import java.util.Collection;
 
@@ -29,7 +28,7 @@ public interface PersistenceAttributeSecurity {
 
     String NAME = "jmix_PersistenceAttributeSecurity";
 
-    View createRestrictedView(View view);
+    FetchPlan createRestrictedFetchPlan(FetchPlan fetchPlan);
 
     void afterLoad(Entity entity);
 

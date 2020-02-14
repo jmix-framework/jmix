@@ -69,7 +69,7 @@ public class EntityManagerImpl implements EntityManager {
     @Inject
     protected ExtendedEntities extendedEntities;
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     protected boolean softDeletion = true;
 
@@ -130,19 +130,19 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     @Deprecated
-    public <T extends Entity> T merge(T entity, @Nullable View view) {
+    public <T extends Entity> T merge(T entity, @Nullable FetchPlan fetchPlan) {
         T managed = merge(entity);
-        if (view != null) {
-            metadataTools.traverseAttributesByView(view, managed, (e, p) -> { /* do nothing, just fetch */ });
+        if (fetchPlan != null) {
+            metadataTools.traverseAttributesByView(fetchPlan, managed, (e, p) -> { /* do nothing, just fetch */ });
         }
         return managed;
     }
 
     @Override
     @Deprecated
-    public <T extends Entity> T merge(T entity, @Nullable String viewName) {
-        if (viewName != null) {
-            return merge(entity, viewRepository.getView(entity.getClass(), viewName));
+    public <T extends Entity> T merge(T entity, @Nullable String fetchPlanName) {
+        if (fetchPlanName != null) {
+            return merge(entity, viewRepository.getFetchPlan(entity.getClass(), fetchPlanName));
         } else {
             return merge(entity);
         }
@@ -185,26 +185,26 @@ public class EntityManagerImpl implements EntityManager {
 
     @Nullable
     @Override
-    public <T extends Entity<K>, K> T find(Class<T> entityClass, K id, View... views) {
+    public <T extends Entity<K>, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(id, "id is null");
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(entityClass);
-        return findWithViews(metaClass, id, Arrays.asList(views));
+        return findWithViews(metaClass, id, Arrays.asList(fetchPlans));
     }
 
     @Nullable
     @Override
-    public <T extends Entity<K>, K> T find(Class<T> entityClass, K id, String... viewNames) {
-        View[] viewArray = new View[viewNames.length];
-        for (int i = 0; i < viewNames.length; i++) {
-            viewArray[i] = viewRepository.getView(entityClass, viewNames[i]);
+    public <T extends Entity<K>, K> T find(Class<T> entityClass, K id, String... fetchPlanNames) {
+        FetchPlan[] viewArray = new FetchPlan[fetchPlanNames.length];
+        for (int i = 0; i < fetchPlanNames.length; i++) {
+            viewArray[i] = viewRepository.getFetchPlan(entityClass, fetchPlanNames[i]);
         }
         return find(entityClass, id, viewArray);
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Entity> T findWithViews(MetaClass metaClass, Object id, List<View> views) {
+    protected <T extends Entity> T findWithViews(MetaClass metaClass, Object id, List<FetchPlan> views) {
         Object realId = getRealId(id);
         log.debug("find {} by id={}, views={}", metaClass.getJavaClass().getSimpleName(), realId, views);
 
@@ -215,7 +215,7 @@ public class EntityManagerImpl implements EntityManager {
         Query query = createQuery(String.format("select e from %s e where e.%s = ?1", metaClass.getName(), pkName));
         ((QueryImpl) query).setSingleResultExpected(true);
         query.setParameter(1, realId);
-        for (View view : views) {
+        for (FetchPlan view : views) {
             query.addView(view);
         }
         return (T) query.getFirstResult();
@@ -276,12 +276,12 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     @Deprecated
-    public void fetch(Entity entity, View view) {
+    public void fetch(Entity entity, FetchPlan fetchPlan) {
     }
 
     @Nullable
     @Override
-    public <T extends Entity<K>, K> T reload(Class<T> entityClass, K id, String... viewNames) {
+    public <T extends Entity<K>, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(id, "id is null");
 
@@ -289,27 +289,27 @@ public class EntityManagerImpl implements EntityManager {
             return null;
         }
 
-        T entity = find(entityClass, id, viewNames);
+        T entity = find(entityClass, id, fetchPlanNames);
         return entity;
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <T extends Entity> T reload(T entity, String... viewNames) {
+    public <T extends Entity> T reload(T entity, String... fetchPlanNames) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         if (entity.getId() instanceof IdProxy && ((IdProxy) entity.getId()).get() == null) {
             return null;
         }
 
-        Entity resultEntity = find(entity.getClass(), entity.getId(), viewNames);
+        Entity resultEntity = find(entity.getClass(), entity.getId(), fetchPlanNames);
         return (T) resultEntity;
     }
 
     @Override
-    public <T extends Entity> T reloadNN(T entity, String... viewNames) {
-        T reloaded = reload(entity, viewNames);
+    public <T extends Entity> T reloadNN(T entity, String... fetchPlanNames) {
+        T reloaded = reload(entity, fetchPlanNames);
         if (reloaded == null)
             throw new EntityNotFoundException("Entity " + entity + " has been deleted");
         return reloaded;

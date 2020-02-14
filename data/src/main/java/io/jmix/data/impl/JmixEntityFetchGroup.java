@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.BaseEntityInternalAccess;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
@@ -76,7 +76,7 @@ public class JmixEntityFetchGroup extends EntityFetchGroup {
     protected boolean cannotAccessUnfetched(FetchGroupTracker entity) {
         return Boolean.FALSE.equals(accessLocalUnfetched.get())
                 && entity instanceof Entity
-                && !AppBeans.get(EntityStates.class).isLoadedWithView((Entity) entity, View.LOCAL);
+                && !AppBeans.get(EntityStates.class).isLoadedWithView((Entity) entity, FetchPlan.LOCAL);
     }
 
     @Override

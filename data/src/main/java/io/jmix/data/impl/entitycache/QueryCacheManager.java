@@ -24,7 +24,7 @@ import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
@@ -87,7 +87,7 @@ public class QueryCacheManager {
      * Get query results from query cache by specified {@code queryKey}
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> getResultListFromCache(QueryKey queryKey, List<View> views) {
+    public <T> List<T> getResultListFromCache(QueryKey queryKey, List<FetchPlan> views) {
         log.debug("Looking for query in cache: {}", queryKey.printDescription());
         List<T> resultList = null;
         QueryResult queryResult = queryCache.get(queryKey);
@@ -100,7 +100,7 @@ public class QueryCacheManager {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
             }
             for (Object id : queryResult.getResult()) {
-                resultList.add(em.find(metaClass.getJavaClass(), id, views.toArray(new View[views.size()])));
+                resultList.add(em.find(metaClass.getJavaClass(), id, views.toArray(new FetchPlan[views.size()])));
             }
         } else {
             log.debug("Query results are not found in cache: {}", queryKey.printDescription());
@@ -113,7 +113,7 @@ public class QueryCacheManager {
      * If query is cached and no results found exception is thrown
      */
     @SuppressWarnings("unchecked")
-    public <T> T getSingleResultFromCache(QueryKey queryKey, List<View> views) {
+    public <T> T getSingleResultFromCache(QueryKey queryKey, List<FetchPlan> views) {
         log.debug("Looking for query in cache: {}", queryKey.printDescription());
         QueryResult queryResult = queryCache.get(queryKey);
         if (queryResult != null) {
@@ -128,7 +128,7 @@ public class QueryCacheManager {
             }
             EntityManager em = persistence.getEntityManager();
             for (Object id : queryResult.getResult()) {
-                return (T) em.find(metaClass.getJavaClass(), id, views.toArray(new View[views.size()]));
+                return (T) em.find(metaClass.getJavaClass(), id, views.toArray(new FetchPlan[views.size()]));
             }
         }
         log.debug("Query results are not found in cache: {}", queryKey.printDescription());

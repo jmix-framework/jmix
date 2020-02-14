@@ -74,7 +74,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     @Inject
     private ExtendedEntities extendedEntities;
     @Inject
-    private ViewRepository viewRepository;
+    private FetchPlanRepository viewRepository;
     @Inject
     protected PersistenceSupport support;
     @Inject
@@ -100,7 +100,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     protected Set<Param> params = new HashSet<>();
     protected Map<String, Object> hints;
     protected LockModeType lockMode;
-    protected List<View> views = new ArrayList<>();
+    protected List<FetchPlan> views = new ArrayList<>();
     protected Integer maxResults;
     protected Integer firstResult;
     protected boolean singleResultExpected;
@@ -122,7 +122,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     @SuppressWarnings("unchecked")
     protected JpaQuery<T> getQuery() {
         if (query == null) {
-            View view = views.isEmpty() ? null : views.get(0);
+            FetchPlan view = views.isEmpty() ? null : views.get(0);
 
             if (isNative) {
                 log.trace("Creating SQL query: {}", queryString);
@@ -193,9 +193,9 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
             for (int i = 0; i < views.size(); i++) {
                 if (i == 0)
-                    fetchGroupMgr.setView(query, queryString, views.get(i), singleResultExpected);
+                    fetchGroupMgr.setFetchPlan(query, queryString, views.get(i), singleResultExpected);
                 else
-                    fetchGroupMgr.addView(query, queryString, views.get(i), singleResultExpected);
+                    fetchGroupMgr.addFetchPlan(query, queryString, views.get(i), singleResultExpected);
             }
         }
         return query;
@@ -214,10 +214,10 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
     protected JpaQuery buildJPAQuery(String queryString, Class<T> resultClass) {
         boolean useJPQLCache = true;
-        View view = views.isEmpty() ? null : views.get(0);
+        FetchPlan view = views.isEmpty() ? null : views.get(0);
         if (view != null) {
             boolean useFetchGroup = view.loadPartialEntities();
-            for (View it : views) {
+            for (FetchPlan it : views) {
                 FetchGroupDescription description = fetchGroupMgr.calculateFetchGroup(queryString, it, singleResultExpected, useFetchGroup);
                 if (description.hasBatches()) {
                     useJPQLCache = false;
@@ -417,7 +417,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
         @SuppressWarnings("unchecked")
         List<T> resultList = (List<T>) getResultFromCache(query, false, obj -> {
             ((List) obj).stream().filter(item -> item instanceof Entity).forEach(item -> {
-                for (View view : views) {
+                for (FetchPlan view : views) {
                     entityFetcher.fetch((Entity) item, view);
                 }
             });
@@ -437,7 +437,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
         @SuppressWarnings("unchecked")
         T result = (T) getResultFromCache(jpaQuery, true, obj -> {
             if (obj instanceof Entity) {
-                for (View view : views) {
+                for (FetchPlan view : views) {
                     entityFetcher.fetch((Entity) obj, view);
                 }
             }
@@ -462,7 +462,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
                 if (!list.isEmpty()) {
                     Object item = list.get(0);
                     if (item instanceof Entity) {
-                        for (View view : views) {
+                        for (FetchPlan view : views) {
                             entityFetcher.fetch((Entity) item, view);
                         }
                     }
@@ -634,7 +634,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setView(View view) {
+    public TypedQuery<T> setView(FetchPlan view) {
         if (isNative)
             throw new UnsupportedOperationException("Views are not supported for native queries");
         checkState();
@@ -649,18 +649,18 @@ public class QueryImpl<T> implements TypedQuery<T> {
         if (resultClass == null)
             throw new IllegalStateException("resultClass is null");
 
-        setView(viewRepository.getView(resultClass, viewName));
+        setView(viewRepository.getFetchPlan(resultClass, viewName));
         return this;
     }
 
     @Override
     public TypedQuery<T> setView(Class<? extends Entity> entityClass, String viewName) {
-        setView(viewRepository.getView(entityClass, viewName));
+        setView(viewRepository.getFetchPlan(entityClass, viewName));
         return this;
     }
 
     @Override
-    public TypedQuery<T> addView(View view) {
+    public TypedQuery<T> addView(FetchPlan view) {
         if (isNative)
             throw new UnsupportedOperationException("Views are not supported for native queries");
         checkState();
@@ -674,13 +674,13 @@ public class QueryImpl<T> implements TypedQuery<T> {
         if (resultClass == null)
             throw new IllegalStateException("resultClass is null");
 
-        addView(viewRepository.getView(resultClass, viewName));
+        addView(viewRepository.getFetchPlan(resultClass, viewName));
         return this;
     }
 
     @Override
     public TypedQuery<T> addView(Class<? extends Entity> entityClass, String viewName) {
-        addView(viewRepository.getView(entityClass, viewName));
+        addView(viewRepository.getFetchPlan(entityClass, viewName));
         return this;
     }
 

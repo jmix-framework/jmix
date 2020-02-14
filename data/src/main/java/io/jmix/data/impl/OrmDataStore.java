@@ -65,7 +65,7 @@ public class OrmDataStore implements DataStore {
     protected MetadataTools metadataTools;
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     @Inject
     protected ServerConfig serverConfig;
@@ -144,7 +144,7 @@ public class OrmDataStore implements DataStore {
                     && context.getQuery().getQueryString() != null)
                     && context.getId() != null;
 
-            View view = createRestrictedView(context);
+            FetchPlan view = createRestrictedView(context);
             Query query = createQuery(em, context, singleResult, false);
             query.setView(view);
 
@@ -222,7 +222,7 @@ public class OrmDataStore implements DataStore {
                     context.getQuery().setQueryString(transformer.getResult());
                 }
             }
-            View view = createRestrictedView(context);
+            FetchPlan view = createRestrictedView(context);
             List<E> entities;
 
             Integer maxIdsBatchSize = dbmsSpecifics.getDbmsFeatures(storeName).getMaxIdsBatchSize();
@@ -277,7 +277,7 @@ public class OrmDataStore implements DataStore {
         return pkProperty == null || pkProperty.getRange().isClass();
     }
 
-    protected <E extends Entity> List<E> loadListBySingleIds(LoadContext<E> context, EntityManager em, View view) {
+    protected <E extends Entity> List<E> loadListBySingleIds(LoadContext<E> context, EntityManager em, FetchPlan view) {
         LoadContext<?> contextCopy = context.copy();
         contextCopy.setIds(Collections.emptyList());
 
@@ -293,7 +293,7 @@ public class OrmDataStore implements DataStore {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> List<E> loadListByBatchesOfIds(LoadContext<E> context, EntityManager em, View view, int batchSize) {
+    protected <E extends Entity> List<E> loadListByBatchesOfIds(LoadContext<E> context, EntityManager em, FetchPlan view, int batchSize) {
         List<List<Object>> partitions = Lists.partition((List<Object>) context.getIds(), batchSize);
 
         List<E> entities = new ArrayList<>(context.getIds().size());
@@ -436,7 +436,7 @@ public class OrmDataStore implements DataStore {
                             checkOperationPermitted(entity, ConstraintOperationType.CREATE);
 
                         if (!context.isDiscardCommitted()) {
-                            View view = getViewFromContextOrNull(context, entity);
+                            FetchPlan view = getViewFromContextOrNull(context, entity);
                             entityFetcher.fetch(entity, view, true);
                         }
 
@@ -673,23 +673,23 @@ public class OrmDataStore implements DataStore {
         return entities;
     }
 
-    protected View getViewFromContext(CommitContext context, Entity entity) {
-        View view = context.getViews().get(entity);
+    protected FetchPlan getViewFromContext(CommitContext context, Entity entity) {
+        FetchPlan view = context.getFetchPlans().get(entity);
         if (view == null) {
-            view = viewRepository.getView(entity.getClass(), View.LOCAL);
+            view = viewRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
         }
 
-        return isAuthorizationRequired(context) ? attributeSecurity.createRestrictedView(view) : view;
+        return isAuthorizationRequired(context) ? attributeSecurity.createRestrictedFetchPlan(view) : view;
     }
 
     @Nullable
-    protected View getViewFromContextOrNull(CommitContext context, Entity entity) {
-        View view = context.getViews().get(entity);
+    protected FetchPlan getViewFromContextOrNull(CommitContext context, Entity entity) {
+        FetchPlan view = context.getFetchPlans().get(entity);
         if (view == null) {
             return null;
         }
 
-        return isAuthorizationRequired(context) ? attributeSecurity.createRestrictedView(view) : view;
+        return isAuthorizationRequired(context) ? attributeSecurity.createRestrictedFetchPlan(view) : view;
     }
 
     protected void checkOperationPermitted(Entity entity, ConstraintOperationType operationType) {
@@ -754,11 +754,11 @@ public class OrmDataStore implements DataStore {
         return query;
     }
 
-    protected View createRestrictedView(LoadContext<?> context) {
-        View view = context.getView() != null ? context.getView() :
-                viewRepository.getView(metadata.getClass(context.getMetaClass()), View.BASE);
+    protected FetchPlan createRestrictedView(LoadContext<?> context) {
+        FetchPlan view = context.getView() != null ? context.getView() :
+                viewRepository.getFetchPlan(metadata.getClass(context.getMetaClass()), FetchPlan.BASE);
 
-        View copy = View.copy(isAuthorizationRequired(context) ? attributeSecurity.createRestrictedView(view) : view);
+        FetchPlan copy = FetchPlan.copy(isAuthorizationRequired(context) ? attributeSecurity.createRestrictedFetchPlan(view) : view);
         if (context.isLoadPartialEntities()
                 && !needToApplyInMemoryReadConstraints(context)
                 && !needToFilterByInMemoryReadConstraints(context)) {
@@ -1098,7 +1098,7 @@ public class OrmDataStore implements DataStore {
 //                .collect(Collectors.toSet());
 //    }
 
-    protected Set<Class> collectEntityClasses(View view, Set<View> visited) {
+    protected Set<Class> collectEntityClasses(FetchPlan view, Set<FetchPlan> visited) {
         if (visited.contains(view)) {
             return Collections.emptySet();
         } else {
@@ -1107,9 +1107,9 @@ public class OrmDataStore implements DataStore {
 
         HashSet<Class> classes = new HashSet<>();
         classes.add(view.getEntityClass());
-        for (ViewProperty viewProperty : view.getProperties()) {
-            if (viewProperty.getView() != null) {
-                classes.addAll(collectEntityClasses(viewProperty.getView(), visited));
+        for (FetchPlanProperty viewProperty : view.getProperties()) {
+            if (viewProperty.getFetchPlan() != null) {
+                classes.addAll(collectEntityClasses(viewProperty.getFetchPlan(), visited));
             }
         }
         return classes;
@@ -1129,7 +1129,7 @@ public class OrmDataStore implements DataStore {
                 persistence.getTransaction(storeName) : persistence.createTransaction(storeName);
     }
 
-    protected <E extends Entity> void detachEntity(EntityManager em, @Nullable E rootEntity, View view) {
+    protected <E extends Entity> void detachEntity(EntityManager em, @Nullable E rootEntity, FetchPlan view) {
         if (rootEntity == null)
             return;
         em.detach(rootEntity);

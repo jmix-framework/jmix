@@ -21,7 +21,7 @@ import test_support.entity.TestAppEntityItem
 import test_support.entity.TestSecondAppEntity
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
-import io.jmix.core.ViewBuilder
+import io.jmix.core.FetchPlanBuilder
 import test_support.DataSpec
 
 import javax.inject.Inject
@@ -49,7 +49,7 @@ class DataManagerCommitTest extends DataSpec {
     def "test view after commit"() {
         when:
 
-        def view = ViewBuilder.of(TestAppEntity)
+        def view = FetchPlanBuilder.of(TestAppEntity)
                 .add("createTs")
                 .add("items.createTs")
                 .build()
@@ -67,7 +67,7 @@ class DataManagerCommitTest extends DataSpec {
 
         def entity = new TestSecondAppEntity(name: 'secondAppEntity', appEntity: loadedAppEntity)
 
-        def commitView = ViewBuilder.of(TestSecondAppEntity)
+        def commitView = FetchPlanBuilder.of(TestSecondAppEntity)
                 .add("name")
                 .add("appEntity.createTs")
                 .add("appEntity.items.name")

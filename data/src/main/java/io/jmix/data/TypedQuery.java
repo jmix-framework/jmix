@@ -17,7 +17,7 @@
 package io.jmix.data;
 
 import io.jmix.core.entity.Entity;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 
 import javax.annotation.Nullable;
 import javax.persistence.FlushModeType;
@@ -69,13 +69,13 @@ public interface TypedQuery<T> extends Query {
     TypedQuery<T> setLockMode(LockModeType lockMode);
 
     @Override
-    TypedQuery<T> setView(@Nullable View view);
+    TypedQuery<T> setView(@Nullable FetchPlan view);
 
     @Override
     TypedQuery<T> setView(Class<? extends Entity> entityClass, String viewName);
 
     @Override
-    TypedQuery<T> addView(View view);
+    TypedQuery<T> addView(FetchPlan view);
 
     @Override
     TypedQuery<T> addView(Class<? extends Entity> entityClass, String viewName);

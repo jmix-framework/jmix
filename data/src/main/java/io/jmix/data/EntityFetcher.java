@@ -33,7 +33,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
 /**
- * Fetches entities by views by accessing reference attributes.
+ * Fetches entities by fetch plans by accessing reference attributes.
  */
 @Component(EntityFetcher.NAME)
 public class EntityFetcher {
@@ -46,7 +46,7 @@ public class EntityFetcher {
     protected Metadata metadata;
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     @Inject
     protected Persistence persistence;
@@ -58,65 +58,65 @@ public class EntityFetcher {
     protected MetadataTools metadataTools;
 
     /**
-     * Fetch instance by view object.
+     * Fetch instance by fetch plan.
      */
-    public void fetch(Entity instance, View view) {
-        if (view == null)
+    public void fetch(Entity instance, FetchPlan fetchPlan) {
+        if (fetchPlan == null)
             return;
-        fetch(instance, view, new HashMap<>(), false);
+        fetch(instance, fetchPlan, new HashMap<>(), false);
     }
 
     /**
-     * Fetch instance by view name.
+     * Fetch instance by fetch plan.
      */
-    public void fetch(Entity instance, String viewName) {
-        if (viewName == null)
+    public void fetch(Entity instance, String fetchPlanName) {
+        if (fetchPlanName == null)
             return;
-        View view = viewRepository.getView(instance.getClass(), viewName);
-        fetch(instance, view, new HashMap<>(), false);
+        FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
+        fetch(instance, fetchPlan, new HashMap<>(), false);
     }
 
     /**
-     * Fetch instance by view object.
+     * Fetch instance by fetch plan.
      *
      * @param optimizeForDetached if true, detached objects encountered in the graph will be first checked whether all
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(Entity instance, View view, boolean optimizeForDetached) {
-        if (view == null)
+    public void fetch(Entity instance, FetchPlan fetchPlan, boolean optimizeForDetached) {
+        if (fetchPlan == null)
             return;
-        fetch(instance, view, new HashMap<>(), optimizeForDetached);
+        fetch(instance, fetchPlan, new HashMap<>(), optimizeForDetached);
     }
 
     /**
-     * Fetch instance by view name.
+     * Fetch instance by fetch plan.
      *
      * @param optimizeForDetached if true, detached objects encountered in the graph will be first checked whether all
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(Entity instance, String viewName, boolean optimizeForDetached) {
-        if (viewName == null)
+    public void fetch(Entity instance, String fetchPlanName, boolean optimizeForDetached) {
+        if (fetchPlanName == null)
             return;
-        View view = viewRepository.getView(instance.getClass(), viewName);
-        fetch(instance, view, new HashMap<>(), optimizeForDetached);
+        FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
+        fetch(instance, fetchPlan, new HashMap<>(), optimizeForDetached);
     }
 
-    protected void fetch(Entity entity, View view, Map<Instance, Set<View>> visited, boolean optimizeForDetached) {
-        Set<View> views = visited.get(entity);
-        if (views == null) {
-            views = new HashSet<>();
-            visited.put(entity, views);
-        } else if (views.contains(view)) {
+    protected void fetch(Entity entity, FetchPlan fetchPlan, Map<Instance, Set<FetchPlan>> visited, boolean optimizeForDetached) {
+        Set<FetchPlan> fetchPlans = visited.get(entity);
+        if (fetchPlans == null) {
+            fetchPlans = new HashSet<>();
+            visited.put(entity, fetchPlans);
+        } else if (fetchPlans.contains(fetchPlan)) {
             return;
         }
-        views.add(view);
+        fetchPlans.add(fetchPlan);
 
         if (log.isTraceEnabled()) log.trace("Fetching instance " + entity);
 
         MetaClass metaClass = metadata.getClass(entity.getClass());
-        for (ViewProperty property : view.getProperties()) {
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty))
                 continue;
@@ -124,17 +124,17 @@ public class EntityFetcher {
             if (log.isTraceEnabled()) log.trace("Fetching property " + property.getName());
 
             Object value = entity.getValue(property.getName());
-            View propertyView = property.getView();
-            if (value != null && propertyView != null) {
+            FetchPlan propertyFetchPlan = property.getFetchPlan();
+            if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
                     for (Object item : ((Collection) value)) {
                         if (item instanceof Entity)
-                            fetch((Entity) item, propertyView, visited, optimizeForDetached);
+                            fetch((Entity) item, propertyFetchPlan, visited, optimizeForDetached);
                     }
                 } else if (value instanceof Entity) {
                     Entity e = (Entity) value;
                     if (!metaProperty.isReadOnly() && entityStates.isDetached(value) && !(value instanceof EmbeddableEntity)) {
-                        if (!optimizeForDetached || needReloading(e, propertyView)) {
+                        if (!optimizeForDetached || needReloading(e, propertyFetchPlan)) {
                             if (log.isTraceEnabled()) {
                                 log.trace("Object " + value + " is detached, loading it");
                             }
@@ -146,22 +146,22 @@ public class EntityFetcher {
                                     Entity managed = em.find(e.getClass(), e.getId());
                                     if (managed != null) { // the instance here can be null if it has been deleted
                                         entity.setValue(property.getName(), managed);
-                                        fetch(managed, propertyView, visited, optimizeForDetached);
+                                        fetch(managed, propertyFetchPlan, visited, optimizeForDetached);
                                     }
                                     tx.commit();
                                 }
                             }
                         }
                     } else {
-                        fetch(e, propertyView, visited, optimizeForDetached);
+                        fetch(e, propertyFetchPlan, visited, optimizeForDetached);
                     }
                 }
             }
         }
     }
 
-    protected boolean needReloading(Entity entity, View view) {
-        return !entityStates.isLoadedWithView(entity, view);
+    protected boolean needReloading(Entity entity, FetchPlan fetchPlan) {
+        return !entityStates.isLoadedWithFetchPlan(entity, fetchPlan);
     }
 
     protected boolean isLazyFetchedLocalAttribute(MetaProperty metaProperty) {

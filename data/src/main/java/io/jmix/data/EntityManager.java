@@ -17,7 +17,7 @@ package io.jmix.data;
 
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 
 import javax.annotation.Nullable;
 import java.sql.Connection;
@@ -25,7 +25,7 @@ import java.sql.Connection;
 /**
  * Interface used to interact with the persistence context.
  *
- * <p>Mostly mimics the {@code javax.persistence.EntityManager} interface and adds methods for working with views and
+ * <p>Mostly mimics the {@code javax.persistence.EntityManager} interface and adds methods for working with fetch plans and
  * soft deletion.</p>
  */
 public interface EntityManager {
@@ -56,16 +56,16 @@ public interface EntityManager {
     <T extends Entity> T merge(T entity);
 
     /**
-     * DEPRECATED. Use {@code io.jmix.core.sys.EntityFetcher#fetch(Entity, View)} if needed.
+     * DEPRECATED. Use {@code io.jmix.core.sys.EntityFetcher#fetch(Entity, FetchPlan)} if needed.
      */
     @Deprecated
-    <T extends Entity> T merge(T entity, @Nullable View view);
+    <T extends Entity> T merge(T entity, @Nullable FetchPlan fetchPlan);
 
     /**
      * DEPRECATED. Use {@code io.jmix.core.sys.EntityFetcher#fetch(Entity, String)} if needed.
      */
     @Deprecated
-    <T extends Entity> T merge(T entity, @Nullable String viewName);
+    <T extends Entity> T merge(T entity, @Nullable String fetchPlanName);
 
     /**
      * Remove the entity instance.
@@ -91,35 +91,35 @@ public interface EntityManager {
     /**
      * Find by primary key.
      * <p>
-     * Due to accepting views, this method actually executes a {@link Query} which may lead to flushing of the
+     * Due to accepting fetch plans, this method actually executes a {@link Query} which may lead to flushing of the
      * persistence context and invoking listeners on modified entities.
      *
      * @param entityClass   entity class
      * @param id            entity id
-     * @param views         array of views
+     * @param fetchPlans         array of fetch plans
      * @return the found entity instance or null if the entity does not exist
      * @throws IllegalArgumentException if the first argument does not denote an entity type or the second argument
      * is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends Entity<K>, K> T find(Class<T> entityClass, K id, View... views);
+    <T extends Entity<K>, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans);
 
     /**
      * Find by primary key.
      * <p>
-     * Due to accepting views, this method actually executes a {@link Query} which may lead to flushing of the
+     * Due to accepting fetch plans, this method actually executes a {@link Query} which may lead to flushing of the
      * persistence context and invoking listeners on modified entities.
      *
      * @param entityClass   entity class
      * @param id            entity id
-     * @param viewNames     array of view names for this entity
+     * @param fetchPlanNames     array of fetch plan names for this entity
      *
      * @return the found entity instance or null if the entity does not exist
      * @throws IllegalArgumentException if the first argument does not denote an entity type or the second argument
      * is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends Entity<K>, K> T find(Class<T> entityClass, K id, String... viewNames);
+    <T extends Entity<K>, K> T find(Class<T> entityClass, K id, String... fetchPlanNames);
 
     /**
      * Get an instance, whose state may be lazily fetched.<br>
@@ -189,30 +189,30 @@ public interface EntityManager {
     <T extends Entity> TypedQuery<T> createNativeQuery(String sqlString, Class<T> resultClass);
 
     /**
-     * Reload an entity from DB according to a combined view defined by the given array of views.
-     * <br> Ensures all combined view attributes are loaded.
+     * Reload an entity from DB according to a combined fetch plan defined by the given array of fetch plans.
+     * <br> Ensures all combined fetch plan attributes are loaded.
      * <br> If the given entity is in managed state, the method returns the same object instance. If the entity is
      * detached, the method returns a new object instance.
      *
      * @param entity        entity instance to reload
-     * @param viewNames     array of view names
+     * @param fetchPlanNames     array of fetch plan names
      * @return              reloaded entity instance, or null if it has been deleted
      */
     @Nullable
-    <T extends Entity> T reload(T entity, String... viewNames);
+    <T extends Entity> T reload(T entity, String... fetchPlanNames);
 
     /**
-     * Reload an entity from DB according to a combined view defined by the given array of views.
-     * <br> Ensures all combined view attributes are loaded.
+     * Reload an entity from DB according to a combined fetch plan defined by the given array of fetch plans.
+     * <br> Ensures all combined fetch plan attributes are loaded.
      * <br> If the given entity is in managed state, the method returns the same object instance. If the entity is
      * detached, the method returns a new object instance.
      *
      * @param entity        entity instance to reload
-     * @param viewNames     array of view names
+     * @param fetchPlanNames     array of fetch plan names
      * @return              reloaded entity instance
      * @throws javax.persistence.EntityNotFoundException if the entity has been deleted
      */
-    <T extends Entity> T reloadNN(T entity, String... viewNames);
+    <T extends Entity> T reloadNN(T entity, String... fetchPlanNames);
 
     /**
      * Synchronize the persistence context to the underlying database.
@@ -248,7 +248,7 @@ public interface EntityManager {
      * DEPRECATED since v.6
      */
     @Deprecated
-    void fetch(Entity entity, View view);
+    void fetch(Entity entity, FetchPlan fetchPlan);
 
     /**
      * DEPRECATED since v.6.
@@ -256,5 +256,5 @@ public interface EntityManager {
      */
     @Deprecated
     @Nullable
-    <T extends Entity<K>, K> T reload(Class<T> entityClass, K id, String... viewNames);
+    <T extends Entity<K>, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames);
 }

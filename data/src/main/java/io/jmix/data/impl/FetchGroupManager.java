@@ -57,28 +57,28 @@ public class FetchGroupManager {
     private MetadataTools metadataTools;
 
     @Inject
-    private ViewRepository viewRepository;
+    private FetchPlanRepository viewRepository;
 
     @Inject
     private ExtendedEntities extendedEntities;
 
-    public void setView(JpaQuery query, String queryString, @Nullable View view, boolean singleResultExpected) {
+    public void setFetchPlan(JpaQuery query, String queryString, @Nullable FetchPlan fetchPlan, boolean singleResultExpected) {
         Preconditions.checkNotNullArgument(query, "query is null");
-        if (view != null) {
-            AttributeGroup ag = view.loadPartialEntities() ? new FetchGroup() : new LoadGroup();
-            applyView(query, queryString, ag, view, singleResultExpected);
+        if (fetchPlan != null) {
+            AttributeGroup ag = fetchPlan.loadPartialEntities() ? new FetchGroup() : new LoadGroup();
+            applyFetchPlan(query, queryString, ag, fetchPlan, singleResultExpected);
         } else {
             query.setHint(QueryHints.FETCH_GROUP, null);
         }
     }
 
-    public void addView(JpaQuery query, String queryString, View view, boolean singleResultExpected) {
+    public void addFetchPlan(JpaQuery query, String queryString, FetchPlan fetchPlan, boolean singleResultExpected) {
         Preconditions.checkNotNullArgument(query, "query is null");
-        Preconditions.checkNotNullArgument(view, "view is null");
+        Preconditions.checkNotNullArgument(fetchPlan, "fetch plan is null");
 
         Map<String, Object> hints = query.getHints();
         AttributeGroup ag = null;
-        if (view.loadPartialEntities()) {
+        if (fetchPlan.loadPartialEntities()) {
             if (hints != null)
                 ag = (FetchGroup) hints.get(QueryHints.FETCH_GROUP);
             if (ag == null)
@@ -90,26 +90,26 @@ public class FetchGroupManager {
                 ag = new LoadGroup();
         }
 
-        applyView(query, queryString, ag, view, singleResultExpected);
+        applyFetchPlan(query, queryString, ag, fetchPlan, singleResultExpected);
     }
 
-    private void applyView(JpaQuery query, String queryString, AttributeGroup attrGroup, View view,
-                           boolean singleResultExpected) {
+    private void applyFetchPlan(JpaQuery query, String queryString, AttributeGroup attrGroup, FetchPlan fetchPlan,
+                                boolean singleResultExpected) {
 
         boolean useFetchGroup = attrGroup instanceof FetchGroup;
 
-        FetchGroupDescription description = calculateFetchGroup(queryString, view, singleResultExpected, useFetchGroup);
+        FetchGroupDescription description = calculateFetchGroup(queryString, fetchPlan, singleResultExpected, useFetchGroup);
 
         if (attrGroup instanceof FetchGroup)
             ((FetchGroup) attrGroup).setShouldLoadAll(true);
 
         if (log.isTraceEnabled())
-            log.trace((useFetchGroup ? "Fetch" : "Load") + " group for " + view + ":\n" + description.getAttributes().stream().collect(Collectors.joining("\n")));
+            log.trace((useFetchGroup ? "Fetch" : "Load") + " group for " + fetchPlan + ":\n" + description.getAttributes().stream().collect(Collectors.joining("\n")));
         for (String attribute : description.getAttributes()) {
             attrGroup.addAttribute(attribute);
         }
 
-        MetaClass metaClass = metadata.getClass(view.getEntityClass());
+        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         if (!metadataTools.isCacheable(metaClass)) {
             query.setHint(useFetchGroup ? QueryHints.FETCH_GROUP : QueryHints.LOAD_GROUP, attrGroup);
         }
@@ -118,7 +118,7 @@ public class FetchGroupManager {
             String fetchModes = description.getHints().entrySet().stream()
                     .map(e -> e.getKey() + "=" + (e.getValue().equals(QueryHints.LEFT_FETCH) ? "JOIN" : "BATCH"))
                     .collect(Collectors.joining(", "));
-            log.debug("Fetch modes for " + view + ": " + (fetchModes.equals("") ? "<none>" : fetchModes));
+            log.debug("Fetch modes for " + fetchPlan + ": " + (fetchModes.equals("") ? "<none>" : fetchModes));
         }
 
         for (Map.Entry<String, String> entry : description.getHints().entrySet()) {
@@ -131,11 +131,11 @@ public class FetchGroupManager {
     }
 
     public FetchGroupDescription calculateFetchGroup(String queryString,
-                                                     View view,
+                                                     FetchPlan fetchPlan,
                                                      boolean singleResultExpected,
                                                      boolean useFetchGroup) {
         Set<FetchGroupField> fetchGroupFields = new LinkedHashSet<>();
-        processView(view, null, fetchGroupFields, useFetchGroup);
+        processFetchPlan(fetchPlan, null, fetchGroupFields, useFetchGroup);
 
         FetchGroupDescription description = new FetchGroupDescription();
 
@@ -149,7 +149,7 @@ public class FetchGroupManager {
                 refFields.add(field);
         }
 
-        MetaClass metaClass = metadata.getClass(view.getEntityClass());
+        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         if (!refFields.isEmpty()) {
             String alias = QueryTransformerFactory.createParser(queryString).getEntityAlias();
 
@@ -366,8 +366,8 @@ public class FetchGroupManager {
         return result;
     }
 
-    private void processView(View view, FetchGroupField parentField, Set<FetchGroupField> fetchGroupFields, boolean useFetchGroup) {
-        Class<? extends Entity> entityClass = view.getEntityClass();
+    private void processFetchPlan(FetchPlan fetchPlan, FetchGroupField parentField, Set<FetchGroupField> fetchGroupFields, boolean useFetchGroup) {
+        Class<? extends Entity> entityClass = fetchPlan.getEntityClass();
 
         if (useFetchGroup) {
             // Always add SoftDelete properties to support EntityManager contract
@@ -387,7 +387,7 @@ public class FetchGroupManager {
             }
         }
 
-        for (ViewProperty property : view.getProperties()) {
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
             String propertyName = property.getName();
             MetaClass metaClass = metadata.getClass(entityClass);
             MetaProperty metaProperty = metaClass.getProperty(propertyName);
@@ -395,35 +395,35 @@ public class FetchGroupManager {
             if (metadataTools.isPersistent(metaProperty) && (metaProperty.getRange().isClass() || useFetchGroup)) {
                 FetchGroupField field = createFetchGroupField(entityClass, parentField, propertyName, property.getFetchMode());
                 fetchGroupFields.add(field);
-                if (property.getView() != null) {
+                if (property.getFetchPlan() != null) {
                     if (ClassUtils.isPrimitiveOrWrapper(metaProperty.getJavaType()) ||
                             String.class.isAssignableFrom(metaProperty.getJavaType())) {
-                        String message = "Wrong Views mechanism usage found. View%s is set for property \"%s\" of " +
+                        String message = "Wrong fetch plans mechanism usage found. Fetch plan %s is set for property \"%s\" of " +
                                 "class \"%s\", but this property does not point to an Entity";
 
-                        String propertyViewName = property.getView().getName();
-                        propertyViewName = propertyViewName != null && !propertyViewName.isEmpty()
-                                ? " \"" + propertyViewName + "\""
+                        String propertyFetchPlanName = property.getFetchPlan().getName();
+                        propertyFetchPlanName = propertyFetchPlanName != null && !propertyFetchPlanName.isEmpty()
+                                ? "\"" + propertyFetchPlanName + "\""
                                 : "";
 
-                        message = String.format(message, propertyViewName, property.getName(),
+                        message = String.format(message, propertyFetchPlanName, property.getName(),
                                 metaClass.getName());
                         throw new DevelopmentException(message);
                     }
 
-                    processView(property.getView(), field, fetchGroupFields, useFetchGroup);
+                    processFetchPlan(property.getFetchPlan(), field, fetchGroupFields, useFetchGroup);
                 }
             }
 
             List<String> relatedProperties = metadataTools.getRelatedProperties(entityClass, propertyName);
             for (String relatedProperty : relatedProperties) {
                 MetaProperty relatedMetaProp = metaClass.getProperty(relatedProperty);
-                if (!view.containsProperty(relatedProperty) && (relatedMetaProp.getRange().isClass() || useFetchGroup)) {
+                if (!fetchPlan.containsProperty(relatedProperty) && (relatedMetaProp.getRange().isClass() || useFetchGroup)) {
                     FetchGroupField field = createFetchGroupField(entityClass, parentField, relatedProperty);
                     fetchGroupFields.add(field);
                     if (relatedMetaProp.getRange().isClass()) {
-                        View relatedView = viewRepository.getView(relatedMetaProp.getRange().asClass(), View.MINIMAL);
-                        processView(relatedView, field, fetchGroupFields, useFetchGroup);
+                        FetchPlan relatedFetchPlan = viewRepository.getFetchPlan(relatedMetaProp.getRange().asClass(), FetchPlan.MINIMAL);
+                        processFetchPlan(relatedFetchPlan, field, fetchGroupFields, useFetchGroup);
                     }
                 }
             }

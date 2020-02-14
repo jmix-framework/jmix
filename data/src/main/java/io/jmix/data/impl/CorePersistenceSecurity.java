@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.security.OnCoreSecurityImplementation;
 import io.jmix.data.PersistenceSecurity;
@@ -76,7 +76,7 @@ public class CorePersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public void assertTokenForREST(Entity entity, View view) {
+    public void assertTokenForREST(Entity entity, FetchPlan view) {
 
     }
 

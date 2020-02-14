@@ -174,7 +174,7 @@ public interface TransactionalDataManager {
      * @param view   view object which affects the returned instance
      * @return saved instance fetched according to the given view
      */
-    <E extends Entity> E save(E entity, @Nullable View view);
+    <E extends Entity> E save(E entity, @Nullable FetchPlan view);
 
     /**
      * Saves the entity to the data store.

@@ -35,33 +35,33 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, String viewName) {
-        return getDataManager().reload(entity, viewName);
+    public <E extends Entity> E reload(E entity, String fetchPlanName) {
+        return getDataManager().reload(entity, fetchPlanName);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, View view) {
-        return getDataManager().reload(entity, view);
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan) {
+        return getDataManager().reload(entity, fetchPlan);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, View view, @Nullable MetaClass metaClass) {
-        return getDataManager().reload(entity, view, metaClass);
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass) {
+        return getDataManager().reload(entity, fetchPlan, metaClass);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, View view, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
-        return getDataManager().reload(entity, view, metaClass, loadDynamicAttributes);
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
+        return getDataManager().reload(entity, fetchPlan, metaClass, loadDynamicAttributes);
     }
 
     @Override
-    public <E extends Entity> E commit(E instance, @Nullable View view) {
-        return getDataManager().commit(instance, view);
+    public <E extends Entity> E commit(E instance, @Nullable FetchPlan fetchPlan) {
+        return getDataManager().commit(instance, fetchPlan);
     }
 
     @Override
-    public <E extends Entity> E commit(E entity, @Nullable String viewName) {
-        return getDataManager().commit(entity, viewName);
+    public <E extends Entity> E commit(E entity, @Nullable String fetchPlanName) {
+        return getDataManager().commit(entity, fetchPlanName);
     }
 
     @Override

@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,10 +78,10 @@ public class GetReferenceIdTest {
 
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setView(
-                    new View(User.class, false)
+                    new FetchPlan(User.class, false)
                             .addProperty("login")
-                            .addProperty("userRoles", new View(UserRole.class)
-                                    .addProperty("role", new View(Role.class)
+                            .addProperty("userRoles", new FetchPlan(UserRole.class)
+                                    .addProperty("role", new FetchPlan(Role.class)
                                             .addProperty("name")))
                             .setLoadPartialEntities(true)
             );
@@ -112,12 +112,12 @@ public class GetReferenceIdTest {
 
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setView(
-                    new View(User.class, false)
+                    new FetchPlan(User.class, false)
                             .addProperty("login")
-                            .addProperty("group", new View(Group.class)
+                            .addProperty("group", new FetchPlan(Group.class)
                                     .addProperty("name"))
-                            .addProperty("userRoles", new View(UserRole.class)
-                                    .addProperty("role", new View(Role.class)
+                            .addProperty("userRoles", new FetchPlan(UserRole.class)
+                                    .addProperty("role", new FetchPlan(Role.class)
                                             .addProperty("name")))
                             .setLoadPartialEntities(true)
             );

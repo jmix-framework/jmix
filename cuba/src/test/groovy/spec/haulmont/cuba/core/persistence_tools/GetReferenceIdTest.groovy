@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import io.jmix.core.AppBeans
 import io.jmix.core.Metadata
-import io.jmix.core.View
-import io.jmix.core.ViewRepository
+import io.jmix.core.FetchPlan
+import io.jmix.core.FetchPlanRepository
 import io.jmix.data.Persistence
 import io.jmix.data.PersistenceTools
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -93,7 +93,7 @@ class GetReferenceIdTest extends CoreTestSpecification {
 
         def tx = persistence.createTransaction()
         try {
-            def view = AppBeans.get(ViewRepository).getView(Order, View.LOCAL)
+            def view = AppBeans.get(FetchPlanRepository).getFetchPlan(Order, FetchPlan.LOCAL)
             view.setLoadPartialEntities(true)
 
             order = persistence.getEntityManager().find(Order, order1.id, view)

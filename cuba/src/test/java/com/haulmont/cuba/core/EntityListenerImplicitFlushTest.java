@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -67,7 +67,7 @@ public class EntityListenerImplicitFlushTest {
 
             TypedQuery<User> query = em.createQuery("select u from test$User u where u.loginLowerCase = :login", User.class);
             query.setParameter("login", user.getLogin());
-            query.setViewName(View.LOCAL); // setting a view leads to using FlushModeType.AUTO - see QueryImpl.getQuery()
+            query.setViewName(FetchPlan.LOCAL); // setting a view leads to using FlushModeType.AUTO - see QueryImpl.getQuery()
             List<User> list = query.getResultList();
             assertEquals(1, list.size());
             assertEquals(user, list.get(0));

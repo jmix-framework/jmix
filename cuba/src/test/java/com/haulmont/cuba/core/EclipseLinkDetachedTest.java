@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -158,7 +158,7 @@ public class EclipseLinkDetachedTest {
         tx = persistence.createTransaction();
         try {
             em = persistence.getEntityManager();
-            View view = new View(User.class).addProperty("login")
+            FetchPlan view = new FetchPlan(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
             assertNotNull(user);
@@ -190,7 +190,7 @@ public class EclipseLinkDetachedTest {
         tx = persistence.createTransaction();
         try {
             em = persistence.getEntityManager();
-            View view = new View(User.class).addProperty("login")
+            FetchPlan view = new FetchPlan(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
             assertNotNull(user);
@@ -228,7 +228,7 @@ public class EclipseLinkDetachedTest {
         tx = persistence.createTransaction();
         try {
             em = persistence.getEntityManager();
-            View view = new View(User.class).addProperty("login")
+            FetchPlan view = new FetchPlan(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
             assertNotNull(user);

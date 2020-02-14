@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchMode;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -92,7 +92,7 @@ public class EclipseLinkQueriesTest {
         List<Group> result;
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            View view = new View(Group.class).addProperty("constraints");
+            FetchPlan view = new FetchPlan(Group.class).addProperty("constraints");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g, test$User u where u.group = g", Group.class);
             query.setView(view);
             result = query.getResultList();
@@ -110,7 +110,7 @@ public class EclipseLinkQueriesTest {
         List<Group> result;
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            View view = new View(Group.class).addProperty("parent");
+            FetchPlan view = new FetchPlan(Group.class).addProperty("parent");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g, test$User u where u.group = g", Group.class);
             query.setView(view);
             result = query.getResultList();
@@ -130,7 +130,7 @@ public class EclipseLinkQueriesTest {
     public void testJoinOnWithToManyView() throws Exception {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            View view = new View(Group.class).addProperty("constraints");
+            FetchPlan view = new FetchPlan(Group.class).addProperty("constraints");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g join test$QueryResult qr on qr.entityId = g.id where qr.queryKey = 1", Group.class);
             query.setView(view);
             List<Group> result = query.getResultList();
@@ -143,7 +143,7 @@ public class EclipseLinkQueriesTest {
     public void testJoinOnWithParentReference() throws Exception {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            View view = new View(Group.class).addProperty("parent");
+            FetchPlan view = new FetchPlan(Group.class).addProperty("parent");
             TypedQuery<Group> query = em.createQuery("select g from test$Group g join test$QueryResult qr on qr.entityId = g.id where qr.queryKey = 1", Group.class);
             query.setView(view);
             List<Group> result = query.getResultList();
@@ -156,7 +156,7 @@ public class EclipseLinkQueriesTest {
     public void testJoinOnWithToManyView2() throws Exception {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            View view = new View(Group.class).addProperty("constraints", new View(Constraint.class, View.LOCAL), FetchMode.JOIN);
+            FetchPlan view = new FetchPlan(Group.class).addProperty("constraints", new FetchPlan(Constraint.class, FetchPlan.LOCAL), FetchMode.JOIN);
             TypedQuery<Group> query = em.createQuery("select g from test$Group g join test$QueryResult qr on qr.entityId = g.id where qr.queryKey = 1", Group.class);
             query.setView(view);
             List<Group> result = query.getResultList();

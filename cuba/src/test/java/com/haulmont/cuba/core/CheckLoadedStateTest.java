@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @CoreTest
 public class CheckLoadedStateTest {
     @Inject
-    private ViewRepository viewRepository;
+    private FetchPlanRepository viewRepository;
     @Inject
     private Persistence persistence;
     @Inject
@@ -83,8 +83,7 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView(View.LOCAL));
+                .setId(userId).setFetchPlan(FetchPlan.LOCAL));
 
         entityStates.checkLoaded(user, "login", "name", "active");
 
@@ -103,8 +102,7 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView(View.MINIMAL));
+                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
 
         entityStates.checkLoaded(user, "login", "name");
 
@@ -139,21 +137,19 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView(View.LOCAL));
+                .setId(userId).setFetchPlan(FetchPlan.LOCAL));
 
-        assertTrue(entityStates.isLoadedWithView(user, View.LOCAL));
+        assertTrue(entityStates.isLoadedWithView(user, FetchPlan.LOCAL));
 
-        entityStates.checkLoadedWithView(user, View.LOCAL);
+        entityStates.checkLoadedWithFetchPlan(user, FetchPlan.LOCAL);
 
         User userMinimal = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView(View.MINIMAL));
+                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
 
         try {
-            assertFalse(entityStates.isLoadedWithView(userMinimal, View.LOCAL));
+            assertFalse(entityStates.isLoadedWithView(userMinimal, FetchPlan.LOCAL));
 
-            entityStates.checkLoadedWithView(userMinimal, View.LOCAL);
+            entityStates.checkLoadedWithFetchPlan(userMinimal, FetchPlan.LOCAL);
 
             fail("user local attributes are not loaded");
         } catch (IllegalArgumentException e) {
@@ -167,13 +163,12 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView("user.browse"));
+                .setId(userId).setFetchPlan("user.browse"));
 
         try {
             assertFalse(entityStates.isLoadedWithView(user, "user.edit"));
 
-            entityStates.checkLoadedWithView(user, "user.edit");
+            entityStates.checkLoadedWithFetchPlan(user, "user.edit");
 
             fail("user edit attributes are not loaded");
         } catch (IllegalArgumentException e) {
@@ -181,12 +176,11 @@ public class CheckLoadedStateTest {
         }
 
         User userEdit = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView("user.edit"));
+                .setId(userId).setFetchPlan("user.edit"));
 
         assertTrue(entityStates.isLoadedWithView(userEdit, "user.edit"));
 
-        entityStates.checkLoadedWithView(userEdit, "user.edit");
+        entityStates.checkLoadedWithFetchPlan(userEdit, "user.edit");
     }
 
     @Test
@@ -195,8 +189,7 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView(View.MINIMAL));
+                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
 
         UserRelatedNews record = metadata.create(UserRelatedNews.class);
 
@@ -207,22 +200,21 @@ public class CheckLoadedStateTest {
 
         UserRelatedNews testRecord = dataManager.commit(record);
 
-        View view = new View(UserRelatedNews.class, false);
+        FetchPlan view = new FetchPlan(UserRelatedNews.class, false);
         view.addProperty("userLogin");
         view.addProperty("name");
 
-        entityStates.checkLoadedWithView(testRecord, view);
+        entityStates.checkLoadedWithFetchPlan(testRecord, view);
 
-        assertTrue(entityStates.isLoadedWithView(testRecord, view));
+        assertTrue(entityStates.isLoadedWithFetchPlan(testRecord, view));
 
         UserRelatedNews minimalRecord = dataManager.load(LoadContext.create(UserRelatedNews.class)
-                .setId(userRelatedNewsId)
-                .setView(View.MINIMAL));
+                .setId(userRelatedNewsId).setFetchPlan(FetchPlan.MINIMAL));
 
         try {
-            assertFalse(entityStates.isLoadedWithView(minimalRecord, view));
+            assertFalse(entityStates.isLoadedWithFetchPlan(minimalRecord, view));
 
-            entityStates.checkLoadedWithView(minimalRecord, view);
+            entityStates.checkLoadedWithFetchPlan(minimalRecord, view);
 
             fail("minimal record attributes are not loaded");
         } catch (IllegalArgumentException e) {
@@ -236,8 +228,7 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId)
-                .setView(View.MINIMAL));
+                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
 
         recursiveUserRelatedIds = new ArrayList<>();
 
@@ -256,22 +247,21 @@ public class CheckLoadedStateTest {
         UserRelatedNews committedRecord = dataManager.commit(record);
         recursiveUserRelatedIds.add(committedRecord.getId());
 
-        View view = new View(UserRelatedNews.class, false);
+        FetchPlan view = new FetchPlan(UserRelatedNews.class, false);
         view.addProperty("parent");
         view.addProperty("name");
 
-        assertTrue(entityStates.isLoadedWithView(committedRecord, view));
+        assertTrue(entityStates.isLoadedWithFetchPlan(committedRecord, view));
 
-        entityStates.checkLoadedWithView(committedRecord, view);
+        entityStates.checkLoadedWithFetchPlan(committedRecord, view);
 
         UserRelatedNews localRecord = dataManager.load(LoadContext.create(UserRelatedNews.class)
-                .setId(committedRecord.getId())
-                .setView(View.LOCAL));
+                .setId(committedRecord.getId()).setFetchPlan(FetchPlan.LOCAL));
 
         try {
-            assertFalse(entityStates.isLoadedWithView(localRecord, view));
+            assertFalse(entityStates.isLoadedWithFetchPlan(localRecord, view));
 
-            entityStates.checkLoadedWithView(localRecord, view);
+            entityStates.checkLoadedWithFetchPlan(localRecord, view);
 
             fail("local record attributes are not loaded");
         } catch (IllegalArgumentException e) {

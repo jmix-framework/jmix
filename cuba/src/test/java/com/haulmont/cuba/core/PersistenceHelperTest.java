@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -169,7 +169,7 @@ public class PersistenceHelperTest {
             em.persist(server);
         });
 
-        View view = new View(Server.class).addProperty("name").addProperty("data")
+        FetchPlan view = new FetchPlan(Server.class).addProperty("name").addProperty("data")
                 .setLoadPartialEntities(true);
         Server reloadedServer = persistence.callInTransaction((em) -> {
             return em.find(Server.class, server.getId(), view);

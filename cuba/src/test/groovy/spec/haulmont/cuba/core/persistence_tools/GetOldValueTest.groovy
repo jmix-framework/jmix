@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
 import io.jmix.core.Metadata
-import io.jmix.core.View
+import io.jmix.core.FetchPlan
 import io.jmix.data.Persistence
 import io.jmix.data.PersistenceTools
 import org.springframework.jdbc.core.JdbcTemplate
@@ -122,7 +122,7 @@ class GetOldValueTest extends CoreTestSpecification {
         def order
         def oldValue
 
-        def view = new View(Order).addProperty('number').setLoadPartialEntities(true)
+        def view = new FetchPlan(Order).addProperty('number').setLoadPartialEntities(true)
 
         when:
 
@@ -156,7 +156,7 @@ class GetOldValueTest extends CoreTestSpecification {
         def order
         def oldValue
 
-        def view = new View(Order).addProperty('orderLines', new View(OrderLine).addProperty('productName'))
+        def view = new FetchPlan(Order).addProperty('orderLines', new FetchPlan(OrderLine).addProperty('productName'))
 
         when:
 
@@ -182,7 +182,7 @@ class GetOldValueTest extends CoreTestSpecification {
         List<OrderLine> oldValue
         OrderLine orderLine11, orderLine12
 
-        def view = new View(Order).addProperty('orderLines', new View(OrderLine).addProperty('productName'))
+        def view = new FetchPlan(Order).addProperty('orderLines', new FetchPlan(OrderLine).addProperty('productName'))
 
         persistence.runInTransaction { em ->
             orderLine11 = metadata.create(OrderLine)

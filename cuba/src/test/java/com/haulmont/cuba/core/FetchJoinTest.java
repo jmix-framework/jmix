@@ -160,15 +160,15 @@ public class FetchJoinTest {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
 
-            View fView = new View(JoinF.class).addProperty("name");
-            View eView = new View(JoinE.class).addProperty("name").addProperty("f", fView, FetchMode.JOIN);
-            View dView = new View(JoinD.class).addProperty("name");
-            View cView = new View(JoinC.class).addProperty("name")
+            FetchPlan fView = new FetchPlan(JoinF.class).addProperty("name");
+            FetchPlan eView = new FetchPlan(JoinE.class).addProperty("name").addProperty("f", fView, FetchMode.JOIN);
+            FetchPlan dView = new FetchPlan(JoinD.class).addProperty("name");
+            FetchPlan cView = new FetchPlan(JoinC.class).addProperty("name")
                     .addProperty("d", dView, FetchMode.JOIN)
                     .addProperty("e", eView, FetchMode.JOIN);
-            View bView = new View(JoinB.class).addProperty("name")
+            FetchPlan bView = new FetchPlan(JoinB.class).addProperty("name")
                     .addProperty("c", cView, FetchMode.JOIN);
-            View aView = new View(JoinA.class).addProperty("name")
+            FetchPlan aView = new FetchPlan(JoinA.class).addProperty("name")
                     .addProperty("b", bView, FetchMode.JOIN);
 
             JoinA loadedA = em.find(JoinA.class, joinA.getId(), aView);
@@ -185,19 +185,19 @@ public class FetchJoinTest {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
 
-            View partyView = new View(Party.class).addProperty("name");
-            View productView = new View(Product.class).addProperty("name");
-            View customerView = new View(Customer.class)
+            FetchPlan partyView = new FetchPlan(Party.class).addProperty("name");
+            FetchPlan productView = new FetchPlan(Product.class).addProperty("name");
+            FetchPlan customerView = new FetchPlan(Customer.class)
                     .addProperty("customerNumber")
                     .addProperty("party", partyView);
-            View salesPersonView = new View(SalesPerson.class)
+            FetchPlan salesPersonView = new FetchPlan(SalesPerson.class)
                     .addProperty("salespersonNumber")
                     .addProperty("party", partyView);
-            View orderView = new View(Order.class)
+            FetchPlan orderView = new FetchPlan(Order.class)
                     .addProperty("orderNumber")
                     .addProperty("customer", customerView)
                     .addProperty("salesPerson", salesPersonView);
-            View orderLineView = new View(OrderLine.class)
+            FetchPlan orderLineView = new FetchPlan(OrderLine.class)
                     .addProperty("order", orderView)
                     .addProperty("product", productView);
 
@@ -213,14 +213,14 @@ public class FetchJoinTest {
 
     @Test
     public void testLoadingJoinedInheritance() throws Exception {
-        View typeLocalView = new View(JoinType.class).addProperty("name");
-        View classTypeView = new View(JoinClassType.class)
+        FetchPlan typeLocalView = new FetchPlan(JoinType.class).addProperty("name");
+        FetchPlan classTypeView = new FetchPlan(JoinClassType.class)
                 .addProperty("name")
                 .addProperty("types", typeLocalView);
-        View typeView = new View(JoinType.class)
+        FetchPlan typeView = new FetchPlan(JoinType.class)
                 .addProperty("name")
                 .addProperty("classType", classTypeView);
-        View userView = new View(JoinUser.class)
+        FetchPlan userView = new FetchPlan(JoinUser.class)
                 .addProperty("name")
                 .addProperty("type", typeView);
 

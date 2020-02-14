@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +88,7 @@ public class PersistenceTest {
             EntityManager em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
-                    new View(User.class, false).addProperty("login").setLoadPartialEntities(true));
+                    new FetchPlan(User.class, false).addProperty("login").setLoadPartialEntities(true));
 
             assertTrue(persistence.getTools().isLoaded(user, "login"));
             assertFalse(persistence.getTools().isLoaded(user, "name"));
@@ -100,8 +100,8 @@ public class PersistenceTest {
             em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
-                    new View(User.class, false).addProperty("login").setLoadPartialEntities(true),
-                    new View(User.class, false).addProperty("name").setLoadPartialEntities(true)
+                    new FetchPlan(User.class, false).addProperty("login").setLoadPartialEntities(true),
+                    new FetchPlan(User.class, false).addProperty("name").setLoadPartialEntities(true)
             );
 
             assertTrue(persistence.getTools().isLoaded(user, "login"));
@@ -114,8 +114,8 @@ public class PersistenceTest {
             em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
-                    new View(User.class, false).addProperty("login").setLoadPartialEntities(true),
-                    new View(User.class, false).addProperty("group", new View(Group.class).addProperty("name")).setLoadPartialEntities(true)
+                    new FetchPlan(User.class, false).addProperty("login").setLoadPartialEntities(true),
+                    new FetchPlan(User.class, false).addProperty("group", new FetchPlan(Group.class).addProperty("name")).setLoadPartialEntities(true)
             );
 
             assertTrue(persistence.getTools().isLoaded(user, "login"));
@@ -265,11 +265,11 @@ public class PersistenceTest {
     @Test
     public void testLostChangeOnReloadWithView1() throws Exception {
         persistence.runInTransaction((em) -> {
-            User u = loadUserByName(em, View.LOCAL);
+            User u = loadUserByName(em, FetchPlan.LOCAL);
 
             u.setLanguage("en");
 
-            u = loadUserByName(em, View.LOCAL);
+            u = loadUserByName(em, FetchPlan.LOCAL);
 
             assertEquals("en", u.getLanguage());
         });
@@ -278,11 +278,11 @@ public class PersistenceTest {
     @Test
     public void testLostChangeOnReloadWithView2() throws Exception {
         persistence.runInTransaction((em) -> {
-            User u = loadUserByName(em, View.LOCAL);
+            User u = loadUserByName(em, FetchPlan.LOCAL);
 
             u.setLanguage("fr");
 
-            u = loadUserByName(em, View.LOCAL);
+            u = loadUserByName(em, FetchPlan.LOCAL);
         });
 
         User changedUser = persistence.callInTransaction((em) -> em.find(User.class, userId));
@@ -297,7 +297,7 @@ public class PersistenceTest {
             User u = em.merge(user);
             u.setEmail("abc@example.com");
 
-            u = em.reload(u, View.LOCAL);
+            u = em.reload(u, FetchPlan.LOCAL);
         });
 
         User changedUser = persistence.callInTransaction((em) -> em.find(User.class, userId));

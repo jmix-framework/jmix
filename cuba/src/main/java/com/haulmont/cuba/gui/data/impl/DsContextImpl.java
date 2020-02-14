@@ -19,7 +19,7 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.*;
 import io.jmix.core.AppBeans;
 import io.jmix.core.CommitContext;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -249,13 +249,13 @@ public class DsContextImpl implements DsContextImplementation {
                 boolean listenersEnabled = implementation.enableListeners(false);
                 try {
                     for (Entity entity : implementation.getItemsToCreate()) {
-                        addToContext(entity, datasource, context.getCommitInstances(), context.getViews());
+                        addToContext(entity, datasource, context.getCommitInstances(), context.getFetchPlans());
                     }
                     for (Entity entity : implementation.getItemsToUpdate()) {
-                        addToContext(entity, datasource, context.getCommitInstances(), context.getViews());
+                        addToContext(entity, datasource, context.getCommitInstances(), context.getFetchPlans());
                     }
                     for (Entity entity : implementation.getItemsToDelete()) {
-                        addToContext(entity, datasource, context.getRemoveInstances(), context.getViews());
+                        addToContext(entity, datasource, context.getRemoveInstances(), context.getFetchPlans());
                     }
                 } finally {
                     implementation.enableListeners(listenersEnabled);
@@ -314,7 +314,7 @@ public class DsContextImpl implements DsContextImplementation {
     }
 
     protected void addToContext(Entity entity, Datasource<Entity> datasource,
-                                Collection<Entity> entities, Map<Object, View> views) {
+                                Collection<Entity> entities, Map<Object, FetchPlan> views) {
         if (datasource instanceof NestedDatasource) {
             replaceMasterCopies(entity, ((NestedDatasource) datasource));
         }

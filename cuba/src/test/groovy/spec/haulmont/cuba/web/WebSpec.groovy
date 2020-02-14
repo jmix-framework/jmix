@@ -57,7 +57,7 @@ class WebSpec extends Specification {
     MetadataTools metadataTools
 
     @Inject
-    ViewRepository viewRepository
+    FetchPlanRepository viewRepository
 
     @Inject
     EntityStates entityStates

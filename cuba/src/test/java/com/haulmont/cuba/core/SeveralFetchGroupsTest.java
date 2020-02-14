@@ -120,7 +120,7 @@ public class SeveralFetchGroupsTest {
     public void testLoadTariffVersions() {
         LoadContext<SeveralFetchGroups_TariffVersion> loadContext = new LoadContext<>(SeveralFetchGroups_TariffVersion.class);
         loadContext.setQueryString("select e from test$SeveralFetchGroups_TariffVersion e order by e.name asc");
-        loadContext.setView("tariffVersion.withParent");
+        loadContext.setFetchPlan("tariffVersion.withParent");
         List<SeveralFetchGroups_TariffVersion> result = dataManager.loadList(loadContext);
         for (SeveralFetchGroups_TariffVersion version : result) {
             Assertions.assertNotNull(version.getParent());

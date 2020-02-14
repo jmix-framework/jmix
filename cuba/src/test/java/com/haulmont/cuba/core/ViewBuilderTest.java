@@ -19,9 +19,9 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.Owner;
 import com.haulmont.cuba.core.model.Pet;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.View;
-import io.jmix.core.ViewBuilder;
-import io.jmix.core.ViewProperty;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanBuilder;
+import io.jmix.core.FetchPlanProperty;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +31,7 @@ public class ViewBuilderTest {
 
     @Test
     public void testBuild() {
-        View view = ViewBuilder.of(Pet.class).build();
+        FetchPlan view = FetchPlanBuilder.of(Pet.class).build();
 
         assertNotNull(view);
         assertFalse(containsSystemProperties(view));
@@ -40,7 +40,7 @@ public class ViewBuilderTest {
 
     @Test
     public void testProperty() {
-        View view = ViewBuilder.of(Pet.class).add("name").build();
+        FetchPlan view = FetchPlanBuilder.of(Pet.class).add("name").build();
 
         assertFalse(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
@@ -48,12 +48,12 @@ public class ViewBuilderTest {
 
     @Test
     public void testRefProperty() {
-        View view = ViewBuilder.of(Pet.class).add("owner").build();
+        FetchPlan view = FetchPlanBuilder.of(Pet.class).add("owner").build();
 
         assertFalse(containsSystemProperties(view));
 
         assertNotNull(view.getProperty("owner"));
-        View ownerView = view.getProperty("owner").getView();
+        FetchPlan ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
         assertFalse(containsSystemProperties(ownerView));
         assertFalse(ownerView.containsProperty("name"));
@@ -61,14 +61,14 @@ public class ViewBuilderTest {
 
     @Test
     public void testInlineRefProperty() {
-        View view = ViewBuilder.of(Pet.class)
+        FetchPlan view = FetchPlanBuilder.of(Pet.class)
                 .add("owner.name")
                 .build();
 
         assertFalse(containsSystemProperties(view));
 
         assertNotNull(view.getProperty("owner"));
-        View ownerView = view.getProperty("owner").getView();
+        FetchPlan ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
         assertFalse(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
@@ -76,14 +76,14 @@ public class ViewBuilderTest {
 
     @Test
     public void testRefView() {
-        View view = ViewBuilder.of(Pet.class)
+        FetchPlan view = FetchPlanBuilder.of(Pet.class)
                 .add("owner", builder -> builder.add("name"))
                 .build();
 
         assertFalse(containsSystemProperties(view));
 
         assertNotNull(view.getProperty("owner"));
-        View ownerView = view.getProperty("owner").getView();
+        FetchPlan ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
         assertFalse(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
@@ -91,14 +91,14 @@ public class ViewBuilderTest {
 
     @Test
     public void testRefLocalView() {
-        View view = ViewBuilder.of(Pet.class)
-                .add("owner", View.LOCAL)
+        FetchPlan view = FetchPlanBuilder.of(Pet.class)
+                .add("owner", FetchPlan.LOCAL)
                 .build();
 
         assertFalse(containsSystemProperties(view));
 
         assertNotNull(view.getProperty("owner"));
-        View ownerView = view.getProperty("owner").getView();
+        FetchPlan ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
         assertFalse(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
@@ -107,7 +107,7 @@ public class ViewBuilderTest {
 
     @Test
     public void testProperties() {
-        View view = ViewBuilder.of(Pet.class).addAll("name", "nick").build();
+        FetchPlan view = FetchPlanBuilder.of(Pet.class).addAll("name", "nick").build();
 
         assertFalse(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
@@ -115,12 +115,12 @@ public class ViewBuilderTest {
 
     @Test
     public void testSystem() {
-        View view = ViewBuilder.of(Pet.class).addSystem().addAll("name").build();
+        FetchPlan view = FetchPlanBuilder.of(Pet.class).addSystem().addAll("name").build();
 
         assertTrue(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
 
-        view = ViewBuilder.of(Pet.class).addSystem().addView(View.LOCAL).build();
+        view = FetchPlanBuilder.of(Pet.class).addSystem().addView(FetchPlan.LOCAL).build();
 
         assertTrue(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
@@ -128,7 +128,7 @@ public class ViewBuilderTest {
 
     @Test
     public void testMinimal() {
-        View view = ViewBuilder.of(Pet.class).addView(View.MINIMAL).build();
+        FetchPlan view = FetchPlanBuilder.of(Pet.class).addView(FetchPlan.MINIMAL).build();
 
         assertFalse(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
@@ -136,12 +136,12 @@ public class ViewBuilderTest {
 
     @Test
     public void testLocal() {
-        View petView = ViewBuilder.of(Pet.class).addView(View.LOCAL).build();
+        FetchPlan petView = FetchPlanBuilder.of(Pet.class).addView(FetchPlan.LOCAL).build();
 
         assertFalse(containsSystemProperties(petView));
         assertTrue(petView.containsProperty("name"));
 
-        View ownerView = ViewBuilder.of(Owner.class).addView(View.LOCAL).build();
+        FetchPlan ownerView = FetchPlanBuilder.of(Owner.class).addView(FetchPlan.LOCAL).build();
         assertFalse(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
         assertFalse(ownerView.containsProperty("address"));
@@ -149,7 +149,7 @@ public class ViewBuilderTest {
 
     @Test
     public void testBase() {
-        View view = ViewBuilder.of(Pet.class).addView(View.BASE).build();
+        FetchPlan view = FetchPlanBuilder.of(Pet.class).addView(FetchPlan.BASE).build();
 
         assertFalse(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
@@ -157,8 +157,8 @@ public class ViewBuilderTest {
 
     @Test
     public void testLocalAndRef() {
-        View view = ViewBuilder.of(Pet.class)
-                .addView(View.LOCAL)
+        FetchPlan view = FetchPlanBuilder.of(Pet.class)
+                .addView(FetchPlan.LOCAL)
                 .add("owner")
                 .build();
 
@@ -166,14 +166,14 @@ public class ViewBuilderTest {
         assertTrue(view.containsProperty("name"));
 
         assertNotNull(view.getProperty("owner"));
-        View ownerView = view.getProperty("owner").getView();
+        FetchPlan ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
         assertFalse(containsSystemProperties(ownerView));
         assertFalse(ownerView.containsProperty("name"));
         assertFalse(ownerView.containsProperty("address"));
 
-        view = ViewBuilder.of(Pet.class)
-                .addView(View.LOCAL)
+        view = FetchPlanBuilder.of(Pet.class)
+                .addView(FetchPlan.LOCAL)
                 .add("owner.name")
                 .add("owner.address.city")
                 .build();
@@ -182,33 +182,33 @@ public class ViewBuilderTest {
         assertTrue(view.containsProperty("name"));
 
         assertNotNull(view.getProperty("owner"));
-        ownerView = view.getProperty("owner").getView();
+        ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
         assertFalse(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
         assertTrue(ownerView.containsProperty("address"));
 
-        View addressView = ownerView.getProperty("address").getView();
+        FetchPlan addressView = ownerView.getProperty("address").getFetchPlan();
         assertTrue(addressView.containsProperty("city"));
     }
 
     @Test
     public void testMerging() {
-        View view1 = ViewBuilder.of(Pet.class)
-                .add("owner", View.LOCAL)
+        FetchPlan view1 = FetchPlanBuilder.of(Pet.class)
+                .add("owner", FetchPlan.LOCAL)
                 .build();
 
-        View view2 = ViewBuilder.of(Pet.class)
+        FetchPlan view2 = FetchPlanBuilder.of(Pet.class)
                 .addView(view1)
                 .add("name")
                 .build();
 
-        ViewProperty ownerProp = view2.getProperty("owner");
-        assertTrue(ownerProp != null && ownerProp.getView() != null);
-        assertTrue(ownerProp.getView().containsProperty("name"));
+        FetchPlanProperty ownerProp = view2.getProperty("owner");
+        assertTrue(ownerProp != null && ownerProp.getFetchPlan() != null);
+        assertTrue(ownerProp.getFetchPlan().containsProperty("name"));
     }
 
-    private boolean containsSystemProperties(View view) {
+    private boolean containsSystemProperties(FetchPlan view) {
         return view.containsProperty("id")
                 && view.containsProperty("version")
                 && view.containsProperty("deleteTs")

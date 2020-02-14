@@ -27,7 +27,7 @@ import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class ViewReferenceAttrTest extends CoreTestSpecification {
     @Inject
-    ViewRepository viewRepository
+    FetchPlanRepository viewRepository
     @Inject
     DataManager dataManager
 
@@ -46,10 +46,10 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
     }
 
     def "Negative (String): PL-9999 Raise exception at the moment of view creation if not reference attribute has view"() {
-        View wrongView = new View(User.class)
+        FetchPlan wrongView = new FetchPlan(User.class)
                 .addProperty(
                         "name",
-                        viewRepository.getView(User.class, "user.locale")
+                        viewRepository.getFetchPlan(User.class, "user.locale")
                 )
 
         LoadContext<User> ctx = new LoadContext<>(User.class)
@@ -68,15 +68,15 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
         }
 
         then:
-        "Wrong Views mechanism usage found. View \"user.locale\" is set for property \"name\" of class \"test\$User\", " +
+        "Wrong fetch plans mechanism usage found. Fetch plan \"user.locale\" is set for property \"name\" of class \"test\$User\", " +
                 "but this property does not point to an Entity" == exceptionMessage
     }
 
     def "Negative (Boxed primitive): PL-9999 Raise exception at the moment of view creation if not reference attribute has view"() {
-        View wrongView = new View(User.class)
+        FetchPlan wrongView = new FetchPlan(User.class)
                 .addProperty(
                         "active",
-                        viewRepository.getView(User.class, "user.locale")
+                        viewRepository.getFetchPlan(User.class, "user.locale")
                 )
 
         LoadContext<User> ctx = new LoadContext<>(User.class)
@@ -95,16 +95,16 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
         }
 
         then:
-        "Wrong Views mechanism usage found. View \"user.locale\" is set for property \"active\" of class \"test\$User\", " +
+        "Wrong fetch plans mechanism usage found. Fetch plan \"user.locale\" is set for property \"active\" of class \"test\$User\", " +
                 "but this property does not point to an Entity" == exceptionMessage
     }
 
     def "Positive: PL-9999 Raise exception at the moment of view creation if not reference attribute has view"() {
-        View correctView = new View(User.class)
+        FetchPlan correctView = new FetchPlan(User.class)
                 .addProperty("login")
                 .addProperty(
                         "group",
-                        new View(Group.class)
+                        new FetchPlan(Group.class)
                                 .addProperty("name")
                 )
 

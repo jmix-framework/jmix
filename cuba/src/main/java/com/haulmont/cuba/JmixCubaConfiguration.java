@@ -17,6 +17,7 @@
 package com.haulmont.cuba;
 
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
+import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.Messages;

@@ -18,8 +18,8 @@ package com.haulmont.cuba.gui.data.impl;
 import com.haulmont.cuba.gui.data.*;
 import io.jmix.core.DevelopmentException;
 import io.jmix.ui.sys.PersistenceHelper;
-import io.jmix.core.View;
-import io.jmix.core.ViewProperty;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.Instance;
@@ -37,7 +37,7 @@ public class PropertyDatasourceImpl<T extends Entity>
     protected Datasource masterDs;
     protected MetaProperty metaProperty;
     protected MetaClass metaClass;
-    protected View view;
+    protected FetchPlan view;
 
     @Override
     public void setup(String id, Datasource masterDs, String property) {
@@ -108,24 +108,24 @@ public class PropertyDatasourceImpl<T extends Entity>
     }
 
     @Override
-    public View getView() {
+    public FetchPlan getView() {
         if (view == null) {
             MetaClass metaMetaClass = masterDs.getMetaClass();
             if (metadata.getTools().isPersistent(metaMetaClass)
                     || metadata.getTools().isEmbeddable(metaMetaClass)) {
-                View masterView = masterDs.getView();
+                FetchPlan masterView = masterDs.getView();
                 if (masterView == null) {
                     throw new DevelopmentException("No view for datasource " + masterDs.getId(),
                             ParamsMap.of("masterDs", masterDs.getId(),
                                          "propertyDs", getId()));
                 }
 
-                ViewProperty property = masterView.getProperty(metaProperty.getName());
+                FetchPlanProperty property = masterView.getProperty(metaProperty.getName());
                 if (property == null) {
                     return null;
                 }
 
-                if (property.getView() == null) {
+                if (property.getFetchPlan() == null) {
                     throw new DevelopmentException(
                             String.format("Invalid view definition: %s. Property '%s' must have a view",
                                     masterView, property),
@@ -135,10 +135,10 @@ public class PropertyDatasourceImpl<T extends Entity>
                                          "property", property)
                     );
                 }
-                view = metadata.getViewRepository().findView(getMetaClass(), property.getView().getName());
+                view = metadata.getViewRepository().findFetchPlan(getMetaClass(), property.getFetchPlan().getName());
                 //anonymous (nameless) view
                 if (view == null)
-                    view = property.getView();
+                    view = property.getFetchPlan();
             }
         }
         return view;

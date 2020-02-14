@@ -58,7 +58,7 @@ public class NonDetachedTest {
     private Group companyGroup;
     private Customer customer;
     private Order order;
-    private View orderView;
+    private FetchPlan orderView;
     private CascadeDeletionPolicyEntity cascadeEntity1;
     private CascadeDeletionPolicyEntity cascadeEntity2;
 
@@ -101,11 +101,11 @@ public class NonDetachedTest {
             tx.commit();
         }
 
-        orderView = new View(Order.class)
+        orderView = new FetchPlan(Order.class)
                 .addProperty("date")
                 .addProperty("amount")
-                .addProperty("customer", new View(Customer.class).addProperty("name"))
-                .addProperty("user", new View(User.class).addProperty("login").addProperty("name"));
+                .addProperty("customer", new FetchPlan(Customer.class).addProperty("name"))
+                .addProperty("user", new FetchPlan(User.class).addProperty("login").addProperty("name"));
     }
 
     @AfterEach

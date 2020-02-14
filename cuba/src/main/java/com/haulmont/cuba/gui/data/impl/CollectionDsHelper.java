@@ -33,12 +33,12 @@ import java.util.List;
 
 public class CollectionDsHelper {
 
-    public static List<MetaPropertyPath> createProperties(View view, MetaClass metaClass) {
+    public static List<MetaPropertyPath> createProperties(FetchPlan fetchPlan, MetaClass metaClass) {
         List<MetaPropertyPath> properties = new ArrayList<>();
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
 
-        if (view != null && metadataTools.isPersistent(metaClass)) {
-            for (ViewProperty property : view.getProperties()) {
+        if (fetchPlan != null && metadataTools.isPersistent(metaClass)) {
+            for (FetchPlanProperty property : fetchPlan.getProperties()) {
                 final String name = property.getName();
 
                 final MetaProperty metaProperty = metaClass.findProperty(name);
@@ -74,10 +74,10 @@ public class CollectionDsHelper {
                 }
             }
         } else {
-            if (view != null) {
+            if (fetchPlan != null) {
                 LoggerFactory.getLogger(CollectionDsHelper.class).
                         warn("Specified view {} for datasource with not persistent entity {}",
-                                view.getName(), metaClass.getName());
+                                fetchPlan.getName(), metaClass.getName());
             }
 
             for (MetaProperty metaProperty : metaClass.getProperties()) {

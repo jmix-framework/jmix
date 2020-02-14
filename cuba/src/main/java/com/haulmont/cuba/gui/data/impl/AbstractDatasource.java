@@ -17,7 +17,7 @@ package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.events.EventRouter;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.Instance;
@@ -75,7 +75,7 @@ public abstract class AbstractDatasource<T extends Entity> implements Datasource
 
     @Override
     public void setup(DsContext dsContext, DataSupplier dataSupplier, String id,
-                      MetaClass metaClass, @Nullable View view) {
+                      MetaClass metaClass, @Nullable FetchPlan view) {
         this.id = id;
     }
 

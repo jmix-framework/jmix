@@ -108,10 +108,10 @@ public class UpdateDetachedTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(Permission.class)
+            FetchPlan view = new FetchPlan(Permission.class)
                     .addProperty("target")
                     .addProperty("role",
-                            new View(Role.class)
+                            new FetchPlan(Role.class)
                                     .addProperty("name")
                     );
 
@@ -142,10 +142,10 @@ public class UpdateDetachedTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(Permission.class)
+            FetchPlan view = new FetchPlan(Permission.class)
                     .addProperty("target")
                     .addProperty("role",
-                            new View(Role.class)
+                            new FetchPlan(Role.class)
                                     .addProperty("name")
                     );
 
@@ -177,10 +177,10 @@ public class UpdateDetachedTest {
 
         LoadContext<Permission> ctx = new LoadContext<>(Permission.class);
         ctx.setId(permissionId);
-        ctx.setView(new View(Permission.class)
+        ctx.setView(new FetchPlan(Permission.class)
                 .addProperty("target")
                 .addProperty("role",
-                        new View(Role.class)
+                        new FetchPlan(Role.class)
                                 .addProperty("name")
                 )
         );

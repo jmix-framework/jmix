@@ -17,8 +17,8 @@
 package spec.haulmont.cuba.core.views
 
 import com.haulmont.cuba.core.model.sales.Order
-import io.jmix.core.View
-import io.jmix.core.ViewRepository
+import io.jmix.core.FetchPlan
+import io.jmix.core.FetchPlanRepository
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -26,11 +26,11 @@ import javax.inject.Inject
 class BaseViewTest extends CoreTestSpecification {
 
     @Inject
-    ViewRepository viewRepository
+    FetchPlanRepository viewRepository
 
     def "base view"() {
 
-        def view = viewRepository.getView(Order, View.BASE)
+        def view = viewRepository.getFetchPlan(Order, FetchPlan.BASE)
 
         expect:
 

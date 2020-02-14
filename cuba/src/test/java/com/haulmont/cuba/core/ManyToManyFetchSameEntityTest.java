@@ -117,8 +117,7 @@ public class ManyToManyFetchSameEntityTest {
     public void testManyToMany_emptyCollection() {
         DataManager dataManager = AppBeans.get(DataManager.class);
 
-        LoadContext<Many2Many_FetchSame1> loadContext = new LoadContext<>(Many2Many_FetchSame1.class)
-                .setView("Many2Many_FetchSame1-emptyCollection");
+        LoadContext<Many2Many_FetchSame1> loadContext = new LoadContext<>(Many2Many_FetchSame1.class).setFetchPlan("Many2Many_FetchSame1-emptyCollection");
         loadContext.setQueryString("select e from test$Many2Many_FetchSame1 e where e.name <> 'same1_3'");
 
         List<Many2Many_FetchSame1> result = dataManager.loadList(loadContext);
@@ -131,8 +130,7 @@ public class ManyToManyFetchSameEntityTest {
     public void testManyToMany_sameEntityTwice() {
         DataManager dataManager = AppBeans.get(DataManager.class);
 
-        LoadContext<Many2Many_FetchSame1> loadContext = new LoadContext<>(Many2Many_FetchSame1.class)
-                .setView("Many2Many_FetchSame1-sameEntityTwice").setId(same1_3);
+        LoadContext<Many2Many_FetchSame1> loadContext = new LoadContext<>(Many2Many_FetchSame1.class).setFetchPlan("Many2Many_FetchSame1-sameEntityTwice").setId(same1_3);
 
         Many2Many_FetchSame1 result = dataManager.load(loadContext);
         Assertions.assertNotNull(result);

@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import org.junit.jupiter.api.AfterEach;
@@ -86,7 +86,7 @@ public class OrmBehaviorTest {
             tx.commitRetaining();
 
             user = persistence.getEntityManager().find(User.class, userId,
-                    new View(User.class).addProperty("group"));
+                    new FetchPlan(User.class).addProperty("group"));
             tx.commit();
         } finally {
             tx.end();

@@ -93,18 +93,18 @@ public class FetchSameEntityTest {
     public void testUnFetched() throws Exception {
         DataManager dataManager = AppBeans.get(DataManager.class);
 
-        View a1View = new View(FetchSameLinkAEntity.class)
+        FetchPlan a1View = new FetchPlan(FetchSameLinkAEntity.class)
                 .addProperty("name")
-                .addProperty("mainEntity", new View(FetchSameMainEntity.class));
+                .addProperty("mainEntity", new FetchPlan(FetchSameMainEntity.class));
 
-        View a2View = new View(FetchSameLinkAEntity.class)
+        FetchPlan a2View = new FetchPlan(FetchSameLinkAEntity.class)
                 .addProperty("description");
 
-        View bView = new View(FetchSameLinkBEntity.class)
+        FetchPlan bView = new FetchPlan(FetchSameLinkBEntity.class)
                 .addProperty("name")
                 .addProperty("linkAEntity", a2View);
 
-        View mainView = new View(FetchSameMainEntity.class)
+        FetchPlan mainView = new FetchPlan(FetchSameMainEntity.class)
                 .addProperty("description")
                 .addProperty("linkAEntities", a1View)
                 .addProperty("linkBEntities", bView);

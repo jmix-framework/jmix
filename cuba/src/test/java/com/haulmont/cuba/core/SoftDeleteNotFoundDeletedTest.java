@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -100,13 +100,13 @@ public class SoftDeleteNotFoundDeletedTest {
 
     @Test
     public void testLoadDeletedObject() {
-        View taskView_Message = new View(SoftDelete_Task.class).addProperty("message");
-        View taskView_Service = new View(SoftDelete_Task.class)
-                .addProperty("service", new View(SoftDelete_Service.class).addProperty("code"));
-        View taskValueView = new View(SoftDelete_TaskValue.class)
+        FetchPlan taskView_Message = new FetchPlan(SoftDelete_Task.class).addProperty("message");
+        FetchPlan taskView_Service = new FetchPlan(SoftDelete_Task.class)
+                .addProperty("service", new FetchPlan(SoftDelete_Service.class).addProperty("code"));
+        FetchPlan taskValueView = new FetchPlan(SoftDelete_TaskValue.class)
                 .addProperty("task", taskView_Message);
 
-        View projectView = new View(SoftDelete_Project.class)
+        FetchPlan projectView = new FetchPlan(SoftDelete_Project.class)
                 .addProperty("name")
                 .addProperty("aValue", taskValueView)
                 .addProperty("task", taskView_Service);

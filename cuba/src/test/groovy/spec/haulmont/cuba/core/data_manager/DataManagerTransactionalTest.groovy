@@ -41,16 +41,16 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
     @Inject
     private TransactionalDataManager txDataManager
     @Inject
-    private ViewRepository viewRepository
+    private FetchPlanRepository viewRepository
     @Inject
     private Metadata metadata
     @Inject
     private EntityStates entityStates
 
-    private View baseView
+    private FetchPlan baseView
 
     void setup() {
-        baseView = viewRepository.getView(Customer, '_base')
+        baseView = viewRepository.getFetchPlan(Customer, '_base')
     }
 
     void cleanup() {
@@ -186,10 +186,10 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         def orderLine12 = new OrderLine(order: order1, productName: 'def')
         txDataManager.save(customer1, order1, orderLine11, orderLine12)
 
-        View orderView = new View(Order)
+        FetchPlan orderView = new FetchPlan(Order)
                 .addProperty('number')
-                .addProperty('customer', new View(Customer).addProperty('name'))
-                .addProperty('orderLines', new View(OrderLine).addProperty('productName'))
+                .addProperty('customer', new FetchPlan(Customer).addProperty('name'))
+                .addProperty('orderLines', new FetchPlan(OrderLine).addProperty('productName'))
 
         Transaction tx = persistence.createTransaction()
 
@@ -214,10 +214,10 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         def orderLine12 = new OrderLine(order: order1, productName: 'def')
         txDataManager.save(customer1, order1, orderLine11, orderLine12)
 
-        View orderView = new View(Order)
+        FetchPlan orderView = new FetchPlan(Order)
                 .addProperty('number')
-                .addProperty('customer', new View(Customer).addProperty('name'))
-                .addProperty('orderLines', new View(OrderLine).addProperty('productName'))
+                .addProperty('customer', new FetchPlan(Customer).addProperty('name'))
+                .addProperty('orderLines', new FetchPlan(OrderLine).addProperty('productName'))
 
         Transaction tx = persistence.createTransaction()
 
@@ -242,9 +242,9 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         def container = new AddressEmbeddedContainer(name: 'name1', address: embedded)
         txDataManager.save(container)
 
-        View view = new View(AddressEmbeddedContainer)
+        FetchPlan view = new FetchPlan(AddressEmbeddedContainer)
                 .addProperty('name')
-                .addProperty('address', new View(AddressEmbedded)
+                .addProperty('address', new FetchPlan(AddressEmbedded)
                         .addProperty('street')
                 )
         Transaction tx = persistence.createTransaction()

@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
 import io.jmix.core.DataManager
 import io.jmix.core.LoadContext
 import io.jmix.core.Metadata
-import io.jmix.core.View
+import io.jmix.core.FetchPlan
 import io.jmix.data.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -70,9 +70,9 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
 
     def "unlink @ManyToMany property if it is owning side and is loaded"() {
         setup:
-        View firstView = new View(DeletePolicy_ManyToMany_First.class)
+        FetchPlan firstView = new FetchPlan(DeletePolicy_ManyToMany_First.class)
                 .addProperty("firstFld")
-        View rootView = new View(DeletePolicy_Root.class)
+        FetchPlan rootView = new FetchPlan(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("manytomany", firstView)
 
@@ -98,12 +98,12 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
 
         DeletePolicy_ManyToMany_First entityFirst1 = dataManager.load(
                 new LoadContext<DeletePolicy_ManyToMany_First>(DeletePolicy_ManyToMany_First.class)
-                        .setView(View.LOCAL)
+                        .setView(FetchPlan.LOCAL)
                         .setId(first1.id))
 
         DeletePolicy_ManyToMany_First entityFirst2 = dataManager.load(
                 new LoadContext<DeletePolicy_ManyToMany_First>(DeletePolicy_ManyToMany_First.class)
-                        .setView(View.LOCAL)
+                        .setView(FetchPlan.LOCAL)
                         .setId(first2.id))
 
         then:
@@ -116,9 +116,9 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
 
     def "unlink @ManyToMany property if it is owning side and isn't loaded"() {
         setup:
-        View firstView = new View(DeletePolicy_ManyToMany_First.class)
+        FetchPlan firstView = new FetchPlan(DeletePolicy_ManyToMany_First.class)
                 .addProperty("firstFld")
-        View rootView = new View(DeletePolicy_Root.class)
+        FetchPlan rootView = new FetchPlan(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("manytomany", firstView)
 
@@ -137,7 +137,7 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
         when:
 
         dataManager.remove(dataManager.load(new LoadContext<DeletePolicy_Root>(DeletePolicy_Root.class)
-                .setView(View.LOCAL)
+                .setView(FetchPlan.LOCAL)
                 .setId(root.id)))
         entityRoot = dataManager.load(
                 new LoadContext<DeletePolicy_Root>(DeletePolicy_Root.class)
@@ -146,12 +146,12 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
 
         DeletePolicy_ManyToMany_First entityFirst1 = dataManager.load(
                 new LoadContext<DeletePolicy_ManyToMany_First>(DeletePolicy_ManyToMany_First.class)
-                        .setView(View.LOCAL)
+                        .setView(FetchPlan.LOCAL)
                         .setId(first1.id))
 
         DeletePolicy_ManyToMany_First entityFirst2 = dataManager.load(
                 new LoadContext<DeletePolicy_ManyToMany_First>(DeletePolicy_ManyToMany_First.class)
-                        .setView(View.LOCAL)
+                        .setView(FetchPlan.LOCAL)
                         .setId(first2.id))
 
         then:

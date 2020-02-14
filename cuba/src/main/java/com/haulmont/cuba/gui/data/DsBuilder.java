@@ -64,7 +64,7 @@ public class DsBuilder {
 
     private String viewName;
 
-    private View view;
+    private FetchPlan view;
 
     private String id;
 
@@ -172,8 +172,8 @@ public class DsBuilder {
         return AppBeans.get(PersistenceManagerClient.NAME);
     }
 
-    protected ViewRepository getViewRepository() {
-        return AppBeans.get(ViewRepository.NAME);
+    protected FetchPlanRepository getViewRepository() {
+        return AppBeans.get(FetchPlanRepository.NAME);
     }
 
     protected Metadata getMetadata() {
@@ -219,7 +219,7 @@ public class DsBuilder {
         return this;
     }
 
-    public View getView() {
+    public FetchPlan getView() {
         return view;
     }
 
@@ -237,7 +237,7 @@ public class DsBuilder {
         return this;
     }
 
-    public DsBuilder setView(View view) {
+    public DsBuilder setView(FetchPlan view) {
         this.view = view;
         if (view != null)
             this.viewName = view.getName();
@@ -338,7 +338,7 @@ public class DsBuilder {
             metaClass = getMetadata().getSession().getClass(javaClass);
         }
         if (view == null && viewName != null) {
-            view = getViewRepository().getView(metaClass, viewName);
+            view = getViewRepository().getFetchPlan(metaClass, viewName);
         }
     }
 

@@ -18,8 +18,8 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.EntityStates;
-import io.jmix.core.View;
-import io.jmix.core.ViewRepository;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
 import io.jmix.ui.Actions;
@@ -37,7 +37,7 @@ public class GuiActionSupport {
     public static final String NAME = "cuba_GuiActionSupport";
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
     @Inject
     protected EntityStates entityStates;
     @Inject
@@ -61,12 +61,12 @@ public class GuiActionSupport {
             needDynamicAttributes = targetDatasource.getLoadDynamicAttributes();
         }
 
-        View view = targetDatasource.getView();
+        FetchPlan view = targetDatasource.getView();
         if (view == null) {
-            view = viewRepository.getView(entity.getClass(), View.LOCAL);
+            view = viewRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
         }
 
-        if (!entityStates.isLoadedWithView(entity, view)) {
+        if (!entityStates.isLoadedWithFetchPlan(entity, view)) {
             entity = targetDatasource.getDsContext().getDataSupplier().reload(entity, view, null, needDynamicAttributes);
         } else if (needDynamicAttributes && !dynamicAttributesAreLoaded) {
             dynamicAttributesGuiTools.reloadDynamicAttributes((BaseGenericIdEntity) entity);

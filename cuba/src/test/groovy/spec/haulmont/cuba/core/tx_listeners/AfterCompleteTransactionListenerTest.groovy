@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.tx_listener.TestAfterCompleteTxListener
 import io.jmix.core.AppBeans
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
-import io.jmix.core.View
+import io.jmix.core.FetchPlan
 import io.jmix.data.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
 
@@ -107,9 +107,9 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
         def entityStates = AppBeans.get(EntityStates)
         TestAfterCompleteTxListener.test = 'accessName'
 
-        def view = new View(User)
+        def view = new FetchPlan(User)
                 .addProperty('login')
-                .addProperty('group', new View(Group).addProperty('name'))
+                .addProperty('group', new FetchPlan(Group).addProperty('name'))
         view.setLoadPartialEntities(true)
 
         when:
@@ -135,10 +135,10 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
         def entityStates = AppBeans.get(EntityStates)
         TestAfterCompleteTxListener.test = 'accessGroup'
 
-        def view = new View(User)
+        def view = new FetchPlan(User)
                 .addProperty('login')
-                .addProperty('userRoles', new View(UserRole)
-                        .addProperty('role', new View(Role)
+                .addProperty('userRoles', new FetchPlan(UserRole)
+                        .addProperty('role', new FetchPlan(Role)
                                 .addProperty('name')))
         view.setLoadPartialEntities(true)
 
@@ -164,7 +164,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
         def entityStates = AppBeans.get(EntityStates)
         TestAfterCompleteTxListener.test = 'accessUserRoles'
 
-        def view = new View(User)
+        def view = new FetchPlan(User)
                 .addProperty('login')
         view.setLoadPartialEntities(true)
 

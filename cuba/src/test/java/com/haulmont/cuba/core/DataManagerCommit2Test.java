@@ -52,7 +52,7 @@ public class DataManagerCommit2Test {
     private Group group1, group2;
     private Role role;
     private Constraint constraint;
-    private View view;
+    private FetchPlan view;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -95,13 +95,13 @@ public class DataManagerCommit2Test {
             tx.commit();
         }
 
-        view = new View(User.class, true)
+        view = new FetchPlan(User.class, true)
                 .addProperty("login")
                 .addProperty("loginLowerCase")
                 .addProperty("name")
                 .addProperty("password")
-                .addProperty("group", new View(Group.class).addProperty("name"))
-                .addProperty("userRoles", new View(UserRole.class));
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"))
+                .addProperty("userRoles", new FetchPlan(UserRole.class));
     }
 
     @AfterEach
@@ -115,7 +115,7 @@ public class DataManagerCommit2Test {
 
     @Test
     public void testViewAfterCommitNew() throws Exception {
-        Group group = dataManager.load(LoadContext.create(Group.class).setId(group1.getId()).setView(View.MINIMAL));
+        Group group = dataManager.load(LoadContext.create(Group.class).setId(group1.getId()).setFetchPlan(FetchPlan.MINIMAL));
         assertFalse(entityStates.isLoaded(group, "createTs"));
 
         User user = metadata.create(User.class);
@@ -124,10 +124,10 @@ public class DataManagerCommit2Test {
             user.setLogin("login" + user.getId());
             user.setGroup(group);
 
-            View userView = new View(User.class, true)
+            FetchPlan userView = new FetchPlan(User.class, true)
                     .addProperty("login")
                     .addProperty("name")
-                    .addProperty("group", new View(Group.class, false)
+                    .addProperty("group", new FetchPlan(Group.class, false)
                             .addProperty("name")
                             .addProperty("createTs"));
 
@@ -140,9 +140,9 @@ public class DataManagerCommit2Test {
 
     @Test
     public void testViewOnSecondLevelAfterCommitNew() throws Exception {
-        View groupView = new View(Group.class, false)
+        FetchPlan groupView = new FetchPlan(Group.class, false)
                 .addProperty("createTs")
-                .addProperty("constraints", new View(Constraint.class, false)
+                .addProperty("constraints", new FetchPlan(Constraint.class, false)
                         .addProperty("createTs"))
                 .setLoadPartialEntities(true);
 
@@ -156,13 +156,13 @@ public class DataManagerCommit2Test {
             user.setLogin("login" + user.getId());
             user.setGroup(group);
 
-            View userView = new View(User.class, true)
+            FetchPlan userView = new FetchPlan(User.class, true)
                     .addProperty("login")
                     .addProperty("name")
-                    .addProperty("group", new View(Group.class, false)
+                    .addProperty("group", new FetchPlan(Group.class, false)
                             .addProperty("createTs")
                             .addProperty("constraints",
-                                    new View(Constraint.class, false)
+                                    new FetchPlan(Constraint.class, false)
                                             .addProperty("entityName")));
 
             User committedUser = dataManager.commit(user, userView);
@@ -175,7 +175,7 @@ public class DataManagerCommit2Test {
 
     @Test
     public void testViewAfterCommitModified() throws Exception {
-        Group group2 = dataManager.load(LoadContext.create(Group.class).setId(this.group2.getId()).setView(View.MINIMAL));
+        Group group2 = dataManager.load(LoadContext.create(Group.class).setId(this.group2.getId()).setFetchPlan(FetchPlan.MINIMAL));
         assertFalse(entityStates.isLoaded(group2, "createTs"));
 
         LoadContext<User> loadContext = LoadContext.create(User.class).setId(userId).setView(view);
@@ -184,10 +184,10 @@ public class DataManagerCommit2Test {
         user.setName("testUser-changed");
         user.setGroup(group2);
 
-        View userView = new View(User.class, true)
+        FetchPlan userView = new FetchPlan(User.class, true)
                 .addProperty("login")
                 .addProperty("name")
-                .addProperty("group", new View(Group.class)
+                .addProperty("group", new FetchPlan(Group.class)
                         .addProperty("name")
                         .addProperty("createTs"));
 

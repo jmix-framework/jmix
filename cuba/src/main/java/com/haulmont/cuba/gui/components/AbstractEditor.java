@@ -35,7 +35,6 @@ import io.jmix.ui.ClientConfig;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
-import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.components.ValidationErrors;
@@ -210,7 +209,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
                     && !parentDs.getItemsToCreate().contains(item) && !parentDs.getItemsToUpdate().contains(item)
                     && parentDs instanceof CollectionDatasource
                     && ((CollectionDatasource) parentDs).containsItem(item.getId())
-                    && !entityStates.isLoadedWithView(item, ds.getView())) {
+                    && !entityStates.isLoadedWithFetchPlan(item, ds.getView())) {
                 item = dataservice.reload(item, ds.getView(), ds.getMetaClass(), ds.getLoadDynamicAttributes());
                 if (parentDs instanceof CollectionPropertyDatasourceImpl) {
                     ((CollectionPropertyDatasourceImpl) parentDs).replaceItem(item);

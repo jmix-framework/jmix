@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.security.entity.Group;
 import io.jmix.security.entity.User;
@@ -99,7 +99,7 @@ public class OptionsGroupTest extends AbstractComponentTest {
         Datasource<User> testDs = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(User.class)
-                .setView(viewRepository.getView(User.class, View.LOCAL))
+                .setView(viewRepository.getFetchPlan(User.class, FetchPlan.LOCAL))
                 .buildDatasource();
 
         testDs.setItem(new User());
@@ -119,7 +119,7 @@ public class OptionsGroupTest extends AbstractComponentTest {
         Datasource<User> testDs = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(User.class)
-                .setView(viewRepository.getView(User.class, View.LOCAL))
+                .setView(viewRepository.getFetchPlan(User.class, FetchPlan.LOCAL))
                 .buildDatasource();
 
         testDs.setItem(new User());
@@ -134,7 +134,7 @@ public class OptionsGroupTest extends AbstractComponentTest {
         CollectionDatasource<Group, UUID> groupsDs = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(Group.class)
-                .setView(viewRepository.getView(Group.class, View.LOCAL))
+                .setView(viewRepository.getFetchPlan(Group.class, FetchPlan.LOCAL))
                 .setRefreshMode(CollectionDatasource.RefreshMode.NEVER)
                 .setAllowCommit(false)
                 .buildCollectionDatasource();

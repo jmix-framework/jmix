@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.LocalDateTimeEntity
 import io.jmix.core.AppBeans
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
-import io.jmix.core.View
+import io.jmix.core.FetchPlan
 import io.jmix.data.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -77,7 +77,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDate, now, now + 1, day)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
 
         then:
         e == entity
@@ -85,7 +85,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDate, now - 1, now, day)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
 
         then:
         e == null
@@ -93,7 +93,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDate, now - 1, now, DAY)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
 
         then:
         e == null
@@ -101,28 +101,28 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDate, now, now + 1, month)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDate, now - 1, now, month)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDate, now - 1, now, minute)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDate, now - 1, now, MINUTE)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -131,7 +131,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now, now + 1, day)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
 
         then:
         e == entity
@@ -139,7 +139,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now - 1, now, day)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
 
         then:
         e == null
@@ -147,42 +147,42 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now, now + 1, month)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now - 1, now, month)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now - 1, now, minute)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now, now + 1, minute)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now - 10, now - 5, second)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.localDateTime, now - 5, now + 5, second)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -191,7 +191,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now, now + 1, day)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
 
         then:
         e == entity
@@ -199,7 +199,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now - 1, now, day)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
 
         then:
         e == null
@@ -207,42 +207,42 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now, now + 1, month)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now - 1, now, month)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now - 1, now, minute)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now, now + 1, minute)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now - 10, now - 5, second)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @between(e.offsetDateTime, now - 5, now + 5, second)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -255,7 +255,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.localDate, :param)')
                 .parameter('param', LocalDate.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
@@ -263,7 +263,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.localDate, :param)')
                 .parameter('param', LocalDate.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -273,7 +273,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.localDate, :param)')
                 .parameter('param', LocalDate.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
@@ -281,7 +281,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.localDate, :param)')
                 .parameter('param', LocalDate.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -291,7 +291,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.localDateTime, :param)')
                 .parameter('param', LocalDateTime.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
@@ -299,7 +299,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.localDateTime, :param)')
                 .parameter('param', LocalDateTime.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -309,7 +309,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.localDateTime, :param)')
                 .parameter('param', LocalDateTime.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
@@ -317,7 +317,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.localDateTime, :param)')
                 .parameter('param', LocalDateTime.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -327,7 +327,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.offsetDateTime, :param)')
                 .parameter('param', OffsetDateTime.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
@@ -335,7 +335,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.offsetDateTime, :param)')
                 .parameter('param', OffsetDateTime.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -345,7 +345,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.offsetDateTime, :param)')
                 .parameter('param', OffsetDateTime.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
@@ -353,7 +353,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.offsetDateTime, :param)')
                 .parameter('param', OffsetDateTime.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -362,14 +362,14 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.nowDate, now)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateBefore(e.nowDate, now+1)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -378,14 +378,14 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.nowDate, now)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateAfter(e.nowDate, now+1)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -397,7 +397,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.localDate, :param)')
                 .parameter('param', LocalDate.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
@@ -405,7 +405,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.localDate, :param)')
                 .parameter('param', LocalDate.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -416,7 +416,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.localDateTime, :param)')
                 .parameter('param', LocalDateTime.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
@@ -424,7 +424,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.localDateTime, :param)')
                 .parameter('param', LocalDateTime.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -434,7 +434,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.offsetDateTime, :param)')
                 .parameter('param', OffsetDateTime.now())
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
@@ -442,7 +442,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.offsetDateTime, :param)')
                 .parameter('param', OffsetDateTime.now().plusDays(1))
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -451,14 +451,14 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.nowDate, now)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
 
         when:
         e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @dateEquals(e.nowDate, now+1)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == null
     }
@@ -469,7 +469,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @today(e.localDate)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -478,7 +478,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @today(e.localDateTime)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }
@@ -487,7 +487,7 @@ class LocalDateTimeMacroTest extends CoreTestSpecification {
         when:
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where @today(e.offsetDateTime)')
-                .view(View.LOCAL).optional().orElse(null)
+                .view(FetchPlan.LOCAL).optional().orElse(null)
         then:
         e == entity
     }

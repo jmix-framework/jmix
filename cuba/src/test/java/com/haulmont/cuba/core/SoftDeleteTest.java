@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchMode;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Query;
@@ -324,13 +324,13 @@ public class SoftDeleteTest {
             assertTrue(group.isDeleted());
         }
 
-        View view;
+        FetchPlan view;
 
         // test fetchMode = AUTO (JOIN is used)
-        view = new View(User.class, "testView")
+        view = new FetchPlan(User.class, "testView")
                 .addProperty("name")
                 .addProperty("login")
-                .addProperty("group", new View(Group.class).addProperty("name"));
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"));
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             User user = em.find(User.class, userId, view);
@@ -343,10 +343,10 @@ public class SoftDeleteTest {
         }
 
         // test fetchMode = UNDEFINED
-        view = new View(User.class, "testView")
+        view = new FetchPlan(User.class, "testView")
                 .addProperty("name")
                 .addProperty("login")
-                .addProperty("group", new View(Group.class).addProperty("name"), FetchMode.UNDEFINED);
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"), FetchMode.UNDEFINED);
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             User user = em.find(User.class, userId, view);
@@ -359,10 +359,10 @@ public class SoftDeleteTest {
         }
 
         // test fetchMode = BATCH
-        view = new View(User.class, "testView")
+        view = new FetchPlan(User.class, "testView")
                 .addProperty("name")
                 .addProperty("login")
-                .addProperty("group", new View(Group.class).addProperty("name"), FetchMode.BATCH);
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"), FetchMode.BATCH);
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             User user = em.find(User.class, userId, view);
@@ -402,13 +402,13 @@ public class SoftDeleteTest {
             assertTrue(group.isDeleted());
         }
 
-        View view;
+        FetchPlan view;
 
         // test fetchMode = AUTO (JOIN is used)
-        view = new View(User.class, "testView")
+        view = new FetchPlan(User.class, "testView")
                 .addProperty("name")
                 .addProperty("login")
-                .addProperty("group", new View(Group.class).addProperty("name"));
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"));
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             boolean prevValue = setPrintInnerJoinInWhereClause(em, false);
@@ -427,10 +427,10 @@ public class SoftDeleteTest {
         }
 
         // test fetchMode = UNDEFINED
-        view = new View(User.class, "testView")
+        view = new FetchPlan(User.class, "testView")
                 .addProperty("name")
                 .addProperty("login")
-                .addProperty("group", new View(Group.class).addProperty("name"), FetchMode.UNDEFINED);
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"), FetchMode.UNDEFINED);
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             boolean prevValue = setPrintInnerJoinInWhereClause(em, false);
@@ -449,10 +449,10 @@ public class SoftDeleteTest {
         }
 
         // test fetchMode = BATCH
-        view = new View(User.class, "testView")
+        view = new FetchPlan(User.class, "testView")
                 .addProperty("name")
                 .addProperty("login")
-                .addProperty("group", new View(Group.class).addProperty("name"), FetchMode.BATCH);
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"), FetchMode.BATCH);
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             boolean prevValue = setPrintInnerJoinInWhereClause(em, false);
@@ -481,13 +481,13 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(User.class, "testView")
+            FetchPlan view = new FetchPlan(User.class, "testView")
                     .addProperty("name")
                     .addProperty("login")
                     .addProperty("userRoles",
-                            new View(UserRole.class, "testView")
+                            new FetchPlan(UserRole.class, "testView")
                                     .addProperty("role",
-                                            new View(Role.class, "testView")
+                                            new FetchPlan(Role.class, "testView")
                                                     .addProperty("name")));
             User user = em.find(User.class, userId, view);
 
@@ -507,10 +507,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(User.class, "testView")
+            FetchPlan view = new FetchPlan(User.class, "testView")
                     .addProperty("name")
                     .addProperty("login")
-                    .addProperty("userRoles", new View(UserRole.class, "testView"), FetchMode.JOIN);
+                    .addProperty("userRoles", new FetchPlan(UserRole.class, "testView"), FetchMode.JOIN);
             User user = em.find(User.class, userId, view);
 
             List<UserRole> userRoles = user.getUserRoles();
@@ -593,13 +593,13 @@ public class SoftDeleteTest {
             EntityManager em = persistence.getEntityManager();
             em.setSoftDeletion(false);
 
-            View view = new View(User.class, "testView")
+            FetchPlan view = new FetchPlan(User.class, "testView")
                     .addProperty("name")
                     .addProperty("login")
                     .addProperty("userRoles",
-                            new View(UserRole.class, "testView")
+                            new FetchPlan(UserRole.class, "testView")
                                     .addProperty("role",
-                                            new View(Role.class, "testView")
+                                            new FetchPlan(Role.class, "testView")
                                                     .addProperty("name")));
             User user = em.find(User.class, userId, view);
 
@@ -852,10 +852,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneB.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneB.class, "testView")
                     .addProperty("name")
                     .addProperty("a",
-                            new View(SoftDeleteOneToOneA.class, "testView").addProperty("name"));
+                            new FetchPlan(SoftDeleteOneToOneA.class, "testView").addProperty("name"));
             SoftDeleteOneToOneB oneToOneB = em.find(SoftDeleteOneToOneB.class, oneToOneB1Id, view);
             assertNotNull(oneToOneB);
             assertNull(oneToOneB.getA());
@@ -871,10 +871,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneB.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneB.class, "testView")
                     .addProperty("name")
                     .addProperty("a",
-                            new View(SoftDeleteOneToOneA.class, "testView").addProperty("name"), FetchMode.BATCH);
+                            new FetchPlan(SoftDeleteOneToOneA.class, "testView").addProperty("name"), FetchMode.BATCH);
             SoftDeleteOneToOneB oneToOneB = em.find(SoftDeleteOneToOneB.class, oneToOneB1Id, view);
             assertNotNull(oneToOneB);
             assertNull(oneToOneB.getA());
@@ -890,10 +890,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneB.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneB.class, "testView")
                     .addProperty("name")
                     .addProperty("a",
-                            new View(SoftDeleteOneToOneA.class, "testView").addProperty("name"), FetchMode.UNDEFINED);
+                            new FetchPlan(SoftDeleteOneToOneA.class, "testView").addProperty("name"), FetchMode.UNDEFINED);
             SoftDeleteOneToOneB oneToOneB = em.find(SoftDeleteOneToOneB.class, oneToOneB1Id, view);
             assertNotNull(oneToOneB);
             assertNull(oneToOneB.getA());
@@ -945,10 +945,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneB.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneB.class, "testView")
                     .addProperty("name")
                     .addProperty("a",
-                            new View(SoftDeleteOneToOneA.class, "testView").addProperty("name"));
+                            new FetchPlan(SoftDeleteOneToOneA.class, "testView").addProperty("name"));
 
             List<SoftDeleteOneToOneB> r = em.createQuery("select b from test$SoftDeleteOneToOneB b where b.name = :name",
                     SoftDeleteOneToOneB.class)
@@ -994,10 +994,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneA.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                     .addProperty("name")
                     .addProperty("b",
-                            new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
+                            new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
             SoftDeleteOneToOneA oneToOneA = em.find(SoftDeleteOneToOneA.class, oneToOneA2Id, view);
             assertNotNull(oneToOneA);
             assertNotNull(oneToOneA.getB());
@@ -1014,10 +1014,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneA.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                     .addProperty("name")
                     .addProperty("b",
-                            new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.BATCH);
+                            new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.BATCH);
             SoftDeleteOneToOneA oneToOneA = em.find(SoftDeleteOneToOneA.class, oneToOneA2Id, view);
             assertNotNull(oneToOneA);
             assertNotNull(oneToOneA.getB());
@@ -1034,10 +1034,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneA.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                     .addProperty("name")
                     .addProperty("b",
-                            new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.UNDEFINED);
+                            new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.UNDEFINED);
             SoftDeleteOneToOneA oneToOneA = em.find(SoftDeleteOneToOneA.class, oneToOneA2Id, view);
             assertNotNull(oneToOneA);
             assertNotNull(oneToOneA.getB());
@@ -1062,10 +1062,10 @@ public class SoftDeleteTest {
             boolean prevValue = setPrintInnerJoinInWhereClause(em, false);
 
             try {
-                View view = new View(SoftDeleteOneToOneA.class, "testView")
+                FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                         .addProperty("name")
                         .addProperty("b",
-                                new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
+                                new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
                 SoftDeleteOneToOneA oneToOneA = em.find(SoftDeleteOneToOneA.class, oneToOneA2Id, view);
                 assertNotNull(oneToOneA);
                 assertNotNull(oneToOneA.getB());
@@ -1087,10 +1087,10 @@ public class SoftDeleteTest {
             boolean prevValue = setPrintInnerJoinInWhereClause(em, false);
 
             try {
-                View view = new View(SoftDeleteOneToOneA.class, "testView")
+                FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                         .addProperty("name")
                         .addProperty("b",
-                                new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.BATCH);
+                                new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.BATCH);
                 SoftDeleteOneToOneA oneToOneA = em.find(SoftDeleteOneToOneA.class, oneToOneA2Id, view);
                 assertNotNull(oneToOneA);
                 assertNotNull(oneToOneA.getB());
@@ -1112,10 +1112,10 @@ public class SoftDeleteTest {
             boolean prevValue = setPrintInnerJoinInWhereClause(em, false);
 
             try {
-                View view = new View(SoftDeleteOneToOneA.class, "testView")
+                FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                         .addProperty("name")
                         .addProperty("b",
-                                new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.UNDEFINED);
+                                new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"), FetchMode.UNDEFINED);
                 SoftDeleteOneToOneA oneToOneA = em.find(SoftDeleteOneToOneA.class, oneToOneA2Id, view);
                 assertNotNull(oneToOneA);
                 assertNotNull(oneToOneA.getB());
@@ -1140,10 +1140,10 @@ public class SoftDeleteTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            View view = new View(SoftDeleteOneToOneA.class, "testView")
+            FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                     .addProperty("name")
                     .addProperty("b",
-                            new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
+                            new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
 
             List<SoftDeleteOneToOneA> r = em.createQuery("select a from test$SoftDeleteOneToOneA a where a.name = :name",
                     SoftDeleteOneToOneA.class)
@@ -1171,10 +1171,10 @@ public class SoftDeleteTest {
             boolean prevValue = setPrintInnerJoinInWhereClause(em, false);
 
             try {
-                View view = new View(SoftDeleteOneToOneA.class, "testView")
+                FetchPlan view = new FetchPlan(SoftDeleteOneToOneA.class, "testView")
                         .addProperty("name")
                         .addProperty("b",
-                                new View(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
+                                new FetchPlan(SoftDeleteOneToOneB.class, "testView").addProperty("name"));
 
                 List<SoftDeleteOneToOneA> r = em.createQuery("select a from test$SoftDeleteOneToOneA a where a.name = :name",
                         SoftDeleteOneToOneA.class)
@@ -1204,8 +1204,8 @@ public class SoftDeleteTest {
 
     @Test
     public void testReferenceToDeletedEntityThroughOneToMany() throws Exception {
-        View userRoleView = new View(UserRole.class).addProperty("role", new View(Role.class).addProperty("deleteTs"));
-        View userView = new View(User.class).addProperty("userRoles", userRoleView);
+        FetchPlan userRoleView = new FetchPlan(UserRole.class).addProperty("role", new FetchPlan(Role.class).addProperty("deleteTs"));
+        FetchPlan userView = new FetchPlan(User.class).addProperty("userRoles", userRoleView);
 
         Role deleted = persistence.callInTransaction((em) -> em.find(Role.class, role3Id));
         assertNull(deleted);
@@ -1222,12 +1222,12 @@ public class SoftDeleteTest {
 
     @Test
     public void testReferenceToDeletedEntityOneToManyThroughManyToOne() {
-        View constraintView = new View(Constraint.class)
+        FetchPlan constraintView = new FetchPlan(Constraint.class)
                 .addProperty("code");
-        View groupView = new View(Group.class)
+        FetchPlan groupView = new FetchPlan(Group.class)
                 .addProperty("name")
                 .addProperty("constraints", constraintView, FetchMode.BATCH);
-        View groupHierarchyView = new View(GroupHierarchy.class).addProperty("group", groupView, FetchMode.BATCH);
+        FetchPlan groupHierarchyView = new FetchPlan(GroupHierarchy.class).addProperty("group", groupView, FetchMode.BATCH);
 
         GroupHierarchy groupHierarchy = persistence.callInTransaction((em) -> em.find(GroupHierarchy.class, groupHierarchyId, groupHierarchyView));
         assertNotNull(groupHierarchy);

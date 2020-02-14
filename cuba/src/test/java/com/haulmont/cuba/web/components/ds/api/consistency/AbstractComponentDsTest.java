@@ -22,7 +22,7 @@ import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.CollectionDatasourceImpl;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;
 import com.haulmont.cuba.web.components.AbstractComponentTest;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
 import io.jmix.security.entity.Group;
 
@@ -36,7 +36,7 @@ public abstract class AbstractComponentDsTest extends AbstractComponentTest {
         Datasource<E> datasource = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(entityClass)
-                .setView(viewRepository.getView(entityClass, View.LOCAL))
+                .setView(viewRepository.getFetchPlan(entityClass, FetchPlan.LOCAL))
                 .buildDatasource();
 
         E entity = metadata.create(entityClass);
@@ -52,7 +52,7 @@ public abstract class AbstractComponentDsTest extends AbstractComponentTest {
         CollectionDatasource<Group, UUID> collectionDatasource = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(Group.class)
-                .setView(viewRepository.getView(Group.class, View.LOCAL))
+                .setView(viewRepository.getFetchPlan(Group.class, FetchPlan.LOCAL))
                 .setRefreshMode(CollectionDatasource.RefreshMode.NEVER)
                 .setAllowCommit(false)
                 .buildCollectionDatasource();

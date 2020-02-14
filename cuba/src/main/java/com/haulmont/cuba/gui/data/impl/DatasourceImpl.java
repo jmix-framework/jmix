@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.data.impl;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.EntityStates;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.Entity;
@@ -41,14 +41,14 @@ public class DatasourceImpl<T extends Entity> extends AbstractDatasource<T> impl
     protected DataSupplier dataSupplier;
 
     protected MetaClass metaClass;
-    protected View view;
+    protected FetchPlan view;
 
     protected State state = State.NOT_INITIALIZED;
     protected T item;
 
     @Override
     public void setup(DsContext dsContext, DataSupplier dataSupplier, String id,
-                      MetaClass metaClass, @Nullable View view) {
+                      MetaClass metaClass, @Nullable FetchPlan view) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
         this.id = id;
         this.dsContext = dsContext;
@@ -57,12 +57,12 @@ public class DatasourceImpl<T extends Entity> extends AbstractDatasource<T> impl
         this.view = view;
     }
 
-    public void setView(View view) {
+    public void setView(FetchPlan view) {
         this.view = view;
     }
 
     public void setView(String viewName) {
-        this.view = metadata.getViewRepository().getView(metaClass, viewName);
+        this.view = metadata.getViewRepository().getFetchPlan(metaClass, viewName);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class DatasourceImpl<T extends Entity> extends AbstractDatasource<T> impl
     }
 
     @Override
-    public View getView() {
+    public FetchPlan getView() {
         return view;
     }
 

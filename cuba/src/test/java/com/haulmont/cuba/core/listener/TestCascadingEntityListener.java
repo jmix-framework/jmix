@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.AppBeans;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -47,7 +47,7 @@ public class TestCascadingEntityListener implements
         Transaction.Runnable code = (em) -> {
             TypedQuery<User> query = entityManager.createQuery("select u from test$User u where u.login = 'admin'", User.class);
             if (withView) {
-                query.setViewName(View.MINIMAL);
+                query.setViewName(FetchPlan.MINIMAL);
             }
             User admin = query.getSingleResult();
             System.out.println(admin.getLogin());

@@ -30,16 +30,16 @@ class FluentLoaderTest extends CoreTestSpecification {
     @Inject
     private DataManager dataManager
     @Inject
-    private ViewRepository viewRepository
+    private FetchPlanRepository viewRepository
     @Inject
     private Metadata metadata
 
-    private View baseView
+    private FetchPlan baseView
     private Customer customer, customer2
     private UUID customerId, customer2Id
 
     void setup() {
-        baseView = viewRepository.getView(Customer, '_base')
+        baseView = viewRepository.getFetchPlan(Customer, '_base')
 
         customer = metadata.create(Customer)
         customer.name = 'Smith'

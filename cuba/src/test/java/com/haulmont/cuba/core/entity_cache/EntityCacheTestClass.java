@@ -308,8 +308,8 @@ public class EntityCacheTestClass {
         User user;
 
         // no name in group
-        View groupView = new View(Group.class, false);
-        View userView = new View(User.class)
+        FetchPlan groupView = new FetchPlan(Group.class, false);
+        FetchPlan userView = new FetchPlan(User.class)
                 .addProperty("login")
                 .addProperty("group", groupView)
                 .setLoadPartialEntities(true);
@@ -345,9 +345,9 @@ public class EntityCacheTestClass {
         appender.clearMessages();
 
         // name in group - from cache again
-        View groupView1 = new View(Group.class, true)
+        FetchPlan groupView1 = new FetchPlan(Group.class, true)
                 .addProperty("name");
-        View userView1 = new View(User.class)
+        FetchPlan userView1 = new FetchPlan(User.class)
                 .addProperty("login")
                 .addProperty("group", groupView1)
                 .setLoadPartialEntities(true);
@@ -436,7 +436,7 @@ public class EntityCacheTestClass {
         appender.clearMessages();
 
         DataManager dataManager = AppBeans.get(DataManager.class);
-        User u = dataManager.load(LoadContext.create(User.class).setId(this.user.getId()).setView("user.browse"));
+        User u = dataManager.load(LoadContext.create(User.class).setId(this.user.getId()).setFetchPlan("user.browse"));
         u.setName("new name");
         dataManager.commit(u);
         assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT")).count()); // no DB requests - the User has been updated in cache
@@ -724,13 +724,13 @@ public class EntityCacheTestClass {
     }
 
     private User loadUserWithRoles() throws Exception {
-        View roleView = new View(Role.class)
+        FetchPlan roleView = new FetchPlan(Role.class)
                 .addProperty("name");
-        View userRoleView = new View(UserRole.class)
+        FetchPlan userRoleView = new FetchPlan(UserRole.class)
                 .addProperty("role", roleView);
-        View groupView = new View(Group.class)
+        FetchPlan groupView = new FetchPlan(Group.class)
                 .addProperty("name");
-        View userView = new View(User.class)
+        FetchPlan userView = new FetchPlan(User.class)
                 .addProperty("login")
                 .addProperty("name")
                 .addProperty("userRoles", userRoleView)
@@ -754,9 +754,9 @@ public class EntityCacheTestClass {
 
     private UserSetting loadUserSetting() throws Exception {
         UserSetting us;
-        View usView = new View(UserSetting.class)
+        FetchPlan usView = new FetchPlan(UserSetting.class)
                 .addProperty("name")
-                .addProperty("user", new View(User.class)
+                .addProperty("user", new FetchPlan(User.class)
                         .addProperty("login"));
         try (Transaction tx = persistence.createTransaction()) {
             us = persistence.getEntityManager().find(UserSetting.class, this.userSetting.getId(), usView);
@@ -834,8 +834,8 @@ public class EntityCacheTestClass {
 
         try (Transaction tx = persistence.createTransaction()) {
             persistence.getEntityManager().getConnection();
-            ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-            View view = viewRepository.getView(metadata.getClass(User.class), "user.browse");
+            FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.class);
+            FetchPlan view = viewRepository.getFetchPlan(metadata.getClass(User.class), "user.browse");
             persistence.getEntityManager().find(User.class, this.user.getId(), view);
             tx.commit();
         }
@@ -845,8 +845,8 @@ public class EntityCacheTestClass {
 
         try (Transaction tx = persistence.createTransaction()) {
             persistence.getEntityManager().getConnection();
-            ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-            View view = viewRepository.getView(metadata.getClass(User.class), "user.browse");
+            FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.class);
+            FetchPlan view = viewRepository.getFetchPlan(metadata.getClass(User.class), "user.browse");
             persistence.getEntityManager().find(User.class, this.user.getId(), view);
             tx.commit();
         }
@@ -861,12 +861,12 @@ public class EntityCacheTestClass {
                 persistence.getEntityManager().getConnection();
                 tx1.commit();
             }
-            ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-            View view = viewRepository.getView(metadata.getClass(User.class), "user.browse");
+            FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.class);
+            FetchPlan view = viewRepository.getFetchPlan(metadata.getClass(User.class), "user.browse");
 
             Query query = persistence.getEntityManager().createQuery("select u from test$User u where u.id = :id")
                     .setParameter("id", user.getId());
-            query.setView(View.copy(view).setLoadPartialEntities(true));
+            query.setView(FetchPlan.copy(view).setLoadPartialEntities(true));
             ((QueryImpl) query).setSingleResultExpected(true);
             User userL = (User) query.getSingleResult();
             //User userL = persistence.getEntityManager().find(User.class, user.getId(), view);
@@ -881,8 +881,8 @@ public class EntityCacheTestClass {
     public void testLoadingRelatedEntityFromCache() {
         appender.clearMessages();
 
-        ViewRepository viewRepository = AppBeans.get(ViewRepository.class);
-        View view = viewRepository.getView(metadata.getClass(UserSubstitution.class), "usersubst.edit");
+        FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.class);
+        FetchPlan view = viewRepository.getFetchPlan(metadata.getClass(UserSubstitution.class), "usersubst.edit");
 
         try (Transaction tx = persistence.createTransaction()) {
             persistence.getEntityManager().find(UserSubstitution.class, this.userSubstitution.getId(), view);
@@ -909,8 +909,7 @@ public class EntityCacheTestClass {
 
         DataManager dataManager = AppBeans.get(DataManager.class);
 
-        LoadContext<CompositeOne> loadContextList = new LoadContext<>(CompositeOne.class)
-                .setView("compositeOne-view");
+        LoadContext<CompositeOne> loadContextList = new LoadContext<>(CompositeOne.class).setFetchPlan("compositeOne-view");
         loadContextList.setQueryString("select e from test$CompositeOne e where e.name = 'compositeOne'").setMaxResults(1);
 
         List<CompositeOne> results = dataManager.loadList(loadContextList);
@@ -929,8 +928,7 @@ public class EntityCacheTestClass {
         appender.clearMessages();
 
         LoadContext<CompositeOne> loadContextOne = new LoadContext<>(CompositeOne.class)
-                .setId(compositeOne.getId())
-                .setView("compositeOne-view");
+                .setId(compositeOne.getId()).setFetchPlan("compositeOne-view");
         CompositeOne result = dataManager.load(loadContextOne);
 
         assertEquals(3, appender.filterMessages(selectsOnly).count()); // UserSubstitution only, User is cached

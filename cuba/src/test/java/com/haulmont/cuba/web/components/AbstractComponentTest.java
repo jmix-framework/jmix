@@ -19,7 +19,7 @@ package com.haulmont.cuba.web.components;
 import com.haulmont.cuba.web.testsupport.WebTest;
 import com.haulmont.cuba.web.testsupport.WebTestConfiguration;
 import io.jmix.core.Metadata;
-import io.jmix.core.ViewRepository;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.Component;
 
@@ -37,7 +37,7 @@ public class AbstractComponentTest {
     protected UiComponents uiComponents;
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     @Inject
     protected Metadata metadata;

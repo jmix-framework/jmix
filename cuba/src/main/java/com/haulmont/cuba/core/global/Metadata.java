@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global;
 import com.haulmont.chile.core.model.Session;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.ViewRepository;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 
 /**
@@ -34,7 +34,7 @@ public interface Metadata extends io.jmix.core.Metadata, Session {
      * @deprecated Use dependency injection.
      */
     @Deprecated
-    ViewRepository getViewRepository();
+    FetchPlanRepository getViewRepository();
 
     /**
      * @deprecated Use dependency injection.

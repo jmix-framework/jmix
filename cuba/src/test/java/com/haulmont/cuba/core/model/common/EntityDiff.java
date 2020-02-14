@@ -17,7 +17,7 @@
 
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -36,7 +36,7 @@ public class EntityDiff extends BaseUuidEntity {
 
     private static final long serialVersionUID = -3884249873393845439L;
 
-    private View diffView;
+    private FetchPlan diffView;
 
     private EntitySnapshot beforeSnapshot;
 
@@ -48,15 +48,15 @@ public class EntityDiff extends BaseUuidEntity {
 
     private List<EntityPropertyDiff> propertyDiffs = new ArrayList<>();
 
-    public EntityDiff(View diffView) {
+    public EntityDiff(FetchPlan diffView) {
         this.diffView = diffView;
     }
 
-    public View getDiffView() {
+    public FetchPlan getDiffView() {
         return diffView;
     }
 
-    public void setDiffView(View diffView) {
+    public void setDiffView(FetchPlan diffView) {
         this.diffView = diffView;
     }
 

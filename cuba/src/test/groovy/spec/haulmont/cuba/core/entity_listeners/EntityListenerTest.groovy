@@ -19,7 +19,6 @@ import com.haulmont.cuba.core.listener.TestUserDetachListener
 import com.haulmont.cuba.core.listener.TestUserEntityListener
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
-import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
 import io.jmix.data.Persistence
 import io.jmix.data.impl.EntityListenerManager
@@ -96,7 +95,7 @@ class EntityListenerTest extends CoreTestSpecification {
             em.persist(user)
         }
 
-        def view = new View(User).addProperty('name')
+        def view = new FetchPlan(User).addProperty('name')
         def loadContext = LoadContext.create(User).setId(user.id).setView(view)
 
         when:
@@ -141,9 +140,9 @@ class EntityListenerTest extends CoreTestSpecification {
 
         when: "loading entity with view"
 
-        def view = new View(User)
+        def view = new FetchPlan(User)
                 .addProperty('name')
-                .addProperty('group', new View(Group)
+                .addProperty('group', new FetchPlan(Group)
                         .addProperty('name'))
         dataManager.load(LoadContext.create(User).setId(user.id).setView(view))
 
@@ -156,7 +155,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         when: "loading entity with local view"
 
-        view = AppBeans.get(ViewRepository).getView(User, View.LOCAL)
+        view = AppBeans.get(FetchPlanRepository).getFetchPlan(User, FetchPlan.LOCAL)
 
         def loadedUser = dataManager.load(LoadContext.create(User).setId(user.id).setView(view))
 
@@ -287,7 +286,7 @@ class EntityListenerTest extends CoreTestSpecification {
         user.group = dataManager.load(Group).id(companyGroup.id).one()
         dataManager.commit(user)
 
-        user = dataManager.load(User).id(user.id).view(View.LOCAL).one()
+        user = dataManager.load(User).id(user.id).view(FetchPlan.LOCAL).one()
 
         EntityListenerManager entityListenerManager = AppBeans.get(EntityListenerManager);
         entityListenerManager.addListener(User, TestUserEntityListener)

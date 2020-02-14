@@ -15,8 +15,8 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.View;
-import io.jmix.core.ViewProperty;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.entity.EmbeddableEntity;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.Instance;
@@ -141,9 +141,9 @@ public class EmbeddedDatasourceImpl<T extends EmbeddableEntity>
     }
 
     @Override
-    public View getView() {
-        final ViewProperty property = masterDs.getView().getProperty(metaProperty.getName());
-        return property == null ? null : metadata.getViewRepository().getView(getMetaClass(), property.getView().getName());
+    public FetchPlan getView() {
+        final FetchPlanProperty property = masterDs.getView().getProperty(metaProperty.getName());
+        return property == null ? null : metadata.getViewRepository().getFetchPlan(getMetaClass(), property.getFetchPlan().getName());
     }
 
     @Override

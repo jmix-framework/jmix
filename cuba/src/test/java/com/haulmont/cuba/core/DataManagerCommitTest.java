@@ -51,7 +51,7 @@ public class DataManagerCommitTest {
     private UUID userRoleId;
     private Group group;
     private Role role;
-    private View view;
+    private FetchPlan view;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -83,13 +83,13 @@ public class DataManagerCommitTest {
             tx.commit();
         }
 
-        view = new View(User.class, true)
+        view = new FetchPlan(User.class, true)
                 .addProperty("login")
                 .addProperty("loginLowerCase")
                 .addProperty("name")
                 .addProperty("password")
-                .addProperty("group", new View(Group.class).addProperty("name"))
-                .addProperty("userRoles", new View(UserRole.class));
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"))
+                .addProperty("userRoles", new FetchPlan(UserRole.class));
     }
 
     @AfterEach

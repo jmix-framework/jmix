@@ -813,7 +813,7 @@ public class QueryCacheTestClass {
         List<User> resultList;
 
         //load with view: one parameter login
-        View userLoginView = new View(User.class)
+        FetchPlan userLoginView = new FetchPlan(User.class)
                 .addProperty("login");
 
         try (Transaction tx = persistence.createTransaction()) {
@@ -859,9 +859,9 @@ public class QueryCacheTestClass {
         appender.clearMessages();
 
         //load with view: group
-        View groupView = new View(Group.class, false)
+        FetchPlan groupView = new FetchPlan(Group.class, false)
                 .addProperty("name");
-        View userGroupView = new View(User.class)
+        FetchPlan userGroupView = new FetchPlan(User.class)
                 .addProperty("group", groupView);
 
         try (Transaction tx = persistence.createTransaction()) {
@@ -969,7 +969,7 @@ public class QueryCacheTestClass {
         List<User> resultList;
 
         //load with view: one parameter login
-        View userLoginView = new View(User.class)
+        FetchPlan userLoginView = new FetchPlan(User.class)
                 .addProperty("login").setLoadPartialEntities(true);
 
         try (Transaction tx = persistence.createTransaction()) {
@@ -1015,9 +1015,9 @@ public class QueryCacheTestClass {
         appender.clearMessages();
 
         //load with view: group
-        View groupView = new View(Group.class, false)
+        FetchPlan groupView = new FetchPlan(Group.class, false)
                 .addProperty("name").setLoadPartialEntities(true);
-        View userGroupView = new View(User.class)
+        FetchPlan userGroupView = new FetchPlan(User.class)
                 .addProperty("group", groupView).setLoadPartialEntities(true);
 
         try (Transaction tx = persistence.createTransaction()) {
@@ -1211,7 +1211,7 @@ public class QueryCacheTestClass {
 
     protected User dataManager_getResultListUserByLoginNamed() {
         DataManager dataManager = AppBeans.get(DataManager.NAME);
-        LoadContext<User> loadContext = new LoadContext<>(User.class).setView("user.browse");
+        LoadContext<User> loadContext = new LoadContext<>(User.class).setFetchPlan("user.browse");
         loadContext.setQueryString("select u from test$User u where u.login = :login")
                 .setParameter("login", "ECTest-" + this.user.getId())
                 .setCacheable(true);

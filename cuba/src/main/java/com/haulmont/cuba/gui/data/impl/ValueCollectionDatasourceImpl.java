@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatypes.Datatype;
@@ -46,7 +46,7 @@ public class ValueCollectionDatasourceImpl
     }
 
     @Override
-    public void setup(DsContext dsContext, DataSupplier dataSupplier, String id, MetaClass metaClass, @Nullable View view) {
+    public void setup(DsContext dsContext, DataSupplier dataSupplier, String id, MetaClass metaClass, @Nullable FetchPlan view) {
         this.id = id;
         this.dsContext = dsContext;
         this.dataSupplier = dataSupplier;

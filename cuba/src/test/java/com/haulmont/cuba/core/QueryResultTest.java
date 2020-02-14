@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
@@ -106,7 +106,7 @@ public class QueryResultTest {
 
     @Test
     public void testFirstQuery() throws SQLException {
-        LoadContext<?> context = new LoadContext<>(User.class).setView(View.LOCAL);
+        LoadContext<?> context = new LoadContext<>(User.class).setFetchPlan(FetchPlan.LOCAL);
         context.setQueryString("select u from test$User u where u.name like :name").setParameter("name", "A-%");
         List entities = dataManager.loadList(context);
         assertEquals(20, entities.size());
@@ -117,7 +117,7 @@ public class QueryResultTest {
 
     @Test
     public void testSecondQuery() throws SQLException {
-        LoadContext<?> context = new LoadContext<>(User.class).setView(View.LOCAL);
+        LoadContext<?> context = new LoadContext<>(User.class).setFetchPlan(FetchPlan.LOCAL);
         context.setQueryString("select u from test$User u where u.email like :email").setParameter("email", "%aaa.com");
 
         LoadContext.Query prevQuery = new LoadContext.Query("select u from test$User u where u.name like :name")
@@ -137,13 +137,13 @@ public class QueryResultTest {
         LoadContext context;
         List<Entity> entities;
 
-        context = new LoadContext(User.class).setView(View.LOCAL);
+        context = new LoadContext(User.class).setFetchPlan(FetchPlan.LOCAL);
         LoadContext.Query query1 = context.setQueryString("select u from test$User u where u.email like :email")
                 .setParameter("email", "%aaa.com");
         entities = dataManager.loadList(context);
         assertEquals(20, entities.size());
 
-        context = new LoadContext(User.class).setView(View.LOCAL);
+        context = new LoadContext(User.class).setFetchPlan(FetchPlan.LOCAL);
         LoadContext.Query query2 = context.setQueryString("select u from test$User u where u.name like :name")
                 .setParameter("name", "A-%");
         context.getPrevQueries().add(query1);
@@ -152,7 +152,7 @@ public class QueryResultTest {
         entities = dataManager.loadList(context);
         assertEquals(10, entities.size());
 
-        context = new LoadContext(User.class).setView(View.LOCAL);
+        context = new LoadContext(User.class).setFetchPlan(FetchPlan.LOCAL);
         context.setQueryString("select u from test$User u where u.firstName like :firstName")
                 .setParameter("firstName", "C-%");
         context.getPrevQueries().add(query1);

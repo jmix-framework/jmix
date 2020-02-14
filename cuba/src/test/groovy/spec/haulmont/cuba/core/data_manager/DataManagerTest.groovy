@@ -301,7 +301,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         then:
 
-        AppBeans.get(EntityStates).isLoadedWithView(line1, View.BASE)
+        AppBeans.get(EntityStates).isLoadedWithView(line1, FetchPlan.BASE)
         AppBeans.get(MetadataTools).getInstanceName(line1) == 'p1 10'
 
         cleanup:

@@ -20,7 +20,7 @@ package com.haulmont.cuba.web.components;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.security.entity.User;
 import io.jmix.ui.components.Component;
@@ -97,7 +97,7 @@ public class DateFieldTest extends AbstractComponentTest {
         Datasource<User> testDs = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(User.class)
-                .setView(viewRepository.getView(User.class, View.LOCAL))
+                .setView(viewRepository.getFetchPlan(User.class, FetchPlan.LOCAL))
                 .buildDatasource();
 
         testDs.setItem(new User());
@@ -148,7 +148,7 @@ public class DateFieldTest extends AbstractComponentTest {
         Datasource<User> testDs = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(User.class)
-                .setView(viewRepository.getView(User.class, View.LOCAL))
+                .setView(viewRepository.getFetchPlan(User.class, FetchPlan.LOCAL))
                 .buildDatasource();
 
         testDs.setItem(new User());

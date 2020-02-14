@@ -21,7 +21,7 @@ import com.haulmont.chile.core.model.impl.CubaSession;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.ViewRepository;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -34,7 +34,7 @@ public class CubaMetadata extends io.jmix.core.impl.MetadataImpl implements Meta
     protected DatatypeRegistry datatypeRegistry;
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     public CubaMetadata(MetadataLoader metadataLoader) {
         super(metadataLoader);
@@ -56,7 +56,7 @@ public class CubaMetadata extends io.jmix.core.impl.MetadataImpl implements Meta
     }
 
     @Override
-    public ViewRepository getViewRepository() {
+    public FetchPlanRepository getViewRepository() {
         return viewRepository;
     }
 

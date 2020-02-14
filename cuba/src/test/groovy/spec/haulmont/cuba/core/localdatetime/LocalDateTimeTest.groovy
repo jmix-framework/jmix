@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.LocalDateTimeEntity
 import io.jmix.core.AppBeans
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
-import io.jmix.core.View
+import io.jmix.core.FetchPlan
 import io.jmix.data.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -89,7 +89,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
 
     def "load/store LocalDate"() {
         when:
-        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(View.LOCAL).one()
+        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(FetchPlan.LOCAL).one()
 
         then:
         e.localDate != null
@@ -98,7 +98,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
 
     def "load/store LocalTime"() {
         when:
-        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(View.LOCAL).one()
+        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(FetchPlan.LOCAL).one()
 
         then:
         e.localTime != null
@@ -107,7 +107,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
 
     def "load/store LocalDateTime"() {
         when:
-        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(View.LOCAL).one()
+        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(FetchPlan.LOCAL).one()
 
         then:
         e.localDateTime != null
@@ -116,7 +116,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
 
     def "load/store OffsetDateTime"() {
         when:
-        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(View.LOCAL).one()
+        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(FetchPlan.LOCAL).one()
 
         then:
         e.offsetDateTime != null
@@ -126,7 +126,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
     @Ignore
     def "load/store OffsetTime"() {
         when:
-        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(View.LOCAL).one()
+        def e = dataManager.load(LocalDateTimeEntity).id(entity.id).view(FetchPlan.LOCAL).one()
 
         then:
         e.offsetTime != null
@@ -138,7 +138,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where e.localDate = :dt')
                 .parameter('dt', localDate)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -149,7 +149,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where e.localDateTime = :dt')
                 .parameter('dt', localDateTime)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -160,7 +160,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where e.localTime = :dt')
                 .parameter('dt', localTime)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -171,7 +171,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where e.offsetDateTime = :dt')
                 .parameter('dt', offsetDateTime)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -185,7 +185,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
         def e = dataManager.load(LocalDateTimeEntity)
                 .query('select e from test_LocalDateTimeEntity e where e.offsetTime = :dt')
                 .parameter('dt', offsetTime)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -199,7 +199,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
                 .query('select e from test_LocalDateTimeEntity e where e.localDate > :dt and e.id = :id')
                 .parameter('dt', minLocalDate)
                 .parameter('id', entity.id)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -211,7 +211,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
                 .query('select e from test_LocalDateTimeEntity e where e.localTime > :dt and e.id = :id')
                 .parameter('dt', minLocalTime)
                 .parameter('id', entity.id)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -223,7 +223,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
                 .query('select e from test_LocalDateTimeEntity e where e.localDateTime > :dt and e.id = :id')
                 .parameter('dt', minLocalDateTime)
                 .parameter('id', entity.id)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -235,7 +235,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
                 .query('select e from test_LocalDateTimeEntity e where e.offsetDateTime > :dt and e.id = :id')
                 .parameter('dt', minOffsetDateTime)
                 .parameter('id', entity.id)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity
@@ -250,7 +250,7 @@ class LocalDateTimeTest extends CoreTestSpecification {
                 .query('select e from test_LocalDateTimeEntity e where e.offsetTime > :dt and e.id = :id')
                 .parameter('dt', minOffsetTime)
                 .parameter('id', entity.id)
-                .view(View.LOCAL).one()
+                .view(FetchPlan.LOCAL).one()
 
         then:
         e == entity

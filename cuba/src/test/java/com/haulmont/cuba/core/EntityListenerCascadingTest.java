@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
 import io.jmix.data.TypedQuery;
@@ -149,7 +149,7 @@ public class EntityListenerCascadingTest {
             u.setLogin("1-NEW-" + user.getId());
 
             TypedQuery<User> query = persistence.getEntityManager().createQuery("select u from test$User u where u.login = 'admin'", User.class);
-            query.setViewName(View.MINIMAL);
+            query.setViewName(FetchPlan.MINIMAL);
             User admin = query.getSingleResult();
             System.out.println(admin.getLogin());
 
@@ -180,7 +180,7 @@ public class EntityListenerCascadingTest {
             u.setLogin("1-NEW-" + user.getId());
 
             TypedQuery<User> query = persistence.getEntityManager().createQuery("select u from test$User u where u.login = 'admin'", User.class);
-            query.setViewName(View.MINIMAL);
+            query.setViewName(FetchPlan.MINIMAL);
             User admin = query.getSingleResult();
             System.out.println(admin.getLogin());
 

@@ -65,16 +65,16 @@ class DeletePolicy_Unlink_OneToManyTest extends CoreTestSpecification {
     def "unlink @OneToMany property if it isn't owning side and is loaded"() {
         setup:
 
-        View rootView_2 = new View(DeletePolicy_Root.class)
+        FetchPlan rootView_2 = new FetchPlan(DeletePolicy_Root.class)
                 .addProperty("rootFld")
-        View firstView_1 = new View(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_1 = new FetchPlan(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
-        View rootView_1 = new View(DeletePolicy_Root.class)
+        FetchPlan rootView_1 = new FetchPlan(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("onetomany", firstView_1)
 
-        View firstView_2 = new View(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_2 = new FetchPlan(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
 
@@ -121,16 +121,16 @@ class DeletePolicy_Unlink_OneToManyTest extends CoreTestSpecification {
     def "unlink @OneToMany property if it isn't owning side and isn't loaded"() {
         setup:
 
-        View rootView_2 = new View(DeletePolicy_Root.class)
+        FetchPlan rootView_2 = new FetchPlan(DeletePolicy_Root.class)
                 .addProperty("rootFld")
-        View firstView_1 = new View(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_1 = new FetchPlan(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
-        View rootView_1 = new View(DeletePolicy_Root.class)
+        FetchPlan rootView_1 = new FetchPlan(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("onetomany", firstView_1)
 
-        View firstView_2 = new View(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_2 = new FetchPlan(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
 
@@ -149,7 +149,7 @@ class DeletePolicy_Unlink_OneToManyTest extends CoreTestSpecification {
         when:
 
         dataManager.remove(dataManager.load(new LoadContext<DeletePolicy_Root>(DeletePolicy_Root.class)
-                .setView(View.LOCAL)
+                .setView(FetchPlan.LOCAL)
                 .setId(root.id)))
         entityRoot = dataManager.load(
                 new LoadContext<DeletePolicy_Root>(DeletePolicy_Root.class)

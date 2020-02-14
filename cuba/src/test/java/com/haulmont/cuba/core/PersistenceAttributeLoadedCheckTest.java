@@ -26,7 +26,7 @@ import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.LoadContext;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.EntityManager;
 import io.jmix.data.Persistence;
 import io.jmix.data.Transaction;
@@ -52,8 +52,8 @@ public class PersistenceAttributeLoadedCheckTest {
     private UUID taskId;
     private UUID userId;
     private UUID groupId;
-    private View taskView;
-    private View userView;
+    private FetchPlan taskView;
+    private FetchPlan userView;
 
     @BeforeEach
     public void setUp() {
@@ -84,16 +84,16 @@ public class PersistenceAttributeLoadedCheckTest {
             tx.commit();
         }
 
-        taskView = new View(ScheduledTask.class, true)
+        taskView = new FetchPlan(ScheduledTask.class, true)
                 .addProperty("beanName");
 
-        userView = new View(User.class, true)
+        userView = new FetchPlan(User.class, true)
                 .addProperty("login")
                 .addProperty("loginLowerCase")
                 .addProperty("name")
                 .addProperty("password")
-                .addProperty("group", new View(Group.class).addProperty("name"))
-                .addProperty("userRoles", new View(UserRole.class));
+                .addProperty("group", new FetchPlan(Group.class).addProperty("name"))
+                .addProperty("userRoles", new FetchPlan(UserRole.class));
     }
 
     @AfterEach

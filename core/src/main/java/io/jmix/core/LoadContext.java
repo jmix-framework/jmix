@@ -48,7 +48,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
 
     protected String metaClass;
     protected Query query;
-    protected View view;
+    protected FetchPlan view;
     protected Object id;
     protected List<Object> idList = new ArrayList<>(0);
     protected boolean softDeletion = true;
@@ -143,7 +143,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
     /**
      * @return view that is used for loading entities
      */
-    public View getView() {
+    public FetchPlan getView() {
         return view;
     }
 
@@ -151,19 +151,27 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
      * @param view view that is used for loading entities
      * @return this instance for chaining
      */
-    public LoadContext<E> setView(View view) {
+    public LoadContext<E> setView(FetchPlan view) {
         this.view = view;
         return this;
     }
 
     /**
-     * @param viewName view that is used for loading entities
+     * @deprecated replaced by {@link LoadContext#setFetchPlan(String)}
+     */
+    @Deprecated
+    public LoadContext<E> setView(String viewName) {
+        return setFetchPlan(viewName);
+    }
+
+    /**
+     * @param fetchPlanName fetch plan that is used for loading entities
      * @return this instance for chaining
      */
-    public LoadContext<E> setView(String viewName) {
+    public LoadContext<E> setFetchPlan(String fetchPlanName) {
         Metadata metadata = AppBeans.get(Metadata.NAME);
-        ViewRepository viewRepository = AppBeans.get(ViewRepository.NAME);
-        this.view = viewRepository.getView(metadata.getSession().findClass(metaClass), viewName);
+        FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.NAME);
+        this.view = viewRepository.getFetchPlan(metadata.getSession().findClass(metaClass), fetchPlanName);
         return this;
     }
 
@@ -273,8 +281,8 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
 
     /**
      * @return whether to load partial entities. When true (which is by default), some local attributes can be unfetched
-     * according to {@link #setView(View)}.
-     * <p>The state of {@link View#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
+     * according to {@link #setView(FetchPlan)}.
+     * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
      */
     public boolean isLoadPartialEntities() {
         return loadPartialEntities;
@@ -282,8 +290,8 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
 
     /**
      * Whether to load partial entities. When true (which is by default), some local attributes can be unfetched
-     * according to {@link #setView(View)}.
-     * <p>The state of {@link View#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
+     * according to {@link #setView(FetchPlan)}.
+     * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
      */
     public LoadContext<E> setLoadPartialEntities(boolean loadPartialEntities) {
         this.loadPartialEntities = loadPartialEntities;

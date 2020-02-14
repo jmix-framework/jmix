@@ -117,9 +117,9 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
                 storeToContextMap.put(storeName, cc);
             }
             cc.getCommitInstances().add(entity);
-            View view = context.getViews().get(entity);
+            FetchPlan view = context.getFetchPlans().get(entity);
             if (view != null)
-                cc.getViews().put(entity, view);
+                cc.getFetchPlans().put(entity, view);
         }
         for (Entity entity : context.getRemoveInstances()) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
@@ -131,9 +131,9 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
                 storeToContextMap.put(storeName, cc);
             }
             cc.getRemoveInstances().add(entity);
-            View view = context.getViews().get(entity);
+            FetchPlan view = context.getFetchPlans().get(entity);
             if (view != null)
-                cc.getViews().put(entity, view);
+                cc.getFetchPlans().put(entity, view);
         }
 
         Set<Entity> result = new LinkedHashSet<>();
@@ -152,7 +152,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
                 cc.setJoinTransaction(context.isJoinTransaction());
                 for (Entity entity : result) {
                     if (toRepeat.contains(entity)) {
-                        cc.addInstanceToCommit(entity, context.getViews().get(entity));
+                        cc.addInstanceToCommit(entity, context.getFetchPlans().get(entity));
                     }
                 }
                 Set<Entity> committedEntities = commit(cc);
@@ -262,7 +262,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
         return repeatRequired;
     }
 
-    protected void readCrossDataStoreReferences(Collection<? extends Entity> entities, View view, MetaClass metaClass,
+    protected void readCrossDataStoreReferences(Collection<? extends Entity> entities, FetchPlan view, MetaClass metaClass,
                                                 boolean joinTransaction) {
         if (stores.getAdditional().isEmpty() || entities.isEmpty() || view == null)
             return;

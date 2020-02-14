@@ -32,9 +32,9 @@ public class FluentLoader<E extends Entity<K>, K> {
     private DataManager dataManager;
     private boolean transactional;
 
-    private View view;
-    private String viewName;
-    private ViewBuilder viewBuilder;
+    private FetchPlan fetchPlan;
+    private String fetchPlanName;
+    private FetchPlanBuilder fetchPlanBuilder;
     private boolean softDeletion = true;
     private boolean dynamicAttributes;
 
@@ -63,26 +63,26 @@ public class FluentLoader<E extends Entity<K>, K> {
     private void initCommonLoadContextParameters(LoadContext<E> loadContext) {
         loadContext.setJoinTransaction(transactional);
 
-        if (view != null)
-            loadContext.setView(view);
-        else if (!Strings.isNullOrEmpty(viewName))
-            loadContext.setView(viewName);
+        if (fetchPlan != null)
+            loadContext.setView(fetchPlan);
+        else if (!Strings.isNullOrEmpty(fetchPlanName))
+            loadContext.setFetchPlan(fetchPlanName);
 
-        if (viewBuilder != null) {
-            if (view != null)
-                viewBuilder.addView(view);
-            else if (!Strings.isNullOrEmpty(viewName))
-                viewBuilder.addView(viewName);
-            loadContext.setView(viewBuilder.build());
+        if (fetchPlanBuilder != null) {
+            if (fetchPlan != null)
+                fetchPlanBuilder.addFetchPlan(fetchPlan);
+            else if (!Strings.isNullOrEmpty(fetchPlanName))
+                fetchPlanBuilder.addFetchPlan(fetchPlanName);
+            loadContext.setView(fetchPlanBuilder.build());
         }
 
         loadContext.setSoftDeletion(softDeletion);
         loadContext.setLoadDynamicAttributes(dynamicAttributes);
     }
 
-    private void createViewBuilder() {
-        if (viewBuilder == null) {
-            viewBuilder = AppBeans.getPrototype(ViewBuilder.NAME, entityClass);
+    private void createFetchPlanBuilder() {
+        if (fetchPlanBuilder == null) {
+            fetchPlanBuilder = AppBeans.getPrototype(FetchPlanBuilder.NAME, entityClass);
         }
     }
 
@@ -120,29 +120,65 @@ public class FluentLoader<E extends Entity<K>, K> {
 
     /**
      * Sets a view.
+     * @deprecated replaced by {@link FluentLoader#fetchPlan(FetchPlan)}
      */
-    public FluentLoader<E, K> view(View view) {
-        this.view = view;
+    @Deprecated
+    public FluentLoader<E, K> view(FetchPlan view) {
+        return fetchPlan(view);
+    }
+
+    /**
+     * Sets a fetch plan.
+     */
+    public FluentLoader<E, K> fetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
         return this;
     }
 
     /**
      * Sets a view by name.
+     * @deprecated replaced by {@link FluentLoader#fetchPlan(String)}
      */
+    @Deprecated
     public FluentLoader<E, K> view(String viewName) {
-        this.viewName = viewName;
+        return fetchPlan(viewName);
+    }
+
+    /**
+     * Sets a fetch plan by name.
+     */
+    public FluentLoader<E, K> fetchPlan(String fetchPlanName) {
+        this.fetchPlanName = fetchPlanName;
         return this;
     }
 
-    public FluentLoader<E, K> view(Consumer<ViewBuilder> viewBuilderConfigurer) {
-        createViewBuilder();
-        viewBuilderConfigurer.accept(viewBuilder);
+    /**
+     *
+     * @deprecated replaced by {@link FluentLoader#fetchPlan(Consumer)}
+     */
+    @Deprecated
+    public FluentLoader<E, K> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+        return fetchPlan(fetchPlanBuilderConfigurer);
+    }
+
+    public FluentLoader<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+        createFetchPlanBuilder();
+        fetchPlanBuilderConfigurer.accept(fetchPlanBuilder);
         return this;
     }
 
+    /**
+     *
+     * @deprecated replaced by {@link FluentLoader#fetchPlanProperties(String...)}
+     */
+    @Deprecated
     public FluentLoader<E, K> viewProperties(String... properties) {
-        createViewBuilder();
-        viewBuilder.addAll(properties);
+        return fetchPlanProperties(properties);
+    }
+
+    public FluentLoader<E, K> fetchPlanProperties(String... properties) {
+        createFetchPlanBuilder();
+        fetchPlanBuilder.addAll(properties);
         return this;
     }
 
@@ -244,29 +280,63 @@ public class FluentLoader<E extends Entity<K>, K> {
 
         /**
          * Sets a view.
+         * @deprecated replaced by {@link ById#fetchPlan(FetchPlan)}
          */
-        public ById<E, K> view(View view) {
-            loader.view = view;
+        @Deprecated
+        public ById<E, K> view(FetchPlan view) {
+            return fetchPlan(view);
+        }
+
+        /**
+         * Sets a fetch plan.
+         */
+        public ById<E, K> fetchPlan(FetchPlan fetchPlan) {
+            loader.fetchPlan = fetchPlan;
             return this;
         }
 
         /**
          * Sets a view by name.
+         * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
+        @Deprecated
         public ById<E, K> view(String viewName) {
-            loader.viewName = viewName;
+            return fetchPlan(viewName);
+        }
+
+        /**
+         * Sets a fetch plan by name.
+         */
+        public ById<E, K> fetchPlan(String viewName) {
+            loader.fetchPlanName = viewName;
             return this;
         }
 
-        public ById<E, K> view(Consumer<ViewBuilder> viewBuilderConfigurer) {
-            loader.createViewBuilder();
-            viewBuilderConfigurer.accept(loader.viewBuilder);
+        /**
+         * @deprecated replaced by {@link ById#fetchPlan(Consumer)} )}
+         */
+        @Deprecated
+        public ById<E, K> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
+            return fetchPlan(viewBuilderConfigurer);
+        }
+
+        public ById<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            loader.createFetchPlanBuilder();
+            fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
         }
 
+        /**
+         * @deprecated replaced by {@link ById#fetchPlanProperties(String...)}
+         */
+        @Deprecated
         public ById<E, K> viewProperties(String... properties) {
-            loader.createViewBuilder();
-            loader.viewBuilder.addAll(properties);
+            return fetchPlanProperties(properties);
+        }
+
+        public ById<E, K> fetchPlanProperties(String... properties) {
+            loader.createFetchPlanBuilder();
+            loader.fetchPlanBuilder.addAll(properties);
             return this;
         }
 
@@ -316,22 +386,40 @@ public class FluentLoader<E extends Entity<K>, K> {
 
         /**
          * Sets a view.
+         * @deprecated replaced by {@link ByIds#fetchPlan(FetchPlan)}
          */
-        public ByIds<E, K> view(View view) {
-            loader.view = view;
+        @Deprecated
+        public ByIds<E, K> view(FetchPlan view) {
+            return fetchPlan(view);
+        }
+
+        /**
+         * Sets a fetch plan.
+         */
+        public ByIds<E, K> fetchPlan(FetchPlan fetchPlan) {
+            loader.fetchPlan = fetchPlan;
             return this;
         }
 
         /**
          * Sets a view by name.
+         * @deprecated replaced by {@link ByIds#fetchPlan(String)}
          */
+        @Deprecated
         public ByIds<E, K> view(String viewName) {
-            loader.viewName = viewName;
+            return fetchPlan(viewName);
+        }
+
+        /**
+         * Sets a fetch plan by name.
+         */
+        public ByIds<E, K> fetchPlan(String fetchPlanName) {
+            loader.fetchPlanName = fetchPlanName;
             return this;
         }
 
         /**
-         * Sets a view configured by the {@link ViewBuilder}. For example:
+         * Sets a view configured by the {@link FetchPlanBuilder}. For example:
          * <pre>
          *     dataManager.load(Pet.class)
          *         .ids(id1, id2)
@@ -340,10 +428,27 @@ public class FluentLoader<E extends Entity<K>, K> {
          *                 "owner.name"))
          *         .list();
          * </pre>
+         * @deprecated replaced by {@link ByIds#fetchPlan(Consumer)} )}
          */
-        public ByIds<E, K> view(Consumer<ViewBuilder> viewBuilderConfigurer) {
-            loader.createViewBuilder();
-            viewBuilderConfigurer.accept(loader.viewBuilder);
+        @Deprecated
+        public ByIds<E, K> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
+            return fetchPlan(viewBuilderConfigurer);
+        }
+
+        /**
+         * Sets a fetch plan configured by the {@link FetchPlanBuilder}. For example:
+         * <pre>
+         *     dataManager.load(Pet.class)
+         *         .ids(id1, id2)
+         *         .fetchPlan(fetchPlanBuilder -&gt; fetchPlanBuilder.addAll(
+         *                 "name",
+         *                 "owner.name"))
+         *         .list();
+         * </pre>
+         */
+        public ByIds<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            loader.createFetchPlanBuilder();
+            fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
         }
 
@@ -359,10 +464,31 @@ public class FluentLoader<E extends Entity<K>, K> {
          *                 "owner.address.city")
          *         .list();
          * </pre>
+         * @deprecated replaced by {@link ByIds#fetchPlanProperties(String...)}
          */
+        @Deprecated
         public ByIds<E, K> viewProperties(String... properties) {
-            loader.createViewBuilder();
-            loader.viewBuilder.addAll(properties);
+            loader.createFetchPlanBuilder();
+            loader.fetchPlanBuilder.addAll(properties);
+            return this;
+        }
+
+        /**
+         * Sets a fetch plan containing the given properties. A property can be designated by a path in the entity graph.
+         * For example:
+         * <pre>
+         *     dataManager.load(Pet.class)
+         *         .ids(id1, id2)
+         *         .fetchPlanProperties(
+         *                 "name",
+         *                 "owner.name",
+         *                 "owner.address.city")
+         *         .list();
+         * </pre>
+         */
+        public ByIds<E, K> fetchPlanProperties(String... properties) {
+            loader.createFetchPlanBuilder();
+            loader.fetchPlanBuilder.addAll(properties);
             return this;
         }
 
@@ -473,29 +599,63 @@ public class FluentLoader<E extends Entity<K>, K> {
 
         /**
          * Sets a view.
+         * @deprecated replaced by {@link ByQuery#fetchPlan(FetchPlan)}
          */
-        public ByQuery<E, K> view(View view) {
-            loader.view = view;
+        @Deprecated
+        public ByQuery<E, K> view(FetchPlan view) {
+            return fetchPlan(view);
+        }
+
+        /**
+         * Sets a fetch plan.
+         */
+        public ByQuery<E, K> fetchPlan(FetchPlan fetchPlan) {
+            loader.fetchPlan = fetchPlan;
             return this;
         }
 
         /**
          * Sets a view by name.
+         * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
+        @Deprecated
         public ByQuery<E, K> view(String viewName) {
-            loader.viewName = viewName;
+            return fetchPlan(viewName);
+        }
+
+        /**
+         * Sets a view by name.
+         */
+        public ByQuery<E, K> fetchPlan(String viewName) {
+            loader.fetchPlanName = viewName;
             return this;
         }
 
-        public ByQuery<E, K> view(Consumer<ViewBuilder> viewBuilderConfigurer) {
-            loader.createViewBuilder();
-            viewBuilderConfigurer.accept(loader.viewBuilder);
+        /**
+         *
+         * @deprecated replaced by {@link ByQuery#fetchPlan(Consumer)} )}
+         */
+        public ByQuery<E, K> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
+            return fetchPlan(viewBuilderConfigurer);
+        }
+
+        public ByQuery<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            loader.createFetchPlanBuilder();
+            fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
         }
 
+        /**
+         *
+         * @deprecated replaced by {@link ByQuery#fetchPlanProperties(String...)}
+         */
         public ByQuery<E, K> viewProperties(String... properties) {
-            loader.createViewBuilder();
-            loader.viewBuilder.addAll(properties);
+            return fetchPlanProperties(properties);
+        }
+
+        public ByQuery<E, K> fetchPlanProperties(String... properties) {
+            loader.createFetchPlanBuilder();
+            loader.fetchPlanBuilder.addAll(properties);
             return this;
         }
 

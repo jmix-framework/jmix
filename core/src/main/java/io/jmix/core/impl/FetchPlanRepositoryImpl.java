@@ -55,18 +55,18 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
- * Base implementation of the {@link ViewRepository}. Contains methods to store {@link View} objects and deploy
+ * Base implementation of the {@link FetchPlanRepository}. Contains methods to store {@link FetchPlan} objects and deploy
  * them from XML. <br>
  * <br> Don't replace this class completely, because the framework uses it directly.
  */
-@Component(ViewRepository.NAME)
-public class ViewRepositoryImpl implements ViewRepository {
+@Component(FetchPlanRepository.NAME)
+public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
-    private final Logger log = LoggerFactory.getLogger(ViewRepositoryImpl.class);
+    private final Logger log = LoggerFactory.getLogger(FetchPlanRepositoryImpl.class);
 
     protected List<String> readFileNames = new LinkedList<>();
 
-    protected Map<MetaClass, Map<String, View>> storage = new ConcurrentHashMap<>();
+    protected Map<MetaClass, Map<String, FetchPlan>> storage = new ConcurrentHashMap<>();
 
     @Inject
     protected Environment environment;
@@ -201,11 +201,11 @@ public class ViewRepositoryImpl implements ViewRepository {
      *
      * @param entityClass entity class
      * @param name        view name
-     * @return view instance. Throws {@link io.jmix.core.ViewNotFoundException} if not found.
+     * @return view instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
     @Override
-    public View getView(Class<? extends Entity> entityClass, String name) {
-        return getView(metadata.getClass(entityClass), name);
+    public FetchPlan getFetchPlan(Class<? extends Entity> entityClass, String name) {
+        return getFetchPlan(metadata.getClass(entityClass), name);
     }
 
     /**
@@ -213,16 +213,16 @@ public class ViewRepositoryImpl implements ViewRepository {
      *
      * @param metaClass entity class
      * @param name      view name
-     * @return view instance. Throws {@link io.jmix.core.ViewNotFoundException} if not found.
+     * @return view instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
     @Override
-    public View getView(MetaClass metaClass, String name) {
+    public FetchPlan getFetchPlan(MetaClass metaClass, String name) {
         Preconditions.checkNotNullArgument(metaClass, "MetaClass is null");
 
-        View view = findView(metaClass, name);
+        FetchPlan view = findFetchPlan(metaClass, name);
 
         if (view == null) {
-            throw new ViewNotFoundException(String.format("View %s/%s not found", metaClass.getName(), name));
+            throw new FetchPlanNotFoundException(String.format("View %s/%s not found", metaClass.getName(), name));
         }
         return view;
     }
@@ -236,7 +236,7 @@ public class ViewRepositoryImpl implements ViewRepository {
      */
     @Override
     @Nullable
-    public View findView(MetaClass metaClass, @Nullable String name) {
+    public FetchPlan findFetchPlan(MetaClass metaClass, @Nullable String name) {
         if (metaClass == null) {
             throw new IllegalArgumentException("Passed metaClass should not be null");
         }
@@ -249,41 +249,41 @@ public class ViewRepositoryImpl implements ViewRepository {
         try {
             checkInitialized();
 
-            View view = retrieveView(metaClass, name, new HashSet<>());
+            FetchPlan view = retrieveView(metaClass, name, new HashSet<>());
             return copyView(view);
         } finally {
             lock.readLock().unlock();
         }
     }
 
-    protected View copyView(@Nullable View view) {
+    protected FetchPlan copyView(@Nullable FetchPlan view) {
         if (view == null) {
             return null;
         }
 
-        View.ViewParams viewParams = new View.ViewParams()
+        FetchPlan.FetchPlanParams viewParams = new FetchPlan.FetchPlanParams()
                 .entityClass(view.getEntityClass())
                 .name(view.getName());
-        View copy = new View(viewParams);
-        for (ViewProperty property : view.getProperties()) {
-            copy.addProperty(property.getName(), copyView(property.getView()), property.getFetchMode());
+        FetchPlan copy = new FetchPlan(viewParams);
+        for (FetchPlanProperty property : view.getProperties()) {
+            copy.addProperty(property.getName(), copyView(property.getFetchPlan()), property.getFetchMode());
         }
 
         return copy;
     }
 
     @Override
-    public Collection<String> getViewNames(MetaClass metaClass) {
+    public Collection<String> getFetchPlanNames(MetaClass metaClass) {
         Preconditions.checkNotNullArgument(metaClass, "MetaClass is null");
         lock.readLock().lock();
         try {
             checkInitialized();
-            Map<String, View> viewMap = storage.get(metaClass);
+            Map<String, FetchPlan> viewMap = storage.get(metaClass);
             if (viewMap != null && !viewMap.isEmpty()) {
                 Set<String> keySet = new HashSet<>(viewMap.keySet());
-                keySet.remove(View.LOCAL);
-                keySet.remove(View.MINIMAL);
-                keySet.remove(View.BASE);
+                keySet.remove(FetchPlan.LOCAL);
+                keySet.remove(FetchPlan.MINIMAL);
+                keySet.remove(FetchPlan.BASE);
                 return keySet;
             } else {
                 return Collections.emptyList();
@@ -294,13 +294,13 @@ public class ViewRepositoryImpl implements ViewRepository {
     }
 
     @Override
-    public Collection<String> getViewNames(Class<? extends Entity> entityClass) {
+    public Collection<String> getFetchPlanNames(Class<? extends Entity> entityClass) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         MetaClass metaClass = metadata.getClass(entityClass);
-        return getViewNames(metaClass);
+        return getFetchPlanNames(metaClass);
     }
 
-    protected View deployDefaultView(MetaClass metaClass, String name, Set<ViewInfo> visited) {
+    protected FetchPlan deployDefaultView(MetaClass metaClass, String name, Set<ViewInfo> visited) {
         Class<? extends Entity> javaClass = metaClass.getJavaClass();
 
         ViewInfo info = new ViewInfo(javaClass, name);
@@ -309,15 +309,15 @@ public class ViewRepositoryImpl implements ViewRepository {
                     name, metaClass.getName()));
         }
 
-        View view;
-        if (View.LOCAL.equals(name)) {
-            view = new View(javaClass, name, false);
+        FetchPlan view;
+        if (FetchPlan.LOCAL.equals(name)) {
+            view = new FetchPlan(javaClass, name, false);
             addAttributesToLocalView(metaClass, view);
-        } else if (View.MINIMAL.equals(name)) {
-            view = new View(javaClass, name, false);
+        } else if (FetchPlan.MINIMAL.equals(name)) {
+            view = new FetchPlan(javaClass, name, false);
             addAttributesToMinimalView(metaClass, view, info, visited);
-        } else if (View.BASE.equals(name)) {
-            view = new View(javaClass, name, false);
+        } else if (FetchPlan.BASE.equals(name)) {
+            view = new FetchPlan(javaClass, name, false);
             addAttributesToMinimalView(metaClass, view, info, visited);
             addAttributesToLocalView(metaClass, view);
         } else {
@@ -329,7 +329,7 @@ public class ViewRepositoryImpl implements ViewRepository {
         return view;
     }
 
-    protected void addAttributesToLocalView(MetaClass metaClass, View view) {
+    protected void addAttributesToLocalView(MetaClass metaClass, FetchPlan view) {
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass()
                     && !metadataTools.isSystem(property)
@@ -339,7 +339,7 @@ public class ViewRepositoryImpl implements ViewRepository {
         }
     }
 
-    protected void addAttributesToMinimalView(MetaClass metaClass, View view, ViewInfo info, Set<ViewInfo> visited) {
+    protected void addAttributesToMinimalView(MetaClass metaClass, FetchPlan view, ViewInfo info, Set<ViewInfo> visited) {
         Collection<MetaProperty> metaProperties = metadataTools.getNamePatternProperties(metaClass, true);
         for (MetaProperty metaProperty : metaProperties) {
             if (metadataTools.isPersistent(metaProperty)) {
@@ -360,18 +360,18 @@ public class ViewRepositoryImpl implements ViewRepository {
         }
     }
 
-    protected void addPersistentAttributeToMinimalView(MetaClass metaClass, Set<ViewInfo> visited, ViewInfo info, View view, MetaProperty metaProperty) {
+    protected void addPersistentAttributeToMinimalView(MetaClass metaClass, Set<ViewInfo> visited, ViewInfo info, FetchPlan view, MetaProperty metaProperty) {
         if (metaProperty.getRange().isClass()
                 && !metaProperty.getRange().getCardinality().isMany()) {
 
-            Map<String, View> views = storage.get(metaProperty.getRange().asClass());
-            View refMinimalView = (views == null ? null : views.get(View.MINIMAL));
+            Map<String, FetchPlan> views = storage.get(metaProperty.getRange().asClass());
+            FetchPlan refMinimalView = (views == null ? null : views.get(FetchPlan.MINIMAL));
 
             if (refMinimalView != null) {
                 view.addProperty(metaProperty.getName(), refMinimalView);
             } else {
                 visited.add(info);
-                View referenceMinimalView = deployDefaultView(metaProperty.getRange().asClass(), View.MINIMAL, visited);
+                FetchPlan referenceMinimalView = deployDefaultView(metaProperty.getRange().asClass(), FetchPlan.MINIMAL, visited);
                 visited.remove(info);
 
                 view.addProperty(metaProperty.getName(), referenceMinimalView);
@@ -435,16 +435,16 @@ public class ViewRepositoryImpl implements ViewRepository {
         }
     }
 
-    protected View retrieveView(MetaClass metaClass, String name, Set<ViewInfo> visited) {
-        Map<String, View> views = storage.get(metaClass);
-        View view = (views == null ? null : views.get(name));
-        if (view == null && (name.equals(View.LOCAL) || name.equals(View.MINIMAL) || name.equals(View.BASE))) {
+    protected FetchPlan retrieveView(MetaClass metaClass, String name, Set<ViewInfo> visited) {
+        Map<String, FetchPlan> views = storage.get(metaClass);
+        FetchPlan view = (views == null ? null : views.get(name));
+        if (view == null && (name.equals(FetchPlan.LOCAL) || name.equals(FetchPlan.MINIMAL) || name.equals(FetchPlan.BASE))) {
             view = deployDefaultView(metaClass, name, visited);
         }
         return view;
     }
 
-    public View deployView(Element rootElem, Element viewElem) {
+    public FetchPlan deployView(Element rootElem, Element viewElem) {
         lock.writeLock().lock();
         try {
             return deployView(rootElem, viewElem, new HashSet<>());
@@ -453,7 +453,7 @@ public class ViewRepositoryImpl implements ViewRepository {
         }
     }
 
-    protected View deployView(Element rootElem, Element viewElem, Set<ViewInfo> visited) {
+    protected FetchPlan deployView(Element rootElem, Element viewElem, Set<ViewInfo> visited) {
         String viewName = getViewName(viewElem);
         MetaClass metaClass = getMetaClass(viewElem);
 
@@ -463,7 +463,7 @@ public class ViewRepositoryImpl implements ViewRepository {
                     viewName, metaClass.getName()));
         }
 
-        View v = retrieveView(metaClass, viewName, visited);
+        FetchPlan v = retrieveView(metaClass, viewName, visited);
         boolean overwrite = Boolean.parseBoolean(viewElem.attributeValue("overwrite"));
 
         String extended = viewElem.attributeValue("extends");
@@ -483,16 +483,16 @@ public class ViewRepositoryImpl implements ViewRepository {
 
         boolean systemProperties = Boolean.valueOf(viewElem.attributeValue("systemProperties"));
 
-        View.ViewParams viewParam = new View.ViewParams().entityClass(metaClass.getJavaClass()).name(viewName);
+        FetchPlan.FetchPlanParams viewParam = new FetchPlan.FetchPlanParams().entityClass(metaClass.getJavaClass()).name(viewName);
         if (isNotEmpty(ancestors)) {
-            List<View> ancestorsViews = ancestors.stream()
+            List<FetchPlan> ancestorsViews = ancestors.stream()
                     .map(a -> getAncestorView(metaClass, a, visited))
                     .collect(Collectors.toList());
 
             viewParam.src(ancestorsViews);
         }
         viewParam.includeSystemProperties(systemProperties);
-        View view = new View(viewParam);
+        FetchPlan view = new FetchPlan(viewParam);
 
         visited.add(info);
         loadView(rootElem, viewElem, view, systemProperties, visited);
@@ -507,13 +507,13 @@ public class ViewRepositoryImpl implements ViewRepository {
         return view;
     }
 
-    protected void replaceOverridden(View replacementView) {
+    protected void replaceOverridden(FetchPlan replacementView) {
         // todo perf4j
 //        StopWatch replaceTiming = new Slf4JStopWatch("ViewRepository.replaceOverridden");
 
-        HashSet<View> checked = new HashSet<>();
+        HashSet<FetchPlan> checked = new HashSet<>();
 
-        for (View view : getAllInitialized()) {
+        for (FetchPlan view : getAllInitialized()) {
             if (!checked.contains(view)) {
                 replaceOverridden(view, replacementView, checked);
             }
@@ -522,13 +522,13 @@ public class ViewRepositoryImpl implements ViewRepository {
 //        replaceTiming.stop();
     }
 
-    protected void replaceOverridden(View root, View replacementView, HashSet<View> checked) {
+    protected void replaceOverridden(FetchPlan root, FetchPlan replacementView, HashSet<FetchPlan> checked) {
         checked.add(root);
 
-        List<ViewProperty> replacements = null;
+        List<FetchPlanProperty> replacements = null;
 
-        for (ViewProperty property : root.getProperties()) {
-            View propertyView = property.getView();
+        for (FetchPlanProperty property : root.getProperties()) {
+            FetchPlan propertyView = property.getFetchPlan();
 
             if (propertyView != null) {
                 if (Objects.equals(propertyView.getName(), replacementView.getName())
@@ -536,7 +536,7 @@ public class ViewRepositoryImpl implements ViewRepository {
                     if (replacements == null) {
                         replacements = new LinkedList<>();
                     }
-                    replacements.add(new ViewProperty(property.getName(), replacementView, property.getFetchMode()));
+                    replacements.add(new FetchPlanProperty(property.getName(), replacementView, property.getFetchMode()));
                 } else if (propertyView.getEntityClass() != null && !checked.contains(propertyView)) {
                     replaceOverridden(propertyView, replacementView, checked);
                 }
@@ -544,14 +544,14 @@ public class ViewRepositoryImpl implements ViewRepository {
         }
 
         if (replacements != null) {
-            for (ViewProperty replacement : replacements) {
-                root.addProperty(replacement.getName(), replacement.getView(), replacement.getFetchMode());
+            for (FetchPlanProperty replacement : replacements) {
+                root.addProperty(replacement.getName(), replacement.getFetchPlan(), replacement.getFetchMode());
             }
         }
     }
 
-    protected View getAncestorView(MetaClass metaClass, String ancestor, Set<ViewInfo> visited) {
-        View ancestorView = retrieveView(metaClass, ancestor, visited);
+    protected FetchPlan getAncestorView(MetaClass metaClass, String ancestor, Set<ViewInfo> visited) {
+        FetchPlan ancestorView = retrieveView(metaClass, ancestor, visited);
         if (ancestorView == null) {
             MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
             if (originalMetaClass != null) {
@@ -574,7 +574,7 @@ public class ViewRepositoryImpl implements ViewRepository {
         return ancestorView;
     }
 
-    protected void loadView(Element rootElem, Element viewElem, View view, boolean systemProperties, Set<ViewInfo> visited) {
+    protected void loadView(Element rootElem, Element viewElem, FetchPlan view, boolean systemProperties, Set<ViewInfo> visited) {
         final MetaClass metaClass = metadata.getClass(view.getEntityClass());
         final String viewName = view.getName();
 
@@ -595,7 +595,7 @@ public class ViewRepositoryImpl implements ViewRepository {
                         metaClass.getName(), viewName, propertyName));
             }
 
-            View refView = null;
+            FetchPlan refView = null;
             String refViewName = propElem.attributeValue("view");
 
             MetaClass refMetaClass;
@@ -645,13 +645,13 @@ public class ViewRepositoryImpl implements ViewRepository {
                 Class<? extends Entity> rangeClass = range.asClass().getJavaClass();
 
                 if (refView != null) {
-                    refView = new View(refView, rangeClass, "", false); // system properties are already in the source view
+                    refView = new FetchPlan(refView, rangeClass, "", false); // system properties are already in the source view
                 } else {
-                    ViewProperty existingProperty = view.getProperty(propertyName);
-                    if (existingProperty != null && existingProperty.getView() != null) {
-                        refView = new View(existingProperty.getView(), rangeClass, "", systemProperties);
+                    FetchPlanProperty existingProperty = view.getProperty(propertyName);
+                    if (existingProperty != null && existingProperty.getFetchPlan() != null) {
+                        refView = new FetchPlan(existingProperty.getFetchPlan(), rangeClass, "", systemProperties);
                     } else {
-                        refView = new View(rangeClass, systemProperties);
+                        refView = new FetchPlan(rangeClass, systemProperties);
                     }
                 }
                 loadView(rootElem, propElem, refView, systemProperties, visited);
@@ -707,8 +707,8 @@ public class ViewRepositoryImpl implements ViewRepository {
         return refMetaClass;
     }
 
-    protected void storeView(MetaClass metaClass, View view) {
-        Map<String, View> views = storage.get(metaClass);
+    protected void storeView(MetaClass metaClass, FetchPlan view) {
+        Map<String, FetchPlan> views = storage.get(metaClass);
         if (views == null) {
             views = new ConcurrentHashMap<>();
         }
@@ -717,20 +717,20 @@ public class ViewRepositoryImpl implements ViewRepository {
         storage.put(metaClass, views);
     }
 
-    protected List<View> getAllInitialized() {
-        List<View> list = new ArrayList<>();
-        for (Map<String, View> viewMap : storage.values()) {
+    protected List<FetchPlan> getAllInitialized() {
+        List<FetchPlan> list = new ArrayList<>();
+        for (Map<String, FetchPlan> viewMap : storage.values()) {
             list.addAll(viewMap.values());
         }
         return list;
     }
 
-    public List<View> getAll() {
+    public List<FetchPlan> getAll() {
         lock.readLock().lock();
         try {
             checkInitialized();
-            List<View> list = new ArrayList<>();
-            for (Map<String, View> viewMap : storage.values()) {
+            List<FetchPlan> list = new ArrayList<>();
+            for (Map<String, FetchPlan> viewMap : storage.values()) {
                 list.addAll(viewMap.values());
             }
             return list;

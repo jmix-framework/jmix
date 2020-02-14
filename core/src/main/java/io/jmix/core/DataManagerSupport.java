@@ -28,7 +28,7 @@ import java.util.Objects;
 public abstract class DataManagerSupport implements DataManager {
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     @Inject
     protected Metadata metadata;
@@ -37,29 +37,29 @@ public abstract class DataManagerSupport implements DataManager {
     protected EntityStates entityStates;
 
     @Override
-    public <E extends Entity> E reload(E entity, String viewName) {
-        Objects.requireNonNull(viewName, "viewName is null");
-        return reload(entity, viewRepository.getView(entity.getClass(), viewName));
+    public <E extends Entity> E reload(E entity, String fetchPlanName) {
+        Objects.requireNonNull(fetchPlanName, "viewName is null");
+        return reload(entity, viewRepository.getFetchPlan(entity.getClass(), fetchPlanName));
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, View view) {
-        return reload(entity, view, null);
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan) {
+        return reload(entity, fetchPlan, null);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, View view, @Nullable MetaClass metaClass) {
-        return reload(entity, view, metaClass, entityHasDynamicAttributes(entity));
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass) {
+        return reload(entity, fetchPlan, metaClass, entityHasDynamicAttributes(entity));
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, View view, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
         if (metaClass == null) {
             metaClass = metadata.getSession().findClass(entity.getClass());
         }
         LoadContext<E> context = new LoadContext<>(metaClass);
         context.setId(entity.getId());
-        context.setView(view);
+        context.setView(fetchPlan);
         context.setLoadDynamicAttributes(loadDynamicAttributes);
 
         E reloaded = load(context);
@@ -83,23 +83,23 @@ public abstract class DataManagerSupport implements DataManager {
     }
 
     @Override
-    public <E extends Entity> E commit(E entity, @Nullable View view) {
-        return commit(new CommitContext().addInstanceToCommit(entity, view)).get(entity);
+    public <E extends Entity> E commit(E entity, @Nullable FetchPlan fetchPlan) {
+        return commit(new CommitContext().addInstanceToCommit(entity, fetchPlan)).get(entity);
     }
 
     @Override
-    public <E extends Entity> E commit(E entity, @Nullable String viewName) {
-        if (viewName != null) {
-            View view = viewRepository.getView(metadata.getClass(entity.getClass()), viewName);
+    public <E extends Entity> E commit(E entity, @Nullable String fetchPlanName) {
+        if (fetchPlanName != null) {
+            FetchPlan view = viewRepository.getFetchPlan(metadata.getClass(entity.getClass()), fetchPlanName);
             return commit(entity, view);
         } else {
-            return commit(entity, (View) null);
+            return commit(entity, (FetchPlan) null);
         }
     }
 
     @Override
     public <E extends Entity> E commit(E entity) {
-        return commit(entity, (View) null);
+        return commit(entity, (FetchPlan) null);
     }
 
     @Override

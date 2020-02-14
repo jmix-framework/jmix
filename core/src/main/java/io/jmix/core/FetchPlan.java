@@ -15,9 +15,9 @@
  */
 package io.jmix.core;
 
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.entity.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -31,7 +31,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
  * Class to declare a graph of objects that must be retrieved from the database.
  * <p>
  * A view can be constructed in Java code or defined in XML and deployed
- * to the {@link ViewRepository} for recurring usage.
+ * to the {@link FetchPlanRepository} for recurring usage.
  * </p>
  * There are the following predefined view types:
  * <ul>
@@ -39,41 +39,44 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
  * <li>{@link #MINIMAL}</li>
  * <li>{@link #BASE}</li>
  * </ul>
- *
  */
-public class View implements Serializable {
+public class FetchPlan implements Serializable {
 
     /**
      * Parameters object to be used in constructors.
      */
-    public static class ViewParams {
-        protected List<View> src = Collections.emptyList();
+    public static class FetchPlanParams {
+        protected List<FetchPlan> src = Collections.emptyList();
         protected Class<? extends Entity> entityClass;
         protected String name;
         protected boolean includeSystemProperties;
 
-        public ViewParams src(View src) {
+        public <T extends FetchPlanParams> T src(FetchPlan src) {
             this.src = Collections.singletonList(src);
-            return this;
+            //noinspection unchecked
+            return (T) this;
         }
 
-        public void src(List<View> sources) {
+        public void src(List<FetchPlan> sources) {
             this.src = sources;
         }
 
-        public ViewParams entityClass(Class<? extends Entity> entityClass) {
+        public <T extends FetchPlanParams> T entityClass(Class<? extends Entity> entityClass) {
             this.entityClass = entityClass;
-            return this;
+            //noinspection unchecked
+            return (T) this;
         }
 
-        public ViewParams name(String name) {
+        public <T extends FetchPlanParams> T name(String name) {
             this.name = name;
-            return this;
+            //noinspection unchecked
+            return (T) this;
         }
 
-        public ViewParams includeSystemProperties(boolean includeSystemProperties) {
+        public <T extends FetchPlanParams> T includeSystemProperties(boolean includeSystemProperties) {
             this.includeSystemProperties = includeSystemProperties;
-            return this;
+            //noinspection unchecked
+            return (T) this;
         }
     }
 
@@ -99,42 +102,42 @@ public class View implements Serializable {
 
     private String name;
 
-    private Map<String, ViewProperty> properties = new LinkedHashMap<>();
+    private Map<String, FetchPlanProperty> properties = new LinkedHashMap<>();
 
     private boolean loadPartialEntities;
 
-    public View(Class<? extends Entity> entityClass) {
+    public FetchPlan(Class<? extends Entity> entityClass) {
         this(entityClass, "", true);
     }
 
-    public View(Class<? extends Entity> entityClass, boolean includeSystemProperties) {
+    public FetchPlan(Class<? extends Entity> entityClass, boolean includeSystemProperties) {
         this(entityClass, "", includeSystemProperties);
     }
 
-    public View(Class<? extends Entity> entityClass, String name) {
+    public FetchPlan(Class<? extends Entity> entityClass, String name) {
         this(entityClass, name, true);
     }
 
-    public View(Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
-        this(new ViewParams().entityClass(entityClass)
-                        .name(name)
-                        .includeSystemProperties(includeSystemProperties)
+    public FetchPlan(Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
+        this(new FetchPlanParams().entityClass(entityClass)
+                .name(name)
+                .includeSystemProperties(includeSystemProperties)
         );
     }
 
-    public View(View src, String name, boolean includeSystemProperties) {
+    public FetchPlan(FetchPlan src, String name, boolean includeSystemProperties) {
         this(src, null, name, includeSystemProperties);
     }
 
-    public View(View src, @Nullable Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
-        this(new ViewParams().src(src)
-                        .entityClass(entityClass != null ? entityClass : src.entityClass)
-                        .name(name)
-                        .includeSystemProperties(includeSystemProperties)
+    public FetchPlan(FetchPlan src, @Nullable Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
+        this(new FetchPlanParams().src(src)
+                .entityClass(entityClass != null ? entityClass : src.entityClass)
+                .name(name)
+                .includeSystemProperties(includeSystemProperties)
         );
     }
 
-    public View(ViewParams viewParams) {
+    public FetchPlan(FetchPlanParams viewParams) {
         this.entityClass = viewParams.entityClass;
         this.name = viewParams.name != null ? viewParams.name : "";
         if (viewParams.includeSystemProperties) {
@@ -142,7 +145,7 @@ public class View implements Serializable {
                 addProperty(propertyName);
             }
         }
-        List<View> sources = viewParams.src;
+        List<FetchPlan> sources = viewParams.src;
 
         if (isNotEmpty(sources)) {
             Class<? extends Entity> entityClass = sources.get(0).entityClass;
@@ -151,22 +154,22 @@ public class View implements Serializable {
                 this.entityClass = entityClass;
             }
 
-            for (View view : sources) {
+            for (FetchPlan view : sources) {
                 putProperties(this.properties, view.getProperties());
             }
         }
     }
 
-    protected void putProperties(Map<String, ViewProperty> thisProperties, Collection<ViewProperty> sourceProperties) {
-        for (ViewProperty sourceProperty : sourceProperties) {
+    protected void putProperties(Map<String, FetchPlanProperty> thisProperties, Collection<FetchPlanProperty> sourceProperties) {
+        for (FetchPlanProperty sourceProperty : sourceProperties) {
             String sourcePropertyName = sourceProperty.getName();
 
             if (thisProperties.containsKey(sourcePropertyName)) {
-                View sourcePropertyView = sourceProperty.getView();
+                FetchPlan sourcePropertyView = sourceProperty.getFetchPlan();
 
                 if (sourcePropertyView != null && isNotEmpty(sourcePropertyView.getProperties())) {
 
-                    Map<String, ViewProperty> thisViewProperties = thisProperties.get(sourcePropertyName).getView().properties;
+                    Map<String, FetchPlanProperty> thisViewProperties = thisProperties.get(sourcePropertyName).getFetchPlan().properties;
                     putProperties(thisViewProperties, sourcePropertyView.getProperties());
                 }
 
@@ -176,17 +179,17 @@ public class View implements Serializable {
         }
     }
 
-    public static View copy(@Nullable View view) {
+    public static FetchPlan copy(@Nullable FetchPlan view) {
         if (view == null) {
             return null;
         }
 
-        View.ViewParams viewParams = new View.ViewParams()
+        FetchPlanParams viewParams = new FetchPlanParams()
                 .entityClass(view.getEntityClass())
                 .name(view.getName());
-        View copy = new View(viewParams);
-        for (ViewProperty property : view.getProperties()) {
-            copy.addProperty(property.getName(), copy(property.getView()), property.getFetchMode());
+        FetchPlan copy = new FetchPlan(viewParams);
+        for (FetchPlanProperty property : view.getProperties()) {
+            copy.addProperty(property.getName(), copy(property.getFetchPlan()), property.getFetchMode());
         }
 
         return copy;
@@ -209,46 +212,49 @@ public class View implements Serializable {
     /**
      * @return collection of properties
      */
-    public Collection<ViewProperty> getProperties() {
+    public Collection<FetchPlanProperty> getProperties() {
         return properties.values();
     }
 
     /**
      * Add a property to this view.
-     * @param name  property name
-     * @param view  a view for a reference attribute, or null
+     *
+     * @param name      property name
+     * @param view      a view for a reference attribute, or null
      * @param fetchMode fetch mode for a reference attribute
-     * @return      this view instance for chaining
+     * @return this view instance for chaining
      */
-    public View addProperty(String name, @Nullable View view, FetchMode fetchMode) {
-        properties.put(name, new ViewProperty(name, view, fetchMode));
+    public FetchPlan addProperty(String name, @Nullable FetchPlan view, FetchMode fetchMode) {
+        properties.put(name, new FetchPlanProperty(name, view, fetchMode));
         return this;
     }
 
     @Deprecated
-    public View addProperty(String name, @Nullable View view, boolean lazy) {
-        properties.put(name, new ViewProperty(name, view, lazy));
+    public FetchPlan addProperty(String name, @Nullable FetchPlan view, boolean lazy) {
+        properties.put(name, new FetchPlanProperty(name, view, lazy));
         return this;
     }
 
     /**
      * Add a property to this view.
-     * @param name  property name
-     * @param view  a view for a reference attribute, or null
-     * @return      this view instance for chaining
+     *
+     * @param name property name
+     * @param view a view for a reference attribute, or null
+     * @return this view instance for chaining
      */
-    public View addProperty(String name, View view) {
-        properties.put(name, new ViewProperty(name, view));
+    public FetchPlan addProperty(String name, FetchPlan view) {
+        properties.put(name, new FetchPlanProperty(name, view));
         return this;
     }
 
     /**
      * Add a property to this view.
-     * @param name  property name
-     * @return      this view instance for chaining
+     *
+     * @param name property name
+     * @return this view instance for chaining
      */
-    public View addProperty(String name) {
-        properties.put(name, new ViewProperty(name, null));
+    public FetchPlan addProperty(String name) {
+        properties.put(name, new FetchPlanProperty(name, null));
         return this;
     }
 
@@ -257,7 +263,7 @@ public class View implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        View view = (View) o;
+        FetchPlan view = (FetchPlan) o;
 
         return entityClass.equals(view.entityClass) && name.equals(view.name);
     }
@@ -276,18 +282,20 @@ public class View implements Serializable {
 
     /**
      * Get directly owned view property by name.
-     * @param name  property name
-     * @return      view property instance or null if it is not found
+     *
+     * @param name property name
+     * @return view property instance or null if it is not found
      */
     @Nullable
-    public ViewProperty getProperty(String name) {
+    public FetchPlanProperty getProperty(String name) {
         return properties.get(name);
     }
 
     /**
      * Check if a directly owned property with the given name exists in the view.
-     * @param name  property name
-     * @return      true if such property found
+     *
+     * @param name property name
+     * @return true if such property found
      */
     public boolean containsProperty(String name) {
         return properties.containsKey(name);
@@ -310,7 +318,7 @@ public class View implements Serializable {
      * @param loadPartialEntities true to affect loading of local attributes
      * @return this view instance for chaining
      */
-    public View setLoadPartialEntities(boolean loadPartialEntities) {
+    public FetchPlan setLoadPartialEntities(boolean loadPartialEntities) {
         this.loadPartialEntities = loadPartialEntities;
         return this;
     }

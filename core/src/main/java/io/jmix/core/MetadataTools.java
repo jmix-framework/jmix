@@ -716,11 +716,11 @@ public class MetadataTools {
      * @param metaClass meta-class
      * @return collection of paths
      */
-    public Collection<MetaPropertyPath> getViewPropertyPaths(View view, MetaClass metaClass) {
+    public Collection<MetaPropertyPath> getViewPropertyPaths(FetchPlan view, MetaClass metaClass) {
         List<MetaPropertyPath> propertyPaths = new ArrayList<>(metaClass.getProperties().size());
         for (final MetaProperty metaProperty : metaClass.getProperties()) {
             final MetaPropertyPath metaPropertyPath = new MetaPropertyPath(metaClass, metaProperty);
-            if (viewContainsProperty(view, metaPropertyPath)) {
+            if (fetchPlanContainsProperty(view, metaPropertyPath)) {
                 propertyPaths.add(metaPropertyPath);
             }
         }
@@ -728,22 +728,30 @@ public class MetadataTools {
     }
 
     /**
+     * @deprecated replaced by {@link MetadataTools#fetchPlanContainsProperty(FetchPlan, MetaPropertyPath)}
+     */
+    @Deprecated
+    public boolean viewContainsProperty(@Nullable FetchPlan view, MetaPropertyPath propertyPath) {
+        return fetchPlanContainsProperty(view, propertyPath);
+    }
+
+    /**
      * Determine whether the view contains a property, traversing a view branch according to the given property path.
      *
-     * @param view         view instance. If null, return false immediately.
+     * @param fetchPlan         view instance. If null, return false immediately.
      * @param propertyPath property path defining the property
      */
-    public boolean viewContainsProperty(@Nullable View view, MetaPropertyPath propertyPath) {
-        View currentView = view;
+    public boolean fetchPlanContainsProperty(@Nullable FetchPlan fetchPlan, MetaPropertyPath propertyPath) {
+        FetchPlan currentFetchPlan = fetchPlan;
         for (MetaProperty metaProperty : propertyPath.getMetaProperties()) {
-            if (currentView == null)
+            if (currentFetchPlan == null)
                 return false;
 
-            ViewProperty property = currentView.getProperty(metaProperty.getName());
+            FetchPlanProperty property = currentFetchPlan.getProperty(metaProperty.getName());
             if (property == null)
                 return false;
 
-            currentView = property.getView();
+            currentFetchPlan = property.getFetchPlan();
         }
         return true;
     }
@@ -952,12 +960,12 @@ public class MetadataTools {
      * @param entity  entity graph entry point
      * @param visitor the attribute visitor implementation
      */
-    public void traverseAttributesByView(View view, Entity entity, EntityAttributeVisitor visitor) {
+    public void traverseAttributesByView(FetchPlan view, Entity entity, EntityAttributeVisitor visitor) {
         checkNotNullArgument(view, "view is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
 
-        internalTraverseAttributesByView(view, entity, visitor, new HashMap<>(), false);
+        internalTraverseAttributesByFetchPlan(view, entity, visitor, new HashMap<>(), false);
     }
 
     /**
@@ -968,12 +976,12 @@ public class MetadataTools {
      * @param entity  entity graph entry point
      * @param visitor the attribute visitor implementation
      */
-    public void traverseLoadedAttributesByView(View view, Entity entity, EntityAttributeVisitor visitor) {
+    public void traverseLoadedAttributesByView(FetchPlan view, Entity entity, EntityAttributeVisitor visitor) {
         checkNotNullArgument(view, "view is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
 
-        internalTraverseAttributesByView(view, entity, visitor, new HashMap<>(), true);
+        internalTraverseAttributesByFetchPlan(view, entity, visitor, new HashMap<>(), true);
     }
 
     /**
@@ -1193,20 +1201,20 @@ public class MetadataTools {
         }
     }
 
-    protected void internalTraverseAttributesByView(View view, Entity entity, EntityAttributeVisitor visitor,
-                                                    Map<Entity, Set<View>> visited, boolean checkLoaded) {
-        Set<View> views = visited.get(entity);
-        if (views == null) {
-            views = new HashSet<>();
-            visited.put(entity, views);
-        } else if (views.contains(view)) {
+    protected void internalTraverseAttributesByFetchPlan(FetchPlan view, Entity entity, EntityAttributeVisitor visitor,
+                                                         Map<Entity, Set<FetchPlan>> visited, boolean checkLoaded) {
+        Set<FetchPlan> fetchPlans = visited.get(entity);
+        if (fetchPlans == null) {
+            fetchPlans = new HashSet<>();
+            visited.put(entity, fetchPlans);
+        } else if (fetchPlans.contains(view)) {
             return;
         }
-        views.add(view);
+        fetchPlans.add(view);
 
         MetaClass metaClass = metadata.getClass(entity.getClass());
 
-        for (ViewProperty property : view.getProperties()) {
+        for (FetchPlanProperty property : view.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (visitor.skip(metaProperty))
                 continue;
@@ -1214,7 +1222,7 @@ public class MetadataTools {
             if (checkLoaded && !persistentAttributesLoadChecker.isLoaded(entity, metaProperty.getName()))
                 continue;
 
-            View propertyView = property.getView();
+            FetchPlan propertyView = property.getFetchPlan();
 
             visitor.visit(entity, metaProperty);
 
@@ -1224,10 +1232,10 @@ public class MetadataTools {
                 if (value instanceof Collection) {
                     for (Object item : ((Collection) value)) {
                         if (item instanceof Instance)
-                            internalTraverseAttributesByView(propertyView, (Entity) item, visitor, visited, checkLoaded);
+                            internalTraverseAttributesByFetchPlan(propertyView, (Entity) item, visitor, visited, checkLoaded);
                     }
                 } else if (value instanceof Instance) {
-                    internalTraverseAttributesByView(propertyView, (Entity) value, visitor, visited, checkLoaded);
+                    internalTraverseAttributesByFetchPlan(propertyView, (Entity) value, visitor, visited, checkLoaded);
                 }
             }
         }

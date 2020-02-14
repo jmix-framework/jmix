@@ -58,24 +58,24 @@ public class CrossDataStoreReferenceLoader {
 
     private MetaClass metaClass;
 
-    private View view;
+    private FetchPlan fetchPlan;
     private boolean joinTransaction;
 
-    public CrossDataStoreReferenceLoader(MetaClass metaClass, View view, boolean joinTransaction) {
+    public CrossDataStoreReferenceLoader(MetaClass metaClass, FetchPlan fetchPlan, boolean joinTransaction) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
-        Preconditions.checkNotNullArgument(view, "view is null");
+        Preconditions.checkNotNullArgument(fetchPlan, "view is null");
         this.metaClass = metaClass;
-        this.view = view;
+        this.fetchPlan = fetchPlan;
         this.joinTransaction = joinTransaction;
     }
 
     public Map<Class<? extends Entity>, List<CrossDataStoreProperty>> getCrossPropertiesMap() {
         Map<Class<? extends Entity>, List<CrossDataStoreProperty>> crossPropertiesMap = new HashMap<>();
-        traverseView(view, crossPropertiesMap, Sets.newIdentityHashSet());
+        traverseView(fetchPlan, crossPropertiesMap, Sets.newIdentityHashSet());
         return crossPropertiesMap;
     }
 
-    private void traverseView(View view, Map<Class<? extends Entity>, List<CrossDataStoreProperty>> crossPropertiesMap, Set<View> visited) {
+    private void traverseView(FetchPlan view, Map<Class<? extends Entity>, List<CrossDataStoreProperty>> crossPropertiesMap, Set<FetchPlan> visited) {
         if (visited.contains(view))
             return;
         visited.add(view);
@@ -83,7 +83,7 @@ public class CrossDataStoreReferenceLoader {
         String storeName = metadataTools.getStoreName(metaClass);
 
         Class<? extends Entity> entityClass = view.getEntityClass();
-        for (ViewProperty viewProperty : view.getProperties()) {
+        for (FetchPlanProperty viewProperty : view.getProperties()) {
             MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(viewProperty.getName());
             if (metaProperty.getRange().isClass()) {
                 MetaClass propertyMetaClass = metaProperty.getRange().asClass();
@@ -100,7 +100,7 @@ public class CrossDataStoreReferenceLoader {
                     if (crossProperties.stream().noneMatch(aProp -> aProp.property == metaProperty))
                         crossProperties.add(new CrossDataStoreProperty(metaProperty, viewProperty));
                 }
-                View propertyView = viewProperty.getView();
+                FetchPlan propertyView = viewProperty.getFetchPlan();
                 if (propertyView != null) {
                     traverseView(propertyView, crossPropertiesMap, visited);
                 }
@@ -138,7 +138,7 @@ public class CrossDataStoreReferenceLoader {
                                             Map<Class<? extends Entity>, List<CrossDataStoreProperty>> crossPropertiesMap) {
         Set<Entity> resultSet = new HashSet<>();
         for (Entity entity : entities) {
-            metadataTools.traverseAttributesByView(view, entity, new EntityAttributeVisitor() {
+            metadataTools.traverseAttributesByView(fetchPlan, entity, new EntityAttributeVisitor() {
                 @Override
                 public void visit(Entity entity, MetaProperty property) {
                     List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.get(entity.getClass());
@@ -169,8 +169,8 @@ public class CrossDataStoreReferenceLoader {
 
         LoadContext<Entity> loadContext = new LoadContext<>(aProp.property.getRange().asClass());
         loadContext.setId(id);
-        if (aProp.viewProperty.getView() != null)
-            loadContext.setView(aProp.viewProperty.getView());
+        if (aProp.fetchPlanProperty.getFetchPlan() != null)
+            loadContext.setView(aProp.fetchPlanProperty.getFetchPlan());
         loadContext.setJoinTransaction(joinTransaction);
         Entity relatedEntity = dataManager.load(loadContext);
         entity.setValue(aProp.property.getName(), relatedEntity);
@@ -230,7 +230,7 @@ public class CrossDataStoreReferenceLoader {
             loadContext.setQuery(query);
         }
 
-        loadContext.setView(crossDataStoreProperty.viewProperty.getView());
+        loadContext.setView(crossDataStoreProperty.fetchPlanProperty.getFetchPlan());
         loadContext.setJoinTransaction(joinTransaction);
 
         List<Entity> loadedEntities = dataManager.loadList(loadContext);
@@ -272,13 +272,13 @@ public class CrossDataStoreReferenceLoader {
     public class CrossDataStoreProperty {
 
         public final MetaProperty property;
-        public final ViewProperty viewProperty;
+        public final FetchPlanProperty fetchPlanProperty;
         public final String relatedPropertyName;
         public final String primaryKeyName;
 
-        public CrossDataStoreProperty(MetaProperty metaProperty, ViewProperty viewProperty) {
+        public CrossDataStoreProperty(MetaProperty metaProperty, FetchPlanProperty fetchPlanProperty) {
             this.property = metaProperty;
-            this.viewProperty = viewProperty;
+            this.fetchPlanProperty = fetchPlanProperty;
 
             List<String> relatedProperties = metadataTools.getRelatedProperties(property);
             relatedPropertyName = relatedProperties.get(0);

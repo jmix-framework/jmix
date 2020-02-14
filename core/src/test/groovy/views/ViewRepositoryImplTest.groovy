@@ -20,7 +20,7 @@ import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
-import io.jmix.core.ViewRepository
+import io.jmix.core.FetchPlanRepository
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
@@ -33,13 +33,13 @@ import javax.inject.Inject
 class ViewRepositoryImplTest extends Specification {
 
     @Inject
-    ViewRepository viewRepository
+    FetchPlanRepository viewRepository
 
     def "view repository is initialized"() {
 
         when:
 
-        def view = viewRepository.getView(TestAddon1Entity, 'test-view-1')
+        def view = viewRepository.getFetchPlan(TestAddon1Entity, 'test-view-1')
 
         then:
 

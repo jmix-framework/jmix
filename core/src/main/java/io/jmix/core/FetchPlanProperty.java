@@ -19,31 +19,31 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
- * Defines a {@link View} property. Each view property corresponds to a
+ * Defines a {@link FetchPlan} property. Each view property corresponds to a
  * {@link io.jmix.core.metamodel.model.MetaProperty} with the same name.
  *
  */
-public class ViewProperty implements Serializable {
+public class FetchPlanProperty implements Serializable {
 
     private static final long serialVersionUID = 4098678639930287203L;
 
     private String name;
 
-    private View view;
+    private FetchPlan view;
 
     private FetchMode fetchMode = FetchMode.AUTO;
 
-    public ViewProperty(String name, @Nullable View view) {
+    public FetchPlanProperty(String name, @Nullable FetchPlan view) {
         this(name, view, FetchMode.AUTO);
     }
 
     @Deprecated
-    public ViewProperty(String name, @Nullable View view, boolean lazy) {
+    public FetchPlanProperty(String name, @Nullable FetchPlan view, boolean lazy) {
         this.name = name;
         this.view = view;
     }
 
-    public ViewProperty(String name, @Nullable View view, FetchMode fetchMode) {
+    public FetchPlanProperty(String name, @Nullable FetchPlan view, FetchMode fetchMode) {
         this.name = name;
         this.view = view;
         this.fetchMode = fetchMode;
@@ -57,10 +57,10 @@ public class ViewProperty implements Serializable {
     }
 
     /**
-     * @return view of the property if the corresponding metaclass attribute is a reference
+     * @return fetch plan of the property if the corresponding meta class attribute is a reference
      */
     @Nullable
-    public View getView() {
+    public FetchPlan getFetchPlan() {
         return view;
     }
 

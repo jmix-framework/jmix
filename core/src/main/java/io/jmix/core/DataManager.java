@@ -43,7 +43,7 @@ public interface DataManager {
 
     /**
      * Loads a single entity instance.
-     * <p>The depth of object graphs, starting from loaded instances, defined by {@link View}
+     * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}
      * object passed in {@link LoadContext}.</p>
      * @param context   {@link LoadContext} object, defining what and how to load
      * @return          the loaded detached object, or null if not found
@@ -53,7 +53,7 @@ public interface DataManager {
 
     /**
      * Loads collection of entity instances.
-     * <p>The depth of object graphs, starting from loaded instances, defined by {@link View}
+     * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}
      * object passed in {@link LoadContext}.</p>
      * @param context   {@link LoadContext} object, defining what and how to load
      * @return          a list of detached instances, or empty list if nothing found
@@ -68,45 +68,45 @@ public interface DataManager {
     long getCount(LoadContext<? extends Entity> context);
 
     /**
-     * Reloads the entity instance from data store with the view specified.
+     * Reloads the entity instance from data store with the fetch plan specified.
      * @param entity        reloading instance
-     * @param viewName      view name
+     * @param fetchPlanName      fetch plan name
      * @return              reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, String viewName);
+    <E extends Entity> E reload(E entity, String fetchPlanName);
 
     /**
-     * Reloads the entity instance from data store with the view specified.
+     * Reloads the entity instance from data store with the fetch plan specified.
      * @param entity        reloading instance
-     * @param view          view object
+     * @param fetchPlan          fetch plan object
      * @return              reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, View view);
+    <E extends Entity> E reload(E entity, FetchPlan fetchPlan);
 
     /**
-     * Reloads the entity instance from data store with the view specified. Loading instance class may differ from original
+     * Reloads the entity instance from data store with the fetch plan specified. Loading instance class may differ from original
      * instance if we want to load an ancestor or a descendant.
      * @param entity        reloading instance
-     * @param view          view object
+     * @param fetchPlan          fetch plan object
      * @param metaClass     desired MetaClass, if null - original entity's metaclass is used
      * @return              reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, View view, @Nullable MetaClass metaClass);
+    <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass);
 
     /**
-     * Reloads the entity instance from data store with the view specified. Loading instance class may differ from original
+     * Reloads the entity instance from data store with the fetch plan specified. Loading instance class may differ from original
      * instance if we want to load an ancestor or a descendant.
      * @param entity                    reloading instance
-     * @param view                      view object
+     * @param fetchPlan                      fetch plan object
      * @param metaClass                 desired MetaClass, if null - original entity's metaclass is used
      * @param loadDynamicAttributes     whether to load dynamic attributes for the entity
      * @return                          reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, View view, @Nullable MetaClass metaClass, boolean loadDynamicAttributes);
+    <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes);
 
     /**
      * Commits a collection of new or detached entity instances to the data store.
@@ -125,18 +125,18 @@ public interface DataManager {
     /**
      * Commits the entity to the data store.
      * @param entity    entity instance
-     * @param view      view object, affects the returned committed instance
+     * @param fetchPlan      fetch plan object, affects the returned committed instance
      * @return          committed instance
      */
-    <E extends Entity> E commit(E entity, @Nullable View view);
+    <E extends Entity> E commit(E entity, @Nullable FetchPlan fetchPlan);
 
     /**
      * Commits the entity to the data store.
      * @param entity    entity instance
-     * @param viewName  view name, affects the returned committed instance
+     * @param fetchPlanName  fetch plan name, affects the returned committed instance
      * @return          committed instance
      */
-    <E extends Entity> E commit(E entity, @Nullable String viewName);
+    <E extends Entity> E commit(E entity, @Nullable String fetchPlanName);
 
     /**
      * Commits the entity to the data store.
@@ -191,7 +191,7 @@ public interface DataManager {
      * List&lt;Customer&gt; customers = dataManager.load(Customer.class)
      *      .query("select c from sample$Customer c where c.name = :name")
      *      .parameter("name", "Smith")
-     *      .view("customer-view")
+     *      .fetchPlan("customer-fetch-plan")
      *      .list();
      * </pre>
      * @param entityClass   class of entity that needs to be loaded
@@ -205,7 +205,7 @@ public interface DataManager {
      * <p>
      * Usage example:
      * <pre>
-     * Customer customer = dataManager.load(customerId).view("with-grade").one();
+     * Customer customer = dataManager.load(customerId).fetchPlan("with-grade").one();
      * </pre>
      * @param entityId   {@link Id} of entity that needs to be loaded
      */

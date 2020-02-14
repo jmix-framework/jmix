@@ -34,7 +34,7 @@ public class CommitContext implements Serializable {
     protected Collection<Entity> commitInstances = new LinkedHashSet<>();
     protected Collection<Entity> removeInstances = new LinkedHashSet<>();
 
-    protected Map<Object, View> views = new HashMap<>();
+    protected Map<Object, FetchPlan> fetchPlans = new HashMap<>();
 
     protected boolean softDeletion = true;
     protected boolean discardCommitted;
@@ -82,13 +82,13 @@ public class CommitContext implements Serializable {
      * Adds an entity to be committed to the database.
      *
      * @param entity entity instance
-     * @param view   view which is used in merge operation to ensure all required attributes are loaded in the returned instance
+     * @param fetchPlan   fetch plan which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
-    public CommitContext addInstanceToCommit(Entity entity, @Nullable View view) {
+    public CommitContext addInstanceToCommit(Entity entity, @Nullable FetchPlan fetchPlan) {
         commitInstances.add(entity);
-        if (view != null)
-            views.put(entity, view);
+        if (fetchPlan != null)
+            fetchPlans.put(entity, fetchPlan);
         return this;
     }
 
@@ -96,13 +96,13 @@ public class CommitContext implements Serializable {
      * Adds an entity to be committed to the database.
      *
      * @param entity   entity instance
-     * @param viewName view which is used in merge operation to ensure all required attributes are loaded in the returned instance
+     * @param fetchPlanName view which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
-    public CommitContext addInstanceToCommit(Entity entity, @Nullable String viewName) {
+    public CommitContext addInstanceToCommit(Entity entity, @Nullable String fetchPlanName) {
         commitInstances.add(entity);
-        if (viewName != null) {
-            views.put(entity, getViewFromRepository(entity, viewName));
+        if (fetchPlanName != null) {
+            fetchPlans.put(entity, getFetchPlanFromRepository(entity, fetchPlanName));
         }
         return this;
     }
@@ -154,8 +154,8 @@ public class CommitContext implements Serializable {
      *
      * @return editable map of entities to their views
      */
-    public Map<Object, View> getViews() {
-        return views;
+    public Map<Object, FetchPlan> getFetchPlans() {
+        return fetchPlans;
     }
 
     /**
@@ -230,10 +230,10 @@ public class CommitContext implements Serializable {
         return this;
     }
 
-    private View getViewFromRepository(Entity entity, String viewName) {
+    private FetchPlan getFetchPlanFromRepository(Entity entity, String fetchPlanName) {
         Metadata metadata = AppBeans.get(Metadata.NAME);
-        ViewRepository viewRepository = AppBeans.get(ViewRepository.NAME);
-        return viewRepository.getView(metadata.findClass(entity.getClass()), viewName);
+        FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.NAME);
+        return viewRepository.getFetchPlan(metadata.findClass(entity.getClass()), fetchPlanName);
     }
 
     /**

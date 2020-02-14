@@ -41,7 +41,7 @@ public class EntityFactory extends TypeFactory {
 
         LoadContext<?> ctx = new LoadContext<>(info.getMetaClass()).setId(info.getId());
         if (info.getViewName() != null)
-            ctx.setView(info.getViewName());
+            ctx.setFetchPlan(info.getViewName());
         return dataManager.load(ctx);
     }
 }

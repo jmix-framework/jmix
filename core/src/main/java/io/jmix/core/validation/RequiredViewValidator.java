@@ -39,12 +39,12 @@ public class RequiredViewValidator implements ConstraintValidator<RequiredView, 
         try {
             EntityStates entityStates = AppBeans.get(EntityStates.NAME);
             if (value instanceof Entity) {
-                entityStates.checkLoadedWithView((Entity) value, view);
+                entityStates.checkLoadedWithFetchPlan((Entity) value, view);
             } else if (value instanceof Collection) {
                 @SuppressWarnings("unchecked")
                 Collection<Entity> entities = (Collection<Entity>) value;
                 for (Entity entity : entities) {
-                    entityStates.checkLoadedWithView(entity, view);
+                    entityStates.checkLoadedWithFetchPlan(entity, view);
                 }
             }
 

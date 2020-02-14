@@ -51,7 +51,7 @@ public class FluentLoaderViewBuilderTest {
         /*.one()*/;
 
         dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(View.MINIMAL).addAll(
+                .view(viewBuilder -> viewBuilder.addView(FetchPlan.MINIMAL).addAll(
                         "owner.name",
                         "owner.address.city"))
                 .id(petId)
@@ -67,7 +67,7 @@ public class FluentLoaderViewBuilderTest {
 
         dataManager.load(Pet.class)
                 .query("...")
-                .view(viewBuilder -> viewBuilder.addView(View.LOCAL).addAll(
+                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city"))
         /*.list()*/;
@@ -90,13 +90,13 @@ public class FluentLoaderViewBuilderTest {
                         "owner.name",
                         "owner.address.city")));
 
-        View view = loadContext.getView();
+        FetchPlan view = loadContext.getView();
         assertFalse(containsSystemProperties(view));
         checkPetView(view);
 
         //noinspection unchecked
         loadContext = createLoadContext(dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(View.LOCAL).addAll(
+                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city")));
 
@@ -106,7 +106,7 @@ public class FluentLoaderViewBuilderTest {
 
         //noinspection unchecked
         loadContext = createLoadContext(dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(View.LOCAL).addAll(
+                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city")));
 
@@ -127,7 +127,7 @@ public class FluentLoaderViewBuilderTest {
 
         //noinspection unchecked
         loadContext = createLoadContext(dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(View.LOCAL))
+                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL))
                 .viewProperties(
                         "owner.name",
                         "owner.address.city"));
@@ -141,12 +141,12 @@ public class FluentLoaderViewBuilderTest {
     public void testViewWithViewBuilder() {
         //noinspection unchecked
         LoadContext<Pet> loadContext = createLoadContext(dataManager.load(Pet.class)
-                .view(View.LOCAL)
+                .view(FetchPlan.LOCAL)
                 .view(viewBuilder -> viewBuilder.addAll(
                         "owner.name",
                         "owner.address.city")));
 
-        View view = loadContext.getView();
+        FetchPlan view = loadContext.getView();
         checkPetView(view);
 
         //noinspection unchecked
@@ -154,27 +154,27 @@ public class FluentLoaderViewBuilderTest {
                 .view(viewBuilder -> viewBuilder.addAll(
                         "owner.name",
                         "owner.address.city"))
-                .view(View.LOCAL));
+                .view(FetchPlan.LOCAL));
 
         view = loadContext.getView();
         checkPetView(view);
     }
 
-    private void checkPetView(View view) {
+    private void checkPetView(FetchPlan view) {
         assertTrue(view.containsProperty("name"));
 
         assertNotNull(view.getProperty("owner"));
-        View ownerView = view.getProperty("owner").getView();
+        FetchPlan ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
         assertFalse(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
         assertTrue(ownerView.containsProperty("address"));
 
-        View addressView = ownerView.getProperty("address").getView();
+        FetchPlan addressView = ownerView.getProperty("address").getFetchPlan();
         assertTrue(addressView.containsProperty("city"));
     }
 
-    private boolean containsSystemProperties(View view) {
+    private boolean containsSystemProperties(FetchPlan view) {
         return view.containsProperty("id")
                 && view.containsProperty("version")
                 && view.containsProperty("deleteTs")

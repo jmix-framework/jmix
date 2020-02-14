@@ -22,8 +22,8 @@ import test_support.AppContextTestExecutionListener
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Pet
 import io.jmix.core.JmixCoreConfiguration
-import io.jmix.core.View
-import io.jmix.core.ViewRepository
+import io.jmix.core.FetchPlan
+import io.jmix.core.FetchPlanRepository
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
@@ -36,12 +36,12 @@ import javax.inject.Inject
 class ViewRepositoryTest extends Specification {
 
     @Inject
-    ViewRepository viewRepository
+    FetchPlanRepository viewRepository
 
     def "view is deployed from add-on's view.xml file"() {
         when:
 
-        def view = viewRepository.getView(TestAddon1Entity, 'test-view-1')
+        def view = viewRepository.getFetchPlan(TestAddon1Entity, 'test-view-1')
 
         then:
 
@@ -50,14 +50,14 @@ class ViewRepositoryTest extends Specification {
 
     def "predefined views do not contain system properties"() {
 
-        def localView = viewRepository.getView(Pet.class, View.LOCAL)
+        def localView = viewRepository.getFetchPlan(Pet.class, FetchPlan.LOCAL)
 
         expect:
         !containsSystemProperties(localView)
 
     }
 
-    private boolean containsSystemProperties(View view) {
+    private boolean containsSystemProperties(FetchPlan view) {
         return view.containsProperty("id") ||
             view.containsProperty("version") ||
             view.containsProperty("deleteTs") ||

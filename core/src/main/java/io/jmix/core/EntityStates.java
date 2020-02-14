@@ -44,7 +44,7 @@ public class EntityStates {
     protected PersistentAttributesLoadChecker checker;
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     @Inject
     protected MetadataTools metadataTools;
@@ -175,14 +175,14 @@ public class EntityStates {
         }
     }
 
-    protected void checkLoadedWithView(Entity entity, View view, Set<Entity> visited) {
+    protected void checkLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan, Set<Entity> visited) {
         if (visited.contains(entity)) {
             return;
         }
 
         visited.add(entity);
 
-        for (ViewProperty property : view.getProperties()) {
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaClass metaClass = metadata.getClass(entity);
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
 
@@ -193,20 +193,20 @@ public class EntityStates {
             }
 
             if (metaProperty.getRange().isClass()) {
-                View propertyView = property.getView();
+                FetchPlan propertyView = property.getFetchPlan();
 
                 if (propertyView != null && metadataTools.isPersistent(metaProperty)) {
                     Object value = entity.getValue(metaProperty.getName());
 
                     if (value != null) {
                         if (!metaProperty.getRange().getCardinality().isMany()) {
-                            checkLoadedWithView((Entity) value, propertyView, visited);
+                            checkLoadedWithFetchPlan((Entity) value, propertyView, visited);
                         } else {
                             @SuppressWarnings("unchecked")
                             Collection<Entity> collection = (Collection) value;
 
                             for (Entity item : collection) {
-                                checkLoadedWithView(item, propertyView, visited);
+                                checkLoadedWithFetchPlan(item, propertyView, visited);
                             }
                         }
                     }
@@ -225,13 +225,28 @@ public class EntityStates {
      * @param entity entity
      * @param view   view
      * @throws IllegalArgumentException if at least one of properties is not loaded
+     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(Entity, FetchPlan)}
      */
     @SuppressWarnings("unchecked")
-    public void checkLoadedWithView(Entity entity, View view) {
-        checkNotNullArgument(entity);
-        checkNotNullArgument(view);
+    @Deprecated
+    public void checkLoadedWithView(Entity entity, FetchPlan view) {
+        checkLoadedWithFetchPlan(entity, view);
+    }
 
-        checkLoadedWithView(entity, view, Sets.newIdentityHashSet());
+    /**
+     * Check that all properties of the fetch plan are loaded from DB for the passed entity.
+     * Throws exception if some property is not loaded.
+     *
+     * @param entity entity
+     * @param fetchPlan   fetch plan
+     * @throws IllegalArgumentException if at least one of properties is not loaded
+     */
+    @SuppressWarnings("unchecked")
+    public void checkLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan) {
+        checkNotNullArgument(entity);
+        checkNotNullArgument(fetchPlan);
+
+        checkLoadedWithFetchPlan(entity, fetchPlan, Sets.newIdentityHashSet());
     }
 
     /**
@@ -241,22 +256,37 @@ public class EntityStates {
      * @param entity   entity
      * @param viewName view name
      * @throws IllegalArgumentException if at least one of properties is not loaded
+     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(Entity, String)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public void checkLoadedWithView(Entity entity, String viewName) {
-        checkNotNullArgument(viewName);
-
-        checkLoadedWithView(entity, viewRepository.getView(metadata.getClass(entity), viewName));
+        checkLoadedWithFetchPlan(entity, viewName);
     }
 
-    protected boolean isLoadedWithView(Entity entity, View view, Set<Entity> visited) {
+    /**
+     * Check that all properties of the fetch plan are loaded from DB for the passed entity.
+     * Throws exception if some property is not loaded.
+     *
+     * @param entity   entity
+     * @param fetchPlanName fetch plan name
+     * @throws IllegalArgumentException if at least one of properties is not loaded
+     */
+    @SuppressWarnings("unchecked")
+    public void checkLoadedWithFetchPlan(Entity entity, String fetchPlanName) {
+        checkNotNullArgument(fetchPlanName);
+
+        checkLoadedWithFetchPlan(entity, viewRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
+    }
+
+    protected boolean isLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan, Set<Entity> visited) {
         if (visited.contains(entity)) {
             return true;
         }
 
         visited.add(entity);
 
-        for (ViewProperty property : view.getProperties()) {
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaClass metaClass = metadata.getClass(entity);
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
 
@@ -265,14 +295,14 @@ public class EntityStates {
             }
 
             if (metaProperty.getRange().isClass()) {
-                View propertyView = property.getView();
+                FetchPlan propertyFetchPlan = property.getFetchPlan();
 
-                if (propertyView != null && metadataTools.isPersistent(metaProperty)) {
+                if (propertyFetchPlan != null && metadataTools.isPersistent(metaProperty)) {
                     Object value = entity.getValue(metaProperty.getName());
 
                     if (value != null) {
                         if (!metaProperty.getRange().getCardinality().isMany()) {
-                            if (!isLoadedWithView((Entity) value, propertyView, visited)) {
+                            if (!isLoadedWithFetchPlan((Entity) value, propertyFetchPlan, visited)) {
                                 return false;
                             }
                         } else {
@@ -280,7 +310,7 @@ public class EntityStates {
                             Collection<Entity> collection = (Collection) value;
 
                             for (Entity item : collection) {
-                                if (!isLoadedWithView(item, propertyView, visited)) {
+                                if (!isLoadedWithFetchPlan(item, propertyFetchPlan, visited)) {
                                     return false;
                                 }
                             }
@@ -300,29 +330,57 @@ public class EntityStates {
      * Check that all properties of the view are loaded from DB for the passed entity.
      *
      * @param entity entity
-     * @param view   view name
+     * @param fetchPlan   view name
+     * @return false if at least one of properties is not loaded
+     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(Entity, FetchPlan)}
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public boolean isLoadedWithView(Entity entity, FetchPlan fetchPlan) {
+        return isLoadedWithFetchPlan(entity, fetchPlan);
+    }
+
+    /**
+     * Check that all properties of the fetch plan are loaded from DB for the passed entity.
+     *
+     * @param entity entity
+     * @param fetchPlan   fetch plan
      * @return false if at least one of properties is not loaded
      */
     @SuppressWarnings("unchecked")
-    public boolean isLoadedWithView(Entity entity, View view) {
+    public boolean isLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan) {
         checkNotNullArgument(entity);
-        checkNotNullArgument(view);
+        checkNotNullArgument(fetchPlan);
 
-        return isLoadedWithView(entity, view, Sets.newIdentityHashSet());
+        return isLoadedWithFetchPlan(entity, fetchPlan, Sets.newIdentityHashSet());
     }
 
     /**
      * Check that all properties of the view are loaded from DB for the passed entity.
      *
      * @param entity   entity
-     * @param viewName view name
+     * @param fetchPlanName view name
+     * @return false if at least one of properties is not loaded
+     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(Entity, String)}
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public boolean isLoadedWithView(Entity entity, String fetchPlanName) {
+        return isLoadedWithFetchPlan(entity, fetchPlanName);
+    }
+
+    /**
+     * Check that all properties of the fetch plan are loaded from DB for the passed entity.
+     *
+     * @param entity   entity
+     * @param fetchPlanName fetch plan name
      * @return false if at least one of properties is not loaded
      */
     @SuppressWarnings("unchecked")
-    public boolean isLoadedWithView(Entity entity, String viewName) {
-        checkNotNullArgument(viewName);
+    public boolean isLoadedWithFetchPlan(Entity entity, String fetchPlanName) {
+        checkNotNullArgument(fetchPlanName);
 
-        return isLoadedWithView(entity, viewRepository.getView(metadata.getClass(entity), viewName));
+        return isLoadedWithFetchPlan(entity, viewRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
     }
 
     /**

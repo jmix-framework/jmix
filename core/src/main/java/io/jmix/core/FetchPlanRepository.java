@@ -23,30 +23,30 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * Represents a repository of {@link View} objects, accessible by names.
- * <br>Repository contains all views defined in XML and deployed at runtime.
+ * Represents a repository of {@link FetchPlan} objects, accessible by names.
+ * <br>Repository contains all fetch plans defined in XML and deployed at runtime.
  */
-public interface ViewRepository {
+public interface FetchPlanRepository {
 
-    String NAME = "cuba_ViewRepository";
+    String NAME = "jmix_FetchPlanRepository";
 
     /**
-     * Get View for an entity.
+     * Get fetch plan for an entity.
      *
      * @param entityClass   entity class
-     * @param name          view name
-     * @return              view instance. Throws {@link ViewNotFoundException} if not found.
+     * @param name          fetch plan name
+     * @return              fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
-    View getView(Class<? extends Entity> entityClass, String name);
+    FetchPlan getFetchPlan(Class<? extends Entity> entityClass, String name);
 
     /**
      * Get View for an entity.
      *
      * @param metaClass     entity class
      * @param name          view name
-     * @return              view instance. Throws {@link ViewNotFoundException} if not found.
+     * @return              view instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
-    View getView(MetaClass metaClass, String name);
+    FetchPlan getFetchPlan(MetaClass metaClass, String name);
 
     /**
      * Searches for a View for an entity.
@@ -56,19 +56,19 @@ public interface ViewRepository {
      * @return              view instance or null if no view found
      */
     @Nullable
-    View findView(MetaClass metaClass, String name);
+    FetchPlan findFetchPlan(MetaClass metaClass, String name);
 
     /**
      * Returns names of views defined for the metaClass
      * @param metaClass entity class
      * @return names of views
      */
-    Collection<String> getViewNames(MetaClass metaClass);
+    Collection<String> getFetchPlanNames(MetaClass metaClass);
 
     /**
      * Returns names of views defined for the entityClass
      * @param entityClass entity class
      * @return names of views
      */
-    Collection<String> getViewNames(Class<? extends Entity> entityClass);
+    Collection<String> getFetchPlanNames(Class<? extends Entity> entityClass);
 }

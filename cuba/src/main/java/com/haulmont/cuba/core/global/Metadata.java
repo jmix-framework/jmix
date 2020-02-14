@@ -34,7 +34,7 @@ public interface Metadata extends io.jmix.core.Metadata, Session {
      * @deprecated Use dependency injection.
      */
     @Deprecated
-    FetchPlanRepository getViewRepository();
+    ViewRepository getViewRepository();
 
     /**
      * @deprecated Use dependency injection.

@@ -62,7 +62,7 @@ public class DatasourceImpl<T extends Entity> extends AbstractDatasource<T> impl
     }
 
     public void setView(String viewName) {
-        this.view = metadata.getViewRepository().getFetchPlan(metaClass, viewName);
+        this.view = metadata.getViewRepository().getView(metaClass, viewName);
     }
 
     @Override

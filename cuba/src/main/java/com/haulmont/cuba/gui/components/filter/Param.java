@@ -242,7 +242,7 @@ public class Param {
         name = builder.name;
         setJavaClass(builder.javaClass);
         entityWhere = builder.entityWhere;
-        entityView = (builder.entityView != null) ? builder.entityView : View.MINIMAL;
+        entityView = (builder.entityView != null) ? builder.entityView : FetchPlan.MINIMAL;
         property = builder.property;
         inExpr = builder.inExpr;
         required = builder.required;
@@ -472,7 +472,7 @@ public class Param {
         MetaClass metaClass = metadata.getClassNN(javaClass);
         //noinspection unchecked
         LoadContext<Entity> ctx = new LoadContext<>(javaClass)
-                .setView(View.BASE);
+                .setFetchPlan(FetchPlan.BASE);
         ctx.setQueryString(String.format("select e from %s e where e.id in :ids", metaClass.getName()))
                 .setParameter("ids", Arrays.asList(ids));
         return dataManager.loadList(ctx);
@@ -490,7 +490,7 @@ public class Param {
         }
         //noinspection unchecked
         LoadContext<Entity> ctx = new LoadContext<>(javaClass)
-                .setView(View.BASE)
+                .setFetchPlan(FetchPlan.BASE)
                 .setId(objectId);
         return dataManager.load(ctx);
     }

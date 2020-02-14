@@ -19,6 +19,7 @@ package com.haulmont.cuba.core;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.ViewRepository;
 import com.haulmont.cuba.core.model.LinkEntity;
 import com.haulmont.cuba.core.model.MultiLinkEntity;
 import com.haulmont.cuba.core.model.common.*;
@@ -314,7 +315,7 @@ public class ViewTest {
             long ts = timeSource.currentTimeMillis();
             Thread.sleep(1000);
 
-            FetchPlan minimalView = metadata.getViewRepository().getFetchPlan(User.class, FetchPlan.MINIMAL);
+            FetchPlan minimalView = metadata.getViewRepository().getView(User.class, FetchPlan.MINIMAL);
             minimalView.setLoadPartialEntities(true);
 
             EntityManager em = persistence.getEntityManager();
@@ -449,25 +450,25 @@ public class ViewTest {
 
     @Test
     public void testNoTransientPropertiesInLocalView() throws Exception {
-        FetchPlan view = metadata.getViewRepository().getFetchPlan(EntitySnapshot.class, FetchPlan.LOCAL);
+        FetchPlan view = metadata.getViewRepository().getView(EntitySnapshot.class, FetchPlan.LOCAL);
         FetchPlanProperty prop = view.getProperty("label");
         assertNull(prop);
     }
 
     @Test
     public void testViewCopy() throws Exception {
-        FetchPlanRepository viewRepository = metadata.getViewRepository();
-        FetchPlan view = viewRepository.getFetchPlan(User.class, FetchPlan.LOCAL);
-        view.addProperty("group", viewRepository.getFetchPlan(Group.class, FetchPlan.MINIMAL));
+        ViewRepository viewRepository = metadata.getViewRepository();
+        FetchPlan view = viewRepository.getView(User.class, FetchPlan.LOCAL);
+        view.addProperty("group", viewRepository.getView(Group.class, FetchPlan.MINIMAL));
 
         assertNotNull(view.getProperty("group"));
-        assertNull(viewRepository.getFetchPlan(User.class, FetchPlan.LOCAL).getProperty("group"));
+        assertNull(viewRepository.getView(User.class, FetchPlan.LOCAL).getProperty("group"));
     }
 
     @Test
     public void testFetchGroupIsAbsentIfViewIsFull() throws Exception {
-        FetchPlanRepository viewRepository = metadata.getViewRepository();
-        FetchPlan view = viewRepository.getFetchPlan(User.class, FetchPlan.LOCAL);
+        ViewRepository viewRepository = metadata.getViewRepository();
+        FetchPlan view = viewRepository.getView(User.class, FetchPlan.LOCAL);
         view.addProperty("group", new FetchPlan(Group.class)
                 .addProperty("name"))
                 .addProperty("userRoles", new FetchPlan(UserRole.class)
@@ -497,8 +498,8 @@ public class ViewTest {
 
     @Test
     public void testSelfReferenceInView() {
-        FetchPlanRepository viewRepository = metadata.getViewRepository();
-        FetchPlan view = viewRepository.getFetchPlan(RootEntity.class, FetchPlan.LOCAL);
+        ViewRepository viewRepository = metadata.getViewRepository();
+        FetchPlan view = viewRepository.getView(RootEntity.class, FetchPlan.LOCAL);
         view.addProperty("entity", new FetchPlan(ChildEntity.class)
                 .addProperty("name").addProperty("description"), FetchMode.AUTO);
         RootEntity e;

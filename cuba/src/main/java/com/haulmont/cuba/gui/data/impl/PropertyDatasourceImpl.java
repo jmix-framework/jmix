@@ -135,7 +135,7 @@ public class PropertyDatasourceImpl<T extends Entity>
                                          "property", property)
                     );
                 }
-                view = metadata.getViewRepository().findFetchPlan(getMetaClass(), property.getFetchPlan().getName());
+                view = metadata.getViewRepository().getView(getMetaClass(), property.getFetchPlan().getName());
                 //anonymous (nameless) view
                 if (view == null)
                     view = property.getFetchPlan();

@@ -143,7 +143,7 @@ public class EmbeddedDatasourceImpl<T extends EmbeddableEntity>
     @Override
     public FetchPlan getView() {
         final FetchPlanProperty property = masterDs.getView().getProperty(metaProperty.getName());
-        return property == null ? null : metadata.getViewRepository().getFetchPlan(getMetaClass(), property.getFetchPlan().getName());
+        return property == null ? null : metadata.getViewRepository().getView(getMetaClass(), property.getFetchPlan().getName());
     }
 
     @Override

@@ -56,35 +56,36 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
     protected EntityStates entityStates;
 
     /**
-     * Removes restricted attributes from a view.
+     * Removes restricted attributes from a fetch plan.
      *
-     * @param view source view
-     * @return restricted view
+     * @param fetchPlan source fetch plan
+     * @return restricted fetch plan
      */
     @Override
-    public View createRestrictedView(View view) {
+    public FetchPlan createRestrictedFetchPlan(FetchPlan fetchPlan) {
         if (!config.getEntityAttributePermissionChecking()) {
-            return view;
+            return fetchPlan;
         }
-        Preconditions.checkNotNullArgument(view, "view is null");
+        Preconditions.checkNotNullArgument(fetchPlan, "fetch plan is null");
 
-        View restrictedView = new View(view.getEntityClass(),
-                StringUtils.isEmpty(view.getName()) ? "" : view.getName() + "_restricted",
+        FetchPlan restrictedView = new FetchPlan(fetchPlan.getEntityClass(),
+                StringUtils.isEmpty(fetchPlan.getName()) ? "" : fetchPlan.getName() + "_restricted",
                 false); // do not include system properties in constructor because they will be copied later if exist
-        copyViewConsideringPermissions(view, restrictedView);
+        copyViewConsideringPermissions(fetchPlan, restrictedView);
         return restrictedView;
     }
 
-    private void copyViewConsideringPermissions(View srcView, View dstView) {
-        MetaClass metaClass = metadata.getClass(srcView.getEntityClass());
-        for (ViewProperty property : srcView.getProperties()) {
+    private void copyViewConsideringPermissions(FetchPlan srcPlan, FetchPlan dstPlan) {
+        MetaClass metaClass = metadata.getClass(srcPlan.getEntityClass());
+        for (FetchPlanProperty property : srcPlan.getProperties()) {
             if (security.isEntityAttrReadPermitted(metaClass, property.getName())) {
-                View viewCopy = null;
-                if (property.getView() != null) {
-                    viewCopy = new View(property.getView().getEntityClass(), property.getView().getName() + "(restricted)", false);
-                    copyViewConsideringPermissions(property.getView(), viewCopy);
+                FetchPlan viewCopy = null;
+                if (property.getFetchPlan() != null) {
+                    viewCopy = new FetchPlan(property.getFetchPlan().getEntityClass(),
+                            property.getFetchPlan().getName() + "(restricted)", false);
+                    copyViewConsideringPermissions(property.getFetchPlan(), viewCopy);
                 }
-                dstView.addProperty(property.getName(), viewCopy, property.getFetchMode());
+                dstPlan.addProperty(property.getName(), viewCopy, property.getFetchMode());
             }
         }
     }

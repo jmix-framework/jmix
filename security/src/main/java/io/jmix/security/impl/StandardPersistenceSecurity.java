@@ -241,7 +241,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public void assertTokenForREST(Entity entity, View view) {
+    public void assertTokenForREST(Entity entity, FetchPlan view) {
         if (BaseEntityInternalAccess.getSecurityToken(entity) == null) {
             assertSecurityConstraints(entity,
                     (e, metaProperty) -> view != null && !view.containsProperty(metaProperty.getName()));

@@ -297,7 +297,7 @@ public class PresentationsImpl implements Presentations {
         if (presentations == null) {
             DataManager ds = AppBeans.get(DataManager.NAME);
             LoadContext ctx = new LoadContext(Presentation.class);
-            ctx.setView("app");
+            ctx.setFetchPlan("app");
 
             UserSessionSource sessionSource = AppBeans.get(UserSessionSource.NAME);
             UserSession session = sessionSource.getUserSession();

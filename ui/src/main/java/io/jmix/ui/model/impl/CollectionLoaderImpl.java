@@ -46,8 +46,8 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
     protected boolean softDeletion = true;
     protected boolean loadDynamicAttributes;
     protected boolean cacheable;
-    protected View view;
-    protected String viewName;
+    protected FetchPlan fetchPlan;
+    protected String fetchPlanName;
     protected Sort sort;
     protected Function<LoadContext<E>, List<E>> delegate;
     protected EventHub events = new EventHub();
@@ -56,8 +56,8 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
         this.applicationContext = applicationContext;
     }
 
-    protected ViewRepository getViewRepository() {
-        return applicationContext.getBean(ViewRepository.NAME, ViewRepository.class);
+    protected FetchPlanRepository getViewRepository() {
+        return applicationContext.getBean(FetchPlanRepository.NAME, FetchPlanRepository.class);
     }
 
     protected DataManager getDataManager() {
@@ -144,13 +144,13 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
         return loadContext;
     }
 
-    protected View resolveView() {
-        View view = this.view;
-        if (view == null && viewName != null) {
-            view = getViewRepository().getView(container.getEntityMetaClass(), viewName);
+    protected FetchPlan resolveView() {
+        FetchPlan view = this.fetchPlan;
+        if (view == null && fetchPlanName != null) {
+            view = getViewRepository().getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
         }
         if (view == null) {
-            view = container.getView();
+            view = container.getFetchPlan();
         }
         return view;
     }
@@ -279,20 +279,20 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
     }
 
     @Override
-    public View getView() {
-        return view;
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
     }
 
     @Override
-    public void setView(View view) {
-        this.view = view;
+    public void setFetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
     }
 
     @Override
-    public void setView(String viewName) {
-        if (this.view != null)
-            throw new IllegalStateException("view is already set");
-        this.viewName = viewName;
+    public void setFetchPlan(String fetchPlanName) {
+        if (this.fetchPlan != null)
+            throw new IllegalStateException("fetch plan is already set");
+        this.fetchPlanName = fetchPlanName;
     }
 
     @Override

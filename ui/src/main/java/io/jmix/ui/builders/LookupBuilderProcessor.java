@@ -187,11 +187,11 @@ public class LookupBuilderProcessor {
 
         Entity newValue = selectedItems.iterator().next();
 
-        View viewForField = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() && metadataTools.isPersistent(newValue.getClass()) ?
-                getViewForField(field) :
+        FetchPlan fetchPlanForField = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() && metadataTools.isPersistent(newValue.getClass()) ?
+                getFetchPlanForField(field) :
                 null;
-        if (viewForField != null && !entityStates.isLoadedWithView(newValue, viewForField)) {
-            newValue = dataManager.reload(newValue, viewForField);
+        if (fetchPlanForField != null && !entityStates.isLoadedWithFetchPlan(newValue, fetchPlanForField)) {
+            newValue = dataManager.reload(newValue, fetchPlanForField);
         }
 
         if (field instanceof LookupPickerField) {
@@ -252,13 +252,13 @@ public class LookupBuilderProcessor {
         DataContext dataContext = UiControllerUtils.getScreenData(builder.getOrigin()).getDataContext();
 
         List<E> mergedItems = new ArrayList<>(selectedItems.size());
-        View viewForCollectionContainer = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() &&
+        FetchPlan viewForCollectionContainer = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() &&
                 collectionDc.getEntityMetaClass() != null && metadataTools.isPersistent(collectionDc.getEntityMetaClass()) ?
-                getViewForCollectionContainer(collectionDc, initializeMasterReference, inverseMetaProperty) :
+                getFetchPlanForCollectionContainer(collectionDc, initializeMasterReference, inverseMetaProperty) :
                 null;
         for (E item : selectedItems) {
             if (!collectionDc.containsItem(item.getId())) {
-                if (viewForCollectionContainer != null && !entityStates.isLoadedWithView(item, viewForCollectionContainer)) {
+                if (viewForCollectionContainer != null && !entityStates.isLoadedWithFetchPlan(item, viewForCollectionContainer)) {
                     item = dataManager.reload(item, viewForCollectionContainer);
                 }
                 // track changes in the related instance
@@ -285,30 +285,30 @@ public class LookupBuilderProcessor {
      * If the value for a component (e.g. {@link io.jmix.ui.components.PickerField}) is selected from lookup screen then there may be cases
      * when in entities in lookup screen some attributes required in the editor are not loaded.
      * <p>
-     * The method evaluates the view that is used for the entity in the given {@code field}
+     * The method evaluates the fetch plan that is used for the entity in the given {@code field}
      *
-     * @return a view or null if the view cannot be evaluated
+     * @return a view or null if the fetch plan cannot be evaluated
      */
     @Nullable
-    protected <E extends Entity> View getViewForField(HasValue<E> field) {
+    protected <E extends Entity> FetchPlan getFetchPlanForField(HasValue<E> field) {
         if (field instanceof HasValueSource) {
             ValueSource valueSource = ((HasValueSource) field).getValueSource();
             if (valueSource instanceof ContainerValueSource) {
                 ContainerValueSource containerValueSource = (ContainerValueSource) valueSource;
                 InstanceContainer<E> container = containerValueSource.getContainer();
-                View view = container.getView();
-                if (view != null) {
+                FetchPlan fetchPlan = container.getFetchPlan();
+                if (fetchPlan != null) {
                     MetaPropertyPath metaPropertyPath = containerValueSource.getMetaPropertyPath();
-                    View curView = view;
+                    FetchPlan curFetchPlan = fetchPlan;
                     for (MetaProperty metaProperty : metaPropertyPath.getMetaProperties()) {
-                        ViewProperty viewProperty = curView.getProperty(metaProperty.getName());
+                        FetchPlanProperty viewProperty = curFetchPlan.getProperty(metaProperty.getName());
                         if (viewProperty != null) {
-                            curView = viewProperty.getView();
+                            curFetchPlan = viewProperty.getFetchPlan();
                         }
-                        if (curView == null) break;
+                        if (curFetchPlan == null) break;
                     }
-                    if (curView != view) {
-                        return curView;
+                    if (curFetchPlan != fetchPlan) {
+                        return curFetchPlan;
                     }
                 }
             }
@@ -317,31 +317,31 @@ public class LookupBuilderProcessor {
     }
 
     /**
-     * See {@link #getViewForField(HasValue)} javadoc.
+     * See {@link #getFetchPlanForField(HasValue)} javadoc.
      *
-     * @return a view or null if the view cannot be evaluated
+     * @return a fetch plan or null if the fetch plan cannot be evaluated
      */
     @Nullable
-    protected <E extends Entity> View getViewForCollectionContainer(CollectionContainer<E> collectionDc,
-                                                                    boolean initializeMasterReference,
-                                                                    MetaProperty inverseMetaProperty) {
-        View view = null;
+    protected <E extends Entity> FetchPlan getFetchPlanForCollectionContainer(CollectionContainer<E> collectionDc,
+                                                                              boolean initializeMasterReference,
+                                                                              MetaProperty inverseMetaProperty) {
+        FetchPlan fetchPlan = null;
         if (collectionDc instanceof Nested) {
             InstanceContainer masterDc = ((Nested) collectionDc).getMaster();
-            View masterView = masterDc.getView();
-            if (masterView != null) {
+            FetchPlan masterFetchPlan = masterDc.getFetchPlan();
+            if (masterFetchPlan != null) {
                 String property = ((Nested) collectionDc).getProperty();
-                ViewProperty viewProperty = masterView.getProperty(property);
+                FetchPlanProperty viewProperty = masterFetchPlan.getProperty(property);
                 if (viewProperty != null) {
-                    view = viewProperty.getView();
-                    if (view != null && initializeMasterReference && inverseMetaProperty != null) {
-                        view.addProperty(inverseMetaProperty.getName());
+                    fetchPlan = viewProperty.getFetchPlan();
+                    if (fetchPlan != null && initializeMasterReference && inverseMetaProperty != null) {
+                        fetchPlan.addProperty(inverseMetaProperty.getName());
                     }
                 }
             }
         } else {
-            view = collectionDc.getView();
+            fetchPlan = collectionDc.getFetchPlan();
         }
-        return view;
+        return fetchPlan;
     }
 }

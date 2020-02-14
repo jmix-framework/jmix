@@ -106,9 +106,9 @@ public class PersistenceHelper {
     public static void checkLoadedWithView(Entity entity, String viewName) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
         if (entityStates != null) {
-            entityStates.checkLoadedWithView(entity, viewName);
+            entityStates.checkLoadedWithFetchPlan(entity, viewName);
         } else {
-            _entityStates.checkLoadedWithView(entity, viewName);
+            _entityStates.checkLoadedWithFetchPlan(entity, viewName);
         }
     }
 

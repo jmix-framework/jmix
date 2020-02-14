@@ -16,7 +16,7 @@
 
 package io.jmix.ui.dynamicattributes;
 
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -69,7 +69,7 @@ public class DynamicAttributesGuiTools {
      * Method checks whether any class in the view hierarchy contains dynamic attributes that must be displayed on
      * the current screen
      */
-    public boolean screenContainsDynamicAttributes(View mainDatasourceView, String screenId) {
+    public boolean screenContainsDynamicAttributes(FetchPlan mainDatasourceView, String screenId) {
         return false;
     }
 

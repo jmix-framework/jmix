@@ -964,9 +964,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         if (entityDataGridSource instanceof ContainerDataUnit) {
             CollectionContainer container = ((ContainerDataUnit) entityDataGridSource).getContainer();
 
-            return container.getView() != null ?
+            return container.getFetchPlan() != null ?
                     // if a view is specified - use view properties
-                    metadataTools.getViewPropertyPaths(container.getView(), container.getEntityMetaClass()) :
+                    metadataTools.getViewPropertyPaths(container.getFetchPlan(), container.getEntityMetaClass()) :
                     // otherwise use all properties from meta-class
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }
@@ -1432,7 +1432,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
         EntityDataGridItems<E> items = getEntityDataGridItemsNN();
         DataComponents factory = beanLocator.get(DataComponents.class);
-        ViewRepository viewRepository = beanLocator.get(ViewRepository.NAME);
+        FetchPlanRepository viewRepository = beanLocator.get(FetchPlanRepository.NAME);
         MetaClass metaClass = items.getEntityMetaClass();
 
         InstanceContainer<E> instanceContainer;
@@ -1442,7 +1442,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         } else {
             instanceContainer = factory.createInstanceContainer(metaClass.getJavaClass());
         }
-        instanceContainer.setView(viewRepository.getView(metaClass, View.LOCAL));
+        instanceContainer.setFetchPlan(viewRepository.getFetchPlan(metaClass, FetchPlan.LOCAL));
         instanceContainer.setItem(item);
 
         itemDatasources.put(item, instanceContainer);

@@ -19,7 +19,7 @@ package io.jmix.ui.model;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.LoadContext;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
@@ -71,20 +71,45 @@ public interface CollectionLoader<E extends Entity> extends BaseCollectionLoader
     void setCacheable(boolean cacheable);
 
     /**
-     * Returns the view which is used when loading.
+     * @deprecated replaced by {@link CollectionLoader#getFetchPlan()}
      */
-    View getView();
+    @Deprecated
+    default FetchPlan getView() {
+        return getFetchPlan();
+    }
 
     /**
-     * Sets the view which is used when loading.
+     * Returns the fetch plan which is used when loading.
      */
-    void setView(View view);
+    FetchPlan getFetchPlan();
 
     /**
-     * Sets the name of the view which is used when loading.
-     * @throws IllegalStateException if the view has already been set by {@link #setView(View)}
+     * @deprecated replaced by {@link CollectionLoader#setFetchPlan(FetchPlan)}
      */
-    void setView(String viewName);
+    @Deprecated
+    default void setView(FetchPlan view) {
+        setFetchPlan(view);
+    }
+
+    /**
+     * Sets the fetch plan which is used when loading.
+     */
+    void setFetchPlan(FetchPlan fetchPlan);
+
+    /**
+     * @deprecated replaced by {@link CollectionLoader#(FetchPlan)}
+     */
+    @Deprecated
+    default void setView(String viewName) {
+        setFetchPlan(viewName);
+    }
+
+
+    /**
+     * Sets the name of the fetch plan which is used when loading.
+     * @throws IllegalStateException if the fetch plan has already been set by {@link #setFetchPlan(FetchPlan)}
+     */
+    void setFetchPlan(String fetchPlanName);
 
     /**
      * Returns a function which will be used to load data instead of standard implementation.

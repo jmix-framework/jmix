@@ -204,7 +204,7 @@ public class MenuItemCommands {
 
         String entityView = propertyElement.attributeValue("entityView");
         if (StringUtils.isNotEmpty(entityView)) {
-            ctx.setView(entityView);
+            ctx.setFetchPlan(entityView);
         }
 
         //noinspection unchecked
@@ -250,7 +250,7 @@ public class MenuItemCommands {
     protected Entity loadEntityInstance(EntityLoadInfo info) {
         LoadContext ctx = new LoadContext(info.getMetaClass()).setId(info.getId());
         if (info.getViewName() != null) {
-            ctx.setView(info.getViewName());
+            ctx.setFetchPlan(info.getViewName());
         }
 
         //noinspection unchecked

@@ -17,7 +17,7 @@
 package io.jmix.ui.components.factories;
 
 import io.jmix.core.Messages;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.annotation.Lookup;
@@ -97,7 +97,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
             CollectionContainer<Entity> container = dataComponents.createCollectionContainer(metaClass.getJavaClass());
             CollectionLoader<Entity> loader = dataComponents.createCollectionLoader();
             loader.setQuery("select e from " + metaClass.getName() + " e");
-            loader.setView(View.MINIMAL);
+            loader.setFetchPlan(FetchPlan.MINIMAL);
             loader.setContainer(container);
             loader.load();
             options = new ContainerOptions(container);

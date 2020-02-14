@@ -21,8 +21,8 @@ import io.jmix.core.EntityAccessException;
 import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.core.ReferenceToEntitySupport;
-import io.jmix.core.View;
-import io.jmix.core.ViewRepository;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.compatibility.EntityLoadInfo;
 import io.jmix.core.entity.Entity;
 import io.jmix.ui.App;
@@ -66,7 +66,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
     protected WindowConfig windowConfig;
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     @Inject
     protected EntityAccessExceptionHandler entityAccessExceptionHandler;
@@ -193,7 +193,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
         ctx.setQueryString(format("select e from %s e where e.%s = :entityId", info.getMetaClass().getName(), pkName))
                 .setParameter("entityId", info.getId());
         if (info.getViewName() != null) {
-            View view = viewRepository.findView(info.getMetaClass(), info.getViewName());
+            FetchPlan view = viewRepository.findFetchPlan(info.getMetaClass(), info.getViewName());
             if (view != null) {
                 ctx.setView(view);
             } else {

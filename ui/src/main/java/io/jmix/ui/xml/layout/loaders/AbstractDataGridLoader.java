@@ -180,9 +180,9 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         List<Column> availableColumns;
 
         if (columnsElement != null) {
-            View view = collectionContainer != null ? collectionContainer.getView()
+            FetchPlan view = collectionContainer != null ? collectionContainer.getFetchPlan()
                     /*: datasource != null ? datasource.getView()*/
-                    : getViewRepository().getView(metaClass.getJavaClass(), View.LOCAL);
+                    : getViewRepository().getFetchPlan(metaClass.getJavaClass(), FetchPlan.LOCAL);
             availableColumns = loadColumns(resultComponent, columnsElement, metaClass, view);
         } else {
             availableColumns = new ArrayList<>();
@@ -219,8 +219,8 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         return beanLocator.get(Metadata.NAME);
     }
 
-    protected ViewRepository getViewRepository() {
-        return beanLocator.get(ViewRepository.NAME);
+    protected FetchPlanRepository getViewRepository() {
+        return beanLocator.get(FetchPlanRepository.NAME);
     }
 
     @SuppressWarnings("unchecked")
@@ -378,8 +378,8 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         }
     }
 
-    protected List<Column> loadColumnsByInclude(DataGrid component, Element columnsElement, MetaClass metaClass, View view) {
-        Collection<String> appliedProperties = getAppliedProperties(columnsElement, view, metaClass);
+    protected List<Column> loadColumnsByInclude(DataGrid component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+        Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
         List<Column> columns = new ArrayList<>(appliedProperties.size());
         List<Element> columnElements = columnsElement.elements("column");
@@ -413,7 +413,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 //                MetaPropertyPath dynamicAttributePath = DynamicAttributesUtils.getMetaPropertyPath(metaClass, propertyId);
 
                 MetaPropertyPath mpp = metaClass.getPropertyPath(propertyId);
-                boolean isViewContainsProperty = mpp != null && getMetadataTools().viewContainsProperty(view, mpp);
+                boolean isViewContainsProperty = mpp != null && getMetadataTools().fetchPlanContainsProperty(fetchPlan, mpp);
 
                 if (isViewContainsProperty /*|| dynamicAttributePath != null*/) {
                     columns.add(loadColumn(component, column, metaClass));
@@ -424,7 +424,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         return columns;
     }
 
-    protected List<Column> loadColumns(DataGrid component, Element columnsElement, MetaClass metaClass, View view) {
+    protected List<Column> loadColumns(DataGrid component, Element columnsElement, MetaClass metaClass, FetchPlan view) {
         String includeAll = columnsElement.attributeValue("includeAll");
         if (StringUtils.isNotBlank(includeAll)) {
             if (Boolean.parseBoolean(includeAll)) {
@@ -706,7 +706,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         }
     }
 
-    protected Collection<String> getAppliedProperties(Element columnsElement, View view, MetaClass metaClass) {
+    protected Collection<String> getAppliedProperties(Element columnsElement, FetchPlan fetchPlan, MetaClass metaClass) {
         String exclude = columnsElement.attributeValue("exclude");
         List<String> excludes = StringUtils.isEmpty(exclude) ? Collections.emptyList() :
                 Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);
@@ -714,8 +714,8 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         MetadataTools metadataTools = getMetadataTools();
 
         Stream<String> properties;
-        if (metadataTools.isPersistent(metaClass) && view != null) {
-            properties = view.getProperties().stream().map(ViewProperty::getName);
+        if (metadataTools.isPersistent(metaClass) && fetchPlan != null) {
+            properties = fetchPlan.getProperties().stream().map(FetchPlanProperty::getName);
         } else {
             properties = metaClass.getProperties().stream().map(MetadataObject::getName);
         }

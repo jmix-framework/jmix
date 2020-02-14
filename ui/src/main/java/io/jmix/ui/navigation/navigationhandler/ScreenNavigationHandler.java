@@ -342,7 +342,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
 
         LoadContext<?> ctx = new LoadContext(metaClass);
         ctx.setId(id);
-        ctx.setView(View.MINIMAL);
+        ctx.setFetchPlan(FetchPlan.MINIMAL);
 
         Entity entity = dataManager.load(ctx);
         if (entity == null) {

@@ -16,7 +16,7 @@
 
 package data_components
 
-import io.jmix.core.ViewRepository
+import io.jmix.core.FetchPlanRepository
 import io.jmix.core.commons.util.Dom4j
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.CollectionLoader
@@ -46,7 +46,7 @@ import javax.inject.Inject
 
 class ScreenDataTest extends DataContextSpec {
 
-    @Inject ViewRepository viewRepository
+    @Inject FetchPlanRepository viewRepository
     @Inject ScreenDataXmlLoader screenDataLoader
 
     def "containers without loaders"() {
@@ -74,8 +74,8 @@ class ScreenDataTest extends DataContextSpec {
         dataContext != null
         userCont != null
         usersCont != null
-        userCont.view == viewRepository.getView(User, 'user.edit')
-        usersCont.view == viewRepository.getView(User, 'user.browse')
+        userCont.view == viewRepository.getFetchPlan(User, 'user.edit')
+        usersCont.view == viewRepository.getFetchPlan(User, 'user.browse')
     }
 
     def "containers with loaders"() {
@@ -259,14 +259,14 @@ class ScreenDataTest extends DataContextSpec {
         userLoader.entityId == UUID.fromString('60885987-1b61-4247-94c7-dff348347f93')
         !userLoader.softDeletion
         userLoader.loadDynamicAttributes
-        ((InstanceLoaderImpl) userLoader).createLoadContext().view == viewRepository.getView(User, 'user.edit')
+        ((InstanceLoaderImpl) userLoader).createLoadContext().view == viewRepository.getFetchPlan(User, 'user.edit')
 
         !usersLoader.softDeletion
         usersLoader.firstResult == 100
         usersLoader.maxResults == 1000
         usersLoader.cacheable
         usersLoader.loadDynamicAttributes
-        ((CollectionLoaderImpl) usersLoader).createLoadContext().view == viewRepository.getView(User, 'user.browse')
+        ((CollectionLoaderImpl) usersLoader).createLoadContext().view == viewRepository.getFetchPlan(User, 'user.browse')
 
         !userInfoLoader.softDeletion
         userInfoLoader.firstResult == 100

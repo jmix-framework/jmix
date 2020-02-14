@@ -305,7 +305,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<CubaButtonField<V>
         }
 
         DataManager dataManager = beanLocator.get(DataManager.NAME);
-        entity = dataManager.reload(entity, View.MINIMAL);
+        entity = dataManager.reload(entity, FetchPlan.MINIMAL);
 
         String windowAlias = screen;
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);

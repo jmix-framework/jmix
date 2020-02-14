@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.model.Instance;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.model.InstanceContainer;
@@ -47,7 +47,7 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
     protected E item;
     protected ApplicationContext applicationContext;
     protected MetaClass entityMetaClass;
-    protected View view;
+    protected FetchPlan fetchPlan;
 
     protected EventHub events = new EventHub();
     protected Instance.PropertyChangeListener listener = this::itemPropertyChanged;
@@ -110,14 +110,12 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
     }
 
     @Nullable
-    @Override
-    public View getView() {
-        return view;
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
     }
 
-    @Override
-    public void setView(View view) {
-        this.view = view;
+    public void setFetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
     }
 
     @SuppressWarnings("unchecked")
@@ -148,7 +146,7 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
     public String toString() {
         return "InstanceContainerImpl{" +
                 "entity=" + entityMetaClass +
-                ", view=" + view +
+                ", view=" + fetchPlan +
                 '}';
     }
 

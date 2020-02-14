@@ -246,8 +246,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         return beanLocator.get(Metadata.NAME);
     }
 
-    protected ViewRepository getViewRepository() {
-        return beanLocator.get(ViewRepository.NAME);
+    protected FetchPlanRepository getViewRepository() {
+        return beanLocator.get(FetchPlanRepository.NAME);
     }
 
     @SuppressWarnings("unchecked")
@@ -387,8 +387,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         }
     }
 
-    protected List<Table.Column> loadColumnsByInclude(Element columnsElement, MetaClass metaClass, View view) {
-        Collection<String> appliedProperties = getAppliedProperties(columnsElement, view, metaClass);
+    protected List<Table.Column> loadColumnsByInclude(Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+        Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
         List<Table.Column> columns = new ArrayList<>(appliedProperties.size());
         List<Element> columnElements = columnsElement.elements("column");
@@ -425,9 +425,9 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 //                MetaPropertyPath dynamicAttributePath = DynamicAttributesUtils.getMetaPropertyPath(metaClass, propertyId);
 
                 MetaPropertyPath mpp = metaClass.getPropertyPath(propertyId);
-                boolean isViewContainsProperty = mpp != null && getMetadataTools().viewContainsProperty(view, mpp);
+                boolean isFetchPlanContainsProperty = mpp != null && getMetadataTools().fetchPlanContainsProperty(fetchPlan, mpp);
 
-                if (isViewContainsProperty /*|| dynamicAttributePath != null*/) {
+                if (isFetchPlanContainsProperty /*|| dynamicAttributePath != null*/) {
                     String visible = column.attributeValue("visible");
                     if (StringUtils.isEmpty(visible) || Boolean.parseBoolean(visible)) {
                         columns.add(loadColumn(column, metaClass));
@@ -439,11 +439,11 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         return columns;
     }
 
-    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass, View view) {
+    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
         String includeAll = columnsElement.attributeValue("includeAll");
         if (StringUtils.isNotBlank(includeAll)
                 && Boolean.parseBoolean(includeAll)) {
-            return loadColumnsByInclude(columnsElement, metaClass, view);
+            return loadColumnsByInclude(columnsElement, metaClass, fetchPlan);
         }
 
         List<Element> columnElements = columnsElement.elements("column");
@@ -763,7 +763,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         }
     }
 
-    protected Collection<String> getAppliedProperties(Element columnsElement, View view, MetaClass metaClass) {
+    protected Collection<String> getAppliedProperties(Element columnsElement, FetchPlan fetchPlan, MetaClass metaClass) {
         String exclude = columnsElement.attributeValue("exclude");
         List<String> excludes = StringUtils.isEmpty(exclude) ? Collections.emptyList() :
                 Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);
@@ -771,8 +771,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         MetadataTools metadataTools = getMetadataTools();
 
         Stream<String> properties;
-        if (metadataTools.isPersistent(metaClass) && view != null) {
-            properties = view.getProperties().stream().map(ViewProperty::getName);
+        if (metadataTools.isPersistent(metaClass) && fetchPlan != null) {
+            properties = fetchPlan.getProperties().stream().map(FetchPlanProperty::getName);
         } else {
             properties = metaClass.getProperties().stream().map(MetadataObject::getName);
         }

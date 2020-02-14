@@ -265,7 +265,7 @@ public class CollectionContainerImpl<E extends Entity>
     public String toString() {
         return "CollectionContainerImpl{" +
                 "entity=" + entityMetaClass +
-                ", view=" + view +
+                ", view=" + fetchPlan +
                 ", size=" + collection.size() +
                 '}';
     }

@@ -18,7 +18,7 @@ package io.jmix.ui.components.actions;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.ViewRepository;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
@@ -44,7 +44,7 @@ public class GuiActionSupport {
     public static final String NAME = "jmix_GuiActionSupport";
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
     @Inject
     protected EntityStates entityStates;
     @Inject

@@ -16,7 +16,7 @@
 package io.jmix.ui.xml.layout.loaders;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.GroupTable;
 import io.jmix.ui.components.Table;
@@ -50,12 +50,12 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
     }
 
     @Override
-    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass, View view) {
+    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
         List<Table.Column> columns = new ArrayList<>();
 
         Element groupElement = columnsElement.element("group");
         if (groupElement != null) {
-            columns.addAll(super.loadColumns(component, groupElement, metaClass, view));
+            columns.addAll(super.loadColumns(component, groupElement, metaClass, fetchPlan));
             final List<Object> groupProperties = new ArrayList<>(columns.size());
             for (Table.Column column : columns) {
                 if (column.isCollapsed()) {
@@ -75,14 +75,14 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
         // check for duplicate
         String includeAll = columnsElement.attributeValue("includeAll");
         if (StringUtils.isNotBlank(includeAll)) {
-            List<Table.Column> columnList = super.loadColumns(component, columnsElement, metaClass, view);
+            List<Table.Column> columnList = super.loadColumns(component, columnsElement, metaClass, fetchPlan);
             for (Table.Column column : columnList) {
                 if (!columns.contains(column)) {
                     columns.add(column);
                 }
             }
         } else {
-            columns.addAll(super.loadColumns(component, columnsElement, metaClass, view));
+            columns.addAll(super.loadColumns(component, columnsElement, metaClass, fetchPlan));
         }
 
         return columns;

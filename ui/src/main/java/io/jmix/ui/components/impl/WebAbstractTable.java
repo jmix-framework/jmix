@@ -141,7 +141,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     protected DatatypeRegistry datatypeRegistry;
     protected DynamicAttributesTools dynamicAttributesTools;
     protected DataComponents dataComponents;
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     protected Locale locale;
 
@@ -266,7 +266,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     @Inject
-    public void setViewRepository(ViewRepository viewRepository) {
+    public void setViewRepository(FetchPlanRepository viewRepository) {
         this.viewRepository = viewRepository;
     }
 
@@ -595,8 +595,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
         } else {
             instanceContainer = dataComponents.createInstanceContainer(metaClass.getJavaClass());
         }
-        View view = viewRepository.getView(metaClass, View.LOCAL);
-        instanceContainer.setView(view);
+        FetchPlan view = viewRepository.getFetchPlan(metaClass, FetchPlan.LOCAL);
+        instanceContainer.setFetchPlan(view);
         instanceContainer.setItem(item);
 
         fieldDatasources.put(item, instanceContainer);
@@ -1567,9 +1567,9 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
         if (entityTableSource instanceof ContainerDataUnit) {
             CollectionContainer container = ((ContainerDataUnit) entityTableSource).getContainer();
 
-            return container.getView() != null ?
+            return container.getFetchPlan() != null ?
                     // if a view is specified - use view properties
-                    metadataTools.getViewPropertyPaths(container.getView(), container.getEntityMetaClass()) :
+                    metadataTools.getViewPropertyPaths(container.getFetchPlan(), container.getEntityMetaClass()) :
                     // otherwise use all properties from meta-class
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }

@@ -268,7 +268,7 @@ public abstract class StandardEditor<T extends Entity> extends Screen
     protected boolean doNotReloadEditedEntity() {
         if (isEntityModifiedInParentContext()) {
             InstanceContainer<T> container = getEditedEntityContainer();
-            if (getEntityStates().isLoadedWithView(entityToEdit, container.getView())) {
+            if (getEntityStates().isLoadedWithFetchPlan(entityToEdit, container.getFetchPlan())) {
                 return true;
             }
         }

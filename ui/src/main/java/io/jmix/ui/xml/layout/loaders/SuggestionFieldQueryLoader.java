@@ -59,7 +59,7 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 
                     LoadContext loadContext = LoadContext.create(entityClass);
                     if (StringUtils.isNotEmpty(view)) {
-                        loadContext.setView(view);
+                        loadContext.setFetchPlan(view);
                     }
                     loadContext.setQuery(LoadContext.createQuery(stringQuery).setParameter("searchString", searchString));
 

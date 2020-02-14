@@ -494,12 +494,12 @@ public class WebTokenList<V extends Entity>
     protected void handleSelection(Collection<V> selected) {
         Collection<V> reloadedSelected = new ArrayList<>();
         //check that selected items are loaded with the correct view and reload selected items if not all the required fields are loaded
-        View viewForField = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() ?
+        FetchPlan viewForField = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() ?
                 getViewForField() :
                 null;
         if (viewForField != null) {
             for (V selectedItem : selected) {
-                if (!entityStates.isLoadedWithView(selectedItem, viewForField)) {
+                if (!entityStates.isLoadedWithFetchPlan(selectedItem, viewForField)) {
                     reloadedSelected.add(dataManager.reload(selectedItem, viewForField));
                 } else {
                     reloadedSelected.add(selectedItem);
@@ -838,20 +838,20 @@ public class WebTokenList<V extends Entity>
      * @return a view or null if the view cannot be evaluated
      */
     @Nullable
-    protected View getViewForField() {
+    protected FetchPlan getViewForField() {
         ValueSource valueSource = getValueSource();
         if (valueSource instanceof ContainerValueSource) {
             ContainerValueSource containerValueSource = (ContainerValueSource) valueSource;
             InstanceContainer container = containerValueSource.getContainer();
-            View view = container.getView();
+            FetchPlan view = container.getFetchPlan();
             if (view != null) {
                 MetaPropertyPath metaPropertyPath = containerValueSource.getMetaPropertyPath();
-                View curView = view;
+                FetchPlan curView = view;
                 if (metaPropertyPath != null) {
                     for (MetaProperty metaProperty : metaPropertyPath.getMetaProperties()) {
-                        ViewProperty viewProperty = curView.getProperty(metaProperty.getName());
+                        FetchPlanProperty viewProperty = curView.getProperty(metaProperty.getName());
                         if (viewProperty != null) {
-                            curView = viewProperty.getView();
+                            curView = viewProperty.getFetchPlan();
                             if (curView == null) return null;
                         }
                     }

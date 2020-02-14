@@ -19,7 +19,7 @@ package io.jmix.ui.model;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.entity.Entity;
-import io.jmix.core.View;
+import io.jmix.core.FetchPlan;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,16 +61,33 @@ public interface InstanceContainer<E extends Entity> {
     MetaClass getEntityMetaClass();
 
     /**
-     * Returns the view which was set by previous call to {@link #setView(View)}.
+     * @deprecated replaced by {@link InstanceContainer#getFetchPlan()}
+     */
+    @Nullable
+    @Deprecated
+    default FetchPlan getView() {
+        return getFetchPlan();
+    }
+
+    /**
+     * Returns the view which was set by previous call to {@link #setFetchPlan(FetchPlan)}.
      * The view is normally used when loading entities for this container.
      */
     @Nullable
-    View getView();
+    FetchPlan getFetchPlan();
+
+    /**
+     * @deprecated replaced by {@link InstanceContainer#setFetchPlan(FetchPlan)}
+     */
+    @Deprecated
+    default void setView(FetchPlan view) {
+        setFetchPlan(view);
+    }
 
     /**
      * Sets a view to be used when loading entities for this container.
      */
-    void setView(View view);
+    void setFetchPlan(FetchPlan fetchPlan);
 
     /**
      * Adds listener to {@link ItemPropertyChangeEvent}s.

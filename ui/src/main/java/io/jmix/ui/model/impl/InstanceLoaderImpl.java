@@ -50,7 +50,7 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
     protected Object entityId;
     protected boolean softDeletion = true;
     protected boolean loadDynamicAttributes;
-    protected View view;
+    protected FetchPlan view;
     protected String viewName;
     protected Function<LoadContext<E>, E> delegate;
     protected EventHub events = new EventHub();
@@ -63,8 +63,8 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
         return applicationContext.getBean(DataManager.NAME, DataManager.class);
     }
 
-    protected ViewRepository getViewRepository() {
-        return applicationContext.getBean(ViewRepository.NAME, ViewRepository.class);
+    protected FetchPlanRepository getViewRepository() {
+        return applicationContext.getBean(FetchPlanRepository.NAME, FetchPlanRepository.class);
     }
 
     protected QueryStringProcessor getQueryStringProcessor() {
@@ -144,13 +144,13 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
         return loadContext;
     }
 
-    protected View resolveView() {
-        View view = this.view;
+    protected FetchPlan resolveView() {
+        FetchPlan view = this.view;
         if (view == null && viewName != null) {
-            view = getViewRepository().getView(container.getEntityMetaClass(), viewName);
+            view = getViewRepository().getFetchPlan(container.getEntityMetaClass(), viewName);
         }
         if (view == null) {
-            view = container.getView();
+            view = container.getFetchPlan();
         }
         return view;
     }
@@ -278,12 +278,12 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
     }
 
     @Override
-    public View getView() {
+    public FetchPlan getView() {
         return view;
     }
 
     @Override
-    public void setView(View view) {
+    public void setView(FetchPlan view) {
         this.view = view;
     }
 

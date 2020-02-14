@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.ViewRepository;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.queryconditions.Condition;
 import io.jmix.core.queryconditions.ConditionXmlLoader;
 import io.jmix.ui.model.*;
@@ -43,7 +43,7 @@ public class ScreenDataXmlLoader {
     public static final String NAME = "jmix_ScreenDataXmlLoader";
 
     @Inject
-    protected ViewRepository viewRepository;
+    protected FetchPlanRepository viewRepository;
 
     @Inject
     protected MetadataTools metadataTools;
@@ -375,7 +375,7 @@ public class ScreenDataXmlLoader {
     protected void loadView(Element element, Class<Entity> entityClass, InstanceContainer<Entity> container) {
         String viewName = element.attributeValue("view");
         if (viewName != null) {
-            container.setView(viewRepository.getView(entityClass, viewName));
+            container.setFetchPlan(viewRepository.getFetchPlan(entityClass, viewName));
         }
     }
 

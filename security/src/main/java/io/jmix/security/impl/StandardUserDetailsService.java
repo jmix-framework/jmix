@@ -16,37 +16,40 @@
 
 package io.jmix.security.impl;
 
-import io.jmix.data.Persistence;
-import io.jmix.data.Transaction;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.data.OrmProperties;
 import io.jmix.security.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 public class StandardUserDetailsService implements UserDetailsService {
 
-    private Persistence persistence;
+    private EntityManagerFactory entityManagerFactory;
 
-    public StandardUserDetailsService(Persistence persistence) {
-        this.persistence = persistence;
+    private FetchPlanRepository fetchPlanRepository;
+
+    public StandardUserDetailsService(EntityManagerFactory entityManagerFactory, FetchPlanRepository fetchPlanRepository) {
+        this.entityManagerFactory = entityManagerFactory;
+        this.fetchPlanRepository = fetchPlanRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        try (Transaction tx = persistence.createTransaction()) {
-            List<User> users = persistence.getEntityManager()
-                    .createQuery("select u from sec_User u where u.loginLowerCase = ?1", User.class)
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        List<User> users = entityManager.createQuery("select u from sec_User u where u.loginLowerCase = ?1", User.class)
                     .setParameter(1, username)
-                    .setViewName("user-login")
+                    .setHint(OrmProperties.FETCH_PLAN, fetchPlanRepository.getFetchPlan(User.class, "user-login"))
                     .getResultList();
-            tx.commit();
-            if (!users.isEmpty()) {
-                return users.get(0);
-            } else {
-                throw new UsernameNotFoundException("User not found");
-            }
+
+        if (!users.isEmpty()) {
+            return users.get(0);
+        } else {
+            throw new UsernameNotFoundException("User not found");
         }
     }
 }

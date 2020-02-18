@@ -22,17 +22,19 @@ import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.*;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Transaction;
-import io.jmix.data.TypedQuery;
 import io.jmix.security.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -55,13 +57,14 @@ public class StandardUserSessionFactory implements UserSessionFactory {
     @Inject
     protected DefaultPermissionValuesConfig defaultPermissionValuesConfig;
 
-    @Inject
-    protected Persistence persistence;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     @Inject
     protected DatatypeRegistry datatypeRegistry;
 
     private final StandardUserSession SYSTEM_SESSION;
+    private TransactionTemplate transaction;
 
     public StandardUserSessionFactory() {
         User user = new User();
@@ -73,15 +76,20 @@ public class StandardUserSessionFactory implements UserSessionFactory {
         SYSTEM_SESSION = new BuiltInSystemUserSession(authentication);
     }
 
+    @Inject
+    protected void setTransactionManager(PlatformTransactionManager transactionManager) {
+        transaction = new TransactionTemplate(transactionManager);
+        transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    }
+
     @Override
     public UserSession create(Authentication authentication) {
         StandardUserSession session = new StandardUserSession(authentication);
-        try (Transaction tx = persistence.createTransaction()) {
+        transaction.executeWithoutResult(transactionStatus -> {
             compilePermissions(session);
             compileConstraints(session);
             compileSessionAttributes(session);
-            tx.commit();
-        }
+        });
         return session;
     }
 
@@ -146,8 +154,7 @@ public class StandardUserSessionFactory implements UserSessionFactory {
         if (group == null)
             return;
 
-        EntityManager em = persistence.getEntityManager();
-        TypedQuery<Constraint> q = em.createQuery("select c from sec_GroupHierarchy h join h.parent.constraints c " +
+        TypedQuery<Constraint> q = entityManager.createQuery("select c from sec_GroupHierarchy h join h.parent.constraints c " +
                 "where h.group.id = ?1", Constraint.class);
         q.setParameter(1, group.getId());
         List<Constraint> constraints = q.getResultList();
@@ -167,8 +174,7 @@ public class StandardUserSessionFactory implements UserSessionFactory {
 
         List<SessionAttribute> list = new ArrayList<>(group.getSessionAttributes());
 
-        EntityManager em = persistence.getEntityManager();
-        TypedQuery<SessionAttribute> q = em.createQuery("select a from sec_GroupHierarchy h join h.parent.sessionAttributes a " +
+        TypedQuery<SessionAttribute> q = entityManager.createQuery("select a from sec_GroupHierarchy h join h.parent.sessionAttributes a " +
                 "where h.group.id = ?1 order by h.level desc", SessionAttribute.class);
         q.setParameter(1, group.getId());
         List<SessionAttribute> attributes = q.getResultList();

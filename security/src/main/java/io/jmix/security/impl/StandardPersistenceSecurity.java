@@ -27,7 +27,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.data.*;
+import io.jmix.data.PersistenceAttributeSecurity;
+import io.jmix.data.PersistenceSecurity;
+import io.jmix.data.RowLevelSecurityException;
+import io.jmix.data.impl.JmixQuery;
 import io.jmix.security.SecurityTokenException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -50,8 +55,8 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     @Inject
     protected SecurityTokenManager securityTokenManager;
 
-    @Inject
-    protected Persistence persistence;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     @Inject
     protected ReferenceToEntitySupport referenceToEntitySupport;
@@ -79,7 +84,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public boolean applyConstraints(Query query) {
+    public boolean applyConstraints(JmixQuery query) {
         QueryParser parser = QueryTransformerFactory.createParser(query.getQueryString());
         String entityName = parser.getEntityName();
 
@@ -107,7 +112,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
 
     // todo user substitution
     @Override
-    public void setQueryParam(Query query, String paramName) {
+    public void setQueryParam(JmixQuery query, String paramName) {
         if (paramName.startsWith(CONSTRAINT_PARAM_SESSION_ATTR)) {
             StandardUserSession userSession = getUserSession();
 
@@ -195,7 +200,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     public void restoreFilteredData(Entity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         String storeName = metadataTools.getStoreName(metaClass);
-        EntityManager entityManager = persistence.getEntityManager(storeName);
+        EntityManager entityManager = getEntityManager(storeName);
 
         Multimap<String, Object> filtered = BaseEntityInternalAccess.getFilteredData(entity);
         if (filtered == null) {
@@ -230,6 +235,11 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
                 }
             }
         }
+    }
+
+    // todo data stores
+    private EntityManager getEntityManager(String storeName) {
+        return entityManager;
     }
 
     @Override

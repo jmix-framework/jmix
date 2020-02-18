@@ -16,8 +16,8 @@
 
 package io.jmix.security;
 
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
-import io.jmix.data.Persistence;
 import io.jmix.security.impl.StandardUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,6 +30,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 @Configuration
 @ComponentScan
@@ -37,12 +39,15 @@ import javax.inject.Inject;
 @EnableWebSecurity
 public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
+
     @Inject
-    private Persistence persistence;
+    private FetchPlanRepository fetchPlanRepository;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        UserDetailsService userDetailsService = new StandardUserDetailsService(persistence);
+        UserDetailsService userDetailsService = new StandardUserDetailsService(entityManagerFactory, fetchPlanRepository);
         auth.userDetailsService(userDetailsService);
         auth.authenticationProvider(new SystemAuthenticationProvider(userDetailsService));
     }

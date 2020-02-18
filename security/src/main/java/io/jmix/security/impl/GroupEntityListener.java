@@ -17,9 +17,7 @@ package io.jmix.security.impl;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.TypedQuery;
+import io.jmix.data.PersistenceTools;
 import io.jmix.data.listener.BeforeInsertEntityListener;
 import io.jmix.data.listener.BeforeUpdateEntityListener;
 import io.jmix.security.entity.Group;
@@ -27,6 +25,9 @@ import io.jmix.security.entity.GroupHierarchy;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,17 +36,20 @@ public class GroupEntityListener implements
         BeforeInsertEntityListener<Group>,
         BeforeUpdateEntityListener<Group> {
 
-    @Inject
-    protected Persistence persistence;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     @Inject
     protected Metadata metadata;
 
     @Inject
+    protected PersistenceTools persistenceTools;
+
+    @Inject
     protected EntityStates entityStates;
 
     @Override
-    public void onBeforeInsert(Group entity, EntityManager entityManager) {
+    public void onBeforeInsert(Group entity) {
         createNewHierarchy(entity, entity.getParent());
     }
 
@@ -59,8 +63,6 @@ public class GroupEntityListener implements
         if (!entityStates.isManaged(parent) && !entityStates.isDetached(parent))
             throw new IllegalStateException("Unable to create GroupHierarchy. Commit parent group first.");
 
-        EntityManager em = persistence.getEntityManager();
-
         if (entity.getHierarchyList() == null) {
             entity.setHierarchyList(new ArrayList<>());
         } else {
@@ -68,7 +70,7 @@ public class GroupEntityListener implements
         }
 
         if (entityStates.isDetached(parent))
-            parent = em.find(Group.class, parent.getId()); // refresh parent in case of detached
+            parent = entityManager.find(Group.class, parent.getId()); // refresh parent in case of detached
 
         int level = 0;
         if (parent.getHierarchyList() != null) {
@@ -77,7 +79,7 @@ public class GroupEntityListener implements
                 h.setGroup(entity);
                 h.setParent(hierarchy.getParent());
                 h.setLevel(level++);
-                em.persist(h);
+                entityManager.persist(h);
                 entity.getHierarchyList().add(h);
             }
         }
@@ -85,23 +87,21 @@ public class GroupEntityListener implements
         h.setGroup(entity);
         h.setParent(parent);
         h.setLevel(level);
-        em.persist(h);
+        entityManager.persist(h);
         entity.getHierarchyList().add(h);
     }
 
     @Override
-    public void onBeforeUpdate(Group entity, EntityManager entityManager) {
-        if (!persistence.getTools().getDirtyFields(entity).contains("parent"))
+    public void onBeforeUpdate(Group entity) {
+        if (!persistenceTools.getDirtyFields(entity).contains("parent"))
             return;
 
-        EntityManager em = persistence.getEntityManager();
-
         for (GroupHierarchy oldHierarchy : entity.getHierarchyList()) {
-            em.remove(oldHierarchy);
+            entityManager.remove(oldHierarchy);
         }
         createNewHierarchy(entity, entity.getParent());
 
-        TypedQuery<GroupHierarchy> q = em.createQuery(
+        TypedQuery<GroupHierarchy> q = entityManager.createQuery(
                 "select h from sec_GroupHierarchy h join fetch h.group " +
                         "where h.parent.id = ?1", GroupHierarchy.class);
         q.setParameter(1, entity.getId());
@@ -109,9 +109,9 @@ public class GroupEntityListener implements
         for (GroupHierarchy hierarchy : list) {
             Group dependentGroup = hierarchy.getGroup();
             for (GroupHierarchy depHierarchy : dependentGroup.getHierarchyList()) {
-                em.remove(depHierarchy);
+                entityManager.remove(depHierarchy);
             }
-            em.remove(hierarchy);
+            entityManager.remove(hierarchy);
             createNewHierarchy(dependentGroup, dependentGroup.getParent());
         }
     }

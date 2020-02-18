@@ -16,7 +16,6 @@
 
 package io.jmix.data.listener;
 
-import io.jmix.data.EntityManager;
 import io.jmix.core.entity.Entity;
 
 import java.util.Collection;
@@ -33,8 +32,8 @@ public interface BeforeCommitTransactionListener {
 
     /**
      * Invoked before transaction commit.
-     * @param entityManager     current {@code EntityManager}
+     * @param storeName data store name
      * @param managedEntities   current persistence context, i.e. a collection of entities in Managed state
      */
-    void beforeCommit(EntityManager entityManager, Collection<Entity> managedEntities);
+    void beforeCommit(String storeName, Collection<Entity> managedEntities);
 }

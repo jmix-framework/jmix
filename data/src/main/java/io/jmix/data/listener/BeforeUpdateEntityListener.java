@@ -15,7 +15,6 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.data.EntityManager;
 import io.jmix.core.entity.Entity;
 
 /**
@@ -28,7 +27,6 @@ public interface BeforeUpdateEntityListener<T extends Entity> {
      * Executes before the object has been updated in DB.
      *
      * @param entity        updated entity instance
-     * @param entityManager EntityManager that owns the entity instance
      */
-    void onBeforeUpdate(T entity, EntityManager entityManager);
+    void onBeforeUpdate(T entity);
 }

@@ -27,8 +27,6 @@ import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.data.EntityChangeType;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
 import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
@@ -37,6 +35,7 @@ import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.internal.sessions.ObjectChangeSet;
+import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.sessions.Session;
@@ -48,6 +47,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
@@ -55,6 +55,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,10 +66,12 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     public static final String RESOURCE_HOLDER_KEY = ContainerResourceHolder.class.getName();
 
+    public static final String RUNNER_RESOURCE_HOLDER = RunnerResourceHolder.class.getName();
+
     public static final String PROP_NAME = "cuba.storeName";
 
     @Inject
-    protected Persistence persistence;
+    protected EntityManagerFactory entityManagerFactory;
 
     @Inject
     protected Metadata metadata;
@@ -117,15 +120,36 @@ public class PersistenceSupport implements ApplicationContextAware {
      */
     public void registerSynchronizations(String store) {
         log.trace("registerSynchronizations for store '{}'", store);
-        TransactionSynchronizationManager.registerSynchronization(((PersistenceImpl) persistence).createSynchronization(store));
         getInstanceContainerResourceHolder(store);
+        getRunnerResourceHolder();
     }
 
-    public void registerInstance(Entity entity, EntityManager entityManager) {
+    /**
+     * INTERNAL
+     */
+    public void addBeforeCommitAction(Runnable action) {
+        RunnerResourceHolder runner = getRunnerResourceHolder();
+        runner.add(action);
+    }
+
+    private RunnerResourceHolder getRunnerResourceHolder() {
+        RunnerResourceHolder runner = (RunnerResourceHolder) TransactionSynchronizationManager.getResource(RUNNER_RESOURCE_HOLDER);
+        if (runner == null) {
+            runner = new RunnerResourceHolder();
+            TransactionSynchronizationManager.bindResource(RUNNER_RESOURCE_HOLDER, runner);
+        }
+        if (TransactionSynchronizationManager.isSynchronizationActive() && !runner.isSynchronizedWithTransaction()) {
+            runner.setSynchronizedWithTransaction(true);
+            TransactionSynchronizationManager.registerSynchronization(new RunnerSynchronization(runner));
+        }
+        return runner;
+    }
+
+    public void registerInstance(Entity entity, javax.persistence.EntityManager entityManager) {
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             throw new RuntimeException("No transaction");
 
-        UnitOfWork unitOfWork = entityManager.getDelegate().unwrap(UnitOfWork.class);
+        UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         getInstanceContainerResourceHolder(getStorageName(unitOfWork)).registerInstanceForUnitOfWork(entity, unitOfWork);
 
         if (entity instanceof BaseGenericIdEntity) {
@@ -142,14 +166,6 @@ public class PersistenceSupport implements ApplicationContextAware {
             throw new RuntimeException("Session is not a UnitOfWork: " + session);
 
         getInstanceContainerResourceHolder(getStorageName(session)).registerInstanceForUnitOfWork(entity, (UnitOfWork) session);
-    }
-
-    public Collection<Entity> getInstances(EntityManager entityManager) {
-        if (!TransactionSynchronizationManager.isActualTransactionActive())
-            throw new RuntimeException("No transaction");
-
-        UnitOfWork unitOfWork = entityManager.getDelegate().unwrap(UnitOfWork.class);
-        return getInstanceContainerResourceHolder(getStorageName(unitOfWork)).getInstances(unitOfWork);
     }
 
     public Collection<Entity> getSavedInstances(String storeName) {
@@ -183,8 +199,8 @@ public class PersistenceSupport implements ApplicationContextAware {
         return holder;
     }
 
-    public void processFlush(EntityManager entityManager, boolean warnAboutImplicitFlush) {
-        UnitOfWork unitOfWork = entityManager.getDelegate().unwrap(UnitOfWork.class);
+    public void processFlush(javax.persistence.EntityManager entityManager, boolean warnAboutImplicitFlush) {
+        UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
         traverseEntities(getInstanceContainerResourceHolder(storeName), new OnSaveEntityVisitor(storeName), warnAboutImplicitFlush);
     }
@@ -267,8 +283,8 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    public void detach(EntityManager entityManager, Entity entity) {
-        UnitOfWork unitOfWork = entityManager.getDelegate().unwrap(UnitOfWork.class);
+    public void detach(javax.persistence.EntityManager entityManager, Entity entity) {
+        UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
 
         if (entity instanceof BaseGenericIdEntity) {
@@ -436,7 +452,7 @@ public class PersistenceSupport implements ApplicationContextAware {
             if (!readOnly) {
                 Collection<Entity> allInstances = container.getAllInstances();
                 for (BeforeCommitTransactionListener transactionListener : beforeCommitTxListeners) {
-                    transactionListener.beforeCommit(persistence.getEntityManager(container.getStoreName()), allInstances);
+                    transactionListener.beforeCommit(container.getStoreName(), allInstances);
                 }
                 queryCacheManager.invalidate(typeNames, true);
                 List<EntityChangedEvent> collectedEvents = entityChangedEventManager.collect(container.getAllInstances());
@@ -486,7 +502,8 @@ public class PersistenceSupport implements ApplicationContextAware {
                 }
             }
 
-            javax.persistence.EntityManager jpaEm = persistence.getEntityManager(container.getStoreName()).getDelegate();
+            javax.persistence.EntityManager jmixEm = getEntityManager(container.getStoreName());
+            JpaEntityManager jpaEm = jmixEm.unwrap(JpaEntityManager.class);
             jpaEm.flush();
             jpaEm.clear();
 
@@ -519,6 +536,11 @@ public class PersistenceSupport implements ApplicationContextAware {
         public int getOrder() {
             return 100;
         }
+    }
+
+    private javax.persistence.EntityManager getEntityManager(String storeName) {
+        // todo data stores
+        return EntityManagerFactoryUtils.doGetTransactionalEntityManager(entityManagerFactory, null, true);
     }
 
     protected class OnSaveEntityVisitor implements EntityVisitor {
@@ -629,6 +651,36 @@ public class PersistenceSupport implements ApplicationContextAware {
             DeletePolicyProcessor processor = AppBeans.get(DeletePolicyProcessor.NAME); // prototype
             processor.setEntity(entity);
             processor.process();
+        }
+    }
+
+    private static class RunnerResourceHolder extends ResourceHolderSupport {
+
+        private List<Runnable> list = new ArrayList<>();
+
+        private void add(Runnable action) {
+            list.add(action);
+        }
+
+        private void run() {
+            for (Runnable runnable : list) {
+                runnable.run();
+            }
+        }
+    }
+
+    private static class RunnerSynchronization extends ResourceHolderSynchronization<RunnerResourceHolder, String> {
+
+        private RunnerResourceHolder runner;
+
+        public RunnerSynchronization(RunnerResourceHolder runner) {
+            super(runner, RUNNER_RESOURCE_HOLDER);
+            this.runner = runner;
+        }
+
+        @Override
+        public void beforeCommit(boolean readOnly) {
+            runner.run();
         }
     }
 }

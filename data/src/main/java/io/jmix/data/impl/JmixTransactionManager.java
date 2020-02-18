@@ -16,12 +16,37 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.Stores;
+import org.eclipse.persistence.internal.helper.CubaUtil;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.jdbc.datasource.JdbcTransactionObjectSupport;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-public class EclipseLinkTransactionManager extends JpaTransactionManager {
+public class JmixTransactionManager extends JpaTransactionManager implements ApplicationContextAware {
+
+    private ApplicationContext applicationContext;
+
+    @Override
+    protected void doBegin(Object transaction, TransactionDefinition definition) {
+        super.doBegin(transaction, definition);
+        // set soft deletion at beginning of each new transaction
+        CubaUtil.setSoftDeletion(true);
+        CubaUtil.setOriginalSoftDeletion(true);
+    }
+
+    @Override
+    protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {
+        super.prepareSynchronization(status, definition);
+        // lookup instead of injection to avoid circular dependency
+        PersistenceSupport persistenceSupport = applicationContext.getBean(PersistenceSupport.NAME, PersistenceSupport.class);
+        persistenceSupport.registerSynchronizations(Stores.MAIN); // todo data stores
+    }
+
     @Override
     protected void doCommit(DefaultTransactionStatus status) {
         JdbcTransactionObjectSupport txObject = (JdbcTransactionObjectSupport) status.getTransaction();
@@ -46,5 +71,10 @@ public class EclipseLinkTransactionManager extends JpaTransactionManager {
                 TransactionSynchronizationManager.unbindResource(getDataSource());
             }
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

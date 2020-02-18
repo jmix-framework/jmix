@@ -15,7 +15,6 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.data.EntityManager;
 import io.jmix.core.entity.Entity;
 
 /**
@@ -28,7 +27,6 @@ public interface BeforeInsertEntityListener<T extends Entity> {
      * Executes before the object has been inserted into DB.
      *
      * @param entity        inserted entity instance
-     * @param entityManager EntityManager that owns the entity instance
      */
-    void onBeforeInsert(T entity, EntityManager entityManager);
+    void onBeforeInsert(T entity);
 }

@@ -15,6 +15,7 @@
  */
 package io.jmix.data.impl;
 
+import io.jmix.core.BeanLocator;
 import io.jmix.core.EnvironmentUtils;
 import io.jmix.data.persistence.JmixIsNullExpressionOperator;
 import org.eclipse.persistence.expressions.ExpressionOperator;
@@ -24,6 +25,7 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.persistence.spi.PersistenceProvider;
 import java.util.Map;
 
 @Component(JmixEclipseLinkJpaVendorAdapter.NAME)
@@ -35,14 +37,24 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
 
     protected final Environment environment;
 
+    protected final PersistenceProvider persistenceProvider;
+
     @Inject
-    public JmixEclipseLinkJpaVendorAdapter(Environment environment, JmixEclipseLinkJpaDialect jpaDialect) {
+    public JmixEclipseLinkJpaVendorAdapter(Environment environment,
+                                           JmixEclipseLinkJpaDialect jpaDialect,
+                                           BeanLocator beanLocator) {
         this.environment = environment;
         this.jpaDialect = jpaDialect;
+        this.persistenceProvider = new JmixPersistenceProvider(beanLocator);
 
         ExpressionOperator.addOperator(new JmixIsNullExpressionOperator());
         setGenerateDdl(false);
         setShowSql(true);
+    }
+
+    @Override
+    public PersistenceProvider getPersistenceProvider() {
+        return persistenceProvider;
     }
 
     @Override

@@ -28,10 +28,7 @@ import javax.inject.Inject;
  * System level wrapper around DBMS-related application properties.
  *
  * <p>For data conversion on the middleware use {@link DbTypeConverter} obtained from
- * {@link io.jmix.data.Persistence} bean.
- * <p>If your client code needs to know what DBMS is currently in use, call {@code getDbmsType()} and
- * {@code getDbmsVersion()} methods of {@link com.haulmont.cuba.core.app.PersistenceManagerService}.
- *
+ * {@link DbmsSpecifics} bean.
  */
 @Component(DbmsType.NAME)
 public class DbmsType {

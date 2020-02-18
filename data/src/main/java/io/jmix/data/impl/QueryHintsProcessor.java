@@ -42,9 +42,8 @@ public class QueryHintsProcessor {
 
     public void applyQueryHint(JpaQuery query, String hintName, Object value) {
         BiConsumer<JpaQuery, Object> handler = hintHandlers.get(hintName);
-        if (handler == null) {
-            throw new UnsupportedOperationException(String.format("Unsupported hint: %s", hintName));
+        if (handler != null) {
+            handler.accept(query, value);
         }
-        handler.accept(query, value);
     }
 }

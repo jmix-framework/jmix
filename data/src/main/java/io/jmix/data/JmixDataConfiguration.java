@@ -18,19 +18,19 @@ package io.jmix.data;
 
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.data.impl.DataPersistentAttributesLoadChecker;
-import io.jmix.data.impl.EclipseLinkTransactionManager;
-import io.jmix.data.impl.JmixEclipseLinkJpaVendorAdapter;
-import io.jmix.data.impl.PersistenceConfigProcessor;
+import io.jmix.data.impl.*;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -60,11 +60,22 @@ public class JmixDataConfiguration {
     }
 
     @Bean
-    protected JpaTransactionManager transactionManager(DataSource dataSource, EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager transactionManager = new EclipseLinkTransactionManager();
+    protected JpaTransactionManager transactionManager(DataSource dataSource,
+                                                       EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JmixTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         transactionManager.setDataSource(dataSource);
         return transactionManager;
+    }
+
+    @Bean
+    protected JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    protected TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
+        return new TransactionTemplate(transactionManager);
     }
 
     @Bean(name = PersistentAttributesLoadChecker.NAME)

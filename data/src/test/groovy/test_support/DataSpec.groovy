@@ -16,14 +16,12 @@
 
 package test_support
 
-
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.data.JmixDataConfiguration
-import io.jmix.data.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
-import test_support.JmixDataTestConfiguration
 
 import javax.inject.Inject
 
@@ -31,28 +29,29 @@ import javax.inject.Inject
 class DataSpec extends Specification {
 
     @Inject
-    Persistence persistence
+    TransactionTemplate transaction
+    
+    @Inject
+    JdbcTemplate jdbc
 
     void setup() {
-        persistence.createTransaction().commit()
+        transaction.executeWithoutResult {}
     }
 
     void cleanup() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource())
+        jdbc.update('delete from SEC_USER_ROLE')
+        jdbc.update('delete from SEC_ROLE')
+        jdbc.update('delete from SEC_USER')
+        jdbc.update('delete from SEC_GROUP')
 
-        jdbcTemplate.update('delete from SEC_USER_ROLE')
-        jdbcTemplate.update('delete from SEC_ROLE')
-        jdbcTemplate.update('delete from SEC_USER')
-        jdbcTemplate.update('delete from SEC_GROUP')
+        jdbc.update('delete from TEST_DATE_TIME_ENTITY')
+        jdbc.update('delete from TEST_APP_ENTITY_ITEM')
+        jdbc.update('delete from TEST_SECOND_APP_ENTITY')
+        jdbc.update('delete from TEST_APP_ENTITY')
+        jdbc.update('delete from TEST_IDENTITY_ID_ENTITY')
+        jdbc.update('delete from TEST_IDENTITY_UUID_ENTITY')
+        jdbc.update('delete from TEST_COMPOSITE_KEY_ENTITY')
 
-        jdbcTemplate.update('delete from TEST_DATE_TIME_ENTITY')
-        jdbcTemplate.update('delete from TEST_APP_ENTITY_ITEM')
-        jdbcTemplate.update('delete from TEST_SECOND_APP_ENTITY')
-        jdbcTemplate.update('delete from TEST_APP_ENTITY')
-        jdbcTemplate.update('delete from TEST_IDENTITY_ID_ENTITY')
-        jdbcTemplate.update('delete from TEST_IDENTITY_UUID_ENTITY')
-        jdbcTemplate.update('delete from TEST_COMPOSITE_KEY_ENTITY')
-
-        jdbcTemplate.update('delete from SALES_PRODUCT')
+        jdbc.update('delete from SALES_PRODUCT')
     }
 }

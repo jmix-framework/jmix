@@ -18,23 +18,24 @@ package io.jmix.data.impl.entitycache;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import io.jmix.core.cluster.ClusterListenerAdapter;
-import io.jmix.core.cluster.ClusterManager;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.FetchPlan;
+import io.jmix.core.cluster.ClusterListenerAdapter;
+import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.data.OrmProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.*;
@@ -50,13 +51,13 @@ public class QueryCacheManager {
     @Inject
     protected ClusterManager clusterManager;
     @Inject
-    protected Persistence persistence;
-    @Inject
     protected QueryCache queryCache;
     @Inject
     protected Metadata metadata;
     @Inject
     protected MetadataTools metadataTools;
+    @PersistenceContext
+    protected EntityManager entityManager;
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCacheManager.class);
 
@@ -74,6 +75,11 @@ public class QueryCacheManager {
                 }
             }
         });
+    }
+
+    private EntityManager getEntityManager(String storeName) {
+        // todo data stores
+        return entityManager;
     }
 
     /**
@@ -94,13 +100,13 @@ public class QueryCacheManager {
         if (queryResult != null) {
             MetaClass metaClass = metadata.getClass(queryResult.getType());
             String storeName = metadataTools.getStoreName(metaClass);
-            EntityManager em = persistence.getEntityManager(storeName);
+            EntityManager em = getEntityManager(storeName);
             resultList = new ArrayList<>(queryResult.getResult().size());
             if (!metadataTools.isCacheable(metaClass)) {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
             }
             for (Object id : queryResult.getResult()) {
-                resultList.add(em.find(metaClass.getJavaClass(), id, views.toArray(new FetchPlan[views.size()])));
+                resultList.add(em.find(metaClass.getJavaClass(), id, OrmProperties.builder().withFetchPlans(views).build()));
             }
         } else {
             log.debug("Query results are not found in cache: {}", queryKey.printDescription());
@@ -126,9 +132,10 @@ public class QueryCacheManager {
                 ex.fillInStackTrace();
                 throw queryResult.getException();
             }
-            EntityManager em = persistence.getEntityManager();
+            String storeName = metadataTools.getStoreName(metaClass);
+            EntityManager em = getEntityManager(storeName);
             for (Object id : queryResult.getResult()) {
-                return (T) em.find(metaClass.getJavaClass(), id, views.toArray(new FetchPlan[views.size()]));
+                return (T) em.find(metaClass.getJavaClass(), id, OrmProperties.builder().withFetchPlans(views).build());
             }
         }
         log.debug("Query results are not found in cache: {}", queryKey.printDescription());

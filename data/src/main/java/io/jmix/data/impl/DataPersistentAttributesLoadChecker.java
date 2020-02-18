@@ -22,7 +22,6 @@ import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.Persistence;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 
@@ -66,8 +65,8 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
             return checkIsLoadedWithGetter(entity, property);
         }
 
-        Persistence persistence = beanLocator.get(Persistence.class);
-        EntityManagerFactory jpaEmf = ((PersistenceImpl) persistence).getJpaEmf(metadataTools.getStoreName(metaClass));
-        return jpaEmf.getPersistenceUnitUtil().isLoaded(entity, property);
+        // todo data stores
+        EntityManagerFactory emf = beanLocator.get(EntityManagerFactory.class);
+        return emf.getPersistenceUnitUtil().isLoaded(entity, property);
     }
 }

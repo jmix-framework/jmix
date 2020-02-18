@@ -15,11 +15,11 @@
  */
 package io.jmix.data.impl;
 
-import io.jmix.data.Persistence;
-import io.jmix.data.listener.*;
 import io.jmix.core.AppBeans;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.annotation.Listeners;
+import io.jmix.data.PersistenceTools;
+import io.jmix.data.listener.*;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public class EntityListenerManager {
     private static final Logger log = LoggerFactory.getLogger(EntityListenerManager.class);
 
     @Inject
-    protected Persistence persistence;
+    protected PersistenceTools persistenceTools;
 
     protected Map<Key, List> cache = new ConcurrentHashMap<>();
 
@@ -228,7 +228,7 @@ public class EntityListenerManager {
                 switch (type) {
                     case BEFORE_DETACH:
                         logExecution(type, entity);
-                        ((BeforeDetachEntityListener) listener).onBeforeDetach(entity, persistence.getEntityManager(storeName));
+                        ((BeforeDetachEntityListener) listener).onBeforeDetach(entity);
                         break;
                     case BEFORE_ATTACH:
                         logExecution(type, entity);
@@ -236,27 +236,27 @@ public class EntityListenerManager {
                         break;
                     case BEFORE_INSERT:
                         logExecution(type, entity);
-                        ((BeforeInsertEntityListener) listener).onBeforeInsert(entity, persistence.getEntityManager(storeName));
+                        ((BeforeInsertEntityListener) listener).onBeforeInsert(entity);
                         break;
                     case AFTER_INSERT:
                         logExecution(type, entity);
-                        ((AfterInsertEntityListener) listener).onAfterInsert(entity, persistence.getEntityManager(storeName).getConnection());
+                        ((AfterInsertEntityListener) listener).onAfterInsert(entity);
                         break;
                     case BEFORE_UPDATE:
                         logExecution(type, entity);
-                        ((BeforeUpdateEntityListener) listener).onBeforeUpdate(entity, persistence.getEntityManager(storeName));
+                        ((BeforeUpdateEntityListener) listener).onBeforeUpdate(entity);
                         break;
                     case AFTER_UPDATE:
                         logExecution(type, entity);
-                        ((AfterUpdateEntityListener) listener).onAfterUpdate(entity, persistence.getEntityManager(storeName).getConnection());
+                        ((AfterUpdateEntityListener) listener).onAfterUpdate(entity);
                         break;
                     case BEFORE_DELETE:
                         logExecution(type, entity);
-                        ((BeforeDeleteEntityListener) listener).onBeforeDelete(entity, persistence.getEntityManager(storeName));
+                        ((BeforeDeleteEntityListener) listener).onBeforeDelete(entity);
                         break;
                     case AFTER_DELETE:
                         logExecution(type, entity);
-                        ((AfterDeleteEntityListener) listener).onAfterDelete(entity, persistence.getEntityManager(storeName).getConnection());
+                        ((AfterDeleteEntityListener) listener).onAfterDelete(entity);
                         break;
                     default:
                         throw new UnsupportedOperationException("Unsupported EntityListenerType: " + type);
@@ -279,7 +279,7 @@ public class EntityListenerManager {
             sb.append("Executing ").append(type).append(" entity listener for ")
                     .append(entity.getClass().getName()).append(" id=").append(entity.getId());
             if (type != EntityListenerType.BEFORE_DETACH && type != EntityListenerType.BEFORE_ATTACH) {
-                Set<String> dirty = persistence.getTools().getDirtyFields(entity);
+                Set<String> dirty = persistenceTools.getDirtyFields(entity);
                 if (!dirty.isEmpty()) {
                     sb.append(", changedProperties: ");
                     for (Iterator<String> it = dirty.iterator(); it.hasNext(); ) {

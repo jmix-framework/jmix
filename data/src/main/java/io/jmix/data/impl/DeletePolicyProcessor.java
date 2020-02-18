@@ -23,9 +23,7 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Query;
+import io.jmix.data.persistence.DbmsSpecifics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -34,6 +32,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.*;
 
 @Component(DeletePolicyProcessor.NAME)
@@ -48,10 +49,17 @@ public class DeletePolicyProcessor {
     protected MetaClass metaClass;
     protected String primaryKeyName;
 
+    @PersistenceContext
     protected EntityManager entityManager;
 
     @Inject
-    protected Persistence persistence;
+    protected JdbcTemplate jdbcTemplate;
+
+    @Inject
+    protected DbmsSpecifics dbmsSpecifics;
+
+    @Inject
+    protected PersistenceSupport persistenceSupport;
 
     @Inject
     protected Metadata metadata;
@@ -72,8 +80,15 @@ public class DeletePolicyProcessor {
         primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
 
         String storeName = metadataTools.getStoreName(metaClass);
-        entityManager = persistence.getEntityManager(storeName == null ? Stores.MAIN : storeName);
+        entityManager = getEntityManager(storeName == null ? Stores.MAIN : storeName);
     }
+
+    private EntityManager getEntityManager(String storeName) {
+        // todo data stores
+        return entityManager;
+    }
+
+
 
     public void process() {
         List<MetaProperty> properties = new ArrayList<>();
@@ -202,23 +217,23 @@ public class DeletePolicyProcessor {
     }
 
     protected void hardDeleteNotLoadedReference(Entity entity, MetaProperty property, Entity reference) {
-        ((PersistenceImpl) persistence).addBeforeCommitAction(() -> {
+        // todo data stores
+        persistenceSupport.addBeforeCommitAction(() -> {
             try {
-                JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
                 String column = metadataTools.getDatabaseColumn(property);
                 if (column != null) { // is null for mapped-by property
                     String updateMasterSql = "update " + metadataTools.getDatabaseTable(metaClass)
                             + " set " + column + " = null where "
                             + metadataTools.getPrimaryKeyName(metaClass) + " = ?";
                     log.debug("Hard delete un-fetched reference: {}, bind: [{}]", updateMasterSql, entity.getId());
-                    jdbcTemplate.update(updateMasterSql, persistence.getDbTypeConverter().getSqlObject(entity.getId()));
+                    jdbcTemplate.update(updateMasterSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(entity.getId()));
                 }
 
                 MetaClass refMetaClass = property.getRange().asClass();
                 String deleteRefSql = "delete from " + metadataTools.getDatabaseTable(refMetaClass) + " where "
                         + metadataTools.getPrimaryKeyName(refMetaClass) + " = ?";
                 log.debug("Hard delete un-fetched reference: {}, bind: [{}]", deleteRefSql, reference.getId());
-                jdbcTemplate.update(deleteRefSql, persistence.getDbTypeConverter().getSqlObject(reference.getId()));
+                jdbcTemplate.update(deleteRefSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(reference.getId()));
             } catch (DataAccessException e) {
                 throw new RuntimeException("Error processing deletion of " + entity, e);
             }
@@ -237,7 +252,8 @@ public class DeletePolicyProcessor {
     }
 
     protected void hardSetReferenceNull(Entity entity, MetaProperty property) {
-        ((PersistenceImpl) persistence).addBeforeCommitAction(() -> {
+        // todo data stores
+        persistenceSupport.addBeforeCommitAction(() -> {
             MetaClass entityMetaClass = metadata.getClass(entity.getClass());
             while (!entityMetaClass.equals(property.getDomain())) {
                 MetaClass ancestor = entityMetaClass.getAncestor();
@@ -255,8 +271,7 @@ public class DeletePolicyProcessor {
                     metadataTools.getPrimaryKeyName(entityMetaClass));
             try {
                 log.debug("Set reference to null: {}, bind: [{}]", sql, entity.getId());
-                JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
-                jdbcTemplate.update(sql, persistence.getDbTypeConverter().getSqlObject(entity.getId()));
+                jdbcTemplate.update(sql, dbmsSpecifics.getDbTypeConverter().getSqlObject(entity.getId()));
             } catch (DataAccessException e) {
                 throw new RuntimeException("Error processing deletion of " + entity, e);
             }

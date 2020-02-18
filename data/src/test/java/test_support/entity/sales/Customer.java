@@ -18,6 +18,7 @@ package test_support.entity.sales;
 
 
 import io.jmix.core.entity.StandardEntity;
+import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.datatypes.impl.EnumUtils;
 
@@ -28,6 +29,7 @@ import javax.persistence.Table;
 @Entity(name = "sales$Customer")
 @Table(name = "SALES_CUSTOMER")
 @NamePattern("%s|name")
+@PublishEntityChangedEvents
 public class Customer extends StandardEntity {
     @Column(name = "NAME")
     private String name;

@@ -15,7 +15,6 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.data.EntityManager;
 import io.jmix.core.entity.Entity;
 
 /**
@@ -29,7 +28,6 @@ public interface BeforeDeleteEntityListener<T extends Entity> {
      * Executes before the object has been deleted or marked as deleted in DB.
      *
      * @param entity        deleted entity instance
-     * @param entityManager EntityManager that owns the entity instance
      */
-    void onBeforeDelete(T entity, EntityManager entityManager);
+    void onBeforeDelete(T entity);
 }

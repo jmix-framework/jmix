@@ -20,20 +20,20 @@ import io.jmix.core.cluster.ClusterListenerAdapter;
 import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.impl.ConfigStorage;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Transaction;
-import io.jmix.data.TypedQuery;
 import io.jmix.data.entity.ConfigEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -49,10 +49,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ConfigStorageImpl implements ConfigStorage {
 
     @Inject
-    protected Persistence persistence;
+    private Metadata metadata;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Inject
-    private Metadata metadata;
+    private TransactionTemplate transaction;
+
+    @Inject
+    private DataSource dataSource;
 
     protected ClusterManager clusterManager;
 
@@ -123,10 +129,10 @@ public class ConfigStorageImpl implements ConfigStorage {
             try {
                 if (cache == null) {
                     log.info("Loading DB-stored app properties cache");
-                    persistence.runInTransaction(em -> {
+                    transaction.executeWithoutResult(transactionStatus -> {
                         // Don't use transactions here because of loop possibility from EntityLog
                         try {
-                            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+                            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
                             cache = jdbcTemplate.query("select NAME, VALUE_ from SYS_CONFIG", new Object[]{},
                                     (ResultSetExtractor<Map<String, String>>) rs -> {
                                         HashMap<String, String> map = new HashMap<>();
@@ -151,35 +157,30 @@ public class ConfigStorageImpl implements ConfigStorage {
     @Override
     public void setDbProperty(String name, String value) {
         Preconditions.checkNotNullArgument(name, "name is null");
-        Transaction tx = persistence.getTransaction();
-        try {
-            EntityManager em = persistence.getEntityManager();
+
+        transaction.executeWithoutResult(transactionStatus -> {
             ConfigEntity instance = getConfigInstance(name);
             if (value != null) {
                 if (instance == null) {
                     instance = metadata.create(ConfigEntity.class);
                     instance.setName(name.trim());
                     instance.setValue(value.trim());
-                    em.persist(instance);
+                    entityManager.persist(instance);
                 } else {
                     instance.setValue(value);
                 }
             } else {
                 if (instance != null)
-                    em.remove(instance);
+                    entityManager.remove(instance);
             }
-            tx.commit();
-        } finally {
-            tx.end();
-        }
+
+        });
         clearCache();
     }
 
     private ConfigEntity getConfigInstance(String name) {
-        EntityManager em = persistence.getEntityManager();
-        TypedQuery<ConfigEntity> query = em.createQuery("select c from sys$Config c where c.name = ?1", ConfigEntity.class);
+        TypedQuery<ConfigEntity> query = entityManager.createQuery("select c from sys$Config c where c.name = ?1", ConfigEntity.class);
         query.setParameter(1, name);
-        query.setView(null);
         List<ConfigEntity> list = query.getResultList();
         if (list.isEmpty())
             return null;

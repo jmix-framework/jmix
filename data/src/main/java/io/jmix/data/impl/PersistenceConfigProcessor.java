@@ -135,7 +135,7 @@ public class PersistenceConfigProcessor {
         Element puElem = rootElem.addElement("persistence-unit");
         puElem.addAttribute("name", "jmix");
 
-        puElem.addElement("provider").setText("org.eclipse.persistence.jpa.PersistenceProvider");
+        puElem.addElement("provider").setText("io.jmix.data.impl.JmixPersistenceProvider");
 
         if (ormXmlCreated) {
             puElem.addElement("mapping-file").setText("orm.xml");

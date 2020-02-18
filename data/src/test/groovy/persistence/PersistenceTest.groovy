@@ -16,38 +16,17 @@
 
 package persistence
 
-import io.jmix.data.Persistence
-import io.jmix.data.Transaction
-import test_support.entity.TestAppEntity
-import test_support.DataSpec
 
-import javax.inject.Inject
+import test_support.DataSpec
+import test_support.entity.TestAppEntity
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 class PersistenceTest extends DataSpec {
 
-    @Inject
-    Persistence persistence
-
-    def "dataSource is initialized"() {
-        expect:
-        persistence.getDataSource() != null
-    }
-
-    def "create and commit transaction"() {
-        when:
-
-        Transaction tx = persistence.createTransaction()
-        try {
-
-            tx.commit()
-        } finally {
-            tx.end()
-        }
-
-        then:
-
-        noExceptionThrown()
-    }
+    @PersistenceContext
+    EntityManager entityManager
 
     def "persist and load entity"() {
 
@@ -55,24 +34,12 @@ class PersistenceTest extends DataSpec {
 
         when:
 
-        Transaction tx = persistence.createTransaction()
-        try {
-            def entityManager = persistence.getEntityManager()
+        transaction.executeWithoutResult {
             entityManager.persist(entity)
-            tx.commit()
-        } finally {
-            tx.end()
         }
 
-        def foundEntity
-
-        tx = persistence.createTransaction()
-        try {
-            def entityManager = persistence.getEntityManager()
-            foundEntity = entityManager.find(TestAppEntity, entity.id)
-            tx.commit()
-        } finally {
-            tx.end()
+        def foundEntity = transaction.execute {
+            return entityManager.find(TestAppEntity, entity.id)
         }
 
         then:

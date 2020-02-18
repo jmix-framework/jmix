@@ -17,9 +17,9 @@
 package io.jmix.data;
 
 import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.BaseEntityInternalAccess;
 import io.jmix.core.entity.BaseGenericIdEntity;
@@ -49,6 +49,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -56,16 +58,17 @@ import java.util.*;
 /**
  * Utility class to provide common functionality related to persistence.
  * <br> Implemented as Spring bean to allow extension in application projects.
- * <br> A reference to this class can be obtained either via DI or by
- * {@link io.jmix.data.Persistence#getTools()} method.
  */
 @Component(PersistenceTools.NAME)
 public class PersistenceTools {
 
     public static final String NAME = "jmix_PersistenceTools";
 
+    @PersistenceContext
+    protected EntityManager entityManager;
+
     @Inject
-    protected Persistence persistence;
+    protected JdbcTemplate jdbc;
 
     @Inject
     protected Metadata metadata;
@@ -183,7 +186,7 @@ public class PersistenceTools {
             if (objectChanges != null) { // can be null for example in AFTER_DELETE entity listener
                 ChangeRecord changeRecord = objectChanges.getChangesForAttributeNamed(attribute);
                 if (changeRecord instanceof CollectionChangeRecord) {
-                    if (persistence.getEntityManager().isSoftDeletion() && changeRecord.getOldValue() != null) {
+                    if (OrmProperties.isSoftDeletion(entityManager) && changeRecord.getOldValue() != null) {
                         MetaProperty metaProperty = metadata.getClass(entity).getProperty(attribute);
                         if (SoftDelete.class.isAssignableFrom(metaProperty.getRange().asClass().getJavaClass())) {
                             Collection oldValue = (Collection) changeRecord.getOldValue();
@@ -318,7 +321,7 @@ public class PersistenceTools {
             if (vh instanceof DatabaseValueHolder) {
                 AbstractRecord row = ((DatabaseValueHolder) vh).getRow();
                 if (row != null) {
-                    Session session = persistence.getEntityManager().getDelegate().unwrap(Session.class);
+                    Session session = entityManager.unwrap(Session.class);
                     ClassDescriptor descriptor = session.getDescriptor(entity);
                     DatabaseMapping mapping = descriptor.getMappingForAttributeName(property);
                     Vector<DatabaseField> fields = mapping.getFields();
@@ -387,8 +390,7 @@ public class PersistenceTools {
     public void deleteRecord(String table, String primaryKeyCol, Object... ids) {
         for (Object id : ids) {
             String sql = "delete from " + table + " where " + primaryKeyCol + " = '" + id.toString() + "'";
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
-            jdbcTemplate.update(sql);
+            jdbc.update(sql);
         }
     }
 

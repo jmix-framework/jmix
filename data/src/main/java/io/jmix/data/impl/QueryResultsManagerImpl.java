@@ -22,15 +22,23 @@ import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.core.security.UserSessions;
-import io.jmix.data.*;
+import io.jmix.data.OrmProperties;
 import io.jmix.data.persistence.DbTypeConverter;
+import io.jmix.data.persistence.DbmsSpecifics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +51,10 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     private final Logger log = LoggerFactory.getLogger(QueryResultsManagerImpl.class);
 
     @Inject
-    protected Persistence persistence;
+    protected DbmsSpecifics dbmsSpecifics;
+
+    @Inject
+    protected JdbcTemplate jdbcTemplate;
 
     @Inject
     protected UserSessionSource userSessionSource;
@@ -63,11 +74,22 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     @Inject
     private MetadataTools metadataTools;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    protected TransactionTemplate transaction;
+
     protected static final int BATCH_SIZE = 100;
 
     protected static final int DELETE_BATCH_SIZE = 100;
 
     protected static final int INACTIVE_DELETION_MAX = 100000;
+
+    @Inject
+    protected void setTransactionManager(PlatformTransactionManager transactionManager) {
+        transaction = new TransactionTemplate(transactionManager);
+        transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+    }
 
     @Override
     public void savePreviousQueryResults(LoadContext loadContext) {
@@ -87,11 +109,8 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
         if (resultsAlreadySaved(queryKey, contextQuery))
             return;
 
-        List idList;
-        Transaction tx = persistence.createTransaction();
-        try {
-            EntityManager em = persistence.getEntityManager();
-            em.setSoftDeletion(loadContext.isSoftDeletion());
+        List idList = transaction.execute(status -> {
+            entityManager.setProperty(OrmProperties.SOFT_DELETION, loadContext.isSoftDeletion());
 
             QueryTransformer transformer = QueryTransformerFactory.createTransformer(contextQuery.getQueryString());
             transformer.replaceWithSelectId(metadataTools.getPrimaryKeyName(metadata.getClass(entityName)));
@@ -110,19 +129,16 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
                 queryBuilder.setPreviousResults(userSessionSource.getUserSession().getId(), loadContext.getQueryKey());
             }
 
-            Query query = queryBuilder.getQuery(em);
+            Query query = queryBuilder.getQuery(entityManager);
 
-            String logMsg = "Load previous query results: " + JpqlQueryBuilder.printQuery(query.getQueryString());
+            String logMsg = "Load previous query results: " + JpqlQueryBuilder.printQuery(((JmixQuery) query).getQueryString());
             log.debug(logMsg);
             long start = System.currentTimeMillis();
 
-            idList = query.getResultList();
-            tx.commit();
-
+            List resultList = query.getResultList();
             log.debug("Done in " + (System.currentTimeMillis() - start) + "ms : " + logMsg);
-        } finally {
-            tx.end();
-        }
+            return resultList;
+        });
 
         delete(queryKey);
         insert(queryKey, idList);
@@ -162,10 +178,8 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
         String logMsg = "Insert " + idList.size() + " query results for " + userSessionId + " / " + queryKey;
         log.debug(logMsg);
 
-        Transaction tx = persistence.createTransaction();
-        try {
-            EntityManager em = persistence.getEntityManager();
-            DbTypeConverter converter = persistence.getDbTypeConverter();
+        transaction.executeWithoutResult(transactionStatus -> {
+            DbTypeConverter converter = dbmsSpecifics.getDbTypeConverter();
             Object idFromList = idList.get(0);
             String columnName = null;
             if (idFromList instanceof String) {
@@ -191,20 +205,15 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
                     row[0] = sublist.get(j);
                     params.add(row);
                 }
-                JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
                 jdbcTemplate.batchUpdate(sql, params, paramTypes);
             }
             log.debug("Done in " + (System.currentTimeMillis() - start) + "ms: " + logMsg);
-
-            tx.commit();
-        } finally {
-            tx.end();
-        }
+        });
     }
 
     @Override
     public void delete(int queryKey) {
-        DbTypeConverter converter = persistence.getDbTypeConverter();
+        DbTypeConverter converter = dbmsSpecifics.getDbTypeConverter();
         UUID userSessionId = userSessionSource.getUserSession().getId();
         String userSessionIdStr = converter.getSqlObject(userSessionId).toString();
         long start = System.currentTimeMillis();
@@ -214,7 +223,6 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
         String sql = "delete from SYS_QUERY_RESULT where SESSION_ID = '"
                 + userSessionIdStr + "' and QUERY_KEY = " + queryKey;
 
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update(sql);
 
         log.debug("Done in " + (System.currentTimeMillis() - start) + "ms : " + logMsg);
@@ -222,8 +230,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     @Override
     public void deleteForCurrentSession() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
-        DbTypeConverter converter = persistence.getDbTypeConverter();
+        DbTypeConverter converter = dbmsSpecifics.getDbTypeConverter();
         UUID userSessionId = userSessionSource.getUserSession().getId();
         String userSessionIdStr = converter.getSqlObject(userSessionId).toString();
         jdbcTemplate.update("delete from SYS_QUERY_RESULT where SESSION_ID = '"
@@ -242,13 +249,12 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     public void internalDeleteForInactiveSessions() {
         log.debug("Delete query results for inactive user sessions");
 
-        List<Object[]> rows;
-        try (Transaction tx = persistence.createTransaction()) {
-            TypedQuery<Object[]> query = persistence.getEntityManager().createQuery(
+        List<Object[]> rows = transaction.execute(status -> {
+            TypedQuery<Object[]> query = entityManager.createQuery(
                     "select e.id, e.sessionId from sys$QueryResult e", Object[].class);
             query.setMaxResults(INACTIVE_DELETION_MAX);
-            rows = query.getResultList();
-        }
+            return query.getResultList();
+        });
         if (rows.size() == INACTIVE_DELETION_MAX) {
             log.debug("Processing " + INACTIVE_DELETION_MAX + " records, run again for the rest");
         }
@@ -276,7 +282,6 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
         log.debug("Deleting " + ids.size() + " records");
         String str = ids.stream().map(String::valueOf).collect(Collectors.joining(","));
         try {
-            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
             jdbcTemplate.update("delete from SYS_QUERY_RESULT where ID in (" + str + ")");
         } catch (DataAccessException e) {
             throw new RuntimeException("Error deleting query result records", e);

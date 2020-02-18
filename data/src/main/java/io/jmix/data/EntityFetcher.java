@@ -25,10 +25,13 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Inject;
 import javax.persistence.Basic;
+import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
+import javax.persistence.PersistenceContext;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
@@ -49,13 +52,16 @@ public class EntityFetcher {
     protected FetchPlanRepository viewRepository;
 
     @Inject
-    protected Persistence persistence;
-
-    @Inject
     protected EntityStates entityStates;
 
     @Inject
     protected MetadataTools metadataTools;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Inject
+    private TransactionTemplate transactionTemplate;
 
     /**
      * Fetch instance by fetch plan.
@@ -140,16 +146,14 @@ public class EntityFetcher {
                             }
                             String storeName = metadataTools.getStoreName(metadata.getClass(e));
                             if (storeName != null) {
-                                try (Transaction tx = persistence.getTransaction(storeName)) {
-                                    EntityManager em = persistence.getEntityManager(storeName);
-                                    @SuppressWarnings("unchecked")
+                                getTransaction(storeName).executeWithoutResult(transactionStatus -> {
+                                    EntityManager em = getEntityManager(storeName);
                                     Entity managed = em.find(e.getClass(), e.getId());
                                     if (managed != null) { // the instance here can be null if it has been deleted
                                         entity.setValue(property.getName(), managed);
                                         fetch(managed, propertyFetchPlan, visited, optimizeForDetached);
                                     }
-                                    tx.commit();
-                                }
+                                });
                             }
                         }
                     } else {
@@ -158,6 +162,16 @@ public class EntityFetcher {
                 }
             }
         }
+    }
+
+    private javax.persistence.EntityManager getEntityManager(String storeName) {
+        // todo data stores
+        return entityManager;
+    }
+
+    private TransactionTemplate getTransaction(String storeName) {
+        // todo data stores
+        return transactionTemplate;
     }
 
     protected boolean needReloading(Entity entity, FetchPlan fetchPlan) {

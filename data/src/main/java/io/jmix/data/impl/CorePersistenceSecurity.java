@@ -20,7 +20,6 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.security.OnCoreSecurityImplementation;
 import io.jmix.data.PersistenceSecurity;
-import io.jmix.data.Query;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
@@ -31,12 +30,12 @@ import java.util.Collection;
 public class CorePersistenceSecurity implements PersistenceSecurity {
 
     @Override
-    public boolean applyConstraints(Query query) {
+    public boolean applyConstraints(JmixQuery query) {
         return false;
     }
 
     @Override
-    public void setQueryParam(Query query, String paramName) {
+    public void setQueryParam(JmixQuery query, String paramName) {
 
     }
 

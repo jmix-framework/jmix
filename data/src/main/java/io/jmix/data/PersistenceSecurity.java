@@ -18,6 +18,7 @@ package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.Entity;
+import io.jmix.data.impl.JmixQuery;
 
 import java.util.Collection;
 
@@ -39,15 +40,14 @@ public interface PersistenceSecurity {
      * @param query query to modify
      * @return true if any constraints have been applied
      */
-    boolean applyConstraints(Query query);
+    boolean applyConstraints(JmixQuery query);
 
     /**
      * Sets the query param to a value provided by user session (see constants above).
-     *
-     * @param query     Query instance
+     *  @param query     Query instance
      * @param paramName parameter to set
      */
-    void setQueryParam(Query query, String paramName);
+    void setQueryParam(JmixQuery query, String paramName);
 
     /**
      * Applies in-memory constraints to the entity by filtered data

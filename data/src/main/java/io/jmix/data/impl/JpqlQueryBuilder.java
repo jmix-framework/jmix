@@ -25,15 +25,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.queryconditions.Condition;
 import io.jmix.core.queryconditions.ConditionJpqlGenerator;
-import io.jmix.data.EntityManager;
 import io.jmix.data.PersistenceSecurity;
-import io.jmix.data.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -163,9 +163,9 @@ public class JpqlQueryBuilder {
 
         //we have to replace parameter names in macros because for {@link com.haulmont.cuba.core.sys.querymacro.TimeBetweenQueryMacroHandler}
         //we need to replace a parameter with number of days with its value before macros is expanded to JPQL expression
-        replaceParamsInMacros(query);
+        replaceParamsInMacros((JmixQuery) query);
 
-        applyConstraints(query);
+        applyConstraints((JmixQuery) query);
 
         Set<String> paramNames = queryTransformerFactory.parser(getResultQueryString()).getParamNames();
 
@@ -178,11 +178,7 @@ public class JpqlQueryBuilder {
                     TemporalValue temporalValue = (TemporalValue) value;
                     query.setParameter(name, temporalValue.date, temporalValue.type);
                 } else {
-                    if (noConversionParams != null && Arrays.asList(noConversionParams).contains(name)) {
-                        query.setParameter(name, value, false);
-                    } else {
-                        query.setParameter(name, value);
-                    }
+                    query.setParameter(name, value);
                 }
             } else {
                 if (entry.getValue() != null)
@@ -261,7 +257,7 @@ public class JpqlQueryBuilder {
         }
     }
 
-    protected void replaceParamsInMacros(Query query) {
+    protected void replaceParamsInMacros(JmixQuery query) {
         Collection<QueryMacroHandler> handlers = AppBeans.getAll(QueryMacroHandler.class).values();
         String modifiedQuery = query.getQueryString();
         for (QueryMacroHandler handler : handlers) {
@@ -270,7 +266,7 @@ public class JpqlQueryBuilder {
         query.setQueryString(modifiedQuery);
     }
 
-    protected void applyConstraints(Query query) {
+    protected void applyConstraints(JmixQuery query) {
         boolean constraintsApplied = security.applyConstraints(query);
         if (constraintsApplied && singleResult) {
             QueryParser parser = queryTransformerFactory.parser(query.getQueryString());

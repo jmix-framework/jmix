@@ -17,11 +17,7 @@
 package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.Metadata;
-import io.jmix.data.EntityManager;
 
-import io.jmix.data.Persistence;
-import io.jmix.data.Transaction;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;

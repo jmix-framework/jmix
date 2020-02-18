@@ -21,10 +21,6 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Transaction;
-import io.jmix.data.TypedQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -172,7 +168,7 @@ public class TypedNativeQueryTest {
             query.setParameter(1, UUID.randomUUID());
             query.getResultList();
             fail();
-        } catch (javax.persistence.PersistenceException e) {
+        } catch (Exception e) {
             // ok
         }
     }

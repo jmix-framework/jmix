@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
 import io.jmix.core.Metadata
 import io.jmix.core.FetchPlan
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import io.jmix.data.PersistenceTools
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification

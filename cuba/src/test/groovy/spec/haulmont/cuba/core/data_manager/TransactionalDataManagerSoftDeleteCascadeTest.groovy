@@ -21,8 +21,8 @@ import com.haulmont.cuba.core.model.entitychangedevent.EceTestProduct
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestStock
 import io.jmix.core.DataManager
 import io.jmix.core.Id
-import io.jmix.data.Persistence
-import io.jmix.data.TransactionalDataManager
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.TransactionalDataManager
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 

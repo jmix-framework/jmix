@@ -21,13 +21,9 @@ import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchMode;
-import io.jmix.core.Metadata;
 import io.jmix.core.FetchPlan;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Query;
-import io.jmix.data.Transaction;
-import org.eclipse.persistence.internal.helper.CubaUtil;
+import io.jmix.core.Metadata;
+import io.jmix.data.*;
 import org.eclipse.persistence.jpa.JpaEntityManager;
 import org.eclipse.persistence.platform.database.DatabasePlatform;
 import org.junit.jupiter.api.AfterEach;
@@ -35,7 +31,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import javax.inject.Inject;
 import java.sql.SQLException;
@@ -240,28 +235,28 @@ public class SoftDeleteTest {
     @Test
     public void testMultipleTransactions() throws Exception {
         try (Transaction tx = persistence.createTransaction()) {
-            assertTrue(CubaUtil.isSoftDeletion());
-
             EntityManager em = persistence.getEntityManager();
+            assertTrue(OrmProperties.isSoftDeletion(em.getDelegate()));
+
             em.setSoftDeletion(false);
-            assertFalse(CubaUtil.isSoftDeletion());
+            assertFalse(OrmProperties.isSoftDeletion(em.getDelegate()));
 
             tx.commit();
         }
 
         try (Transaction tx = persistence.createTransaction()) {
-            assertTrue(CubaUtil.isSoftDeletion());
-
             EntityManager em = persistence.getEntityManager();
+            assertTrue(OrmProperties.isSoftDeletion(em.getDelegate()));
+
             em.setSoftDeletion(false);
-            assertFalse(CubaUtil.isSoftDeletion());
+            assertFalse(OrmProperties.isSoftDeletion(em.getDelegate()));
 
             try (Transaction tx1 = persistence.createTransaction()) {
-                assertTrue(CubaUtil.isSoftDeletion());
+                assertTrue(OrmProperties.isSoftDeletion(persistence.getEntityManager().getDelegate()));
 
                 tx1.commit();
             }
-            assertFalse(CubaUtil.isSoftDeletion());
+            assertFalse(OrmProperties.isSoftDeletion(persistence.getEntityManager().getDelegate()));
 
             tx.commit();
         }
@@ -1262,7 +1257,7 @@ public class SoftDeleteTest {
     }
 
     protected boolean setPrintInnerJoinInWhereClause(EntityManager entityManager, boolean value) {
-        JpaEntityManager jpaEntityManager = (JpaEntityManager) entityManager.getDelegate();
+        JpaEntityManager jpaEntityManager = entityManager.getDelegate().unwrap(JpaEntityManager.class);
         DatabasePlatform platform = jpaEntityManager.getActiveSession().getPlatform();
         boolean prevValue = platform.shouldPrintInnerJoinInWhereClause();
         platform.setPrintInnerJoinInWhereClause(value);

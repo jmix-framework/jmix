@@ -16,13 +16,17 @@
 
 package com.haulmont.cuba.core.model.sales;
 
+import com.haulmont.cuba.core.listener.*;
+import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
+import com.haulmont.cuba.core.listener.AfterDeleteEntityListener;
+import com.haulmont.cuba.core.listener.AfterInsertEntityListener;
+import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import io.jmix.core.Id;
 import io.jmix.core.entity.Entity;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.Persistence;
 import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.event.EntityPersistingEvent;
-import io.jmix.data.listener.*;
 import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;

@@ -18,7 +18,6 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.AppBeans;
-import io.jmix.data.Persistence;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;

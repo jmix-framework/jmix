@@ -17,8 +17,7 @@
 package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.Server;
-import io.jmix.data.EntityManager;
-import io.jmix.data.listener.BeforeUpdateEntityListener;
+import com.haulmont.cuba.core.EntityManager;
 
 public class TestListenerThrowing implements BeforeUpdateEntityListener<Server> {
 

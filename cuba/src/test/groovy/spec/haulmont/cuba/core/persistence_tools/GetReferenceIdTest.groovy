@@ -22,7 +22,7 @@ import io.jmix.core.AppBeans
 import io.jmix.core.Metadata
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanRepository
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import io.jmix.data.PersistenceTools
 import spec.haulmont.cuba.core.CoreTestSpecification
 

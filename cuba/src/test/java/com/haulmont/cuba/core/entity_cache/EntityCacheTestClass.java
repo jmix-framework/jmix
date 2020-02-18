@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.entity_cache;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import com.haulmont.cuba.core.*;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositeOne;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositePropertyOne;
@@ -28,8 +29,7 @@ import com.haulmont.cuba.core.testsupport.TestAppender;
 import com.haulmont.cuba.core.testsupport.TestNamePrinter;
 
 import io.jmix.core.*;
-import io.jmix.data.*;
-import io.jmix.data.impl.QueryImpl;
+import com.haulmont.cuba.core.sys.QueryImpl;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.jpa.EntityManagerFactoryDelegate;
 import org.eclipse.persistence.jpa.JpaCache;

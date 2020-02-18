@@ -16,9 +16,9 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.data.EntityManager;
-import io.jmix.data.listener.BeforeInsertEntityListener;
-import io.jmix.data.listener.BeforeUpdateEntityListener;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.listener.BeforeInsertEntityListener;
+import com.haulmont.cuba.core.listener.BeforeUpdateEntityListener;
 
 public class UserEntityListener implements BeforeInsertEntityListener<User>, BeforeUpdateEntityListener<User> {
 

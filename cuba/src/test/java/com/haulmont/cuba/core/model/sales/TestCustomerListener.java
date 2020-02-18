@@ -16,11 +16,11 @@
 
 package com.haulmont.cuba.core.model.sales;
 
-import io.jmix.data.EntityManager;
-import io.jmix.data.listener.AfterDeleteEntityListener;
-import io.jmix.data.listener.AfterInsertEntityListener;
-import io.jmix.data.listener.AfterUpdateEntityListener;
-import io.jmix.data.listener.BeforeDetachEntityListener;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.listener.AfterDeleteEntityListener;
+import com.haulmont.cuba.core.listener.AfterInsertEntityListener;
+import com.haulmont.cuba.core.listener.AfterUpdateEntityListener;
+import com.haulmont.cuba.core.listener.BeforeDetachEntityListener;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.sql.Connection;

@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.tx_listener.TestBeforeCommitTxListener
 import io.jmix.core.Metadata
-import io.jmix.data.Persistence
-import io.jmix.data.Transaction
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.Transaction
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 

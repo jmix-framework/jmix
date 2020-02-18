@@ -23,7 +23,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.Persistence;
+import com.haulmont.cuba.core.Persistence;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 

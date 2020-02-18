@@ -25,7 +25,7 @@ import io.jmix.core.AppBeans
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlan
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject

@@ -19,11 +19,8 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.FileDescriptor;
 import com.haulmont.cuba.core.model.common.Server;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.listener.BeforeDeleteEntityListener;
-import io.jmix.data.listener.BeforeInsertEntityListener;
-import io.jmix.data.listener.BeforeUpdateEntityListener;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.Persistence;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

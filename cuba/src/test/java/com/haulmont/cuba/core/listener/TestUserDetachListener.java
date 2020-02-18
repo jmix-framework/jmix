@@ -17,8 +17,7 @@
 package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.data.EntityManager;
-import io.jmix.data.listener.BeforeDetachEntityListener;
+import com.haulmont.cuba.core.EntityManager;
 
 public class TestUserDetachListener implements BeforeDetachEntityListener<User> {
     @Override

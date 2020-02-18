@@ -21,11 +21,11 @@ import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.Entity;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Transaction;
-import io.jmix.data.TypedQuery;
-import io.jmix.data.listener.BeforeCommitTransactionListener;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.Transaction;
+import com.haulmont.cuba.core.TypedQuery;
+import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

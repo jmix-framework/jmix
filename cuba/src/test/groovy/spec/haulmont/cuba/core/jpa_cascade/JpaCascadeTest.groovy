@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeItem
 import io.jmix.core.AppBeans
 import io.jmix.core.EntityStates
 import io.jmix.core.Metadata
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import io.jmix.data.impl.EntityListenerManager
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification

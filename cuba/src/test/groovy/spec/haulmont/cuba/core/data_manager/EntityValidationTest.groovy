@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.beanvalidation.ValidatedEntity
 import io.jmix.core.CommitContext
 import io.jmix.core.DataManager
 import io.jmix.core.validation.EntityValidationException
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 

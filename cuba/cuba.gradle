@@ -25,6 +25,7 @@ targetCompatibility = rootProject.targetCompatibility
 
 test {
     useJUnitPlatform()
+    systemProperty("org.slf4j.simpleLogger.log.eclipselink.sql", "debug")
 }
 
 dependencies {

@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.listener.TestUserEntityListener
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import io.jmix.core.*
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import io.jmix.data.impl.EntityListenerManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 

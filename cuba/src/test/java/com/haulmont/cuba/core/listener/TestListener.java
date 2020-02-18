@@ -19,12 +19,8 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.Server;
 import io.jmix.core.AppBeans;
-import io.jmix.data.Persistence;
-import io.jmix.data.listener.AfterDeleteEntityListener;
-import io.jmix.data.listener.AfterInsertEntityListener;
-import io.jmix.data.listener.AfterUpdateEntityListener;
+import com.haulmont.cuba.core.Persistence;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 import java.sql.Connection;
 import java.util.ArrayList;

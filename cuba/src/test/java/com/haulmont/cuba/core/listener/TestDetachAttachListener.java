@@ -18,9 +18,7 @@
 package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.Server;
-import io.jmix.data.EntityManager;
-import io.jmix.data.listener.BeforeAttachEntityListener;
-import io.jmix.data.listener.BeforeDetachEntityListener;
+import com.haulmont.cuba.core.EntityManager;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

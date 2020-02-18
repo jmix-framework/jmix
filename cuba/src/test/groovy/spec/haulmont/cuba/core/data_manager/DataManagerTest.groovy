@@ -24,8 +24,7 @@ import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
 import groovy.sql.Sql
 import io.jmix.core.*
-import io.jmix.core.compatibility.AppContext
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -105,102 +104,6 @@ class DataManagerTest extends CoreTestSpecification {
         then:
 
         count > 0
-    }
-
-    def "loadList query parameter without implicit conversion - legacy behavior"() {
-        def group = dataManager.load(LoadContext.create(Group).setId(defaultGroup.id))
-
-        LoadContext.Query query
-
-        AppContext.setProperty('cuba.implicitConversionOfJpqlParams', 'true')
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        when: "condition by reference object, no implicit conversion"
-
-        query = LoadContext.createQuery('select u from test$User u where u.group = :group')
-        query.setParameter('group', group, false) // no implicit conversion
-        def users = dataManager.loadList(LoadContext.create(User).setQuery(query).setView('user.browse'))
-
-        then: "ok"
-
-        users.size() > 0
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        when: "condition by reference object, implicit conversion"
-
-        query = LoadContext.createQuery('select u from test$User u where u.group = :group')
-        query.setParameter('group', group)
-        dataManager.loadList(LoadContext.create(User).setQuery(query).setView('user.browse'))
-
-        then: "fail"
-
-        thrown(IllegalArgumentException)
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        when: "condition by reference id, implicit conversion"
-
-        query = LoadContext.createQuery('select u from test$User u where u.group.id = :group')
-        query.setParameter('group', group)
-        users = dataManager.loadList(LoadContext.create(User).setQuery(query).setView('user.browse'))
-
-        then: "ok"
-
-        users.size() > 0
-
-        cleanup:
-
-        AppContext.setProperty('cuba.implicitConversionOfJpqlParams', null)
-    }
-
-    def "loadValues query parameter without implicit conversion - legacy behavior"() {
-        def group = dataManager.load(LoadContext.create(Group).setId(defaultGroup.id))
-
-        ValueLoadContext.Query query
-
-        AppContext.setProperty('cuba.implicitConversionOfJpqlParams', 'true')
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        when: "condition by reference object, no implicit conversion"
-
-        query = ValueLoadContext.createQuery('select u.id, u.login from test$User u where u.group = :group')
-        query.setParameter('group', group, false) // no implicit conversion
-        def list = dataManager.loadValues(ValueLoadContext.create().setQuery(query).addProperty('id').addProperty('login'))
-
-        then: "ok"
-
-        list.size() > 0
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        when: "condition by reference object, implicit conversion"
-
-        query = ValueLoadContext.createQuery('select u.id, u.login from test$User u where u.group = :group')
-        query.setParameter('group', group)
-        dataManager.loadValues(ValueLoadContext.create().setQuery(query).addProperty('id').addProperty('login'))
-
-        then: "fail"
-
-        thrown(IllegalArgumentException)
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        when: "condition by reference id, implicit conversion"
-
-        query = ValueLoadContext.createQuery('select u.id, u.login from test$User u where u.group.id = :group')
-        query.setParameter('group', group)
-        list = dataManager.loadValues(ValueLoadContext.create().setQuery(query).addProperty('id').addProperty('login'))
-
-        then: "ok"
-
-        list.size() > 0
-
-        cleanup:
-
-        AppContext.setProperty('cuba.implicitConversionOfJpqlParams', null)
     }
 
     def "loadValues query parameter without implicit conversion"() {

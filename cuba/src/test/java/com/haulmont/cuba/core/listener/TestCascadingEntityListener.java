@@ -19,12 +19,10 @@ package com.haulmont.cuba.core.listener;
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.AppBeans;
 import io.jmix.core.FetchPlan;
-import io.jmix.data.EntityManager;
-import io.jmix.data.Persistence;
-import io.jmix.data.Transaction;
-import io.jmix.data.TypedQuery;
-import io.jmix.data.listener.AfterUpdateEntityListener;
-import io.jmix.data.listener.BeforeUpdateEntityListener;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.Transaction;
+import com.haulmont.cuba.core.TypedQuery;
 
 import java.sql.Connection;
 import java.util.ArrayList;

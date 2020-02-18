@@ -19,9 +19,9 @@ package spec.haulmont.cuba.core.data_events
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
 import io.jmix.core.*
-import io.jmix.data.Persistence
-import io.jmix.data.Transaction
-import io.jmix.data.TransactionalDataManager
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.Transaction
+import com.haulmont.cuba.core.TransactionalDataManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject

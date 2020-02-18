@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
 import io.jmix.core.*
-import io.jmix.data.Transaction
-import io.jmix.data.TransactionalDataManager
+import com.haulmont.cuba.core.Transaction
+import com.haulmont.cuba.core.TransactionalDataManager
 import io.jmix.data.event.EntityChangedEvent
 import spec.haulmont.cuba.core.CoreTestSpecification
 

@@ -20,7 +20,7 @@ import io.jmix.core.*
  * limitations under the License.
  */
 
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 

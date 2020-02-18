@@ -17,9 +17,9 @@
 package spec.haulmont.cuba.core.jpa_cascade;
 
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeFoo;
-import io.jmix.data.EntityManager;
-import io.jmix.data.listener.BeforeInsertEntityListener;
-import io.jmix.data.listener.BeforeUpdateEntityListener;
+import com.haulmont.cuba.core.EntityManager;
+import com.haulmont.cuba.core.listener.BeforeInsertEntityListener;
+import com.haulmont.cuba.core.listener.BeforeUpdateEntityListener;
 
 import java.util.ArrayList;
 import java.util.List;

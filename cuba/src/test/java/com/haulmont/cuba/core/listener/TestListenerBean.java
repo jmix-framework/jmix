@@ -18,10 +18,7 @@
 package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.model.common.Server;
-import io.jmix.data.Persistence;
-import io.jmix.data.listener.AfterDeleteEntityListener;
-import io.jmix.data.listener.AfterInsertEntityListener;
-import io.jmix.data.listener.AfterUpdateEntityListener;
+import com.haulmont.cuba.core.Persistence;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

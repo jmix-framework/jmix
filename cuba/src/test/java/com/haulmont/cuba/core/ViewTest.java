@@ -29,7 +29,6 @@ import com.haulmont.cuba.core.model.selfinherited.RootEntityDetail;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
-import io.jmix.data.*;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

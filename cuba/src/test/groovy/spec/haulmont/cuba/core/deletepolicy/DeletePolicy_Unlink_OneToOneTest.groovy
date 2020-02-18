@@ -22,7 +22,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.LoadContext
 import io.jmix.core.Metadata
 import io.jmix.core.FetchPlan
-import io.jmix.data.Persistence
+import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 

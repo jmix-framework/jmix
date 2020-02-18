@@ -22,8 +22,8 @@ import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.*
 import io.jmix.data.JmixDataConfiguration
-import io.jmix.data.Persistence
 import io.jmix.ui.JmixUiConfiguration
+import org.springframework.transaction.support.TransactionTemplate
 import test_support.entity.TestNullableIdEntity
 import test_support.entity.TestNullableIdItemEntity
 import org.eclipse.persistence.internal.queries.EntityFetchGroup
@@ -43,33 +43,34 @@ class DataContextSpec extends Specification {
     @Inject
     EntityStates entityStates
     @Inject
-    Persistence persistence
+    TransactionTemplate transaction
+    @Inject
+    JdbcTemplate jdbc
 
     void setup() {
-        persistence.createTransaction().commit()
+        transaction.executeWithoutResult {}
     }
 
     void cleanup() {
         TestNullableIdEntity.sequence.set(0L)
         TestNullableIdItemEntity.sequence.set(0L)
 
-        def jdbcTemplate = new JdbcTemplate(persistence.getDataSource())
-        jdbcTemplate.update('delete from TEST_NULLABLE_ID_ITEM_ENTITY')
-        jdbcTemplate.update('delete from TEST_NULLABLE_ID_ENTITY')
-        jdbcTemplate.update('delete from TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY')
-        jdbcTemplate.update('delete from TEST_IDENTITY_ID_ENTITY')
-        jdbcTemplate.update('delete from TEST_STRING_ID_ENTITY')
-        jdbcTemplate.update('delete from TEST_ORDER_LINE_PARAM')
-        jdbcTemplate.update('delete from TEST_ORDER_LINE')
-        jdbcTemplate.update('delete from TEST_PRODUCT_TAG_LINK')
-        jdbcTemplate.update('delete from TEST_PRODUCT')
-        jdbcTemplate.update('delete from TEST_PRODUCT_TAG')
-        jdbcTemplate.update('delete from TEST_ORDER')
-        jdbcTemplate.update('delete from TEST_CUSTOMER')
-        jdbcTemplate.update('delete from SEC_USER_ROLE')
-        jdbcTemplate.update('delete from SEC_USER')
-        jdbcTemplate.update('delete from SEC_ROLE')
-        jdbcTemplate.update('delete from SEC_GROUP')
+        jdbc.update('delete from TEST_NULLABLE_ID_ITEM_ENTITY')
+        jdbc.update('delete from TEST_NULLABLE_ID_ENTITY')
+        jdbc.update('delete from TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY')
+        jdbc.update('delete from TEST_IDENTITY_ID_ENTITY')
+        jdbc.update('delete from TEST_STRING_ID_ENTITY')
+        jdbc.update('delete from TEST_ORDER_LINE_PARAM')
+        jdbc.update('delete from TEST_ORDER_LINE')
+        jdbc.update('delete from TEST_PRODUCT_TAG_LINK')
+        jdbc.update('delete from TEST_PRODUCT')
+        jdbc.update('delete from TEST_PRODUCT_TAG')
+        jdbc.update('delete from TEST_ORDER')
+        jdbc.update('delete from TEST_CUSTOMER')
+        jdbc.update('delete from SEC_USER_ROLE')
+        jdbc.update('delete from SEC_USER')
+        jdbc.update('delete from SEC_ROLE')
+        jdbc.update('delete from SEC_GROUP')
     }
 
     void makeDetached(def entity) {

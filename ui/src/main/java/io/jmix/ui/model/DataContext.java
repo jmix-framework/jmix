@@ -16,12 +16,10 @@
 
 package io.jmix.ui.model;
 
+import io.jmix.core.EntitySet;
+import io.jmix.core.SaveContext;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.entity.Entity;
-import io.jmix.core.BeanValidation;
-import io.jmix.core.CommitContext;
-import io.jmix.core.DataManager;
-import io.jmix.core.EntitySet;
 import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
@@ -29,7 +27,6 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -261,8 +258,6 @@ public interface DataContext {
         private final Collection<Entity> modifiedInstances;
         private final Collection<Entity> removedInstances;
         private boolean commitPrevented;
-        private List<Class> validationGroups;
-        private CommitContext.ValidationMode validationMode;
 
         public PreCommitEvent(DataContext dataContext, Collection<Entity> modified, Collection<Entity> removed) {
             super(dataContext);
@@ -304,44 +299,6 @@ public interface DataContext {
          */
         public boolean isCommitPrevented() {
             return commitPrevented;
-        }
-
-        /**
-         * @return groups targeted for validation.
-         * @see javax.validation.Validator#validate(Object, Class[])
-         */
-        public List<Class> getValidationGroups() {
-            return validationGroups;
-        }
-
-        /**
-         * Sets groups targeted for validation.
-         * Note that groups will be ignored for child context.
-         *
-         * @param validationGroups {@code Set} of groups
-         * @see javax.validation.Validator#validate(Object, Class[])
-         */
-        public void setValidationGroups(List<Class> validationGroups) {
-            this.validationGroups = validationGroups;
-        }
-
-        /**
-         * @return {@link CommitContext.ValidationMode} of associated commit.
-         */
-        public CommitContext.ValidationMode getValidationMode() {
-            return validationMode;
-        }
-
-        /**
-         * Sets {@link CommitContext.ValidationMode} for associated commit.
-         * Validation mode affects whether entity bean validation will be applied on {@link DataManager} level.
-         * Note that the validation mode will be ignored for child context.
-         *
-         * @param validationMode validation type
-         * @see BeanValidation
-         */
-        public void setValidationMode(CommitContext.ValidationMode validationMode) {
-            this.validationMode = validationMode;
         }
     }
 
@@ -418,10 +375,10 @@ public interface DataContext {
     /**
      * Returns a function which will be used to commit data instead of standard implementation.
      */
-    Function<CommitContext, Set<Entity>> getCommitDelegate();
+    Function<SaveContext, Set<Entity>> getCommitDelegate();
 
     /**
      * Sets a function which will be used to commit data instead of standard implementation.
      */
-    void setCommitDelegate(Function<CommitContext, Set<Entity>> delegate);
+    void setCommitDelegate(Function<SaveContext, Set<Entity>> delegate);
 }

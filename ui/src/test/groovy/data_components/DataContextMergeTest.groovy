@@ -16,7 +16,7 @@
 
 package data_components
 
-import io.jmix.core.CommitContext
+import io.jmix.core.SaveContext
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.Id
@@ -728,8 +728,8 @@ class DataContextMergeTest extends DataContextSpec {
     def "commit and merge partially loaded entity"() {
         DataContext context = factory.createDataContext()
 
-        Customer customer1 = dataManager.commit(new Customer(name: 'c1', address: new Address()))
-        Order order1 = dataManager.commit(new Order(number: '111', customer: customer1))
+        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+        Order order1 = dataManager.save(new Order(number: '111', customer: customer1))
 
         def order11 = dataManager.load(Id.of(order1)).view { it.add('number') }.one()
 
@@ -752,7 +752,7 @@ class DataContextMergeTest extends DataContextSpec {
         order3.customer != null
 
         cleanup:
-        dataManager.commit(new CommitContext([], [order3, customer1]))
+        dataManager.remove(order3, customer1)
     }
 
     def "committed new entity has reference loaded"() {
@@ -772,8 +772,8 @@ class DataContextMergeTest extends DataContextSpec {
 //    def "fetch group"() {
 //        DataContext context = factory.createDataContext()
 //
-//        Customer customer1 = dataManager.commit(new Customer(name: 'c1', address: new Address()))
-//        Order order1 = dataManager.commit(new Order(number: '111', customer: customer1))
+//        Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
+//        Order order1 = dataManager.save(new Order(number: '111', customer: customer1))
 //
 //        when:
 //        def order11 = dataManager.load(Id.of(order1)).view { it.add('number') }.one()

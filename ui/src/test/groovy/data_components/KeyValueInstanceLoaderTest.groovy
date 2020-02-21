@@ -45,7 +45,7 @@ class KeyValueInstanceLoaderTest extends DataContextSpec {
         loader.addPostLoadListener(postLoadListener)
 
         Foo foo = new Foo()
-        dataManager.commit(foo)
+        dataManager.save(foo)
 
         when:
 
@@ -83,7 +83,7 @@ class KeyValueInstanceLoaderTest extends DataContextSpec {
         loader.addPostLoadListener(postLoadListener)
 
         Foo foo = new Foo()
-        dataManager.commit(foo)
+        dataManager.save(foo)
 
         when:
 

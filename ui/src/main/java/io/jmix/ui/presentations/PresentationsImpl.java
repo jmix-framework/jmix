@@ -15,10 +15,7 @@
  */
 package io.jmix.ui.presentations;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.CommitContext;
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
+import io.jmix.core.*;
 import io.jmix.core.commons.xmlparsing.Dom4jTools;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.Presentation;
@@ -47,6 +44,7 @@ public class PresentationsImpl implements Presentations {
     private Set<Presentation> needToRemove = new HashSet<>();
 
     private List<PresentationsChangeListener> listeners;
+    private FetchPlanRepository fetchPlanRepository;
 
     public PresentationsImpl(Component c) {
         name = ComponentsHelper.getComponentPath(c);
@@ -215,11 +213,8 @@ public class PresentationsImpl implements Presentations {
         if (!needToUpdate.isEmpty() || !needToRemove.isEmpty()) {
             DataManager ds = AppBeans.get(DataManager.NAME);
 
-            CommitContext ctx = new CommitContext(
-                    Collections.unmodifiableSet(needToUpdate),
-                    Collections.unmodifiableSet(needToRemove)
-            );
-            Set<Entity> commitResult = ds.commit(ctx);
+            SaveContext ctx = new SaveContext().saving(needToUpdate).removing(needToRemove);
+            Set<Entity> commitResult = ds.save(ctx);
             commited(commitResult);
 
             clearCommitList();
@@ -296,8 +291,8 @@ public class PresentationsImpl implements Presentations {
     private void checkLoad() {
         if (presentations == null) {
             DataManager ds = AppBeans.get(DataManager.NAME);
-            LoadContext ctx = new LoadContext(Presentation.class);
-            ctx.setFetchPlan("app");
+            LoadContext<Presentation> ctx = new LoadContext<>(Presentation.class);
+            ctx.setFetchPlan(AppBeans.get(FetchPlanRepository.class).getFetchPlan(Presentation.class, "app"));
 
             UserSessionSource sessionSource = AppBeans.get(UserSessionSource.NAME);
             UserSession session = sessionSource.getUserSession();

@@ -16,6 +16,8 @@
 
 package io.jmix.ui;
 
+import io.jmix.core.SaveContext;
+import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -210,11 +212,11 @@ public class RemoveOperation {
         }
 
         if (needCommit) {
-            CommitContext commitContext = new CommitContext();
+            SaveContext saveContext = new SaveContext();
             for (Entity entity : entitiesToCommit) {
-                commitContext.addInstanceToRemove(entity);
+                saveContext.removing(entity);
             }
-            dataManager.commit(commitContext);
+            dataManager.save(saveContext);
             for (Entity entity : entitiesToRemove) {
                 screenData.getDataContext().evict(entity);
             }

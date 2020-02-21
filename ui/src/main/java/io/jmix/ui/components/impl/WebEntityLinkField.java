@@ -16,6 +16,7 @@
 
 package io.jmix.ui.components.impl;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.entity.Entity;
@@ -305,7 +306,10 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<CubaButtonField<V>
         }
 
         DataManager dataManager = beanLocator.get(DataManager.NAME);
-        entity = dataManager.reload(entity, FetchPlan.MINIMAL);
+        //noinspection unchecked
+        entity = dataManager.load(Id.of(entity))
+                .fetchPlan(beanLocator.get(FetchPlanRepository.class).getFetchPlan(entity.getClass(), FetchPlan.MINIMAL))
+                .one();
 
         String windowAlias = screen;
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);

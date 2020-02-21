@@ -46,7 +46,7 @@ import javax.inject.Inject
 
 class ScreenDataTest extends DataContextSpec {
 
-    @Inject FetchPlanRepository viewRepository
+    @Inject FetchPlanRepository fetchPlanRepository
     @Inject ScreenDataXmlLoader screenDataLoader
 
     def "containers without loaders"() {
@@ -74,8 +74,8 @@ class ScreenDataTest extends DataContextSpec {
         dataContext != null
         userCont != null
         usersCont != null
-        userCont.view == viewRepository.getFetchPlan(User, 'user.edit')
-        usersCont.view == viewRepository.getFetchPlan(User, 'user.browse')
+        userCont.view == fetchPlanRepository.getFetchPlan(User, 'user.edit')
+        usersCont.view == fetchPlanRepository.getFetchPlan(User, 'user.browse')
     }
 
     def "containers with loaders"() {
@@ -259,14 +259,14 @@ class ScreenDataTest extends DataContextSpec {
         userLoader.entityId == UUID.fromString('60885987-1b61-4247-94c7-dff348347f93')
         !userLoader.softDeletion
         userLoader.loadDynamicAttributes
-        ((InstanceLoaderImpl) userLoader).createLoadContext().view == viewRepository.getFetchPlan(User, 'user.edit')
+        ((InstanceLoaderImpl) userLoader).createLoadContext().fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.edit')
 
         !usersLoader.softDeletion
         usersLoader.firstResult == 100
         usersLoader.maxResults == 1000
         usersLoader.cacheable
         usersLoader.loadDynamicAttributes
-        ((CollectionLoaderImpl) usersLoader).createLoadContext().view == viewRepository.getFetchPlan(User, 'user.browse')
+        ((CollectionLoaderImpl) usersLoader).createLoadContext().fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.browse')
 
         !userInfoLoader.softDeletion
         userInfoLoader.firstResult == 100

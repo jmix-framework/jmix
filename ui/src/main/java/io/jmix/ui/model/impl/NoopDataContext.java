@@ -19,7 +19,7 @@ package io.jmix.ui.model.impl;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.events.sys.VoidSubscription;
 import io.jmix.core.entity.Entity;
-import io.jmix.core.CommitContext;
+import io.jmix.core.SaveContext;
 import io.jmix.core.EntitySet;
 import io.jmix.ui.model.DataContext;
 
@@ -141,11 +141,11 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public Function<CommitContext, Set<Entity>> getCommitDelegate() {
+    public Function<SaveContext, Set<Entity>> getCommitDelegate() {
         return null;
     }
 
     @Override
-    public void setCommitDelegate(Function<CommitContext, Set<Entity>> delegate) {
+    public void setCommitDelegate(Function<SaveContext, Set<Entity>> delegate) {
     }
 }

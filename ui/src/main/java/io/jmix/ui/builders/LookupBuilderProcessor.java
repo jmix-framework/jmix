@@ -17,6 +17,7 @@
 package io.jmix.ui.builders;
 
 
+import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -191,7 +192,7 @@ public class LookupBuilderProcessor {
                 getFetchPlanForField(field) :
                 null;
         if (fetchPlanForField != null && !entityStates.isLoadedWithFetchPlan(newValue, fetchPlanForField)) {
-            newValue = dataManager.reload(newValue, fetchPlanForField);
+            newValue = dataManager.load(Id.of(newValue)).fetchPlan(fetchPlanForField).one();
         }
 
         if (field instanceof LookupPickerField) {
@@ -259,7 +260,8 @@ public class LookupBuilderProcessor {
         for (E item : selectedItems) {
             if (!collectionDc.containsItem(item.getId())) {
                 if (viewForCollectionContainer != null && !entityStates.isLoadedWithFetchPlan(item, viewForCollectionContainer)) {
-                    item = dataManager.reload(item, viewForCollectionContainer);
+                    //noinspection unchecked
+                    item = (E) dataManager.load(Id.of(item)).fetchPlan(viewForCollectionContainer).one();
                 }
                 // track changes in the related instance
                 E mergedItem = dataContext.merge(item);

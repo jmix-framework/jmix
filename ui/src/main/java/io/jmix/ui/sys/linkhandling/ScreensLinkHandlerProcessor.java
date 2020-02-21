@@ -195,7 +195,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
         if (info.getViewName() != null) {
             FetchPlan view = viewRepository.findFetchPlan(info.getMetaClass(), info.getViewName());
             if (view != null) {
-                ctx.setView(view);
+                ctx.setFetchPlan(view);
             } else {
                 log.warn("Unable to find view \"{}\" for entity \"{}\"", info.getViewName(), info.getMetaClass());
             }

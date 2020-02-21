@@ -17,6 +17,8 @@
 package io.jmix.ui.model.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.entity.Entity;
@@ -50,8 +52,8 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
     protected Object entityId;
     protected boolean softDeletion = true;
     protected boolean loadDynamicAttributes;
-    protected FetchPlan view;
-    protected String viewName;
+    protected FetchPlan fetchPlan;
+    protected String fetchPlanName;
     protected Function<LoadContext<E>, E> delegate;
     protected EventHub events = new EventHub();
 
@@ -63,7 +65,7 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
         return applicationContext.getBean(DataManager.NAME, DataManager.class);
     }
 
-    protected FetchPlanRepository getViewRepository() {
+    protected FetchPlanRepository getFetchPlanRepository() {
         return applicationContext.getBean(FetchPlanRepository.NAME, FetchPlanRepository.class);
     }
 
@@ -126,7 +128,7 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
     public LoadContext<E> createLoadContext() {
         Class<E> entityClass = container.getEntityMetaClass().getJavaClass();
 
-        LoadContext<E> loadContext = LoadContext.create(entityClass);
+        LoadContext<E> loadContext = new LoadContext(entityClass);
 
         if (entityId != null) {
             loadContext.setId(entityId);
@@ -137,17 +139,17 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
             query.setParameters(parameters);
         }
 
-        loadContext.setView(resolveView());
+        loadContext.setFetchPlan(resolveFetchPlan());
         loadContext.setSoftDeletion(softDeletion);
         loadContext.setLoadDynamicAttributes(loadDynamicAttributes);
 
         return loadContext;
     }
 
-    protected FetchPlan resolveView() {
-        FetchPlan view = this.view;
-        if (view == null && viewName != null) {
-            view = getViewRepository().getFetchPlan(container.getEntityMetaClass(), viewName);
+    protected FetchPlan resolveFetchPlan() {
+        FetchPlan view = this.fetchPlan;
+        if (view == null && fetchPlanName != null) {
+            view = getFetchPlanRepository().getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
         }
         if (view == null) {
             view = container.getFetchPlan();
@@ -278,19 +280,19 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
     }
 
     @Override
-    public FetchPlan getView() {
-        return view;
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
     }
 
     @Override
-    public void setView(FetchPlan view) {
-        this.view = view;
+    public void setFetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
     }
 
     @Override
     public void setView(String viewName) {
-        if (this.view != null)
+        if (this.fetchPlan != null)
             throw new IllegalStateException("view is already set");
-        this.viewName = viewName;
+        this.fetchPlanName = viewName;
     }
 }

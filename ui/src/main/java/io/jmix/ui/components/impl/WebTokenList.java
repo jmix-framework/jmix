@@ -16,6 +16,7 @@
 
 package io.jmix.ui.components.impl;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -500,7 +501,8 @@ public class WebTokenList<V extends Entity>
         if (viewForField != null) {
             for (V selectedItem : selected) {
                 if (!entityStates.isLoadedWithFetchPlan(selectedItem, viewForField)) {
-                    reloadedSelected.add(dataManager.reload(selectedItem, viewForField));
+                    //noinspection unchecked
+                    reloadedSelected.add((V) dataManager.load(Id.of(selectedItem)).fetchPlan(viewForField).one());
                 } else {
                     reloadedSelected.add(selectedItem);
                 }

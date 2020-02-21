@@ -16,7 +16,7 @@
 
 package data_components
 
-import io.jmix.core.CommitContext
+import io.jmix.core.SaveContext
 import io.jmix.core.EntitySet
 import io.jmix.data.impl.JmixEntityFetchGroup
 import io.jmix.ui.model.DataComponents
@@ -373,9 +373,9 @@ class DataContextTest extends DataContextSpec {
         makeDetached(product1, product2, line)
         def line1 = context.merge(line)
 
-        context.setCommitDelegate { CommitContext cc ->
+        context.setCommitDelegate { SaveContext cc ->
             Set entities = new HashSet()
-            cc.commitInstances.each {
+            cc.entitiesToSave.each {
                 entities.add(makeSaved(it))
             }
             entities.find { it == line }.product = makeSaved(product2)
@@ -494,7 +494,7 @@ class DataContextTest extends DataContextSpec {
         Order order1 = makeSaved(new Order(number: "111"))
 
         def dataContext = factory.createDataContext()
-        dataContext.setCommitDelegate { CommitContext cc ->
+        dataContext.setCommitDelegate { SaveContext cc ->
             [makeSaved(new Order(id: order1.id, number: 'committed through delegate'))].toSet()
         }
 

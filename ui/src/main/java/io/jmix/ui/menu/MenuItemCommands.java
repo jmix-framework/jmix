@@ -17,6 +17,8 @@
 package io.jmix.ui.menu;
 
 import com.google.common.collect.ImmutableMap;
+import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.compatibility.AppContext;
@@ -60,7 +62,7 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 @Component("cuba_MenuItemCommands")
 public class MenuItemCommands {
 
-    private static final org.slf4j.Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
+    private static final Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
     private static final Logger log = LoggerFactory.getLogger(MenuItemCommands.class);
 
     @Inject
@@ -75,6 +77,8 @@ public class MenuItemCommands {
     protected Metadata metadata;
     @Inject
     protected MetadataTools metadataTools;
+    @Inject
+    private FetchPlanRepository fetchPlanRepository;
     @Inject
     protected ScreenBuilders screenBuilders;
 
@@ -204,7 +208,7 @@ public class MenuItemCommands {
 
         String entityView = propertyElement.attributeValue("entityView");
         if (StringUtils.isNotEmpty(entityView)) {
-            ctx.setFetchPlan(entityView);
+            ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, entityView));
         }
 
         //noinspection unchecked
@@ -250,7 +254,7 @@ public class MenuItemCommands {
     protected Entity loadEntityInstance(EntityLoadInfo info) {
         LoadContext ctx = new LoadContext(info.getMetaClass()).setId(info.getId());
         if (info.getViewName() != null) {
-            ctx.setFetchPlan(info.getViewName());
+            ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(info.getMetaClass(), info.getViewName()));
         }
 
         //noinspection unchecked

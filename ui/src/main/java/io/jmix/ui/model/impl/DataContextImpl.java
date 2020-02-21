@@ -17,6 +17,8 @@
 package io.jmix.ui.model.impl;
 
 import com.google.common.collect.Sets;
+import io.jmix.core.SaveContext;
+import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
@@ -70,7 +72,7 @@ public class DataContextImpl implements DataContext {
 
     protected DataContextImpl parentContext;
 
-    protected Function<CommitContext, Set<Entity>> commitDelegate;
+    protected Function<SaveContext, Set<Entity>> commitDelegate;
 
     protected Map<Entity, Map<String, EmbeddedPropertyChangeListener>> embeddedPropertyListeners = new WeakHashMap<>();
 
@@ -601,7 +603,7 @@ public class DataContextImpl implements DataContext {
 
         EntitySet committedAndMerged;
         try {
-            Set<Entity> committed = performCommit(preCommitEvent.getValidationMode(), preCommitEvent.getValidationGroups());
+            Set<Entity> committed = performCommit();
             committedAndMerged = mergeCommitted(committed);
         } finally {
             nullIdEntitiesMap.clear();
@@ -626,38 +628,34 @@ public class DataContextImpl implements DataContext {
     }
 
     @Override
-    public Function<CommitContext, Set<Entity>> getCommitDelegate() {
+    public Function<SaveContext, Set<Entity>> getCommitDelegate() {
         return commitDelegate;
     }
 
     @Override
-    public void setCommitDelegate(Function<CommitContext, Set<Entity>> delegate) {
+    public void setCommitDelegate(Function<SaveContext, Set<Entity>> delegate) {
         this.commitDelegate = delegate;
     }
 
-    protected Set<Entity> performCommit(CommitContext.ValidationMode validationMode, List<Class> validationGroups) {
+    protected Set<Entity> performCommit() {
         if (!hasChanges())
             return Collections.emptySet();
 
         if (parentContext == null) {
-            return commitToDataManager(validationMode, validationGroups);
+            return commitToDataManager();
         } else {
             return commitToParentContext();
         }
     }
 
-    protected Set<Entity> commitToDataManager(CommitContext.ValidationMode validationMode, List<Class> validationGroups) {
-        CommitContext commitContext = new CommitContext(
-                isolate(filterCommittedInstances(modifiedInstances)),
-                isolate(filterCommittedInstances(removedInstances)));
-        if (validationMode != null)
-            commitContext.setValidationMode(validationMode);
-        if (validationGroups != null)
-            commitContext.setValidationGroups(validationGroups);
+    protected Set<Entity> commitToDataManager() {
+        SaveContext saveContext = new SaveContext()
+                .saving(isolate(filterCommittedInstances(modifiedInstances)))
+                .removing(isolate(filterCommittedInstances(removedInstances)));
         if (commitDelegate == null) {
-            return getDataManager().commit(commitContext);
+            return getDataManager().save(saveContext);
         } else {
-            return commitDelegate.apply(commitContext);
+            return commitDelegate.apply(saveContext);
         }
     }
 

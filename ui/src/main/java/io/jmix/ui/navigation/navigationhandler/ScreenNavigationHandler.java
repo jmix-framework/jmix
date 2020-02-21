@@ -16,6 +16,8 @@
 
 package io.jmix.ui.navigation.navigationhandler;
 
+import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.commons.datastruct.Pair;
 import io.jmix.core.commons.util.ParamsMap;
@@ -65,6 +67,8 @@ public class ScreenNavigationHandler implements NavigationHandler {
     protected DataManager dataManager;
     @Inject
     protected Metadata metadata;
+    @Inject
+    private FetchPlanRepository fetchPlanRepository;
 
     @Override
     public boolean doHandle(NavigationState requestedState, AppUI ui) {
@@ -342,7 +346,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
 
         LoadContext<?> ctx = new LoadContext(metaClass);
         ctx.setId(id);
-        ctx.setFetchPlan(FetchPlan.MINIMAL);
+        ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.MINIMAL));
 
         Entity entity = dataManager.load(ctx);
         if (entity == null) {

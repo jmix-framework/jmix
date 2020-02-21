@@ -56,16 +56,16 @@ public interface InstanceLoader<E extends Entity> extends DataLoader {
     /**
      * Returns the view which is used when loading.
      */
-    FetchPlan getView();
+    FetchPlan getFetchPlan();
 
     /**
      * Sets the view which is used when loading.
      */
-    void setView(FetchPlan view);
+    void setFetchPlan(FetchPlan fetchPlan);
 
     /**
      * Sets the name of the view which is used when loading.
-     * @throws IllegalStateException if the view has already been set by {@link #setView(FetchPlan)}
+     * @throws IllegalStateException if the view has already been set by {@link #setFetchPlan(FetchPlan)}
      */
     void setView(String viewName);
 

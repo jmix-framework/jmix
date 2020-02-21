@@ -56,7 +56,7 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
         this.applicationContext = applicationContext;
     }
 
-    protected FetchPlanRepository getViewRepository() {
+    protected FetchPlanRepository getFetchPlanRepository() {
         return applicationContext.getBean(FetchPlanRepository.NAME, FetchPlanRepository.class);
     }
 
@@ -120,7 +120,7 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
     public LoadContext<E> createLoadContext() {
         Class<E> entityClass = container.getEntityMetaClass().getJavaClass();
 
-        LoadContext<E> loadContext = LoadContext.create(entityClass);
+        LoadContext<E> loadContext = new LoadContext<>(entityClass);
 
         String queryString = getQueryStringProcessor().process(this.query, entityClass);
 
@@ -137,17 +137,17 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
         if (maxResults < Integer.MAX_VALUE)
             query.setMaxResults(maxResults);
 
-        loadContext.setView(resolveView());
+        loadContext.setFetchPlan(resolveFetchPlan());
         loadContext.setSoftDeletion(softDeletion);
         loadContext.setLoadDynamicAttributes(loadDynamicAttributes);
 
         return loadContext;
     }
 
-    protected FetchPlan resolveView() {
+    protected FetchPlan resolveFetchPlan() {
         FetchPlan view = this.fetchPlan;
         if (view == null && fetchPlanName != null) {
-            view = getViewRepository().getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
+            view = getFetchPlanRepository().getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
         }
         if (view == null) {
             view = container.getFetchPlan();

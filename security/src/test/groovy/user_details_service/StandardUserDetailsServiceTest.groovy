@@ -47,7 +47,7 @@ class StandardUserDetailsServiceTest extends Specification {
     def "load user"() {
 
         def user = new User(login: 'user1', password: '123')
-        dataManager.commit(user)
+        dataManager.save(user)
 
         when:
 

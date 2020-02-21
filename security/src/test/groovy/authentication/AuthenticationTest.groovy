@@ -48,7 +48,7 @@ class AuthenticationTest extends Specification {
     def "create and remove session"() {
 
         def user = new User(login: 'user1', password: '{noop}123')
-        dataManager.commit(user)
+        dataManager.save(user)
 
         when:
 

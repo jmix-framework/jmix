@@ -70,7 +70,7 @@ class AuthorizationTest extends Specification {
         def userRole2 = new UserRole(user: user, role: role2)
         user.userRoles.add(userRole2)
 
-        dataManager.commit(permission11, role1, role2, userRole1, userRole2, user)
+        dataManager.save(permission11, role1, role2, userRole1, userRole2, user)
 
         when:
 
@@ -99,7 +99,7 @@ class AuthorizationTest extends Specification {
 
         def user = new User(login: 'user1', password: '{noop}123', group: group)
 
-        dataManager.commit(constraint, group, user)
+        dataManager.save(constraint, group, user)
 
         when:
 

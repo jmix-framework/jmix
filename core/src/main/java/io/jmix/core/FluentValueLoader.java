@@ -34,12 +34,7 @@ public class FluentValueLoader<T> extends AbstractFluentValueLoader {
     private final static String PROP_NAME = "p1";
 
     public FluentValueLoader(String queryString, Class<T> valueClass, DataManager dataManager) {
-        super(queryString, dataManager, false);
-        this.valueClass = valueClass;
-    }
-
-    public FluentValueLoader(String queryString, Class<T> valueClass, DataManager dataManager, boolean transactional) {
-        super(queryString, dataManager, transactional);
+        super(queryString, dataManager);
         this.valueClass = valueClass;
     }
 

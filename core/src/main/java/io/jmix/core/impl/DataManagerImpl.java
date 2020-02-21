@@ -17,13 +17,9 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.EmbeddableEntity;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.entity.IdProxy;
-import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.validation.EntityValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -31,12 +27,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.util.*;
 
 @Component(DataManager.NAME)
-public class DataManagerImpl extends DataManagerSupport implements DataManager {
+public class DataManagerImpl implements DataManager {
 
     private static final Logger log = LoggerFactory.getLogger(DataManagerImpl.class);
 
@@ -50,16 +44,10 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
     protected EntityStates entityStates;
 
     @Inject
-    protected ServerConfig serverConfig;
-
-    @Inject
     protected Stores stores;
 
     @Inject
     protected ApplicationContext applicationContext;
-
-    @Inject
-    protected BeanValidation beanValidation;
 
     protected Map<String, DataStore> dataStores = new HashMap<>();
 
@@ -74,7 +62,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
         DataStore storage = getDataStore(getStoreName(metaClass));
         E entity = storage.load(context);
         if (entity != null)
-            readCrossDataStoreReferences(Collections.singletonList(entity), context.getView(), metaClass, context.isJoinTransaction());
+            readCrossDataStoreReferences(Collections.singletonList(entity), context.getFetchPlan(), metaClass, context.isJoinTransaction());
         return entity;
     }
 
@@ -84,7 +72,7 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
         MetaClass metaClass = metadata.getClass(context.getMetaClass());
         DataStore storage = getDataStore(getStoreName(metaClass));
         List<E> entities = storage.loadList(context);
-        readCrossDataStoreReferences(entities, context.getView(), metaClass, context.isJoinTransaction());
+        readCrossDataStoreReferences(entities, context.getFetchPlan(), metaClass, context.isJoinTransaction());
         return entities;
     }
 
@@ -96,50 +84,63 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public EntitySet commit(CommitContext context) {
-        validate(context);
+    public EntitySet save(Entity... entities) {
+        return save(new SaveContext().saving(entities));
+    }
 
-        Map<String, CommitContext> storeToContextMap = new TreeMap<>();
+    @Override
+    public <E extends Entity> E save(E entity) {
+        return save(new SaveContext().saving(entity)).optional(entity).orElseThrow(IllegalStateException::new);
+    }
+
+    @Override
+    public void remove(Entity... entities) {
+        save(new SaveContext().removing(entities));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public EntitySet save(SaveContext context) {
+        Map<String, SaveContext> storeToContextMap = new TreeMap<>();
         Set<Entity> toRepeat = new HashSet<>();
-        for (Entity entity : context.getCommitInstances()) {
+        for (Entity entity : context.getEntitiesToSave()) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             String storeName = getStoreName(metaClass);
 
-            boolean repeatRequired = writeCrossDataStoreReferences(entity, context.getCommitInstances());
+            boolean repeatRequired = writeCrossDataStoreReferences(entity, context.getEntitiesToSave());
             if (repeatRequired) {
                 toRepeat.add(entity);
             }
 
-            CommitContext cc = storeToContextMap.get(storeName);
+            SaveContext cc = storeToContextMap.get(storeName);
             if (cc == null) {
-                cc = createCommitContext(context);
+                cc = createSaveContext(context);
                 storeToContextMap.put(storeName, cc);
             }
-            cc.getCommitInstances().add(entity);
+            cc.getEntitiesToSave().add(entity);
             FetchPlan view = context.getFetchPlans().get(entity);
             if (view != null)
                 cc.getFetchPlans().put(entity, view);
         }
-        for (Entity entity : context.getRemoveInstances()) {
+        for (Entity entity : context.getEntitiesToRemove()) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             String storeName = getStoreName(metaClass);
 
-            CommitContext cc = storeToContextMap.get(storeName);
+            SaveContext cc = storeToContextMap.get(storeName);
             if (cc == null) {
-                cc = createCommitContext(context);
+                cc = createSaveContext(context);
                 storeToContextMap.put(storeName, cc);
             }
-            cc.getRemoveInstances().add(entity);
+            cc.getEntitiesToRemove().add(entity);
             FetchPlan view = context.getFetchPlans().get(entity);
             if (view != null)
                 cc.getFetchPlans().put(entity, view);
         }
 
         Set<Entity> result = new LinkedHashSet<>();
-        for (Map.Entry<String, CommitContext> entry : storeToContextMap.entrySet()) {
+        for (Map.Entry<String, SaveContext> entry : storeToContextMap.entrySet()) {
             DataStore dataStore = getDataStore(entry.getKey());
-            Set<Entity> committed = dataStore.commit(entry.getValue());
+            Set<Entity> committed = dataStore.save(entry.getValue());
             result.addAll(committed);
         }
 
@@ -148,14 +149,14 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
 //            boolean logging = entityLog.isLoggingForCurrentThread();
 //            entityLog.processLoggingForCurrentThread(false);
             try {
-                CommitContext cc = new CommitContext();
-                cc.setJoinTransaction(context.isJoinTransaction());
+                SaveContext sc = new SaveContext();
+                sc.setJoinTransaction(context.isJoinTransaction());
                 for (Entity entity : result) {
                     if (toRepeat.contains(entity)) {
-                        cc.addInstanceToCommit(entity, context.getFetchPlans().get(entity));
+                        sc.saving(entity, context.getFetchPlans().get(entity));
                     }
                 }
-                Set<Entity> committedEntities = commit(cc);
+                Set<Entity> committedEntities = save(sc);
                 for (Entity committedEntity : committedEntities) {
                     if (result.contains(committedEntity)) {
                         result.remove(committedEntity);
@@ -177,35 +178,26 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
         return store.loadValues(context);
     }
 
-    protected CommitContext createCommitContext(CommitContext context) {
-        CommitContext newCtx = new CommitContext();
+    protected SaveContext createSaveContext(SaveContext context) {
+        SaveContext newCtx = new SaveContext();
         newCtx.setSoftDeletion(context.isSoftDeletion());
-        newCtx.setDiscardCommitted(context.isDiscardCommitted());
+        newCtx.setDiscardSaved(context.isDiscardSaved());
         newCtx.setAuthorizationRequired(context.isAuthorizationRequired());
         newCtx.setJoinTransaction(context.isJoinTransaction());
-        newCtx.setValidationMode(context.getValidationMode());
-        newCtx.setValidationGroups(context.getValidationGroups());
         return newCtx;
     }
 
     @Override
-    public DataManager secure() {
-        return new Secure(this, metadata);
+    public <T extends Entity> T create(Class<T> entityClass) {
+        return metadata.create(entityClass);
     }
 
     @Override
-    public <E extends Entity<K>, K> FluentLoader<E, K> load(Class<E> entityClass) {
-        return new FluentLoader<>(entityClass, this);
-    }
-
-    @Override
-    public FluentValuesLoader loadValues(String queryString) {
-        return new FluentValuesLoader(queryString, this);
-    }
-
-    @Override
-    public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        return new FluentValueLoader<>(queryString, valueClass, this);
+    public <T extends BaseGenericIdEntity<K>, K> T getReference(Class<T> entityClass, K id) {
+        T entity = metadata.create(entityClass);
+        entity.setId(id);
+        entityStates.makePatch(entity);
+        return entity;
     }
 
     protected boolean writeCrossDataStoreReferences(Entity entity, Collection<Entity> allEntities) {
@@ -287,68 +279,5 @@ public class DataManagerImpl extends DataManagerSupport implements DataManager {
             dataStore.setName(name);
             return dataStore;
         });
-    }
-
-    protected void validate(CommitContext context) {
-        if (CommitContext.ValidationMode.DEFAULT == context.getValidationMode() && serverConfig.getDataManagerBeanValidation()
-                || CommitContext.ValidationMode.ALWAYS_VALIDATE == context.getValidationMode()) {
-            for (Entity entity : context.getCommitInstances()) {
-                validateEntity(entity, context.getValidationGroups());
-            }
-        }
-    }
-
-    protected void validateEntity(Entity entity, List<Class> validationGroups) {
-        Validator validator = beanValidation.getValidator();
-        Set<ConstraintViolation<Entity>> violations;
-        if (validationGroups == null || validationGroups.isEmpty()) {
-            violations = validator.validate(entity);
-        } else {
-            violations = validator.validate(entity, validationGroups.toArray(new Class[0]));
-        }
-        if (!violations.isEmpty())
-            throw new EntityValidationException(String.format("Entity %s validation failed.", entity.toString()), violations);
-    }
-
-    private static class Secure extends DataManagerImpl {
-
-        private DataManager dataManager;
-
-        public Secure(DataManager dataManager, Metadata metadata) {
-            this.dataManager = dataManager;
-            //noinspection ReassignmentInjectVariable
-            this.metadata = metadata;
-        }
-
-        @Nullable
-        @Override
-        public <E extends Entity> E load(LoadContext<E> context) {
-            context.setAuthorizationRequired(true);
-            return dataManager.load(context);
-        }
-
-        @Override
-        public <E extends Entity> List<E> loadList(LoadContext<E> context) {
-            context.setAuthorizationRequired(true);
-            return dataManager.loadList(context);
-        }
-
-        @Override
-        public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-            context.setAuthorizationRequired(true);
-            return dataManager.loadValues(context);
-        }
-
-        @Override
-        public long getCount(LoadContext<? extends Entity> context) {
-            context.setAuthorizationRequired(true);
-            return dataManager.getCount(context);
-        }
-
-        @Override
-        public EntitySet commit(CommitContext context) {
-            context.setAuthorizationRequired(true);
-            return dataManager.commit(context);
-        }
     }
 }

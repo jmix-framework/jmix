@@ -170,7 +170,7 @@ public class CrossDataStoreReferenceLoader {
         LoadContext<Entity> loadContext = new LoadContext<>(aProp.property.getRange().asClass());
         loadContext.setId(id);
         if (aProp.fetchPlanProperty.getFetchPlan() != null)
-            loadContext.setView(aProp.fetchPlanProperty.getFetchPlan());
+            loadContext.setFetchPlan(aProp.fetchPlanProperty.getFetchPlan());
         loadContext.setJoinTransaction(joinTransaction);
         Entity relatedEntity = dataManager.load(loadContext);
         entity.setValue(aProp.property.getName(), relatedEntity);
@@ -206,7 +206,7 @@ public class CrossDataStoreReferenceLoader {
         if (primaryKeyProperty == null || !primaryKeyProperty.getRange().isClass()) {
             String queryString = String.format(
                     "select e from %s e where e.%s in :idList", cdsrMetaClass, crossDataStoreProperty.primaryKeyName);
-            loadContext.setQuery(LoadContext.createQuery(queryString).setParameter("idList", idList));
+            loadContext.setQuery(new LoadContext.Query(queryString).setParameter("idList", idList));
         } else {
             // composite key entity
             StringBuilder sb = new StringBuilder("select e from ");
@@ -220,7 +220,7 @@ public class CrossDataStoreReferenceLoader {
                 if (it.hasNext())
                     sb.append(" and ");
             }
-            LoadContext.Query query = LoadContext.createQuery(sb.toString());
+            LoadContext.Query query = new LoadContext.Query(sb.toString());
             for (MetaProperty property : idMetaClass.getProperties()) {
                 List<Object> propList = idList.stream()
                         .map(o -> ((Entity) o).getValue(property.getName()))
@@ -230,7 +230,7 @@ public class CrossDataStoreReferenceLoader {
             loadContext.setQuery(query);
         }
 
-        loadContext.setView(crossDataStoreProperty.fetchPlanProperty.getFetchPlan());
+        loadContext.setFetchPlan(crossDataStoreProperty.fetchPlanProperty.getFetchPlan());
         loadContext.setJoinTransaction(joinTransaction);
 
         List<Entity> loadedEntities = dataManager.loadList(loadContext);

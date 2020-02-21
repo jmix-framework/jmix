@@ -18,6 +18,7 @@
 package io.jmix.core.config.type;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.LoadContext;
 import io.jmix.core.compatibility.EntityLoadInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,9 @@ public class EntityFactory extends TypeFactory {
     @Inject
     private DataManager dataManager;
 
+    @Inject
+    private FetchPlanRepository fetchPlanRepository;
+
     @Override
     public Object build(String string) {
         if (StringUtils.isBlank(string))
@@ -41,7 +45,7 @@ public class EntityFactory extends TypeFactory {
 
         LoadContext<?> ctx = new LoadContext<>(info.getMetaClass()).setId(info.getId());
         if (info.getViewName() != null)
-            ctx.setFetchPlan(info.getViewName());
+            ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(info.getMetaClass(), info.getViewName()));
         return dataManager.load(ctx);
     }
 }

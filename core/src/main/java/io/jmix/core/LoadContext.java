@@ -22,7 +22,6 @@ import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.queryconditions.Condition;
 
-import javax.annotation.Nullable;
 import javax.persistence.TemporalType;
 import java.io.Serializable;
 import java.util.*;
@@ -32,8 +31,8 @@ import java.util.stream.Collectors;
  * Class that defines parameters for loading entities from the database via {@link DataManager}.
  * <p>Typical usage:
  * <pre>
-    LoadContext&lt;User&gt; context = LoadContext.create(User.class).setQuery(
-            LoadContext.createQuery("select u from sec$User u where u.login like :login")
+    LoadContext&lt;User&gt; context = new LoadContext(User.class).setQuery(
+            new LoadContext.Query("select u from sec$User u where u.login like :login")
                     .setParameter("login", "a%")
                     .setMaxResults(10))
             .setView("user.browse");
@@ -44,11 +43,11 @@ import java.util.stream.Collectors;
  */
 public class LoadContext<E extends Entity> implements DataLoadContext, Serializable {
 
-    private static final long serialVersionUID = -8808320502197308698L;
+    private static final long serialVersionUID = -3406772812465222907L;
 
     protected String metaClass;
     protected Query query;
-    protected FetchPlan view;
+    protected FetchPlan fetchPlan;
     protected Object id;
     protected List<Object> idList = new ArrayList<>(0);
     protected boolean softDeletion = true;
@@ -58,27 +57,9 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
     protected boolean loadDynamicAttributes;
     protected boolean loadPartialEntities = true;
     protected boolean authorizationRequired;
-    protected boolean joinTransaction;
+    protected boolean joinTransaction = true;
 
     protected Map<String, Object> hints; // lazy initialized map
-
-    /**
-     * Factory method to create a LoadContext instance.
-     *
-     * @param entityClass   class of the loaded entities
-     */
-    public static <E extends Entity> LoadContext<E> create(Class<E> entityClass) {
-        return new LoadContext<>(entityClass);
-    }
-
-    /**
-     * Factory method to create a LoadContext.Query instance for passing into {@link #setQuery(Query)} method.
-     *
-     * @param queryString   JPQL query string. Only named parameters are supported.
-     */
-    public static LoadContext.Query createQuery(String queryString) {
-        return new LoadContext.Query(queryString);
-    }
 
     /**
      * @param metaClass metaclass of the loaded entities
@@ -143,35 +124,16 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
     /**
      * @return view that is used for loading entities
      */
-    public FetchPlan getView() {
-        return view;
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
     }
 
     /**
-     * @param view view that is used for loading entities
+     * @param fetchPlan view that is used for loading entities
      * @return this instance for chaining
      */
-    public LoadContext<E> setView(FetchPlan view) {
-        this.view = view;
-        return this;
-    }
-
-    /**
-     * @deprecated replaced by {@link LoadContext#setFetchPlan(String)}
-     */
-    @Deprecated
-    public LoadContext<E> setView(String viewName) {
-        return setFetchPlan(viewName);
-    }
-
-    /**
-     * @param fetchPlanName fetch plan that is used for loading entities
-     * @return this instance for chaining
-     */
-    public LoadContext<E> setFetchPlan(String fetchPlanName) {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.NAME);
-        this.view = viewRepository.getFetchPlan(metadata.getSession().findClass(metaClass), fetchPlanName);
+    public LoadContext<E> setFetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
         return this;
     }
 
@@ -227,7 +189,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
      * Allows to execute query on a previous query result.
      * @return editable list of previous queries
      */
-    public List<Query> getPrevQueries() {
+    public List<Query> getPreviousQueries() {
         return prevQueries;
     }
 
@@ -281,7 +243,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
 
     /**
      * @return whether to load partial entities. When true (which is by default), some local attributes can be unfetched
-     * according to {@link #setView(FetchPlan)}.
+     * according to {@link #setFetchPlan(FetchPlan)}.
      * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
      */
     public boolean isLoadPartialEntities() {
@@ -290,7 +252,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
 
     /**
      * Whether to load partial entities. When true (which is by default), some local attributes can be unfetched
-     * according to {@link #setView(FetchPlan)}.
+     * according to {@link #setFetchPlan(FetchPlan)}.
      * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
      */
     public LoadContext<E> setLoadPartialEntities(boolean loadPartialEntities) {
@@ -328,7 +290,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
         }
         ctx.metaClass = metaClass;
         ctx.setQuery(query != null ? query.copy() : null);
-        ctx.view = view;
+        ctx.fetchPlan = fetchPlan;
         ctx.id = id;
         ctx.softDeletion = softDeletion;
         ctx.prevQueries.addAll(prevQueries.stream().map(Query::copy).collect(Collectors.toList()));
@@ -346,7 +308,7 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
     public String toString() {
         return String.format(
                 "LoadContext{metaClass=%s, query=%s, view=%s, id=%s, softDeletion=%s, partialEntities=%s, dynamicAttributes=%s}",
-                metaClass, query, view, id, softDeletion, loadPartialEntities, loadDynamicAttributes
+                metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities, loadDynamicAttributes
         );
     }
 
@@ -355,16 +317,18 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
      */
     public static class Query implements DataLoadContextQuery, Serializable {
 
-        private static final long serialVersionUID = 3819951144050635838L;
+        private static final long serialVersionUID = -5803374131930436223L;
 
         private Map<String, Object> parameters = new HashMap<>();
-        private String[] noConversionParams;
         private String queryString;
         private int firstResult;
         private int maxResults;
         private boolean cacheable;
         private Condition condition;
         private Sort sort;
+
+        protected Query() {
+        }
 
         /**
          * @param queryString JPQL query string. Only named parameters are supported.
@@ -396,27 +360,6 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
          */
         public Query setParameter(String name, Object value) {
             parameters.put(name, value);
-            return this;
-        }
-
-        /**
-         * Set value for a query parameter.
-         * @deprecated implicit conversions are deprecated, do not use this feature
-         * @param name  parameter name
-         * @param value parameter value
-         * @param implicitConversions whether to do parameter value conversions, e.g. convert an entity to its ID
-         * @return  this query instance for chaining
-         */
-        @Deprecated
-        public Query setParameter(String name, Object value, boolean implicitConversions) {
-            parameters.put(name, value);
-            if (!implicitConversions) {
-                // this is a rare case, so let's save some memory by using an array instead of a list
-                if (noConversionParams == null)
-                    noConversionParams = new String[0];
-                noConversionParams = Arrays.copyOfRange(noConversionParams, 0, noConversionParams.length + 1);
-                noConversionParams[noConversionParams.length - 1] = name;
-            }
             return this;
         }
 
@@ -525,23 +468,23 @@ public class LoadContext<E extends Entity> implements DataLoadContext, Serializa
             return cacheable;
         }
 
-        @Nullable
-        public String[] getNoConversionParams() {
-            return noConversionParams;
-        }
-
         /**
          * Creates a copy of this Query instance.
          */
         public Query copy() {
-            Query query = new Query(queryString);
-            query.parameters.putAll(parameters);
-            query.firstResult = firstResult;
-            query.maxResults = maxResults;
-            query.cacheable = cacheable;
-            query.condition = condition == null ? null : condition.copy();
-            query.sort = sort;
-            return query;
+            Query newQuery = new Query();
+            copyStateTo(newQuery);
+            return newQuery;
+        }
+
+        public void copyStateTo(Query query) {
+            query.queryString = this.queryString;
+            query.parameters.putAll(this.parameters);
+            query.firstResult = this.firstResult;
+            query.maxResults = this.maxResults;
+            query.cacheable = this.cacheable;
+            query.condition = this.condition == null ? null : this.condition.copy();
+            query.sort = this.sort;
         }
 
         @Override

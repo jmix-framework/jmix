@@ -22,8 +22,8 @@ import java.util.*;
 class AbstractFluentValueLoader {
 
     protected DataManager dataManager;
-    private boolean transactional;
 
+    private boolean joinTransaction = true;
     private String store;
     private String queryString;
     private boolean softDeletion = true;
@@ -32,10 +32,9 @@ class AbstractFluentValueLoader {
     private int firstResult;
     private int maxResults;
 
-    AbstractFluentValueLoader(String queryString, DataManager dataManager, boolean transactional) {
+    AbstractFluentValueLoader(String queryString, DataManager dataManager) {
         this.queryString = queryString;
         this.dataManager = dataManager;
-        this.transactional = transactional;
     }
 
     protected ValueLoadContext createLoadContext() {
@@ -56,9 +55,14 @@ class AbstractFluentValueLoader {
         loadContext.getQuery().setFirstResult(firstResult);
         loadContext.getQuery().setMaxResults(maxResults);
 
-        loadContext.setJoinTransaction(transactional);
+        loadContext.setJoinTransaction(joinTransaction);
 
         return loadContext;
+    }
+
+    public AbstractFluentValueLoader joinTransaction(boolean join) {
+        this.joinTransaction = join;
+        return this;
     }
 
     /**

@@ -90,7 +90,7 @@ public class FluentLoaderViewBuilderTest {
                         "owner.name",
                         "owner.address.city")));
 
-        FetchPlan view = loadContext.getView();
+        FetchPlan view = loadContext.getFetchPlan();
         assertFalse(containsSystemProperties(view));
         checkPetView(view);
 
@@ -100,7 +100,7 @@ public class FluentLoaderViewBuilderTest {
                         "owner.name",
                         "owner.address.city")));
 
-        view = loadContext.getView();
+        view = loadContext.getFetchPlan();
         assertFalse(containsSystemProperties(view));
         checkPetView(view);
 
@@ -110,7 +110,7 @@ public class FluentLoaderViewBuilderTest {
                         "owner.name",
                         "owner.address.city")));
 
-        view = loadContext.getView();
+        view = loadContext.getFetchPlan();
         assertFalse(containsSystemProperties(view));
         checkPetView(view);
 
@@ -121,7 +121,7 @@ public class FluentLoaderViewBuilderTest {
                         "owner.name",
                         "owner.address.city"));
 
-        view = loadContext.getView();
+        view = loadContext.getFetchPlan();
         assertFalse(containsSystemProperties(view));
         checkPetView(view);
 
@@ -132,7 +132,7 @@ public class FluentLoaderViewBuilderTest {
                         "owner.name",
                         "owner.address.city"));
 
-        view = loadContext.getView();
+        view = loadContext.getFetchPlan();
         assertFalse(containsSystemProperties(view));
         checkPetView(view);
     }
@@ -146,7 +146,7 @@ public class FluentLoaderViewBuilderTest {
                         "owner.name",
                         "owner.address.city")));
 
-        FetchPlan view = loadContext.getView();
+        FetchPlan view = loadContext.getFetchPlan();
         checkPetView(view);
 
         //noinspection unchecked
@@ -156,7 +156,7 @@ public class FluentLoaderViewBuilderTest {
                         "owner.address.city"))
                 .view(FetchPlan.LOCAL));
 
-        view = loadContext.getView();
+        view = loadContext.getFetchPlan();
         checkPetView(view);
     }
 

@@ -16,9 +16,9 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.CommitContext;
 import io.jmix.core.DataStore;
 import io.jmix.core.LoadContext;
+import io.jmix.core.SaveContext;
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.KeyValueEntity;
@@ -72,10 +72,10 @@ public class NoopDataStore implements DataStore {
     }
 
     @Override
-    public Set<Entity> commit(CommitContext context) {
+    public Set<Entity> save(SaveContext context) {
         Set<Entity> set = new HashSet<>();
-        set.addAll(context.getCommitInstances());
-        set.addAll(context.getRemoveInstances());
+        set.addAll(context.getEntitiesToSave());
+        set.addAll(context.getEntitiesToRemove());
         return set;
     }
 

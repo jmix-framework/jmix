@@ -57,7 +57,7 @@ public interface DataStore {
      * Commits a collection of new or detached entity instances to the storage.
      * @return set of committed instances
      */
-    Set<Entity> commit(CommitContext context);
+    Set<Entity> save(SaveContext context);
 
     /**
      * Loads list of key-value pairs.

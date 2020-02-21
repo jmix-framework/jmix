@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data;
 
 import io.jmix.ui.filter.QueryFilter;
-import io.jmix.core.LoadContext;
+import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.AggregationInfo;

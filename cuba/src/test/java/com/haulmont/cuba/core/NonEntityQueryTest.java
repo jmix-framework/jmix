@@ -30,7 +30,7 @@
 //import com.haulmont.cuba.testsupport.TestContainer;
 //import com.haulmont.cuba.testsupport.TestSupport;
 //import com.haulmont.cuba.testsupport.TestUserSessionSource;
-//import io.jmix.core.DataManager;
+//import com.haulmont.cuba.core.global.DataManager;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.model.common.UserRole
 import com.haulmont.cuba.core.tx_listener.TestAfterCompleteTxListener
 import io.jmix.core.AppBeans
-import io.jmix.core.DataManager
+import com.haulmont.cuba.core.global.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlan
 import com.haulmont.cuba.core.Persistence

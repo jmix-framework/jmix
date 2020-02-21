@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
 import com.haulmont.cuba.web.testsupport.TestSupport
 
-import io.jmix.core.CommitContext
+import com.haulmont.cuba.core.global.CommitContext
 import io.jmix.core.entity.Entity
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext
@@ -155,7 +155,7 @@ class CompositionTest extends UiScreenSpec {
             commit(_) >> { CommitContext cc ->
                 updated.addAll(cc.commitInstances)
                 removed.addAll(cc.removeInstances)
-                TestServiceProxy.getDefault(DataService).commit(cc)
+                TestServiceProxy.getDefault(DataService).save(cc)
             }
         })
         [upd: updated, rem: removed]

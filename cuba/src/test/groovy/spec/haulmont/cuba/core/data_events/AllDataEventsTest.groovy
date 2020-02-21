@@ -16,6 +16,7 @@
 
 package spec.haulmont.cuba.core.data_events
 
+import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
 import io.jmix.core.*

@@ -16,6 +16,7 @@
 
 package spec.haulmont.cuba.core.data_manager
 
+import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Status
 import io.jmix.core.*

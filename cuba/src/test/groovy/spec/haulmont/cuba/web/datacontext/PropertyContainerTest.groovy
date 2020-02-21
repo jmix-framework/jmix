@@ -17,7 +17,7 @@
 package spec.haulmont.cuba.web.datacontext
 
 
-import io.jmix.core.DataManager
+import com.haulmont.cuba.core.global.DataManager
 import io.jmix.ui.model.DataComponents
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore

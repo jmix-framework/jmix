@@ -19,7 +19,7 @@ package spec.haulmont.cuba.core.data_manager
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestLogEntry
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestProduct
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestStock
-import io.jmix.core.DataManager
+import com.haulmont.cuba.core.global.DataManager
 import io.jmix.core.Id
 import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.TransactionalDataManager

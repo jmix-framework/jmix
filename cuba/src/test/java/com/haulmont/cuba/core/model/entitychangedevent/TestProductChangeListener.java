@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.entitychangedevent;
 
-import io.jmix.core.DataManager;
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.TransactionalDataManager;
 import io.jmix.data.event.EntityChangedEvent;
 import org.springframework.stereotype.Component;

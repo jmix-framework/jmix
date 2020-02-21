@@ -15,6 +15,9 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
@@ -80,6 +83,11 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
+    public <T extends BaseGenericIdEntity<K>, K> void remove(Id<T, K> entityId) {
+        getDataManager().remove(entityId);
+    }
+
+    @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
         return getDataManager().loadValues(context);
     }
@@ -90,6 +98,31 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
+    public io.jmix.core.DataManager getDelegate() {
+        return getDataManager().getDelegate();
+    }
+
+    @Override
+    public <E extends Entity<K>, K> FluentLoader<E, K> load(Class<E> entityClass) {
+        return getDataManager().load(entityClass);
+    }
+
+    @Override
+    public <E extends Entity<K>, K> FluentLoader.ById<E, K> load(Id<E, K> entityId) {
+        return getDataManager().load(entityId);
+    }
+
+    @Override
+    public FluentValuesLoader loadValues(String queryString) {
+        return getDataManager().loadValues(queryString);
+    }
+
+    @Override
+    public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
+        return getDataManager().loadValue(queryString, valueClass);
+    }
+
+    @Override
     public <T extends Entity> T create(Class<T> entityClass) {
         return getDataManager().create(entityClass);
     }
@@ -97,6 +130,11 @@ public class GenericDataSupplier implements DataSupplier {
     @Override
     public <T extends BaseGenericIdEntity<K>, K> T getReference(Class<T> entityClass, K id) {
         return getDataManager().getReference(entityClass, id);
+    }
+
+    @Override
+    public <T extends BaseGenericIdEntity<K>, K> T getReference(Id<T, K> entityId) {
+        return null;
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.model.fetchjoin.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;

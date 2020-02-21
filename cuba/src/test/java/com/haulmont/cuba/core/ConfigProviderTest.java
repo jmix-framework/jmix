@@ -25,7 +25,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ConfigInterfaces;
-import io.jmix.core.DataManager;
+import com.haulmont.cuba.core.global.DataManager;
 import io.jmix.core.compatibility.AppContext;
 import io.jmix.data.entity.ConfigEntity;
 import org.junit.jupiter.api.AfterEach;

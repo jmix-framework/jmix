@@ -1,5 +1,7 @@
 package spec.haulmont.cuba.core.data_events
 
+import com.haulmont.cuba.core.global.CommitContext
+import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestProduct
 import com.haulmont.cuba.core.model.entitychangedevent.TestProductChangeListener
 import io.jmix.core.*

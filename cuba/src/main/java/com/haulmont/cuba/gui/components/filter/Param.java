@@ -19,6 +19,8 @@ package com.haulmont.cuba.gui.components.filter;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;

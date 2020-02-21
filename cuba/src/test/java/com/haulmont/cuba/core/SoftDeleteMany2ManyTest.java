@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.model.Many2ManyA;
 import com.haulmont.cuba.core.model.Many2ManyB;
 import com.haulmont.cuba.core.testsupport.CoreTest;

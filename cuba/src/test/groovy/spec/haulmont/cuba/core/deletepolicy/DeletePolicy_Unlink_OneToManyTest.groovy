@@ -16,6 +16,8 @@
 
 package spec.haulmont.cuba.core.deletepolicy
 
+import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToMany_First
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
 import io.jmix.core.*

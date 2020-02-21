@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.OwnerCategory;
 import com.haulmont.cuba.core.model.Pet;
 import com.haulmont.cuba.web.components.PickerField;
 import com.haulmont.cuba.web.components.TextField;
-import io.jmix.core.LoadContext;
+import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.components.DataLoadCoordinator;
 import io.jmix.ui.model.CollectionContainer;

@@ -18,6 +18,8 @@
 package com.haulmont.cuba.core;
 
 import com.google.common.collect.Iterables;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;

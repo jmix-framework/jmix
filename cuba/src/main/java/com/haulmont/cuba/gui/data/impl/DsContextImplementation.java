@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import io.jmix.core.entity.Entity;
-import io.jmix.core.CommitContext;
+import com.haulmont.cuba.core.global.CommitContext;
 import io.jmix.ui.filter.ParameterInfo;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;

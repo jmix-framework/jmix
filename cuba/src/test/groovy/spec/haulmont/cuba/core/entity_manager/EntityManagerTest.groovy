@@ -19,7 +19,7 @@ package spec.haulmont.cuba.core.entity_manager
 import com.haulmont.cuba.core.model.not_persistent.CustomerWithNonPersistentRef
 import com.haulmont.cuba.core.model.not_persistent.TestNotPersistentEntity
 import com.haulmont.cuba.core.model.primary_keys.EntityKey
-import io.jmix.core.DataManager
+import com.haulmont.cuba.core.global.DataManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject

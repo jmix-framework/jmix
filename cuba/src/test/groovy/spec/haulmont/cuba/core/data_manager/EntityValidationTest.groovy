@@ -18,8 +18,8 @@ package spec.haulmont.cuba.core.data_manager
 
 import com.haulmont.cuba.core.model.beanvalidation.EmbeddedValidatedEntity
 import com.haulmont.cuba.core.model.beanvalidation.ValidatedEntity
-import io.jmix.core.CommitContext
-import io.jmix.core.DataManager
+import com.haulmont.cuba.core.global.CommitContext
+import com.haulmont.cuba.core.global.DataManager
 import io.jmix.core.validation.EntityValidationException
 import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate

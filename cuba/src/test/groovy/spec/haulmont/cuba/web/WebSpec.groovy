@@ -16,6 +16,7 @@
 
 package spec.haulmont.cuba.web
 
+import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.web.testsupport.WebTest
 
 import com.haulmont.cuba.web.testsupport.ui.TestConnectorTracker

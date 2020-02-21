@@ -18,7 +18,7 @@ package spec.haulmont.cuba.core.localdatetime
 
 import com.haulmont.cuba.core.model.LocalDateTimeEntity
 import io.jmix.core.AppBeans
-import io.jmix.core.DataManager
+import com.haulmont.cuba.core.global.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.FetchPlan
 import com.haulmont.cuba.core.Persistence

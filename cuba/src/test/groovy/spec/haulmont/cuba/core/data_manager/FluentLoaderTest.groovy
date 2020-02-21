@@ -16,6 +16,7 @@
 
 package spec.haulmont.cuba.core.data_manager
 
+import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Status
 import io.jmix.core.*
@@ -67,16 +68,16 @@ class FluentLoaderTest extends CoreTestSpecification {
         dataManager.load(Customer).one() instanceof Customer
         dataManager.load(Customer).optional() instanceof Optional
 
-        dataManager.load(Customer).view('_base').list() instanceof List
-        dataManager.load(Customer).view(baseView).list() instanceof List
+        dataManager.load(Customer).fetchPlan('_base').list() instanceof List
+        dataManager.load(Customer).fetchPlan(baseView).list() instanceof List
 
         // load by id
 
         dataManager.load(Customer).id(customerId).one() == customer
         dataManager.load(Customer).id(customerId).optional() == Optional.of(customer)
 
-        dataManager.load(Customer).id(customerId).view('_base').one() == customer
-        dataManager.load(Customer).id(customerId).view(baseView).one() == customer
+        dataManager.load(Customer).id(customerId).fetchPlan('_base').one() == customer
+        dataManager.load(Customer).id(customerId).fetchPlan(baseView).one() == customer
 
         // load by query
 
@@ -124,7 +125,7 @@ class FluentLoaderTest extends CoreTestSpecification {
 
     def "test LoadContext when loading all"() {
         def loader
-        LoadContext loadContext
+        io.jmix.core.LoadContext loadContext
 
         when:
 
@@ -149,27 +150,27 @@ class FluentLoaderTest extends CoreTestSpecification {
 
         when:
 
-        loader = dataManager.load(Customer).view('_base')
+        loader = dataManager.load(Customer).fetchPlan('_base')
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        loadContext.view == baseView
+        loadContext.fetchPlan == baseView
 
         when:
 
-        loader = dataManager.load(Customer).view(baseView)
+        loader = dataManager.load(Customer).fetchPlan(baseView)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        loadContext.view == baseView
+        loadContext.fetchPlan == baseView
     }
 
 
     def "test LoadContext when loading by id"() {
         def loader
-        LoadContext loadContext
+        io.jmix.core.LoadContext loadContext
 
         when:
 
@@ -192,26 +193,26 @@ class FluentLoaderTest extends CoreTestSpecification {
 
         when:
 
-        loader = dataManager.load(Customer).id(customer.id).view('_base')
+        loader = dataManager.load(Customer).id(customer.id).fetchPlan('_base')
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        loadContext.view == baseView
+        loadContext.fetchPlan == baseView
 
         when:
 
-        loader = dataManager.load(Customer).id(customer.id).view(baseView)
+        loader = dataManager.load(Customer).id(customer.id).fetchPlan(baseView)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        loadContext.view == baseView
+        loadContext.fetchPlan == baseView
     }
 
     def "test LoadContext when loading by query"() {
         def loader
-        LoadContext loadContext
+        io.jmix.core.LoadContext loadContext
 
         when:
 
@@ -234,18 +235,6 @@ class FluentLoaderTest extends CoreTestSpecification {
         then:
 
         loadContext.query.parameters['n'] == 'Smith'
-        loadContext.query.noConversionParams == null
-
-        when:
-
-        loader = dataManager.load(Customer).query('select c from test$Customer c where name = :n')
-                .parameter('n', 'Smith', false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
-
-        then:
-
-        loadContext.query.parameters['n'] == 'Smith'
-        loadContext.query.noConversionParams[0] == 'n'
 
         when:
 
@@ -290,7 +279,7 @@ class FluentLoaderTest extends CoreTestSpecification {
 
     def "test LoadContext when loading by collection of ids"() {
         def loader
-        LoadContext loadContext
+        io.jmix.core.LoadContext loadContext
 
         when:
 
@@ -314,26 +303,26 @@ class FluentLoaderTest extends CoreTestSpecification {
 
         when:
 
-        loader = dataManager.load(Customer).ids(customer.id, customer2.id).view('_base')
+        loader = dataManager.load(Customer).ids(customer.id, customer2.id).fetchPlan('_base')
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        loadContext.view == baseView
+        loadContext.fetchPlan == baseView
 
         when:
 
-        loader = dataManager.load(Customer).ids(customer.id, customer2.id).view(baseView)
+        loader = dataManager.load(Customer).ids(customer.id, customer2.id).fetchPlan(baseView)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        loadContext.view == baseView
+        loadContext.fetchPlan == baseView
     }
 
     def "test positional params"() {
         def loader
-        LoadContext loadContext
+        io.jmix.core.LoadContext loadContext
 
         when:
 

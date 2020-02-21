@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.data.impl;
 import com.google.common.collect.Iterables;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.LoadContext;
+import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.Entity;

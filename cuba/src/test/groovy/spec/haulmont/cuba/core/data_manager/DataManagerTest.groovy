@@ -16,6 +16,8 @@
 
 package spec.haulmont.cuba.core.data_manager
 
+import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.model.primary_keys.CompositeKeyEntity
@@ -176,20 +178,6 @@ class DataManagerTest extends CoreTestSpecification {
 
         noExceptionThrown()
         count > 0
-    }
-
-    def "more than one parameter without implicit conversion #1163"() {
-
-        when:
-
-        LoadContext.Query query = LoadContext.createQuery('select e from test$Foo e where e.ref1 = :ref1 and e.ref2 = :ref2')
-                .setParameter('ref1', 'val1', false)
-                .setParameter('ref2', 'val2', false)
-                .setParameter('ref3', 'val3', false)
-
-        then:
-
-        query.getNoConversionParams() == ['ref1', 'ref2', 'ref3'].toArray(new String[0])
     }
 
     def "load uses _base view by default"() {

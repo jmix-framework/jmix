@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.Instance;

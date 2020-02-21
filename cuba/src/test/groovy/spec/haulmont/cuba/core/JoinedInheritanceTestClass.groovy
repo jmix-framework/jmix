@@ -18,7 +18,7 @@ package spec.haulmont.cuba.core
 import com.haulmont.cuba.core.model.selfinherited.ChildEntity
 import com.haulmont.cuba.core.model.selfinherited.ChildEntityDetail
 import com.haulmont.cuba.core.model.selfinherited.ChildEntityReferrer
-import io.jmix.core.DataManager
+import com.haulmont.cuba.core.global.DataManager
 import io.jmix.core.Metadata
 import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate

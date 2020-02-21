@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.sales.OrderLine;
 import com.haulmont.cuba.core.model.sales.Product;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.AppBeans;
-import io.jmix.core.DataManager;
+import com.haulmont.cuba.core.global.DataManager;
 import io.jmix.core.Id;
 import io.jmix.data.event.AttributeChanges;
 import io.jmix.data.event.EntityChangedEvent;

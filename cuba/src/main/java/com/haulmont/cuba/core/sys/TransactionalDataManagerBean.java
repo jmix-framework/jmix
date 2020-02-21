@@ -16,6 +16,9 @@
 
 package com.haulmont.cuba.core.sys;
 
+import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
@@ -45,22 +48,22 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
 
     @Override
     public <E extends Entity<K>, K> FluentLoader<E, K> load(Class<E> entityClass) {
-        return new FluentLoader<>(entityClass, dataManager, true);
+        return new FluentLoader<>(entityClass, dataManager.getDelegate());
     }
 
     @Override
     public <E extends Entity<K>, K> FluentLoader.ById<E, K> load(Id<E, K> entityId) {
-        return new FluentLoader<>(entityId.getEntityClass(), dataManager, true).id(entityId.getValue());
+        return new FluentLoader<>(entityId.getEntityClass(), dataManager.getDelegate()).id(entityId.getValue());
     }
 
     @Override
     public FluentValuesLoader loadValues(String queryString) {
-        return new FluentValuesLoader(queryString, dataManager, true);
+        return new FluentValuesLoader(queryString, dataManager.getDelegate());
     }
 
     @Override
     public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        return new FluentValueLoader<>(queryString, valueClass, dataManager, true);
+        return new FluentValueLoader<>(queryString, valueClass, dataManager.getDelegate());
     }
 
     @Nullable
@@ -145,7 +148,6 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
 
     private static class Secure extends TransactionalDataManagerBean {
 
-        @SuppressWarnings("ReassignmentInjectVariable")
         public Secure(DataManager dataManager, Transactions transactions) {
             this.dataManager = dataManager.secure();
             this.transactions = transactions;

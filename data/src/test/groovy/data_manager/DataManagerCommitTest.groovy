@@ -16,6 +16,8 @@
 
 package data_manager
 
+import io.jmix.core.Id
+import io.jmix.core.SaveContext
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
 import test_support.entity.TestSecondAppEntity
@@ -42,7 +44,7 @@ class DataManagerCommitTest extends DataSpec {
         appEntity = new TestAppEntity(name: 'appEntity')
         appEntityItem = new TestAppEntityItem(name: 'appEntityItem', appEntity: appEntity)
 
-        dataManager.commit(appEntity, appEntityItem)
+        dataManager.save(appEntity, appEntityItem)
     }
 
 
@@ -55,7 +57,7 @@ class DataManagerCommitTest extends DataSpec {
                 .build()
                 .setLoadPartialEntities(true)
 
-        def loadedAppEntity = dataManager.reload(appEntity, view)
+        def loadedAppEntity = dataManager.load(Id.of(appEntity)).fetchPlan(view).one()
 
         then:
 
@@ -73,7 +75,7 @@ class DataManagerCommitTest extends DataSpec {
                 .add("appEntity.items.name")
                 .build()
 
-        def entity1 = dataManager.commit(entity, commitView)
+        def entity1 = dataManager.save(new SaveContext().saving(entity, commitView)).get(entity)
 
         then:
 

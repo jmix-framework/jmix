@@ -53,7 +53,6 @@ public class JpqlQueryBuilder {
 
     protected String queryString;
     protected Map<String, Object> queryParameters;
-    protected String[] noConversionParams;
     protected Condition condition;
     protected Sort sort;
 
@@ -119,11 +118,6 @@ public class JpqlQueryBuilder {
 
     public JpqlQueryBuilder setQueryParameters(Map<String, Object> queryParams) {
         this.queryParameters = queryParams;
-        return this;
-    }
-
-    public JpqlQueryBuilder setNoConversionParams(String[] noConversionParams) {
-        this.noConversionParams = noConversionParams;
         return this;
     }
 

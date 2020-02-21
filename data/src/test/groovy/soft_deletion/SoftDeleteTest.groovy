@@ -38,7 +38,7 @@ class SoftDeleteTest extends DataSpec {
 
         entity = dataManager.create(TestAppEntity)
         entity.name = 'e1'
-        entity = dataManager.commit(entity)
+        entity = dataManager.save(entity)
         dataManager.remove(entity)
 
         when:
@@ -56,7 +56,7 @@ class SoftDeleteTest extends DataSpec {
 
         entity = dataManager.create(TestAppEntity)
         entity.name = 'e1'
-        entity = dataManager.commit(entity)
+        entity = dataManager.save(entity)
         dataManager.remove(entity)
 
         when:

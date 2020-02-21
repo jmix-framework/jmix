@@ -52,7 +52,7 @@ class IdentityEntityTest extends DataSpec {
 
         when:
 
-        def entity11 = dataManager.commit(entity1)
+        def entity11 = dataManager.save(entity1)
         def entity12 = dataManager.load(TestIdentityIdEntity).id(IdProxy.of(entity11.id.get())).one()
 
         then:
@@ -67,7 +67,7 @@ class IdentityEntityTest extends DataSpec {
 
         when:
 
-        def entity11 = dataManager.commit(entity1)
+        def entity11 = dataManager.save(entity1)
         def entity12 = dataManager.load(TestIdentityUuidEntity).id(IdProxy.of(entity11.id.get())).one()
 
         then:
@@ -79,7 +79,7 @@ class IdentityEntityTest extends DataSpec {
     def "storing in hashtables"() {
 
         def entity1 = dataManager.create(TestIdentityIdEntity)
-        def entity11 = dataManager.commit(entity1)
+        def entity11 = dataManager.save(entity1)
         def idVal = entity11.id.get()
         def uuid = entity11.id.uuid
 

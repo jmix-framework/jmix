@@ -22,6 +22,7 @@ import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.data.OrmProperties;
+import io.jmix.data.event.EntityChangedEvent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -34,15 +35,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.JmixDataTestConfiguration;
+import test_support.TestCustomerListener;
 import test_support.entity.sales.Customer;
-import test_support.entity_listener.TestEventListener;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -65,10 +68,22 @@ public class EntityManagerTest {
     @Autowired
     EntityStates entityStates;
 
+    @Autowired
+    TestCustomerListener customerListener;
+
+    List<EntityChangedEvent<Customer, UUID>> customerEvents = new ArrayList<>();
+
+    @Before
+    public void setup() {
+        customerListener.changedEventConsumer = event -> {
+            customerEvents.add(event);
+        };
+    }
+
     @Before
     @After
     public void cleanup() throws Exception {
-        TestEventListener.customerEvents.clear();
+        customerEvents.clear();
         try {
             jdbc.update("delete from SALES_CUSTOMER");
         } catch (DataAccessException e) {
@@ -90,7 +105,7 @@ public class EntityManagerTest {
         List<Map<String, Object>> rows = jdbc.queryForList("select * from SALES_CUSTOMER");
         assertEquals(1, rows.size());
         // and:
-        assertEquals(1, TestEventListener.customerEvents.size());
+        assertEquals(1, customerEvents.size());
     }
 
     @Ignore
@@ -156,7 +171,7 @@ public class EntityManagerTest {
         tx.executeWithoutResult(status -> {
             entityManager.persist(customer);
         });
-        TestEventListener.customerEvents.clear();
+        customerEvents.clear();
 
         // when:
         customer.setName("c11");
@@ -169,7 +184,7 @@ public class EntityManagerTest {
         assertEquals("c11", mergedCustomer.getName());
         assertEquals(customer.getVersion() + 1, (int) mergedCustomer.getVersion());
         // and:
-        assertEquals(1, TestEventListener.customerEvents.size());
+        assertEquals(1, customerEvents.size());
     }
 
     @Test
@@ -180,7 +195,7 @@ public class EntityManagerTest {
         tx.executeWithoutResult(status -> {
             entityManager.persist(customer);
         });
-        TestEventListener.customerEvents.clear();
+        customerEvents.clear();
 
         // when:
         tx.executeWithoutResult(status -> {
@@ -202,7 +217,7 @@ public class EntityManagerTest {
         tx.executeWithoutResult(status -> {
             entityManager.persist(customer);
         });
-        TestEventListener.customerEvents.clear();
+        customerEvents.clear();
 
         // when:
         tx.executeWithoutResult(status -> {

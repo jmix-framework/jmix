@@ -93,7 +93,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     @Override
     public void savePreviousQueryResults(LoadContext loadContext) {
-        @SuppressWarnings("unchecked") List<LoadContext.Query> prevQueries = loadContext.getPrevQueries();
+        @SuppressWarnings("unchecked") List<LoadContext.Query> prevQueries = loadContext.getPreviousQueries();
         if (prevQueries.isEmpty())
             return;
 
@@ -122,8 +122,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
                     .setEntityName(entityName)
                     .setCondition(contextQuery.getCondition())
                     .setSort(contextQuery.getSort())
-                    .setQueryParameters(contextQuery.getParameters())
-                    .setNoConversionParams(contextQuery.getNoConversionParams());
+                    .setQueryParameters(contextQuery.getParameters());
 
             if (prevQueries.size() > 1) {
                 queryBuilder.setPreviousResults(userSessionSource.getUserSession().getId(), loadContext.getQueryKey());

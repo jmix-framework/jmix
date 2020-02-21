@@ -87,7 +87,7 @@ public class QueryTest {
         // given:
         Customer customer = dataManager.create(Customer.class);
         customer.setName("c1");
-        dataManager.commit(customer);
+        dataManager.save(customer);
 
         // when:
         List<Customer> customerList = tx.execute(status -> {

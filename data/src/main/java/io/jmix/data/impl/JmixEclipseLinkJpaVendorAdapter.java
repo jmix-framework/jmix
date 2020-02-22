@@ -65,6 +65,10 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
         map.put("eclipselink.logging.logger", "org.eclipse.persistence.logging.slf4j.SLF4JLogger");
         map.put("eclipselink.cache.coordination.protocol", "io.jmix.data.impl.entitycache.EntityCacheTransportManager");
         map.put("eclipselink.cache.coordination.propagate-asynchronously", "false");
+        map.put("eclipselink.weaving", "static");
+        map.put("eclipselink.flush-clear.cache", "Merge");
+        map.put("eclipselink.cache.shared.default", "false");
+
         map.put("javax.persistence.validation.mode", "NONE");
 
         for (String name : EnvironmentUtils.getPropertyNames(environment)) {

@@ -30,6 +30,7 @@ import io.jmix.core.security.UserSessionSource;
 import io.jmix.data.PersistenceAttributeSecurity;
 import io.jmix.data.PersistenceSecurity;
 import io.jmix.data.RowLevelSecurityException;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.JmixQuery;
 import io.jmix.security.SecurityTokenException;
 import org.apache.commons.collections4.CollectionUtils;
@@ -40,7 +41,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -55,8 +55,8 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     @Inject
     protected SecurityTokenManager securityTokenManager;
 
-    @PersistenceContext
-    protected EntityManager entityManager;
+    @Inject
+    protected StoreAwareLocator storeAwareLocator;
 
     @Inject
     protected ReferenceToEntitySupport referenceToEntitySupport;
@@ -200,7 +200,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     public void restoreFilteredData(Entity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         String storeName = metadataTools.getStoreName(metaClass);
-        EntityManager entityManager = getEntityManager(storeName);
+        EntityManager entityManager = storeAwareLocator.getEntityManager(storeName);
 
         Multimap<String, Object> filtered = BaseEntityInternalAccess.getFilteredData(entity);
         if (filtered == null) {
@@ -235,11 +235,6 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
                 }
             }
         }
-    }
-
-    // todo data stores
-    private EntityManager getEntityManager(String storeName) {
-        return entityManager;
     }
 
     @Override

@@ -27,6 +27,7 @@ import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.data.EntityChangeType;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
@@ -47,7 +48,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
-import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
@@ -55,23 +55,22 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component(PersistenceSupport.NAME)
 public class PersistenceSupport implements ApplicationContextAware {
 
-    public static final String NAME = "cuba_PersistenceImplSupport";
+    public static final String NAME = "jmix_PersistenceImplSupport";
 
     public static final String RESOURCE_HOLDER_KEY = ContainerResourceHolder.class.getName();
 
     public static final String RUNNER_RESOURCE_HOLDER = RunnerResourceHolder.class.getName();
 
-    public static final String PROP_NAME = "cuba.storeName";
+    public static final String PROP_NAME = "jmix.storeName";
 
     @Inject
-    protected EntityManagerFactory entityManagerFactory;
+    protected StoreAwareLocator storeAwareLocator;
 
     @Inject
     protected Metadata metadata;
@@ -121,22 +120,25 @@ public class PersistenceSupport implements ApplicationContextAware {
     public void registerSynchronizations(String store) {
         log.trace("registerSynchronizations for store '{}'", store);
         getInstanceContainerResourceHolder(store);
-        getRunnerResourceHolder();
+        getRunnerResourceHolder(store);
     }
 
     /**
      * INTERNAL
      */
-    public void addBeforeCommitAction(Runnable action) {
-        RunnerResourceHolder runner = getRunnerResourceHolder();
+    public void addBeforeCommitAction(String storeName, Runnable action) {
+        RunnerResourceHolder runner = getRunnerResourceHolder(storeName);
         runner.add(action);
     }
 
-    private RunnerResourceHolder getRunnerResourceHolder() {
+    private RunnerResourceHolder getRunnerResourceHolder(String storeName) {
         RunnerResourceHolder runner = (RunnerResourceHolder) TransactionSynchronizationManager.getResource(RUNNER_RESOURCE_HOLDER);
         if (runner == null) {
-            runner = new RunnerResourceHolder();
+            runner = new RunnerResourceHolder(storeName);
             TransactionSynchronizationManager.bindResource(RUNNER_RESOURCE_HOLDER, runner);
+        } else if (!storeName.equals(runner.getStoreName())) {
+            throw new IllegalStateException("Cannot handle entity from " + storeName
+                    + " datastore because active transaction is for " + runner.getStoreName());
         }
         if (TransactionSynchronizationManager.isSynchronizationActive() && !runner.isSynchronizedWithTransaction()) {
             runner.setSynchronizedWithTransaction(true);
@@ -502,7 +504,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                 }
             }
 
-            javax.persistence.EntityManager jmixEm = getEntityManager(container.getStoreName());
+            javax.persistence.EntityManager jmixEm = storeAwareLocator.getEntityManager(container.getStoreName());
             JpaEntityManager jpaEm = jmixEm.unwrap(JpaEntityManager.class);
             jpaEm.flush();
             jpaEm.clear();
@@ -536,11 +538,6 @@ public class PersistenceSupport implements ApplicationContextAware {
         public int getOrder() {
             return 100;
         }
-    }
-
-    private javax.persistence.EntityManager getEntityManager(String storeName) {
-        // todo data stores
-        return EntityManagerFactoryUtils.doGetTransactionalEntityManager(entityManagerFactory, null, true);
     }
 
     protected class OnSaveEntityVisitor implements EntityVisitor {
@@ -657,6 +654,15 @@ public class PersistenceSupport implements ApplicationContextAware {
     private static class RunnerResourceHolder extends ResourceHolderSupport {
 
         private List<Runnable> list = new ArrayList<>();
+        private String storeName;
+
+        public RunnerResourceHolder(String storeName) {
+            this.storeName = storeName;
+        }
+
+        public String getStoreName() {
+            return storeName;
+        }
 
         private void add(Runnable action) {
             list.add(action);

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -49,31 +50,36 @@ public class JmixDataConfiguration {
     }
 
     @Bean
+    @Primary
     protected LocalContainerEntityManagerFactoryBean entityManagerFactory(
             DataSource dataSource, Metadata metadata, DbmsSpecifics dbmsSpecifics,
             JmixEclipseLinkJpaVendorAdapter jpaVendorAdapter) {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setPersistenceXmlLocation(createPersistenceXml(metadata, dbmsSpecifics));
+        factoryBean.setPersistenceXmlLocation("file:" +
+                new PersistenceConfigProcessor(environment, metadata, dbmsSpecifics).create(Stores.MAIN));
         factoryBean.setDataSource(dataSource);
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         return factoryBean;
     }
 
     @Bean
+    @Primary
     protected JpaTransactionManager transactionManager(DataSource dataSource,
                                                        EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager transactionManager = new JmixTransactionManager();
+        JpaTransactionManager transactionManager = new JmixTransactionManager(Stores.MAIN);
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         transactionManager.setDataSource(dataSource);
         return transactionManager;
     }
 
     @Bean
+    @Primary
     protected JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
     @Bean
+    @Primary
     protected TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
         return new TransactionTemplate(transactionManager);
     }
@@ -88,11 +94,4 @@ public class JmixDataConfiguration {
         return new DataEntitySystemStateSupport();
     }
 
-    protected String createPersistenceXml(Metadata metadata, DbmsSpecifics dbmsSpecifics) {
-        String fileName = environment.getProperty("jmix.workDir") + "/META-INF/persistence.xml";
-        PersistenceConfigProcessor processor = new PersistenceConfigProcessor(
-                environment, metadata, dbmsSpecifics, Stores.MAIN, fileName);
-        processor.create();
-        return "file:" + fileName;
-    }
 }

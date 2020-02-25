@@ -20,8 +20,10 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.BaseGenericIdEntity;
+import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.StoreAwareLocator;
 import org.eclipse.persistence.jpa.JpaCache;
 import org.springframework.stereotype.Component;
 
@@ -37,9 +39,8 @@ public class OrmCacheSupport {
     @Inject
     protected Metadata metadata;
 
-    // todo data stores
     @Inject
-    protected EntityManagerFactory entityManagerFactory;
+    protected StoreAwareLocator storeAwareLocator;
 
     @Inject
     protected EntityStates entityStates;
@@ -79,7 +80,9 @@ public class OrmCacheSupport {
     }
 
     private void evictEntity(Object entity) {
-        if (entity != null && !entityStates.isNew(entity)) {
+        if (entity instanceof Entity && !entityStates.isNew(entity)) {
+            String storeName = metadata.getClass((Entity) entity).getStore().getName();
+            EntityManagerFactory entityManagerFactory = storeAwareLocator.getEntityManagerFactory(storeName);
             JpaCache cache = (JpaCache) entityManagerFactory.getCache();
             cache.evict(entity, true);
         }

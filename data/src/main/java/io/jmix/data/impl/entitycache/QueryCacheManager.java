@@ -27,6 +27,7 @@ import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.data.OrmProperties;
+import io.jmix.data.StoreAwareLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.io.Serializable;
 import java.util.*;
@@ -56,8 +56,8 @@ public class QueryCacheManager {
     protected Metadata metadata;
     @Inject
     protected MetadataTools metadataTools;
-    @PersistenceContext
-    protected EntityManager entityManager;
+    @Inject
+    protected StoreAwareLocator storeAwareLocator;
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCacheManager.class);
 
@@ -75,11 +75,6 @@ public class QueryCacheManager {
                 }
             }
         });
-    }
-
-    private EntityManager getEntityManager(String storeName) {
-        // todo data stores
-        return entityManager;
     }
 
     /**
@@ -100,7 +95,7 @@ public class QueryCacheManager {
         if (queryResult != null) {
             MetaClass metaClass = metadata.getClass(queryResult.getType());
             String storeName = metadataTools.getStoreName(metaClass);
-            EntityManager em = getEntityManager(storeName);
+            EntityManager em = storeAwareLocator.getEntityManager(storeName);
             resultList = new ArrayList<>(queryResult.getResult().size());
             if (!metadataTools.isCacheable(metaClass)) {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
@@ -133,7 +128,7 @@ public class QueryCacheManager {
                 throw queryResult.getException();
             }
             String storeName = metadataTools.getStoreName(metaClass);
-            EntityManager em = getEntityManager(storeName);
+            EntityManager em = storeAwareLocator.getEntityManager(storeName);
             for (Object id : queryResult.getResult()) {
                 return (T) em.find(metaClass.getJavaClass(), id, OrmProperties.builder().withFetchPlans(views).build());
             }

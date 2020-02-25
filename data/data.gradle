@@ -45,6 +45,7 @@ entitiesEnhancing {
 }
 
 test {
+    systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")
     systemProperty("org.slf4j.simpleLogger.log.eclipselink.sql", "debug")
 }
 

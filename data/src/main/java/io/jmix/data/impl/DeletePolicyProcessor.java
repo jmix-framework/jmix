@@ -23,6 +23,7 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.*;
 
@@ -49,8 +49,8 @@ public class DeletePolicyProcessor {
     protected MetaClass metaClass;
     protected String primaryKeyName;
 
-    @PersistenceContext
-    protected EntityManager entityManager;
+    @Inject
+    protected StoreAwareLocator storeAwareLocator;
 
     @Inject
     protected JdbcTemplate jdbcTemplate;
@@ -70,6 +70,8 @@ public class DeletePolicyProcessor {
     @Inject
     protected EntityStates entityStates;
 
+    protected EntityManager entityManager;
+
     public Entity getEntity() {
         return entity;
     }
@@ -84,11 +86,8 @@ public class DeletePolicyProcessor {
     }
 
     private EntityManager getEntityManager(String storeName) {
-        // todo data stores
-        return entityManager;
+        return storeAwareLocator.getEntityManager(storeName);
     }
-
-
 
     public void process() {
         List<MetaProperty> properties = new ArrayList<>();
@@ -217,8 +216,7 @@ public class DeletePolicyProcessor {
     }
 
     protected void hardDeleteNotLoadedReference(Entity entity, MetaProperty property, Entity reference) {
-        // todo data stores
-        persistenceSupport.addBeforeCommitAction(() -> {
+        persistenceSupport.addBeforeCommitAction(metaClass.getStore().getName(), () -> {
             try {
                 String column = metadataTools.getDatabaseColumn(property);
                 if (column != null) { // is null for mapped-by property
@@ -252,8 +250,7 @@ public class DeletePolicyProcessor {
     }
 
     protected void hardSetReferenceNull(Entity entity, MetaProperty property) {
-        // todo data stores
-        persistenceSupport.addBeforeCommitAction(() -> {
+        persistenceSupport.addBeforeCommitAction(metaClass.getStore().getName(), () -> {
             MetaClass entityMetaClass = metadata.getClass(entity.getClass());
             while (!entityMetaClass.equals(property.getDomain())) {
                 MetaClass ancestor = entityMetaClass.getAncestor();

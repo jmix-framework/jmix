@@ -22,6 +22,7 @@ import io.jmix.core.entity.BaseGenericIdEntity;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.StoreAwareLocator;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 
@@ -29,10 +30,10 @@ import javax.persistence.EntityManagerFactory;
 
 public class DataPersistentAttributesLoadChecker extends CorePersistentAttributesLoadChecker {
 
-    private BeanLocator beanLocator;
+    private StoreAwareLocator storeAwareLocator;
 
     public DataPersistentAttributesLoadChecker(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+        this.storeAwareLocator = beanLocator.get(StoreAwareLocator.NAME);
     }
 
     @Override
@@ -65,8 +66,7 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
             return checkIsLoadedWithGetter(entity, property);
         }
 
-        // todo data stores
-        EntityManagerFactory emf = beanLocator.get(EntityManagerFactory.class);
+        EntityManagerFactory emf = storeAwareLocator.getEntityManagerFactory(metaClass.getStore().getName());
         return emf.getPersistenceUnitUtil().isLoaded(entity, property);
     }
 }

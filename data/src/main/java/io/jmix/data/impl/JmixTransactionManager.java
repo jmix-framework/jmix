@@ -29,7 +29,13 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 public class JmixTransactionManager extends JpaTransactionManager implements ApplicationContextAware {
 
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
+
+    protected String storeName;
+
+    public JmixTransactionManager(String storeName) {
+        this.storeName = storeName;
+    }
 
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) {
@@ -44,7 +50,7 @@ public class JmixTransactionManager extends JpaTransactionManager implements App
         super.prepareSynchronization(status, definition);
         // lookup instead of injection to avoid circular dependency
         PersistenceSupport persistenceSupport = applicationContext.getBean(PersistenceSupport.NAME, PersistenceSupport.class);
-        persistenceSupport.registerSynchronizations(Stores.MAIN); // todo data stores
+        persistenceSupport.registerSynchronizations(storeName);
     }
 
     @Override

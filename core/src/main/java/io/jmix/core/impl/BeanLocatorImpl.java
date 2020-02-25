@@ -55,7 +55,7 @@ public class BeanLocatorImpl implements BeanLocator, ApplicationContextAware {
     }
 
     @Override
-    public <T> T get(String name, @Nullable Class<T> beanType) {
+    public <T> T get(String name, Class<T> beanType) {
         Preconditions.checkNotNullArgument(name, "name is null");
         return applicationContext.getBean(name, beanType);
     }

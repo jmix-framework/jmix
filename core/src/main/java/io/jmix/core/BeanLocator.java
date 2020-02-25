@@ -46,12 +46,11 @@ public interface BeanLocator {
     /**
      * Returns an instance of the specified bean.
      * @param name      the name of the bean to retrieve
-     * @param beanType  type the bean must match. Can be an interface or superclass of the actual class, or null
-     * for any match. For example, if the value is Object.class, this method will succeed whatever the class of the
+     * @param beanType  type the bean must match. Can be an interface or superclass of the actual class.
      * returned instance.
      * @return          bean instance
      */
-    <T> T get(String name, @Nullable Class<T> beanType);
+    <T> T get(String name, Class<T> beanType);
 
     /**
      * Returns an instance of prototype bean, specifying explicit constructor arguments.

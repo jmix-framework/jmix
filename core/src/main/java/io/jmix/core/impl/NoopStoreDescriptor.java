@@ -19,7 +19,7 @@ package io.jmix.core.impl;
 import io.jmix.core.metamodel.model.StoreDescriptor;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component(NoopStoreDescriptor.NAME)
 public class NoopStoreDescriptor implements StoreDescriptor {
 
     public static final String NAME = "jmix_NoopStoreDescriptor";

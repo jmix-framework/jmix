@@ -22,7 +22,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -47,9 +46,7 @@ public class DataManagerImpl implements DataManager {
     protected Stores stores;
 
     @Inject
-    protected ApplicationContext applicationContext;
-
-    protected Map<String, DataStore> dataStores = new HashMap<>();
+    protected DataStoreFactory dataStoreFactory;
 
     // todo entity log
 //    @Inject
@@ -59,7 +56,7 @@ public class DataManagerImpl implements DataManager {
     @Override
     public <E extends Entity> E load(LoadContext<E> context) {
         MetaClass metaClass = metadata.getClass(context.getMetaClass());
-        DataStore storage = getDataStore(getStoreName(metaClass));
+        DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
         E entity = storage.load(context);
         if (entity != null)
             readCrossDataStoreReferences(Collections.singletonList(entity), context.getFetchPlan(), metaClass, context.isJoinTransaction());
@@ -67,10 +64,9 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <E extends Entity> List<E> loadList(LoadContext<E> context) {
         MetaClass metaClass = metadata.getClass(context.getMetaClass());
-        DataStore storage = getDataStore(getStoreName(metaClass));
+        DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
         List<E> entities = storage.loadList(context);
         readCrossDataStoreReferences(entities, context.getFetchPlan(), metaClass, context.isJoinTransaction());
         return entities;
@@ -79,7 +75,7 @@ public class DataManagerImpl implements DataManager {
     @Override
     public long getCount(LoadContext<? extends Entity> context) {
         MetaClass metaClass = metadata.getClass(context.getMetaClass());
-        DataStore storage = getDataStore(getStoreName(metaClass));
+        DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
         return storage.getCount(context);
     }
 
@@ -90,7 +86,9 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public <E extends Entity> E save(E entity) {
-        return save(new SaveContext().saving(entity)).optional(entity).orElseThrow(IllegalStateException::new);
+        return save(new SaveContext().saving(entity))
+                .optional(entity)
+                .orElseThrow(() -> new IllegalStateException("Data store didn't return a saved entity"));
     }
 
     @Override
@@ -99,7 +97,6 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public EntitySet save(SaveContext context) {
         Map<String, SaveContext> storeToContextMap = new TreeMap<>();
         Set<Entity> toRepeat = new HashSet<>();
@@ -112,34 +109,26 @@ public class DataManagerImpl implements DataManager {
                 toRepeat.add(entity);
             }
 
-            SaveContext cc = storeToContextMap.get(storeName);
-            if (cc == null) {
-                cc = createSaveContext(context);
-                storeToContextMap.put(storeName, cc);
-            }
-            cc.getEntitiesToSave().add(entity);
+            SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
+            sc.saving(entity);
             FetchPlan view = context.getFetchPlans().get(entity);
             if (view != null)
-                cc.getFetchPlans().put(entity, view);
+                sc.getFetchPlans().put(entity, view);
         }
         for (Entity entity : context.getEntitiesToRemove()) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             String storeName = getStoreName(metaClass);
 
-            SaveContext cc = storeToContextMap.get(storeName);
-            if (cc == null) {
-                cc = createSaveContext(context);
-                storeToContextMap.put(storeName, cc);
-            }
-            cc.getEntitiesToRemove().add(entity);
+            SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
+            sc.removing(entity);
             FetchPlan view = context.getFetchPlans().get(entity);
             if (view != null)
-                cc.getFetchPlans().put(entity, view);
+                sc.getFetchPlans().put(entity, view);
         }
 
         Set<Entity> result = new LinkedHashSet<>();
         for (Map.Entry<String, SaveContext> entry : storeToContextMap.entrySet()) {
-            DataStore dataStore = getDataStore(entry.getKey());
+            DataStore dataStore = dataStoreFactory.get(entry.getKey());
             Set<Entity> committed = dataStore.save(entry.getValue());
             result.addAll(committed);
         }
@@ -174,7 +163,7 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-        DataStore store = getDataStore(getStoreName(context.getStoreName()));
+        DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
         return store.loadValues(context);
     }
 
@@ -270,14 +259,5 @@ public class DataManagerImpl implements DataManager {
 
     protected String getStoreName(@Nullable String storeName) {
         return storeName == null ? Stores.NOOP : storeName;
-    }
-
-    protected DataStore getDataStore(String name) {
-        String beanName = stores.get(name).getDescriptor().getBeanName();
-        return dataStores.computeIfAbsent(beanName, s -> {
-            DataStore dataStore = applicationContext.getBean(s, DataStore.class);
-            dataStore.setName(name);
-            return dataStore;
-        });
     }
 }

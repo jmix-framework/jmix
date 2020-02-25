@@ -76,6 +76,11 @@ public class Stores {
 
         StoreDescriptor noopDescriptor = getStoreDescriptor(NOOP);
         stores.put(NOOP, new StoreImpl(NOOP, noopDescriptor != null ? noopDescriptor : noopStoreDescriptor));
+
+        for (String storeName : getAdditional()) {
+            StoreDescriptor storeDescriptor = getStoreDescriptor(storeName);
+            stores.put(storeName, new StoreImpl(storeName, storeDescriptor != null ? storeDescriptor : ormStoreDescriptor));
+        }
     }
 
     @Nullable
@@ -123,9 +128,9 @@ public class Stores {
      * @return the list of additional data store names registered in the {@code cuba.additionalStores} app property
      */
     public List<String> getAdditional() {
-        String dbProp = environment.getProperty("jmix.additionalStores");
-        if (!Strings.isNullOrEmpty(dbProp))
-            return SPLITTER.splitToList(dbProp);
+        String property = environment.getProperty("jmix.additionalStores");
+        if (!Strings.isNullOrEmpty(property))
+            return SPLITTER.splitToList(property);
         else
             return Collections.emptyList();
     }

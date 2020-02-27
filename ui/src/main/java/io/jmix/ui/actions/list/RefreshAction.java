@@ -17,6 +17,7 @@
 package io.jmix.ui.actions.list;
 
 import io.jmix.core.Messages;
+import io.jmix.core.entity.Entity;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.actions.ListAction;
 import io.jmix.ui.components.Component;
@@ -26,6 +27,7 @@ import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
 import org.slf4j.Logger;
@@ -102,6 +104,12 @@ public class RefreshAction extends ListAction {
             loader = ((HasLoader) container).getLoader();
         }
         if (loader != null) {
+            DataContext dataContext = loader.getDataContext();
+            if (dataContext != null) {
+                for (Object entity : container.getItems()) {
+                    dataContext.evict((Entity) entity);
+                }
+            }
             loader.load();
         } else {
             log.warn("RefreshAction '{}' target container has no loader, refresh is impossible", getId());

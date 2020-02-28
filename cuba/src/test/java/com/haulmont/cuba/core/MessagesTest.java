@@ -122,7 +122,7 @@ public class MessagesTest {
         String msg = messages.getMessage(MpTestNestedObj.class, "key0");
         assertEquals("Message0", msg);
 
-        assertEquals(3,
+        assertEquals(2,
                 Iterables.size(Iterables.filter(appender.getMessages(), new Predicate<String>() {
                     @Override
                     public boolean apply(@Nullable String input) {
@@ -130,7 +130,7 @@ public class MessagesTest {
                     }
                 }))
         );
-        assertEquals(3,
+        assertEquals(2,
                 Iterables.size(Iterables.filter(appender.getMessages(), new Predicate<String>() {
                     @Override
                     public boolean apply(@Nullable String input) {
@@ -180,7 +180,7 @@ public class MessagesTest {
 
         String msg = messages.getMessage("com.haulmont.cuba.core.messagespack.nested com.haulmont.cuba.core.messagespack", "key0");
         assertEquals("Message0", msg);
-        assertEquals(14, getSearchMessagesCount());
+        assertEquals(10, getSearchMessagesCount());
 
         appender.getMessages().clear();
 

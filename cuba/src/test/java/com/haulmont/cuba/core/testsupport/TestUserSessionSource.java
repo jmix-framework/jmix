@@ -24,6 +24,7 @@ import io.jmix.core.security.impl.CoreUser;
 import io.jmix.core.security.impl.UserSessionSourceImpl;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.UUID;
 
 public class TestUserSessionSource extends UserSessionSourceImpl {
@@ -52,6 +53,7 @@ public class TestUserSessionSource extends UserSessionSourceImpl {
             user.setId(UUID.fromString(USER_ID));
             SystemAuthenticationToken authentication = new SystemAuthenticationToken(user, Collections.emptyList());
             session = new UserSession(authentication);
+            session.setLocale(Locale.ENGLISH);
         }
         return session;
     }

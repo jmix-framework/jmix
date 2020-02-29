@@ -68,7 +68,7 @@ publishing {
     publications {
         javaMaven(MavenPublication) {
             groupId = 'io.jmix.cuba'
-            artifactId = jar.archiveBaseName
+            artifactId = 'jmix-cuba'
 
             from components.java
             artifact sourcesJar

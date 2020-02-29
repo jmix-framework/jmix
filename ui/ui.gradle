@@ -71,7 +71,7 @@ publishing {
     publications {
         javaMaven(MavenPublication) {
             groupId = 'io.jmix.ui'
-            artifactId = jar.archiveBaseName
+            artifactId = 'jmix-ui'
 
             from components.java
             artifact sourcesJar

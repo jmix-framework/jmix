@@ -45,7 +45,7 @@ publishing {
     publications {
         javaMaven(MavenPublication) {
             groupId = 'io.jmix.ui-themes'
-            artifactId = jar.archiveBaseName
+            artifactId = 'jmix-ui-themes'
 
             from components.java
         }

@@ -33,7 +33,7 @@ publishing {
     publications {
         javaMaven(MavenPublication) {
             groupId = 'io.jmix.ui-themes-compiled'
-            artifactId = jar.archiveBaseName
+            artifactId = 'jmix-ui-themes-compiled'
 
             from components.java
         }

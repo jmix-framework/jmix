@@ -56,7 +56,7 @@ publishing {
     publications {
         javaMaven(MavenPublication) {
             groupId = 'io.jmix.security'
-            artifactId = jar.archiveBaseName
+            artifactId = 'jmix-security'
 
             from components.java
             artifact sourcesJar

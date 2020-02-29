@@ -62,7 +62,7 @@ publishing {
     publications {
         javaMaven(MavenPublication) {
             groupId = 'io.jmix.data'
-            artifactId = jar.archiveBaseName
+            artifactId = 'jmix-data'
 
             from components.java
             artifact sourcesJar

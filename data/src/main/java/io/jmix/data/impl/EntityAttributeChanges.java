@@ -156,7 +156,10 @@ public class EntityAttributeChanges {
         return null;
     }
 
-    protected void addChanges(ObjectChangeSet changeSet) {
+    /**
+     * INTERNAL
+     */
+    public void addChanges(ObjectChangeSet changeSet) {
         if (changeSet == null)
             return;
 

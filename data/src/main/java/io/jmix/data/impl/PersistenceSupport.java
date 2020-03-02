@@ -55,6 +55,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -88,7 +89,7 @@ public class PersistenceSupport implements ApplicationContextAware {
     protected EntityChangedEventManager entityChangedEventManager;
 
     @Inject
-    protected EntityChangingEventManager entityChangingEventManager;
+    protected PersistenceLifecycleListenerManager persistenceLifecycleListenerManager;
 
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 
@@ -147,7 +148,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         return runner;
     }
 
-    public void registerInstance(Entity entity, javax.persistence.EntityManager entityManager) {
+    public void registerInstance(Entity entity, EntityManager entityManager) {
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             throw new RuntimeException("No transaction");
 
@@ -201,7 +202,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         return holder;
     }
 
-    public void processFlush(javax.persistence.EntityManager entityManager, boolean warnAboutImplicitFlush) {
+    public void processFlush(EntityManager entityManager, boolean warnAboutImplicitFlush) {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
         traverseEntities(getInstanceContainerResourceHolder(storeName), new OnSaveEntityVisitor(storeName), warnAboutImplicitFlush);
@@ -285,7 +286,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    public void detach(javax.persistence.EntityManager entityManager, Entity entity) {
+    public void detach(EntityManager entityManager, Entity entity) {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
 
@@ -417,8 +418,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 
             if (!readOnly) {
                 traverseEntities(container, new OnSaveEntityVisitor(container.getStoreName()), false);
-                // todo entity log
-//                entityLog.flush();
+                persistenceLifecycleListenerManager.fireFlush(container.getStoreName());
             }
 
             Collection<Entity> instances = container.getAllInstances();
@@ -504,7 +504,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                 }
             }
 
-            javax.persistence.EntityManager jmixEm = storeAwareLocator.getEntityManager(container.getStoreName());
+            EntityManager jmixEm = storeAwareLocator.getEntityManager(container.getStoreName());
             JpaEntityManager jpaEm = jmixEm.unwrap(JpaEntityManager.class);
             jpaEm.flush();
             jpaEm.clear();
@@ -554,10 +554,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                     && !getSavedInstances(storeName).contains(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, storeName);
 
-                entityChangingEventManager.publishEvent(entity, EntityChangeType.CREATE, null);
-
-                // todo entity log
-//                entityLog.registerCreate(entity, true);
+                persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.CREATE, null);
 
                 // todo fts
 //                enqueueForFts(entity, FtsChangeType.INSERT);
@@ -574,10 +571,7 @@ public class PersistenceSupport implements ApplicationContextAware {
             if (isDeleted(entity, changeListener)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
 
-                entityChangingEventManager.publishEvent(entity, EntityChangeType.DELETE, null);
-
-                // todo entity log
-//                entityLog.registerDelete(entity, true);
+                persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.DELETE, null);
 
                 if ((entity instanceof SoftDelete))
                     processDeletePolicy(entity);
@@ -601,18 +595,14 @@ public class PersistenceSupport implements ApplicationContextAware {
 
                 if (BaseEntityInternalAccess.isNew(entity)) {
 
-                    entityChangingEventManager.publishEvent(entity, EntityChangeType.CREATE, null);
-                    // todo entity log
-//                    // it can happen if flush was performed, so the entity is still New but was saved
-//                    entityLog.registerCreate(entity, true);
+                    // it can happen if flush was performed, so the entity is still New but was saved
+                    persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.CREATE, null);
 
                     // todo fts
 //                    enqueueForFts(entity, FtsChangeType.INSERT);
                 } else {
 
-                    entityChangingEventManager.publishEvent(entity, EntityChangeType.UPDATE, changes);
-                    // todo entity log
-//                    entityLog.registerModify(entity, true, changes);
+                    persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.UPDATE, changes);
 
                     // todo fts
 //                    enqueueForFts(entity, FtsChangeType.UPDATE);

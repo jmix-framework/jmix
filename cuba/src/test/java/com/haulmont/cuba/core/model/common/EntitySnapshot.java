@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.annotations.MetaProperty;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.security.UserSessionSource;
+import io.jmix.data.entity.ReferenceToEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.PostConstruct;

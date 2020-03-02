@@ -16,8 +16,8 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
 import io.jmix.core.entity.BaseDbGeneratedIdEntity;
 import io.jmix.core.entity.BaseUuidEntity;
@@ -27,6 +27,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.entity.ReferenceToEntity;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;

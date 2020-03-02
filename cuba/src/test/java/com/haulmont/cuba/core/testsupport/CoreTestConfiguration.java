@@ -19,29 +19,48 @@ package com.haulmont.cuba.core.testsupport;
 import com.haulmont.cuba.JmixCubaConfiguration;
 import com.haulmont.cuba.core.model.common.UserEntityListener;
 import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.Stores;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.data.JmixDataConfiguration;
+import io.jmix.data.impl.JmixEntityManagerFactoryBean;
+import io.jmix.data.impl.JmixTransactionManager;
+import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.ui.JmixUiConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
 @Import({JmixCoreConfiguration.class, JmixCubaConfiguration.class, JmixDataConfiguration.class, JmixUiConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-app.properties")
 public class CoreTestConfiguration {
+
     @Bean
-    protected DataSource dataSource() {
+    DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
                 .build();
+    }
+
+    @Bean
+    @Primary
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            DataSource dataSource, PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
+    }
+
+    @Bean
+    @Primary
+    PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
     }
 
     @Bean(name = "test_UserEntityListener")

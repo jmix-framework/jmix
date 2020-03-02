@@ -16,23 +16,20 @@
 
 package test_support;
 
-import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.JmixDataConfiguration;
-import io.jmix.data.impl.JmixEclipseLinkJpaVendorAdapter;
+import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
-import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -46,12 +43,42 @@ import javax.sql.DataSource;
 @JmixModule(dependsOn = JmixDataConfiguration.class)
 public class JmixDataTestConfiguration {
 
-    @Autowired
-    protected Environment environment;
+    @Bean
+    @Primary
+    DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .generateUniqueName(true)
+                .setType(EmbeddedDatabaseType.HSQL)
+                .build();
+    }
 
     @Bean
     @Primary
-    protected DataSource dataSource() {
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            DataSource dataSource, PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
+    }
+
+    @Bean
+    @Primary
+    PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
+    }
+
+    @Bean
+    @Primary
+    JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    @Primary
+    TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
+        return new TransactionTemplate(transactionManager);
+    }
+
+    @Bean
+    DataSource db1DataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
@@ -59,48 +86,31 @@ public class JmixDataTestConfiguration {
     }
 
     @Bean
-    protected DataSource db1DataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.HSQL)
-                .build();
+    LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(
+            PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
+        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), processor, jpaVendorAdapter);
     }
 
     @Bean
-    protected LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(
-            Metadata metadata, DbmsSpecifics dbmsSpecifics, JmixEclipseLinkJpaVendorAdapter jpaVendorAdapter) {
-        LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setPersistenceXmlLocation("file:" +
-                new PersistenceConfigProcessor(environment, metadata, dbmsSpecifics).create("db1"));
-        factoryBean.setDataSource(db1DataSource());
-        factoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-        return factoryBean;
-    }
-
-    @Bean
-    protected JpaTransactionManager db1TransactionManager(
-            @Qualifier("db1DataSource") DataSource dataSource,
+    JpaTransactionManager db1TransactionManager(
             @Qualifier("db1EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager transactionManager = new JmixTransactionManager("db1");
-        transactionManager.setEntityManagerFactory(entityManagerFactory);
-        transactionManager.setDataSource(dataSource);
-        return transactionManager;
+        return new JmixTransactionManager("db1", entityManagerFactory);
     }
 
     @Bean
-    protected JdbcTemplate db1JdbcTemplate(
+    JdbcTemplate db1JdbcTemplate(
             @Qualifier("db1DataSource") DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }
 
     @Bean
-    protected TransactionTemplate db1TransactionTemplate(
+    TransactionTemplate db1TransactionTemplate(
             @Qualifier("db1TransactionManager") PlatformTransactionManager transactionManager) {
         return new TransactionTemplate(transactionManager);
     }
 
     @Bean(JpqlSortExpressionProvider.NAME)
-    protected JpqlSortExpressionProvider jpqlSortExpressionProvider() {
+    JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
     }
 }

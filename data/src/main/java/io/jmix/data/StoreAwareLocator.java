@@ -28,6 +28,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 @Component(StoreAwareLocator.NAME)
 public class StoreAwareLocator {
@@ -37,8 +38,12 @@ public class StoreAwareLocator {
     @Inject
     protected BeanLocator beanLocator;
 
+    public DataSource getDataSource(String storeName) {
+        return getBean(storeName, "dataSource", DataSource.class);
+    }
+
     public JdbcTemplate getJdbcTemplate(String storeName) {
-        return getBean(storeName, "jdbcTemplate", JdbcTemplate.class);
+        return new JdbcTemplate(getDataSource(storeName));
     }
 
     public PlatformTransactionManager getTransactionManager(String storeName) {
@@ -46,7 +51,7 @@ public class StoreAwareLocator {
     }
 
     public TransactionTemplate getTransactionTemplate(String storeName) {
-        return getBean(storeName, "transactionTemplate", TransactionTemplate.class);
+        return new TransactionTemplate(getTransactionManager(storeName));
     }
 
     public EntityManagerFactory getEntityManagerFactory(String storeName) {

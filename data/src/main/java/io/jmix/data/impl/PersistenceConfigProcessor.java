@@ -29,7 +29,9 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import java.util.stream.Collectors;
  * Generates a working persistence.xml file combining classes and properties from a set of given persistence.xml files,
  * defined in <code>cuba.persistenceConfig</code> app property.
  */
+@Component
 public class PersistenceConfigProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(PersistenceConfigProcessor.class);
@@ -49,6 +52,7 @@ public class PersistenceConfigProcessor {
     protected Environment environment;
     protected Metadata metadata;
 
+    @Inject
     public PersistenceConfigProcessor(Environment environment, Metadata metadata, DbmsSpecifics dbmsSpecifics) {
         this.environment = environment;
         this.metadata = metadata;

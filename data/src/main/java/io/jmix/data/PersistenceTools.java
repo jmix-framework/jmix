@@ -51,6 +51,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -68,7 +69,7 @@ public class PersistenceTools {
     protected EntityManager entityManager;
 
     @Inject
-    protected JdbcTemplate jdbc;
+    protected DataSource dataSource;
 
     @Inject
     protected Metadata metadata;
@@ -390,7 +391,7 @@ public class PersistenceTools {
     public void deleteRecord(String table, String primaryKeyCol, Object... ids) {
         for (Object id : ids) {
             String sql = "delete from " + table + " where " + primaryKeyCol + " = '" + id.toString() + "'";
-            jdbc.update(sql);
+            new JdbcTemplate(dataSource).update(sql);
         }
     }
 

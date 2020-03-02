@@ -39,6 +39,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.sql.DataSource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,9 +53,6 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     @Inject
     protected DbmsSpecifics dbmsSpecifics;
-
-    @Inject
-    protected JdbcTemplate jdbcTemplate;
 
     @Inject
     protected UserSessionSource userSessionSource;
@@ -77,6 +75,8 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     @PersistenceContext
     private EntityManager entityManager;
 
+    protected JdbcTemplate jdbcTemplate;
+
     protected TransactionTemplate transaction;
 
     protected static final int BATCH_SIZE = 100;
@@ -84,6 +84,11 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     protected static final int DELETE_BATCH_SIZE = 100;
 
     protected static final int INACTIVE_DELETION_MAX = 100000;
+
+    @Inject
+    protected void setDataSource(DataSource dataSource) {
+        jdbcTemplate = new JdbcTemplate(dataSource);
+    }
 
     @Inject
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {

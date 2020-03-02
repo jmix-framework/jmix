@@ -1,0 +1,33 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+group = 'io.jmix.starter.data'
+version = rootProject.jmixVersion
+sourceCompatibility = rootProject.sourceCompatibility
+
+dependencies {
+    api project(':modules:core')
+    api project(':modules:data')
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+publishing {
+    publications {
+        javaMaven(MavenPublication) {
+            groupId = 'io.jmix.starter.data'
+            artifactId = 'jmix-starter-data'
+
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}

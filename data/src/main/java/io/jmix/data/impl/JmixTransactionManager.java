@@ -16,7 +16,6 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.Stores;
 import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -27,14 +26,17 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.persistence.EntityManagerFactory;
+
 public class JmixTransactionManager extends JpaTransactionManager implements ApplicationContextAware {
 
     protected ApplicationContext applicationContext;
 
     protected String storeName;
 
-    public JmixTransactionManager(String storeName) {
+    public JmixTransactionManager(String storeName, EntityManagerFactory entityManagerFactory) {
         this.storeName = storeName;
+        setEntityManagerFactory(entityManagerFactory);
     }
 
     @Override

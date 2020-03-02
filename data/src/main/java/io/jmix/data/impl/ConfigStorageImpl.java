@@ -27,6 +27,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.inject.Inject;
@@ -55,10 +56,9 @@ public class ConfigStorageImpl implements ConfigStorage {
     private EntityManager entityManager;
 
     @Inject
-    private TransactionTemplate transaction;
-
-    @Inject
     private DataSource dataSource;
+
+    protected TransactionTemplate transaction;
 
     protected ClusterManager clusterManager;
 
@@ -72,6 +72,11 @@ public class ConfigStorageImpl implements ConfigStorage {
 
     private static class InvalidateCacheMsg implements Serializable {
         private static final long serialVersionUID = -3116358584797500962L;
+    }
+
+    @Inject
+    protected void setTransactionManager(PlatformTransactionManager transactionManager) {
+        transaction = new TransactionTemplate(transactionManager);
     }
 
     @Inject

@@ -44,11 +44,14 @@ public @interface JmixModule {
      * The list of configuration classes this module depends on. The classes must be annotated with {@link JmixModule}
      * themselves.
      */
-    Class[] dependsOn();
+    Class[] dependsOn() default AllModules.class;
 
     /**
      * The list of properties provided by this module. Actual values in the application are defined as a result of
      * overriding or appending according to the module dependencies tree.
      */
     JmixProperty[] properties() default {};
+
+    class AllModules {
+    }
 }

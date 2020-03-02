@@ -34,9 +34,11 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,14 +59,19 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
         List<JmixModuleDescriptor> components = new ArrayList<>();
         List<String> componentIds = new ArrayList<>();
 
+        List<JmixModuleDescriptor> leafComponents = new ArrayList<>();
+
         for (String beanName : registry.getBeanDefinitionNames()) {
             BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
-            if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
-                continue;
-            }
-            if (!((AnnotatedBeanDefinition) beanDefinition).getMetadata().hasAnnotation(JmixModule.class.getName())
+            if (!(beanDefinition instanceof AnnotatedBeanDefinition)
                     || ((AnnotatedBeanDefinition) beanDefinition).getFactoryMethodMetadata() != null) {
                 continue;
+            }
+            AnnotationMetadata annotationMetadata = ((AnnotatedBeanDefinition) beanDefinition).getMetadata();
+            if (!(annotationMetadata.hasAnnotation(JmixModule.class.getName())
+                    || annotationMetadata.hasAnnotation("org.springframework.boot.autoconfigure.SpringBootApplication")
+                    || annotationMetadata.hasAnnotation("org.springframework.boot.autoconfigure.EnableAutoConfiguration"))) {
+                    continue;
             }
             String beanClassName = beanDefinition.getBeanClassName();
 
@@ -79,9 +86,6 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
                 throw new RuntimeException(e);
             }
             JmixModule componentAnnotation = AnnotationUtils.findAnnotation(beanClass, JmixModule.class);
-            if (componentAnnotation == null) {
-                continue;
-            }
             String compId = getComponentId(componentAnnotation, beanClass);
             if (!componentIds.contains(compId)) {
                 componentIds.add(compId);
@@ -97,6 +101,18 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
                     });
             if (!components.contains(compDescriptor))
                 components.add(compDescriptor);
+
+            if (isDependingOnAll(componentAnnotation)) {
+                leafComponents.add(compDescriptor);
+            }
+        }
+
+        for (JmixModuleDescriptor leafComponent : leafComponents) {
+            for (JmixModuleDescriptor component : components) {
+                if (!leafComponents.contains(component)) {
+                    leafComponent.addDependency(component);
+                }
+            }
         }
 
         components.sort((c1, c2) -> {
@@ -120,38 +136,50 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
 
     }
 
-    private String getComponentId(JmixModule jmixModule, Class<?> aClass) {
-        String compId = jmixModule.id();
+    private boolean isDependingOnAll(@Nullable JmixModule componentAnnotation) {
+        return componentAnnotation == null
+                || (componentAnnotation.dependsOn().length == 1 && componentAnnotation.dependsOn()[0] == JmixModule.AllModules.class);
+    }
+
+    private String getComponentId(@Nullable JmixModule jmixModule, Class<?> aClass) {
+        String compId = "";
+        if (jmixModule != null) {
+            compId = jmixModule.id();
+        }
         if ("".equals(compId)) {
             compId = aClass.getPackage().getName();
         }
         return compId;
     }
 
-    private void load(JmixModuleDescriptor component, JmixModule componentAnnotation,
+    private void load(JmixModuleDescriptor component, @Nullable JmixModule componentAnnotation,
                       List<JmixModuleDescriptor> components) {
-        for (Class<?> depClass : componentAnnotation.dependsOn()) {
-            JmixModule depComponentAnnotation = AnnotationUtils.findAnnotation(depClass, JmixModule.class);
-            if (depComponentAnnotation == null) {
-                log.warn("Dependency class {} is not annotated with {}, ignoring it", depClass.getName(), JmixModule.class.getName());
-                continue;
-            }
-            String depCompId = getComponentId(depComponentAnnotation, depClass);
+        if (!isDependingOnAll(componentAnnotation)) {
+            for (Class<?> depClass : componentAnnotation.dependsOn()) {
+                JmixModule depComponentAnnotation = AnnotationUtils.findAnnotation(depClass, JmixModule.class);
+                if (depComponentAnnotation == null) {
+                    log.warn("Dependency class {} is not annotated with {}, ignoring it", depClass.getName(), JmixModule.class.getName());
+                    continue;
+                }
+                String depCompId = getComponentId(depComponentAnnotation, depClass);
 
-            JmixModuleDescriptor depComp = components.stream()
-                    .filter(descriptor -> descriptor.getId().equals(depCompId))
-                    .findAny()
-                    .orElseGet(() -> {
-                        JmixModuleDescriptor descriptor = new JmixModuleDescriptor(depCompId);
-                        load(descriptor, depComponentAnnotation, components);
-                        components.add(descriptor);
-                        return descriptor;
-                    });
-            component.addDependency(depComp);
+                JmixModuleDescriptor depComp = components.stream()
+                        .filter(descriptor -> descriptor.getId().equals(depCompId))
+                        .findAny()
+                        .orElseGet(() -> {
+                            JmixModuleDescriptor descriptor = new JmixModuleDescriptor(depCompId);
+                            load(descriptor, depComponentAnnotation, components);
+                            components.add(descriptor);
+                            return descriptor;
+                        });
+                component.addDependency(depComp);
+            }
         }
 
-        for (JmixProperty propertyAnn : componentAnnotation.properties()) {
-            component.setProperty(propertyAnn.name(), propertyAnn.value(), propertyAnn.append());
+        if (componentAnnotation != null) {
+            for (JmixProperty propertyAnn : componentAnnotation.properties()) {
+                component.setProperty(propertyAnn.name(), propertyAnn.value(), propertyAnn.append());
+            }
         }
     }
 

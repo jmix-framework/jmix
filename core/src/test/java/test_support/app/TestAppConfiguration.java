@@ -1,7 +1,6 @@
 package test_support.app;
 
 
-import test_support.addon1.TestAddon1Configuration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.annotation.JmixModule;
@@ -15,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@JmixModule(dependsOn = TestAddon1Configuration.class, properties = {
+@JmixModule(properties = {
         @JmixProperty(name = "jmix.viewsConfig", value = "test_support/app/views.xml", append = true),
         @JmixProperty(name = "prop1", value = "app_prop1", append = true),
         @JmixProperty(name = "prop2", value = "app_prop2"),

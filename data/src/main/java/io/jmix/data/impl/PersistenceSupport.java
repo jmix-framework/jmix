@@ -44,6 +44,7 @@ import org.eclipse.persistence.sessions.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
@@ -88,8 +89,8 @@ public class PersistenceSupport implements ApplicationContextAware {
     @Inject
     protected EntityChangedEventManager entityChangedEventManager;
 
-    @Inject
-    protected PersistenceLifecycleListenerManager persistenceLifecycleListenerManager;
+    @Autowired(required = false)
+    protected List<PersistenceLifecycleListener> lifecycleListeners = new ArrayList<>();
 
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 
@@ -317,6 +318,24 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
+    protected void fireFlush(String storeName) {
+        if (lifecycleListeners == null) {
+            return;
+        }
+        for (PersistenceLifecycleListener listener : lifecycleListeners) {
+            listener.onFlush(storeName);
+        }
+    }
+
+    protected void fireEntityChange(Entity entity, EntityChangeType type, EntityAttributeChanges changes) {
+        if (lifecycleListeners == null) {
+            return;
+        }
+        for (PersistenceLifecycleListener listener : lifecycleListeners) {
+            listener.onEntityChange(entity, type, changes);
+        }
+    }
+
     public interface EntityVisitor {
         boolean visit(BaseGenericIdEntity entity);
     }
@@ -418,7 +437,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 
             if (!readOnly) {
                 traverseEntities(container, new OnSaveEntityVisitor(container.getStoreName()), false);
-                persistenceLifecycleListenerManager.fireFlush(container.getStoreName());
+                fireFlush(container.getStoreName());
             }
 
             Collection<Entity> instances = container.getAllInstances();
@@ -554,7 +573,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                     && !getSavedInstances(storeName).contains(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, storeName);
 
-                persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.CREATE, null);
+                fireEntityChange(entity, EntityChangeType.CREATE, null);
 
                 // todo fts
 //                enqueueForFts(entity, FtsChangeType.INSERT);
@@ -571,7 +590,7 @@ public class PersistenceSupport implements ApplicationContextAware {
             if (isDeleted(entity, changeListener)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
 
-                persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.DELETE, null);
+                fireEntityChange(entity, EntityChangeType.DELETE, null);
 
                 if ((entity instanceof SoftDelete))
                     processDeletePolicy(entity);
@@ -596,13 +615,12 @@ public class PersistenceSupport implements ApplicationContextAware {
                 if (BaseEntityInternalAccess.isNew(entity)) {
 
                     // it can happen if flush was performed, so the entity is still New but was saved
-                    persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.CREATE, null);
+                    fireEntityChange(entity, EntityChangeType.CREATE, null);
 
                     // todo fts
 //                    enqueueForFts(entity, FtsChangeType.INSERT);
                 } else {
-
-                    persistenceLifecycleListenerManager.fireEntityChange(entity, EntityChangeType.UPDATE, changes);
+                    fireEntityChange(entity, EntityChangeType.UPDATE, changes);
 
                     // todo fts
 //                    enqueueForFts(entity, FtsChangeType.UPDATE);

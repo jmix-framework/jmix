@@ -32,7 +32,6 @@ import io.jmix.data.EntityChangeType;
 import io.jmix.data.PersistenceTools;
 import io.jmix.data.impl.EntityAttributeChanges;
 import io.jmix.data.impl.PersistenceLifecycleListener;
-import io.jmix.data.impl.PersistenceLifecycleListenerManager;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
@@ -59,7 +58,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component(EntityLogAPI.NAME)
-public class EntityLog implements EntityLogAPI {
+public class EntityLog implements EntityLogAPI, PersistenceLifecycleListener {
 
     private static final Logger log = LoggerFactory.getLogger(EntityLog.class);
 
@@ -94,34 +93,6 @@ public class EntityLog implements EntityLogAPI {
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
-    @Inject
-    protected void createPersistenceLifecycleListener(PersistenceLifecycleListenerManager manager) {
-        manager.addListener(new PersistenceLifecycleListener() {
-            @Override
-            public void onEntityChange(Entity entity, EntityChangeType type, EntityAttributeChanges changes) {
-                if (entity instanceof EntityLogItem) {
-                    return;
-                }
-                switch (type) {
-                    case CREATE:
-                        registerCreate(entity, true);
-                        break;
-                    case UPDATE:
-                        registerModify(entity, true, changes);
-                        break;
-                    case DELETE:
-                        registerDelete(entity, true);
-                        break;
-                }
-            }
-
-            @Override
-            public void onFlush(String storeName) {
-                flush(storeName);
-            }
-        });
-    }
-
 //    TODO: DynamicAttributes
 //    @Inject
 //    protected DynamicAttributes dynamicAttributes;
@@ -153,6 +124,29 @@ public class EntityLog implements EntityLogAPI {
     @Override
     public boolean isLoggingForCurrentThread() {
         return !Boolean.FALSE.equals(entityLogSwitchedOn.get());
+    }
+
+    @Override
+    public void onEntityChange(Entity entity, EntityChangeType type, EntityAttributeChanges changes) {
+        if (entity instanceof EntityLogItem) {
+            return;
+        }
+        switch (type) {
+            case CREATE:
+                registerCreate(entity, true);
+                break;
+            case UPDATE:
+                registerModify(entity, true, changes);
+                break;
+            case DELETE:
+                registerDelete(entity, true);
+                break;
+        }
+    }
+
+    @Override
+    public void onFlush(String storeName) {
+        flush(storeName);
     }
 
     @Override

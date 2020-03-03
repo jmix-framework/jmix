@@ -17,15 +17,22 @@
 package test_support;
 
 import io.jmix.audit.JmixAuditConfiguration;
+import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.data.impl.JmixEntityManagerFactoryBean;
+import io.jmix.data.impl.JmixTransactionManager;
+import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
@@ -33,17 +40,42 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = JmixAuditConfiguration.class)
 public class JmixAuditTestConfiguration {
-
     @Bean
-    protected DataSource dataSource() {
+    @Primary
+    DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
                 .build();
     }
 
+    @Bean
+    @Primary
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            DataSource dataSource, PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
+    }
+
+    @Bean
+    @Primary
+    PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
+    }
+
+    @Bean
+    @Primary
+    JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    @Primary
+    TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
+        return new TransactionTemplate(transactionManager);
+    }
+
     @Bean(JpqlSortExpressionProvider.NAME)
-    protected JpqlSortExpressionProvider jpqlSortExpressionProvider() {
+    JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
     }
 }

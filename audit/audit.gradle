@@ -55,7 +55,7 @@ publishing {
     publications {
         javaMaven(MavenPublication) {
             groupId = 'io.jmix.audit'
-            artifactId = jar.archiveBaseName
+            artifactId = 'jmix-audit'
 
             from components.java
             artifact sourcesJar

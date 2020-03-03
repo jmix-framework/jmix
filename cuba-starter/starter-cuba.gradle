@@ -12,7 +12,7 @@ dependencies {
     api project(':modules:ui')
     api project(':modules:cuba')
 
-    api project(':starters:starter-ui-minimal')
+    api project(':starters:starter-standard')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

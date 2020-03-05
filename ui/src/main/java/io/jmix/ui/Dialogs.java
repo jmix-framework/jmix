@@ -17,9 +17,17 @@
 package io.jmix.ui;
 
 import io.jmix.ui.actions.Action;
+import io.jmix.ui.app.inputdialog.DialogActions;
+import io.jmix.ui.app.inputdialog.InputDialog;
+import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.components.ContentMode;
 import io.jmix.ui.components.SizeUnit;
+import io.jmix.ui.components.ValidationErrors;
+import io.jmix.ui.components.inputdialog.InputDialogAction;
 import io.jmix.ui.screen.FrameOwner;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Utility dialogs API.
@@ -507,6 +515,196 @@ public interface Dialogs {
      * Builder for dialogs with inputs.
      */
     interface InputDialogBuilder {
-        // todo input dialogs
+
+        /**
+         * Adds input parameter to the dialog. InputParameter describes field which will be used in the input dialog.
+         * <p>
+         * Example:
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withParameter(
+         *                 entityParameter("userField", User.class)
+         *                         .withCaption("User field")
+         *                         .withRequired(true)
+         *         )
+         *         .show();
+         * } </pre>
+         *
+         * @param parameter input parameter that will be added to the dialog
+         * @return builder
+         * @see InputParameter#entityParameter(String, Class)
+         */
+        InputDialogBuilder withParameter(InputParameter parameter);
+
+        /**
+         * Sets input parameters. InputParameter describes field which will be used in the input dialog.
+         * <p>
+         * Example:
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *          .withParameters(
+         *                  stringParameter("nameField")
+         *                          .withCaption("Name field caption")
+         *                          .withDefaultValue("default value"),
+         *                  intParameter("countField")
+         *                          .withCaption("Count field caption")
+         *                          .withRequired(true))
+         *          .show();
+         *  } </pre>
+         *
+         * @param parameters input parameters
+         * @return builder
+         * @see InputParameter#stringParameter(String)
+         * @see InputParameter#intParameter(String)
+         */
+        InputDialogBuilder withParameters(InputParameter... parameters);
+
+        /**
+         * Add close listener to the dialog. See close actions for {@link DialogActions} in {@link InputDialog}.
+         *
+         * @param listener close listener to add
+         * @return builder
+         */
+        InputDialogBuilder withCloseListener(Consumer<InputDialog.InputDialogCloseEvent> listener);
+
+        /**
+         * Sets dialog actions. {@link InputDialogAction} provides access to input dialog in {@link InputDialogAction.InputDialogActionPerformed}
+         * where it is possible to get values form the fields and implement logic to close dialog.
+         * <p>
+         * Note, if there is no actions are set input dialog will use {@link DialogActions#OK_CANCEL} by default.
+         * </p>
+         * Example:
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withCaption("Dialog caption")
+         *         .withParameter(parameter("nameField").withCaption("Name"))
+         *         .withActions(
+         *                 action("okAction")
+         *                         .withCaption("OK")
+         *                         .withIcon(CubaIcon.DIALOG_OK)
+         *                         .withHandler(event -> {
+         *                             InputDialog inputDialog = event.getInputDialog();
+         *                             String name = inputDialog.getValue("nameField");
+         *                             // do logic
+         *                             inputDialog.close(InputDialog.INPUT_DIALOG_OK_ACTION);
+         *                         }),
+         *                 action("cancelAction")
+         *                         .withCaption("Cancel")
+         *                         .withIcon(CubaIcon.DIALOG_CANCEL)
+         *                         .withValidationRequired(false)
+         *                         .withHandler(event -> {
+         *                             InputDialog inputDialog = event.getInputDialog();
+         *                             inputDialog.close(InputDialog.INPUT_DIALOG_CANCEL_ACTION);
+         *                         }))
+         *         .show();
+         * }
+         * </pre>
+         *
+         * @param actions actions
+         * @return builder
+         * @see InputDialogAction#action(String)
+         */
+        InputDialogBuilder withActions(InputDialogAction... actions);
+
+        /**
+         * Sets predefined dialog actions. "OK" and "YES" actions always check fields validation before close the dialog.
+         * By default if there is no actions are set input dialog will use {@link DialogActions#OK_CANCEL}.
+         *
+         * @param actions actions
+         * @return builder
+         */
+        InputDialogBuilder withActions(DialogActions actions);
+
+        /**
+         * Sets dialog actions and result handler. "OK" and "YES" actions always check fields validation before close
+         * the dialog. Handler is invoked after close event and can be used instead of
+         * {@link #withCloseListener(Consumer)}.
+         * Example
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withCaption("Dialog caption")
+         *         .withParameter(parameter("nameField").withCaption("Name"))
+         *         .withActions(DialogActions.OK_CANCEL, result -> {
+         *             switch (result.getCloseActionType()) {
+         *                 case OK:
+         *                     String name = result.getValue("nameField");
+         *                     // do logic
+         *                     break;
+         *                 case CANCEL:
+         *                     // do logic
+         *                     break;
+         *             }
+         *         })
+         *         .show();
+         * } </pre>
+         *
+         * @param actions       dialog actions
+         * @param resultHandler result handler
+         * @return builder
+         */
+        InputDialogBuilder withActions(DialogActions actions, Consumer<InputDialog.InputDialogResult> resultHandler);
+
+        /**
+         * Sets additional handler for field validation. It receives input dialog context and must return {@link ValidationErrors}
+         * instance. Returned validation errors will be shown with another errors from fields.
+         * Example
+         * <pre>{@code
+         *  dialogs.createInputDialog(this)
+         *         .withParameters(
+         *                 stringParameter("phoneField").withCaption("Phone"),
+         *                 stringParameter("addressField").withCaption("Address"))
+         *         .withValidator(context -> {
+         *             String phone = context.getValue("phoneField");
+         *             String address = context.getValue("addressField");
+         *             if (Strings.isNullOrEmpty(phone) && Strings.isNullOrEmpty(address)) {
+         *                 return ValidationErrors.of("Phone or Address should be filled");
+         *             }
+         *             return ValidationErrors.none();
+         *         })
+         *         .show();
+         *  }</pre>
+         *
+         * @param validator validator
+         * @return builder
+         */
+        InputDialogBuilder withValidator(Function<InputDialog.ValidationContext, ValidationErrors> validator);
+
+        /**
+         * Sets dialog screen caption.
+         *
+         * @param caption dialog screen caption
+         * @return builder
+         */
+        InputDialogBuilder withCaption(String caption);
+
+        /**
+         * Sets dialog width.
+         *
+         * @param width dialog width
+         * @return builder
+         */
+        InputDialogBuilder withWidth(String width);
+
+        /**
+         * Sets dialog height.
+         *
+         * @param height dialog height
+         * @return builder
+         */
+        InputDialogBuilder withHeight(String height);
+
+        /**
+         * Shows the dialog.
+         *
+         * @return opened input dialog
+         */
+        InputDialog show();
+
+        /**
+         * Builds the input dialog.
+         *
+         * @return input dialog
+         */
+        InputDialog build();
     }
 }

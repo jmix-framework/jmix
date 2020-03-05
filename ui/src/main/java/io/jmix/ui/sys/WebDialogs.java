@@ -24,28 +24,44 @@ import com.vaadin.ui.VerticalLayout;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.ClientConfig;
+import io.jmix.ui.Dialogs;
+import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.DialogAction;
+import io.jmix.ui.app.inputdialog.DialogActions;
+import io.jmix.ui.app.inputdialog.InputDialog;
+import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.components.ContentMode;
 import io.jmix.ui.components.KeyCombination;
 import io.jmix.ui.components.SizeUnit;
+import io.jmix.ui.components.ValidationErrors;
+import io.jmix.ui.components.inputdialog.InputDialogAction;
 import io.jmix.ui.executors.BackgroundWorker;
-import io.jmix.ui.Dialogs;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.*;
+import io.jmix.ui.widgets.ExceptionDialog;
+import io.jmix.ui.widgets.JmixButton;
+import io.jmix.ui.widgets.JmixLabel;
+import io.jmix.ui.widgets.JmixWindow;
+import io.jmix.ui.widgets.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.util.Collection;
 import java.util.EnumSet;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static io.jmix.ui.components.impl.WebComponentsHelper.setClickShortcut;
-import static io.jmix.ui.components.impl.WebWrapperUtils.*;
+import static io.jmix.ui.components.impl.WebWrapperUtils.toContentMode;
+import static io.jmix.ui.components.impl.WebWrapperUtils.toSizeUnit;
+import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinContentMode;
 
 public class WebDialogs implements Dialogs {
 
@@ -61,9 +77,15 @@ public class WebDialogs implements Dialogs {
     protected Icons icons;
     @Inject
     protected ClientConfig clientConfig;
+    protected ScreenBuilders screenBuilders;
 
     public WebDialogs(AppUI ui) {
         this.ui = ui;
+    }
+
+    @Inject
+    public void setScreenBuilders(ScreenBuilders screenBuilders) {
+        this.screenBuilders = screenBuilders;
     }
 
     @Override
@@ -101,8 +123,7 @@ public class WebDialogs implements Dialogs {
 
     @Override
     public InputDialogBuilder createInputDialog(FrameOwner owner) {
-        // todo input dialogs
-        throw new UnsupportedOperationException();
+        return new InputDialogBuilderImpl(owner);
     }
 
     public JmixButton createButton(Action action) {
@@ -689,6 +710,129 @@ public class WebDialogs implements Dialogs {
             }
             ui.addWindow(dialog);
             dialog.focus();
+        }
+    }
+
+    public class InputDialogBuilderImpl implements InputDialogBuilder {
+
+        protected InputDialog inputDialog;
+
+        public InputDialogBuilderImpl(FrameOwner owner) {
+            inputDialog = screenBuilders.screen(owner)
+                    .withScreenClass(InputDialog.class)
+                    .withOpenMode(OpenMode.DIALOG)
+                    .build();
+        }
+
+        @Override
+        public InputDialogBuilder withParameter(InputParameter parameter) {
+            inputDialog.setParameter(parameter);
+            return this;
+        }
+
+        @Override
+        public InputDialogBuilder withParameters(InputParameter... parameters) {
+            inputDialog.setParameters(parameters);
+            return this;
+        }
+
+        public Collection<InputParameter> getParameters() {
+            return inputDialog.getParameters();
+        }
+
+        @Override
+        public InputDialogBuilder withCloseListener(Consumer<InputDialog.InputDialogCloseEvent> listener) {
+            inputDialog.setCloseListener(listener);
+            return this;
+        }
+
+        public Consumer<InputDialog.InputDialogCloseEvent> getCloseListener() {
+            return inputDialog.getCloseListener();
+        }
+
+        @Override
+        public InputDialogBuilder withActions(InputDialogAction... actions) {
+            inputDialog.setActions(actions);
+            return this;
+        }
+
+        public Collection<Action> getActions() {
+            return inputDialog.getActions();
+        }
+
+        @Override
+        public InputDialogBuilder withActions(DialogActions actions) {
+            inputDialog.setDialogActions(actions);
+            return this;
+        }
+
+        @Override
+        public InputDialogBuilder withActions(DialogActions actions, Consumer<InputDialog.InputDialogResult> resultHandler) {
+            inputDialog.setDialogActions(actions);
+            inputDialog.setResultHandler(resultHandler);
+            return this;
+        }
+
+        public DialogActions getDialogActions() {
+            return inputDialog.getDialogActions();
+        }
+
+        @Nullable
+        public Consumer<InputDialog.InputDialogResult> getResultHandler() {
+            return inputDialog.getResultHandler();
+        }
+
+        @Override
+        public InputDialogBuilder withValidator(Function<InputDialog.ValidationContext, ValidationErrors> validator) {
+            inputDialog.setValidator(validator);
+            return this;
+        }
+
+        public Function<InputDialog.ValidationContext, ValidationErrors> getValidator() {
+            return inputDialog.getValidator();
+        }
+
+        @Override
+        public InputDialogBuilder withCaption(String caption) {
+            inputDialog.getDialogWindow().setCaption(caption);
+            return this;
+        }
+
+        @Override
+        public InputDialogBuilder withWidth(String width) {
+            inputDialog.getDialogWindow().setDialogWidth(width);
+            return this;
+        }
+
+        public float getWidth() {
+            return inputDialog.getDialogWindow().getDialogWidth();
+        }
+
+        @Override
+        public InputDialogBuilder withHeight(String height) {
+            inputDialog.getDialogWindow().setDialogHeight(height);
+            return this;
+        }
+
+        public float getHeight() {
+            return inputDialog.getDialogWindow().getDialogHeight();
+        }
+
+        @Nullable
+        public String getCaption() {
+            return inputDialog.getDialogWindow().getCaption();
+        }
+
+        @Override
+        public InputDialog show() {
+            InputDialog dialog = build();
+            dialog.show();
+            return dialog;
+        }
+
+        @Override
+        public InputDialog build() {
+            return inputDialog;
         }
     }
 }

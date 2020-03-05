@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+group = 'io.jmix.starter.ui'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+dependencies {
+    api project(':modules:core')
+    api project(':modules:ui')
+
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+
+publishing {
+    publications {
+        javaMaven(MavenPublication) {
+            groupId = 'io.jmix.starter.ui'
+            artifactId = 'jmix-starter-ui'
+
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}

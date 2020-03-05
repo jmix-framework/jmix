@@ -17,11 +17,45 @@
 package io.jmix.autoconfigure.ui;
 
 import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.JmixModules;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.ui.JmixUiConfiguration;
+import io.jmix.ui.sys.ActionsConfiguration;
+import io.jmix.ui.sys.UiControllersConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import java.util.Collections;
 
 @Configuration
 @Import({JmixCoreConfiguration.class, JmixUiConfiguration.class})
 public class JmixUiAutoConfiguration {
+
+    @Bean("jmix_AppUiControllers")
+    @ConditionalOnMissingBean(name = "jmix_AppUiControllers")
+    public UiControllersConfiguration uiControllersConfiguration(
+            ApplicationContext applicationContext,
+            AnnotationScanMetadataReaderFactory metadataReaderFactory,
+            JmixModules jmixModules) {
+
+        UiControllersConfiguration uiControllers
+                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
+        uiControllers.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
+        return uiControllers;
+    }
+
+    @Bean("jmix_AppUiActions")
+    @ConditionalOnMissingBean(name = "jmix_AppUiActions")
+    public ActionsConfiguration actionsConfiguration(
+            ApplicationContext applicationContext,
+            AnnotationScanMetadataReaderFactory metadataReaderFactory,
+            JmixModules jmixModules) {
+
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
+        return actionsConfiguration;
+    }
 }

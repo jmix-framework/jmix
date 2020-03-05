@@ -17,6 +17,9 @@
 
 <default-permission-values xmlns="http://schemas.haulmont.com/jmix/default-permission-values.xsd">
 
+    <!-- Screens -->
+    <permission target="inputDialog" value="1" type="10"/>
+
     <!-- Entities -->
     <permission target="sys_KeyValueEntity:read" value="1" type="20"/>
 

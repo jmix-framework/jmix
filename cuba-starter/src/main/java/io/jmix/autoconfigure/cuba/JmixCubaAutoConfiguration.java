@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure;
+package io.jmix.autoconfigure.cuba;
 
 import com.haulmont.cuba.JmixCubaConfiguration;
 import io.jmix.core.JmixCoreConfiguration;

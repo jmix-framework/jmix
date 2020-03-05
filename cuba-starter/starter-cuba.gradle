@@ -6,13 +6,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 dependencies {
-    api project(':modules:core')
-    api project(':modules:data')
-    api project(':modules:security')
-    api project(':modules:ui')
-    api project(':modules:cuba')
-
     api project(':starters:starter-standard')
+    api project(':modules:cuba')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }

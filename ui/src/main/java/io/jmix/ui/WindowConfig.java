@@ -71,8 +71,8 @@ public class WindowConfig {
     protected static final List<String> LOGIN_SCREEN_IDS = ImmutableList.of("login", "loginWindow");
     protected static final List<String> MAIN_SCREEN_IDS = ImmutableList.of("main", "mainWindow");
 
-    protected static final String LOGIN_SCREEN_PROP = "cuba.web.loginScreenId";
-    protected static final String MAIN_SCREEN_PROP = "cuba.web.mainScreenId";
+    protected static final String LOGIN_SCREEN_PROP = "jmix.ui.loginScreenId";
+    protected static final String MAIN_SCREEN_PROP = "jmix.ui.mainScreenId";
 
     private final Logger log = LoggerFactory.getLogger(WindowConfig.class);
 

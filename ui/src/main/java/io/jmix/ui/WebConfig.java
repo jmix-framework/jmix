@@ -499,7 +499,7 @@ public interface WebConfig extends Config {
      *
      * @return login screen id
      */
-    @Property("cuba.web.loginScreenId")
+    @Property(WindowConfig.LOGIN_SCREEN_PROP)
     @DefaultString("login")
     String getLoginScreenId();
 
@@ -511,7 +511,7 @@ public interface WebConfig extends Config {
      *
      * @return main screen id
      */
-    @Property("cuba.web.mainScreenId")
+    @Property(WindowConfig.MAIN_SCREEN_PROP)
     @DefaultString("main")
     String getMainScreenId();
 

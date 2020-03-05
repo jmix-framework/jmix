@@ -34,27 +34,34 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
     }
 
     /**
-     * @return app component Id
+     * @return module Id
      */
     public String getId() {
         return id;
     }
 
     /**
+     * @return base package of the module. It is normally equal to {@link #getId()}
+     */
+    public String getBasePackage() {
+        return id;
+    }
+
+    /**
      * INTERNAL.
-     * Add a dependency to the component.
+     * Add a dependency to the module.
      */
     public void addDependency(JmixModuleDescriptor other) {
         if (dependencies.contains(other))
             return;
         if (other.dependsOn(this))
-            throw new RuntimeException("Circular dependency between app components '" + this + "' and '" + other + "'");
+            throw new RuntimeException("Circular dependency between modules '" + this + "' and '" + other + "'");
 
         dependencies.add(other);
     }
 
     /**
-     * Check if this component depends on the given component.
+     * Check if this module depends on the given module.
      */
     public boolean dependsOn(JmixModuleDescriptor other) {
         for (JmixModuleDescriptor dependency : dependencies) {
@@ -66,7 +73,7 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
 
     /**
      * INTERNAL.
-     * Set a file-based app property defined in this app component.
+     * Set a file-based app property defined in this module.
      */
     public void setProperty(String name, String value, boolean additive) {
         if (properties == null)
@@ -85,7 +92,7 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
     }
 
     /**
-     * @return a file-based app property defined in this app component or null if not found
+     * @return a file-based app property defined in this module or null if not found
      */
     @Nullable
     public String getProperty(String property) {
@@ -97,7 +104,7 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
     }
 
     /**
-     * @return names of properties exported by this app component, sorted in natural order
+     * @return names of properties exported by this module, sorted in natural order
      */
     public List<String> getPropertyNames() {
         if (properties == null)

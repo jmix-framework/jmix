@@ -37,7 +37,7 @@ public class JmixMessageSource extends ReloadableResourceBundleMessageSource {
         setResourceLoader(resourceLoader);
         setFallbackToSystemLocale(false);
 
-        ListIterator<JmixModuleDescriptor> iterator = modules.getComponents().listIterator(modules.getComponents().size());
+        ListIterator<JmixModuleDescriptor> iterator = modules.getAll().listIterator(modules.getAll().size());
         while (iterator.hasPrevious()) {
             JmixModuleDescriptor module = iterator.previous();
             addBasenames(addModuleBasename(module.getId()));

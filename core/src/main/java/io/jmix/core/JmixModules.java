@@ -18,7 +18,6 @@ package io.jmix.core;
 
 import com.google.common.base.Splitter;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -34,58 +33,64 @@ public class JmixModules {
 
     public static final Pattern SEPARATOR_PATTERN = Pattern.compile("\\s");
 
-    private final List<JmixModuleDescriptor> components;
+    private final List<JmixModuleDescriptor> moduleDescriptors;
 
-    private final Environment environment;
-
-    public JmixModules(Environment environment, List<JmixModuleDescriptor> components) {
-        this.environment = environment;
-        this.components = components;
+    public JmixModules(List<JmixModuleDescriptor> moduleDescriptors) {
+        this.moduleDescriptors = moduleDescriptors;
     }
 
     /**
-     * @return the list of components
+     * @return the list of module descriptors sorted according to dependencies
      */
-    public List<JmixModuleDescriptor> getComponents() {
-        return Collections.unmodifiableList(components);
+    public List<JmixModuleDescriptor> getAll() {
+        return Collections.unmodifiableList(moduleDescriptors);
     }
 
     /**
-     * Get a component by Id.
-     * @return component or null if not found
+     * @return module descriptor by its id or null if not found
      */
     @Nullable
-    public JmixModuleDescriptor get(String componentId) {
-        for (JmixModuleDescriptor component : components) {
-            if (component.getId().equals(componentId))
-                return component;
+    public JmixModuleDescriptor get(String moduleId) {
+        for (JmixModuleDescriptor module : moduleDescriptors) {
+            if (module.getId().equals(moduleId))
+                return module;
         }
         return null;
+    }
+
+    /**
+     * @return the last module descriptor which normally corresponds to the application
+     */
+    public JmixModuleDescriptor getLast() {
+        if (moduleDescriptors.isEmpty()) {
+            throw new IllegalStateException("No Jmix modules found");
+        }
+        return moduleDescriptors.get(moduleDescriptors.size() - 1);
     }
 
     @Nullable
     public String getProperty(String name) {
         List<String> values = new ArrayList<>();
 
-        List<JmixModuleDescriptor> components = getComponents();
-        ListIterator<JmixModuleDescriptor> iterator = components.listIterator(components.size());
+        List<JmixModuleDescriptor> descriptors = getAll();
+        ListIterator<JmixModuleDescriptor> iterator = descriptors.listIterator(descriptors.size());
 
         int index;
         while (iterator.hasPrevious()) {
-            JmixModuleDescriptor component = iterator.previous();
+            JmixModuleDescriptor module = iterator.previous();
 
-            String compValue = component.getProperty(name);
-            if (StringUtils.isNotEmpty(compValue)) {
-                if (component.isAdditiveProperty(name)) {
+            String moduleValue = module.getProperty(name);
+            if (StringUtils.isNotEmpty(moduleValue)) {
+                if (module.isAdditiveProperty(name)) {
                     index = 0;
-                    for (String valuePart : split(compValue)) {
+                    for (String valuePart : split(moduleValue)) {
                         if (!values.contains(valuePart)) {
                             values.add(index, valuePart);
                             index++;
                         }
                     }
                 } else {
-                    values.add(0, compValue);
+                    values.add(0, moduleValue);
                     // we found overwrite, stop iteration
                     break;
                 }
@@ -95,7 +100,7 @@ public class JmixModules {
         return values.isEmpty() ? null : String.join(" ", values);
     }
 
-    private Iterable<String> split(String compValue) {
-        return Splitter.on(SEPARATOR_PATTERN).omitEmptyStrings().split(compValue);
+    private Iterable<String> split(String moduleValue) {
+        return Splitter.on(SEPARATOR_PATTERN).omitEmptyStrings().split(moduleValue);
     }
 }

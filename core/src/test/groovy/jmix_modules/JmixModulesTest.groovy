@@ -34,7 +34,7 @@ import spock.lang.Specification
 class JmixModulesTest extends Specification {
 
     @Autowired
-    private JmixModules components
+    private JmixModules modules
 
     @Autowired
     private TestBean testBean
@@ -45,13 +45,13 @@ class JmixModulesTest extends Specification {
     def "test dependencies"() {
         expect:
 
-        components != null
-        components.components.size() == 3
-        components.components[0].id == 'io.jmix.core'
+        modules != null
+        modules.all.size() == 3
+        modules.all[0].id == 'io.jmix.core'
 
-        def jmixCore = components.get('io.jmix.core')
-        def addon1 = components.get('test_support.addon1')
-        def app = components.get('test_support.app')
+        def jmixCore = modules.get('io.jmix.core')
+        def addon1 = modules.get('test_support.addon1')
+        def app = modules.get('test_support.app')
 
         addon1.dependsOn(jmixCore)
         app.dependsOn(addon1)
@@ -61,9 +61,9 @@ class JmixModulesTest extends Specification {
     def "configuration properties of components"() {
         expect:
 
-        def jmixCore = components.get('io.jmix.core')
-        def addon1 = components.get('test_support.addon1')
-        def app = components.get('test_support.app')
+        def jmixCore = modules.get('io.jmix.core')
+        def addon1 = modules.get('test_support.addon1')
+        def app = modules.get('test_support.app')
 
         jmixCore.getProperty('jmix.viewsConfig') == 'io/jmix/core/views.xml'
         addon1.getProperty('jmix.viewsConfig') == 'test_support/addon1/views.xml'
@@ -74,10 +74,10 @@ class JmixModulesTest extends Specification {
     def "resulting configuration properties"() {
         expect:
 
-        components.getProperty('jmix.viewsConfig') == 'io/jmix/core/views.xml test_support/addon1/views.xml test_support/app/views.xml'
-        components.getProperty('prop1') == 'addon1_prop1 app_prop1'
-        components.getProperty('prop2') == 'app_prop2'
-        components.getProperty('prop3') == 'app_prop3'
+        modules.getProperty('jmix.viewsConfig') == 'io/jmix/core/views.xml test_support/addon1/views.xml test_support/app/views.xml'
+        modules.getProperty('prop1') == 'addon1_prop1 app_prop1'
+        modules.getProperty('prop2') == 'app_prop2'
+        modules.getProperty('prop3') == 'app_prop3'
     }
 
     def "using configuration properties"() {

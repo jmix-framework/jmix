@@ -58,7 +58,7 @@ public class EntitiesScanner extends AbstractClasspathScanner {
 
     @Inject
     public void setJmixComponents(JmixModules jmixModules) {
-        basePackages = jmixModules.getComponents().stream()
+        basePackages = jmixModules.getAll().stream()
                 .map(JmixModuleDescriptor::getId)
                 .collect(Collectors.toList());
     }

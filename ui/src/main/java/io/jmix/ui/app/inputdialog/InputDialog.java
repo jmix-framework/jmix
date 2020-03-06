@@ -336,6 +336,8 @@ public class InputDialog extends Screen {
             fieldIds.add(field.getId());
             form.add(field);
         }
+
+        form.focusFirstComponent();
     }
 
     @SuppressWarnings("unchecked")

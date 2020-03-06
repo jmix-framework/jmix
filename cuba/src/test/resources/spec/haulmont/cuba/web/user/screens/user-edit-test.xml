@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+        focusComponent="form">
+    <data>
+        <instance id="userDc"
+                  class="com.haulmont.cuba.core.model.common.User"
+                  view="_local">
+            <loader/>
+        </instance>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="scrollBox" spacing="true">
+        <scrollBox id="scrollBox" spacing="true">
+            <form id="form" dataContainer="userDc">
+                <column width="250px">
+                    <textField id="loginField" property="login"/>
+                    <textField id="nameField" property="name"/>
+                    <textField id="firstNameField" property="firstName"/>
+                    <textField id="lastNameField" property="lastName"/>
+                    <textField id="middleNameField" property="middleName"/>
+                    <textField id="positionField" property="position"/>
+                    <textField id="emailField" property="email"/>
+                    <textField id="languageField" property="language"/>
+                    <textField id="timeZoneField" property="timeZone"/>
+                    <checkBox id="timeZoneAutoField" property="timeZoneAuto"/>
+                    <checkBox id="activeField" property="active"/>
+                    <checkBox id="changePasswordAtNextLogonField" property="changePasswordAtNextLogon"/>
+                    <textField id="ipMaskField" property="ipMask"/>
+                </column>
+            </form>
+        </scrollBox>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

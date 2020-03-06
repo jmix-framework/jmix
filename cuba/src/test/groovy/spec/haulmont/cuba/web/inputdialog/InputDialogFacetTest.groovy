@@ -16,6 +16,7 @@
 
 package spec.haulmont.cuba.web.inputdialog
 
+import com.haulmont.cuba.web.app.main.MainScreen
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.inputdialog.screens.InputDialogScreen
@@ -24,14 +25,14 @@ import java.util.stream.Collectors
 
 class InputDialogFacetTest extends UiScreenSpec {
 
-    /*void setup() { todo port
-        exportScreensPackages(['spec.haulmont.cuba.web.inputdialog.screens', 'com.haulmont.cuba.gui.app.core.inputdialog'])
+    void setup() {
+        exportScreensPackages(['spec.haulmont.cuba.web.inputdialog.screens', 'io.jmix.ui.app.inputdialog'])
     }
 
     def 'InputDialog parameters are initialized'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         def inputDialogScreen = screens.create(InputDialogScreen)
@@ -59,7 +60,7 @@ class InputDialogFacetTest extends UiScreenSpec {
     def 'InputDialog parameter default values are propagated'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         def inputDialogScreen = screens.create(InputDialogScreen)
@@ -81,7 +82,7 @@ class InputDialogFacetTest extends UiScreenSpec {
     def 'InputDialog custom actions are propagated'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         def inputDialogScreen = screens.create(InputDialogScreen)
@@ -98,5 +99,5 @@ class InputDialogFacetTest extends UiScreenSpec {
 
         actions.find { action -> action.id == 'ok' } != null
         actions.find { action -> action.id == 'cancel' } != null
-    }*/
+    }
 }

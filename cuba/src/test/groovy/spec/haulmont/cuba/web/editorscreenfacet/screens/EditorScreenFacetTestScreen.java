@@ -17,28 +17,27 @@
 package spec.haulmont.cuba.web.editorscreenfacet.screens;
 
 
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.Metadata;
-import io.jmix.security.entity.User;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.Button;
+import io.jmix.ui.components.EditorScreenFacet;
 import io.jmix.ui.components.PickerField;
 import io.jmix.ui.components.Table;
 import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.screen.LoadDataBeforeShow;
+import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
+import spec.haulmont.cuba.web.user.screens.UserEditTest;
 
 import javax.inject.Inject;
 
-@SuppressWarnings({"unused", "InvalidInstalledDelegate"})
-@LoadDataBeforeShow
+@SuppressWarnings({"unused"})
 @UiController("cuba_EditorScreenFacetTestScreen")
 @UiDescriptor("editor-screen-facet-test-screen.xml")
 public class EditorScreenFacetTestScreen extends Screen {
 
-    /*
-    todo port
     @Inject
     public Metadata metadata;
 
@@ -56,13 +55,13 @@ public class EditorScreenFacetTestScreen extends Screen {
     public Button button;
 
     @Inject
-    public EditorScreenFacet<User, UserEditor> editorScreenFacet;
+    public EditorScreenFacet<User, UserEditTest> editorScreenFacet;
     @Inject
-    public EditorScreenFacet<User, UserEditor> tableScreenFacet;
+    public EditorScreenFacet<User, UserEditTest> tableScreenFacet;
     @Inject
-    public EditorScreenFacet<User, UserEditor> fieldScreenFacet;
+    public EditorScreenFacet<User, UserEditTest> fieldScreenFacet;
     @Inject
-    public EditorScreenFacet<User, UserEditor> editorEntityProvider;
+    public EditorScreenFacet<User, UserEditTest> editorEntityProvider;
 
     @Install(to = "editorScreenFacet", subject = "entityProvider")
     public User provideEntity() {
@@ -83,5 +82,5 @@ public class EditorScreenFacetTestScreen extends Screen {
     @Install(to = "editorScreenFacet", subject = "initializer")
     public void initEntity(User user) {
         user.setEmail("test@email.com");
-    }*/
+    }
 }

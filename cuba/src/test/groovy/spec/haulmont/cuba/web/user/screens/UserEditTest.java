@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package spec.haulmont.cuba.web.messagedialog.screens;
+package spec.haulmont.cuba.web.user.screens;
 
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Button;
-import io.jmix.ui.components.MessageDialogFacet;
-import io.jmix.ui.screen.Screen;
+import com.haulmont.cuba.core.model.common.User;
+import io.jmix.ui.screen.EditedEntityContainer;
+import io.jmix.ui.screen.StandardEditor;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
-
-@UiController
-@UiDescriptor("message-dialog-screen.xml")
-public class MessageDialogScreen extends Screen {
-
-    @Inject
-    public Action dialogAction;
-    @Inject
-    public Button dialogButton;
-    @Inject
-    public MessageDialogFacet messageDialog;
+@UiController("test$User.edit")
+@UiDescriptor("user-edit-test.xml")
+@EditedEntityContainer("userDc")
+public class UserEditTest extends StandardEditor<User> {
 }

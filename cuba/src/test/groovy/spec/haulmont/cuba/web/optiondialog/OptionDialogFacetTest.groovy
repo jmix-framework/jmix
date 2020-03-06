@@ -16,19 +16,27 @@
 
 package spec.haulmont.cuba.web.optiondialog
 
+import com.haulmont.cuba.web.app.main.MainScreen
+import io.jmix.ui.Dialogs
+import io.jmix.ui.GuiDevelopmentException
+import io.jmix.ui.components.ContentMode
+import io.jmix.ui.components.impl.WebButton
+import io.jmix.ui.components.impl.WebOptionDialogFacet
+import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
+import spec.haulmont.cuba.web.optiondialog.screens.OptionDialogScreen
 
 @SuppressWarnings('GroovyAccessibility')
 class OptionDialogFacetTest extends UiScreenSpec {
 
-    /*void setup() { todo port
+    void setup() {
         exportScreensPackages(['spec.haulmont.cuba.web.optiondialog.screens'])
     }
 
     def 'OptionDialog attributes are correctly loaded'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         when: 'OptionDialog is configured in XML'
@@ -62,7 +70,7 @@ class OptionDialogFacetTest extends UiScreenSpec {
     def 'Declarative OptionDialog subscription on Action'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         def screen = screens.create(OptionDialogScreen)
@@ -80,7 +88,7 @@ class OptionDialogFacetTest extends UiScreenSpec {
     def 'Declarative OptionDialog subscription on Button'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         def screen = screens.create(OptionDialogScreen)
@@ -117,7 +125,7 @@ class OptionDialogFacetTest extends UiScreenSpec {
     def 'OptionDialog should have single subscription'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(OptionDialogScreen)
@@ -139,7 +147,7 @@ class OptionDialogFacetTest extends UiScreenSpec {
     def 'OptionDialog target should not be missing'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(OptionDialogScreen)
@@ -165,5 +173,5 @@ class OptionDialogFacetTest extends UiScreenSpec {
         then: 'Exception is thrown'
 
         thrown GuiDevelopmentException
-    }*/
+    }
 }

@@ -17,12 +17,12 @@
 <window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd">
     <data>
         <collection id="userDc"
-                    class="com.haulmont.cuba.security.entity.User"
-                    view="user.browse">
+                    class="com.haulmont.cuba.core.model.common.User"
+                    view="_local">
             <loader>
                 <query>
                     <![CDATA[
-                        select u from sec$User u
+                        select u from test$User u
                     ]]>
                 </query>
             </loader>
@@ -33,7 +33,7 @@
     </actions>
     <facets>
         <lookupScreen id="lookupScreen"
-                      entityClass="com.haulmont.cuba.security.entity.User"
+                      entityClass="com.haulmont.cuba.core.model.common.User"
                       openMode="DIALOG"
                       onAction="action"
                       field="pickerField"
@@ -49,7 +49,7 @@
     </facets>
     <layout>
         <pickerField id="pickerField"
-                     metaClass="sec$User"/>
+                     metaClass="test$User"/>
         <button id="button"/>
         <table id="usersTable"
                dataContainer="userDc">

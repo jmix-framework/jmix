@@ -16,20 +16,23 @@
 
 package spec.haulmont.cuba.web.lookupscreenfacet
 
-
+import com.haulmont.cuba.core.model.common.User
+import com.haulmont.cuba.web.app.main.MainScreen
+import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
+import spec.haulmont.cuba.web.lookupscreenfacet.screens.LookupScreenFacetTestScreen
 
 @SuppressWarnings('GroovyAccessibility')
 class LookupScreenFacetTest extends UiScreenSpec {
 
-    /*void setup() { todo port
-        exportScreensPackages(['spec.haulmont.cuba.web.lookupscreenfacet.screens'])
+    void setup() {
+        exportScreensPackages(['spec.haulmont.cuba.web.lookupscreenfacet.screens', 'spec.haulmont.cuba.web.user.screens'])
     }
 
     def 'LookupScreenFacet is loaded from XML'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(LookupScreenFacetTestScreen)
@@ -63,7 +66,7 @@ class LookupScreenFacetTest extends UiScreenSpec {
     def 'LookupScreenFacet opens lookup by entity class'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(LookupScreenFacetTestScreen)
@@ -83,7 +86,7 @@ class LookupScreenFacetTest extends UiScreenSpec {
     def 'LookupScreenFacet opens lookup by list component'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(LookupScreenFacetTestScreen)
@@ -103,7 +106,7 @@ class LookupScreenFacetTest extends UiScreenSpec {
     def 'LookupScreenFacet opens lookup by PickerField'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(LookupScreenFacetTestScreen)
@@ -123,7 +126,7 @@ class LookupScreenFacetTest extends UiScreenSpec {
     def 'Delegates are correctly installed into LookupScreenFacet'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(LookupScreenFacetTestScreen)
@@ -139,5 +142,5 @@ class LookupScreenFacetTest extends UiScreenSpec {
         lookupScreenFacet.selectHandler
         lookupScreenFacet.selectValidator
         lookupScreenFacet.transformation
-    }*/
+    }
 }

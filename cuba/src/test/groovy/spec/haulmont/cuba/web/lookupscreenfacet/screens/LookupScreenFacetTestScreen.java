@@ -16,26 +16,21 @@
 
 package spec.haulmont.cuba.web.lookupscreenfacet.screens;
 
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.Metadata;
-import io.jmix.security.entity.User;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.Button;
+import io.jmix.ui.components.LookupScreenFacet;
 import io.jmix.ui.components.PickerField;
 import io.jmix.ui.components.Table;
 import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.screen.Install;
-import io.jmix.ui.screen.LoadDataBeforeShow;
-import io.jmix.ui.screen.LookupScreen;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
+import spec.haulmont.cuba.web.user.screens.UserBrowseTest;
 
 import javax.inject.Inject;
 import java.util.Collection;
 
-@SuppressWarnings({"unused", "InvalidInstalledDelegate"})
-@LoadDataBeforeShow
+@SuppressWarnings({"unused"})
 @UiController("cuba_LookupScreenFacetTestScreen")
 @UiDescriptor("lookup-screen-facet-test-screen.xml")
 public class LookupScreenFacetTestScreen extends Screen {
@@ -56,12 +51,12 @@ public class LookupScreenFacetTestScreen extends Screen {
     @Inject
     public Action action;
 
-    /*@Inject
-    public LookupScreenFacet<User, UserBrowser> lookupScreen;
     @Inject
-    public LookupScreenFacet<User, UserBrowser> tableLookupScreen;
+    public LookupScreenFacet<User, UserBrowseTest> lookupScreen;
     @Inject
-    public LookupScreenFacet<User, UserBrowser> fieldLookupScreen;*/
+    public LookupScreenFacet<User, UserBrowseTest> tableLookupScreen;
+    @Inject
+    public LookupScreenFacet<User, UserBrowseTest> fieldLookupScreen;
 
     @Subscribe
     public void onInit(InitEvent event) {

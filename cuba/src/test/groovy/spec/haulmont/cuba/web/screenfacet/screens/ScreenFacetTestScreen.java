@@ -16,8 +16,11 @@
 
 package spec.haulmont.cuba.web.screenfacet.screens;
 
+import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.Button;
+import io.jmix.ui.components.ScreenFacet;
 import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
@@ -27,7 +30,7 @@ import javax.inject.Inject;
 @UiDescriptor("screen-facet-test-screen.xml")
 public class ScreenFacetTestScreen extends Screen {
 
-    /*@Inject todo port
+    @Inject
     public Button button;
     @Inject
     public Action action;
@@ -48,5 +51,5 @@ public class ScreenFacetTestScreen extends Screen {
     @Subscribe("screenIdFacet")
     public void onScreenAfterClose(ScreenFacet.AfterCloseEvent event) {
         afterCloseListenerTriggered = true;
-    }*/
+    }
 }

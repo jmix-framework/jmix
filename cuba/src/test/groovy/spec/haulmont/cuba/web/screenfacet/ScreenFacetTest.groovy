@@ -16,19 +16,27 @@
 
 package spec.haulmont.cuba.web.screenfacet
 
+import com.haulmont.cuba.web.app.main.MainScreen
+import io.jmix.ui.GuiDevelopmentException
+import io.jmix.ui.components.impl.WebButton
+import io.jmix.ui.components.impl.WebScreenFacet
+import io.jmix.ui.screen.FrameOwner
+import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
+import spec.haulmont.cuba.web.screenfacet.screens.ScreenFacetTestScreen
+import spec.haulmont.cuba.web.screenfacet.screens.ScreenToOpenWithFacet
 
 @SuppressWarnings('GroovyAccessibility')
 class ScreenFacetTest extends UiScreenSpec {
 
-    /*void setup() { todo port
+    void setup() {
         exportScreensPackages(['spec.haulmont.cuba.web.screenfacet.screens'])
     }
 
     def 'ScreenFacet is loaded from XML'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
@@ -61,7 +69,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet opens screen by screen id'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
@@ -81,7 +89,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet opens screen by screen class'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
@@ -101,7 +109,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet opens screen and injects props'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
@@ -128,7 +136,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet can be triggered via Action'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screen = screens.create(ScreenFacetTestScreen)
@@ -148,7 +156,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet can be triggered via Button'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screen = screens.create(ScreenFacetTestScreen)
@@ -168,7 +176,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet fires AfterShowEvent and AfterCloseEvent'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
@@ -216,7 +224,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet should have only one subscription'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
@@ -239,7 +247,7 @@ class ScreenFacetTest extends UiScreenSpec {
     def 'ScreenFacet target should not be missing'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
@@ -266,5 +274,5 @@ class ScreenFacetTest extends UiScreenSpec {
         then: 'Exception is thrown'
 
         thrown GuiDevelopmentException
-    }*/
+    }
 }

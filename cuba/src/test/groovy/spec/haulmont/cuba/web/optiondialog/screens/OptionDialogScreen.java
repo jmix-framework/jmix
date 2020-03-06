@@ -16,16 +16,22 @@
 
 package spec.haulmont.cuba.web.optiondialog.screens;
 
+import io.jmix.ui.actions.Action;
+import io.jmix.ui.components.Button;
+import io.jmix.ui.components.OptionDialogFacet;
+import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-@SuppressWarnings({"unused", "InvalidInstalledDelegate"})
+import javax.inject.Inject;
+
+@SuppressWarnings({"unused"})
 @UiController
 @UiDescriptor("option-dialog-screen.xml")
 public class OptionDialogScreen extends Screen {
 
-    /*@Inject todo port
+    @Inject
     public Action dialogAction;
     @Inject
     public Button dialogButton;
@@ -34,5 +40,5 @@ public class OptionDialogScreen extends Screen {
 
     @Install(subject = "actionHandler", to = "optionDialog.ok")
     protected void onOkActionPerform() {
-    }*/
+    }
 }

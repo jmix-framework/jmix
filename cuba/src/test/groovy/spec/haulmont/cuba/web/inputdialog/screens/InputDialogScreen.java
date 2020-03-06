@@ -17,7 +17,10 @@
 package spec.haulmont.cuba.web.inputdialog.screens;
 
 import io.jmix.ui.actions.Action;
+import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.components.Button;
+import io.jmix.ui.components.InputDialogFacet;
+import io.jmix.ui.components.ValidationErrors;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
@@ -25,13 +28,11 @@ import io.jmix.ui.screen.UiDescriptor;
 
 import javax.inject.Inject;
 
-@SuppressWarnings({"unused", "InvalidInstalledDelegate"})
+@SuppressWarnings({"unused"})
 @UiController
 @UiDescriptor("input-dialog-screen.xml")
 public class InputDialogScreen extends Screen {
 
-    /*
-    todo port
     @Inject
     public Button dialogButton;
     @Inject
@@ -52,5 +53,5 @@ public class InputDialogScreen extends Screen {
     @Install(to = "inputDialog", subject = "validator")
     public ValidationErrors validateDialogResults(InputDialog.ValidationContext context) {
         return new ValidationErrors();
-    }*/
+    }
 }

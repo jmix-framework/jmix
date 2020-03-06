@@ -17,16 +17,23 @@
 package spec.haulmont.cuba.web.notification.screens;
 
 
+import io.jmix.ui.actions.Action;
+import io.jmix.ui.components.Button;
+import io.jmix.ui.components.NotificationFacet;
+import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-@SuppressWarnings({"unused", "InvalidInstalledDelegate"})
+import javax.inject.Inject;
+
+@SuppressWarnings({"unused"})
 @UiController
 @UiDescriptor("screen-with-notification.xml")
 public class ScreenWithNotification extends Screen {
 
-    /*@Inject todo port
+    @Inject
     public NotificationFacet testNotification;
     @Inject
     public Action notificationAction;
@@ -53,5 +60,5 @@ public class ScreenWithNotification extends Screen {
     @Subscribe("testNotification")
     public void onNotificationClosed(NotificationFacet.CloseEvent e) {
         closeEvtFired = true;
-    }*/
+    }
 }

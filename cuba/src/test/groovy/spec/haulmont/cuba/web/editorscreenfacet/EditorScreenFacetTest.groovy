@@ -16,26 +16,23 @@
 
 package spec.haulmont.cuba.web.editorscreenfacet
 
-
+import com.haulmont.cuba.core.model.common.User
+import com.haulmont.cuba.web.app.main.MainScreen
+import io.jmix.ui.builders.EditMode
+import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
+import spec.haulmont.cuba.web.editorscreenfacet.screens.EditorScreenFacetTestScreen
 
 class EditorScreenFacetTest extends UiScreenSpec {
 
-    /*void setup() { todo port
-        exportScreensPackages(['spec.haulmont.cuba.web.editorscreenfacet.screens'])
-
-        *//*TestServiceProxy.mock(SecurityScopesService, Mock(SecurityScopesService) {
-            isOnlyDefaultScope() >> {
-                return true
-            }
-        })*//*
-
+    void setup() {
+        exportScreensPackages(['spec.haulmont.cuba.web.editorscreenfacet.screens', 'spec.haulmont.cuba.web.user.screens'])
     }
 
     def 'EditorScreenFacet is loaded from XML'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(EditorScreenFacetTestScreen)
@@ -61,7 +58,7 @@ class EditorScreenFacetTest extends UiScreenSpec {
     def 'EditorScreenFacet opens editor by entity class'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(EditorScreenFacetTestScreen)
@@ -81,7 +78,7 @@ class EditorScreenFacetTest extends UiScreenSpec {
     def 'EditorScreenFacet opens editor by list component'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(EditorScreenFacetTestScreen)
@@ -101,7 +98,7 @@ class EditorScreenFacetTest extends UiScreenSpec {
     def 'EditorScreenFacet opens editor by PickerField'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(EditorScreenFacetTestScreen)
@@ -121,7 +118,7 @@ class EditorScreenFacetTest extends UiScreenSpec {
     def 'EditorScreenFacet opens editor by entity provider'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(EditorScreenFacetTestScreen)
@@ -142,7 +139,7 @@ class EditorScreenFacetTest extends UiScreenSpec {
     def 'Delegates are correctly installed into EditorScreenFacet'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         mainWindow.show()
 
         def screenWithFacet = screens.create(EditorScreenFacetTestScreen)
@@ -157,5 +154,5 @@ class EditorScreenFacetTest extends UiScreenSpec {
 
         editorScreenFacet.entityProvider
         editorScreenFacet.initializer
-    }*/
+    }
 }

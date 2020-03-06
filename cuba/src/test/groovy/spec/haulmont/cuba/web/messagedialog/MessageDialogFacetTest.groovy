@@ -16,19 +16,27 @@
 
 package spec.haulmont.cuba.web.messagedialog
 
+import com.haulmont.cuba.web.app.main.MainScreen
+import io.jmix.ui.Dialogs
+import io.jmix.ui.GuiDevelopmentException
+import io.jmix.ui.components.ContentMode
+import io.jmix.ui.components.impl.WebButton
+import io.jmix.ui.components.impl.WebMessageDialogFacet
+import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
+import spec.haulmont.cuba.web.messagedialog.screens.MessageDialogScreen
 
 @SuppressWarnings('GroovyAccessibility')
 class MessageDialogFacetTest extends UiScreenSpec {
 
-    /*void setup() { todo port
+    void setup() {
         exportScreensPackages(['spec.haulmont.cuba.web.messagedialog.screens'])
     }
 
     def 'MessageDialog attributes are correctly loaded'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         when: 'MessageDialog is configured in XML'
@@ -64,7 +72,7 @@ class MessageDialogFacetTest extends UiScreenSpec {
     def 'Declarative MessageDialog subscription on Action'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         def screen = screens.create(MessageDialogScreen)
@@ -82,7 +90,7 @@ class MessageDialogFacetTest extends UiScreenSpec {
     def 'Declarative MessageDialog subscription on Button'() {
         def screens = vaadinUi.screens
 
-        def mainScreen = screens.create('mainWindow', OpenMode.ROOT)
+        def mainScreen = screens.create(MainScreen, OpenMode.ROOT)
         mainScreen.show()
 
         def screen = screens.create(MessageDialogScreen)
@@ -119,7 +127,7 @@ class MessageDialogFacetTest extends UiScreenSpec {
     def 'MessageDialog should have single subscription'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(MessageDialogScreen)
@@ -141,7 +149,7 @@ class MessageDialogFacetTest extends UiScreenSpec {
     def 'MessageDialog target should not be missing'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(MessageDialogScreen)
@@ -167,5 +175,5 @@ class MessageDialogFacetTest extends UiScreenSpec {
         then: 'Exception is thrown'
 
         thrown GuiDevelopmentException
-    }*/
+    }
 }

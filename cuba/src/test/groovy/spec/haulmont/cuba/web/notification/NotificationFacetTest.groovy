@@ -16,20 +16,29 @@
 
 package spec.haulmont.cuba.web.notification
 
-
+import com.vaadin.server.Extension
+import com.vaadin.ui.Notification
+import io.jmix.ui.GuiDevelopmentException
+import io.jmix.ui.Notifications
+import io.jmix.ui.app.main.MainScreen
+import io.jmix.ui.components.ContentMode
+import io.jmix.ui.components.impl.WebButton
+import io.jmix.ui.components.impl.WebNotificationFacet
+import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
+import spec.haulmont.cuba.web.notification.screens.ScreenWithNotification
 
 @SuppressWarnings('GroovyAccessibility')
 class NotificationFacetTest extends UiScreenSpec {
 
-    /*void setup() { todo port
+    void setup() {
         exportScreensPackages(['spec.haulmont.cuba.web.notification.screens'])
     }
 
     def 'Notification attributes are applied'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(ScreenWithNotification)
@@ -54,7 +63,7 @@ class NotificationFacetTest extends UiScreenSpec {
     def 'Notification Install and Subscribe handlers'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(ScreenWithNotification)
@@ -86,7 +95,7 @@ class NotificationFacetTest extends UiScreenSpec {
     def 'Declarative Notification Action subscription'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(ScreenWithNotification)
@@ -106,7 +115,7 @@ class NotificationFacetTest extends UiScreenSpec {
     def 'Declarative Notification Button subscription'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(ScreenWithNotification)
@@ -148,7 +157,7 @@ class NotificationFacetTest extends UiScreenSpec {
     def 'Notification should have single subscription'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(ScreenWithNotification)
@@ -171,7 +180,7 @@ class NotificationFacetTest extends UiScreenSpec {
     def 'Notification target should not be missing'() {
         def screens = vaadinUi.screens
 
-        def mainWindow = screens.create('mainWindow', OpenMode.ROOT)
+        def mainWindow = screens.create(MainScreen, OpenMode.ROOT)
         screens.show(mainWindow)
 
         def screen = screens.create(ScreenWithNotification)
@@ -210,5 +219,5 @@ class NotificationFacetTest extends UiScreenSpec {
         for (Notification ntf : notifications) {
             ntf.close()
         }
-    }*/
+    }
 }

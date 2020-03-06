@@ -41,7 +41,6 @@ class WebComponentsHelperTest extends UiScreenSpec {
 
         when: 'Finding screen action'
 
-
         def screenAction = WebComponentsHelper.findAction(frame, 'screenAction')
 
         then: 'Action found'
@@ -63,7 +62,5 @@ class WebComponentsHelperTest extends UiScreenSpec {
         then: 'Action found'
 
         lpfAction
-
-
     }
 }

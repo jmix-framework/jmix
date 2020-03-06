@@ -20,6 +20,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.commons.util.ParamsMap;
+import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.datatypes.impl.*;
@@ -353,6 +354,10 @@ public class InputDialog extends Screen {
         }
 
         if (datatype == null) {
+            Field field = createFieldByClass(parameter.getDatatypeJavaClass());
+            if (field != null) {
+                return field;
+            }
             datatype = datatypeRegistry.getNN(String.class);
         }
 
@@ -420,6 +425,22 @@ public class InputDialog extends Screen {
         lookupField.setOptionsEnum(parameter.getEnumClass());
         lookupField.setWidthFull();
         return lookupField;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    protected Field createFieldByClass(@Nullable Class datatypeJavaClass) {
+        if (datatypeJavaClass == null) {
+            return null;
+        }
+
+        if (datatypeJavaClass.isAssignableFrom(FileDescriptor.class)) {
+            FileUploadField fileUploadField = uiComponents.create(FileUploadField.NAME);
+            fileUploadField.setShowFileName(true);
+            fileUploadField.setShowClearButton(true);
+            return fileUploadField;
+        }
+        return null;
     }
 
     protected void initActions(List<Action> actions) {

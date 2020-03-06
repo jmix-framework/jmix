@@ -18,6 +18,7 @@ package io.jmix.ui.app.inputdialog;
 
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.Entity;
+import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import io.jmix.ui.components.Field;
@@ -336,6 +337,16 @@ public class InputParameter {
      */
     public static InputParameter booleanParameter(String id) {
         return new InputParameter(id).withDatatypeJavaClass(Boolean.class);
+    }
+
+    /**
+     * Creates parameter with FileDescriptor type.
+     *
+     * @param id field id
+     * @return input parameter
+     */
+    public static InputParameter fileParameter(String id) {
+        return new InputParameter(id).withDatatypeJavaClass(FileDescriptor.class);
     }
 
     /**

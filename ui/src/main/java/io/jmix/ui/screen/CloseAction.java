@@ -17,7 +17,11 @@
 package io.jmix.ui.screen;
 
 /**
- * Result of {@link Screen} close. Can provide additional data for screen consumers.
+ * Marker interface for objects that describe how a {@link Screen} was closed.
+ * <p>
+ * Such objects can also define some payload to be used by code opened the screen and expecting some results from it.
+ *
+ * @see StandardCloseAction
  */
 public interface CloseAction {
 }

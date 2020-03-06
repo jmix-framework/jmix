@@ -17,6 +17,8 @@
 package io.jmix.ui.sys;
 
 import io.jmix.ui.components.Component;
+import io.jmix.ui.components.ScreenFacet;
+import io.jmix.ui.components.Window;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
@@ -36,6 +38,7 @@ import java.util.List;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
+@SuppressWarnings("unused")
 @org.springframework.stereotype.Component(UiControllerPropertyInjector.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiControllerPropertyInjector {
@@ -45,15 +48,39 @@ public class UiControllerPropertyInjector {
     public static final String NAME = "jmix_UiControllerPropertyInjector";
 
     protected final FrameOwner frameOwner;
+    protected final Screen sourceScreen;
     protected final List<UiControllerProperty> properties;
 
     protected UiControllerReflectionInspector reflectionInspector;
 
+    /**
+     * Creates UiControllerPropertyInjector to inject properties into fragments
+     *
+     * @param frameOwner target screen
+     * @param properties properties to inject
+     */
     public UiControllerPropertyInjector(FrameOwner frameOwner, List<UiControllerProperty> properties) {
         checkNotNullArgument(frameOwner, "Frame owner cannot be null");
         checkNotNullArgument(properties, "Properties cannot be null");
 
         this.frameOwner = frameOwner;
+        this.sourceScreen = null;
+        this.properties = properties;
+    }
+
+    /**
+     * Creates UiControllerPropertyInjector to inject properties into {@link ScreenFacet}.
+     *
+     * @param frameOwner   target screen
+     * @param sourceScreen source screen that is used to load ref properties
+     * @param properties   properties to inject
+     */
+    public UiControllerPropertyInjector(FrameOwner frameOwner, Screen sourceScreen, List<UiControllerProperty> properties) {
+        checkNotNullArgument(frameOwner, "Frame owner cannot be null");
+        checkNotNullArgument(properties, "Properties cannot be null");
+
+        this.frameOwner = frameOwner;
+        this.sourceScreen = sourceScreen;
         this.properties = properties;
     }
 
@@ -187,15 +214,22 @@ public class UiControllerPropertyInjector {
     @Nullable
     protected Component findComponent(String componentId) {
         Component component = null;
+        Window window = null;
 
-        if (frameOwner instanceof ScreenFragment) {
+        if (sourceScreen != null) {
+            window = sourceScreen.getWindow();
+        } else if (frameOwner instanceof ScreenFragment) {
             FrameOwner host = ((ScreenFragment) frameOwner).getHostController();
 
             if (host instanceof Screen) {
-                component = ((Screen) host).getWindow().getComponent(componentId);
+                window = ((Screen) host).getWindow();
             }
         } else if (frameOwner instanceof Screen) {
-            component = ((Screen) frameOwner).getWindow().getComponent(componentId);
+            window = ((Screen) frameOwner).getWindow();
+        }
+
+        if (window != null) {
+            component = window.getComponent(componentId);
         }
 
         return component;
@@ -207,6 +241,10 @@ public class UiControllerPropertyInjector {
                 ? ((ScreenFragment) frameOwner).getHostController()
                 : frameOwner;
 
+        if (sourceScreen != null) {
+            return UiControllerUtils.getScreenData(sourceScreen)
+                    .getContainer(containerId);
+        }
         return UiControllerUtils.getScreenData(host)
                 .getContainer(containerId);
     }

@@ -17,6 +17,7 @@
 
 package io.jmix.data.impl.dbms;
 
+import io.jmix.core.UuidProvider;
 import io.jmix.data.persistence.DbTypeConverter;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +25,8 @@ import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Component("oracleDbTypeConverter")
-public class OracleDbTypeConverter implements DbTypeConverter {
+@Component("postgresDbTypeConverter")
+public class PostgresDbTypeConverter implements DbTypeConverter {
 
     @Override
     public Object getJavaObject(ResultSet resultSet, int columnIndex) {
@@ -37,7 +38,25 @@ public class OracleDbTypeConverter implements DbTypeConverter {
             if ((columnIndex > metaData.getColumnCount()) || (columnIndex <= 0))
                 throw new IndexOutOfBoundsException("Column index out of bound");
 
-            value = resultSet.getObject(columnIndex);
+            int sqlType = metaData.getColumnType(columnIndex);
+            String typeName = metaData.getColumnTypeName(columnIndex);
+
+            switch (sqlType) {
+                case Types.OTHER:
+                    if (resultSet.getObject(columnIndex) instanceof UUID) {
+                        value = resultSet.getObject(columnIndex);
+                    } else if ("uuid".equals(typeName)) {
+                        String stringValue = resultSet.getString(columnIndex);
+                        value = stringValue != null ? UuidProvider.fromString(stringValue) : null;
+                    } else {
+                        value = resultSet.getObject(columnIndex);
+                    }
+                    break;
+
+                default:
+                    value = resultSet.getObject(columnIndex);
+                    break;
+            }
 
             return value;
         } catch (SQLException e) {
@@ -47,29 +66,21 @@ public class OracleDbTypeConverter implements DbTypeConverter {
 
     @Override
     public Object getSqlObject(Object value) {
-        if (value instanceof Date)
-            return new Timestamp(((Date) value).getTime());
-        if (value instanceof Boolean)
-            return ((Boolean) value) ? "1" : "0";
-        if (value instanceof UUID)
-            return value.toString().replace("-", "");
-        return value;
+        try {
+            if (value instanceof Date)
+                return new Timestamp(((Date) value).getTime());
+            if (value instanceof UUID)
+                return new PostgresUUID((UUID) value);
+            return value;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error converting application value", e);
+        }
     }
 
     @Override
     public int getSqlType(Class<?> javaClass) {
         if (javaClass == Date.class)
             return Types.TIMESTAMP;
-        else if (javaClass == UUID.class)
-            return Types.VARCHAR;
-        else if (javaClass == Boolean.class)
-            return Types.CHAR;
-        else if (javaClass == String.class)
-            return Types.VARCHAR;
-        else if (javaClass == Integer.class)
-            return Types.INTEGER;
-        else if (javaClass == Long.class)
-            return Types.BIGINT;
         return Types.OTHER;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright (c) 2008-2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package io.jmix.data.impl.dbms;
@@ -23,24 +24,24 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("hsqlDbmsFeatures")
-public class HsqlDbmsFeatures implements DbmsFeatures {
+@Component("postgresDbmsFeatures")
+public class PostgresDbmsFeatures implements DbmsFeatures {
 
     @Override
     public Map<String, String> getJpaParameters() {
         HashMap<String, String> params = new HashMap<>();
-        params.put("eclipselink.target-database", "io.jmix.data.impl.dbms.JmixHSQLPlatform");
+        params.put("eclipselink.target-database", "io.jmix.data.impl.dbms.JmixPostgreSQLPlatform");
         return params;
     }
 
     @Override
     public String getIdColumn() {
-        return "ID";
+        return "id";
     }
 
     @Override
     public String getDeleteTsColumn() {
-        return "DELETE_TS";
+        return "delete_ts";
     }
 
     @Override
@@ -51,7 +52,7 @@ public class HsqlDbmsFeatures implements DbmsFeatures {
     @Nullable
     @Override
     public String getUuidTypeClassName() {
-        return null;
+        return "com.haulmont.cuba.core.sys.persistence.PostgresUUID";
     }
 
     @Nullable
@@ -62,12 +63,12 @@ public class HsqlDbmsFeatures implements DbmsFeatures {
 
     @Override
     public String getUniqueConstraintViolationPattern() {
-        return "integrity constraint violation: unique constraint or index violation[:;]? ([^\\s]+)";
+        return "ERROR: duplicate key value violates unique constraint \"(.+)\"";
     }
 
     @Override
     public boolean isNullsLastSorting() {
-        return false;
+        return true;
     }
 
     @Override

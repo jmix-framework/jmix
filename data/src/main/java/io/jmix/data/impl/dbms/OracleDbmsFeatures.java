@@ -20,12 +20,13 @@ package io.jmix.data.impl.dbms;
 import io.jmix.data.persistence.DbmsFeatures;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("UnusedDeclaration")
+@Component("oracleDbmsFeatures")
 public class OracleDbmsFeatures implements DbmsFeatures {
 
     private static final Logger log = LoggerFactory.getLogger(OracleDbmsFeatures.class);

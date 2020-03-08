@@ -24,8 +24,8 @@ import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Component("oracleDbTypeConverter")
-public class OracleDbTypeConverter implements DbTypeConverter {
+@Component("mysqlDbTypeConverter")
+public class MysqlDbTypeConverter implements DbTypeConverter {
 
     @Override
     public Object getJavaObject(ResultSet resultSet, int columnIndex) {
@@ -49,8 +49,6 @@ public class OracleDbTypeConverter implements DbTypeConverter {
     public Object getSqlObject(Object value) {
         if (value instanceof Date)
             return new Timestamp(((Date) value).getTime());
-        if (value instanceof Boolean)
-            return ((Boolean) value) ? "1" : "0";
         if (value instanceof UUID)
             return value.toString().replace("-", "");
         return value;
@@ -63,7 +61,7 @@ public class OracleDbTypeConverter implements DbTypeConverter {
         else if (javaClass == UUID.class)
             return Types.VARCHAR;
         else if (javaClass == Boolean.class)
-            return Types.CHAR;
+            return Types.BIT;
         else if (javaClass == String.class)
             return Types.VARCHAR;
         else if (javaClass == Integer.class)

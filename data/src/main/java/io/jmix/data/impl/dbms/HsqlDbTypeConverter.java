@@ -23,7 +23,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Component
+@Component("hsqlDbTypeConverter")
 public class HsqlDbTypeConverter implements DbTypeConverter {
 
     @Override

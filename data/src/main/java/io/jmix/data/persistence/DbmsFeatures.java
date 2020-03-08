@@ -76,6 +76,13 @@ public interface DbmsFeatures {
     boolean isSchemaByUser();
 
     /**
+     * @return true if catalog name must be used for obtaining database metadata
+     */
+    default boolean requiresDbCatalogName() {
+        return false;
+    }
+
+    /**
      * @return true if the DBMS supports equals conditions in the filter and sort for LOB columns
      */
     boolean supportsLobSortingAndFiltering();

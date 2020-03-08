@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright (c) 2008-2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,46 +12,48 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
 package io.jmix.data.impl.dbms;
 
+import io.jmix.core.commons.util.Preconditions;
 import io.jmix.data.SequenceSupport;
 import org.springframework.stereotype.Component;
 
-@Component("hsqlSequenceSupport")
-public class HsqlSequenceSupport implements SequenceSupport {
-
+@Component("mysqlSequenceSupport")
+public class MysqlSequenceSupport implements SequenceSupport {
     @Override
     public String sequenceExistsSql(String sequenceName) {
-        return "select top 1 SEQUENCE_NAME from INFORMATION_SCHEMA.SYSTEM_SEQUENCES where SEQUENCE_NAME = '"
-                + sequenceName.toUpperCase() + "'";
+        return "select NAME from SYS_SEQUENCE where NAME = '" + sequenceName + "'";
     }
 
     @Override
     public String createSequenceSql(String sequenceName, long startValue, long increment) {
-        return "create sequence " + sequenceName
-                + " as bigint start with " + startValue + " increment by " + increment;
+        return "insert into SYS_SEQUENCE (NAME, CURR_VALUE, INCREMENT) values ('" + sequenceName + "', " + startValue
+                + ", " + increment + ")";
     }
 
     @Override
     public String modifySequenceSql(String sequenceName, long startWith) {
-        return "alter sequence " + sequenceName + " restart with " + startWith;
+        return "update SYS_SEQUENCE set CURR_VALUE = " + startWith + " where " +
+                "NAME = '" + sequenceName + "'";
     }
 
     @Override
     public String deleteSequenceSql(String sequenceName) {
-        return "drop sequence " + (sequenceName != null ? sequenceName.toUpperCase() : null);
+        return "delete from SYS_SEQUENCE where name = '" + sequenceName + "'";
     }
 
     @Override
     public String getNextValueSql(String sequenceName) {
-        return "select next value for " + sequenceName + " from dual";
+        Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
+        return "update SYS_SEQUENCE set CURR_VALUE = last_insert_id(CURR_VALUE + INCREMENT) where NAME = '" + sequenceName + "' ^ select last_insert_id() - INCREMENT from SYS_SEQUENCE where NAME = '" + sequenceName +"'";
     }
 
     @Override
     public String getCurrentValueSql(String sequenceName) {
-        return "select START_WITH from INFORMATION_SCHEMA.SYSTEM_SEQUENCES where SEQUENCE_NAME = '"
-                + sequenceName.toUpperCase() + "'";
+        Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
+        return "select CURR_VALUE from SYS_SEQUENCE where NAME = '" + sequenceName.toLowerCase() + "'";
     }
 }

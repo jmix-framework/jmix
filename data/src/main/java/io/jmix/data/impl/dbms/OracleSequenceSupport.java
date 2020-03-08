@@ -18,7 +18,9 @@
 package io.jmix.data.impl.dbms;
 
 import io.jmix.data.SequenceSupport;
+import org.springframework.stereotype.Component;
 
+@Component("oracleSequenceSupport")
 public class OracleSequenceSupport implements SequenceSupport {
 
     @Override

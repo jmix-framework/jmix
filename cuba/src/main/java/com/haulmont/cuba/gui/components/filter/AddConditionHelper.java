@@ -86,8 +86,7 @@ public class AddConditionHelper {
         Map<String, Object> params = new HashMap<>();
         ConditionDescriptorsTreeBuilderAPI descriptorsTreeBuilder = AppBeans.getPrototype(ConditionDescriptorsTreeBuilderAPI.NAME,
                 filter,
-                2 // todo filter
-                /*clientConfig.getGenericFilterPropertiesHierarchyDepth()*/,
+                clientConfig.getGenericFilterPropertiesHierarchyDepth(),
                 hideDynamicAttributes,
                 hideCustomConditions,
                 conditionsTree);

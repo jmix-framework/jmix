@@ -33,6 +33,7 @@ dependencies {
     api 'org.springframework:spring-tx'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
     implementation 'org.postgresql:postgresql'
+    implementation 'org.liquibase:liquibase-core'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

@@ -54,4 +54,3 @@ public class JmixDataAutoConfiguration {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
     }
 }
-

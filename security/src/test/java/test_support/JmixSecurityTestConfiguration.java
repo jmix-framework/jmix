@@ -22,7 +22,9 @@ import io.jmix.data.JmixDataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
+import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.security.JmixSecurityConfiguration;
+import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,5 +62,13 @@ public class JmixSecurityTestConfiguration {
     @Primary
     PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
+    }
+
+    @Bean
+    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setDataSource(dataSource);
+        liquibase.setChangeLog("file:" + processor.createMasterChangeLog(Stores.MAIN));
+        return liquibase;
     }
 }

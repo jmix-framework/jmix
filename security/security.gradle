@@ -35,6 +35,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.apache.commons:commons-dbcp2'
+    testImplementation 'org.liquibase:liquibase-core'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

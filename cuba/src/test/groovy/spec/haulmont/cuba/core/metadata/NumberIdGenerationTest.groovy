@@ -1,0 +1,171 @@
+/*
+ * Copyright (c) 2008-2018 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package spec.haulmont.cuba.core.metadata
+
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.model.number_id.NumberIdJoinedChild
+import com.haulmont.cuba.core.model.number_id.NumberIdJoinedRoot
+import com.haulmont.cuba.core.model.number_id.NumberIdSeqNameFirst
+import com.haulmont.cuba.core.model.number_id.NumberIdSeqNameSecond
+import com.haulmont.cuba.core.model.number_id.NumberIdSingleTableChild
+import com.haulmont.cuba.core.model.number_id.NumberIdSingleTableGrandChild
+import com.haulmont.cuba.core.model.number_id.NumberIdSingleTableRoot
+import io.jmix.core.Metadata
+import io.jmix.data.SequenceSupport
+import io.jmix.data.persistence.DbmsSpecifics
+import org.springframework.jdbc.core.JdbcTemplate
+import spec.haulmont.cuba.core.CoreTestSpecification
+
+import javax.inject.Inject
+
+class NumberIdGenerationTest extends CoreTestSpecification {
+    @Inject
+    private Metadata metadata
+    @Inject
+    private DbmsSpecifics dbmsSpecifics
+    @Inject
+    private Persistence persistence
+
+    private SequenceSupport sequenceSupport
+
+
+    void setup() {
+        sequenceSupport = dbmsSpecifics.getSequenceSupport()
+    }
+
+    def "joined inheritance strategy"() {
+
+        when:
+
+        def root1 = metadata.create(NumberIdJoinedRoot)
+        def root2 = metadata.create(NumberIdJoinedRoot)
+
+        then:
+
+        sequenceExistsByEntityName(metadata.getClass(NumberIdJoinedRoot).getName())
+        root2.id == root1.id + 1
+
+        when: "creating child entities"
+
+        def child1 = metadata.create(NumberIdJoinedChild)
+        def child2 = metadata.create(NumberIdJoinedChild)
+
+        then: "the same sequence as for root is used"
+
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdJoinedChild).getName())
+        child1.id == root2.id + 1
+        child2.id == child1.id + 1
+
+    }
+
+    def "single table inheritance strategy"() {
+
+        when:
+
+        def root1 = metadata.create(NumberIdSingleTableRoot)
+        def root2 = metadata.create(NumberIdSingleTableRoot)
+
+        then:
+
+        sequenceExistsByEntityName(metadata.getClass(NumberIdSingleTableRoot).getName())
+        root2.id == root1.id + 1
+
+        when: "creating child entities"
+
+        def child1 = metadata.create(NumberIdSingleTableChild)
+        def child2 = metadata.create(NumberIdSingleTableChild)
+
+        then: "the same sequence as for root is used"
+
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSingleTableChild).getName())
+        child1.id == root2.id + 1
+        child2.id == child1.id + 1
+
+        when: "creating grand children entities"
+
+        def grandChild1 = metadata.create(NumberIdSingleTableGrandChild)
+        def grandChild2 = metadata.create(NumberIdSingleTableGrandChild)
+
+        then: "the same sequence as for root is used"
+
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSingleTableChild).getName())
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSingleTableGrandChild).getName())
+        grandChild1.id == child2.id + 1
+        grandChild2.id == grandChild1.id + 1
+    }
+
+    def "sequence name annotation"() {
+
+        when:
+
+        def first = metadata.create(NumberIdSeqNameFirst)
+        def second = metadata.create(NumberIdSeqNameSecond)
+
+        then:
+
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameFirst).getName())
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameSecond).getName())
+        sequenceExistsByName('seq_number_id_name')
+        first.id + 1 == second.id
+        getCurrentSequenceValue('seq_number_id_name') == second.id
+
+        when:
+
+        first = metadata.create(NumberIdSeqNameFirst)
+
+        then:
+
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameFirst).getName())
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameSecond).getName())
+        sequenceExistsByName('seq_number_id_name')
+        getCurrentSequenceValue('seq_number_id_name') == first.id
+
+        when:
+
+        second = metadata.create(NumberIdSeqNameSecond)
+
+        then:
+
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameFirst).getName())
+        !sequenceExistsByEntityName(metadata.getClass(NumberIdSeqNameSecond).getName())
+        sequenceExistsByName('seq_number_id_name')
+        getCurrentSequenceValue('seq_number_id_name') == second.id
+        first.id + 1 == second.id
+    }
+
+    private boolean sequenceExistsByEntityName(String entityName) {
+        return sequenceExistsByName(getSequenceName(entityName))
+    }
+
+    private boolean sequenceExistsByName(String sequenceName) {
+        def sequenceExistsSql = sequenceSupport.sequenceExistsSql(sequenceName)
+        def template = new JdbcTemplate(persistence.getDataSource())
+        def rows = template.queryForList(sequenceExistsSql)
+        return !rows.isEmpty()
+    }
+
+    protected String getSequenceName(String entityName) {
+        return "seq_id_" + entityName.replace('$', '_');
+    }
+
+    private long getCurrentSequenceValue(String sequenceName) {
+        def sql = "select NEXT_VALUE from INFORMATION_SCHEMA.SYSTEM_SEQUENCES where SEQUENCE_NAME = '" + sequenceName.toUpperCase() + "'"
+        def template = new JdbcTemplate(persistence.getDataSource())
+        def rows = template.queryForList(sql)
+        return (rows[0]['NEXT_VALUE'] as long) - 1
+    }
+}

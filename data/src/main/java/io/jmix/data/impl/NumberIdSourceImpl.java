@@ -18,16 +18,25 @@ package io.jmix.data.impl;
 
 import org.springframework.stereotype.Component;
 
-// todo impl
+import javax.inject.Inject;
+
 @Component(NumberIdSource.NAME)
 public class NumberIdSourceImpl implements NumberIdSource {
+    @Inject
+    protected NumberIdCache cache;
+
     @Override
     public Long createLongId(String entityName) {
-        return null;
+        return cache.createLongId(entityName);
     }
 
     @Override
     public Integer createIntegerId(String entityName) {
-        return null;
+        long nextLong = createLongId(entityName);
+        int nextInt = (int) nextLong;
+        if (nextInt != nextLong)
+            throw new IllegalStateException("Error creating a new Integer ID for entity " + entityName
+                    + ": sequence overflow");
+        return nextInt;
     }
 }

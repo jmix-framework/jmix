@@ -46,7 +46,7 @@ public class HsqlSequenceSupport implements SequenceSupport {
 
     @Override
     public String getNextValueSql(String sequenceName) {
-        return "select next value for " + sequenceName + " from dual";
+        return "call next value for " + sequenceName;
     }
 
     @Override

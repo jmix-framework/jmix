@@ -22,8 +22,8 @@ import io.jmix.core.Stores;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * INTERNAL.
@@ -34,7 +34,7 @@ public class DataStoreFactory {
 
     public static final String NAME = "jmix_DataStoreFactory";
 
-    protected Map<String, DataStore> dataStores = new HashMap<>();
+    protected Map<String, DataStore> dataStores = new ConcurrentHashMap<>();
 
     @Inject
     protected Stores stores;

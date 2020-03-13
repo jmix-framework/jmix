@@ -16,8 +16,10 @@
 
 package io.jmix.audit.entity;
 
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
+import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
 
 import javax.persistence.*;
@@ -49,7 +51,8 @@ public class LoggedEntity extends BaseUuidEntity implements Creatable {
     @Column(name = "MANUAL")
     private Boolean manual;
 
-    @OneToMany(mappedBy = "entity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "entity")
+    @OnDelete(DeletePolicy.CASCADE)
     private Set<LoggedAttribute> attributes;
 
     @Override

@@ -2,8 +2,7 @@ apply plugin: 'java'
 apply plugin: 'java-library'
 
 group = 'io.jmix.starter.ui'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '1.8'
+version = rootProject.jmixVersion
 
 dependencies {
     api project(':modules:core')

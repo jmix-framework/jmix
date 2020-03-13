@@ -20,13 +20,6 @@ apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 version = rootProject.jmixVersion
-sourceCompatibility = rootProject.sourceCompatibility
-targetCompatibility = rootProject.targetCompatibility
-
-test {
-    useJUnitPlatform()
-    systemProperty("org.slf4j.simpleLogger.log.eclipselink.sql", "debug")
-}
 
 dependencies {
     api platform(project(':jmix-platform'))
@@ -62,6 +55,11 @@ jar {
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier = 'sources'
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty("org.slf4j.simpleLogger.log.eclipselink.sql", "debug")
 }
 
 publishing {

@@ -69,6 +69,9 @@ public abstract class App {
     public static final String APP_THEME_COOKIE_PREFIX = "APP_THEME_NAME_";
 
     public static final String COOKIE_LOCALE = "LAST_LOCALE";
+    public static final String COOKIE_REMEMBER_ME = "rememberMe";
+    public static final String COOKIE_LOGIN = "rememberMe.Login";
+    public static final String COOKIE_PASSWORD = "rememberMe.Password";
 
     private static final Logger log = LoggerFactory.getLogger(App.class);
 

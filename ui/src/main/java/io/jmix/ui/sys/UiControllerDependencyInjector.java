@@ -34,6 +34,7 @@ import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import io.jmix.ui.sys.UiControllerReflectionInspector.AnnotatedMethod;
@@ -627,11 +628,11 @@ public class UiControllerDependencyInjector {
             // injecting fragments
             return getScreenContext(frameOwner).getFragments();
 
-        } /*else if (UrlRouting.class.isAssignableFrom(type)) {
-            // todo injecting urlRouting
+        } else if (UrlRouting.class.isAssignableFrom(type)) {
+            // injecting urlRouting
             return getScreenContext(frameOwner).getUrlRouting();
 
-        } */else if (MessageBundle.class == type) {
+        } else if (MessageBundle.class == type) {
             return createMessageBundle(element, frameOwner, frame);
 
         } else if (ThemeConstants.class == type) {

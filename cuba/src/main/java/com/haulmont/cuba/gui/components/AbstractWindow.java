@@ -15,13 +15,13 @@
  */
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.WindowInfo;

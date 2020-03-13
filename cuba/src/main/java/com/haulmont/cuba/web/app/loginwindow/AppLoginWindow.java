@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright (c) 2008-2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.web.app.login;
+package com.haulmont.cuba.web.app.loginwindow;
 
-import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.components.AbstractWindow;
+import com.haulmont.cuba.web.app.login.LoginScreen;
 import io.jmix.core.GlobalConfig;
 import io.jmix.core.security.Credentials;
 import io.jmix.core.security.LoginException;
 import io.jmix.core.security.LoginPasswordCredentials;
-import io.jmix.ui.*;
+import io.jmix.ui.App;
+import io.jmix.ui.Connection;
+import io.jmix.ui.WebAuthConfig;
+import io.jmix.ui.WebConfig;
 import io.jmix.ui.components.*;
-import io.jmix.ui.navigation.Route;
 import io.jmix.ui.navigation.UrlRouting;
-import io.jmix.ui.screen.*;
 import io.jmix.ui.security.LoginScreenAuthDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,51 +39,56 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Base class for Login screen.
+ * Legacy base class for a controller of application Login window.
+ *
+ * @see LoginScreen
  */
-@Route(path = "login", root = true)
-@UiDescriptor("login-screen.xml")
-@UiController("login")
-public class LoginScreen extends Screen {
+public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWindow {
 
-    private static final Logger log = LoggerFactory.getLogger(LoginScreen.class);
+    private static final Logger log = LoggerFactory.getLogger(AppLoginWindow.class);
+
+    protected static final ThreadLocal<LoginScreenAuthDelegate.AuthInfo> authInfoThreadLocal = new ThreadLocal<>();
 
     @Inject
     protected GlobalConfig globalConfig;
+
     @Inject
     protected WebConfig webConfig;
+
     @Inject
     protected WebAuthConfig webAuthConfig;
 
     @Inject
-    protected Messages messages;
-    @Inject
-    protected Notifications notifications;
-    @Inject
-    protected Screens screens;
+    protected App app;
 
     @Inject
-    protected App app;
-    @Inject
     protected Connection connection;
+
     @Inject
     protected LoginScreenAuthDelegate authDelegate;
 
     @Inject
     protected Image logoImage;
+
     @Inject
     protected TextField<String> loginField;
+
     @Inject
     protected CheckBox rememberMeCheckBox;
+
     @Inject
     protected PasswordField passwordField;
+
     @Inject
     protected LookupField<Locale> localesSelect;
+
     @Inject
     protected UrlRouting urlRouting;
 
-    @Subscribe
-    protected void onInit(InitEvent event) {
+    @Override
+    public void init(Map<String, Object> params) {
+        super.init(params);
+
         loginField.focus();
 
         initPoweredByLink();
@@ -97,13 +104,15 @@ public class LoginScreen extends Screen {
         initRememberMeLocalesBox();
     }
 
-    @Subscribe
-    protected void onAfterShow(AfterShowEvent event) {
+    @Override
+    protected void afterShow(AfterShowEvent event) {
+        super.afterShow(event);
+
         doRememberMeLogin();
     }
 
     protected void initPoweredByLink() {
-        Component poweredByLink = getWindow().getComponent("poweredByLink");
+        Component poweredByLink = getComponent("poweredByLink");
         if (poweredByLink != null) {
             poweredByLink.setVisible(webConfig.getLoginDialogPoweredByLinkVisible());
         }
@@ -117,29 +126,23 @@ public class LoginScreen extends Screen {
         localesSelect.setVisible(localeSelectVisible);
 
         // if old layout is used
-        Component localesSelectLabel = getWindow().getComponent("localesSelectLabel");
+        Component localesSelectLabel = getComponent("localesSelectLabel");
         if (localesSelectLabel != null) {
             localesSelectLabel.setVisible(localeSelectVisible);
         }
 
         localesSelect.addValueChangeListener(e -> {
-            app.setLocale(e.getValue());
+            Locale selectedLocale = e.getValue();
 
-            LoginScreenAuthDelegate.AuthInfo authInfo = new LoginScreenAuthDelegate.AuthInfo(loginField.getValue(),
-                    passwordField.getValue(),
-                    rememberMeCheckBox.getValue());
+            app.setLocale(selectedLocale);
 
-            String screenId = UiControllerUtils.getScreenContext(this)
-                    .getWindowInfo()
-                    .getId();
-
-            Screen loginScreen = screens.create(screenId, OpenMode.ROOT);
-
-            if (loginScreen instanceof LoginScreen) {
-                ((LoginScreen) loginScreen).setAuthInfo(authInfo);
+            authInfoThreadLocal.set(new LoginScreenAuthDelegate.AuthInfo(loginField.getValue(), passwordField.getValue(),
+                    rememberMeCheckBox.getValue()));
+            try {
+                app.createTopLevelWindow();
+            } finally {
+                authInfoThreadLocal.set(null);
             }
-
-            loginScreen.show();
         });
     }
 
@@ -160,13 +163,26 @@ public class LoginScreen extends Screen {
     }
 
     protected void initRememberMeLocalesBox() {
-        Component rememberLocalesBox = getWindow().getComponent("rememberLocalesBox");
+        Component rememberLocalesBox = getComponent("rememberLocalesBox");
         if (rememberLocalesBox != null) {
             rememberLocalesBox.setVisible(rememberMeCheckBox.isVisible() || localesSelect.isVisible());
         }
     }
 
     protected void initDefaultCredentials() {
+        LoginScreenAuthDelegate.AuthInfo authInfo = authInfoThreadLocal.get();
+        if (authInfo != null) {
+            loginField.setValue(authInfo.getLogin());
+            passwordField.setValue(authInfo.getPassword());
+            rememberMeCheckBox.setValue(authInfo.getRememberMe());
+
+            localesSelect.focus();
+
+            authInfoThreadLocal.set(null);
+
+            return;
+        }
+
         String defaultUser = webConfig.getLoginDialogDefaultUser();
         if (!StringUtils.isBlank(defaultUser) && !"<disabled>".equals(defaultUser)) {
             loginField.setValue(defaultUser);
@@ -186,19 +202,13 @@ public class LoginScreen extends Screen {
         String title = messages.getMainMessage("loginWindow.loginFailed", app.getLocale());
         String message = messages.getMainMessage("loginWindow.pleaseContactAdministrator", app.getLocale());
 
-        notifications.create(Notifications.NotificationType.ERROR)
-                .withCaption(title)
-                .withDescription(message)
-                .show();
+        showNotification(title, message, NotificationType.ERROR);
     }
 
     protected void showLoginException(String message) {
         String title = messages.getMainMessage("loginWindow.loginFailed", app.getLocale());
 
-        notifications.create(Notifications.NotificationType.ERROR)
-                .withCaption(title)
-                .withDescription(message)
-                .show();
+        showNotification(title, message, NotificationType.ERROR);
     }
 
     public void login() {
@@ -222,9 +232,7 @@ public class LoginScreen extends Screen {
         Map<String, Object> params = new HashMap<>(urlRouting.getState().getParams());
 
         if (StringUtils.isEmpty(login) || StringUtils.isEmpty(password)) {
-            notifications.create(Notifications.NotificationType.WARNING)
-                    .withCaption(messages.getMainMessage("loginWindow.emptyLoginOrPassword"))
-                    .show();
+            showNotification(messages.getMainMessage("loginWindow.emptyLoginOrPassword"), NotificationType.WARNING);
             return;
         }
 
@@ -247,8 +255,7 @@ public class LoginScreen extends Screen {
             log.error("Internal error during login", e);
 
             showUnhandledExceptionOnLogin(e);
-        */
-        } catch (LoginException e) {
+        */} catch (LoginException e) {
             log.info("Login failed: {}", e.toString());
 
             String message = StringUtils.abbreviate(e.getMessage(), 1000);
@@ -266,13 +273,5 @@ public class LoginScreen extends Screen {
 
     protected void doRememberMeLogin() {
         authDelegate.doRememberMeLogin(localesSelect.isVisibleRecursive());
-    }
-
-    protected void setAuthInfo(LoginScreenAuthDelegate.AuthInfo authInfo) {
-        loginField.setValue(authInfo.getLogin());
-        passwordField.setValue(authInfo.getPassword());
-        rememberMeCheckBox.setValue(authInfo.getRememberMe());
-
-        localesSelect.focus();
     }
 }

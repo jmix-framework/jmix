@@ -52,9 +52,9 @@ public class MenuConfig {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
 
-    public static final String NAME = "cuba_MenuConfig";
+    public static final String NAME = "jmix_MenuConfig";
 
-    public static final String MENU_CONFIG_XML_PROP = "cuba.menuConfig";
+    public static final String MENU_CONFIG_XML_PROP = "jmix.menuConfig";
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 

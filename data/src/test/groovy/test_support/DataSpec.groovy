@@ -20,12 +20,15 @@ import io.jmix.core.JmixCoreConfiguration
 import io.jmix.data.JmixDataConfiguration
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
 
 import javax.inject.Inject
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixDataTestConfiguration])
+@TestExecutionListeners(value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DataSpec extends Specification {
 
     @Inject

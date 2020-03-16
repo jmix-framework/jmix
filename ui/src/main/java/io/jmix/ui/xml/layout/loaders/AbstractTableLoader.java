@@ -132,7 +132,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
         loadRowsCount(resultComponent, element); // must be before datasource setting
 
-        MetaClass metaClass;
+        MetaClass metaClass = null;
         CollectionContainer collectionContainer = null;
         DataLoader dataLoader = null;
         // TODO: legacy-ui
@@ -189,19 +189,18 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             TODO: legacy-ui
             View view = collectionContainer != null ? collectionContainer.getView()
                     : datasource != null ? datasource.getView()
-                    : getViewRepository().getView(metaClass.getJavaClass(), View.LOCAL);
-            availableColumns = loadColumns(resultComponent, columnsElement, metaClass, view);*/
+                    : getViewRepository().getView(metaClass.getJavaClass(), View.LOCAL);*/
+            // todo get FetchPlan
+            availableColumns = loadColumns(resultComponent, columnsElement, metaClass, null);
         } else {
             availableColumns = new ArrayList<>();
         }
 
-        /*
-        TODO: legacy-ui
         for (Table.Column column : availableColumns) {
             resultComponent.addColumn(column);
             loadValidators(resultComponent, column);
             loadRequired(resultComponent, column);
-        }*/
+        }
 
         if (collectionContainer != null) {
             //todo dynamic attributes

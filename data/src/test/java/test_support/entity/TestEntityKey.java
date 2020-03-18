@@ -17,14 +17,14 @@
 package test_support.entity;
 
 
-import io.jmix.core.entity.EmbeddableEntity;
+import io.jmix.core.Entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class TestEntityKey extends EmbeddableEntity {
+public class TestEntityKey implements Entity<Object> {
     private static final long serialVersionUID = -7240469493134421919L;
 
     @Column(name = "TENANT")

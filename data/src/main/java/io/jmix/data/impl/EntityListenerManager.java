@@ -16,7 +16,8 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.data.PersistenceTools;
 import io.jmix.data.listener.*;
@@ -36,7 +37,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <p>Usually entity listeners are registered declaratively with {@code @Listeners} annotation on entity class.
  * Methods {@link #addListener(Class, Class)} and {@link #addListener(Class, String)} allow to add listeners dynamically,
  * e.g. to an entity from a base project.
- *
  */
 @Component(EntityListenerManager.NAME)
 public class EntityListenerManager {
@@ -277,7 +277,7 @@ public class EntityListenerManager {
         if (log.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder();
             sb.append("Executing ").append(type).append(" entity listener for ")
-                    .append(entity.getClass().getName()).append(" id=").append(entity.getId());
+                    .append(entity.getClass().getName()).append(" id=").append((Object) EntityValues.getId(entity));
             if (type != EntityListenerType.BEFORE_DETACH && type != EntityListenerType.BEFORE_ATTACH) {
                 Set<String> dirty = persistenceTools.getDirtyFields(entity);
                 if (!dirty.isEmpty()) {

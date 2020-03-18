@@ -15,7 +15,6 @@
  */
 package io.jmix.data.entity;
 
-import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.Updatable;
 import io.jmix.core.entity.Versioned;

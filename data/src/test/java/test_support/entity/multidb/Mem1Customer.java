@@ -5,7 +5,7 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;

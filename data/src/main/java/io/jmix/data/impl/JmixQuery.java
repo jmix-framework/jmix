@@ -19,11 +19,12 @@ package io.jmix.data.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.jmix.core.Entity;
 import io.jmix.core.Id;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.compatibility.AppContext;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
@@ -142,7 +143,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
 
         @SuppressWarnings("unchecked")
         E result = (E) getResultFromCache(jpaQuery, true, obj -> {
-            if (obj instanceof io.jmix.core.entity.Entity) {
+            if (obj instanceof Entity) {
                 for (FetchPlan fetchPlan : fetchPlans) {
                     entityFetcher.fetch((Entity) obj, fetchPlan);
                 }
@@ -821,7 +822,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
 
     private Object convertToCollectionOfIds(Object value) {
         return ((Collection<?>) value).stream()
-                .map(it -> it instanceof Entity ? ((Entity) it).getId() : ((EnumClass) it).getId())
+                .map(it -> it instanceof Entity ? EntityValues.getId(((Entity) it)) : ((EnumClass) it).getId())
                 .collect(Collectors.toList());
     }
 

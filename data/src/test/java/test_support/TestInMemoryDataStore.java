@@ -17,7 +17,8 @@
 package test_support;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -88,14 +89,14 @@ public class TestInMemoryDataStore implements DataStore {
                 instances = new ConcurrentHashMap<>();
                 entities.put(metaClassName, instances);
             }
-            instances.put(entity.getId(), entity);
+            instances.put(EntityValues.getId(entity), entity);
             result.add(entity);
         }
         for (Entity entity : context.getEntitiesToRemove()) {
             String metaClassName = metadata.getClass(entity.getClass()).getName();
             Map<Object, Entity> instances = entities.get(metaClassName);
             if (instances != null) {
-                instances.remove(entity.getId());
+                instances.remove(EntityValues.getId(entity));
             }
             result.add(entity);
         }

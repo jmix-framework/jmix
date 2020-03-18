@@ -16,8 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.entity.BaseGenericIdEntity;
-
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -25,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test_TestCompositeKeyEntity")
 @Table(name = "TEST_COMPOSITE_KEY_ENTITY")
-public class TestCompositeKeyEntity extends BaseGenericIdEntity<TestEntityKey> {
+public class TestCompositeKeyEntity implements io.jmix.core.Entity<TestEntityKey> {
 
     private static final long serialVersionUID = -2538345720324624741L;
 
@@ -38,12 +36,10 @@ public class TestCompositeKeyEntity extends BaseGenericIdEntity<TestEntityKey> {
     @Column(name = "EMAIL")
     private String email;
 
-    @Override
     public void setId(TestEntityKey id) {
         this.id = id;
     }
 
-    @Override
     public TestEntityKey getId() {
         return id;
     }

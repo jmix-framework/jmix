@@ -59,7 +59,7 @@ class MultiDbDataManagerTest extends DataSpec {
     void testOneStore() {
         when:
         Db1Customer customer = metadata.create(Db1Customer.class)
-        customer.setId(IdProxy.of(1L))
+        customer.setId(1L)
         customer.setName("John Doe")
         dataManager.save(customer)
 
@@ -82,7 +82,7 @@ class MultiDbDataManagerTest extends DataSpec {
 
     void testTwoStores() {
         Db1Customer customer = metadata.create(Db1Customer.class)
-        customer.setId(IdProxy.of(1L))
+        customer.setId(1L)
         customer.setName("John Doe")
 
         colour = metadata.create(Colour.class)

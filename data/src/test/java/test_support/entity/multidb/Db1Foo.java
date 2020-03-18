@@ -5,7 +5,7 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.entity.BaseLongIdEntity;
+import io.jmix.data.entity.BaseLongIdEntity;
 import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.annotations.Store;
 

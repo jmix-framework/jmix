@@ -16,12 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.entity.BaseEntityInternalAccess;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.*;
 import org.eclipse.persistence.core.queries.CoreAttributeGroup;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.FetchGroupManager;
@@ -57,11 +52,11 @@ public class JmixEntityFetchGroup extends EntityFetchGroup {
 
     @Override
     public String onUnfetchedAttribute(FetchGroupTracker entity, String attributeName) {
-        if (entity instanceof BaseGenericIdEntity) {
-            String[] inaccessible = BaseEntityInternalAccess.getInaccessibleAttributes((BaseGenericIdEntity) entity);
-            if (inaccessible != null) {
-                for (String inaccessibleAttribute : inaccessible) {
-                    if (attributeName.equals(inaccessibleAttribute))
+        if (entity instanceof Entity) {
+            EntityEntry entityEntry = ((Entity<?>) entity).__getEntityEntry();
+            if (entityEntry.getSecurityState().getInaccessibleAttributes() != null) {
+                for (String attribute : entityEntry.getSecurityState().getInaccessibleAttributes()) {
+                    if (attributeName.equals(attribute))
                         return null;
                 }
             }
@@ -76,7 +71,7 @@ public class JmixEntityFetchGroup extends EntityFetchGroup {
     protected boolean cannotAccessUnfetched(FetchGroupTracker entity) {
         return Boolean.FALSE.equals(accessLocalUnfetched.get())
                 && entity instanceof Entity
-                && !AppBeans.get(EntityStates.class).isLoadedWithView((Entity) entity, FetchPlan.LOCAL);
+                && !AppBeans.get(EntityStates.class).isLoadedWithFetchPlan((Entity) entity, FetchPlan.LOCAL);
     }
 
     @Override

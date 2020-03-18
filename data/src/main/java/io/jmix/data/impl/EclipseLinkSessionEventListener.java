@@ -23,15 +23,14 @@ import io.jmix.core.Metadata;
 import io.jmix.core.commons.datastruct.Pair;
 import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.entity.JmixEnhanced;
-import io.jmix.core.entity.JmixEnhancingDisabled;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.JmixSettersEnhanced;
 import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.core.metamodel.model.impl.AbstractInstance;
 import io.jmix.data.persistence.EntityNotEnhancedException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -174,9 +173,9 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
     }
 
     protected void enhancementCheck(Class entityClass, List<Pair<Class, String>> missingEnhancements) {
-        boolean jmixEnhanced = ArrayUtils.contains(entityClass.getInterfaces(), JmixEnhanced.class)
-                || !(AbstractInstance.class.isAssignableFrom(entityClass))
-                || ArrayUtils.contains(entityClass.getInterfaces(), JmixEnhancingDisabled.class);
+        boolean jmixEnhanced = ArrayUtils.contains(entityClass.getInterfaces(), JmixSettersEnhanced.class)
+                || !(Entity.class.isAssignableFrom(entityClass))
+                || ArrayUtils.contains(entityClass.getDeclaredAnnotations(), DisableEnhancing.class);
         boolean persistenceObject = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceObject.class);
         boolean persistenceWeaved = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeaved.class);
         boolean persistenceWeavedFetchGroups = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeavedFetchGroups.class);

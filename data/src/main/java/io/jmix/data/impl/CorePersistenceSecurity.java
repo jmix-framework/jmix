@@ -17,7 +17,7 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.security.OnCoreSecurityImplementation;
 import io.jmix.data.PersistenceSecurity;
 import org.springframework.context.annotation.Conditional;

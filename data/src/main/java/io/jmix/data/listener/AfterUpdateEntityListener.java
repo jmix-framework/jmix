@@ -15,8 +15,7 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.core.entity.Entity;
-
+import io.jmix.core.Entity;
 /**
  * Defines the contract for handling of entities after they have been updated in DB.
  */

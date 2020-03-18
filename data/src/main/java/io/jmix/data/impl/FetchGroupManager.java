@@ -18,9 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.BaseUuidEntity;
-import io.jmix.core.entity.EmbeddableEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -368,6 +366,7 @@ public class FetchGroupManager {
 
     private void processFetchPlan(FetchPlan fetchPlan, FetchGroupField parentField, Set<FetchGroupField> fetchGroupFields, boolean useFetchGroup) {
         Class<? extends Entity> entityClass = fetchPlan.getEntityClass();
+        MetaClass entityMetaClass = metadata.getClass(entityClass);
 
         if (useFetchGroup) {
             // Always add SoftDelete properties to support EntityManager contract
@@ -378,9 +377,9 @@ public class FetchGroupManager {
             }
 
             // Always add uuid property if the entity has primary key not of type UUID
-            if (!BaseUuidEntity.class.isAssignableFrom(entityClass)
-                    && !EmbeddableEntity.class.isAssignableFrom(entityClass)) {
-                MetaProperty uuidProp = metadata.getClass(entityClass).findProperty("uuid");
+            MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(entityMetaClass);
+            if (pkProperty != null && !UUID.class.equals(pkProperty.getJavaType())) {
+                MetaProperty uuidProp = entityMetaClass.findProperty("uuid");
                 if (uuidProp != null && metadataTools.isPersistent(uuidProp)) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, "uuid"));
                 }
@@ -389,8 +388,7 @@ public class FetchGroupManager {
 
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             String propertyName = property.getName();
-            MetaClass metaClass = metadata.getClass(entityClass);
-            MetaProperty metaProperty = metaClass.getProperty(propertyName);
+            MetaProperty metaProperty = entityMetaClass.getProperty(propertyName);
 
             if (metadataTools.isPersistent(metaProperty) && (metaProperty.getRange().isClass() || useFetchGroup)) {
                 FetchGroupField field = createFetchGroupField(entityClass, parentField, propertyName, property.getFetchMode());
@@ -407,7 +405,7 @@ public class FetchGroupManager {
                                 : "";
 
                         message = String.format(message, propertyFetchPlanName, property.getName(),
-                                metaClass.getName());
+                                entityMetaClass.getName());
                         throw new DevelopmentException(message);
                     }
 
@@ -417,7 +415,7 @@ public class FetchGroupManager {
 
             List<String> relatedProperties = metadataTools.getRelatedProperties(entityClass, propertyName);
             for (String relatedProperty : relatedProperties) {
-                MetaProperty relatedMetaProp = metaClass.getProperty(relatedProperty);
+                MetaProperty relatedMetaProp = entityMetaClass.getProperty(relatedProperty);
                 if (!fetchPlan.containsProperty(relatedProperty) && (relatedMetaProp.getRange().isClass() || useFetchGroup)) {
                     FetchGroupField field = createFetchGroupField(entityClass, parentField, relatedProperty);
                     fetchGroupFields.add(field);

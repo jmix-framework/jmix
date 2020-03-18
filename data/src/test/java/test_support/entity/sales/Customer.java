@@ -17,7 +17,9 @@
 package test_support.entity.sales;
 
 
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
+import io.jmix.core.entity.annotation.Listeners;
+import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotations.NamePattern;

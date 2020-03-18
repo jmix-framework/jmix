@@ -16,15 +16,16 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.data.event.AttributeChanges;
-import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.core.Events;
 import io.jmix.core.Id;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.*;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.event.AttributeChanges;
+import io.jmix.data.event.EntityChangedEvent;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.sessions.changesets.AggregateChangeRecord;
@@ -83,14 +84,10 @@ public class EntityChangedEventManager {
                 MetaClass metaClass = metadata.getClass(entity.getClass());
                 Map attrMap = (Map) metaClass.getAnnotations().get(PublishEntityChangedEvents.class.getName());
                 if (attrMap != null) {
-                    if (!(entity instanceof BaseGenericIdEntity)) {
-                        log.warn("Cannot publish EntityChangedEvent for {} because it is not a BaseGenericIdEntity", entity);
-                    } else {
-                        return new PublishingInfo(
-                                Boolean.TRUE.equals(attrMap.get("created")),
-                                Boolean.TRUE.equals(attrMap.get("updated")),
-                                Boolean.TRUE.equals(attrMap.get("deleted")));
-                    }
+                    return new PublishingInfo(
+                            Boolean.TRUE.equals(attrMap.get("created")),
+                            Boolean.TRUE.equals(attrMap.get("updated")),
+                            Boolean.TRUE.equals(attrMap.get("deleted")));
                 }
                 return new PublishingInfo();
             });
@@ -99,7 +96,7 @@ public class EntityChangedEventManager {
             if (info.publish) {
                 EntityChangedEvent.Type type = null;
                 AttributeChanges attributeChanges = null;
-                if (info.onCreated && BaseEntityInternalAccess.isNew((BaseGenericIdEntity) entity)) {
+                if (info.onCreated && entity.__getEntityEntry().isNew()) {
                     type = EntityChangedEvent.Type.CREATED;
                     attributeChanges = getEntityAttributeChanges(entity, false);
                 } else {
@@ -110,7 +107,7 @@ public class EntityChangedEventManager {
                             log.warn("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
                             continue;
                         }
-                        if (info.onDeleted && PersistenceSupport.isDeleted((BaseGenericIdEntity) entity, changeListener)) {
+                        if (info.onDeleted && PersistenceSupport.isDeleted(entity, changeListener)) {
                             type = EntityChangedEvent.Type.DELETED;
                             attributeChanges = getEntityAttributeChanges(entity, true);
                         } else if (info.onUpdated && changeListener.hasChanges()) {
@@ -248,13 +245,15 @@ public class EntityChangedEventManager {
         Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
 
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
-            Object value = entity.getValue(property.getName());
+            Object value = EntityValues.getValue(entity, property.getName());
             if (deleted) {
-                if (value instanceof EmbeddableEntity) {
-                    EmbeddableEntity embedded = (EmbeddableEntity) value;
-                    embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges(embedded, true));
-                } else if (value instanceof Entity) {
-                    changes.add(new AttributeChanges.Change(property.getName(), Id.of((Entity) value)));
+                if (value instanceof Entity) {
+                    boolean isEmbeddable = ((Entity<?>) value).__getEntityEntry().isEmbeddable();
+                    if (isEmbeddable) {
+                        embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges((Entity) value, true));
+                    } else {
+                        changes.add(new AttributeChanges.Change(property.getName(), Id.of((Entity) value)));
+                    }
                 } else if (value instanceof Collection) {
                     Collection<Entity> coll = (Collection<Entity>) value;
                     Collection<Id> idColl = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();

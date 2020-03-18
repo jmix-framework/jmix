@@ -5,7 +5,6 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.entity.BaseDbGeneratedIdEntity;
 import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.annotations.Store;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @Table(name = "CUSTOMER")
 @NamePattern("%s|name")
 @Store(name = "db1")
-public class Db1Customer extends BaseDbGeneratedIdEntity<Long> {
+public class Db1Customer implements io.jmix.core.Entity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO/*, generator = "ref$Db1Customer"*/)
@@ -30,13 +29,11 @@ public class Db1Customer extends BaseDbGeneratedIdEntity<Long> {
     @Column(name = "NAME")
     private String name;
 
-    @Override
-    protected void setDbGeneratedId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
-    protected Long getDbGeneratedId() {
+    public Long getId() {
         return id;
     }
 

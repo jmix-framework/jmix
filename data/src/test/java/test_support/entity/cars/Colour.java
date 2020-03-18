@@ -4,7 +4,7 @@
  */
 package test_support.entity.cars;
 
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.Column;

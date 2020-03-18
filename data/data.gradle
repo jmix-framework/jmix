@@ -25,10 +25,9 @@ dependencies {
     api platform(project(':jmix-platform'))
 
     api project(':modules:core')
-    // todo eclipselink
-//    api 'org.eclipse.persistence:org.eclipse.persistence.jpa'
     api 'org.springframework:spring-orm'
     api 'org.springframework:spring-tx'
+    api 'org.eclipse.persistence:org.eclipse.persistence.jpa'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
     implementation 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'

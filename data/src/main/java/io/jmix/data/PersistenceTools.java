@@ -16,15 +16,9 @@
 
 package io.jmix.data;
 
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.BaseEntityInternalAccess;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -55,6 +49,9 @@ import javax.sql.DataSource;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
 import java.util.*;
+
+import static io.jmix.core.entity.EntityValues.getId;
+import static io.jmix.core.entity.EntityValues.getValue;
 
 /**
  * Utility class to provide common functionality related to persistence.
@@ -179,7 +176,7 @@ public class PersistenceTools {
             return null;
 
         } else if (!isDirty(entity, attribute)) {
-            return entity.getValue(attribute);
+            return getValue(entity, attribute);
 
         } else {
             ObjectChangeSet objectChanges =
@@ -279,7 +276,7 @@ public class PersistenceTools {
      * @throws IllegalStateException    if the entity is not in Managed state
      * @throws RuntimeException         if anything goes wrong when retrieving the ID
      */
-    public RefId getReferenceId(BaseGenericIdEntity entity, String property) {
+    public RefId getReferenceId(Entity entity, String property) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaProperty metaProperty = metaClass.getProperty(property);
 
@@ -289,9 +286,9 @@ public class PersistenceTools {
         if (!entityStates.isManaged(entity))
             throw new IllegalStateException("Entity must be in managed state");
 
-        String[] inaccessibleAttributes = BaseEntityInternalAccess.getInaccessibleAttributes(entity);
-        if (inaccessibleAttributes != null) {
-            for (String inaccessibleAttr : inaccessibleAttributes) {
+        EntityEntry entityEntry = entity.__getEntityEntry();
+        if (entityEntry.getSecurityState().getInaccessibleAttributes() != null) {
+            for (String inaccessibleAttr : entityEntry.getSecurityState().getInaccessibleAttributes()) {
                 if (inaccessibleAttr.equals(property))
                     return RefId.createNotLoaded(property);
             }
@@ -303,8 +300,8 @@ public class PersistenceTools {
                 if (!fetchGroup.containsAttributeInternal(property))
                     return RefId.createNotLoaded(property);
                 else {
-                    Entity refEntity = (Entity) entity.getValue(property);
-                    return RefId.create(property, refEntity == null ? null : refEntity.getId());
+                    Entity refEntity = getValue(entity, property);
+                    return RefId.create(property, refEntity == null ? null : getId(refEntity));
                 }
             }
         }
@@ -375,7 +372,7 @@ public class PersistenceTools {
             if (table == null || primaryKey == null)
                 throw new RuntimeException("Unable to determine table or primary key name for " + entity);
 
-            deleteRecord(table, primaryKey, entity.getId());
+            deleteRecord(table, primaryKey, EntityValues.<Object>getId(entity));
         }
     }
 
@@ -396,7 +393,7 @@ public class PersistenceTools {
     }
 
     /**
-     * A wrapper for the reference ID value returned by {@link #getReferenceId(BaseGenericIdEntity, String)} method.
+     * A wrapper for the reference ID value returned by {@link #getReferenceId(Entity, String)} method.
      *
      * @see #isLoaded()
      * @see #getValue()

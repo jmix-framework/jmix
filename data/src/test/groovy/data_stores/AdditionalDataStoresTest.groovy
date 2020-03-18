@@ -26,8 +26,6 @@ import test_support.DataSpec
 import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Mem1Customer
 
-import javax.sql.DataSource
-
 class AdditionalDataStoresTest extends DataSpec {
 
     @Autowired

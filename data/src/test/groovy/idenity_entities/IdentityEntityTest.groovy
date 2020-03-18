@@ -16,6 +16,7 @@
 
 package idenity_entities
 
+import io.jmix.core.entity.EntityValues
 import test_support.entity.TestIdentityIdEntity
 import test_support.entity.TestIdentityUuidEntity
 import io.jmix.core.DataManager
@@ -35,7 +36,7 @@ class IdentityEntityTest extends DataSpec {
 
         then:
 
-        entity1.id != null
+        EntityValues.getId(entity1) != null
 
         when:
 
@@ -53,7 +54,7 @@ class IdentityEntityTest extends DataSpec {
         when:
 
         def entity11 = dataManager.save(entity1)
-        def entity12 = dataManager.load(TestIdentityIdEntity).id(IdProxy.of(entity11.id.get())).one()
+        def entity12 = dataManager.load(TestIdentityIdEntity).id(IdProxy.of(entity11.id)).one()
 
         then:
 
@@ -68,7 +69,7 @@ class IdentityEntityTest extends DataSpec {
         when:
 
         def entity11 = dataManager.save(entity1)
-        def entity12 = dataManager.load(TestIdentityUuidEntity).id(IdProxy.of(entity11.id.get())).one()
+        def entity12 = dataManager.load(TestIdentityUuidEntity).id(IdProxy.of(entity11.id)).one()
 
         then:
 
@@ -80,14 +81,14 @@ class IdentityEntityTest extends DataSpec {
 
         def entity1 = dataManager.create(TestIdentityIdEntity)
         def entity11 = dataManager.save(entity1)
-        def idVal = entity11.id.get()
-        def uuid = entity11.id.uuid
+        def idVal = entity11.id
+        def uuid = EntityValues.getId(entity11).uuid
 
         def map = new HashMap()
 
         when:
 
-        map.put(entity11.id, entity11)
+        map.put(EntityValues.getId(entity11), entity11)
 
         then:
 

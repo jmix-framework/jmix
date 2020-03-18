@@ -17,7 +17,7 @@
 package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.data.impl.JmixQuery;
 
 import java.util.Collection;

@@ -16,7 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.data.listener.BeforeCommitTransactionListener;
 import org.springframework.stereotype.Component;
 

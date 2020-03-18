@@ -16,7 +16,7 @@
 
 package test_support.entity;
 
-import io.jmix.core.entity.BaseIdentityIdEntity;
+import io.jmix.data.entity.BaseIdentityIdEntity;
 import io.jmix.core.entity.HasUuid;
 
 import javax.persistence.Column;

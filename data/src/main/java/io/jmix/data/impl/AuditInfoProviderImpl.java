@@ -16,8 +16,8 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.data.AuditInfoProvider;
 import io.jmix.core.security.UserSessionSource;
+import io.jmix.data.AuditInfoProvider;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

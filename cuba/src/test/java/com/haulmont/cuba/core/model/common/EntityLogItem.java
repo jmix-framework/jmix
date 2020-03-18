@@ -19,8 +19,7 @@ package com.haulmont.cuba.core.model.common;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.BaseDbGeneratedIdEntity;
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -104,9 +103,6 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
 
     @Column(name = "ENTITY_INSTANCE_NAME")
     private String entityInstanceName;
-
-    @Transient
-    private transient BaseDbGeneratedIdEntity dbGeneratedIdEntity;
 
     @Transient
     @MetaProperty
@@ -215,14 +211,6 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
 
     public void setEntityRef(ReferenceToEntity entityRef) {
         this.entityRef = entityRef;
-    }
-
-    public BaseDbGeneratedIdEntity getDbGeneratedIdEntity() {
-        return dbGeneratedIdEntity;
-    }
-
-    public void setDbGeneratedIdEntity(BaseDbGeneratedIdEntity dbGeneratedIdEntity) {
-        this.dbGeneratedIdEntity = dbGeneratedIdEntity;
     }
 
     public String getEntityInstanceName() {

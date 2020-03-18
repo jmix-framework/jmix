@@ -21,7 +21,8 @@ import io.jmix.core.DevelopmentException;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.*;
 import io.jmix.core.security.*;
 import io.jmix.ui.components.AggregationInfo;
@@ -88,8 +89,8 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         masterDs.addItemChangeListener(e -> {
             log.trace("itemChanged: prevItem={}, item={}", e.getPrevItem(), e.getItem());
 
-            Collection prevColl = e.getPrevItem() == null ? null : (Collection) e.getPrevItem().getValue(metaProperty.getName());
-            Collection coll = e.getItem() == null ? null : (Collection) e.getItem().getValue(metaProperty.getName());
+            Collection prevColl = e.getPrevItem() == null ? null : (Collection) EntityValues.getValue(e.getPrevItem(), metaProperty.getName());
+            Collection coll = e.getItem() == null ? null : (Collection) EntityValues.getValue(e.getItem(), metaProperty.getName());
             reattachListeners(prevColl, coll);
 
             if (coll != null && metadata.getTools().isPersistent(metaProperty)) {
@@ -130,14 +131,14 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     protected void reattachListeners(Collection prevColl, Collection coll) {
         if (prevColl != null)
             for (Object entity : prevColl) {
-                if (entity instanceof Instance)
-                    detachListener((Instance) entity);
+                if (entity instanceof Entity)
+                    detachListener((Entity) entity);
             }
 
         if (coll != null)
             for (Object entity : coll) {
-                if (entity instanceof Instance)
-                    attachListener((Instance) entity);
+                if (entity instanceof Entity)
+                    attachListener((Entity) entity);
             }
     }
 
@@ -148,7 +149,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         Collection<T> collection = getCollection();
         if (collection != null) {
             for (T t : collection) {
-                if (t.getId().equals(id)) {
+                if (EntityValues.<K>getId(t).equals(id)) {
                     return t;
                 }
             }
@@ -181,7 +182,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
             else {
                 List<K> ids = new ArrayList<>(items.size());
                 for (T item : items) {
-                    ids.add(item.getId());
+                    ids.add(EntityValues.getId(item));
                 }
                 return ids;
             }
@@ -266,9 +267,9 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
                 || !security.isEntityAttrPermitted(parentMetaClass, metaProperty.getName(), EntityAttrAccess.VIEW)) {
             return new ArrayList<>(); // Don't use Collections.emptyList() to avoid confusing UnsupportedOperationExceptions
         } else {
-            final Instance master = masterDs.getItem();
+            final Entity master = masterDs.getItem();
             //noinspection unchecked
-            return master == null ? null : (Collection<T>) master.getValue(metaProperty.getName());
+            return master == null ? null : (Collection<T>) EntityValues.getValue(master, metaProperty.getName());
         }
     }
 
@@ -316,7 +317,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
                 // Last chance to find and set a master item
                 MetaProperty inverseProp = metaProperty.getInverse();
                 if (inverseProp != null) {
-                    Entity probableMasterItem = item.getValue(inverseProp.getName());
+                    Entity probableMasterItem = EntityValues.getValue(item, inverseProp.getName());
                     if (probableMasterItem != null) {
                         Collection<Entity> masterCollection = ((CollectionPropertyDatasourceImpl) masterDs).getCollection();
                         for (Entity masterCollectionItem : masterCollection) {
@@ -393,20 +394,20 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     }
 
     protected void initCollection() {
-        Instance item = masterDs.getItem();
+        Entity item = masterDs.getItem();
         if (item == null)
             throw new IllegalStateException("Item is null");
 
         Class<?> type = metaProperty.getJavaType();
         if (List.class.isAssignableFrom(type)) {
-            item.setValue(metaProperty.getName(), new ArrayList());
+            EntityValues.setValue(item, metaProperty.getName(), new ArrayList());
         } else if (Set.class.isAssignableFrom(type)) {
-            item.setValue(metaProperty.getName(), new LinkedHashSet());
+            EntityValues.setValue(item, metaProperty.getName(), new LinkedHashSet());
         } else {
             throw new UnsupportedOperationException("Type " + type + " not supported, should implement List or Set");
         }
 
-        if (item.getValue(metaProperty.getName()) == null) {
+        if (EntityValues.getValue(item, metaProperty.getName()) == null) {
             throw new RuntimeException("Cannot set collection property " + metaProperty.getName() + ". Probably not contained in view.");
         }
     }
@@ -467,7 +468,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
 
                 MetaProperty inverseProperty = metaProperty.getInverse();
                 if (inverseProperty != null)
-                    item.setValue(inverseProperty.getName(), null);
+                    EntityValues.setValue(item, inverseProperty.getName(), null);
 
                 // detach listener only after setting value to the link property
                 detachListener(item);
@@ -513,7 +514,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
 
             MetaProperty inverseProperty = metaProperty.getInverse();
             if (inverseProperty != null)
-                item.setValue(inverseProperty.getName(), masterDs.getItem());
+                EntityValues.setValue(item, inverseProperty.getName(), masterDs.getItem());
 
             // attach listener only after setting value to the link property
             attachListener(item);
@@ -544,7 +545,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
                             throw new UnsupportedOperationException("No inverse property for " + metaProperty);
                         }
 
-                        item.setValue(inverseProperty.getName(), null);
+                        EntityValues.setValue(item, inverseProperty.getName(), null);
                     }
 
                     // detach listener only after setting value to the link property
@@ -663,7 +664,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         }
 
         for (T item : collection) {
-            if (item.getId().equals(itemId)) {
+            if (EntityValues.<K>getId(item).equals(itemId)) {
                 return true;
             }
         }
@@ -889,7 +890,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     protected Comparator<T> createEntityComparator() {
         MetaPropertyPath propertyPath = sortInfos[0].getPropertyPath();
         boolean asc = Order.ASC.equals(sortInfos[0].getOrder());
-        return Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.asc(asc));
+        return Comparator.comparing(e -> EntityValues.getValueEx(e, propertyPath), EntityValuesComparator.asc(asc));
     }
 
     @Override
@@ -908,7 +909,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     public K getIdByIndex(int index) {
         Collection<T> collection = getCollection();
         if (CollectionUtils.isNotEmpty(collection)) {
-            return Iterables.get(collection, index).getId();
+            return EntityValues.getId(Iterables.get(collection, index));
         }
         return null;
     }
@@ -924,7 +925,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         Collection<T> collection = getCollection();
         if (collection != null && !collection.isEmpty()) {
             T first = Iterables.getFirst(collection, null);
-            return first == null ? null : first.getId();
+            return first == null ? null : EntityValues.getId(first);
         }
         return null;
     }
@@ -933,7 +934,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     public K lastItemId() {
         Collection<T> collection = getCollection();
         if (collection != null && !collection.isEmpty()) {
-            return Iterables.getLast(collection).getId();
+            return EntityValues.getId(Iterables.getLast(collection));
         }
         return null;
     }
@@ -945,7 +946,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         if ((collection != null) && !collection.isEmpty() && !itemId.equals(lastItemId())) {
             List<T> list = new ArrayList<>(collection);
             T currentItem = getItem(itemId);
-            return list.get(list.indexOf(currentItem) + 1).getId();
+            return EntityValues.getId(list.get(list.indexOf(currentItem) + 1));
         }
         return null;
     }
@@ -957,7 +958,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         if ((collection != null) && !collection.isEmpty() && !itemId.equals(firstItemId())) {
             List<T> list = new ArrayList<>(collection);
             T currentItem = getItem(itemId);
-            return list.get(list.indexOf(currentItem) - 1).getId();
+            return EntityValues.getId(list.get(list.indexOf(currentItem) - 1));
         }
         return null;
     }
@@ -983,7 +984,6 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     }
 
     protected Object getItemValue(MetaPropertyPath property, K itemId) {
-        Instance instance = getItemNN(itemId);
-        return instance.getValueEx(property);
+        return EntityValues.getValueEx(getItemNN(itemId), property);
     }
 }

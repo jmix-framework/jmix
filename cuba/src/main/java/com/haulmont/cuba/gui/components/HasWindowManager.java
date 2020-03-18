@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.Notifications;

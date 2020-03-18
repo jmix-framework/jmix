@@ -15,9 +15,10 @@
  */
 package com.haulmont.cuba.gui.data;
 
+import io.jmix.core.Entity;
 import io.jmix.ui.filter.QueryFilter;
 import com.haulmont.cuba.core.global.LoadContext;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.model.CollectionChangeType;
@@ -112,7 +113,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
 
     /**
      * Suspend invocation of {@code collectionChanged} method of registered {@link CollectionChangeListener}s.
-     * It makes sense in case of massive updates of the datasource by {@link #addItem(io.jmix.core.entity.Entity)}
+     * It makes sense in case of massive updates of the datasource by {@link #addItem(Entity)}
      * or similar methods.
      * After that, {@code collectionChanged} will be invoked once on {@link #resumeListeners()} call.
      * <br>Usage example:

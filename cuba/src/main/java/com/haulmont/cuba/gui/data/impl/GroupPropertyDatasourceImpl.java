@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.GroupDatasource;

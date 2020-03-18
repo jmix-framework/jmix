@@ -17,15 +17,14 @@ package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.gui.data.*;
 import io.jmix.core.DevelopmentException;
-import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.impl.AbstractInstance;
+import io.jmix.ui.sys.PersistenceHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -82,7 +81,7 @@ public class PropertyDatasourceImpl<T extends Entity>
 
     @Override
     public T getItem() {
-        final Instance item = masterDs.getItem();
+        final Entity item = masterDs.getItem();
         return getItem(item);
     }
 
@@ -94,8 +93,8 @@ public class PropertyDatasourceImpl<T extends Entity>
         return getState() == State.VALID ? getItem() : null;
     }
 
-    protected T getItem(Instance item) {
-        return item == null ? null : (T) item.getValue(metaProperty.getName());
+    protected T getItem(Entity item) {
+        return item == null ? null : (T) EntityValues.getValue(item, metaProperty.getName());
     }
 
     @Override
@@ -117,7 +116,7 @@ public class PropertyDatasourceImpl<T extends Entity>
                 if (masterView == null) {
                     throw new DevelopmentException("No view for datasource " + masterDs.getId(),
                             ParamsMap.of("masterDs", masterDs.getId(),
-                                         "propertyDs", getId()));
+                                    "propertyDs", getId()));
                 }
 
                 FetchPlanProperty property = masterView.getProperty(metaProperty.getName());
@@ -130,9 +129,9 @@ public class PropertyDatasourceImpl<T extends Entity>
                             String.format("Invalid view definition: %s. Property '%s' must have a view",
                                     masterView, property),
                             ParamsMap.of("masterDs", masterDs.getId(),
-                                         "propertyDs", getId(),
-                                         "masterView", masterView,
-                                         "property", property)
+                                    "propertyDs", getId(),
+                                    "masterView", masterView,
+                                    "property", property)
                     );
                 }
                 view = metadata.getViewRepository().getView(getMetaClass(), property.getFetchPlan().getName());
@@ -169,7 +168,7 @@ public class PropertyDatasourceImpl<T extends Entity>
             if (parentDs instanceof CollectionDatasource) {
                 CollectionDatasource parentCollectionDs = (CollectionDatasource) parentDs;
                 for (Entity item : itemsToCreate) {
-                    if (parentCollectionDs.containsItem(item.getId())) {
+                    if (parentCollectionDs.containsItem(EntityValues.getId(item))) {
                         parentCollectionDs.modifyItem(item);
                     } else {
                         parentCollectionDs.addItem(item);
@@ -190,7 +189,7 @@ public class PropertyDatasourceImpl<T extends Entity>
                         // delete only if they have the same master item
                         if (inverseProp != null
                                 && PersistenceHelper.isLoaded(createdItem, inverseProp.getName())
-                                && Objects.equals(createdItem.getValue(inverseProp.getName()), masterDs.getItem())) {
+                                && Objects.equals(EntityValues.getValue(createdItem, inverseProp.getName()), masterDs.getItem())) {
                             parentCollectionDs.removeItem(createdItem);
                         }
                     }
@@ -223,8 +222,8 @@ public class PropertyDatasourceImpl<T extends Entity>
             metadata.getTools().copy(item, getItem());
             itemsToUpdate.add(item);
         } else {
-            final Instance parentItem = masterDs.getItem();
-            parentItem.setValue(metaProperty.getName(), item);
+            final Entity parentItem = masterDs.getItem();
+            EntityValues.setValue(parentItem, metaProperty.getName(), item);
         }
         setModified(true);
     }
@@ -270,8 +269,8 @@ public class PropertyDatasourceImpl<T extends Entity>
 
             boolean isModified = masterDs.isModified();
 
-            AbstractInstance parentInstance = (AbstractInstance) parentItem;
-            parentInstance.setValue(metaProperty.getName(), newItem, false);
+            EntityValues.setValue(parentItem, metaProperty.getName(), newItem, false);
+
             detachListener(prevItem);
             attachListener(newItem);
 

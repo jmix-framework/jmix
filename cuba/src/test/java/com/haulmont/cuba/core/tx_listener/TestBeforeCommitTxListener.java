@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;

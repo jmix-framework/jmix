@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.global.ViewRepository;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanNotFoundException;
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.stereotype.Component;
 

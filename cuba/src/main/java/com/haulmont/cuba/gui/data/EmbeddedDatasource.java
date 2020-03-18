@@ -15,15 +15,15 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.entity.EmbeddableEntity;
+import io.jmix.core.Entity;
 
 /**
  * Datasource containing an embedded entity from a property of another entity instance.
  * <p>Usually defined in XML descriptor inside the parent datasource element.
- * @param <T> type of enclosed embeddable entity
  *
+ * @param <T> type of enclosed embeddable entity
  */
 @Deprecated
-public interface EmbeddedDatasource<T extends EmbeddableEntity>
+public interface EmbeddedDatasource<T extends Entity>
         extends NestedDatasource<T> {
 }

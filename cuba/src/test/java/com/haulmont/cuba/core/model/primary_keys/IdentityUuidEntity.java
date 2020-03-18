@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.primary_keys;
 
 import io.jmix.core.UuidProvider;
-import io.jmix.core.entity.BaseIdentityIdEntity;
+import io.jmix.data.entity.BaseIdentityIdEntity;
 import io.jmix.core.entity.HasUuid;
 
 import javax.persistence.AttributeOverride;

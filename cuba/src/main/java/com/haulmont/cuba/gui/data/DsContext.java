@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data;
 
 import com.haulmont.cuba.core.global.CommitContext;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.FrameContext;
 
 import javax.annotation.Nullable;

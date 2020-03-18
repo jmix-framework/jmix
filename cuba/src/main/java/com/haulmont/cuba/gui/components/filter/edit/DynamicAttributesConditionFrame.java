@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ReferenceToEntitySupport;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.Label;
 import io.jmix.ui.components.LookupField;

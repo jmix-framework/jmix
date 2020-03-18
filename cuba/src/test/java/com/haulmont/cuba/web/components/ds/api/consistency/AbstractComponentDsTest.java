@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.impl.CollectionDatasourceImpl;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;
 import com.haulmont.cuba.web.components.AbstractComponentTest;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.security.entity.Group;
 
 import java.util.UUID;

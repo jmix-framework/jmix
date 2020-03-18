@@ -16,17 +16,18 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.AppBeans;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.commons.events.EventRouter;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.executors.BackgroundWorker;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.NestedDatasource;
+import io.jmix.core.AppBeans;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.commons.events.EventRouter;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntityPropertyChangeListener;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.ui.executors.BackgroundWorker;
 import io.jmix.ui.sys.PersistenceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public abstract class AbstractDatasource<T extends Entity> implements Datasource
     protected Collection<Entity> itemsToCreate = new HashSet<>();
     protected Collection<Entity> itemsToUpdate = new HashSet<>();
     protected Collection<Entity> itemsToDelete = new HashSet<>();
-    protected Instance.PropertyChangeListener listener = new ItemListener();
+    protected EntityPropertyChangeListener listener = new ItemListener();
 
     protected boolean listenersEnabled = true;
 
@@ -242,20 +243,20 @@ public abstract class AbstractDatasource<T extends Entity> implements Datasource
         this.loadDynamicAttributes = value;
     }
 
-    protected void attachListener(Instance item) {
+    protected void attachListener(Entity item) {
         if (item == null) {
             return;
         }
 
-        item.addPropertyChangeListener(listener);
+        item.__getEntityEntry().addPropertyChangeListener(listener);
     }
 
-    protected void detachListener(Instance item) {
+    protected void detachListener(Entity item) {
         if (item == null) {
             return;
         }
 
-        item.removePropertyChangeListener(listener);
+        item.__getEntityEntry().removePropertyChangeListener(listener);
     }
 
     protected void fireItemChanged(T prevItem) {
@@ -270,10 +271,10 @@ public abstract class AbstractDatasource<T extends Entity> implements Datasource
         getEventRouter().fireEvent(StateChangeListener.class, StateChangeListener::stateChanged, stateChangeEvent);
     }
 
-    protected class ItemListener implements Instance.PropertyChangeListener {
+    protected class ItemListener implements EntityPropertyChangeListener {
         @SuppressWarnings("unchecked")
         @Override
-        public void propertyChanged(Instance.PropertyChangeEvent e) {
+        public void propertyChanged(EntityPropertyChangeEvent e) {
             if (!listenersEnabled) {
                 return;
             }

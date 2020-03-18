@@ -19,7 +19,7 @@ package spec.haulmont.cuba.web.datacontext
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.OrderLineParam
-import io.jmix.core.entity.Entity
+import io.jmix.core.Entity
 import io.jmix.ui.screen.UiControllerUtils
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.datacontext.screens.OrderScreen

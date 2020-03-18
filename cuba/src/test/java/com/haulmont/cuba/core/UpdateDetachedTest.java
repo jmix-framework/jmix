@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.model.common.PermissionType;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.*;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

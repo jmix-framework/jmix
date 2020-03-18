@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.components.data.table;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.GroupDatasource;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.data.GroupTableItems;
 import io.jmix.ui.gui.data.GroupInfo;
 

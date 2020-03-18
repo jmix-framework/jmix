@@ -20,8 +20,7 @@ import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.Actions;
 import io.jmix.ui.dynamicattributes.DynamicAttributesGuiTools;
 import org.springframework.stereotype.Component;
@@ -54,12 +53,9 @@ public class GuiActionSupport {
     public Entity reloadEntityIfNeeded(Entity entity, Datasource targetDatasource) {
         boolean needDynamicAttributes = false;
         boolean dynamicAttributesAreLoaded = true;
-        if (entity instanceof BaseGenericIdEntity) {
-            BaseGenericIdEntity e = (BaseGenericIdEntity) entity;
-            // todo dynamic attributes
-//            dynamicAttributesAreLoaded = e.getDynamicAttributes() != null;
-            needDynamicAttributes = targetDatasource.getLoadDynamicAttributes();
-        }
+        //dynamicAttributesAreLoaded = e.getDynamicAttributes() != null;
+        needDynamicAttributes = targetDatasource.getLoadDynamicAttributes();
+
 
         FetchPlan view = targetDatasource.getView();
         if (view == null) {
@@ -69,7 +65,7 @@ public class GuiActionSupport {
         if (!entityStates.isLoadedWithFetchPlan(entity, view)) {
             entity = targetDatasource.getDsContext().getDataSupplier().reload(entity, view, null, needDynamicAttributes);
         } else if (needDynamicAttributes && !dynamicAttributesAreLoaded) {
-            dynamicAttributesGuiTools.reloadDynamicAttributes((BaseGenericIdEntity) entity);
+            dynamicAttributesGuiTools.reloadDynamicAttributes(entity);
         }
         return entity;
     }

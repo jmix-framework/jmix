@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.model.sales;
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;

@@ -17,7 +17,7 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.web.components.LookupPickerField;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 @Deprecated
 public class WebLookupPickerField<V extends Entity>

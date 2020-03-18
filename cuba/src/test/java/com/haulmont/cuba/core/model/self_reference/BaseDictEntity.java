@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.self_reference;
 
-import io.jmix.core.entity.BaseStringIdEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.annotations.MetaClass;
 
 import javax.persistence.Column;
@@ -25,21 +25,11 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @MetaClass(name = "test$BaseDictEntity")
-public class BaseDictEntity extends BaseStringIdEntity {
+public class BaseDictEntity implements Entity<String> {
 
     @Id
     @Column(name = "CODE", nullable = false, length = 32)
     private String code;
-
-    @Override
-    public void setId(String id) {
-        this.code = id;
-    }
-
-    @Override
-    public String getId() {
-        return code;
-    }
 
     public String getCode() {
         return code;

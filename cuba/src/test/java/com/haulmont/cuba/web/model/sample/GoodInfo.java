@@ -16,9 +16,9 @@
 
 package com.haulmont.cuba.web.model.sample;
 
-import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.data.entity.BaseUuidEntity;
 
 import java.util.Date;
 

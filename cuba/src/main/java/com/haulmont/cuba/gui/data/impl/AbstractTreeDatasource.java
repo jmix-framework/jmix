@@ -19,7 +19,8 @@ package com.haulmont.cuba.gui.data.impl;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.commons.datastruct.Node;
 import io.jmix.core.commons.datastruct.Tree;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.logging.UIPerformanceLogger;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
@@ -58,7 +59,7 @@ public abstract class AbstractTreeDatasource<T extends Entity<K>, K>
         if (tree != null) {
             for (Node<T> node : tree.toList()) {
                 final T entity = node.getData();
-                final K id = entity.getId();
+                final K id = EntityValues.getId(entity);
 
                 data.put(id, entity);
                 attachListener(entity);
@@ -95,7 +96,7 @@ public abstract class AbstractTreeDatasource<T extends Entity<K>, K>
 
             List ids = new ArrayList();
             for (Node<T> rootNode : tree.getRootNodes()) {
-                ids.add(rootNode.getData().getId());
+                ids.add(EntityValues.<K>getId(rootNode.getData()));
             }
             return (Collection<K>) Collections.unmodifiableCollection(ids);
         }
@@ -108,7 +109,7 @@ public abstract class AbstractTreeDatasource<T extends Entity<K>, K>
         }
 
         final Node<T> node = nodes.get(itemId);
-        return node == null ? null : node.getParent() == null ? null : node.getParent().getData().getId();
+        return node == null ? null : node.getParent() == null ? null : EntityValues.getId(node.getParent().getData());
     }
 
     @Override
@@ -125,7 +126,7 @@ public abstract class AbstractTreeDatasource<T extends Entity<K>, K>
 
             final List<K> ids = new ArrayList<>();
             for (Node<T> targetNode : children) {
-                ids.add(targetNode.getData().getId());
+                ids.add(EntityValues.getId(targetNode.getData()));
             }
 
             return ids;

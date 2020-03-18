@@ -25,7 +25,7 @@ import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEd
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Scripting;
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;

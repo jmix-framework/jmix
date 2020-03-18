@@ -15,22 +15,21 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.entity.EmbeddableEntity;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.EmbeddedDatasource;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanProperty;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class EmbeddedDatasourceImpl<T extends EmbeddableEntity>
+public class EmbeddedDatasourceImpl<T extends Entity>
         extends AbstractDatasource<T>
         implements Datasource<T>, DatasourceImplementation<T>, EmbeddedDatasource<T> {
 
@@ -103,7 +102,7 @@ public class EmbeddedDatasourceImpl<T extends EmbeddableEntity>
     public T getItem() {
         backgroundWorker.checkUIAccess();
 
-        final Instance item = masterDs.getItem();
+        final Entity item = masterDs.getItem();
         return getItem(item);
     }
 
@@ -115,8 +114,8 @@ public class EmbeddedDatasourceImpl<T extends EmbeddableEntity>
         return getState() == State.VALID ? getItem() : null;
     }
 
-    protected T getItem(Instance item) {
-        return item == null ? null : (T) item.getValue(metaProperty.getName());
+    protected T getItem(Entity item) {
+        return item == null ? null : (T) EntityValues.getValue(item, metaProperty.getName());
     }
 
     @Override
@@ -127,8 +126,8 @@ public class EmbeddedDatasourceImpl<T extends EmbeddableEntity>
             metadata.getTools().copy(item, getItem());
             itemsToUpdate.add(item);
         } else {
-            final Instance parentItem = masterDs.getItem();
-            parentItem.setValue(metaProperty.getName(), item);
+            final Entity parentItem = masterDs.getItem();
+            EntityValues.setValue(parentItem, metaProperty.getName(), item);
         }
         setModified(true);
         ((DatasourceImplementation) masterDs).modified(masterDs.getItem());

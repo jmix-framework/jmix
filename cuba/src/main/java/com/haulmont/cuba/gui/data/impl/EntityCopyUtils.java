@@ -19,14 +19,12 @@ package com.haulmont.cuba.gui.data.impl;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.impl.AbstractInstance;
-import io.jmix.core.entity.BaseDbGeneratedIdEntity;
-import io.jmix.core.entity.BaseEntityInternalAccess;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -34,20 +32,18 @@ import java.util.List;
 
 public class EntityCopyUtils {
 
-    public static Entity copyCompositions(Entity source) {
-        Preconditions.checkNotNullArgument(source, "source is null");
+    public static Entity copyCompositions(Entity src) {
+        Preconditions.checkNotNullArgument(src, "source is null");
 
         Entity dest;
         try {
-            dest = source.getClass().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            dest = src.getClass().getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-        copyCompositions(source, dest);
+        copyCompositions(src, dest);
 
-        if (BaseEntityInternalAccess.supportsSecurityState(source)) {
-            BaseEntityInternalAccess.setSecurityState(dest, BaseEntityInternalAccess.getSecurityState(source));
-        }
+        dest.__getEntityEntry().setSecurityState(src.__getEntityEntry().getSecurityState());
 
         return dest;
     }
@@ -56,9 +52,7 @@ public class EntityCopyUtils {
         Preconditions.checkNotNullArgument(source, "source is null");
         Preconditions.checkNotNullArgument(dest, "dest is null");
 
-        if (source instanceof BaseDbGeneratedIdEntity && dest instanceof BaseDbGeneratedIdEntity) {
-            ((BaseDbGeneratedIdEntity) dest).setId(((BaseDbGeneratedIdEntity) source).getId());
-        }
+        EntityValues.setId(dest, EntityValues.getId(source));
 
         Metadata metadata = AppBeans.get(Metadata.class);
 
@@ -67,7 +61,7 @@ public class EntityCopyUtils {
             MetaProperty dstProperty = metadata.getClass(dest).findProperty(name);
             if (dstProperty != null && !dstProperty.isReadOnly()) {
                 try {
-                    Object value = source.getValue(name);
+                    Object value = EntityValues.getValue(source, name);
 
                     if (value != null && srcProperty.getRange().getCardinality().isMany()
                             && srcProperty.getType() == MetaProperty.Type.COMPOSITION) {
@@ -87,10 +81,10 @@ public class EntityCopyUtils {
                             dstCollection = new ArrayList<>(tmpCollection);
                         else
                             dstCollection = tmpCollection;
-                        dest.setValue(name, dstCollection);
+                        EntityValues.setValue(dest, name, dstCollection);
 
                     } else {
-                        dest.setValue(name, source.getValue(name));
+                        EntityValues.setValue(dest, name, EntityValues.getValue(source, name));
                     }
                 } catch (RuntimeException e) {
                     Throwable cause = ExceptionUtils.getRootCause(e);
@@ -102,15 +96,11 @@ public class EntityCopyUtils {
                 }
             }
         }
-        if (source instanceof BaseGenericIdEntity && dest instanceof BaseGenericIdEntity) {
-            BaseGenericIdEntity destGenericEntity = (BaseGenericIdEntity) dest;
-            BaseGenericIdEntity<?> sourceGenericEntity = (BaseGenericIdEntity<?>) source;
 
-            BaseEntityInternalAccess.setDetached(destGenericEntity, BaseEntityInternalAccess.isDetached(sourceGenericEntity));
-            BaseEntityInternalAccess.setNew(destGenericEntity, BaseEntityInternalAccess.isNew(sourceGenericEntity));
-            // todo dynamic attributes
+        dest.__getEntityEntry().setDetached(source.__getEntityEntry().isDetached());
+        dest.__getEntityEntry().setNew(source.__getEntityEntry().isNew());
+        // todo dynamic attributes
 //            destGenericEntity.setDynamicAttributes(sourceGenericEntity.getDynamicAttributes());
-        }
     }
 
     public static void copyCompositionsBack(Entity source, Entity dest) {
@@ -123,13 +113,13 @@ public class EntityCopyUtils {
             MetaProperty dstProperty = metadata.getClass(dest).findProperty(name);
             if (dstProperty != null && !dstProperty.isReadOnly()) {
                 try {
-                    Object value = source.getValue(name);
+                    Object value = EntityValues.getValue(source, name);
 
                     if (value != null && srcProperty.getRange().getCardinality().isMany()
                             && srcProperty.getType() == MetaProperty.Type.COMPOSITION) {
-                        ((AbstractInstance) dest).setValue(name, source.getValue(name), false);
+                        EntityValues.setValue(dest, name, EntityValues.getValue(source, name), false);
                     } else {
-                        dest.setValue(name, source.getValue(name));
+                        EntityValues.setValue(dest, name, EntityValues.getValue(source, name));
                     }
                 } catch (RuntimeException e) {
                     Throwable cause = ExceptionUtils.getRootCause(e);

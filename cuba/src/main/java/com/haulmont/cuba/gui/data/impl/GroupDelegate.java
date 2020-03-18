@@ -18,7 +18,8 @@ package com.haulmont.cuba.gui.data.impl;
 import com.google.common.collect.ImmutableList;
 import com.haulmont.cuba.gui.data.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.gui.data.GroupInfo;
 import org.apache.commons.collections4.CollectionUtils;
@@ -130,7 +131,7 @@ public abstract class GroupDelegate<T extends Entity<K>, K> {
         groupValues.put(property, itemValue);
 
         GroupInfo<MetaPropertyPath> groupInfo = new GroupInfo<>(groupValues);
-        itemGroups.put(item.getId(), groupInfo);
+        itemGroups.put(EntityValues.getId(item), groupInfo);
 
         if (!parents.containsKey(groupInfo)) {
             parents.put(groupInfo, parent);
@@ -182,7 +183,7 @@ public abstract class GroupDelegate<T extends Entity<K>, K> {
 
                         items.clear();
                         for (T entity : entities) {
-                            items.add(entity.getId());
+                            items.add(EntityValues.getId(entity));
                         }
                     }
                 }
@@ -284,9 +285,9 @@ public abstract class GroupDelegate<T extends Entity<K>, K> {
         Preconditions.checkNotNullArgument(item);
 
         if (property.getMetaProperties().length == 1) {
-            return item.getValue(property.getMetaProperty().getName());
+            return EntityValues.getValue(item, property.getMetaProperty().getName());
         } else {
-            return item.getValueEx(property);
+            return EntityValues.getValueEx(item, property);
         }
     }
 
@@ -331,7 +332,7 @@ public abstract class GroupDelegate<T extends Entity<K>, K> {
     }
 
     public GroupInfo getParentGroup(T entity) {
-        K id = entity.getId();
+        K id = EntityValues.getId(entity);
         if (!datasource.containsItem(id)) {
             throw new IllegalArgumentException("Datasource doesn't contain passed entity");
         }
@@ -339,11 +340,11 @@ public abstract class GroupDelegate<T extends Entity<K>, K> {
         if (itemGroups == null) {
             return null;
         }
-        return itemGroups.get(entity.getId());
+        return itemGroups.get(EntityValues.<K>getId(entity));
     }
 
     public List<GroupInfo> getGroupPath(T entity) {
-        K id = entity.getId();
+        K id = EntityValues.getId(entity);
         if (!datasource.containsItem(id)) {
             throw new IllegalArgumentException("Datasource doesn't contain passed entity");
         }
@@ -352,7 +353,7 @@ public abstract class GroupDelegate<T extends Entity<K>, K> {
             return Collections.emptyList();
         }
 
-        GroupInfo groupInfo = itemGroups.get(entity.getId());
+        GroupInfo groupInfo = itemGroups.get(EntityValues.<K>getId(entity));
         if (groupInfo == null) {
             return Collections.emptyList();
         }

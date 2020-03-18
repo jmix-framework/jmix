@@ -39,13 +39,13 @@ class DataContextIdProxyTest extends UiScreenSpec {
         when:
 
         TestIdentityIdEntity serverSideEntity = TestSupport.reserialize(merged)
-        serverSideEntity.setDbGeneratedId(10)
+        serverSideEntity.setId(10)
         TestIdentityIdEntity returnedEntity = TestSupport.reserialize(serverSideEntity)
 
         TestIdentityIdEntity mergedReturnedEntity = dataContext.merge(returnedEntity)
 
         then:
 
-        mergedReturnedEntity.getId().get() == 10
+        mergedReturnedEntity.getId() == 10
     }
 }

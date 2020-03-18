@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.navigation.entityinference.testscreens.notype.byinterface;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.Screen;
 

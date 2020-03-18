@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 
 import java.util.*;
@@ -50,9 +50,9 @@ public class HierarchicalDatasourceImpl<T extends Entity<K>, K>
             Collection<K> ids = getItemIds();
             for (K id : ids) {
                 Entity<K> item = getItemNN(id);
-                Entity<K> parentItem = item.getValue(hierarchyPropertyName);
-                if (parentItem != null && parentItem.getId().equals(itemId))
-                    res.add(item.getId());
+                Entity<K> parentItem = EntityValues.getValue(item, hierarchyPropertyName);
+                if (parentItem != null && EntityValues.<K>getId(parentItem).equals(itemId))
+                    res.add(EntityValues.getId(item));
             }
 
             return res;
@@ -63,12 +63,12 @@ public class HierarchicalDatasourceImpl<T extends Entity<K>, K>
     @Override
     public K getParent(K itemId) {
         if (hierarchyPropertyName != null) {
-            Instance item = getItem(itemId);
+            Entity item = getItem(itemId);
             if (item == null)
                 return null;
             else {
-                Entity<K> parentItem = item.getValue(hierarchyPropertyName);
-                return parentItem == null ? null : parentItem.getId();
+                Entity<K> parentItem = EntityValues.getValue(item, hierarchyPropertyName);
+                return parentItem == null ? null : EntityValues.getId(parentItem);
             }
         }
         return null;
@@ -82,9 +82,9 @@ public class HierarchicalDatasourceImpl<T extends Entity<K>, K>
             Set<K> result = new LinkedHashSet<>();
             for (K id : ids) {
                 Entity<K> item = getItemNN(id);
-                Entity<K> parentItem = item.getValue(hierarchyPropertyName);
-                if (parentItem == null || !containsItem(parentItem.getId()))
-                    result.add(item.getId());
+                Entity<K> parentItem = EntityValues.getValue(item, hierarchyPropertyName);
+                if (parentItem == null || !containsItem(EntityValues.getId(parentItem)))
+                    result.add(EntityValues.getId(item));
             }
             return result;
         } else {
@@ -94,12 +94,12 @@ public class HierarchicalDatasourceImpl<T extends Entity<K>, K>
 
     @Override
     public boolean isRoot(K itemId) {
-        Instance item = getItem(itemId);
+        Entity item = getItem(itemId);
         if (item == null) return false;
 
         if (hierarchyPropertyName != null) {
-            Entity<K> parentItem = item.getValue(hierarchyPropertyName);
-            return (parentItem == null || !containsItem(parentItem.getId()));
+            Entity<K> parentItem = EntityValues.getValue(item, hierarchyPropertyName);
+            return (parentItem == null || !containsItem(EntityValues.getId(parentItem)));
         } else {
             return true;
         }
@@ -115,8 +115,8 @@ public class HierarchicalDatasourceImpl<T extends Entity<K>, K>
             Collection<K> ids = getItemIds();
             for (K id : ids) {
                 Entity item = getItemNN(id);
-                Entity parentItem = item.getValue(hierarchyPropertyName);
-                if (parentItem != null && parentItem.getId().equals(itemId))
+                Entity parentItem = EntityValues.getValue(item, hierarchyPropertyName);
+                if (parentItem != null && EntityValues.getId(parentItem).equals(itemId))
                     return true;
             }
         }

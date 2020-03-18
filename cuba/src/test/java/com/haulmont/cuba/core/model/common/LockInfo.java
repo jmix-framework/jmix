@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.model.common;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.TimeSource;
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;

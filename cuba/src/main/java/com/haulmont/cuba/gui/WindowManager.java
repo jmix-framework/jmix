@@ -17,7 +17,7 @@ package com.haulmont.cuba.gui;
 
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;

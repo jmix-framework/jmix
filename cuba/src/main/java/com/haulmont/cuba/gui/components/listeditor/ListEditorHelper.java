@@ -19,10 +19,10 @@ package com.haulmont.cuba.gui.components.listeditor;
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.datatypes.TimeZoneAwareDatatype;
-import io.jmix.core.metamodel.model.Instance;
 import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.components.ListEditor;
@@ -55,8 +55,8 @@ public class ListEditorHelper {
             return null;
         switch (itemType) {
             case ENTITY:
-                if (v instanceof Instance)
-                    return AppBeans.get(MetadataTools.class).getInstanceName((Instance) v);
+                if (v instanceof Entity)
+                    return AppBeans.get(MetadataTools.class).getInstanceName((Entity) v);
                 else
                     return v.toString();
             case STRING:

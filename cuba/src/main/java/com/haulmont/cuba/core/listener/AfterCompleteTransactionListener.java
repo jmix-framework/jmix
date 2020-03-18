@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.listener;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 import java.util.Collection;
 

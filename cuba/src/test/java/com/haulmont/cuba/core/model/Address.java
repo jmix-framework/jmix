@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model;
 
-import io.jmix.core.entity.EmbeddableEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.annotations.MetaClass;
 
 import javax.persistence.Column;
@@ -24,7 +24,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @MetaClass(name = "test_PetclinicAddress")
-public class Address extends EmbeddableEntity {
+public class Address implements Entity<Object> {
 
     private static final long serialVersionUID = 3973674066005826186L;
 

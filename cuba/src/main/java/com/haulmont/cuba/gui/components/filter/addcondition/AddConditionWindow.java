@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescr
 import com.haulmont.cuba.gui.components.filter.descriptor.HeaderConditionDescriptor;
 import com.haulmont.cuba.gui.components.filter.descriptor.PropertyConditionDescriptor;
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.components.Button;

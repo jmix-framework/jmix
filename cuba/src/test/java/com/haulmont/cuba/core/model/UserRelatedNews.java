@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 

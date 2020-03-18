@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.actions.BaseAction;

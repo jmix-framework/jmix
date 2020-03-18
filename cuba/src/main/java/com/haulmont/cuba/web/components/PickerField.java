@@ -17,7 +17,7 @@
 package com.haulmont.cuba.web.components;
 
 import com.haulmont.cuba.gui.components.Field;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 @Deprecated
 public interface PickerField<V extends Entity>

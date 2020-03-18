@@ -17,7 +17,7 @@
 package com.haulmont.cuba.web.components;
 
 import com.haulmont.cuba.gui.components.OptionsField;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 @Deprecated
 public interface LookupPickerField<V extends Entity> extends io.jmix.ui.components.LookupPickerField<V>, OptionsField<V, V> {

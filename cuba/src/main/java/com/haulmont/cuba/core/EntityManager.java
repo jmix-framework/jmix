@@ -15,9 +15,9 @@
  */
 package com.haulmont.cuba.core;
 
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 import java.sql.Connection;
@@ -47,11 +47,11 @@ public interface EntityManager {
      * of attributes of the passed entity. If the object does not exist in the database, the passed entity is persisted
      * and returned.
      *
-     * @param entity    entity instance
+     * @param entity entity instance
      * @return the instance that the state was merged to
      * @throws IllegalArgumentException if instance is not an entity or is a removed entity
-     * @see io.jmix.core.PersistenceHelper#isNew(Object)
-     * @see io.jmix.core.PersistenceHelper#makePatch(BaseGenericIdEntity)
+     * @see EntityStates#isNew(Object)
+     * @see EntityStates#makePatch(Entity)
      */
     <T extends Entity> T merge(T entity);
 
@@ -71,7 +71,7 @@ public interface EntityManager {
      * Remove the entity instance.
      * What actually happens depends on {@link #isSoftDeletion} flag.
      *
-     * @param entity    entity instance
+     * @param entity entity instance
      * @throws IllegalArgumentException if not an entity
      */
     void remove(Entity entity);
@@ -79,11 +79,11 @@ public interface EntityManager {
     /**
      * Find by primary key.
      *
-     * @param entityClass   entity class
-     * @param id            entity id
+     * @param entityClass entity class
+     * @param id          entity id
      * @return the found entity instance or null if the entity does not exist
      * @throws IllegalArgumentException if the first argument does not denote an entity type or the second argument
-     * is not a valid type for that entity's primary key
+     *                                  is not a valid type for that entity's primary key
      */
     @Nullable
     <T extends Entity<K>, K> T find(Class<T> entityClass, K id);
@@ -94,12 +94,12 @@ public interface EntityManager {
      * Due to accepting fetch plans, this method actually executes a {@link Query} which may lead to flushing of the
      * persistence context and invoking listeners on modified entities.
      *
-     * @param entityClass   entity class
-     * @param id            entity id
-     * @param fetchPlans         array of fetch plans
+     * @param entityClass entity class
+     * @param id          entity id
+     * @param fetchPlans  array of fetch plans
      * @return the found entity instance or null if the entity does not exist
      * @throws IllegalArgumentException if the first argument does not denote an entity type or the second argument
-     * is not a valid type for that entity's primary key
+     *                                  is not a valid type for that entity's primary key
      */
     @Nullable
     <T extends Entity<K>, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans);
@@ -110,13 +110,12 @@ public interface EntityManager {
      * Due to accepting fetch plans, this method actually executes a {@link Query} which may lead to flushing of the
      * persistence context and invoking listeners on modified entities.
      *
-     * @param entityClass   entity class
-     * @param id            entity id
-     * @param fetchPlanNames     array of fetch plan names for this entity
-     *
+     * @param entityClass    entity class
+     * @param id             entity id
+     * @param fetchPlanNames array of fetch plan names for this entity
      * @return the found entity instance or null if the entity does not exist
      * @throws IllegalArgumentException if the first argument does not denote an entity type or the second argument
-     * is not a valid type for that entity's primary key
+     *                                  is not a valid type for that entity's primary key
      */
     @Nullable
     <T extends Entity<K>, K> T find(Class<T> entityClass, K id, String... fetchPlanNames);
@@ -130,11 +129,11 @@ public interface EntityManager {
      * be available upon detachment, unless it was accessed by the
      * application while the entity manager was open.
      *
-     * @param entityClass   entity class
-     * @param id            entity id
+     * @param entityClass entity class
+     * @param id          entity id
      * @return the found entity instance
-     * @throws IllegalArgumentException if the first argument does not denote an entity type or the second argument
-     * is not a valid type for that entity's primary key
+     * @throws IllegalArgumentException                  if the first argument does not denote an entity type or the second argument
+     *                                                   is not a valid type for that entity's primary key
      * @throws javax.persistence.EntityNotFoundException if the entity state cannot be accessed
      */
     <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id);
@@ -182,7 +181,7 @@ public interface EntityManager {
     /**
      * Create an instance of Query for executing a native SQL statement and map its result to an entity.<br>
      *
-     * @param sqlString a native SQL query string
+     * @param sqlString   a native SQL query string
      * @param resultClass expected result class
      * @return the new query instance
      */
@@ -194,9 +193,9 @@ public interface EntityManager {
      * <br> If the given entity is in managed state, the method returns the same object instance. If the entity is
      * detached, the method returns a new object instance.
      *
-     * @param entity        entity instance to reload
-     * @param fetchPlanNames     array of fetch plan names
-     * @return              reloaded entity instance, or null if it has been deleted
+     * @param entity         entity instance to reload
+     * @param fetchPlanNames array of fetch plan names
+     * @return reloaded entity instance, or null if it has been deleted
      */
     @Nullable
     <T extends Entity> T reload(T entity, String... fetchPlanNames);
@@ -207,9 +206,9 @@ public interface EntityManager {
      * <br> If the given entity is in managed state, the method returns the same object instance. If the entity is
      * detached, the method returns a new object instance.
      *
-     * @param entity        entity instance to reload
-     * @param fetchPlanNames     array of fetch plan names
-     * @return              reloaded entity instance
+     * @param entity         entity instance to reload
+     * @param fetchPlanNames array of fetch plan names
+     * @return reloaded entity instance
      * @throws javax.persistence.EntityNotFoundException if the entity has been deleted
      */
     <T extends Entity> T reloadNN(T entity, String... fetchPlanNames);
@@ -240,7 +239,7 @@ public interface EntityManager {
     Connection getConnection();
 
     /**
-     * @return  underlying implementation provided by ORM
+     * @return underlying implementation provided by ORM
      */
     javax.persistence.EntityManager getDelegate();
 

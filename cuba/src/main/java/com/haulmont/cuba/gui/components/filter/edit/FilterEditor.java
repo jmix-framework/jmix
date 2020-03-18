@@ -39,7 +39,7 @@ import io.jmix.core.ConfigInterfaces;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.commons.datastruct.Node;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.ClientConfig;

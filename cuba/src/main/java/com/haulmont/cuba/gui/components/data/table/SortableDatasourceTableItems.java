@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.components.data.table;
 
 import com.google.common.base.Preconditions;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.data.TableItems;
 

@@ -20,7 +20,8 @@ package com.haulmont.cuba.core.testsupport;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.core.Persistence;
@@ -76,7 +77,7 @@ public class TestSupport {
                 throw new RuntimeException("Unable to determine table or primary key name for " + entity);
             }
 
-            deleteRecord(table, primaryKey, entity.getId());
+            deleteRecord(table, primaryKey, EntityValues.<Object>getId(entity));
         }
     }
 }

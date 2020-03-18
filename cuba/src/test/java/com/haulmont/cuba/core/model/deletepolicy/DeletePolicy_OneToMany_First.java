@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.deletepolicy;
 
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 

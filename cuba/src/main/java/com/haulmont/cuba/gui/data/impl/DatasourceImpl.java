@@ -21,7 +21,8 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
@@ -105,7 +106,7 @@ public class DatasourceImpl<T extends Entity> extends AbstractDatasource<T> impl
 
             if (parentDs instanceof CollectionDatasource) {
                 CollectionDatasource ds = (CollectionDatasource) parentDs;
-                if (ds.containsItem(item.getId())) {
+                if (ds.containsItem(EntityValues.getId(item))) {
                     ds.modifyItem(item);
                 } else {
                     ds.addItem(item);

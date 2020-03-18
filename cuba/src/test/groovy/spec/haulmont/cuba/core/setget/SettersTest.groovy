@@ -36,22 +36,22 @@ class SettersTest extends CoreTestSpecification {
     def "Overloaded setter"() {
         when:
         String stringValue = "stringValue"
-        settersEntity.setValue("stringField", stringValue)
-        String afterValue = settersEntity.getValue("stringField")
+        settersEntity.__getEntityEntry().setAttributeValue("stringField", stringValue)
+        String afterValue = settersEntity.__getEntityEntry().getAttributeValue("stringField")
 
         then:
         stringValue == afterValue
 
         when:
         Double doubleValue = 10D
-        settersEntity.setValue("stringField", doubleValue)
-        afterValue = settersEntity.getValue("stringField")
+        settersEntity.__getEntityEntry().setAttributeValue("stringField", doubleValue)
+        afterValue = settersEntity.__getEntityEntry().getAttributeValue("stringField")
 
         then:
         doubleValue.toString() == afterValue
 
         when:
-        settersEntity.setValue("stringField", true)
+        settersEntity.__getEntityEntry().setAttributeValue("stringField", true)
 
         then:
         thrown(IllegalArgumentException)
@@ -68,7 +68,7 @@ class SettersTest extends CoreTestSpecification {
 
         when:
         booleanValue = true
-        settersEntity.setValue("staticFlag", booleanValue)
+        settersEntity.__getEntityEntry().setAttributeValue("staticFlag", booleanValue)
 
         then:
         thrown(IllegalArgumentException)

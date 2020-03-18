@@ -17,7 +17,7 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.global.impl.EntityListenerUtils;
 import com.haulmont.cuba.core.EntityManager;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 /**
  * Defines the contract for handling entities right before they are detached from an EntityManager

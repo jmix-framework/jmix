@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.common;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 

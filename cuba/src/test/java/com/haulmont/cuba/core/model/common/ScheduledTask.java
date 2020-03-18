@@ -17,7 +17,7 @@
 
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.Updatable;
@@ -30,7 +30,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Entity that stores an information about a scheduled task.

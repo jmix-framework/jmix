@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 @Deprecated
 public interface ListComponent<E extends Entity> extends io.jmix.ui.components.ListComponent<E> {

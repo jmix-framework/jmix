@@ -24,8 +24,8 @@ import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
 import com.haulmont.cuba.gui.data.impl.EntityCopyUtils;
 import io.jmix.core.*;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
@@ -200,7 +200,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
         }
 
         Class<? extends Entity> entityClass = item.getClass();
-        Object entityId = item.getId();
+        Object entityId = EntityValues.getId(item);
 
         EntityStates entityStates = getBeanLocator().get(EntityStates.class);
 
@@ -208,7 +208,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
             if (!PersistenceHelper.isNew(item)
                     && !parentDs.getItemsToCreate().contains(item) && !parentDs.getItemsToUpdate().contains(item)
                     && parentDs instanceof CollectionDatasource
-                    && ((CollectionDatasource) parentDs).containsItem(item.getId())
+                    && ((CollectionDatasource) parentDs).containsItem(EntityValues.getId(item))
                     && !entityStates.isLoadedWithFetchPlan(item, ds.getView())) {
                 item = dataservice.reload(item, ds.getView(), ds.getMetaClass(), ds.getLoadDynamicAttributes());
                 if (parentDs instanceof CollectionPropertyDatasourceImpl) {
@@ -235,9 +235,9 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
             item = newItem;
         }
 
-        if (ds.getLoadDynamicAttributes() && item instanceof BaseGenericIdEntity) {
+        if (ds.getLoadDynamicAttributes()) {
             if (PersistenceHelper.isNew(item)) {
-                dynamicAttributesGuiTools.initDefaultAttributeValues((BaseGenericIdEntity) item, metadata.getClass(item));
+                dynamicAttributesGuiTools.initDefaultAttributeValues(item, metadata.getClass(item));
             }
 
             // todo dynamic attributes
@@ -324,7 +324,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
                 for (Datasource datasource : parentDs.getDsContext().getAll()) {
                     if (datasource instanceof NestedDatasource
                             && ((NestedDatasource) datasource).getMaster().equals(parentDs)) {
-                        Object value = entity.getValue(property.getName());
+                        Object value = EntityValues.getValue(entity, property.getName());
                         if (value instanceof Collection) {
                             Collection collection = (Collection) value;
                             //noinspection unchecked

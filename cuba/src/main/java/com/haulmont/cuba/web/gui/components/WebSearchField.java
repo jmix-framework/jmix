@@ -17,7 +17,7 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.web.components.SearchField;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 public class WebSearchField<V extends Entity> extends io.jmix.ui.components.impl.WebSearchField<V>
         implements SearchField<V> {

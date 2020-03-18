@@ -32,7 +32,7 @@ public class PropertyChangedTest {
         EntityWithRelatedProperties testEntity = new EntityWithRelatedProperties();
         List<String> changedAttrs = new ArrayList<>();
 
-        testEntity.addPropertyChangeListener(p -> {
+        testEntity.__getEntityEntry().addPropertyChangeListener(p -> {
             changedAttrs.add(p.getProperty());
             if ("name".equals(p.getProperty())) {
                 assertNull(p.getPrevValue());
@@ -60,7 +60,7 @@ public class PropertyChangedTest {
         EntityWithRelatedProperties testEntity = new EntityWithRelatedProperties();
         List<String> changedAttrs = new ArrayList<>();
 
-        testEntity.addPropertyChangeListener(p -> {
+        testEntity.__getEntityEntry().addPropertyChangeListener(p -> {
             changedAttrs.add(p.getProperty());
 
             assertEquals("notRelatedAttr", p.getProperty());

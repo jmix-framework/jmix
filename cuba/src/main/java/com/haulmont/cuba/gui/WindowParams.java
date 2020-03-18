@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.FrameContext;
 import org.apache.commons.lang3.BooleanUtils;
 

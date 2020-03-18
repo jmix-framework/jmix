@@ -21,7 +21,8 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.data.BindingState;
 import io.jmix.ui.components.data.Options;
@@ -94,7 +95,7 @@ public class DatasourceOptions<E extends Entity<K>, K> implements Options<E>, En
 
     @Override
     public boolean containsItem(E item) {
-        return datasource.containsItem(item.getId());
+        return datasource.containsItem(EntityValues.getId(item));
     }
 
     @Override

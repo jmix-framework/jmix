@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.beanvalidation;
 
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;

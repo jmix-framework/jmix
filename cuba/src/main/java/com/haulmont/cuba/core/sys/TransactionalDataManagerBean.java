@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import com.haulmont.cuba.core.TransactionalDataManager;
 import com.haulmont.cuba.core.Transactions;
@@ -129,9 +129,9 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     }
 
     @Override
-    public <T extends BaseGenericIdEntity<K>, K> T getReference(Class<T> entityClass, K id) {
+    public <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id) {
         T entity = metadata.create(entityClass);
-        entity.setId(id);
+        EntityValues.setId(entity, id);
         entityStates.makePatch(entity);
         return entity;
     }

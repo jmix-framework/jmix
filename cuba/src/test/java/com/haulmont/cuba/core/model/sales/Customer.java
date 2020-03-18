@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.sales;
 
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.datatypes.impl.EnumUtils;
 

@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global.impl;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 

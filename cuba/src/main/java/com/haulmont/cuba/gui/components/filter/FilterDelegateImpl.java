@@ -49,7 +49,7 @@ import io.jmix.core.commons.datastruct.Pair;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.commons.xmlparsing.Dom4jTools;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.queryconditions.JpqlCondition;
 import io.jmix.core.security.Security;

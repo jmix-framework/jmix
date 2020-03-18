@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.screen.compatibility;
 
 import com.haulmont.cuba.gui.components.AbstractEditor;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.compatibility.AfterCloseListenerAdapter;

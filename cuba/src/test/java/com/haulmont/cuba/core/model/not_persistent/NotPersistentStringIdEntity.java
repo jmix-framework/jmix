@@ -16,14 +16,14 @@
 
 package com.haulmont.cuba.core.model.not_persistent;
 
-import io.jmix.core.entity.BaseStringIdEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 
 import javax.persistence.Id;
 
 @MetaClass(name = "test$NotPersistentStringIdEntity")
-public class NotPersistentStringIdEntity extends BaseStringIdEntity {
+public class NotPersistentStringIdEntity implements Entity<String> {
 
     @Id
     @MetaProperty(mandatory = true)
@@ -32,21 +32,19 @@ public class NotPersistentStringIdEntity extends BaseStringIdEntity {
     @MetaProperty
     protected String name;
 
-    @Override
-    public String getId() {
-        return identifier;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.identifier = id;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

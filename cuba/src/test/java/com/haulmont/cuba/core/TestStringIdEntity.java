@@ -16,14 +16,12 @@
 
 package com.haulmont.cuba.core;
 
-import io.jmix.core.entity.BaseStringIdEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity(name = "test$StringIdEntity")
-public class TestStringIdEntity extends BaseStringIdEntity {
+public class TestStringIdEntity implements io.jmix.core.Entity<String> {
 
     @Id
     @Column(name = "CODE")
@@ -31,16 +29,6 @@ public class TestStringIdEntity extends BaseStringIdEntity {
 
     @Column(name = "NAME")
     private String name;
-
-    @Override
-    public String getId() {
-        return code;
-    }
-
-    @Override
-    public void setId(String id) {
-        code = id;
-    }
 
     public String getName() {
         return name;

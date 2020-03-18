@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.tx_listener;
 
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.EntityStates;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import org.springframework.jdbc.core.JdbcTemplate;

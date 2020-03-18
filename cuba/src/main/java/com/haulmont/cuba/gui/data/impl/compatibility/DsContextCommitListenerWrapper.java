@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.data.impl.compatibility;
 
 import com.haulmont.cuba.core.global.CommitContext;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.gui.data.DsContext;
 
 import java.util.Set;

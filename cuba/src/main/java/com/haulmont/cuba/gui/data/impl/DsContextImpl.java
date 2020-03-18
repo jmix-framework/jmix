@@ -17,19 +17,19 @@ package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.*;
+import com.haulmont.cuba.gui.data.impl.compatibility.DsContextCommitListenerWrapper;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.impl.AbstractInstance;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.FrameContext;
-import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.ui.filter.ParameterInfo;
-import com.haulmont.cuba.gui.data.impl.compatibility.DsContextCommitListenerWrapper;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.sys.PersistenceHelper;
 
@@ -289,7 +289,7 @@ public class DsContextImpl implements DsContextImplementation {
                     || !PersistenceHelper.isLoaded(entity, property.getName()))
                 continue;
 
-            Object value = entity.getValue(property.getName());
+            Object value = EntityValues.getValue(entity, property.getName());
             if (value != null) {
                 if (property.getRange().getCardinality().isMany()) {
                     Collection collection = (Collection) value;
@@ -306,7 +306,7 @@ public class DsContextImpl implements DsContextImplementation {
                     }
                 } else {
                     if (contextEntity.equals(value) && contextEntity != value) {
-                        entity.setValue(property.getName(), contextEntity);
+                        EntityValues.setValue(entity, property.getName(), contextEntity);
                     }
                 }
             }
@@ -334,13 +334,13 @@ public class DsContextImpl implements DsContextImplementation {
                 MetaClass metaClass = metadata.getExtendedEntities().getEffectiveMetaClass(inverseProp.getDomain());
                 if (metaClass.equals(datasource.getMetaClass())
                         && (PersistenceHelper.isLoaded(entity, inverseProp.getName())
-                        && entity.getValue(inverseProp.getName()) != null)) // replace master only if it's already set
+                        && EntityValues.getValue(entity, inverseProp.getName()) != null)) // replace master only if it's already set
                 {
                     Object masterItem = null;
                     if (masterDs instanceof CollectionDatasource) {
-                        Entity value = entity.getValue(inverseProp.getName());
+                        Entity value = EntityValues.getValue(entity, inverseProp.getName());
                         if (value != null) {
-                            Object id = value.getId();
+                            Object id = EntityValues.getId(value);
                             //noinspection unchecked
                             masterItem = ((CollectionDatasource) masterDs).getItem(id);
                         }
@@ -349,7 +349,7 @@ public class DsContextImpl implements DsContextImplementation {
                     }
                     if (masterItem != null) {
                         // CAUTION need to rework this mechanism in case of two or more nested collection datasources
-                        ((AbstractInstance) entity).setValue(inverseProp.getName(), masterItem, false);
+                        EntityValues.setValue(entity, inverseProp.getName(), masterItem, false);
                     }
                 }
             }

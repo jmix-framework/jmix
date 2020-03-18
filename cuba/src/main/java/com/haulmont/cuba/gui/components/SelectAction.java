@@ -19,7 +19,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.components.Component;
@@ -99,7 +99,7 @@ public class SelectAction extends AbstractAction {
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
         for (Object obj : selected) {
             if (obj instanceof Entity) {
-                metadataTools.traverseAttributes((Entity) obj, (entity, property) -> entity.removeAllListeners());
+                metadataTools.traverseAttributes((Entity) obj, (entity, property) -> entity.__getEntityEntry().removeAllListeners());
             }
         }
     }

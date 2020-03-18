@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 

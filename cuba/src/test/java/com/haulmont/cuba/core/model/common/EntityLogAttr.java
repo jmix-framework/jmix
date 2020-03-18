@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;

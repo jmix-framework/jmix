@@ -16,7 +16,7 @@
 package com.haulmont.cuba.core.global;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

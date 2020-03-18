@@ -19,8 +19,7 @@ import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.gui.data.DataSupplier;
@@ -83,7 +82,7 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <T extends BaseGenericIdEntity<K>, K> void remove(Id<T, K> entityId) {
+    public <T extends Entity<K>, K> void remove(Id<T, K> entityId) {
         getDataManager().remove(entityId);
     }
 
@@ -128,12 +127,12 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <T extends BaseGenericIdEntity<K>, K> T getReference(Class<T> entityClass, K id) {
+    public <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id) {
         return getDataManager().getReference(entityClass, id);
     }
 
     @Override
-    public <T extends BaseGenericIdEntity<K>, K> T getReference(Id<T, K> entityId) {
+    public <T extends Entity<K>, K> T getReference(Id<T, K> entityId) {
         return null;
     }
 

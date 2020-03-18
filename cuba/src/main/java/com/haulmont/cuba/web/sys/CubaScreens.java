@@ -25,7 +25,7 @@ import com.haulmont.cuba.gui.screen.compatibility.ScreenEditorWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenFragmentWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenLookupWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenWrapper;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;

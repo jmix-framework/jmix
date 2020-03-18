@@ -15,8 +15,8 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import org.apache.commons.lang3.StringUtils;
 
@@ -54,9 +54,9 @@ public class HierarchicalPropertyDatasourceImpl<T extends Entity<K>, K>
             Collection<K> ids = getItemIds();
             for (K id : ids) {
                 Entity<K> currentItem = getItemNN(id);
-                Object parentItem = currentItem.getValue(hierarchyPropertyName);
+                Object parentItem = EntityValues.getValue(currentItem, hierarchyPropertyName);
                 if (parentItem != null && parentItem.equals(item))
-                    res.add(currentItem.getId());
+                    res.add(EntityValues.getId(currentItem));
             }
 
             if (StringUtils.isNotBlank(sortPropertyName)) {
@@ -64,8 +64,8 @@ public class HierarchicalPropertyDatasourceImpl<T extends Entity<K>, K>
                     Entity item1 = getItemNN(o1);
                     Entity item2 = getItemNN(o2);
 
-                    Object value1 = item1.getValue(sortPropertyName);
-                    Object value2 = item2.getValue(sortPropertyName);
+                    Object value1 = EntityValues.getValue(item1, sortPropertyName);
+                    Object value2 = EntityValues.getValue(item2, sortPropertyName);
 
                     if ((value1 instanceof Comparable)
                             && (value2 instanceof Comparable)) {
@@ -84,12 +84,12 @@ public class HierarchicalPropertyDatasourceImpl<T extends Entity<K>, K>
     @Override
     public K getParent(K itemId) {
         if (hierarchyPropertyName != null) {
-            Instance item = getItem(itemId);
+            Entity item = getItem(itemId);
             if (item == null)
                 return null;
             else {
-                Entity<K> value = item.getValue(hierarchyPropertyName);
-                return value == null ? null : value.getId();
+                Entity<K> value = EntityValues.getValue(item, hierarchyPropertyName);
+                return value == null ? null : EntityValues.getId(value);
             }
         }
         return null;
@@ -104,8 +104,8 @@ public class HierarchicalPropertyDatasourceImpl<T extends Entity<K>, K>
             Set<K> result = new LinkedHashSet<>();
             for (K id : ids) {
                 Entity<K> item = getItemNN(id);
-                Object value = item.getValue(hierarchyPropertyName);
-                if (value == null || !containsItem(((T) value).getId())) result.add(item.getId());
+                Object value = EntityValues.getValue(item, hierarchyPropertyName);
+                if (value == null || !containsItem(EntityValues.getId(((T) value)))) result.add(EntityValues.getId(item));
             }
             return result;
         } else {
@@ -116,12 +116,12 @@ public class HierarchicalPropertyDatasourceImpl<T extends Entity<K>, K>
     @SuppressWarnings("unchecked")
     @Override
     public boolean isRoot(K itemId) {
-        Instance item = getItem(itemId);
+        Entity item = getItem(itemId);
         if (item == null) return false;
 
         if (hierarchyPropertyName != null) {
-            Object value = item.getValue(hierarchyPropertyName);
-            return (value == null || !containsItem(((T) value).getId()));
+            Object value = EntityValues.getValue(item, hierarchyPropertyName);
+            return (value == null || !containsItem(EntityValues.getId(((T) value))));
         } else {
             return true;
         }
@@ -134,7 +134,7 @@ public class HierarchicalPropertyDatasourceImpl<T extends Entity<K>, K>
 
         if (hierarchyPropertyName != null) {
             for (T currentItem : getItems()) {
-                Object parentItem = currentItem.getValue(hierarchyPropertyName);
+                Object parentItem = EntityValues.getValue(currentItem, hierarchyPropertyName);
                 if (parentItem != null && parentItem.equals(item))
                     return true;
             }

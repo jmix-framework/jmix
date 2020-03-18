@@ -26,7 +26,7 @@ import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.datastruct.Node;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
 import io.jmix.ui.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -120,12 +120,12 @@ public class AppliedFilter {
             return "";
 
         if (param.isDateInterval()) {
-            DateIntervalValue dateIntervalValue = AppBeans.getPrototype(DateIntervalValue.NAME, (String) value);
+            DateIntervalValue dateIntervalValue = AppBeans.getPrototype(DateIntervalValue.NAME, value);
             return dateIntervalValue.getLocalizedValue();
         }
 
-        if (value instanceof Instance)
-            return AppBeans.get(MetadataTools.class).getInstanceName((Instance) value);
+        if (value instanceof Entity)
+            return AppBeans.get(MetadataTools.class).getInstanceName((Entity<?>) value);
 
         if (value instanceof Enum)
             return messages.getMessage((Enum) value);
@@ -134,8 +134,8 @@ public class AppliedFilter {
             ArrayList<String> names = new ArrayList<>();
             ArrayList list = ((ArrayList) value);
             for (Object obj : list) {
-                if (obj instanceof Instance)
-                    names.add(AppBeans.get(MetadataTools.class).getInstanceName(((Instance) obj)));
+                if (obj instanceof Entity)
+                    names.add(AppBeans.get(MetadataTools.class).getInstanceName(((Entity<?>) obj)));
                 else {
                     names.add(FilterConditionUtils.formatParamValue(param, obj));
                 }

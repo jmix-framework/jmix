@@ -16,8 +16,6 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
-import io.jmix.core.entity.BaseGenericIdEntity;
-
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -25,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test$CompositeKeyEntity")
 @Table(name = "TEST_COMPOSITE_KEY")
-public class CompositeKeyEntity extends BaseGenericIdEntity<EntityKey> {
+public class CompositeKeyEntity implements io.jmix.core.Entity<EntityKey> {
 
     private static final long serialVersionUID = -2538345720324624741L;
 
@@ -38,12 +36,10 @@ public class CompositeKeyEntity extends BaseGenericIdEntity<EntityKey> {
     @Column(name = "EMAIL")
     private String email;
 
-    @Override
     public void setId(EntityKey id) {
         this.id = id;
     }
 
-    @Override
     public EntityKey getId() {
         return id;
     }

@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.tx_listener;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import org.springframework.core.Ordered;

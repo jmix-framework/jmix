@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.global.impl;
 
 import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.Persistence;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

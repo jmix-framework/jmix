@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model;
 
-import io.jmix.core.entity.BaseLongIdEntity;
+import io.jmix.data.entity.BaseLongIdEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

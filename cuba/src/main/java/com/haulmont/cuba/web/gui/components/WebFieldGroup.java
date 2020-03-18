@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;

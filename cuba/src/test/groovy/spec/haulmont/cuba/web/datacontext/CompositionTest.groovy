@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.model.sales.Product
 import com.haulmont.cuba.web.testsupport.TestSupport
 
 import com.haulmont.cuba.core.global.CommitContext
-import io.jmix.core.entity.Entity
+import io.jmix.core.Entity
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext
 import io.jmix.ui.model.InstanceContainer

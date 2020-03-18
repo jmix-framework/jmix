@@ -39,4 +39,36 @@ public class SecurityState implements Serializable {
     protected String[] filteredAttributes;
 
     protected byte[] securityToken;
+
+    public Multimap<String, Object> getFilteredData() {
+        return filteredData;
+    }
+
+    public void setFilteredData(Multimap<String, Object> filteredData) {
+        this.filteredData = filteredData;
+    }
+
+    public String[] getInaccessibleAttributes() {
+        return inaccessibleAttributes;
+    }
+
+    public void setInaccessibleAttributes(String[] inaccessibleAttributes) {
+        this.inaccessibleAttributes = inaccessibleAttributes;
+    }
+
+    public String[] getFilteredAttributes() {
+        return filteredAttributes;
+    }
+
+    public void setFilteredAttributes(String[] filteredAttributes) {
+        this.filteredAttributes = filteredAttributes;
+    }
+
+    public byte[] getSecurityToken() {
+        return securityToken;
+    }
+
+    public void setSecurityToken(byte[] securityToken) {
+        this.securityToken = securityToken;
+    }
 }

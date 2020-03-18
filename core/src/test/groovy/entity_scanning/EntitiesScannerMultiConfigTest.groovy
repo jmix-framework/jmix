@@ -45,7 +45,7 @@ class EntitiesScannerMultiConfigTest extends Specification {
         scanner != null
         scanner.applicationContext != null
         scanner.metadataReaderFactory != null
-        scanner.basePackages == ['io.jmix.core', 'test_support.addon1']
+        scanner.basePackages == ['io.jmix.core', 'test_support.base', 'test_support.addon1']
 
         when:
 
@@ -53,7 +53,7 @@ class EntitiesScannerMultiConfigTest extends Specification {
 
         then:
 
-        entityDefList.find { it == 'io.jmix.core.entity.BaseUuidEntity' } != null
+        entityDefList.find { it == 'test_support.base.entity.BaseUuidEntity' } != null
         entityDefList.find { it == 'test_support.addon1.entity.TestAddon1Entity' } != null
     }
 }

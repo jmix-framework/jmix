@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.core.entity.dummy;
+package io.jmix.core;
 
-import io.jmix.core.entity.BaseIntegerIdEntity;
-import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.Entity;
 
-import javax.persistence.Entity;
+public interface EntityInitializer {
+    /**
+     * Defines the highest precedence for {@link org.springframework.core.Ordered} providers of the platform.
+     */
+    int HIGHEST_PLATFORM_PRECEDENCE = 100;
 
-@Entity
-@SystemLevel
-public class DummyIntegerIdEntity extends BaseIntegerIdEntity {
-    private static final long serialVersionUID = 3489413651786961575L;
+    /**
+     * Defines the lowest precedence for {@link org.springframework.core.Ordered} providers of the platform.
+     */
+    int LOWEST_PLATFORM_PRECEDENCE = 1000;
+
+    <T> void initEntity(Entity<T> entity);
 }

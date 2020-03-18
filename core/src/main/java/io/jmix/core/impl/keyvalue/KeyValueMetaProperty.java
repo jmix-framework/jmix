@@ -18,7 +18,7 @@ package io.jmix.core.impl.keyvalue;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;

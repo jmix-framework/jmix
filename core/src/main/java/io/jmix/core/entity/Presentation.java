@@ -16,6 +16,8 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.Entity;
+
 import java.util.UUID;
 
 // todo implementations

@@ -17,7 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 /**
  * Visitor to be submitted to {@link MetadataTools#traverseAttributes(Entity, EntityAttributeVisitor)}.

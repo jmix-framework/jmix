@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import io.jmix.core.config.ConfigUtil;
 import io.jmix.core.config.EnumStore;
 import io.jmix.core.config.EnumStoreMode;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.AppBeans;
 import org.apache.commons.lang3.ClassUtils;
 

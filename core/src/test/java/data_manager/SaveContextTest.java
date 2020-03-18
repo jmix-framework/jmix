@@ -22,7 +22,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.SaveContext;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

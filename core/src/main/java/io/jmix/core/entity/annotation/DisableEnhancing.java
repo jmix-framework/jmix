@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.core.entity;
 
-import io.jmix.core.metamodel.model.Instance;
+package io.jmix.core.entity.annotation;
 
-/**
- * Interface to be implemented by domain model objects with identifiers.
- * @param <T> identifier type
- *
- */
-public interface Entity<T> extends Instance {
-    T getId();
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface DisableEnhancing {
 }

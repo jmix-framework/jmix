@@ -13,35 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.core.entity;
+package test_support.base.entity;
 
+import io.jmix.core.UuidProvider;
+import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import java.util.UUID;
 
-/**
- * Base class for entities with Long Identity identifier.
- */
 @MappedSuperclass
-@MetaClass(name = "sys$BaseIdentityIdEntity")
-@UnavailableInSecurityConstraints
-public abstract class BaseIdentityIdEntity extends BaseDbGeneratedIdEntity<Long> {
+@MetaClass(name = "base_BaseUuidEntity")
+public abstract class BaseUuidEntity extends BaseGenericIdEntity<UUID> implements HasUuid {
 
-    private static final long serialVersionUID = 3083677558630811496L;
+    private static final long serialVersionUID = -2217624132287086972L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
-    protected Long id;
+    protected UUID id;
 
-    @Override
-    protected void setDbGeneratedId(Long id) {
+    public BaseUuidEntity() {
+        id = UuidProvider.createUuid();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
         this.id = id;
     }
 
     @Override
-    protected Long getDbGeneratedId() {
+    public UUID getUuid() {
         return id;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.id = uuid;
     }
 }

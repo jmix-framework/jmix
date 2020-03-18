@@ -16,7 +16,8 @@
 
 package io.jmix.core;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -60,11 +61,11 @@ public final class Id<T extends Entity<K>, K> implements Serializable {
      */
     public static <T extends Entity<K>, K> Id<T, K> of(T entity) {
         checkNotNullArgument(entity);
-        checkNotNullArgument(entity.getId());
+        checkNotNullArgument(EntityValues.<K>getId(entity));
 
         @SuppressWarnings("unchecked")
         Class<T> entityClass = (Class<T>) entity.getClass();
-        return new Id<>(entity.getId(), entityClass);
+        return new Id<>(EntityValues.getId(entity), entityClass);
     }
 
     /**

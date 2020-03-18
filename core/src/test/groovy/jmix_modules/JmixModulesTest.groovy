@@ -46,7 +46,7 @@ class JmixModulesTest extends Specification {
         expect:
 
         modules != null
-        modules.all.size() == 3
+        modules.all.size() == 4
         modules.all[0].id == 'io.jmix.core'
 
         def jmixCore = modules.get('io.jmix.core')

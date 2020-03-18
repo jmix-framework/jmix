@@ -47,19 +47,13 @@ dependencies {
     api 'org.dom4j:dom4j'
     api 'javax.annotation:javax.annotation-api'
 
-    // todo eclipselink
-//    api 'org.eclipse.persistence:javax.persistence'
-    api 'org.eclipse.persistence:org.eclipse.persistence.jpa'
+    api 'org.eclipse.persistence:jakarta.persistence'
     api 'org.antlr:antlr-runtime'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"
     testRuntimeOnly 'org.slf4j:slf4j-simple'
-}
-
-entitiesEnhancing {
-    enabled = true
 }
 
 jar {

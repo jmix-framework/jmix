@@ -16,19 +16,26 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.NumberIdSource;
+import io.jmix.core.EntityInitializer;
+import io.jmix.core.UuidProvider;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.HasUuid;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-// todo impl
-@Component(NumberIdSource.NAME)
-public class NumberIdSourceImpl implements NumberIdSource {
+@Component(EntityUuidInitializer.NAME)
+public class EntityUuidInitializer implements EntityInitializer, Ordered {
+    public static final String NAME = "jmix_EntityUuidInitializer";
+
     @Override
-    public Long createLongId(String entityName) {
-        return null;
+    public <T> void initEntity(Entity<T> entity) {
+        if (entity instanceof HasUuid) {
+            ((HasUuid) entity).setUuid(UuidProvider.createUuid());
+        }
     }
 
     @Override
-    public Integer createIntegerId(String entityName) {
-        return null;
+    public int getOrder() {
+        return HIGHEST_PLATFORM_PRECEDENCE + 10;
     }
 }

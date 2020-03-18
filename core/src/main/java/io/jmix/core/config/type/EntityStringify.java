@@ -17,7 +17,7 @@
 package io.jmix.core.config.type;
 
 import io.jmix.core.compatibility.OriginalEntityLoadInfo;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 public class EntityStringify extends TypeStringify {
 

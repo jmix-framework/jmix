@@ -13,28 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.core.entity;
+package test_support.base.entity;
 
-import io.jmix.core.metamodel.model.impl.AbstractInstance;
+import io.jmix.core.Entity;
 
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 
-/**
- * Base class for persistent embeddable entities.
- *
- */
 @MappedSuperclass
-@io.jmix.core.metamodel.annotations.MetaClass(name = "sys$EmbeddableEntity")
-public abstract class EmbeddableEntity extends AbstractInstance implements Entity<Object> {
+@io.jmix.core.metamodel.annotations.MetaClass(name = "base$BaseGenericIdEntity")
+public abstract class BaseGenericIdEntity<T> implements Entity<T> {
 
-    private static final long serialVersionUID = 266201862280559076L;
+    private static final long serialVersionUID = -8400641366148656528L;
 
-    @Transient
-    protected SecurityState __securityState;
+    public abstract void setId(T id);
 
-    @Override
-    public Object getId() {
-        return this;
-    }
+    public abstract T getId();
 }

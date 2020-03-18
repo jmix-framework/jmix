@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.core;
+package io.jmix.core.entity;
 
-public interface NumberIdSource {
-
-    String NAME = "jmix_NumberIdSource";
-
-    Long createLongId(String entityName);
-
-    Integer createIntegerId(String entityName);
+/**
+ * Marker interface to be implemented by entities that should not be enhanced.
+ *
+ */
+public interface JmixSettersEnhanced {
 }

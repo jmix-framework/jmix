@@ -16,29 +16,38 @@
 
 package io.jmix.core.metamodel.model.utils;
 
+import io.jmix.core.AppBeans;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RelatedPropertiesCache {
     private final Map<String, Set<String>> propertiesMap = new HashMap<>();
 
-    public RelatedPropertiesCache(MetaClass metaClass) {
-        Objects.requireNonNull(metaClass, "metaClass is null");
+    private static final Map<Class, RelatedPropertiesCache> propertiesCacheMap = new ConcurrentHashMap<>();
 
+    public static RelatedPropertiesCache getOrCreate(Class clazz) {
+        return propertiesCacheMap.computeIfAbsent(clazz, RelatedPropertiesCache::new);
+    }
+
+    protected RelatedPropertiesCache(Class clazz) {
+        Objects.requireNonNull(clazz, "class is null");
+
+        MetaClass metaClass = AppBeans.get(Metadata.class).getClass(clazz);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-
             if (metaProperty.isReadOnly() && isNotPersistent(metaProperty)) {
-                Collection<String> relatedProperties = getRelatedProperties(metaProperty);
 
-                for (String relatedProperty : relatedProperties) {
-                    Set<String> relatedReadOnlyProperties = propertiesMap
-                            .computeIfAbsent(relatedProperty, k -> new HashSet<>());
-                    relatedReadOnlyProperties.add(metaProperty.getName());
+                for (String property : getRelatedProperties(metaProperty)) {
+                    Set<String> set = propertiesMap.computeIfAbsent(property, k -> new HashSet<>());
+                    set.add(metaProperty.getName());
                 }
+
             }
+
         }
     }
 

@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.metamodel.model.impl.*;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.MetadataBuildSupport.XmlAnnotation;
 import org.apache.commons.lang3.ArrayUtils;

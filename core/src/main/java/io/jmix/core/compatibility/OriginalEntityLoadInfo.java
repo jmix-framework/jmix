@@ -19,7 +19,8 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
@@ -60,6 +61,6 @@ public class OriginalEntityLoadInfo extends EntityLoadInfo {
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
         boolean stringKey = primaryKeyProperty != null && primaryKeyProperty.getJavaType().equals(String.class);
 
-        return new OriginalEntityLoadInfo((UUID) entity.getId(), metaClass, stringKey);
+        return new OriginalEntityLoadInfo((UUID) EntityValues.getId(entity), metaClass, stringKey);
     }
 }

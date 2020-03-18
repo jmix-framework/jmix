@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.jmix.core;
 
-package io.jmix.core.entity.dummy;
+import java.io.Serializable;
 
-import io.jmix.core.entity.BaseLongIdEntity;
-import io.jmix.core.entity.annotation.SystemLevel;
+/**
+ * Interface to be implemented by domain model objects with identifiers.
+ *
+ * @param <T> identifier type
+ */
+@SuppressWarnings("unused")
+public interface Entity<T> extends Serializable {
+    default EntityEntry<T> __getEntityEntry() {
+        throw new UnsupportedOperationException();
+    }
 
-import javax.persistence.Entity;
-
-@Entity
-@SystemLevel
-public class DummyLongIdEntity extends BaseLongIdEntity {
-    private static final long serialVersionUID = 6844350647309377054L;
+    default void __copyEntityEntry() {
+        throw new UnsupportedOperationException();
+    }
 }

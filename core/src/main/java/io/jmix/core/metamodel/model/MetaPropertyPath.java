@@ -24,7 +24,7 @@ import java.util.Arrays;
 /**
  * Object representing a relative path to a property from certain MetaClass
  */
-public class MetaPropertyPath implements Serializable, Instance.BeanPropertyPath {
+public class MetaPropertyPath implements Serializable, PropertyPath {
 
     private static final long serialVersionUID = -3149651267513333787L;
 

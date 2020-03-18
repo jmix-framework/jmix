@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.core.entity;
+package test_support.base.entity;
 
+import io.jmix.core.entity.Creatable;
+import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.entity.Updatable;
+import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.util.Date;
 
-/**
- * The most widely used base class for entities. <br>
- * Optimistically locked, implements Updatable and SoftDelete.
- */
 @MappedSuperclass
-@MetaClass(name = "sys$StandardEntity")
-@UnavailableInSecurityConstraints
+@MetaClass(name = "base$StandardEntity")
 public abstract class StandardEntity extends BaseUuidEntity implements Versioned, Creatable, Updatable, SoftDelete {
 
     private static final long serialVersionUID = 5642226839555253331L;

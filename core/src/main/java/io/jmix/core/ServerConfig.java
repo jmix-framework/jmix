@@ -20,6 +20,7 @@ import io.jmix.core.config.Property;
 import io.jmix.core.config.Source;
 import io.jmix.core.config.SourceType;
 import io.jmix.core.config.defaults.*;
+import io.jmix.core.entity.JmixSettersEnhanced;
 import io.jmix.core.security.UserSessions;
 
 /**
@@ -324,7 +325,7 @@ public interface ServerConfig extends Config {
      * If true, detected problems will be logged instead of throwing {@code EntityNotEnhancedException}.
      * <p>
      * List of checked interfaces:
-     * {@link io.jmix.core.entity.JmixEnhanced}
+     * {@link JmixSettersEnhanced}
      * {@link org.eclipse.persistence.internal.descriptors.PersistenceObject}
      * {@link org.eclipse.persistence.internal.weaving.PersistenceWeaved}
      * {@link org.eclipse.persistence.internal.weaving.PersistenceWeavedFetchGroups}

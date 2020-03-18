@@ -16,7 +16,6 @@
 
 package entity_scanning
 
-import test_support.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.impl.scanning.EntitiesScanner
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,8 +23,10 @@ import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
+import test_support.AppContextTestExecutionListener
+import test_support.base.BaseConfiguration
 
-@ContextConfiguration(classes = [JmixCoreConfiguration])
+@ContextConfiguration(classes = [JmixCoreConfiguration, BaseConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class EntitiesScannerTest extends Specification {
@@ -44,7 +45,7 @@ class EntitiesScannerTest extends Specification {
         scanner != null
         scanner.applicationContext != null
         scanner.metadataReaderFactory != null
-        scanner.basePackages == ['io.jmix.core']
+        scanner.basePackages == ['io.jmix.core', 'test_support.base']
 
         when:
 
@@ -52,6 +53,6 @@ class EntitiesScannerTest extends Specification {
 
         then:
 
-        entityDefList.find { it == 'io.jmix.core.entity.BaseUuidEntity' } != null
+        entityDefList.find { it == 'test_support.base.entity.BaseUuidEntity' } != null
     }
 }

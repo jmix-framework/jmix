@@ -19,7 +19,8 @@ package io.jmix.core.impl;
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -146,7 +147,7 @@ public class CrossDataStoreReferenceLoader {
                         crossProperties.stream()
                                 .filter(ap -> ap.property == property)
                                 .forEach(ap -> {
-                                    if (entity.getValue(ap.relatedPropertyName) != null) {
+                                    if (EntityValues.getValue(entity, ap.relatedPropertyName) != null) {
                                         resultSet.add(entity);
                                     }
                                 });
@@ -165,7 +166,7 @@ public class CrossDataStoreReferenceLoader {
     private void loadOne(EntityCrossDataStoreProperty entityCrossDataStoreProperty) {
         Entity entity = entityCrossDataStoreProperty.entity;
         CrossDataStoreProperty aProp = entityCrossDataStoreProperty.crossProp;
-        Object id = entity.getValue(aProp.relatedPropertyName);
+        Object id = EntityValues.getValue(entity, aProp.relatedPropertyName);
 
         LoadContext<Entity> loadContext = new LoadContext<>(aProp.property.getRange().asClass());
         loadContext.setId(id);
@@ -173,7 +174,7 @@ public class CrossDataStoreReferenceLoader {
             loadContext.setFetchPlan(aProp.fetchPlanProperty.getFetchPlan());
         loadContext.setJoinTransaction(joinTransaction);
         Entity relatedEntity = dataManager.load(loadContext);
-        entity.setValue(aProp.property.getName(), relatedEntity);
+        EntityValues.setValue(entity, aProp.property.getName(), relatedEntity);
     }
 
     private void loadMany(CrossDataStoreProperty crossDataStoreProperty, List<Entity> entities) {
@@ -191,7 +192,7 @@ public class CrossDataStoreReferenceLoader {
 
     private void loadBatch(CrossDataStoreProperty crossDataStoreProperty, List<Entity> entities) {
         List<Object> idList = entities.stream()
-                .map(e -> e.getValue(crossDataStoreProperty.relatedPropertyName))
+                .map(e -> EntityValues.getValue(e, crossDataStoreProperty.relatedPropertyName))
                 .filter(Objects::nonNull)
                 .distinct()
                 .collect(Collectors.toList());
@@ -223,7 +224,7 @@ public class CrossDataStoreReferenceLoader {
             LoadContext.Query query = new LoadContext.Query(sb.toString());
             for (MetaProperty property : idMetaClass.getProperties()) {
                 List<Object> propList = idList.stream()
-                        .map(o -> ((Entity) o).getValue(property.getName()))
+                        .map(o -> EntityValues.getValue(((Entity) o), property.getName()))
                         .collect(Collectors.toList());
                 query.setParameter("list_" + property.getName(), propList);
             }
@@ -236,15 +237,14 @@ public class CrossDataStoreReferenceLoader {
         List<Entity> loadedEntities = dataManager.loadList(loadContext);
 
         for (Entity entity : entities) {
-            Object relatedPropertyValue = entity.getValue(crossDataStoreProperty.relatedPropertyName);
+            Object relatedPropertyValue = EntityValues.getValue(entity, crossDataStoreProperty.relatedPropertyName);
             loadedEntities.stream()
                     .filter(e -> {
-                        Object id = e.getId() instanceof IdProxy ? ((IdProxy) e.getId()).getNN() : e.getId();
+                        Object id = EntityValues.getId(e) instanceof IdProxy ? ((IdProxy) EntityValues.getId(e)).getNN() : EntityValues.getId(e);
                         return id.equals(relatedPropertyValue);
                     })
                     .findAny()
-                    .ifPresent(e ->
-                            entity.setValue(crossDataStoreProperty.property.getName(), e)
+                    .ifPresent(e -> EntityValues.setValue(entity, crossDataStoreProperty.property.getName(), e)
                     );
         }
     }

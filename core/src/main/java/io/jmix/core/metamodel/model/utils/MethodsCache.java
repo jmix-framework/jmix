@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -45,8 +46,13 @@ public class MethodsCache {
             .put(boolean.class, Boolean.class)
             .build();
 
+    private static final Map<Class, MethodsCache> methodCacheMap = new ConcurrentHashMap<>();
 
-    public MethodsCache(Class clazz) {
+    public static MethodsCache getOrCreate(Class clazz) {
+        return methodCacheMap.computeIfAbsent(clazz, MethodsCache::new);
+    }
+
+    protected MethodsCache(Class clazz) {
         final Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             String name = method.getName();

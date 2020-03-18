@@ -20,5 +20,5 @@ package io.jmix.core.entity;
  * Marker interface to be implemented by entities that should not be enhanced.
  *
  */
-public interface JmixEnhanced {
+public interface JmixEntityEntryEnhanced {
 }

@@ -17,7 +17,7 @@
 package io.jmix.core;
 
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.*;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -25,7 +25,10 @@ import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.datatypes.TimeZoneAwareDatatype;
-import io.jmix.core.metamodel.model.*;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.UserSessionSource;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -67,9 +70,7 @@ public class MetadataTools {
     public static final String LENGTH_ANN_NAME = "jmix.length";
 
     public static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(
-            Instance.class,
             Entity.class,
-            BaseGenericIdEntity.class,
             Versioned.class,
             Creatable.class,
             Updatable.class,
@@ -150,8 +151,8 @@ public class MetadataTools {
             return datatype.format(value, userSessionSource.getLocale());
         } else if (range.isEnum()) {
             return messages.getMessage((Enum) value);
-        } else if (value instanceof Instance) {
-            return getInstanceName((Instance) value);
+        } else if (value instanceof Entity) {
+            return getInstanceName((Entity) value);
         } else if (value instanceof Collection) {
             @SuppressWarnings("unchecked")
             Collection<Object> collection = (Collection<Object>) value;
@@ -172,8 +173,8 @@ public class MetadataTools {
     public String format(@Nullable Object value) {
         if (value == null) {
             return "";
-        } else if (value instanceof Instance) {
-            return getInstanceName((Instance) value);
+        } else if (value instanceof Entity) {
+            return getInstanceName((Entity) value);
         } else if (value instanceof Enum) {
             return messages.getMessage((Enum) value, userSessionSource.getLocale());
         } else if (value instanceof Collection) {
@@ -197,7 +198,7 @@ public class MetadataTools {
      * @return Instance name as defined by {@link io.jmix.core.metamodel.annotations.NamePattern}
      * or <code>toString()</code>.
      */
-    public String getInstanceName(Instance instance) {
+    public String getInstanceName(Entity instance) {
         checkNotNullArgument(instance, "instance is null");
 
         MetaClass metaClass = metadata.getClass(instance.getClass());
@@ -222,7 +223,7 @@ public class MetadataTools {
             String fieldName = rec.fields[i];
             MetaProperty property = metaClass.getProperty(fieldName);
 
-            Object value = instance.getValue(fieldName);
+            Object value = EntityValues.getValue(instance, fieldName);
             values[i] = format(value, property);
         }
 
@@ -335,6 +336,14 @@ public class MetadataTools {
     public boolean hasCompositePrimaryKey(MetaClass metaClass) {
         MetaProperty primaryKeyProperty = getPrimaryKeyProperty(metaClass);
         return primaryKeyProperty != null && primaryKeyProperty.getAnnotatedElement().isAnnotationPresent(EmbeddedId.class);
+    }
+
+    /**
+     * @return true if passed MetaClass has a db generated primary key
+     */
+    public boolean hasDbGeneratedPrimaryKey(MetaClass metaClass) {
+        MetaProperty primaryKeyProperty = getPrimaryKeyProperty(metaClass);
+        return primaryKeyProperty != null && primaryKeyProperty.getAnnotatedElement().isAnnotationPresent(GeneratedValue.class);
     }
 
     /**
@@ -738,7 +747,7 @@ public class MetadataTools {
     /**
      * Determine whether the view contains a property, traversing a view branch according to the given property path.
      *
-     * @param fetchPlan         view instance. If null, return false immediately.
+     * @param fetchPlan    view instance. If null, return false immediately.
      * @param propertyPath property path defining the property
      */
     public boolean fetchPlanContainsProperty(@Nullable FetchPlan fetchPlan, MetaPropertyPath propertyPath) {
@@ -991,7 +1000,7 @@ public class MetadataTools {
      * @param source source instance
      * @return new instance of the same Java class as source
      */
-    public <T extends Instance> T copy(T source) {
+    public <T extends Entity> T copy(T source) {
         checkNotNullArgument(source, "source is null");
 
         @SuppressWarnings("unchecked")
@@ -1011,7 +1020,7 @@ public class MetadataTools {
      * @param source source instance
      * @param dest   destination instance
      */
-    public void copy(Instance source, Instance dest) {
+    public void copy(Entity source, Entity dest) {
         checkNotNullArgument(source, "source is null");
         checkNotNullArgument(dest, "dest is null");
 
@@ -1022,7 +1031,7 @@ public class MetadataTools {
             MetaProperty dstProperty = destMetaClass.findProperty(name);
             if (dstProperty != null && !dstProperty.isReadOnly() && persistentAttributesLoadChecker.isLoaded(source, name)) {
                 try {
-                    dest.setValue(name, source.getValue(name));
+                    EntityValues.setValue(dest, name, EntityValues.getValue(source, name));
                 } catch (RuntimeException e) {
                     Throwable cause = ExceptionUtils.getRootCause(e);
                     if (cause == null)
@@ -1102,7 +1111,7 @@ public class MetadataTools {
 
         @Override
         public void put(Entity entity) {
-            cache.put(new CacheKey(entity.getClass(), entity.getId()), entity);
+            cache.put(new CacheKey(entity.getClass(), EntityValues.getId(entity)), entity);
         }
     }
 
@@ -1112,7 +1121,8 @@ public class MetadataTools {
     @SuppressWarnings("unchecked")
     public <T extends Entity> T deepCopy(T source) {
         CachingEntitiesHolder entityFinder = new CachingEntitiesHolder();
-        Entity destination = entityFinder.create(source.getClass(), source.getId());
+        Entity destination = entityFinder.create(source.getClass(), EntityValues.getId(source));
+
         deepCopy(source, destination, entityFinder);
 
         return (T) destination;
@@ -1129,7 +1139,7 @@ public class MetadataTools {
                 continue;
             }
 
-            Object value = source.getValue(name);
+            Object value = EntityValues.getValue(source, name);
             if (value == null) {
                 continue;
             }
@@ -1146,25 +1156,25 @@ public class MetadataTools {
                     Collection<Entity> dstCollection = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
 
                     for (Entity srcRef : srcCollection) {
-                        Entity reloadedRef = entitiesHolder.find(srcRef.getClass(), srcRef.getId());
+                        Entity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
                         if (reloadedRef == null) {
-                            reloadedRef = entitiesHolder.create(srcRef.getClass(), srcRef.getId());
+                            reloadedRef = entitiesHolder.create(srcRef.getClass(), EntityValues.getId(srcRef));
                             deepCopy(srcRef, reloadedRef, entitiesHolder);
                         }
                         dstCollection.add(reloadedRef);
                     }
-                    destination.setValue(name, dstCollection);
+                    EntityValues.setValue(destination, name, dstCollection);
                 } else {
                     Entity srcRef = (Entity) value;
-                    Entity reloadedRef = entitiesHolder.find(srcRef.getClass(), srcRef.getId());
+                    Entity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
                     if (reloadedRef == null) {
-                        reloadedRef = entitiesHolder.create(srcRef.getClass(), srcRef.getId());
+                        reloadedRef = entitiesHolder.create(srcRef.getClass(), EntityValues.getId(srcRef));
                         deepCopy(srcRef, reloadedRef, entitiesHolder);
                     }
-                    destination.setValue(name, reloadedRef);
+                    EntityValues.setValue(destination, name, reloadedRef);
                 }
             } else {
-                destination.setValue(name, value);
+                EntityValues.setValue(destination, name, value);
             }
         }
 
@@ -1186,7 +1196,7 @@ public class MetadataTools {
             visitor.visit(entity, property);
             if (property.getRange().isClass()) {
                 if (persistentAttributesLoadChecker.isLoaded(entity, property.getName())) {
-                    Object value = entity.getValue(property.getName());
+                    Object value = EntityValues.getValue(entity, property.getName());
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {
@@ -1226,15 +1236,15 @@ public class MetadataTools {
 
             visitor.visit(entity, metaProperty);
 
-            Object value = entity.getValue(property.getName());
+            Object value = EntityValues.getValue(entity, property.getName());
 
             if (value != null && propertyView != null) {
                 if (value instanceof Collection) {
                     for (Object item : ((Collection) value)) {
-                        if (item instanceof Instance)
+                        if (item instanceof Entity)
                             internalTraverseAttributesByFetchPlan(propertyView, (Entity) item, visitor, visited, checkLoaded);
                     }
-                } else if (value instanceof Instance) {
+                } else if (value instanceof Entity) {
                     internalTraverseAttributesByFetchPlan(propertyView, (Entity) value, visitor, visited, checkLoaded);
                 }
             }
@@ -1252,9 +1262,7 @@ public class MetadataTools {
     @SuppressWarnings("unchecked")
     protected static Entity createInstanceWithId(Class<? extends Entity> entityClass, Object id) {
         Entity entity = createInstance(entityClass);
-        if (entity instanceof BaseGenericIdEntity) {
-            ((BaseGenericIdEntity) entity).setId(id);
-        }
+        EntityValues.setId(entity, id);
         return entity;
     }
 

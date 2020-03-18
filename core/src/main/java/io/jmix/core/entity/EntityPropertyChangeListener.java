@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.core.entity.dummy;
+package io.jmix.core.entity;
 
-import io.jmix.core.entity.BaseIntIdentityIdEntity;
-import io.jmix.core.entity.annotation.SystemLevel;
-
-import javax.persistence.Entity;
-
-@Entity
-@SystemLevel
-public class DummyIntIdentityIdEntity extends BaseIntIdentityIdEntity {
-    private static final long serialVersionUID = -5727374425199010859L;
+/**
+ * Interface to track changes in data model objects.
+ */
+@FunctionalInterface
+public interface EntityPropertyChangeListener {
+    /**
+     * Called when value of instance property changed.
+     *
+     * @param e event object
+     */
+    void propertyChanged(EntityPropertyChangeEvent e);
 }

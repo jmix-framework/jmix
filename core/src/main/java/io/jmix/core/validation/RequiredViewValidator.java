@@ -18,7 +18,7 @@ package io.jmix.core.validation;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintValidator;

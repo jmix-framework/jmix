@@ -16,25 +16,49 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.core.UuidProvider;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
-public class CoreUser extends BaseUuidEntity implements User {
+public class CoreUser implements Entity<UUID>, HasUuid, User {
 
     private static final long serialVersionUID = 2032149054729862959L;
 
+    private UUID id;
     private String login;
     private String password;
     private String name;
 
     public CoreUser(String login, String password, String name) {
+        id = UuidProvider.createUuid();
         this.login = login;
         this.password = password;
         this.name = name;
+    }
+
+    @Override
+    public UUID getUuid() {
+        return id;
+    }
+
+    @Override
+    public void setUuid(UUID uuid) {
+        this.id = uuid;
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     @Override

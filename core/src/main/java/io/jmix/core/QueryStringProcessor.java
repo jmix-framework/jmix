@@ -17,7 +17,7 @@
 package io.jmix.core;
 
 import com.google.common.base.Strings;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.stereotype.Component;
 

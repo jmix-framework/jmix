@@ -16,7 +16,8 @@
 
 package test_support.app.entity;
 
-import io.jmix.core.entity.StandardEntity;
+
+import test_support.base.entity.StandardEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;

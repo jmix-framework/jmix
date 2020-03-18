@@ -15,17 +15,14 @@
  */
 package io.jmix.core.metamodel.model.utils;
 
-import io.jmix.core.metamodel.model.Instance;
-import io.jmix.core.metamodel.model.impl.AbstractInstance;
-import org.apache.commons.lang3.ArrayUtils;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.PropertyPath;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
- * Utility class to work with {@link Instance}s.
+ * Utility class to work with {@link Entity}s.
  */
 public final class InstanceUtils {
 
@@ -41,43 +38,11 @@ public final class InstanceUtils {
      * </pre>
      * @param path value path as string
      * @return value path as array or empty array if the input is null
+     * @deprecated replaced by {@link ObjectPathUtils#parseValuePath(String)}
      */
+    @Deprecated
     public static String[] parseValuePath(@Nullable String path) {
-        if (path == null)
-            return new String[0];
-
-        if (path.startsWith("+"))
-            return new String[] { path };
-
-        List<String> elements = new ArrayList<>(4);
-
-        int bracketCount = 0;
-
-        StringBuilder buffer = new StringBuilder();
-
-        for (int i = 0; i < path.length(); i++) {
-            char c = path.charAt(i);
-            if (c == '[')
-                bracketCount++;
-            if (c == ']')
-                bracketCount--;
-
-            if ('.' != c || bracketCount > 0)
-                buffer.append(c);
-
-            if ('.' == c && bracketCount == 0) {
-                String element = buffer.toString();
-                if (!"".equals(element)) {
-                    elements.add(element);
-                } else {
-                    throw new IllegalStateException("Wrong value path format");
-                }
-                buffer = new StringBuilder();
-            }
-        }
-        elements.add(buffer.toString());
-
-        return elements.toArray(new String[0]);
+        return ObjectPathUtils.parseValuePath(path);
     }
 
     /**
@@ -85,151 +50,102 @@ public final class InstanceUtils {
      * brackets.
      * @param path value path as array
      * @return value path as string or empty string if the input is null
+     * @deprecated replaced by {@link ObjectPathUtils#formatValuePath(String[])}
      */
+    @Deprecated
     public static String formatValuePath(String[] path) {
-        if (path == null) {
-            return "";
-        }
-
-        StringBuilder buffer = new StringBuilder();
-        int i = 1;
-        for (String s : path) {
-            if (s.contains(".")) {
-                buffer.append("[").append(s).append("]");
-            } else {
-                buffer.append(s);
-            }
-            if (i < path.length) buffer.append(".");
-            i++;
-        }
-        return buffer.toString();
+        return ObjectPathUtils.formatValuePath(path);
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link Instance#getValueEx(String)}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, String)}.
      *
-     * @param instance     instance
+     * @param entity     instance
      * @param propertyPath attribute path
      * @return attribute value
+     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String)}
      */
-    public static <T> T getValueEx(Instance instance, String propertyPath) {
-        String[] properties = parseValuePath(propertyPath);
-        return getValueEx(instance, properties);
+    @Deprecated
+    public static <T> T getValueEx(Entity<?> entity, String propertyPath) {
+        return EntityValues.getValueEx(entity, propertyPath);
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link Instance#getValueEx(String)}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, PropertyPath)}.
      *
-     * @param instance     instance
+     * @param entity     entity
      * @param propertyPath attribute path
      * @return attribute value
+     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, PropertyPath)}
      */
-    public static <T> T getValueEx(Instance instance, Instance.BeanPropertyPath propertyPath) {
-        if (propertyPath.isDirectProperty()) {
-            return instance.getValue(propertyPath.getFirstPropertyName());
-        }
-
-        String[] properties = propertyPath.getPropertyNames();
-        return getValueEx(instance, properties);
+    @Deprecated
+    public static <T> T getValueEx(Entity<?> entity, PropertyPath propertyPath) {
+        return EntityValues.getValueEx(entity, propertyPath);
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link Instance#getValueEx(String)}.
-     * @param instance      instance
-     * @param properties    path to the attribute
-     * @return              attribute value
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T getValueEx(Instance instance, String[] properties) {
-        if (properties == null) {
-            return null;
-        }
-
-        Object currentValue = null;
-        Instance currentInstance = instance;
-        for (String property : properties) {
-            if (currentInstance == null)
-                break;
-
-            currentValue = currentInstance.getValue(property);
-            if (currentValue == null)
-                break;
-
-            currentInstance = currentValue instanceof Instance ? (Instance) currentValue : null;
-        }
-        return (T) currentValue;
-    }
-
-    /**
-     * Set value of an attribute according to the rules described in {@link Instance#setValueEx(String, Object)}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, String[])}.
      *
-     * @param instance     instance
+     * @param entity   entity
+     * @param properties path to the attribute
+     * @return attribute value
+     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String[])}
+     */
+    @Deprecated
+    public static <T> T getValueEx(Entity<?> entity, String[] properties) {
+        return EntityValues.getValueEx(entity, properties);
+    }
+
+    /**
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, String, Object)}.
+     *
+     * @param entity     entity
      * @param propertyPath path to the attribute
      * @param value        attribute value
+     * @deprecated replaced by {@link EntityValues#setValueEx(Entity, String, Object)}
      */
-    public static void setValueEx(Instance instance, String propertyPath, Object value) {
-        String[] properties = parseValuePath(propertyPath);
-        setValueEx(instance, properties, value);
+    @Deprecated
+    public static void setValueEx(Entity<?> entity, String propertyPath, Object value) {
+        EntityValues.setValueEx(entity, propertyPath, value);
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link Instance#setValueEx(String, Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, PropertyPath, Object)}.
      *
-     * @param instance     instance
+     * @param entity     entity
      * @param propertyPath path to the attribute
      * @param value        attribute value
+     * @deprecated replaced by {@link EntityValues#setValueEx(Entity, PropertyPath, Object)}
      */
-    public static void setValueEx(Instance instance, Instance.BeanPropertyPath propertyPath, Object value) {
-        if (propertyPath.isDirectProperty()) {
-            instance.setValue(propertyPath.getFirstPropertyName(), value);
-        } else {
-            String[] properties = propertyPath.getPropertyNames();
-            setValueEx(instance, properties, value);
-        }
+    @Deprecated
+    public static void setValueEx(Entity entity, PropertyPath propertyPath, Object value) {
+        EntityValues.setValueEx(entity, propertyPath, value);
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link Instance#setValueEx(String, Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, String[], Object)}.
      *
-     * @param instance   instance
+     * @param entity     entity
      * @param properties path to the attribute
      * @param value      attribute value
+     * @deprecated replaces by {@link EntityValues#setValueEx(Entity, String[], Object)}
      */
-    public static void setValueEx(Instance instance, String[] properties, Object value) {
-        if (properties.length > 1) {
-
-            if (properties.length == 2) {
-                instance = instance.getValue(properties[0]);
-            } else {
-                String[] subarray = ArrayUtils.subarray(properties, 0, properties.length - 1);
-                String intermediatePath = formatValuePath(subarray);
-                instance = instance.getValueEx(intermediatePath);
-            }
-
-            if (instance != null) {
-                String property = properties[properties.length - 1];
-                instance.setValue(property, value);
-            }
-        } else {
-            instance.setValue(properties[0], value);
-        }
+    @Deprecated
+    public static void setValueEx(Entity<?> entity, String[] properties, Object value) {
+        EntityValues.setValueEx(entity, properties, value);
     }
 
     /**
-     * Used by {@link AbstractInstance} to check whether a property value has been changed.
+     * Used by {@link } to check whether a property value has been changed.
      *
      * @param a an object
-     * @param b  an object
-     * @return true if {@code a} equals to {@code b}, but in case of {@code a} is {@link AbstractInstance} or {@code Collection} returns
-     *  true only if {@code a} is the same instance as {@code b}
+     * @param b an object
+     * @return true if {@code a} equals to {@code b}, but in case of {@code a} is {@link } or {@code Collection} returns
+     * true only if {@code a} is the same instance as {@code b}
+     * @deprecated replaced by {@link EntityValues#propertyValueEquals(Object, Object)}
      */
+    @Deprecated
     public static boolean propertyValueEquals(Object a, Object b) {
-        if (a == b) {
-            return true;
-        }
-        if (a instanceof AbstractInstance || a instanceof Collection) {
-            return false;
-        }
-        return a != null && a.equals(b);
+       return EntityValues.propertyValueEquals(a, b);
     }
 }

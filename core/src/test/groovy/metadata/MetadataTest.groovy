@@ -19,12 +19,12 @@ package metadata
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.Stores
-import io.jmix.core.entity.BaseGenericIdEntity
-import io.jmix.core.entity.BaseUuidEntity
-import io.jmix.core.entity.StandardEntity
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
+import test_support.base.entity.BaseGenericIdEntity
+import test_support.base.entity.BaseUuidEntity
+import test_support.base.entity.StandardEntity
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.AppContextTestExecutionListener

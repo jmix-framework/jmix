@@ -16,9 +16,9 @@
 
 package test_support.app.entity;
 
-import io.jmix.core.entity.StandardEntity;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
+import test_support.base.entity.StandardEntity;
 
 import javax.persistence.*;
 

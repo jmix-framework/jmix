@@ -18,7 +18,7 @@ package io.jmix.core;
 
 import com.google.common.base.Strings;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.queryconditions.Condition;
 
 import javax.persistence.TemporalType;

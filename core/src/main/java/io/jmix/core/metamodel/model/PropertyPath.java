@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.core.entity.dummy;
+package io.jmix.core.metamodel.model;
 
-import io.jmix.core.entity.StandardEntity;
+/**
+ * Property path descriptor.
+ */
+public interface PropertyPath {
+    /**
+     * @return names of properties
+     */
+    String[] getPropertyNames();
 
-import javax.persistence.Entity;
+    /**
+     * @return first property name
+     */
+    String getFirstPropertyName();
 
-@Entity
-public class DummyEntity extends StandardEntity {
-    private static final long serialVersionUID = -7814076878004728831L;
+    /**
+     * @return true if property path represents single property name
+     */
+    boolean isDirectProperty();
 }

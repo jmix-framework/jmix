@@ -16,23 +16,28 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.core.UuidProvider;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 
+import javax.persistence.Id;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Non-persistent entity to show user sessions list in UI.
- *
  */
 @MetaClass(name = "sec$UserSessionEntity")
 @SystemLevel
-public class UserSessionEntity extends BaseUuidEntity {
+public class UserSessionEntity implements Entity<UUID>, HasUuid {
 
     private static final long serialVersionUID = 7730031482721158275L;
 
+    @Id
+    private UUID id;
     @MetaProperty
     private String login;
     @MetaProperty
@@ -47,6 +52,28 @@ public class UserSessionEntity extends BaseUuidEntity {
     private Date lastUsedTs;
     @MetaProperty
     private Boolean system;
+
+    public UserSessionEntity() {
+        id = UuidProvider.createUuid();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    @Override
+    public UUID getUuid() {
+        return id;
+    }
+
+    @Override
+    public void setUuid(UUID uuid) {
+        this.id = uuid;
+    }
 
     public String getLogin() {
         return login;

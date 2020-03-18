@@ -16,8 +16,7 @@
 
 package io.jmix.core;
 
-import io.jmix.core.entity.BaseEntityInternalAccess;
-import io.jmix.core.entity.BaseGenericIdEntity;
+import io.jmix.core.Entity;
 import org.springframework.stereotype.Component;
 
 @Component(EntitySystemStateSupport.NAME)
@@ -25,11 +24,11 @@ public class EntitySystemStateSupport {
 
     public static final String NAME = "jmix_EntitySystemStateSupport";
 
-    public void copySystemState(BaseGenericIdEntity src, BaseGenericIdEntity dst) {
-        BaseEntityInternalAccess.copySystemState(src, dst);
+    public void copySystemState(Entity<?> src, Entity<?> dst) {
+        dst.__getEntityEntry().copy(src.__getEntityEntry());
     }
 
-    public void mergeSystemState(BaseGenericIdEntity src, BaseGenericIdEntity dst) {
-        BaseEntityInternalAccess.copySystemState(src, dst);
+    public void mergeSystemState(Entity<?> src, Entity<?> dst) {
+        dst.__getEntityEntry().copy(src.__getEntityEntry());
     }
 }

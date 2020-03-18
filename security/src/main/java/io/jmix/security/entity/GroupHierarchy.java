@@ -15,7 +15,7 @@
  */
 package io.jmix.security.entity;
 
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.SystemLevel;
 

@@ -16,7 +16,7 @@
 package io.jmix.security.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;

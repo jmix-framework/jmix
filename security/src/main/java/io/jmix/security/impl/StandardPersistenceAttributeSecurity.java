@@ -18,24 +18,23 @@ package io.jmix.security.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.BaseEntityInternalAccess;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.entity.SecurityState;
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.Security;
 import io.jmix.data.PersistenceAttributeSecurity;
 import io.jmix.data.impl.JmixEntityFetchGroup;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.lang.reflect.Field;
 import java.util.*;
-
-import static io.jmix.core.entity.BaseEntityInternalAccess.*;
 
 @Component(PersistenceAttributeSecurity.NAME)
 public class StandardPersistenceAttributeSecurity implements PersistenceAttributeSecurity {
@@ -135,7 +134,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
             if (!metadataTools.isSystem(metaProperty)
                     && !metaProperty.isReadOnly()
                     && !security.isEntityAttrUpdatePermitted(metaClass, metaProperty.getName())) {
-                entity.setValue(metaProperty.getName(), null);
+                EntityValues.setValue(entity, metaProperty.getName(), null);
             }
         }
     }
@@ -155,7 +154,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
             String name = metaProperty.getName();
             if (metadataTools.isEmbedded(metaProperty) && entityStates.isLoaded(entity, name)) {
-                Entity embedded = entity.getValue(name);
+                Entity embedded = EntityValues.getValue(entity, name);
                 applySecurityToFetchGroup(embedded);
             }
         }
@@ -220,11 +219,14 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
     }
 
     private void addInaccessibleAttribute(Entity entity, String property) {
-        SecurityState securityState = getOrCreateSecurityState(entity);
-        String[] attributes = getInaccessibleAttributes(securityState);
+        EntityEntry entityEntry = entity.__getEntityEntry();
+
+        String[] attributes = entityEntry.getSecurityState().getInaccessibleAttributes();
+
         attributes = attributes == null ? new String[1] : Arrays.copyOf(attributes, attributes.length + 1);
         attributes[attributes.length - 1] = property;
-        setInaccessibleAttributes(securityState, attributes);
+
+        entityEntry.getSecurityState().setInaccessibleAttributes(attributes);
     }
 
     protected void setNullPropertyValue(Entity entity, MetaProperty property) {
@@ -241,10 +243,10 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
                     nullValue = new LinkedHashSet<>();
                 }
             }
-            BaseEntityInternalAccess.setValue(entity, property.getName(), nullValue);
-            BaseEntityInternalAccess.setValueForHolder(entity, property.getName(), nullValue);
+            setValue(entity, property.getName(), nullValue);
+            setValueForHolder(entity, property.getName(), nullValue);
         } else {
-            BaseEntityInternalAccess.setValue(entity, property.getName(), null);
+            setValue(entity, property.getName(), null);
         }
     }
 
@@ -277,6 +279,30 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
                     setNullPropertyValue(entity, property);
                 }
             }
+        }
+    }
+
+    private static void setValue(Entity entity, String attribute, @Nullable Object value) {
+        Preconditions.checkNotNullArgument(entity, "entity is null");
+        Field field = FieldUtils.getField(entity.getClass(), attribute, true);
+        if (field == null)
+            throw new RuntimeException(String.format("Cannot find field '%s' in class %s", attribute, entity.getClass().getName()));
+        try {
+            field.set(entity, value);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(String.format("Unable to set value to %s.%s", entity.getClass().getSimpleName(), attribute), e);
+        }
+    }
+
+    private static void setValueForHolder(Entity entity, String attribute, @Nullable Object value) {
+        Preconditions.checkNotNullArgument(entity, "entity is null");
+        Field field = FieldUtils.getField(entity.getClass(), String.format("_persistence_%s_vh",attribute), true);
+        if (field == null)
+            return;
+        try {
+            field.set(entity, value);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(String.format("Unable to set value to %s.%s", entity.getClass().getSimpleName(), attribute), e);
         }
     }
 }

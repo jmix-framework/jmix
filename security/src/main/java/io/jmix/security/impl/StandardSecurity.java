@@ -20,13 +20,16 @@ import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Scripting;
-import io.jmix.core.entity.*;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.IdProxy;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
-import io.jmix.core.security.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.security.*;
 import io.jmix.data.RowLevelSecurityException;
 import io.jmix.security.entity.Permission;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +39,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -220,12 +222,12 @@ public class StandardSecurity implements Security {
                 Object o = evaluateConstraintScript(entity, groovyScript);
                 if (Boolean.FALSE.equals(o)) {
                     log.trace("Entity does not match security constraint. Entity class [{}]. Entity [{}]. Constraint [{}].",
-                            metaClassName, entity.getId(), constraint.getCheckType());
+                            metaClassName, EntityValues.getId(entity), constraint.getCheckType());
                     return false;
                 }
             } catch (Exception e) {
                 log.error("An error occurred while applying constraint's Groovy script. The entity has been filtered out." +
-                        "Entity class [{}]. Entity [{}].", metaClassName, entity.getId(), e);
+                        "Entity class [{}]. Entity [{}].", metaClassName, EntityValues.getId(entity), e);
                 return false;
             }
         }
@@ -258,36 +260,45 @@ public class StandardSecurity implements Security {
     }
 
     @SuppressWarnings({"unused", "unchecked"})
-    protected Object parseValue(Class<?> clazz, String string) {
+    protected Object parseValue(Class<?> clazz, String strValue) {
         try {
             if (Entity.class.isAssignableFrom(clazz)) {
-                Object entity = metadata.create((Class<Entity>)clazz);
-                if (entity instanceof BaseIntegerIdEntity) {
-                    ((BaseIntegerIdEntity) entity).setId(Integer.valueOf(string));
-                } else if (entity instanceof BaseLongIdEntity) {
-                    ((BaseLongIdEntity) entity).setId(Long.valueOf(string));
-                } else if (entity instanceof BaseStringIdEntity) {
-                    ((BaseStringIdEntity) entity).setId(string);
-                } else if (entity instanceof BaseIdentityIdEntity) {
-                    ((BaseIdentityIdEntity) entity).setId(IdProxy.of(Long.valueOf(string)));
-                } else if (entity instanceof BaseIntIdentityIdEntity) {
-                    ((BaseIntIdentityIdEntity) entity).setId(IdProxy.of(Integer.valueOf(string)));
-                } else if (entity instanceof HasUuid) {
-                    ((HasUuid) entity).setUuid(UUID.fromString(string));
+                MetaClass metaClass = metadata.getClass(clazz);
+                Entity entity = metadata.create(metaClass);
+                MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+
+                if (pkProperty != null) {
+                    boolean dbGeneratedPrimaryKey = metadataTools.hasDbGeneratedPrimaryKey(metaClass);
+                    Object pkValue = null;
+                    if (Long.class.equals(pkProperty.getJavaType())) {
+                        pkValue = Long.valueOf(strValue);
+                        if (dbGeneratedPrimaryKey) {
+                            pkValue = IdProxy.of((Long) pkValue);
+                        }
+                    } else if (Integer.class.equals(pkProperty.getJavaType())) {
+                        pkValue = Integer.valueOf(strValue);
+                        if (dbGeneratedPrimaryKey) {
+                            pkValue = IdProxy.of((Integer) pkValue);
+                        }
+                    } else if (UUID.class.equals(pkProperty.getJavaType())) {
+                        pkValue = UUID.fromString(strValue);
+                    } else if (String.class.equals(pkProperty.getJavaType())) {
+                        pkValue = strValue;
+                    }
+                    EntityValues.setId(entity, pkValue);
                 }
                 return entity;
             } else if (EnumClass.class.isAssignableFrom(clazz)) {
                 //noinspection unchecked
-                Enum parsedEnum = Enum.valueOf((Class<Enum>) clazz, string);
-                return parsedEnum;
+                return Enum.valueOf((Class<Enum>) clazz, strValue);
             } else {
                 Datatype datatype = datatypeRegistry.get(clazz);
-                return datatype != null ? datatype.parse(string) : string;
+                return datatype != null ? datatype.parse(strValue) : strValue;
             }
         } catch (ParseException | IllegalArgumentException e) {
-            log.error("Could not parse a value in constraint. Class [{}], value [{}].", clazz, string, e);
+            log.error("Could not parse a value in constraint. Class [{}], value [{}].", clazz, strValue, e);
             throw new RowLevelSecurityException(format("Could not parse a value in constraint. Class [%s], value [%s]. " +
-                    "See the log for details.", clazz, string), null);
+                    "See the log for details.", clazz, strValue), null);
         }
     }
 }

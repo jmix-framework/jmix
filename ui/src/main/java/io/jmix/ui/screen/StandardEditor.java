@@ -20,8 +20,8 @@ import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.events.TriggerOnce;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.actions.Action;
@@ -194,8 +194,7 @@ public abstract class StandardEditor<T extends Entity> extends Screen
 
             if (instanceLoader != null
                     && instanceLoader.isLoadDynamicAttributes()
-                    && getEntityStates().isNew(entityToEdit)
-                    && mergedEntity instanceof BaseGenericIdEntity) {
+                    && getEntityStates().isNew(entityToEdit)) {
                 // todo dynamic attributes
                 // tools.initDefaultAttributeValues((BaseGenericIdEntity) mergedEntity, mergedEntity.getMetaClass());
             }
@@ -206,7 +205,7 @@ public abstract class StandardEditor<T extends Entity> extends Screen
             container.setItem(mergedEntity);
         } else {
             InstanceLoader loader = getEditedEntityLoader();
-            loader.setEntityId(entityToEdit.getId());
+            loader.setEntityId(EntityValues.getId(entityToEdit));
         }
     }
 
@@ -299,7 +298,7 @@ public abstract class StandardEditor<T extends Entity> extends Screen
         for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (property.getRange().isClass()) {
                 if (getEntityStates().isLoaded(entity, property.getName())) {
-                    Object value = entity.getValue(property.getName());
+                    Object value = EntityValues.getValue(entity, property.getName());
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {

@@ -17,6 +17,7 @@
 package test_support
 
 import io.jmix.core.AppBeans
+import io.jmix.core.Entity
 import io.jmix.core.EntityStates
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.TimeSource
@@ -102,7 +103,7 @@ class DataContextSpec extends Specification {
         TimeSource timeSource = AppBeans.get(TimeSource)
 
         T e = reserialize(entity)
-        entityStates.makeDetached((BaseGenericIdEntity) e)
+        entityStates.makeDetached((Entity)e)
 
         if (e instanceof Versioned) {
             Versioned versioned = (Versioned) e

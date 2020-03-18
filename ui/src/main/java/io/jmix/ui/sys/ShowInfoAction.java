@@ -19,7 +19,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;

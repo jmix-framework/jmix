@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components.data.meta;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.data.TreeItems;
 
 import javax.annotation.Nullable;

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 import java.util.Collection;
 import java.util.function.Consumer;

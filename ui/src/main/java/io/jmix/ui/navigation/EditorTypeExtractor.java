@@ -16,7 +16,7 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.StandardEditor;

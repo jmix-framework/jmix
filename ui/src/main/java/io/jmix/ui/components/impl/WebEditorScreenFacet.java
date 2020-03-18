@@ -17,7 +17,7 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.builders.EditMode;
 import io.jmix.ui.builders.EditorBuilder;

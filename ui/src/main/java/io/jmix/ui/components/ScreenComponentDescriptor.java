@@ -17,23 +17,49 @@
 package io.jmix.ui.components;
 
 import com.google.common.base.Strings;
-import io.jmix.core.entity.BaseUuidEntity;
+import io.jmix.core.UuidProvider;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 import org.dom4j.Element;
 
+import javax.persistence.Id;
+import java.util.UUID;
+
 @io.jmix.core.metamodel.annotations.MetaClass(name = "sec$ScreenComponentDescriptor")
 @SystemLevel
-public class ScreenComponentDescriptor extends BaseUuidEntity {
+public class ScreenComponentDescriptor implements Entity<UUID>, HasUuid {
 
+    @Id
+    protected UUID id;
     protected Element element;
 
     @MetaProperty
     protected ScreenComponentDescriptor parent;
 
     public ScreenComponentDescriptor(Element element, ScreenComponentDescriptor parent) {
+        this.id = UuidProvider.createUuid();
         this.element = element;
         this.parent = parent;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    @Override
+    public UUID getUuid() {
+        return id;
+    }
+
+    @Override
+    public void setUuid(UUID uuid) {
+        this.id = uuid;
     }
 
     @MetaProperty

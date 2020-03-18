@@ -17,7 +17,7 @@
 package io.jmix.ui.components;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 /**
  * SearchPickerField adds to PickerField the ability to search an entity using a special options datasource.

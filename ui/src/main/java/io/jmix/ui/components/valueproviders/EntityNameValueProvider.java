@@ -18,7 +18,7 @@ package io.jmix.ui.components.valueproviders;
 
 import com.vaadin.data.ValueProvider;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 public class EntityNameValueProvider<E extends Entity> implements ValueProvider<E, String> {
 

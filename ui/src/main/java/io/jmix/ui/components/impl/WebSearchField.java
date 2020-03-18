@@ -18,7 +18,7 @@ package io.jmix.ui.components.impl;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.App;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.SearchField;

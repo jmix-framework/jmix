@@ -37,13 +37,13 @@ class DataContextIdProxyTest extends DataContextSpec {
         when:
 
         TestIdentityIdEntity serverSideEntity = reserialize(merged)
-        serverSideEntity.setDbGeneratedId(10)
+        serverSideEntity.setId(10)
         TestIdentityIdEntity returnedEntity = reserialize(serverSideEntity)
 
         TestIdentityIdEntity mergedReturnedEntity = dataContext.merge(returnedEntity)
 
         then:
 
-        mergedReturnedEntity.getId().get() == 10
+        mergedReturnedEntity.getId() == 10
     }
 }

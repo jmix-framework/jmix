@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.components;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.data.DataUnit;
 
 import javax.annotation.Nullable;

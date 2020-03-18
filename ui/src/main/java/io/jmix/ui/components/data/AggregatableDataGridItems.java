@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components.data;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.AggregationInfo;
 
 import java.util.Collection;

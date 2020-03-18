@@ -18,7 +18,8 @@ package io.jmix.ui.model.impl;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
@@ -55,18 +56,18 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
             c = ((String) o1).compareToIgnoreCase((String) o2);
         } else if (o1 instanceof Comparable && o2 instanceof Comparable) {
             c = ((Comparable) o1).compareTo(o2);
-        } else if (o1 instanceof Instance && o2 instanceof Instance) {
+        } else if (o1 instanceof Entity && o2 instanceof Entity) {
             MetaClass metaClass = metadata.getClass(o1.getClass());
             Collection<MetaProperty> namePatternProperties = metadataTools.getNamePatternProperties(metaClass, true);
             if (namePatternProperties.isEmpty()) {
-                String instanceName1 = metadataTools.getInstanceName((Instance) o1);
-                String instanceName2 = metadataTools.getInstanceName((Instance) o2);
+                String instanceName1 = metadataTools.getInstanceName((Entity) o1);
+                String instanceName2 = metadataTools.getInstanceName((Entity) o2);
                 c = instanceName1.compareToIgnoreCase(instanceName2);
             } else {
                 c = 0;
                 for (MetaProperty property : namePatternProperties) {
-                    Object v1 = ((Instance) o1).getValue(property.getName());
-                    Object v2 = ((Instance) o2).getValue(property.getName());
+                    Object v1 = EntityValues.getValue(((Entity) o1), property.getName());
+                    Object v2 = EntityValues.getValue(((Entity) o2), property.getName());
                     c = compareAsc(v1, v2);
                     if (c != 0)
                         break;

@@ -19,7 +19,7 @@ package io.jmix.ui.components.factories;
 import io.jmix.core.Messages;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.entity.annotation.LookupType;
 import io.jmix.core.metamodel.model.MetaClass;

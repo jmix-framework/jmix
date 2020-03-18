@@ -18,10 +18,11 @@ package io.jmix.ui.components.calendar;
 
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
-import org.apache.commons.lang3.BooleanUtils;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.components.data.calendar.EntityCalendarEventProvider;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.util.function.Consumer;
 
@@ -37,10 +38,10 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
         this.provider = provider;
 
         // todo bad practice, use datasource listener instead
-        this.entity.addPropertyChangeListener(this::onPropertyChanged);
+        this.entity.__getEntityEntry().addPropertyChangeListener(this::onPropertyChanged);
     }
 
-    protected void onPropertyChanged(Instance.PropertyChangeEvent event) {
+    protected void onPropertyChanged(EntityPropertyChangeEvent event) {
         events.publish(EventChangeEvent.class, new EventChangeEvent<>(this));
     }
 
@@ -51,7 +52,7 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
     @Override
     public V getStart() {
         if (provider.getStartDateProperty() != null) {
-            return entity.getValue(provider.getStartDateProperty());
+            return EntityValues.getValue(entity, provider.getStartDateProperty());
         } else {
             return null;
         }
@@ -59,13 +60,13 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
 
     @Override
     public void setStart(V start) {
-        entity.setValue(provider.getStartDateProperty(), start);
+        EntityValues.setValue(entity, provider.getStartDateProperty(), start);
     }
 
     @Override
     public V getEnd() {
         if (provider.getEndDateProperty() != null) {
-            return entity.getValue(provider.getEndDateProperty());
+            return EntityValues.getValue(entity, provider.getEndDateProperty());
         } else {
             return null;
         }
@@ -73,13 +74,13 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
 
     @Override
     public void setEnd(V end) {
-        entity.setValue(provider.getEndDateProperty(), end);
+        EntityValues.setValue(entity, provider.getEndDateProperty(), end);
     }
 
     @Override
     public String getCaption() {
         if (provider.getCaptionProperty() != null) {
-            return entity.getValue(provider.getCaptionProperty());
+            return EntityValues.getValue(entity, provider.getCaptionProperty());
         } else {
             return null;
         }
@@ -87,18 +88,18 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
 
     @Override
     public void setCaption(String caption) {
-        entity.setValue(provider.getCaptionProperty(), caption);
+        EntityValues.setValue(entity, provider.getCaptionProperty(), caption);
     }
 
     @Override
     public void setDescription(String description) {
-        entity.setValue(provider.getDescriptionProperty(), description);
+        EntityValues.setValue(entity, provider.getDescriptionProperty(), description);
     }
 
     @Override
     public String getDescription() {
         if (provider.getDescriptionProperty() != null) {
-            return entity.getValue(provider.getDescriptionProperty());
+            return EntityValues.getValue(entity, provider.getDescriptionProperty());
         } else {
             return null;
         }
@@ -107,7 +108,7 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
     @Override
     public String getStyleName() {
         if (provider.getStyleNameProperty() != null) {
-            return entity.getValue(provider.getStyleNameProperty());
+            return EntityValues.getValue(entity, provider.getStyleNameProperty());
         } else {
             return null;
         }
@@ -115,13 +116,13 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
 
     @Override
     public void setStyleName(String styleName) {
-        entity.setValue(provider.getStyleNameProperty(), styleName);
+        EntityValues.setValue(entity, provider.getStyleNameProperty(), styleName);
     }
 
     @Override
     public boolean isAllDay() {
         if (provider.getIsAllDayProperty() != null) {
-            return BooleanUtils.isTrue(entity.getValue(provider.getIsAllDayProperty()));
+            return BooleanUtils.isTrue(EntityValues.getValue(entity, provider.getIsAllDayProperty()));
         } else {
             return false;
         }
@@ -129,7 +130,7 @@ public class EntityCalendarEvent<E extends Entity, V> implements CalendarEvent<V
 
     @Override
     public void setAllDay(boolean isAllDay) {
-        entity.setValue(provider.getIsAllDayProperty(), isAllDay);
+        EntityValues.setValue(entity, provider.getIsAllDayProperty(), isAllDay);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

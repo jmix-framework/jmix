@@ -17,7 +17,7 @@
 package io.jmix.ui.components;
 
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.calendar.CalendarEvent;
 import io.jmix.ui.components.calendar.CalendarEventProvider;
 import io.jmix.ui.components.calendar.ContainerCalendarEventProvider;

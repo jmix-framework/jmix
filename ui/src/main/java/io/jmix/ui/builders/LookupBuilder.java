@@ -17,7 +17,7 @@
 package io.jmix.ui.builders;
 
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.Screens;
 import io.jmix.ui.components.HasValue;
 import io.jmix.ui.components.ListComponent;

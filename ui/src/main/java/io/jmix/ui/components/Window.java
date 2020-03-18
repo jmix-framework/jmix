@@ -17,7 +17,7 @@ package io.jmix.ui.components;
 
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.validation.groups.UiCrossFieldChecks;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Notifications;

@@ -17,7 +17,7 @@
 package io.jmix.ui.actions;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
 import io.jmix.ui.components.ListComponent;

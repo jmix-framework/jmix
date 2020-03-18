@@ -17,7 +17,7 @@
 package io.jmix.ui.components;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 /**
  * LookupPickerField adds to PickerField the ability to select an entity from drop-down list.

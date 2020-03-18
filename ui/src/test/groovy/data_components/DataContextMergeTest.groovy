@@ -16,31 +16,32 @@
 
 package data_components
 
-import io.jmix.core.SaveContext
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.Id
-import io.jmix.core.entity.BaseEntityInternalAccess
-import io.jmix.core.entity.SecurityState
-import io.jmix.core.metamodel.model.Instance
+import io.jmix.core.entity.EntityPropertyChangeEvent
+import io.jmix.core.entity.EntityPropertyChangeListener
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.DataContext
+import org.eclipse.persistence.internal.queries.EntityFetchGroup
+import org.eclipse.persistence.queries.FetchGroupTracker
 import test_support.DataContextSpec
 import test_support.entity.TestIdentityIdEntity
 import test_support.entity.TestJpaLifecycleCallbacksEntity
 import test_support.entity.TestReadOnlyPropertyEntity
 import test_support.entity.sales.*
 import test_support.entity.sec.User
-import org.eclipse.persistence.internal.queries.EntityFetchGroup
-import org.eclipse.persistence.queries.FetchGroupTracker
 
 import javax.inject.Inject
 
 class DataContextMergeTest extends DataContextSpec {
 
-    @Inject DataComponents factory
-    @Inject EntityStates entityStates
-    @Inject DataManager dataManager
+    @Inject
+    DataComponents factory
+    @Inject
+    EntityStates entityStates
+    @Inject
+    DataManager dataManager
 
     def "merge equal instances"() throws Exception {
         DataContext context = factory.createDataContext()
@@ -572,13 +573,13 @@ class DataContextMergeTest extends DataContextSpec {
         def mergedOrder = context.merge(order1)
 
         Map<String, Integer> events = [:]
-        Instance.PropertyChangeListener listener = new Instance.PropertyChangeListener() {
+        EntityPropertyChangeListener listener = new EntityPropertyChangeListener() {
             @Override
-            void propertyChanged(Instance.PropertyChangeEvent e) {
+            void propertyChanged(EntityPropertyChangeEvent e) {
                 events.compute(e.property, { k, v -> v == null ? 1 : v + 1 })
             }
         }
-        mergedOrder.addPropertyChangeListener(listener)
+        mergedOrder.__getEntityEntry().addPropertyChangeListener(listener)
 
         when: "committing new instances"
 
@@ -629,8 +630,8 @@ class DataContextMergeTest extends DataContextSpec {
         TestJpaLifecycleCallbacksEntity entity = new TestJpaLifecycleCallbacksEntity(name: 'test1')
         def mergedEntity = context.merge(entity)
 
-        Instance.PropertyChangeListener listener = Mock()
-        mergedEntity.addPropertyChangeListener(listener)
+        EntityPropertyChangeListener listener = Mock()
+        mergedEntity.__getEntityEntry().addPropertyChangeListener(listener)
 
         when:
 
@@ -638,7 +639,7 @@ class DataContextMergeTest extends DataContextSpec {
 
         then:
 
-        1 * listener.propertyChanged({it.property == 'prePersistCounter'})
+        1 * listener.propertyChanged({ it.property == 'prePersistCounter' })
     }
 
     def "exception on commit keeps current state intact"() {
@@ -666,12 +667,12 @@ class DataContextMergeTest extends DataContextSpec {
 
         def mergedEntity = context.merge(entity)
 
-        Instance.PropertyChangeListener listener = Mock()
-        mergedEntity.addPropertyChangeListener(listener)
+        EntityPropertyChangeListener listener = Mock()
+        mergedEntity.__getEntityEntry().addPropertyChangeListener(listener)
 
         then:
 
-        context.find(entity).id.get() == null
+        context.find(entity).id == null
 
         when:
 
@@ -679,8 +680,8 @@ class DataContextMergeTest extends DataContextSpec {
 
         then:
 
-        context.find(entity).id.get() != null
-        0 * listener.propertyChanged({it.property == 'id'}) // is not invoked because id is set in copySystemState() by setDbGeneratedId() which is not enhanced
+        context.find(entity).id != null
+        1 * listener.propertyChanged({ it.property == 'id' }) // is not invoked because id is set in copySystemState() by setDbGeneratedId() which is not enhanced
     }
 
     def "system state should not be merged for non root entities"() {
@@ -693,21 +694,20 @@ class DataContextMergeTest extends DataContextSpec {
 
         when: "parent entity has system state and child entity has link to the object without system state"
 
-        def securityState = new SecurityState()
-        BaseEntityInternalAccess.setSecurityState(order1, securityState)
-        BaseEntityInternalAccess.setNew(order1, true)
+        def securityState = order1.__getEntityEntry().getSecurityState()
+        order1.__getEntityEntry().setNew(true)
         context.merge(order1)
 
         order2.amount = 4
-        BaseEntityInternalAccess.setNew(order2, false)
+        order2.__getEntityEntry().setNew(false)
         context.merge(line1)
 
         then:
 
         def orderInContext = context.find(Order, order1.id)
         orderInContext.amount == 4
-        BaseEntityInternalAccess.getSecurityState(orderInContext).is(securityState)
-        BaseEntityInternalAccess.isNew(orderInContext)
+        orderInContext.__getEntityEntry().getSecurityState().is(securityState)
+        orderInContext.__getEntityEntry().isNew()
 
     }
 

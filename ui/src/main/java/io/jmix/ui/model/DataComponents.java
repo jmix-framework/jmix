@@ -16,8 +16,9 @@
 
 package io.jmix.ui.model;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.Security;
 import io.jmix.ui.model.impl.*;
 import io.jmix.core.security.EntityOp;
@@ -80,7 +81,7 @@ public class DataComponents implements ApplicationContextAware {
                 && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
             masterContainer.addItemChangeListener(e -> {
                 Entity item = masterContainer.getItemOrNull();
-                container.setItem(item != null ? item.getValue(property) : null);
+                container.setItem(item != null ? EntityValues.getValue(item, property) : null);
             });
 
             masterContainer.addItemPropertyChangeListener(e -> {
@@ -118,7 +119,7 @@ public class DataComponents implements ApplicationContextAware {
                 && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
             masterContainer.addItemChangeListener(e -> {
                 Entity item = masterContainer.getItemOrNull();
-                container.setItems(item != null ? item.getValue(property) : null);
+                container.setItems(item != null ? EntityValues.getValue(item, property) : null);
             });
 
             masterContainer.addItemPropertyChangeListener(e -> {

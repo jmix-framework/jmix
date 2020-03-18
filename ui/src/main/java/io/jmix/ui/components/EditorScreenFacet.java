@@ -16,13 +16,9 @@
 
 package io.jmix.ui.components;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.builders.EditMode;
-import io.jmix.ui.meta.PropertyType;
-import io.jmix.ui.meta.StudioDelegate;
-import io.jmix.ui.meta.StudioFacet;
-import io.jmix.ui.meta.StudioProperties;
-import io.jmix.ui.meta.StudioProperty;
+import io.jmix.ui.meta.*;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.Screen;

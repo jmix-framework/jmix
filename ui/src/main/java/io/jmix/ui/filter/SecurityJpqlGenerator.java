@@ -16,11 +16,13 @@
 
 package io.jmix.ui.filter;
 
-import io.jmix.core.entity.BaseDbGeneratedIdEntity;
-import io.jmix.core.entity.BaseIntegerIdEntity;
-import io.jmix.core.entity.BaseLongIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.AppBeans;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -67,8 +69,8 @@ public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
                     .map(String::trim)
                     .map(v -> valueToString(javaClass, v, Op.EQUAL))
                     .collect(Collectors.joining(", ", "(", ")"));
-           return convertedValue;
-        } else  if (Number.class.isAssignableFrom(javaClass)
+            return convertedValue;
+        } else if (Number.class.isAssignableFrom(javaClass)
                 || Boolean.class.isAssignableFrom(javaClass)) {
             return value;
         } else if (EnumClass.class.isAssignableFrom(javaClass)) {
@@ -77,13 +79,18 @@ public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
             Object enumId = ((EnumClass) enumValue).getId();
             return (enumId instanceof Number) ? enumId.toString() : "'" + enumId + "'";
         } else if (Entity.class.isAssignableFrom(javaClass)) {
-            if (BaseIntegerIdEntity.class.isAssignableFrom(javaClass)
-                    || BaseLongIdEntity.class.isAssignableFrom(javaClass)
-                    || BaseDbGeneratedIdEntity.class.isAssignableFrom(javaClass)) {
-                return value;
-            } else {
-                return "'" + value + "'";
+            Metadata metadata = AppBeans.get(Metadata.class);
+            MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
+            MetaClass metaClass = metadata.findClass(javaClass);
+            if (metaClass != null) {
+                MetaProperty metaProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+                if (metaProperty != null) {
+                    if (!Number.class.isAssignableFrom(metaProperty.getJavaType())) {
+                        return "'" + value + "'";
+                    }
+                }
             }
+            return value;
         } else {
             if (operator == Op.CONTAINS || operator == Op.DOES_NOT_CONTAIN) {
                 return "'%" + value + "%'";

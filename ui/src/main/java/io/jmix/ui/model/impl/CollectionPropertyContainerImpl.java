@@ -16,10 +16,11 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.entity.Entity;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.context.ApplicationContext;
@@ -76,7 +77,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
         Entity masterItem = master.getItemOrNull();
         if (masterItem != null) {
             MetaProperty masterProperty = getMasterProperty();
-            Collection masterCollection = masterItem.getValue(masterProperty.getName());
+            Collection masterCollection = EntityValues.getValue(masterItem, masterProperty.getName());
             if (masterCollection != entities) {
                 updateMasterCollection(masterProperty, masterCollection, entities);
             }
@@ -85,7 +86,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
 
     protected void updateMaster() {
         MetaProperty masterProperty = getMasterProperty();
-        Collection masterCollection = master.getItem().getValue(masterProperty.getName());
+        Collection masterCollection = EntityValues.getValue(master.getItem(), masterProperty.getName());
         updateMasterCollection(masterProperty, masterCollection, this.collection);
     }
 
@@ -103,7 +104,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
                                         @Nullable Collection masterCollection,
                                         @Nullable Collection<E> newCollection) {
         if (newCollection == null) {
-            master.getItem().setValue(metaProperty.getName(), null);
+            EntityValues.setValue(master.getItem(), metaProperty.getName(), null);
         } else {
             if (masterCollection == null) {
                 initMasterCollection(metaProperty, newCollection);
@@ -111,7 +112,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
                 masterCollection.clear();
                 masterCollection.addAll(newCollection);
                 if (master instanceof ItemPropertyChangeNotifier) {
-                    Instance.PropertyChangeEvent event = new Instance.PropertyChangeEvent(
+                    EntityPropertyChangeEvent event = new EntityPropertyChangeEvent(
                             master.getItem(),
                             metaProperty.getName(),
                             masterCollection,
@@ -130,7 +131,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
         } else {
             masterCollection = new LinkedHashSet<>(newCollection);
         }
-        master.getItem().setValue(metaProperty.getName(), masterCollection);
+        EntityValues.setValue(master.getItem(), metaProperty.getName(), masterCollection);
         return masterCollection;
     }
 
@@ -138,7 +139,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
     protected void replaceInCollection(int idx, E entity) {
         super.replaceInCollection(idx, entity);
         MetaProperty masterProperty = getMasterProperty();
-        Collection<E> masterCollection = master.getItem().getValue(masterProperty.getName());
+        Collection<E> masterCollection = EntityValues.getValue(master.getItem(), masterProperty.getName());
         if (masterCollection == null) {
             masterCollection = initMasterCollection(masterProperty, Collections.emptyList());
             masterCollection.add(entity);
@@ -156,7 +157,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
     protected void addToCollection(E entity) {
         super.addToCollection(entity);
         MetaProperty masterProperty = getMasterProperty();
-        Collection<E> masterCollection = master.getItem().getValue(masterProperty.getName());
+        Collection<E> masterCollection = EntityValues.getValue(master.getItem(), masterProperty.getName());
         if (masterCollection == null) {
             masterCollection = initMasterCollection(masterProperty, Collections.emptyList());
         }

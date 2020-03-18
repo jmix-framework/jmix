@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.data.HasValueSource;
 import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.ValueSource;

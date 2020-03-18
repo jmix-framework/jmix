@@ -17,7 +17,7 @@
 package io.jmix.ui.dynamicattributes;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.entity.BaseGenericIdEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.HasValue;
@@ -73,7 +73,7 @@ public class DynamicAttributesGuiTools {
         return false;
     }
 
-    public void initDefaultAttributeValues(BaseGenericIdEntity item, MetaClass metaClass) {
+    public void initDefaultAttributeValues(Entity item, MetaClass metaClass) {
     }
 
     /*
@@ -117,18 +117,17 @@ public class DynamicAttributesGuiTools {
      * Reload dynamic attributes on the entity
      */
     @SuppressWarnings("unchecked")
-    public void reloadDynamicAttributes(BaseGenericIdEntity entity) {
+    public void reloadDynamicAttributes(Entity entity) {
     }
 
     /**
      * Returns validators for a dynamic attribute
+     *
      * @return collection of validators
      */
     public Collection<Consumer<?>> createValidators(CategoryAttribute attribute) {
         return null;
     }
-
-
 
 
     /**

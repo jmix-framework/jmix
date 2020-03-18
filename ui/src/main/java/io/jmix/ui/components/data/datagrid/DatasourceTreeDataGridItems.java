@@ -17,7 +17,7 @@
 package io.jmix.ui.components.data.datagrid;
 
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.data.TreeDataGridItems;
 
 import javax.annotation.Nullable;

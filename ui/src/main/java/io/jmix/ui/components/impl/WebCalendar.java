@@ -21,7 +21,7 @@ import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.datatypes.impl.AbstractTemporalDatatype;

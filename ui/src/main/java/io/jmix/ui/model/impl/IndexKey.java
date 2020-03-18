@@ -16,7 +16,8 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 
 public class IndexKey {
 
@@ -30,7 +31,7 @@ public class IndexKey {
      */
     public static IndexKey ofEntity(Entity entity) {
         IndexKey indexKey = new IndexKey();
-        indexKey.key = entity.getId() != null ? entity.getId() : entity;
+        indexKey.key = EntityValues.getId(entity) != null ? EntityValues.getId(entity) : entity;
         return indexKey;
     }
 

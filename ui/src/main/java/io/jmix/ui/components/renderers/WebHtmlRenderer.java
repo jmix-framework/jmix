@@ -17,7 +17,7 @@
 package io.jmix.ui.components.renderers;
 
 import com.vaadin.ui.renderers.HtmlRenderer;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.DataGrid;
 import io.jmix.ui.components.impl.WebAbstractDataGrid;
 

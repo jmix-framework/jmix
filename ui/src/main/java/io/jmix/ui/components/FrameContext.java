@@ -17,10 +17,7 @@ package io.jmix.ui.components;
 
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
-import io.jmix.core.metamodel.model.Instance;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.HasValue;
-import io.jmix.ui.components.ListComponent;
+import io.jmix.core.Entity;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -47,23 +44,24 @@ public interface FrameContext {
      * Retrieves value of a component by complex name, dereferencing path to the component and possible drill down to the value.
      *
      * @param property path to the value. Parsed by the following rules:
-     * <br>First split by dots taking into account square brackets, and looking for a component from left to right.
-     * <br>If a component not found, return null.
-     * <br>If a component found and it is a {@link HasValue}
-     * or {@link ListComponent}, retrieve its value.
-     * <br>If the value is null, return it.
-     * <br>If there is nothing left in the path after the component name, return the value.
-     * <br>Else if the value is {@link Instance}, drill down to it and return the value
-     * of the property by remaining property path.
-     * <br>If the value is an {@link EnumClass} and remaining
-     * property path is "id", return EnumClass.getId() value.
+     *                 <br>First split by dots taking into account square brackets, and looking for a component from left to right.
+     *                 <br>If a component not found, return null.
+     *                 <br>If a component found and it is a {@link HasValue}
+     *                 or {@link ListComponent}, retrieve its value.
+     *                 <br>If the value is null, return it.
+     *                 <br>If there is nothing left in the path after the component name, return the value.
+     *                 <br>Else if the value is {@link Entity}, drill down to it and return the value
+     *                 of the property by remaining property path.
+     *                 <br>If the value is an {@link EnumClass} and remaining
+     *                 property path is "id", return EnumClass.getId() value.
      */
     <T> T getValue(String property);
 
     /**
      * Set value of a component by its path in the window
+     *
      * @param property path to the component (separated by dots, taking into account square brackets)
-     * @param value value to set
+     * @param value    value to set
      * @throws UnsupportedOperationException if the component not found or is not a {@link HasValue}
      */
     void setValue(String property, Object value);

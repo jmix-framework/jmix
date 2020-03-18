@@ -16,9 +16,10 @@
 
 package io.jmix.ui.model.impl;
 
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.Sort;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Sorter;
@@ -68,6 +69,6 @@ public abstract class BaseContainerSorter implements Sorter {
             throw new IllegalArgumentException("Property " + sort.getOrders().get(0).getProperty() + " is invalid");
         }
         boolean asc = sort.getOrders().get(0).getDirection() == Sort.Direction.ASC;
-        return Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.asc(asc));
+        return Comparator.comparing(e -> EntityValues.getValueEx(e, propertyPath), EntityValuesComparator.asc(asc));
     }
 }

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.meta.StudioDelegate;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperties;

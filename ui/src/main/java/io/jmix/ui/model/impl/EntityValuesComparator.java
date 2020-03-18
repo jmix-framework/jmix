@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.IdProxy;
 
 import java.util.Comparator;
@@ -24,7 +24,7 @@ import java.util.Comparator;
 /**
  * A comparison function, which imposes a ordering for entity attribute values.
  * <p>
- * For example, to obtain a {@code Comparator} that compares {@code io.jmix.core.entity.Entity} objects
+ * For example, to obtain a {@code Comparator} that compares {@code io.jmix.core.Entity} objects
  * by some property that is specified by {@code io.jmix.core.metamodel.model.MetaPropertyPath}:
  * <pre>{@code Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.of(asc))}</pre>
  */
@@ -47,7 +47,7 @@ public class EntityValuesComparator<T> extends AbstractComparator<T> {
 
     protected Object transformValue(T value) {
         Object newValue = value;
-        if (!(value == null || value instanceof Comparable || value instanceof Instance)) {
+        if (!(value == null || value instanceof Comparable || value instanceof Entity)) {
             if (value instanceof IdProxy) {
                 newValue = ((IdProxy) value).get();
             } else {

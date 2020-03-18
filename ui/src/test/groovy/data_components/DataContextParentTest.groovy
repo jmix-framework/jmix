@@ -17,7 +17,7 @@
 package data_components
 
 import io.jmix.core.EntityStates
-import io.jmix.core.entity.BaseEntityInternalAccess
+
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.DataContext
 import test_support.DataContextSpec
@@ -386,6 +386,6 @@ class DataContextParentTest extends DataContextSpec {
     }
 
     boolean isNew(def entity) {
-        BaseEntityInternalAccess.isNew(entity)
+        entity.__getEntityEntry().isNew()
     }
 }

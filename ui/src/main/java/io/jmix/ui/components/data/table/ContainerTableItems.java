@@ -19,7 +19,8 @@ package io.jmix.ui.components.data.table;
 import io.jmix.core.Sort;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.AggregationInfo;
@@ -101,7 +102,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
 
     @Override
     public Collection<?> getItemIds() {
-        return container.getItems().stream().map(Entity::getId).collect(Collectors.toList());
+        return container.getItems().stream().map(e -> EntityValues.getId(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -124,7 +125,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
     public void updateItem(E item) {
         checkNotNullArgument(item, "item is null");
 
-        if (container.containsItem(item.getId())) {
+        if (container.containsItem(EntityValues.getId(item))) {
             container.replaceItem(item);
         }
     }
@@ -132,7 +133,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
     @Override
     public Object getItemValue(Object itemId, Object propertyId) {
         MetaPropertyPath propertyPath = (MetaPropertyPath) propertyId;
-        return container.getItem(itemId).getValueEx(propertyPath);
+        return EntityValues.getValueEx(container.getItem(itemId), propertyPath);
     }
 
     @Override
@@ -142,7 +143,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
 
     @Override
     public boolean containsId(Object itemId) {
-        return container.getItems().stream().anyMatch(e -> e.getId().equals(itemId));
+        return container.getItems().stream().anyMatch(e -> EntityValues.getId(e).equals(itemId));
     }
 
     @Override
@@ -204,19 +205,19 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
     public Object nextItemId(Object itemId) {
         List<E> items = container.getItems();
         int index = container.getItemIndex(itemId);
-        return index == items.size() - 1 ? null : items.get(index + 1).getId();
+        return index == items.size() - 1 ? null : EntityValues.getId(items.get(index + 1));
     }
 
     @Override
     public Object prevItemId(Object itemId) {
         int index = container.getItemIndex(itemId);
-        return index <= 0 ? null : container.getItems().get(index - 1).getId();
+        return index <= 0 ? null : EntityValues.getId(container.getItems().get(index - 1));
     }
 
     @Override
     public Object firstItemId() {
         List<E> items = container.getItems();
-        return items.isEmpty() ? null : items.get(0).getId();
+        return items.isEmpty() ? null : EntityValues.getId(items.get(0));
     }
 
     @Override
@@ -225,7 +226,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
         if (items.isEmpty()) {
             return null;
         }
-        return items.get(items.size() - 1).getId();
+        return EntityValues.getId(items.get(items.size() - 1));
     }
 
     @Override

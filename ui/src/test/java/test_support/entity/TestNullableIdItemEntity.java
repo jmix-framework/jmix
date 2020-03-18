@@ -16,14 +16,12 @@
 
 package test_support.entity;
 
-import io.jmix.core.entity.BaseGenericIdEntity;
-
 import javax.persistence.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Entity(name = "test_NullableIdItemEntity")
 @Table(name = "TEST_NULLABLE_ID_ITEM_ENTITY")
-public class TestNullableIdItemEntity extends BaseGenericIdEntity<Long> {
+public class TestNullableIdItemEntity implements io.jmix.core.Entity<Long> {
 
     private static final long serialVersionUID = 8115973479078477156L;
 
@@ -46,12 +44,10 @@ public class TestNullableIdItemEntity extends BaseGenericIdEntity<Long> {
             id = sequence.incrementAndGet();
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }

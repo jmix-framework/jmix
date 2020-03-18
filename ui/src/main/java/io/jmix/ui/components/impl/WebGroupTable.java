@@ -16,8 +16,8 @@
 package io.jmix.ui.components.impl;
 
 import com.google.common.collect.Lists;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.GroupTable;
@@ -447,7 +447,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
     @Override
     public void expandPath(Entity item) {
         if (component.hasGroups()) {
-            expandGroupsFor((Collection<GroupInfo>) component.rootGroups(), item.getId());
+            expandGroupsFor((Collection<GroupInfo>) component.rootGroups(), EntityValues.getId(item));
         }
     }
 
@@ -655,8 +655,8 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
 
                     TableDataContainer container = (TableDataContainer) component.getContainerDataSource();
 
-                    Instance item = (Instance) container.getInternalItem(itemId);
-                    Object captionValue = item.getValueEx(captionProperty);
+                    Entity item = (Entity) container.getInternalItem(itemId);
+                    Object captionValue = EntityValues.getValueEx(item, captionProperty);
 
                     // vaadin8 use metadataTools format with metaproperty
                     return metadataTools.format(captionValue);

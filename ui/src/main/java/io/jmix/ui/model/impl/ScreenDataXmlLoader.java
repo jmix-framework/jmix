@@ -22,7 +22,7 @@ import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.FetchPlanRepository;

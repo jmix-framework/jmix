@@ -22,15 +22,10 @@ import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.entity.IdProxy;
-import io.jmix.core.entity.Versioned;
+import io.jmix.core.entity.*;
 import io.jmix.core.impl.StandardSerialization;
-import io.jmix.core.metamodel.model.Instance;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.impl.AbstractInstance;
 import io.jmix.ui.model.DataContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -220,7 +215,7 @@ public class DataContextImpl implements DataContext {
 
             mergeState(entity, managed, mergedMap, isRoot);
 
-            managed.addPropertyChangeListener(propertyChangeListener);
+            managed.__getEntityEntry().addPropertyChangeListener(propertyChangeListener);
 
             if (getEntityStates().isNew(managed)) {
                 modifiedInstances.add(managed);
@@ -236,9 +231,9 @@ public class DataContextImpl implements DataContext {
     }
 
     protected Object makeKey(Entity entity) {
-        Object id = entity.getId();
+        Object id = EntityValues.getId(entity);
         if (id != null) {
-            return entity.getId();
+            return EntityValues.getId(entity);
         } else {
             return entity;
         }
@@ -272,7 +267,7 @@ public class DataContextImpl implements DataContext {
                     && (srcNew || entityStates.isLoaded(srcEntity, propertyName))          // loaded src
                     && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {       // loaded dst
 
-                Object value = srcEntity.getValue(propertyName);
+                Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities and do not try to assign IdProxy
                 if ((!isRoot && value == null)
@@ -290,7 +285,7 @@ public class DataContextImpl implements DataContext {
                     && (srcNew || entityStates.isLoaded(srcEntity, propertyName))          // loaded src
                     && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {       // loaded dst
 
-                Object value = srcEntity.getValue(propertyName);
+                Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities and do not try to assign IdProxy
                 if ((!isRoot && value == null)
@@ -315,16 +310,16 @@ public class DataContextImpl implements DataContext {
                     Entity srcRef = (Entity) value;
                     if (!mergedMap.containsKey(srcRef)) {
                         Entity managedRef = internalMerge(srcRef, mergedMap, false);
-                        ((AbstractInstance) dstEntity).setValue(propertyName, managedRef, false);
+                        EntityValues.setValue(dstEntity, propertyName, managedRef, false);
                         if (getMetadataTools().isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
-                            managedRef.addPropertyChangeListener(listener);
+                            managedRef.__getEntityEntry().addPropertyChangeListener(listener);
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);
                         }
                     } else {
                         Entity managedRef = mergedMap.get(srcRef);
                         if (managedRef != null) {
-                            ((AbstractInstance) dstEntity).setValue(propertyName, managedRef, false);
+                            EntityValues.setValue(dstEntity, propertyName, managedRef, false);
                         } else {
                             // should never happen
                             log.debug("Instance was merged but managed instance is null: {}", srcRef);
@@ -337,7 +332,7 @@ public class DataContextImpl implements DataContext {
 
     protected void setPropertyValue(Entity entity, MetaProperty property, Object value) {
         if (!property.isReadOnly()) {
-            entity.setValue(property.getName(), value);
+            EntityValues.setValue(entity, property.getName(), value);
         } else {
             AnnotatedElement annotatedElement = property.getAnnotatedElement();
             if (annotatedElement instanceof Field) {
@@ -354,12 +349,8 @@ public class DataContextImpl implements DataContext {
 
     @SuppressWarnings("unchecked")
     protected void copySystemState(Entity srcEntity, Entity dstEntity) {
-        if (dstEntity instanceof BaseGenericIdEntity) {
-            ((BaseGenericIdEntity) dstEntity).setId(srcEntity.getId());
-
-            getEntitySystemStateSupport().copySystemState((BaseGenericIdEntity) srcEntity, (BaseGenericIdEntity) dstEntity);
-
-        }
+        EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
+        getEntitySystemStateSupport().copySystemState(srcEntity, dstEntity);
 
         if (dstEntity instanceof Versioned) {
             ((Versioned) dstEntity).setVersion(((Versioned) srcEntity).getVersion());
@@ -367,10 +358,8 @@ public class DataContextImpl implements DataContext {
     }
 
     protected void mergeSystemState(Entity srcEntity, Entity dstEntity, boolean isRoot) {
-        if (dstEntity instanceof BaseGenericIdEntity) {
-            if (isRoot) {
-                getEntitySystemStateSupport().mergeSystemState((BaseGenericIdEntity) srcEntity, (BaseGenericIdEntity) dstEntity);
-            }
+        if (isRoot) {
+            getEntitySystemStateSupport().mergeSystemState(srcEntity, dstEntity);
         }
     }
 
@@ -386,7 +375,7 @@ public class DataContextImpl implements DataContext {
             setPropertyValue(managedEntity, property, dstList);
 
         } else {
-            List<Entity> dstList = managedEntity.getValue(property.getName());
+            List<Entity> dstList = EntityValues.getValue(managedEntity, property.getName());
             if (dstList == null) {
                 dstList = createObservableList(managedEntity);
                 setPropertyValue(managedEntity, property, dstList);
@@ -418,7 +407,7 @@ public class DataContextImpl implements DataContext {
             setPropertyValue(managedEntity, property, dstSet);
 
         } else {
-            Set<Entity> dstSet = managedEntity.getValue(property.getName());
+            Set<Entity> dstSet = EntityValues.getValue(managedEntity, property.getName());
             if (dstSet == null) {
                 dstSet = createObservableSet(managedEntity);
                 setPropertyValue(managedEntity, property, dstSet);
@@ -488,7 +477,7 @@ public class DataContextImpl implements DataContext {
                     Map<Object, Entity> entityMap = entry.getValue();
                     for (Entity entity : entityMap.values()) {
                         if (getEntityStates().isLoaded(entity, metaProperty.getName())) {
-                            Collection collection = entity.getValue(metaProperty.getName());
+                            Collection collection = EntityValues.getValue(entity, metaProperty.getName());
                             if (collection != null) {
                                 collection.remove(entityToRemove);
                             }
@@ -542,14 +531,14 @@ public class DataContextImpl implements DataContext {
     }
 
     protected void removeListeners(Entity entity) {
-        entity.removePropertyChangeListener(propertyChangeListener);
+        entity.__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
         Map<String, EmbeddedPropertyChangeListener> listenerMap = embeddedPropertyListeners.get(entity);
         if (listenerMap != null) {
             for (Map.Entry<String, EmbeddedPropertyChangeListener> entry : listenerMap.entrySet()) {
-                Entity embedded = entity.getValue(entry.getKey());
+                Entity embedded = EntityValues.getValue(entity, entry.getKey());
                 if (embedded != null) {
-                    embedded.removePropertyChangeListener(entry.getValue());
-                    embedded.removePropertyChangeListener(propertyChangeListener);
+                    embedded.__getEntityEntry().removePropertyChangeListener(entry.getValue());
+                    embedded.__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
                 }
             }
             embeddedPropertyListeners.remove(entity);
@@ -672,7 +661,7 @@ public class DataContextImpl implements DataContext {
         for (int i = 0; i < isolatedEntities.size(); i++) {
             Entity isolatedEntity = (Entity) isolatedEntities.get(i);
             Entity entity = entities.get(i);
-            if (entity.getId() == null) {
+            if (EntityValues.getId(entity) == null) {
                 nullIdEntitiesMap.put(isolatedEntity, entity);
             }
         }
@@ -709,10 +698,9 @@ public class DataContextImpl implements DataContext {
         MetaClass refMetaClass = getMetadata().getClass(refEntity.getClass());
 
         return metaClass.getProperties().stream()
-                .anyMatch(metaProperty ->
-                        metaProperty.getRange().isClass()
-                                && metaProperty.getRange().asClass().equals(refMetaClass)
-                                && Objects.equals(entity.getValue(metaProperty.getName()), refEntity));
+                .anyMatch(metaProperty -> metaProperty.getRange().isClass()
+                        && metaProperty.getRange().asClass().equals(refMetaClass)
+                        && Objects.equals(EntityValues.getValue(entity, metaProperty.getName()), refEntity));
     }
 
     protected EntitySet mergeCommitted(Set<Entity> committed) {
@@ -767,7 +755,7 @@ public class DataContextImpl implements DataContext {
         for (MetaProperty property : getMetadata().getClass(entity.getClass()).getProperties()) {
             if (!property.getRange().isClass() || !getEntityStates().isLoaded(entity, property.getName()))
                 continue;
-            Object value = entity.getValue(property.getName());
+            Object value = EntityValues.getValue(entity, property.getName());
             String prefix = StringUtils.repeat("  ", level);
             if (value instanceof Entity) {
                 String str = printEntity((Entity) value, level + 1, visited);
@@ -790,9 +778,9 @@ public class DataContextImpl implements DataContext {
         return "{" + object.getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(object)) + "}";
     }
 
-    protected class PropertyChangeListener implements Instance.PropertyChangeListener {
+    protected class PropertyChangeListener implements EntityPropertyChangeListener {
         @Override
-        public void propertyChanged(Instance.PropertyChangeEvent e) {
+        public void propertyChanged(EntityPropertyChangeEvent e) {
             // if id has been changed, put the entity to the content with the new id
             MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(e.getItem().getClass());
             if (primaryKeyProperty != null && e.getProperty().equals(primaryKeyProperty.getName())) {
@@ -810,7 +798,7 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected class EmbeddedPropertyChangeListener implements Instance.PropertyChangeListener {
+    protected class EmbeddedPropertyChangeListener implements EntityPropertyChangeListener {
 
         private final Entity entity;
 
@@ -819,7 +807,7 @@ public class DataContextImpl implements DataContext {
         }
 
         @Override
-        public void propertyChanged(Instance.PropertyChangeEvent e) {
+        public void propertyChanged(EntityPropertyChangeEvent e) {
             if (!disableListeners) {
                 modifiedInstances.add(entity);
                 fireChangeListener(entity);

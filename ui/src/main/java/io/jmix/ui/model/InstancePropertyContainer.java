@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 /**
  * Container that holds a single instance which is loaded as a property of another entity.

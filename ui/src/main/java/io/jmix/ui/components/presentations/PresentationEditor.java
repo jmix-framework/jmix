@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.components.presentations;
 
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.Security;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
@@ -38,6 +39,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 public class PresentationEditor extends CubaWindow {
 
@@ -104,7 +107,7 @@ public class PresentationEditor extends CubaWindow {
 
         defaultField = new CheckBox();
         defaultField.setCaption(messages.getMessage("PresentationsEditor.default"));
-        defaultField.setValue(presentation.getId().equals(component.getDefaultPresentationId()));
+        defaultField.setValue(EntityValues.<UUID>getId(presentation).equals(component.getDefaultPresentationId()));
         root.addComponent(defaultField);
 
         if (allowGlobalPresentations) {
@@ -199,7 +202,7 @@ public class PresentationEditor extends CubaWindow {
 
         addCloseListener(e -> {
             if (isNew) {
-                component.applyPresentation(presentation.getId());
+                component.applyPresentation(EntityValues.<UUID>getId(presentation));
             }
         });
     }

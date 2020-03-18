@@ -18,7 +18,7 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.events.sys.VoidSubscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.SaveContext;
 import io.jmix.core.EntitySet;
 import io.jmix.ui.model.DataContext;

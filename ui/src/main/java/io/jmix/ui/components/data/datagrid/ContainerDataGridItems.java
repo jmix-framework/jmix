@@ -19,7 +19,8 @@ package io.jmix.ui.components.data.datagrid;
 import io.jmix.core.Sort;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.AggregationInfo;
@@ -96,7 +97,7 @@ public class ContainerDataGridItems<E extends Entity>
 
     @Override
     public Object getItemId(E item) {
-        return item.getId();
+        return EntityValues.getId(item);
     }
 
     @Override
@@ -106,7 +107,7 @@ public class ContainerDataGridItems<E extends Entity>
 
     @Override
     public int indexOfItem(E item) {
-        return container.getItemIndex(item.getId());
+        return container.getItemIndex(EntityValues.getId(item));
     }
 
     @Nullable
@@ -127,7 +128,7 @@ public class ContainerDataGridItems<E extends Entity>
 
     @Override
     public boolean containsItem(E item) {
-        return container.getItemOrNull(item.getId()) != null;
+        return container.getItemOrNull(EntityValues.getId(item)) != null;
     }
 
     @Override
@@ -242,7 +243,7 @@ public class ContainerDataGridItems<E extends Entity>
 
             @Override
             public Object getItemValue(MetaPropertyPath property, Object itemId) {
-                return container.getItem(itemId).getValueEx(property);
+                return EntityValues.getValueEx(container.getItem(itemId), property);
             }
         };
     }

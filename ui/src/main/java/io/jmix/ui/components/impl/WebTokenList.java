@@ -18,7 +18,8 @@ package io.jmix.ui.components.impl;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.*;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.ClientConfig;
@@ -549,7 +550,7 @@ public class WebTokenList<V extends Entity>
 
         for (V value : valueSourceValue) {
             options.getOptions()
-                    .filter(option -> Objects.equals(option.getId(), value.getId()))
+                    .filter(option -> Objects.equals(EntityValues.getId(option), EntityValues.getId(value)))
                     .findFirst()
                     .ifPresent(option -> {
                         valueSourceValue.remove(value);

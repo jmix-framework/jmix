@@ -17,7 +17,8 @@
 package io.jmix.ui.components.data.datagrid;
 
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.components.data.TreeDataGridItems;
 import io.jmix.ui.model.CollectionContainer;
 
@@ -46,13 +47,13 @@ public class ContainerTreeDataGridItems<E extends Entity>
             // root items
             return container.getItems().stream()
                     .filter(it -> {
-                        E parentItem = it.getValue(hierarchyProperty);
-                        return parentItem == null || (container.getItemOrNull(parentItem.getId()) == null);
+                        E parentItem = EntityValues.getValue(it, hierarchyProperty);
+                        return parentItem == null || (container.getItemOrNull(EntityValues.getId(parentItem)) == null);
                     });
         } else {
             return container.getItems().stream()
                     .filter(it -> {
-                        E parentItem = it.getValue(hierarchyProperty);
+                        E parentItem = EntityValues.getValue(it, hierarchyProperty);
                         return parentItem != null && parentItem.equals(item);
                     });
         }
@@ -61,7 +62,7 @@ public class ContainerTreeDataGridItems<E extends Entity>
     @Override
     public boolean hasChildren(E item) {
         return container.getItems().stream().anyMatch(it -> {
-            E parentItem = it.getValue(hierarchyProperty);
+            E parentItem = EntityValues.getValue(it, hierarchyProperty);
             return parentItem != null && parentItem.equals(item);
         });
     }
@@ -70,6 +71,6 @@ public class ContainerTreeDataGridItems<E extends Entity>
     @Override
     public E getParent(E item) {
         Preconditions.checkNotNullArgument(item);
-        return item.getValue(hierarchyProperty);
+        return EntityValues.getValue(item, hierarchyProperty);
     }
 }

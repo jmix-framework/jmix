@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.CollectionContainer;
@@ -26,7 +26,6 @@ import io.jmix.ui.model.Nested;
  * Interface for entity aware screen facets.
  *
  * @param <E> entity type
- *
  * @see EditorScreenFacet
  * @see LookupScreenFacet
  */

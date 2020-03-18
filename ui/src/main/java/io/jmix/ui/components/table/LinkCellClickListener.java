@@ -17,14 +17,10 @@
 package io.jmix.ui.components.table;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.WindowConfig;
-import io.jmix.ui.components.ComponentsHelper;
-import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.Table;
-import io.jmix.ui.components.Window;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -57,7 +53,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
         }
 
         Entity entity;
-        Object value = rowItem.getValueEx(columnId);
+        Object value = EntityValues.getValueEx(rowItem, columnId);
 
         if (value instanceof Entity) {
             entity = (Entity) value;

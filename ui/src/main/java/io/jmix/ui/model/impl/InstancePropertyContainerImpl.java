@@ -17,7 +17,7 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstancePropertyContainer;
 import org.springframework.context.ApplicationContext;

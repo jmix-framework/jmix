@@ -21,7 +21,7 @@ import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.App;
 import io.jmix.ui.ClientConfig;

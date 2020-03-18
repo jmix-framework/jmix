@@ -16,9 +16,9 @@
 
 package io.jmix.ui.facets;
 
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.entity.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.*;
@@ -33,7 +33,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * Base class for entity aware screen facet providers.
  *
  * @param <T> screen facet type
- *
  * @see EditorScreenFacet
  * @see LookupScreenFacet
  */

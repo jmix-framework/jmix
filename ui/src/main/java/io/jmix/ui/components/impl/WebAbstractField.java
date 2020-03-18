@@ -17,7 +17,7 @@ package io.jmix.ui.components.impl;
 
 import io.jmix.core.Messages;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.metamodel.model.utils.InstanceUtils;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.data.ValueSource;
@@ -225,7 +225,7 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
     }
 
     protected boolean fieldValueEquals(V value, V oldValue) {
-        return InstanceUtils.propertyValueEquals(oldValue, value);
+        return EntityValues.propertyValueEquals(oldValue, value);
     }
 
     @Override

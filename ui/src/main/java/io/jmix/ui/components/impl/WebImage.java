@@ -19,7 +19,7 @@ package io.jmix.ui.components.impl;
 import com.vaadin.event.MouseEvents;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaPropertyPath;

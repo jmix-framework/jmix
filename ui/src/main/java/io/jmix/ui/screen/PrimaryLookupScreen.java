@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

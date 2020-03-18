@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components.impl;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.widgets.CubaGrid;
 
 public class WebDataGrid<E extends Entity> extends WebAbstractDataGrid<CubaGrid<E>, E> {

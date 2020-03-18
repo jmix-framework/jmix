@@ -16,11 +16,10 @@
 
 package io.jmix.ui.model.impl;
 
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.EmbeddableEntity;
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.model.CollectionChangeType;
@@ -62,7 +61,7 @@ public class CollectionContainerImpl<E extends Entity>
     @Override
     public void setItem(@Nullable E item) {
         if (item != null) {
-            int idx = getItemIndex(item.getId());
+            int idx = getItemIndex(EntityValues.getId(item));
             if (idx == -1) {
                 throw new IllegalArgumentException("CollectionContainer does not contain " + item);
             }
@@ -124,13 +123,17 @@ public class CollectionContainerImpl<E extends Entity>
     public int getItemIndex(Object entityOrId) {
         checkNotNullArgument(entityOrId, "entity or id is null");
         IndexKey indexKey;
-        if (entityOrId instanceof Entity && !(entityOrId instanceof EmbeddableEntity)) {
+        if (entityOrId instanceof Entity) {
             // if an entity instance is passed instead of id, check if the entity is of valid class and extract id
             Entity entity = (Entity) entityOrId;
             if (!entityMetaClass.getJavaClass().isAssignableFrom(entity.getClass())) {
                 throw new IllegalArgumentException("Invalid entity class: " + entity.getClass());
             }
-            indexKey = IndexKey.ofEntity(entity);
+            if (entity.__getEntityEntry().isEmbeddable()) {
+                indexKey = IndexKey.of(entityOrId);
+            } else {
+                indexKey = IndexKey.ofEntity(entity);
+            }
         } else {
             indexKey = IndexKey.of(entityOrId);
         }
@@ -147,7 +150,7 @@ public class CollectionContainerImpl<E extends Entity>
     public void replaceItem(E entity) {
         checkNotNullArgument(entity, "entity is null");
 
-        Object id = entity.getId();
+        Object id = EntityValues.getId(entity);
         int idx = getItemIndex(id);
         CollectionChangeType changeType;
         if (idx > -1) {
@@ -202,7 +205,7 @@ public class CollectionContainerImpl<E extends Entity>
     }
 
     @Override
-    public void itemPropertyChanged(Instance.PropertyChangeEvent e) {
+    public void itemPropertyChanged(EntityPropertyChangeEvent e) {
         if (!listenersEnabled) {
             return;
         }
@@ -250,7 +253,7 @@ public class CollectionContainerImpl<E extends Entity>
 
     protected void clearItemIfNotExists() {
         if (item != null) {
-            int idx = getItemIndex(item.getId());
+            int idx = getItemIndex(EntityValues.getId(item));
             if (idx == -1) {
                 // item doesn't exist in the collection
                 E prevItem = item;

@@ -17,11 +17,12 @@
 package io.jmix.ui.components.table;
 
 import com.google.common.base.Strings;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
 import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import com.vaadin.ui.VerticalLayout;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.App;
 import io.jmix.ui.components.Table;
@@ -54,9 +55,9 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
             // todo dynamic attributes
             MetaClass metaClass = null/* = item.getMetaClass()*/;
             metaProperty = dynamicAttributesTools.getMetaPropertyPath(metaClass, columnId).getMetaProperty();
-            value = dynamicAttributesTools.getDynamicAttributeValueAsString(metaProperty, item.getValueEx(columnId));
+            value = dynamicAttributesTools.getDynamicAttributeValueAsString(metaProperty, EntityValues.getValueEx(item, columnId));
         } else {
-            value = item.getValueEx(columnId);
+            value = EntityValues.getValueEx(item, columnId);
         }
         if (column.getMaxTextLength() != null) {
             boolean isMultiLineCell = StringUtils.contains(value, "\n");

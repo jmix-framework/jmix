@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 /**
  * Interface for editor screen controllers.

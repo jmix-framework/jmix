@@ -16,7 +16,7 @@
 
 package test_support.entity.sales;
 
-import io.jmix.core.entity.StandardEntity;
+import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.*;

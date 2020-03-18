@@ -21,7 +21,7 @@ import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.LoadContext;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.Field;
 import io.jmix.ui.components.SuggestionField;

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.screen.Screen;
 
 import java.util.Collections;

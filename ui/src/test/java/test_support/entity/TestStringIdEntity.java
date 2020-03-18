@@ -16,8 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.entity.BaseStringIdEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test$StringIdEntity")
 @Table(name = "TEST_STRING_ID_ENTITY")
-public class TestStringIdEntity extends BaseStringIdEntity {
+public class TestStringIdEntity implements io.jmix.core.Entity<String> {
 
     private static final long serialVersionUID = 8115973479078477156L;
 
@@ -35,16 +33,6 @@ public class TestStringIdEntity extends BaseStringIdEntity {
 
     @Column(name = "NAME")
     private String name;
-
-    @Override
-    public String getId() {
-        return code;
-    }
-
-    @Override
-    public void setId(String id) {
-        code = id;
-    }
 
     public String getName() {
         return name;

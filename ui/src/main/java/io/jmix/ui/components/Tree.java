@@ -17,7 +17,7 @@ package io.jmix.ui.components;
 
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.data.TreeItems;
 

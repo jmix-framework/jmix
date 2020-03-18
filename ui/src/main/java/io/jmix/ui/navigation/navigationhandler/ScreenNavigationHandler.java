@@ -21,7 +21,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.commons.datastruct.Pair;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;

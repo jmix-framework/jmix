@@ -18,7 +18,8 @@ package io.jmix.ui.components;
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -781,7 +782,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
             Entity ownerEntity = entityValueSource.getItem();
             MetaProperty inverseProp = entityValueSource.getMetaPropertyPath().getMetaProperty().getInverse();
             if (inverseProp != null) {
-                entity.setValue(inverseProp.getName(), ownerEntity);
+                EntityValues.setValue(entity, inverseProp.getName(), ownerEntity);
             }
 
             return entity;

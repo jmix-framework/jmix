@@ -16,7 +16,7 @@
 
 package io.jmix.ui;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.builders.*;
 import io.jmix.ui.components.*;

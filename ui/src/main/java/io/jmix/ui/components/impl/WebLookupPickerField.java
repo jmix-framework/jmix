@@ -20,7 +20,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
 import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.ClientConfig;
 import io.jmix.ui.components.LookupPickerField;

@@ -16,14 +16,13 @@
 
 package io.jmix.ui.model.impl;
 
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.entity.HasInstanceMetaClass;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.entity.Entity;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.FetchPlan;
 import io.jmix.ui.model.DataLoader;
@@ -50,7 +49,7 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
     protected FetchPlan fetchPlan;
 
     protected EventHub events = new EventHub();
-    protected Instance.PropertyChangeListener listener = this::itemPropertyChanged;
+    protected EntityPropertyChangeListener listener = this::itemPropertyChanged;
     protected DataLoader loader;
 
     protected boolean listenersEnabled = true;
@@ -130,15 +129,15 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
         return events.subscribe(ItemChangeEvent.class, (Consumer) listener);
     }
 
-    protected void attachListener(Instance entity) {
+    protected void attachListener(Entity entity) {
         if (entity != null) {
-            entity.addPropertyChangeListener(listener);
+            entity.__getEntityEntry().addPropertyChangeListener(listener);
         }
     }
 
-    protected void detachListener(Instance entity) {
+    protected void detachListener(Entity entity) {
         if (entity != null) {
-            entity.removePropertyChangeListener(listener);
+            entity.__getEntityEntry().removePropertyChangeListener(listener);
         }
     }
 
@@ -173,7 +172,7 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
 
     @Override
     @SuppressWarnings("unchecked")
-    public void itemPropertyChanged(Instance.PropertyChangeEvent e) {
+    public void itemPropertyChanged(EntityPropertyChangeEvent e) {
         if (!listenersEnabled) {
             return;
         }

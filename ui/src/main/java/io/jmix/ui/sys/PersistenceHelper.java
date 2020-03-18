@@ -18,8 +18,7 @@ package io.jmix.ui.sys;
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 
 /**
  * Utility class providing information about entity states.
@@ -137,9 +136,9 @@ public class PersistenceHelper {
     }
 
     /**
-     * @see EntityStates#makeDetached(BaseGenericIdEntity)
+     * @see EntityStates#makeDetached(Entity)
      */
-    public static void makeDetached(BaseGenericIdEntity entity) {
+    public static void makeDetached(Entity entity) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
         if (entityStates != null) {
             entityStates.makeDetached(entity);
@@ -149,9 +148,9 @@ public class PersistenceHelper {
     }
 
     /**
-     * @see EntityStates#makePatch(BaseGenericIdEntity)
+     * @see EntityStates#makePatch(Entity)
      */
-    public static void makePatch(BaseGenericIdEntity entity) {
+    public static void makePatch(Entity entity) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
         if (entityStates != null) {
             entityStates.makePatch(entity);

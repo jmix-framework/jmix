@@ -16,7 +16,7 @@
 package io.jmix.ui.components;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.data.TableItems;
 import io.jmix.ui.gui.data.GroupInfo;

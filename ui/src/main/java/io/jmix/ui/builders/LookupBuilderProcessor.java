@@ -19,7 +19,8 @@ package io.jmix.ui.builders;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.*;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.ClientConfig;
@@ -258,7 +259,7 @@ public class LookupBuilderProcessor {
                 getFetchPlanForCollectionContainer(collectionDc, initializeMasterReference, inverseMetaProperty) :
                 null;
         for (E item : selectedItems) {
-            if (!collectionDc.containsItem(item.getId())) {
+            if (!collectionDc.containsItem(EntityValues.getId(item))) {
                 if (viewForCollectionContainer != null && !entityStates.isLoadedWithFetchPlan(item, viewForCollectionContainer)) {
                     //noinspection unchecked
                     item = (E) dataManager.load(Id.of(item)).fetchPlan(viewForCollectionContainer).one();
@@ -267,7 +268,7 @@ public class LookupBuilderProcessor {
                 E mergedItem = dataContext.merge(item);
                 if (initializeMasterReference) {
                     // change reference, now it will be marked as modified
-                    mergedItem.setValue(inverseMetaProperty.getName(), masterItem);
+                    EntityValues.setValue(mergedItem, inverseMetaProperty.getName(), masterItem);
                 }
                 mergedItems.add(mergedItem);
             }

@@ -22,7 +22,7 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.UserSessionSource;

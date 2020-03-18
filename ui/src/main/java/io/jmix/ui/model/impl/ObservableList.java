@@ -17,7 +17,7 @@
 package io.jmix.ui.model.impl;
 
 import com.google.common.collect.ForwardingList;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.model.CollectionChangeType;
 
 import java.io.ObjectStreamException;

@@ -24,7 +24,7 @@ import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.compatibility.EntityLoadInfo;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Screens;

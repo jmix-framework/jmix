@@ -18,7 +18,7 @@ package io.jmix.ui.model;
 
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 
 import javax.annotation.Nonnull;

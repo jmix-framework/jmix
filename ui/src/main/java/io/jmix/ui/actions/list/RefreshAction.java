@@ -17,7 +17,7 @@
 package io.jmix.ui.actions.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.actions.ListAction;
 import io.jmix.ui.components.Component;

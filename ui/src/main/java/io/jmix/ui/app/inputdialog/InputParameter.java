@@ -16,8 +16,8 @@
 
 package io.jmix.ui.app.inputdialog;
 
+import io.jmix.core.Entity;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.Entity;
 import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;

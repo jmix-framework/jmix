@@ -17,7 +17,7 @@
 package io.jmix.ui.components.data.datagrid;
 
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.data.BindingState;
 import io.jmix.ui.components.data.DataGridItems;

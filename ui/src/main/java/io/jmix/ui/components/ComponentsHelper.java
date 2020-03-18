@@ -15,12 +15,7 @@
  */
 package io.jmix.ui.components;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.annotation.Lookup;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.data.value.ValueBinder;
 import io.jmix.ui.components.impl.FrameImplementation;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ValuePathHelper;
@@ -31,8 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-
-import static io.jmix.core.entity.BaseEntityInternalAccess.getFilteredAttributes;
 
 /**
  * Utility class working with GenericUI components.
@@ -95,7 +88,7 @@ public abstract class ComponentsHelper {
         FrameImplementation frameImpl = (FrameImplementation) window;
         if (elements.length == 1) {
             return frameImpl.getRegisteredComponent(id);
-                // todo timers should be find using getFacet()
+            // todo timers should be find using getFacet()
 //                return window.getTimer(id);
         } else {
             Component innerComponent = frameImpl.getRegisteredComponent(elements[0]);

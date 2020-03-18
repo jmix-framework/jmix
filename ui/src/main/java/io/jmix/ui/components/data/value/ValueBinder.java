@@ -22,9 +22,10 @@ import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.BaseGenericIdEntity;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.EntityEntry;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -35,9 +36,9 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Field;
 import io.jmix.ui.components.HasValue;
 import io.jmix.ui.components.data.BindingState;
+import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.ValueBinding;
-import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.validators.BeanPropertyValidator;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -49,8 +50,6 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import static io.jmix.core.entity.BaseEntityInternalAccess.getFilteredAttributes;
 
 @org.springframework.stereotype.Component(ValueBinder.NAME)
 public class ValueBinder {
@@ -337,20 +336,19 @@ public class ValueBinder {
                             .map(MetadataObject::getName)
                             .collect(Collectors.joining("."));
 
-                    targetItem = rootItem.getValueEx(basePropertyItem);
+                    targetItem = EntityValues.getValueEx(rootItem, basePropertyItem);
                 }
 
-                if (targetItem instanceof BaseGenericIdEntity) {
-                    String metaPropertyName = metaPropertyPath.getMetaProperty().getName();
-                    Object value = targetItem.getValue(metaPropertyName);
+                EntityEntry entityEntry = targetItem.__getEntityEntry();
 
-                    BaseGenericIdEntity baseGenericIdEntity = (BaseGenericIdEntity) targetItem;
-                    String[] filteredAttributes = getFilteredAttributes(baseGenericIdEntity);
+                String metaPropertyName = metaPropertyPath.getMetaProperty().getName();
+                Object value = EntityValues.getValue(targetItem, metaPropertyName);
 
-                    if (value == null && filteredAttributes != null
-                            && ArrayUtils.contains(filteredAttributes, metaPropertyName)) {
-                        field.setRequired(false);
-                    }
+                String[] filteredAttributes = entityEntry.getSecurityState().getFilteredAttributes();
+
+                if (value == null && filteredAttributes != null
+                        && ArrayUtils.contains(filteredAttributes, metaPropertyName)) {
+                    field.setRequired(false);
                 }
             }
         }

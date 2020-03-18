@@ -17,7 +17,7 @@
 package io.jmix.ui.components.data.options;
 
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.HasValue;
 import io.jmix.ui.components.data.BindingState;

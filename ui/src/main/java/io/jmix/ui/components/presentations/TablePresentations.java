@@ -18,6 +18,7 @@ package io.jmix.ui.components.presentations;
 import com.vaadin.ui.*;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.Presentation;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.actions.Action;
@@ -31,10 +32,7 @@ import io.jmix.ui.widgets.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
@@ -83,7 +81,7 @@ public class TablePresentations extends VerticalLayout {
                     // simple change current item
                     if (oldPresentationId != null) {
                         if (oldPresentationId instanceof Presentation)
-                            oldPresentationId = ((Presentation) oldPresentationId).getId();
+                            oldPresentationId = EntityValues.<UUID>getId(((Presentation) oldPresentationId));
 
                         MenuBar.MenuItem lastMenuItem = presentationsMenuMap.get(oldPresentationId);
                         if (lastMenuItem != null)
@@ -92,7 +90,7 @@ public class TablePresentations extends VerticalLayout {
 
                     Presentation current = presentations.getCurrent();
                     if (current != null) {
-                        MenuBar.MenuItem menuItem = presentationsMenuMap.get(current.getId());
+                        MenuBar.MenuItem menuItem = presentationsMenuMap.get(EntityValues.<UUID>getId(current));
                         if (menuItem != null)
                             setCurrentItemStyle(menuItem);
                     }
@@ -111,7 +109,7 @@ public class TablePresentations extends VerticalLayout {
                 if (presentationsMenuMap != null) {
                     if (oldPresentationId != null) {
                         if (oldPresentationId instanceof Presentation)
-                            oldPresentationId = ((Presentation) oldPresentationId).getId();
+                            oldPresentationId = EntityValues.<UUID>getId(((Presentation) oldPresentationId));
 
                         MenuBar.MenuItem lastMenuItem = presentationsMenuMap.get(oldPresentationId);
                         if (lastMenuItem != null)
@@ -120,7 +118,7 @@ public class TablePresentations extends VerticalLayout {
 
                     Presentation defaultPresentation = presentations.getDefault();
                     if (defaultPresentation != null) {
-                        MenuBar.MenuItem menuItem = presentationsMenuMap.get(defaultPresentation.getId());
+                        MenuBar.MenuItem menuItem = presentationsMenuMap.get(EntityValues.<UUID>getId(defaultPresentation));
                         if (menuItem != null)
                             setDefaultItemStyle(menuItem);
                     }
@@ -235,11 +233,11 @@ public class TablePresentations extends VerticalLayout {
                     selectedItem -> table.applyPresentation(presId)
             );
             Presentation current = p.getCurrent();
-            if (current != null && presId.equals(current.getId())) {
+            if (current != null && presId.equals(EntityValues.<UUID>getId(current))) {
                 setCurrentItemStyle(item);
             }
             Presentation defaultPresentation = p.getDefault();
-            if (defaultPresentation != null && presId.equals(defaultPresentation.getId())) {
+            if (defaultPresentation != null && presId.equals(EntityValues.<UUID>getId(defaultPresentation))) {
                 setDefaultItemStyle(item);
             }
             presentationsMenuMap.put(presId, item);

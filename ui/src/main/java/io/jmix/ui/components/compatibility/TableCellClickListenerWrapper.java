@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components.compatibility;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.Table;
 
 import java.util.function.Consumer;

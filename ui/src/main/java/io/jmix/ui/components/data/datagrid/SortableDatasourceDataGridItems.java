@@ -17,7 +17,7 @@
 package io.jmix.ui.components.data.datagrid;
 
 import com.google.common.base.Preconditions;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.data.DataGridItems;
 

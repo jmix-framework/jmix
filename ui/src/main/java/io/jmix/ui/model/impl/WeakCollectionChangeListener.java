@@ -17,7 +17,7 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.model.CollectionContainer;
 
 import java.lang.ref.WeakReference;

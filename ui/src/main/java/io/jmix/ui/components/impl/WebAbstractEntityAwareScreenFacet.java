@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components.impl;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.ui.components.EntityAwareScreenFacet;
 import io.jmix.ui.components.ListComponent;
 import io.jmix.ui.components.PickerField;

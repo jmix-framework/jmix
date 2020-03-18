@@ -16,8 +16,8 @@
 
 package io.jmix.ui.components.data.table;
 
-import io.jmix.core.entity.Entity;
-import io.jmix.core.metamodel.model.Instance;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.components.data.TreeTableItems;
 import io.jmix.ui.model.CollectionContainer;
 
@@ -47,9 +47,9 @@ public class ContainerTreeTableItems<E extends Entity>
             Set<Object> result = new LinkedHashSet<>();
             for (Object id : ids) {
                 Entity item = getItemNN(id);
-                Entity parentItem = item.getValue(hierarchyProperty);
-                if (parentItem == null || (container.getItemOrNull(parentItem.getId()) == null))
-                    result.add(item.getId());
+                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                if (parentItem == null || (container.getItemOrNull(EntityValues.getId(parentItem)) == null))
+                    result.add(EntityValues.getId(item));
             }
             return result;
         } else {
@@ -60,12 +60,12 @@ public class ContainerTreeTableItems<E extends Entity>
     @Override
     public Object getParent(Object itemId) {
         if (hierarchyProperty != null) {
-            Instance item = getItem(itemId);
+            Entity item = getItem(itemId);
             if (item == null)
                 return null;
             else {
-                Entity parentItem = item.getValue(hierarchyProperty);
-                return parentItem == null ? null : parentItem.getId();
+                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                return parentItem == null ? null : EntityValues.getId(parentItem);
             }
         }
         return null;
@@ -83,9 +83,9 @@ public class ContainerTreeTableItems<E extends Entity>
             Collection ids = getItemIds();
             for (Object id : ids) {
                 Entity item = getItemNN(id);
-                Entity parentItem = item.getValue(hierarchyProperty);
-                if (parentItem != null && parentItem.getId().equals(itemId))
-                    res.add(item.getId());
+                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                if (parentItem != null && EntityValues.getId(parentItem).equals(itemId))
+                    res.add(EntityValues.getId(item));
             }
 
             return res;
@@ -95,12 +95,12 @@ public class ContainerTreeTableItems<E extends Entity>
 
     @Override
     public boolean isRoot(Object itemId) {
-        Instance item = getItem(itemId);
+        Entity item = getItem(itemId);
         if (item == null) return false;
 
         if (hierarchyProperty != null) {
-            Entity parentItem = item.getValue(hierarchyProperty);
-            return (parentItem == null || (container.getItemOrNull(parentItem.getId()) == null));
+            Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+            return (parentItem == null || (container.getItemOrNull(EntityValues.getId(parentItem)) == null));
         } else {
             return true;
         }
@@ -116,8 +116,8 @@ public class ContainerTreeTableItems<E extends Entity>
             Collection ids = getItemIds();
             for (Object id : ids) {
                 Entity item = getItemNN(id);
-                Entity parentItem = item.getValue(hierarchyProperty);
-                if (parentItem != null && parentItem.getId().equals(itemId))
+                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                if (parentItem != null && EntityValues.getId(parentItem).equals(itemId))
                     return true;
             }
         }

@@ -16,7 +16,7 @@
 
 package io.jmix.audit;
 
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.data.impl.EntityAttributeChanges;
 
 import javax.annotation.Nullable;

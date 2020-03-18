@@ -17,12 +17,15 @@
 package io.jmix.audit.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.data.entity.BaseUuidEntity;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.Date;
 import java.util.Set;
 

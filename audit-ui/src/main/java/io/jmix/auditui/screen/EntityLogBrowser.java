@@ -22,7 +22,7 @@ import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
-import io.jmix.core.entity.Entity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.User;
 import io.jmix.core.metamodel.model.MetaClass;

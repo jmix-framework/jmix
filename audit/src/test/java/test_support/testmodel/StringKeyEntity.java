@@ -16,15 +16,13 @@
 
 package test_support.testmodel;
 
-import io.jmix.core.entity.BaseStringIdEntity;
 import io.jmix.core.metamodel.annotations.MetaProperty;
-import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.*;
 
 @Entity(name = "test$StringKeyEntity")
 @Table(name = "TEST_STRING_KEY")
-public class StringKeyEntity extends BaseStringIdEntity {
+public class StringKeyEntity implements io.jmix.core.Entity<String> {
 
     private static final long serialVersionUID = 871701970234815437L;
 
@@ -38,16 +36,6 @@ public class StringKeyEntity extends BaseStringIdEntity {
     @MetaProperty
     @Transient
     protected String description;
-
-    @Override
-    public String getId() {
-        return code;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.code = id;
-    }
 
     public String getCode() {
         return code;

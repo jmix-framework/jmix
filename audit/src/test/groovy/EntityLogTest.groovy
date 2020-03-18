@@ -1,6 +1,7 @@
 import io.jmix.audit.entity.EntityLogItem
-import io.jmix.core.entity.BaseDbGeneratedIdEntity
-import io.jmix.core.entity.Entity
+import io.jmix.core.Entity
+import io.jmix.core.entity.EntityValues
+import io.jmix.core.entity.IdProxy
 import io.jmix.data.impl.EntityAttributeChanges
 import test_support.testmodel.IdentityEntity
 import test_support.testmodel.IntIdentityEntity
@@ -139,7 +140,7 @@ class EntityLogTest extends AbstractEntityLogTest {
 
         then:
 
-        List<EntityLogItem> logItems = getEntityLogItems('test$IntIdentityEntity', intIdentityEntity.id.get())
+        List<EntityLogItem> logItems = getEntityLogItems('test$IntIdentityEntity', EntityValues.getId(intIdentityEntity).get())
         EntityLogItem logItem = logItems.first()
 
         logItems.size() == 2
@@ -187,7 +188,7 @@ class EntityLogTest extends AbstractEntityLogTest {
         when:
 
         withTransaction {
-            StringKeyEntity e = em.find(StringKeyEntity, stringKeyEntity.id)
+            StringKeyEntity e = em.find(StringKeyEntity, EntityValues.getId(stringKeyEntity))
             e.name = 'test2'
             e.description = 'description2'
 
@@ -220,15 +221,19 @@ class EntityLogTest extends AbstractEntityLogTest {
         }
     }
 
-    private clearEntityById(BaseDbGeneratedIdEntity entity, String tableName) {
-        if (entity && entity.id.get()) {
-            runSqlUpdate("delete from $tableName where id = ${entity.id.get()}")
+    private clearEntityById(Entity entity, String tableName) {
+        Object id = EntityValues.getId(entity)
+        if (id instanceof IdProxy) {
+            id = id.get()
+        }
+        if (entity && id) {
+            runSqlUpdate("delete from $tableName where id = ${id}")
         }
     }
 
     private clearEntityByCode(StringKeyEntity entity, String tableName) {
-        if (entity && entity.id) {
-            runSqlUpdate("delete from $tableName where code = '${entity.id}'")
+        if (entity && EntityValues.getId(entity)) {
+            runSqlUpdate("delete from $tableName where code = '${EntityValues.getId(entity)}'")
         }
     }
 

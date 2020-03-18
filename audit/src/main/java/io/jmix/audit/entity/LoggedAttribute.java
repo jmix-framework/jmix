@@ -16,9 +16,9 @@
 
 package io.jmix.audit.entity;
 
-import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.data.entity.BaseUuidEntity;
 
 import javax.persistence.*;
 import java.util.Date;

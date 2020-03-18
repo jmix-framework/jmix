@@ -4,10 +4,11 @@ import io.jmix.audit.entity.EntityLogItem
 import io.jmix.audit.entity.LoggedAttribute
 import io.jmix.audit.entity.LoggedEntity
 import io.jmix.core.AppBeans
+import io.jmix.core.Entity
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.MetadataTools
-import io.jmix.core.entity.BaseDbGeneratedIdEntity
-import io.jmix.core.entity.BaseStringIdEntity
+import io.jmix.core.entity.EntityValues
+import io.jmix.core.entity.IdProxy
 import io.jmix.data.JmixDataConfiguration
 import io.jmix.data.PersistenceTools
 import org.springframework.jdbc.core.JdbcTemplate
@@ -114,12 +115,12 @@ class AbstractEntityLogTest extends Specification {
         getEntityLogItems(entityName, entityId).first()
     }
 
-    protected EntityLogItem getLatestEntityLogItem(String entityName, BaseDbGeneratedIdEntity entity) {
-        getEntityLogItems(entityName, entity.id.get()).first()
-    }
-
-    protected EntityLogItem getLatestEntityLogItem(String entityName, BaseStringIdEntity entity) {
-        getEntityLogItems(entityName, entity.id).first()
+    protected EntityLogItem getLatestEntityLogItem(String entityName, Entity entity) {
+        Object id = EntityValues.getId(entity);
+        if (id instanceof IdProxy) {
+            id = id.getNN()
+        }
+        getEntityLogItems(entityName, id).first()
     }
 
     protected void clearTable(EntityManager em, String tableName) {

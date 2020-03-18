@@ -18,11 +18,11 @@ package io.jmix.audit.entity;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
-import io.jmix.core.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.MetaClass;
 import io.jmix.core.metamodel.annotations.MetaProperty;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.data.entity.BaseUuidEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -120,7 +120,7 @@ public class EntityLogAttr extends BaseUuidEntity {
                     Enum en = getEnumById(property.getRange().asEnumeration().getValues(), value);
                     if (en != null) {
                         return messages.getMessage(en);
-                    } else  {
+                    } else {
                         String nameKey = property.getRange().asEnumeration().getJavaClass().getSimpleName() + "." + value;
                         String packageName = property.getRange().asEnumeration().getJavaClass().getPackage().getName();
                         return messages.getMessage(packageName, nameKey);
@@ -215,7 +215,8 @@ public class EntityLogAttr extends BaseUuidEntity {
                     Enum caller = Enum.valueOf((Class<Enum>) property.getJavaType(), value);
                     Messages messages = AppBeans.get(Messages.NAME);
                     return messages.getMessage(caller);
-                } catch (IllegalArgumentException ignored) {}
+                } catch (IllegalArgumentException ignored) {
+                }
             }
         }
 

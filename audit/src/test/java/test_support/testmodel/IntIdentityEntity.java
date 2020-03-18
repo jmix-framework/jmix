@@ -16,7 +16,8 @@
 
 package test_support.testmodel;
 
-import io.jmix.core.entity.BaseIntIdentityIdEntity;
+
+import io.jmix.data.entity.BaseIntIdentityIdEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

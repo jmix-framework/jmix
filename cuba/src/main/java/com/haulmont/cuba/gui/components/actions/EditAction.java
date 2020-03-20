@@ -15,9 +15,13 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.ListComponent;
-import io.jmix.core.ConfigInterfaces;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.PropertyDatasource;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.util.ParamsMap;
@@ -26,18 +30,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.*;
-import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
+import io.jmix.ui.components.Component;
+import io.jmix.ui.components.Field;
+import io.jmix.ui.components.Window;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.Icons;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.PropertyDatasource;
-import com.haulmont.cuba.gui.components.AbstractEditor;
 import org.springframework.context.annotation.Scope;
 
 import java.util.*;
@@ -159,9 +160,7 @@ public class EditAction extends ItemTrackingAction
 
         this.icon = AppBeans.get(Icons.class).get(CubaIcon.EDIT_ACTION);
 
-        ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.NAME);
-        ClientConfig config = configuration.getConfig(ClientConfig.class);
-        setShortcut(config.getTableEditShortcut());
+        setShortcut(AppBeans.get(UiProperties.class).getTableEditShortcut());
     }
 
     @Override

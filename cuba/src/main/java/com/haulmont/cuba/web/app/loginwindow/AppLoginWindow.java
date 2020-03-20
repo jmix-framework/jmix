@@ -18,17 +18,16 @@ package com.haulmont.cuba.web.app.loginwindow;
 
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.web.app.login.LoginScreen;
-import io.jmix.core.GlobalConfig;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.security.Credentials;
 import io.jmix.core.security.LoginException;
 import io.jmix.core.security.LoginPasswordCredentials;
 import io.jmix.ui.App;
 import io.jmix.ui.Connection;
-import io.jmix.ui.WebAuthConfig;
-import io.jmix.ui.WebConfig;
 import io.jmix.ui.components.*;
 import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.security.LoginScreenAuthDelegate;
+import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,13 +49,10 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
     protected static final ThreadLocal<LoginScreenAuthDelegate.AuthInfo> authInfoThreadLocal = new ThreadLocal<>();
 
     @Inject
-    protected GlobalConfig globalConfig;
+    protected CoreProperties coreProperties;
 
     @Inject
-    protected WebConfig webConfig;
-
-    @Inject
-    protected WebAuthConfig webAuthConfig;
+    protected UiLoginProperties uiLoginProperties;
 
     @Inject
     protected App app;
@@ -114,15 +110,15 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
     protected void initPoweredByLink() {
         Component poweredByLink = getComponent("poweredByLink");
         if (poweredByLink != null) {
-            poweredByLink.setVisible(webConfig.getLoginDialogPoweredByLinkVisible());
+            poweredByLink.setVisible(uiLoginProperties.isPoweredByLinkVisible());
         }
     }
 
     protected void initLocales() {
-        localesSelect.setOptionsMap(globalConfig.getAvailableLocales());
+        localesSelect.setOptionsMap(coreProperties.getAvailableLocales());
         localesSelect.setValue(app.getLocale());
 
-        boolean localeSelectVisible = globalConfig.getLocaleSelectVisible();
+        boolean localeSelectVisible = coreProperties.isLocaleSelectVisible();
         localesSelect.setVisible(localeSelectVisible);
 
         // if old layout is used
@@ -156,7 +152,7 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
     }
 
     protected void initRememberMe() {
-        if (!webConfig.getRememberMeEnabled()) {
+        if (!uiLoginProperties.isRememberMeEnabled()) {
             rememberMeCheckBox.setValue(false);
             rememberMeCheckBox.setVisible(false);
         }
@@ -183,14 +179,14 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
             return;
         }
 
-        String defaultUser = webConfig.getLoginDialogDefaultUser();
+        String defaultUser = uiLoginProperties.getDefaultUser();
         if (!StringUtils.isBlank(defaultUser) && !"<disabled>".equals(defaultUser)) {
             loginField.setValue(defaultUser);
         } else {
             loginField.setValue("");
         }
 
-        String defaultPassw = webConfig.getLoginDialogDefaultPassword();
+        String defaultPassw = uiLoginProperties.getDefaultPassword();
         if (!StringUtils.isBlank(defaultPassw) && !"<disabled>".equals(defaultPassw)) {
             passwordField.setValue(defaultPassw);
         } else {
@@ -246,7 +242,7 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
             if (connection.getSession() != null) {
                 Locale loggedInLocale = connection.getSession().getLocale();
 
-                if (globalConfig.getLocaleSelectVisible()) {
+                if (coreProperties.isLocaleSelectVisible()) {
                     app.addCookie(App.COOKIE_LOCALE, loggedInLocale.toLanguageTag());
                 }
             }

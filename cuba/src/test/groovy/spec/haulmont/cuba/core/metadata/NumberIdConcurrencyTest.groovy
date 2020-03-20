@@ -21,6 +21,8 @@ import com.haulmont.cuba.core.model.number_id.NumberIdSingleTableRoot
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.compatibility.AppContext
+import io.jmix.data.DataConfigPropertiesAccess
+import io.jmix.data.DataProperties
 import io.jmix.data.SequenceSupport
 import io.jmix.data.impl.NumberIdCache
 import io.jmix.data.impl.NumberIdWorker
@@ -49,6 +51,8 @@ class NumberIdConcurrencyTest extends CoreTestSpecification {
     private NumberIdCache numberIdCache
     @Inject
     private Persistence persistence
+    @Inject
+    private DataProperties dataProperties
 
     private SequenceSupport sequenceSupport
 
@@ -81,7 +85,7 @@ class NumberIdConcurrencyTest extends CoreTestSpecification {
 
     def "generating ids with increment 1"() {
 
-        AppContext.setProperty('cuba.numberIdCacheSize', '1')
+        DataConfigPropertiesAccess.setNumberIdCacheSize(dataProperties, 1)
 
         when:
 
@@ -95,12 +99,12 @@ class NumberIdConcurrencyTest extends CoreTestSpecification {
 
         cleanup:
 
-        AppContext.setProperty('cuba.numberIdCacheSize', null)
+        DataConfigPropertiesAccess.setNumberIdCacheSize(dataProperties, 100)
     }
 
     def "generating ids with increment 20"() {
 
-        AppContext.setProperty('cuba.numberIdCacheSize', '20')
+        DataConfigPropertiesAccess.setNumberIdCacheSize(dataProperties, 20)
 
         when:
 
@@ -112,11 +116,11 @@ class NumberIdConcurrencyTest extends CoreTestSpecification {
 
         cleanup:
 
-        AppContext.setProperty('cuba.numberIdCacheSize', null)
+        DataConfigPropertiesAccess.setNumberIdCacheSize(dataProperties, 100)
     }
 
     def "generate with zero size cache"() {
-        AppContext.setProperty('cuba.numberIdCacheSize', '0')
+        DataConfigPropertiesAccess.setNumberIdCacheSize(dataProperties, 0)
 
         when:
 
@@ -140,7 +144,7 @@ class NumberIdConcurrencyTest extends CoreTestSpecification {
 
         cleanup:
 
-        AppContext.setProperty('cuba.numberIdCacheSize', null)
+        DataConfigPropertiesAccess.setNumberIdCacheSize(dataProperties, 100)
     }
 
     private void generateSomeEntities(int count) {

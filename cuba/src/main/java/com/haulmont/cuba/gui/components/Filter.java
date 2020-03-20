@@ -20,7 +20,6 @@ import com.haulmont.cuba.gui.components.filter.FilterDelegate;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.components.*;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.DataLoader;
@@ -255,12 +254,12 @@ public interface Filter extends HasMargin, Component.BelongToFrame, HasNamedComp
     boolean isApplyImmediately();
 
     /**
-     * Returns a template for filter controls layout. See {@link ClientConfig#getGenericFilterControlsLayout()}
+     * Returns a template for filter controls layout. See {@link com.haulmont.cuba.CubaProperties#getGenericFilterControlsLayout()}
      */
     String getControlsLayoutTemplate();
 
     /**
-     * Sets a template for filter controls layout. See {@link ClientConfig#getGenericFilterControlsLayout()}
+     * Sets a template for filter controls layout. See {@link com.haulmont.cuba.CubaProperties#getGenericFilterControlsLayout()}
      */
     void setControlsLayoutTemplate(String controlsLayoutTemplate);
 

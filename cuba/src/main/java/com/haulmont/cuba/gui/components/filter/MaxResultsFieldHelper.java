@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.components.filter;
 
 import com.google.common.base.Splitter;
-import io.jmix.ui.ClientConfig;
+import com.haulmont.cuba.CubaProperties;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.LookupField;
 import io.jmix.ui.theme.ThemeConstants;
@@ -38,7 +38,7 @@ public class MaxResultsFieldHelper {
     @Inject
     protected ThemeConstantsManager themeConstantsManager;
     @Inject
-    protected ClientConfig clientConfig;
+    protected CubaProperties properties;
 
     public LookupField<Integer> createMaxResultsLookupField() {
         LookupField<Integer> maxResultsLookupField = uiComponents.create(LookupField.of(Integer.class));
@@ -55,7 +55,7 @@ public class MaxResultsFieldHelper {
         filterHelper.setLookupNullSelectionAllowed(maxResultsLookupField, false);
 
         List<Integer> maxResultOptions = new ArrayList<>();
-        String maxResultOptionsStr = clientConfig.getGenericFilterMaxResultsOptions();
+        String maxResultOptionsStr = properties.getGenericFilterMaxResultsOptions();
         Iterable<String> split = Splitter.on(",").trimResults().split(maxResultOptionsStr);
         for (String option : split) {
             if ("NULL".equals(option)) {

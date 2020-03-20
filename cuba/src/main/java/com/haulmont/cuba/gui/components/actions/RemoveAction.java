@@ -20,7 +20,6 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -28,8 +27,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Dialogs;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.Component;
@@ -139,9 +138,7 @@ public class RemoveAction extends ItemTrackingAction
 
         this.icon = AppBeans.get(Icons.class).get(CubaIcon.REMOVE_ACTION);
 
-        ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.NAME);
-        ClientConfig config = configuration.getConfig(ClientConfig.class);
-        setShortcut(config.getTableRemoveShortcut());
+        setShortcut(AppBeans.get(UiProperties.class).getTableRemoveShortcut());
     }
 
     /**

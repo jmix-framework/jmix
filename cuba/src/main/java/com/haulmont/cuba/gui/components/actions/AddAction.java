@@ -23,7 +23,6 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
@@ -32,7 +31,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.Security;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.actions.Action;
@@ -173,9 +172,7 @@ public class AddAction extends ListAction
 
         this.icon = AppBeans.get(Icons.class).get(CubaIcon.ADD_ACTION);
 
-        ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        setShortcut(clientConfig.getTableAddShortcut());
+        setShortcut(AppBeans.get(UiProperties.class).getTableAddShortcut());
     }
 
     @Override

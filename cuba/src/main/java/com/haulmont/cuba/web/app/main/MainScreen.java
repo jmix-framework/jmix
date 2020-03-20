@@ -16,32 +16,17 @@
 
 package com.haulmont.cuba.web.app.main;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.Messages;
 import com.vaadin.server.WebBrowser;
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.ui.App;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.ScreenTools;
-import io.jmix.ui.Screens;
-import io.jmix.ui.WebConfig;
-import io.jmix.ui.components.AppWorkArea;
-import io.jmix.ui.components.Button;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.CssLayout;
-import io.jmix.ui.components.Image;
-import io.jmix.ui.components.ThemeResource;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.*;
+import io.jmix.ui.components.*;
 import io.jmix.ui.components.dev.LayoutAnalyzerContextMenuProvider;
 import io.jmix.ui.components.mainwindow.AppMenu;
 import io.jmix.ui.components.mainwindow.SideMenu;
 import io.jmix.ui.components.mainwindow.UserIndicator;
 import io.jmix.ui.navigation.Route;
-import io.jmix.ui.screen.OpenMode;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -163,8 +148,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
     }
 
     protected void initTitleBar() {
-        ConfigInterfaces configuration = getBeanLocator().get(ConfigInterfaces.class);
-        if (configuration.getConfig(WebConfig.class).getUseInverseHeader()) {
+        if (getBeanLocator().get(CubaProperties.class).isUseInverseHeader()) {
             Component titleBar = getTitleBar();
             if (titleBar != null) {
                 titleBar.setStyleName("c-app-menubar c-inverse-header");
@@ -234,9 +218,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
     }
 
     protected void openLoginScreen() {
-        String loginScreenId = getBeanLocator().get(ConfigInterfaces.class)
-                .getConfig(WebConfig.class)
-                .getLoginScreenId();
+        String loginScreenId = getBeanLocator().get(UiProperties.class).getLoginScreenId();
 
         UiControllerUtils.getScreenContext(this)
                 .getScreens()

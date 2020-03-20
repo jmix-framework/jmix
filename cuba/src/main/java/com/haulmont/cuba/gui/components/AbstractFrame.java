@@ -18,8 +18,11 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.*;
-import io.jmix.ui.ClientConfig;
+import io.jmix.core.AppBeans;
+import io.jmix.core.DevelopmentException;
+import io.jmix.core.Events;
+import io.jmix.core.Messages;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.*;
 import io.jmix.ui.gui.OpenType;
@@ -409,10 +412,7 @@ public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrappe
             buffer.append(error.description).append("\n");
         }
 
-        ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-
-        NotificationType notificationType = NotificationType.valueOf(clientConfig.getValidationNotificationType());
+        NotificationType notificationType = NotificationType.valueOf(AppBeans.get(UiProperties.class).getValidationNotificationType());
         showNotification(messages.getMessage("validationFail.caption"), buffer.toString(), notificationType);
     }
 

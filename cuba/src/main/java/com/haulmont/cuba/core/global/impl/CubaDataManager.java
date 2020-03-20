@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.core.global.impl;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
@@ -28,6 +29,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.EntityValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -57,7 +59,7 @@ public class CubaDataManager implements DataManager {
     protected EntityStates entityStates;
 
     @Inject
-    protected ServerConfig serverConfig;
+    protected CubaProperties properties;
 
     @Inject
     protected BeanValidation beanValidation;
@@ -200,7 +202,7 @@ public class CubaDataManager implements DataManager {
     }
 
     protected void validate(CommitContext context) {
-        if (CommitContext.ValidationMode.DEFAULT == context.getValidationMode() && serverConfig.getDataManagerBeanValidation()
+        if (CommitContext.ValidationMode.DEFAULT == context.getValidationMode() && properties.isDataManagerBeanValidation()
                 || CommitContext.ValidationMode.ALWAYS_VALIDATE == context.getValidationMode()) {
             for (Entity entity : context.getCommitInstances()) {
                 validateEntity(entity, context.getValidationGroups());

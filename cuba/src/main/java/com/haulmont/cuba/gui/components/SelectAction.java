@@ -16,11 +16,10 @@
 package com.haulmont.cuba.gui.components;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Entity;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.LookupComponent;
@@ -45,8 +44,7 @@ public class SelectAction extends AbstractAction {
         this.window = window;
         this.primary = true;
 
-        ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.class);
-        setShortcut(configuration.getConfig(ClientConfig.class).getCommitShortcut());
+        setShortcut(AppBeans.get(UiProperties.class).getCommitShortcut());
 
         Messages messages = AppBeans.get(Messages.NAME);
         setCaption(messages.getMessage("actions.Select"));

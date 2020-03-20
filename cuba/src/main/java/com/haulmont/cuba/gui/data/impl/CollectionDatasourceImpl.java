@@ -16,17 +16,15 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.google.common.base.Preconditions;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
-import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.commons.collections.ReadOnlyLinkedMapValuesView;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.filter.Condition;
 import io.jmix.ui.filter.DenyingClause;
@@ -40,13 +38,7 @@ import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
@@ -95,8 +87,7 @@ public class CollectionDatasourceImpl<T extends Entity<K>, K>
 
     protected int firstResult;
 
-    protected boolean sortOnDb = AppBeans.<ConfigInterfaces>get(ConfigInterfaces.NAME)
-            .getConfig(ClientConfig.class).getCollectionDatasourceDbSortEnabled();
+    protected boolean sortOnDb = true;
 
     protected LoadContext.Query lastQuery;
     protected LinkedList<LoadContext.Query> prevQueries = new LinkedList<>();

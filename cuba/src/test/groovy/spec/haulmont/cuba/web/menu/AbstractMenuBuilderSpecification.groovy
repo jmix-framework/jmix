@@ -16,23 +16,15 @@
 
 package spec.haulmont.cuba.web.menu
 
-import com.haulmont.cuba.web.testsupport.TestUserSessionSource
 import com.haulmont.cuba.core.global.Messages
-import io.jmix.core.ConfigInterfaces
+import com.haulmont.cuba.web.testsupport.TestUserSessionSource
 import io.jmix.core.MessageTools
-import io.jmix.core.config.Config
 import io.jmix.ui.components.impl.WindowImplementation
 import spock.lang.Specification
 
 abstract class AbstractMenuBuilderSpecification extends Specification {
 
-    def configuration = new ConfigInterfaces() {
-        @Override
-        Config getConfig(Class configInterface) {
-            return null
-        }
-    }
-    def messageTools = new MessageTools(configuration) {
+    def messageTools = new MessageTools() {
         @Override
         String loadString(String ref) {
             return ''

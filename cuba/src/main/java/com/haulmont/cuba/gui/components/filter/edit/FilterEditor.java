@@ -17,6 +17,10 @@
 
 package com.haulmont.cuba.gui.components.filter.edit;
 
+import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractWindow;
@@ -25,24 +29,14 @@ import com.haulmont.cuba.gui.components.filter.AddConditionHelper;
 import com.haulmont.cuba.gui.components.filter.ConditionsTree;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.components.filter.GroupType;
-import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
-import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
-import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
-import com.haulmont.cuba.gui.components.filter.condition.GroupCondition;
-import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
+import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescriptor;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.AppBeans;
-import com.haulmont.cuba.core.global.CommitContext;
-import io.jmix.core.ConfigInterfaces;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.commons.datastruct.Node;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.DialogAction;
@@ -53,14 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -226,10 +213,9 @@ public class FilterEditor extends AbstractWindow {
             }
         });
 
-        ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.NAME);
         boolean manualApplyRequired = filter.getManualApplyRequired() != null ?
                 filter.getManualApplyRequired() :
-                configuration.getConfig(ClientConfig.class).getGenericFilterManualApplyRequired();
+                AppBeans.get(CubaProperties.class).isGenericFilterManualApplyRequired();
 
         if (!manualApplyRequired) {
             applyDefaultCb.setVisible(manualApplyRequired);

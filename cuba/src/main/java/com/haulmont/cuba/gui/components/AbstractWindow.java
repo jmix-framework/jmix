@@ -19,11 +19,10 @@ import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
@@ -154,14 +153,11 @@ public class AbstractWindow extends Screen
             if (closeAction instanceof ChangeTrackerCloseAction
                     && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges()
                     && hasUnsavedChanges()) {
-                ConfigInterfaces configuration = getBeanLocator().get(ConfigInterfaces.NAME);
-                ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-
                 ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
 
                 UnknownOperationResult result = new UnknownOperationResult();
 
-                if (this instanceof Committable && clientConfig.getUseSaveConfirmation()) {
+                if (this instanceof Committable && getBeanLocator().get(UiProperties.class).isUseSaveConfirmation()) {
                     Committable committable = (Committable) this;
 
                     screenValidation.showSaveConfirmationDialog(this, closeAction)

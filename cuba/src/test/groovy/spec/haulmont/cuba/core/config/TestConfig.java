@@ -16,11 +16,11 @@
 
 package spec.haulmont.cuba.core.config;
 
-import io.jmix.core.config.Config;
-import io.jmix.core.config.Property;
-import io.jmix.core.config.Source;
-import io.jmix.core.config.SourceType;
-import io.jmix.core.config.defaults.Default;
+import com.haulmont.cuba.core.config.Config;
+import com.haulmont.cuba.core.config.Property;
+import com.haulmont.cuba.core.config.Source;
+import com.haulmont.cuba.core.config.SourceType;
+import com.haulmont.cuba.core.config.defaults.Default;
 
 public interface TestConfig extends Config {
 

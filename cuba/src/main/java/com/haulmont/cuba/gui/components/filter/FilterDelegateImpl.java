@@ -19,11 +19,12 @@ package com.haulmont.cuba.gui.components.filter;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
@@ -32,11 +33,7 @@ import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
-import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
-import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
-import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
-import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
+import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.edit.FilterEditor;
 import com.haulmont.cuba.gui.components.filter.filterselect.FilterSelectWindow;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -55,13 +52,7 @@ import io.jmix.core.queryconditions.JpqlCondition;
 import io.jmix.core.security.Security;
 import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.ui.ClientConfig;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.WindowConfig;
-import io.jmix.ui.WindowInfo;
+import io.jmix.ui.*;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
@@ -72,13 +63,7 @@ import io.jmix.ui.components.Component.Alignment;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
 import io.jmix.ui.components.data.meta.EntityDataUnit;
 import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
-import io.jmix.ui.filter.Clause;
-import io.jmix.ui.filter.Condition;
-import io.jmix.ui.filter.DenyingClause;
-import io.jmix.ui.filter.LogicalCondition;
-import io.jmix.ui.filter.ParameterInfo;
-import io.jmix.ui.filter.ParametersHelper;
-import io.jmix.ui.filter.QueryFilter;
+import io.jmix.ui.filter.*;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
@@ -133,7 +118,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     @Inject
     protected UserSessionSource userSessionSource;
     @Inject
-    protected ConfigInterfaces configuration;
+    protected Configuration configuration;
     @Inject
     protected Security security;
     @Inject
@@ -151,9 +136,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     @Inject
     protected PersistenceManagerClient persistenceManager;
     @Inject
-    protected ClientConfig clientConfig;
-    @Inject
-    protected GlobalConfig globalConfig;
+    protected CubaProperties properties;
 
     @Inject
     protected BeanLocator beanLocator;
@@ -269,7 +252,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         }*/
         filterMode = FilterMode.GENERIC_MODE;
 
-        conditionsLocation = clientConfig.getGenericFilterConditionsLocation();
+        conditionsLocation = properties.getGenericFilterConditionsLocation();
 
         // todo filter
         // applyImmediately = clientConfig.getGenericFilterApplyImmediately();
@@ -382,7 +365,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         String layoutDescription = !Strings.isNullOrEmpty(controlsLayoutTemplate) ?
                 controlsLayoutTemplate :
-                clientConfig.getGenericFilterControlsLayout();
+                properties.getGenericFilterControlsLayout();
         ControlsLayoutBuilder controlsLayoutBuilder = createControlsLayoutBuilder(layoutDescription);
         controlsLayoutBuilder.build();
         if (isMaxResultsLayoutVisible()) {
@@ -1281,13 +1264,13 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         Iterator<FilterEntity> it = filterEntities.iterator();
         int addedEntitiesCount = 0;
-        while (it.hasNext() && addedEntitiesCount < clientConfig.getGenericFilterPopupListSize()) {
+        while (it.hasNext() && addedEntitiesCount < properties.getGenericFilterPopupListSize()) {
             final FilterEntity fe = it.next();
             addSetFilterEntityAction(filtersPopupButton, fe);
             addedEntitiesCount++;
         }
 
-        if (filterEntities.size() > clientConfig.getGenericFilterPopupListSize()) {
+        if (filterEntities.size() > properties.getGenericFilterPopupListSize()) {
             addShowMoreFilterEntitiesAction(filtersPopupButton);
         }
     }
@@ -1685,7 +1668,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         if (beforeFilterAppliedHandler != null) {
             if (!beforeFilterAppliedHandler.beforeFilterApplied()) return false;
         }
-        if (clientConfig.getGenericFilterChecking()) {
+        if (properties.isGenericFilterChecking()) {
             if (filterEntity != null && conditions.getRoots().size() > 0) {
                 boolean haveCorrectCondition = hasCorrectCondition();
                 if (!haveCorrectCondition) {
@@ -1955,7 +1938,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     }
 
     protected boolean getResultingManualApplyRequired() {
-        return manualApplyRequired != null ? manualApplyRequired : clientConfig.getGenericFilterManualApplyRequired();
+        return manualApplyRequired != null ? manualApplyRequired : properties.isGenericFilterManualApplyRequired();
     }
 
     @Override
@@ -2257,7 +2240,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
     @Override
     public Integer getColumnsCount() {
-        return columnsCount != null ? columnsCount : clientConfig.getGenericFilterColumnsCount();
+        return columnsCount != null ? columnsCount : properties.getGenericFilterColumnsCount();
     }
 
     @Override
@@ -2368,8 +2351,8 @@ public class FilterDelegateImpl implements FilterDelegate {
     }
 
     protected void initShortcutActions() {
-        String filterApplyShortcut = clientConfig.getFilterApplyShortcut();
-        String filterSelectShortcut = clientConfig.getFilterSelectShortcut();
+        String filterApplyShortcut = properties.getFilterApplyShortcut();
+        String filterSelectShortcut = properties.getFilterSelectShortcut();
 
         if (filter.getApplyTo() instanceof ListComponent) {
             ListComponent listComponent = (ListComponent) filter.getApplyTo();
@@ -3126,7 +3109,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
     /**
      * Class creates filter controls layout based on template. See template format in documentation for {@link
-     * ClientConfig#getGenericFilterControlsLayout()}
+     * com.haulmont.cuba.CubaProperties#getGenericFilterControlsLayout()}
      */
     protected class ControlsLayoutBuilder {
 
@@ -3258,7 +3241,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         protected boolean isActionAllowed(String actionName) {
             switch (actionName) {
                 case "pin":
-                    return globalConfig.getAllowQueryFromSelected();
+                    return properties.isAllowQueryFromSelected();
                 case "save_search_folder":
                 case "save_app_folder":
                     return folderActionsEnabled && filterHelper.isFolderActionsEnabled();

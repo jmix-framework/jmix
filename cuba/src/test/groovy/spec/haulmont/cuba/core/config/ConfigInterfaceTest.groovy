@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.core.config
 
-import io.jmix.core.ConfigInterfaces
+import com.haulmont.cuba.core.global.Configuration
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class ConfigInterfaceTest extends CoreTestSpecification {
 
     @Inject
-    private ConfigInterfaces configuration
+    private Configuration configuration
 
 
     def "default method in configuration interface"() {

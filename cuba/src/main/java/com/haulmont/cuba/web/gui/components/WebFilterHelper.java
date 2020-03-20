@@ -28,12 +28,11 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.ConfigInterfaces;
+import com.haulmont.cuba.core.global.Configuration;
 import io.jmix.core.commons.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.WebConfig;
 import io.jmix.ui.components.*;
 import io.jmix.ui.widgets.CubaTextField;
 import io.jmix.ui.widgets.CubaTree;
@@ -51,7 +50,7 @@ public class WebFilterHelper implements FilterHelper {
     protected static final String TREE_DRAGGED_ITEM_ID = "itemid";
 
     @Inject
-    protected ConfigInterfaces configuration;
+    protected Configuration configuration;
 
     @Inject
     protected UiComponents uiComponents;
@@ -95,7 +94,7 @@ public class WebFilterHelper implements FilterHelper {
 
     @Override
     public boolean isFolderActionsEnabled() {
-        return configuration.getConfig(WebConfig.class).getFoldersPaneEnabled();
+        return false; // todo folderspane configuration.getConfig(WebConfig.class).getFoldersPaneEnabled();
     }
 
     @Override
@@ -278,7 +277,7 @@ public class WebFilterHelper implements FilterHelper {
 
     @Override
     public boolean isTableActionsEnabled() {
-        return configuration.getConfig(WebConfig.class).getFoldersPaneEnabled();
+        return false; // todo folderspane configuration.getConfig(WebConfig.class).getFoldersPaneEnabled();
     }
 
     @Override

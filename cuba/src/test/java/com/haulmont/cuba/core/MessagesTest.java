@@ -28,8 +28,7 @@ import com.haulmont.cuba.core.messagespack.nested.MpTestNestedObj;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestAppender;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.core.GlobalConfig;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.security.UserSessionSource;
 import org.apache.commons.lang3.LocaleUtils;
@@ -266,7 +265,7 @@ public class MessagesTest {
     public void testLanguageAndCountry() throws Exception {
         Messages messages = AppBeans.get(Messages.class);
 
-        Map<String, Locale> availableLocales = AppBeans.get(ConfigInterfaces.class).getConfig(GlobalConfig.class).getAvailableLocales();
+        Map<String, Locale> availableLocales = AppBeans.get(CoreProperties.class).getAvailableLocales();
         assertTrue(availableLocales.containsValue(Locale.forLanguageTag("fr")));
         assertTrue(availableLocales.containsValue(Locale.forLanguageTag("fr-CA")));
 
@@ -289,7 +288,7 @@ public class MessagesTest {
     public void testScriptAndVariant() throws Exception {
         Messages messages = AppBeans.get(Messages.class);
 
-        Map<String, Locale> availableLocales = AppBeans.get(ConfigInterfaces.class).getConfig(GlobalConfig.class).getAvailableLocales();
+        Map<String, Locale> availableLocales = AppBeans.get(CoreProperties.class).getAvailableLocales();
         assertTrue(availableLocales.containsValue(LocaleUtils.toLocale("sr")));
         assertTrue(availableLocales.containsValue(Locale.forLanguageTag("sr-Latn")));
         assertTrue(availableLocales.containsValue(LocaleUtils.toLocale("ja")));

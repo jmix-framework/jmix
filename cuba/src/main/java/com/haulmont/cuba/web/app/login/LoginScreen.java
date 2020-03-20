@@ -17,16 +17,20 @@
 package com.haulmont.cuba.web.app.login;
 
 import com.haulmont.cuba.core.global.Messages;
-import io.jmix.core.GlobalConfig;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.security.Credentials;
 import io.jmix.core.security.LoginException;
 import io.jmix.core.security.LoginPasswordCredentials;
-import io.jmix.ui.*;
+import io.jmix.ui.App;
+import io.jmix.ui.Connection;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.Screens;
 import io.jmix.ui.components.*;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.security.LoginScreenAuthDelegate;
+import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +51,9 @@ public class LoginScreen extends Screen {
     private static final Logger log = LoggerFactory.getLogger(LoginScreen.class);
 
     @Inject
-    protected GlobalConfig globalConfig;
+    protected CoreProperties coreProperties;
     @Inject
-    protected WebConfig webConfig;
-    @Inject
-    protected WebAuthConfig webAuthConfig;
+    protected UiLoginProperties uiLoginProperties;
 
     @Inject
     protected Messages messages;
@@ -105,15 +107,15 @@ public class LoginScreen extends Screen {
     protected void initPoweredByLink() {
         Component poweredByLink = getWindow().getComponent("poweredByLink");
         if (poweredByLink != null) {
-            poweredByLink.setVisible(webConfig.getLoginDialogPoweredByLinkVisible());
+            poweredByLink.setVisible(uiLoginProperties.isPoweredByLinkVisible());
         }
     }
 
     protected void initLocales() {
-        localesSelect.setOptionsMap(globalConfig.getAvailableLocales());
+        localesSelect.setOptionsMap(coreProperties.getAvailableLocales());
         localesSelect.setValue(app.getLocale());
 
-        boolean localeSelectVisible = globalConfig.getLocaleSelectVisible();
+        boolean localeSelectVisible = coreProperties.isLocaleSelectVisible();
         localesSelect.setVisible(localeSelectVisible);
 
         // if old layout is used
@@ -153,7 +155,7 @@ public class LoginScreen extends Screen {
     }
 
     protected void initRememberMe() {
-        if (!webConfig.getRememberMeEnabled()) {
+        if (!uiLoginProperties.isRememberMeEnabled()) {
             rememberMeCheckBox.setValue(false);
             rememberMeCheckBox.setVisible(false);
         }
@@ -167,14 +169,14 @@ public class LoginScreen extends Screen {
     }
 
     protected void initDefaultCredentials() {
-        String defaultUser = webConfig.getLoginDialogDefaultUser();
+        String defaultUser = uiLoginProperties.getDefaultUser();
         if (!StringUtils.isBlank(defaultUser) && !"<disabled>".equals(defaultUser)) {
             loginField.setValue(defaultUser);
         } else {
             loginField.setValue("");
         }
 
-        String defaultPassw = webConfig.getLoginDialogDefaultPassword();
+        String defaultPassw = uiLoginProperties.getDefaultPassword();
         if (!StringUtils.isBlank(defaultPassw) && !"<disabled>".equals(defaultPassw)) {
             passwordField.setValue(defaultPassw);
         } else {
@@ -238,7 +240,7 @@ public class LoginScreen extends Screen {
             if (connection.getSession() != null) {
                 Locale loggedInLocale = connection.getSession().getLocale();
 
-                if (globalConfig.getLocaleSelectVisible()) {
+                if (coreProperties.isLocaleSelectVisible()) {
                     app.addCookie(App.COOKIE_LOCALE, loggedInLocale.toLanguageTag());
                 }
             }

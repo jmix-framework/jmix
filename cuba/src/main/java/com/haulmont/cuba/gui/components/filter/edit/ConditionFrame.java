@@ -17,17 +17,13 @@
 
 package com.haulmont.cuba.gui.components.filter.edit;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.core.AppBeans;
-import io.jmix.ui.ClientConfig;
-import io.jmix.ui.components.BoxLayout;
-import io.jmix.ui.components.CheckBox;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.LookupField;
-import io.jmix.ui.components.TextField;
+import io.jmix.ui.components.*;
 import io.jmix.ui.theme.ThemeConstants;
 
 import javax.inject.Inject;
@@ -38,7 +34,7 @@ import java.util.Map;
 public abstract class ConditionFrame<T extends AbstractCondition> extends AbstractFrame {
 
     @Inject
-    protected ClientConfig clientConfig;
+    protected CubaProperties properties;
 
     @Inject
     protected ThemeConstants theme;
@@ -71,7 +67,7 @@ public abstract class ConditionFrame<T extends AbstractCondition> extends Abstra
 
         if (width != null) {
             List<Integer> widthValues = new ArrayList<>();
-            int conditionsColumnsCount = filter != null ? filter.getColumnsCount() : clientConfig.getGenericFilterColumnsCount();
+            int conditionsColumnsCount = filter != null ? filter.getColumnsCount() : properties.getGenericFilterColumnsCount();
             for (int i = 1; i <= conditionsColumnsCount; i++) {
                 widthValues.add(i);
             }

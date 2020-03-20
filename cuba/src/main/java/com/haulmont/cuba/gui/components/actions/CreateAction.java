@@ -21,7 +21,6 @@ import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
@@ -31,7 +30,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.Component;
@@ -167,11 +166,10 @@ public class CreateAction extends ListAction
 
         this.icon = AppBeans.get(Icons.class).get(CubaIcon.CREATE_ACTION);
 
-        ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        setShortcut(clientConfig.getTableInsertShortcut());
+        UiProperties properties = AppBeans.get(UiProperties.class);
+        setShortcut(properties.getTableInsertShortcut());
 
-        this.addFirst = clientConfig.getCreateActionAddsFirst();
+        this.addFirst = properties.isCreateActionAddsFirst();
     }
 
     /**
@@ -452,7 +450,7 @@ public class CreateAction extends ListAction
      * Whether this action will add a new instance to the beginning of the datasource's collection.
      * Affects only standalone datasources, for nested datasources new items are always added to the end.
      *
-     * @see ClientConfig#getCreateActionAddsFirst()
+     * @see io.jmix.ui.UiProperties#isCreateActionAddsFirst()
      */
     public void setAddFirst(boolean addFirst) {
         this.addFirst = addFirst;

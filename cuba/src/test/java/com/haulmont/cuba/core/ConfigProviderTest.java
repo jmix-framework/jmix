@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
+import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.DataManager;
 import io.jmix.core.compatibility.AppContext;
 import io.jmix.data.entity.ConfigEntity;
@@ -86,7 +86,7 @@ public class ConfigProviderTest {
 
     @Test
     public void testAppProperties() {
-        TestConfig config = AppBeans.get(ConfigInterfaces.class).getConfig(TestConfig.class);
+        TestConfig config = AppBeans.get(Configuration.class).getConfig(TestConfig.class);
 
         // String property
 
@@ -190,7 +190,7 @@ public class ConfigProviderTest {
 
     @Test
     public void testDatabaseProperties() throws Exception {
-        TestConfig config = AppBeans.get(ConfigInterfaces.class).getConfig(TestConfig.class);
+        TestConfig config = AppBeans.get(Configuration.class).getConfig(TestConfig.class);
 
         String dbProp = config.getDatabaseProp();
         assertNull(dbProp);
@@ -241,7 +241,7 @@ public class ConfigProviderTest {
 
     @Test
     public void testSystemPropOverridesAppProp() throws Exception {
-        TestConfig config = AppBeans.get(ConfigInterfaces.class).getConfig(TestConfig.class);
+        TestConfig config = AppBeans.get(Configuration.class).getConfig(TestConfig.class);
 
         String value = config.getStringPropDef();
         assertEquals("def_value", value);
@@ -255,7 +255,7 @@ public class ConfigProviderTest {
     @Test
     public void testNotFoundGetterForProperty() {
         try {
-            TestConfig config = AppBeans.get(ConfigInterfaces.class).getConfig(TestConfig.class);
+            TestConfig config = AppBeans.get(Configuration.class).getConfig(TestConfig.class);
             config.setStringNotFoundGetProp("problem");
             fail("Exception is not thrown for property without getter");
         } catch (Exception e) {

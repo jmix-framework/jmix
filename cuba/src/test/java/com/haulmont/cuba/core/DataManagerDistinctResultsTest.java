@@ -26,6 +26,8 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.*;
+import io.jmix.data.DataProperties;
+import io.jmix.data.DataConfigPropertiesAccess;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +53,9 @@ public class DataManagerDistinctResultsTest {
 
     @Inject
     private Persistence persistence;
+
+    @Inject
+    private DataProperties dataProperties;
 
     private UUID groupId;
     private UUID role1Id;
@@ -137,7 +142,7 @@ public class DataManagerDistinctResultsTest {
 
         LinkedHashSet<User> set;
 
-        AppBeans.get(ConfigInterfaces.class).getConfig(ServerConfig.class).setInMemoryDistinct(false);
+        DataConfigPropertiesAccess.setInMemoryDistinct(dataProperties, false);
 
         set = load(0, 10, QUERY);
         assertEquals(5, set.size());
@@ -149,7 +154,7 @@ public class DataManagerDistinctResultsTest {
         assertEquals("user00", Iterables.getFirst(set, null).getLoginLowerCase());
         assertEquals("user09", Iterables.getLast(set, null).getLoginLowerCase());
 
-        AppBeans.get(ConfigInterfaces.class).getConfig(ServerConfig.class).setInMemoryDistinct(true);
+        DataConfigPropertiesAccess.setInMemoryDistinct(dataProperties, true);
 
         set = load(0, 10, QUERY);
         assertEquals(5, set.size());

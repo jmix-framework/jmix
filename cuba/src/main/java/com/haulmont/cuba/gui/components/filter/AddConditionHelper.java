@@ -17,6 +17,7 @@
 
 package com.haulmont.cuba.gui.components.filter;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.Filter;
@@ -29,9 +30,7 @@ import com.haulmont.cuba.gui.components.filter.descriptor.DynamicAttributesCondi
 import com.haulmont.cuba.gui.components.filter.edit.CustomConditionEditor;
 import com.haulmont.cuba.gui.components.filter.edit.DynamicAttributesConditionEditor;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.commons.datastruct.Tree;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.components.Window;
@@ -55,7 +54,7 @@ public class AddConditionHelper {
     protected Handler handler;
     protected boolean hideDynamicAttributes;
     protected boolean hideCustomConditions;
-    protected ClientConfig clientConfig;
+    protected CubaProperties properties;
 
     public AddConditionHelper(Filter filter, Handler handler) {
         this(filter, false, false, handler);
@@ -69,7 +68,7 @@ public class AddConditionHelper {
         this.hideCustomConditions = hideCustomConditions;
         windowManager = AppBeans.get(WindowManagerProvider.class).get();
         windowConfig = AppBeans.get(WindowConfig.class);
-        clientConfig = AppBeans.get(ConfigInterfaces.class).getConfig(ClientConfig.class);
+        properties = AppBeans.get(CubaProperties.class);
     }
 
     public interface Handler {
@@ -86,7 +85,7 @@ public class AddConditionHelper {
         Map<String, Object> params = new HashMap<>();
         ConditionDescriptorsTreeBuilderAPI descriptorsTreeBuilder = AppBeans.getPrototype(ConditionDescriptorsTreeBuilderAPI.NAME,
                 filter,
-                clientConfig.getGenericFilterPropertiesHierarchyDepth(),
+                properties.getGenericFilterPropertiesHierarchyDepth(),
                 hideDynamicAttributes,
                 hideCustomConditions,
                 conditionsTree);

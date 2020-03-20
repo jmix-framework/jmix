@@ -18,15 +18,11 @@ package com.haulmont.cuba.core.config;
 
 import com.haulmont.cuba.core.model.common.RoleType;
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.core.config.Config;
-import io.jmix.core.config.Property;
-import io.jmix.core.config.Source;
-import io.jmix.core.config.SourceType;
-import io.jmix.core.config.defaults.Default;
-import io.jmix.core.config.defaults.DefaultBoolean;
-import io.jmix.core.config.defaults.DefaultInt;
-import io.jmix.core.config.defaults.DefaultInteger;
-import io.jmix.core.config.type.*;
+import com.haulmont.cuba.core.config.defaults.Default;
+import com.haulmont.cuba.core.config.defaults.DefaultBoolean;
+import com.haulmont.cuba.core.config.defaults.DefaultInt;
+import com.haulmont.cuba.core.config.defaults.DefaultInteger;
+import com.haulmont.cuba.core.config.type.*;
 
 import java.util.Date;
 import java.util.List;

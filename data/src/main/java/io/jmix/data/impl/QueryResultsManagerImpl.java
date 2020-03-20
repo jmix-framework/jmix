@@ -64,9 +64,6 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     protected ClusterManager clusterManager;
 
     @Inject
-    protected ConfigInterfaces configuration;
-
-    @Inject
     protected Metadata metadata;
 
     @Inject
@@ -243,8 +240,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     @Override
     public void deleteForInactiveSessions() {
-        if (!AppContext.isStarted() || !clusterManager.isMaster()
-                || !configuration.getConfig(GlobalConfig.class).getAllowQueryFromSelected())
+        if (!AppContext.isStarted() || !clusterManager.isMaster())
             return;
 
         internalDeleteForInactiveSessions();

@@ -27,6 +27,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.data.DataProperties;
 import io.jmix.data.OrmProperties;
 import io.jmix.data.StoreAwareLocator;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class QueryCacheManager {
     public static final String NAME = "cuba_QueryCacheManager";
 
     @Inject
-    protected QueryCacheConfig queryCacheConfig;
+    protected DataProperties properties;
     @Inject
     protected ClusterManager clusterManager;
     @Inject
@@ -82,7 +83,7 @@ public class QueryCacheManager {
      * Returns true if query cache enabled
      */
     public boolean isEnabled() {
-        return queryCacheConfig.getQueryCacheEnabled();
+        return properties.isQueryCacheEnabled();
     }
 
     /**

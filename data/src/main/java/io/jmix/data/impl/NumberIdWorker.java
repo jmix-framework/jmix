@@ -17,7 +17,10 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Stores;
+import io.jmix.data.DataProperties;
 import io.jmix.data.Sequence;
 import io.jmix.data.Sequences;
 import org.apache.commons.lang3.StringUtils;
@@ -43,10 +46,7 @@ public class NumberIdWorker {
     protected Sequences sequences;
 
     @Inject
-    protected ServerConfig serverConfig;
-
-    @Inject
-    protected GlobalConfig config;
+    protected DataProperties dataProperties;
 
     public Long createLongId(String entityName, String sequenceName) {
         Sequence sequence = Sequence.withName(getSequenceName(entityName, sequenceName))
@@ -61,7 +61,7 @@ public class NumberIdWorker {
         Sequence sequence = Sequence.withName(getSequenceName(entityName, sequenceName))
                 .setStore(getDataStore(entityName))
                 .setStartValue(0)
-                .setIncrement(config.getNumberIdCacheSize());
+                .setIncrement(dataProperties.getNumberIdCacheSize());
 
         return sequences.createNextValue(sequence);
     }
@@ -74,7 +74,7 @@ public class NumberIdWorker {
     }
 
     protected String getDataStore(String entityName) {
-        if (!serverConfig.getUseEntityDataStoreForIdSequence()) {
+        if (!dataProperties.isUseEntityDataStoreForIdSequence()) {
             return Stores.MAIN;
         } else {
             return metadataTools.getStoreName(metadata.getClass(entityName));

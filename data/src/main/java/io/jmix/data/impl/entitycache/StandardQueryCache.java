@@ -20,6 +20,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.jmix.data.DataProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -42,13 +43,13 @@ public class StandardQueryCache implements QueryCache {
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
     @Inject
-    protected QueryCacheConfig queryCacheConfig;
+    protected DataProperties properties;
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCache.class);
 
     @PostConstruct
     protected void init() {
-        data = CacheBuilder.newBuilder().maximumSize(queryCacheConfig.getQueryCacheMaxSize()).build();
+        data = CacheBuilder.newBuilder().maximumSize(properties.getQueryCacheMaxSize()).build();
     }
 
     @Override
@@ -169,7 +170,7 @@ public class StandardQueryCache implements QueryCache {
 
     @Override
     public long getMaxSize() {
-        return queryCacheConfig.getQueryCacheMaxSize();
+        return properties.getQueryCacheMaxSize();
     }
 
     @Override

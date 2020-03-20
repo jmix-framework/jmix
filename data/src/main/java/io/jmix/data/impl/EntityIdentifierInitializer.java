@@ -17,7 +17,6 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -43,7 +42,7 @@ public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
     @Inject
     protected NumberIdSource numberIdSource;
     @Inject
-    protected GlobalConfig config;
+    protected CoreProperties coreProperties;
 
     @Override
     public <T> void initEntity(Entity<T> entity) {
@@ -56,7 +55,7 @@ public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
             //noinspection unchecked
             EntityValues.setId(entity, (T) key);
         } else if (entity instanceof BaseLongIdEntity || entity instanceof BaseIntegerIdEntity) {
-            if (!config.getEnableIdGenerationForEntitiesInAdditionalDataStores()
+            if (!coreProperties.isIdGenerationForEntitiesInAdditionalDataStoresEnabled()
                     && !Stores.MAIN.equals(metadataTools.getStoreName(metaClass))) {
                 return;
             }

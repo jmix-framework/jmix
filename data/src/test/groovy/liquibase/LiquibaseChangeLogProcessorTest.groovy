@@ -47,7 +47,7 @@ class LiquibaseChangeLogProcessorTest extends Specification {
         then:
         def masterFile = new File(fileName)
         masterFile.exists()
-        masterFile.canonicalPath == new File(environment.getProperty('jmix.workDir'), 'liquibase-changelog.xml').canonicalPath
+        masterFile.canonicalPath == new File(environment.getProperty('jmix.core.workDir'), 'liquibase-changelog.xml').canonicalPath
 
         and:
         def databaseChangeLog = new XmlSlurper().parse(masterFile)
@@ -65,7 +65,7 @@ class LiquibaseChangeLogProcessorTest extends Specification {
         then:
         def masterFile = new File(fileName)
         masterFile.exists()
-        masterFile.canonicalPath == new File(environment.getProperty('jmix.workDir'), 'db1-liquibase-changelog.xml').canonicalPath
+        masterFile.canonicalPath == new File(environment.getProperty('jmix.core.workDir'), 'db1-liquibase-changelog.xml').canonicalPath
 
         and:
         def databaseChangeLog = new XmlSlurper().parse(masterFile)

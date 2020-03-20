@@ -136,7 +136,7 @@ public class PersistenceConfigProcessor {
 
     protected String getFileName(String storeName) {
         String suffix = Stores.isMain(storeName) ? "" : "-" + storeName;
-        return environment.getProperty("jmix.workDir") + "/META-INF/persistence" + suffix + ".xml";
+        return environment.getProperty("jmix.core.workDir") + "/META-INF/persistence" + suffix + ".xml";
     }
 
     protected void postProcess(Document document) {

@@ -17,10 +17,10 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.GlobalConfig;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.annotation.IdSequence;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.DataProperties;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -42,7 +42,7 @@ public class NumberIdCache {
     @Inject
     protected NumberIdWorker numberIdWorker;
     @Inject
-    protected GlobalConfig config;
+    protected DataProperties dataProperties;
 
     protected ConcurrentMap<String, Generator> cache = new ConcurrentHashMap<>();
 
@@ -65,7 +65,7 @@ public class NumberIdCache {
         }
 
         protected boolean useIdCache() {
-            return config.getNumberIdCacheSize() != 0 && cached;
+            return dataProperties.getNumberIdCacheSize() != 0 && cached;
         }
 
         protected void createCachedCounter() {
@@ -78,7 +78,7 @@ public class NumberIdCache {
                 return numberIdWorker.createLongId(entityName, sequenceName);
             } else {
                 long next = ++counter;
-                if (next > sequenceValue + config.getNumberIdCacheSize()) {
+                if (next > sequenceValue + dataProperties.getNumberIdCacheSize()) {
                     createCachedCounter();
                     next = ++counter;
                 }

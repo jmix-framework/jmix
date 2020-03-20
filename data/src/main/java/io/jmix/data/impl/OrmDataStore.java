@@ -71,6 +71,21 @@ public class OrmDataStore implements DataStore {
 
     private static final Logger log = LoggerFactory.getLogger(OrmDataStore.class);
 
+//    @Value("jmix.data.inMemoryDistinct:false")
+//    protected boolean inMemoryDistinct;
+//
+//    @Value("jmix.data.disableLoadValuesIfConstraints:false")
+//    protected boolean disableLoadValuesIfConstraints;
+//
+//    @Value("jmix.data.dataManagerChecksSecurityOnMiddleware:false")
+//    protected boolean dataManagerChecksSecurityOnMiddleware;
+//
+//    @Value("jmix.data.useReadOnlyTransactionForLoad:false")
+//    protected boolean useReadOnlyTransactionForLoad;
+
+    @Inject
+    protected DataProperties properties;
+
     @Inject
     protected Metadata metadata;
 
@@ -79,9 +94,6 @@ public class OrmDataStore implements DataStore {
 
     @Inject
     protected FetchPlanRepository fetchPlanRepository;
-
-    @Inject
-    protected ServerConfig serverConfig;
 
     @Inject
     protected Security security;
@@ -235,7 +247,7 @@ public class OrmDataStore implements DataStore {
             em.setProperty(OrmProperties.SOFT_DELETION, context.isSoftDeletion());
 
             boolean ensureDistinct = false;
-            if (serverConfig.getInMemoryDistinct() && context.getQuery() != null) {
+            if (properties.isInMemoryDistinct() && context.getQuery() != null) {
                 QueryTransformer transformer = queryTransformerFactory.transformer(
                         context.getQuery().getQueryString());
                 ensureDistinct = transformer.removeDistinct();
@@ -379,7 +391,7 @@ public class OrmDataStore implements DataStore {
                 em.setProperty(OrmProperties.SOFT_DELETION, context.isSoftDeletion());
 
                 boolean ensureDistinct = false;
-                if (serverConfig.getInMemoryDistinct() && context.getQuery() != null) {
+                if (properties.isInMemoryDistinct() && context.getQuery() != null) {
                     QueryTransformer transformer = QueryTransformerFactory.createTransformer(
                             context.getQuery().getQueryString());
                     ensureDistinct = transformer.removeDistinct();
@@ -980,7 +992,7 @@ public class OrmDataStore implements DataStore {
         }
         if (security.hasInMemoryConstraints(metaClass, ConstraintOperationType.READ, ConstraintOperationType.ALL)) {
             String msg = String.format("%s is not permitted for %s", ConstraintOperationType.READ, metaClass.getName());
-            if (serverConfig.getDisableLoadValuesIfConstraints()) {
+            if (properties.isDisableLoadValuesIfConstraints()) {
                 throw new RowLevelSecurityException(msg, metaClass.getName(), ConstraintOperationType.READ);
             } else {
                 log.debug(msg);
@@ -996,7 +1008,7 @@ public class OrmDataStore implements DataStore {
             }
             if (security.hasConstraints(entityMetaClass)) {
                 String msg = String.format("%s is not permitted for %s", ConstraintOperationType.READ, entityName);
-                if (serverConfig.getDisableLoadValuesIfConstraints()) {
+                if (properties.isDisableLoadValuesIfConstraints()) {
                     throw new RowLevelSecurityException(msg, entityName, ConstraintOperationType.READ);
                 } else {
                     log.debug(msg);
@@ -1020,15 +1032,15 @@ public class OrmDataStore implements DataStore {
     }
 
     protected boolean isAuthorizationRequired(LoadContext context) {
-        return context.isAuthorizationRequired() || serverConfig.getDataManagerChecksSecurityOnMiddleware();
+        return context.isAuthorizationRequired() || properties.isDataManagerChecksSecurityOnMiddleware();
     }
 
     protected boolean isAuthorizationRequired(ValueLoadContext context) {
-        return context.isAuthorizationRequired() || serverConfig.getDataManagerChecksSecurityOnMiddleware();
+        return context.isAuthorizationRequired() || properties.isDataManagerChecksSecurityOnMiddleware();
     }
 
     protected boolean isAuthorizationRequired(SaveContext context) {
-        return context.isAuthorizationRequired() || serverConfig.getDataManagerChecksSecurityOnMiddleware();
+        return context.isAuthorizationRequired() || properties.isDataManagerChecksSecurityOnMiddleware();
     }
 
     protected List<Integer> getNotPermittedSelectIndexes(QueryParser queryParser) {
@@ -1156,7 +1168,7 @@ public class OrmDataStore implements DataStore {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName(LOAD_TX_PREFIX + txCount.incrementAndGet());
 
-        if (serverConfig.getUseReadOnlyTransactionForLoad()) {
+        if (properties.isUseReadOnlyTransactionForLoad()) {
             def.setReadOnly(true);
         }
         if (joinTransaction) {

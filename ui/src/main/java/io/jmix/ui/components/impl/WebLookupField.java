@@ -18,10 +18,9 @@ package io.jmix.ui.components.impl;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.StyleGenerator;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.LookupField;
 import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.ValueSource;
@@ -106,10 +105,7 @@ public class WebLookupField<V> extends WebV8AbstractField<CubaComboBox<V>, V, V>
     public void afterPropertiesSet() {
         initComponent(component);
 
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        setPageLength(clientConfig.getLookupFieldPageLength());
-
+        setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
 
         UserSessionSource userSessionSource = beanLocator.get(UserSessionSource.class);
 

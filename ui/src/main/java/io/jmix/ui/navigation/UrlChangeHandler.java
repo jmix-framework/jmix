@@ -64,7 +64,7 @@ public class UrlChangeHandler implements InitializingBean {
     protected UrlTools urlTools;
 
     @Inject
-    protected WebConfig webConfig;
+    protected UiProperties uiProperties;
     @Inject
     protected WindowConfig windowConfig;
 
@@ -90,7 +90,7 @@ public class UrlChangeHandler implements InitializingBean {
 
     public void handleUrlChange(Page.PopStateEvent event) {
         if (notSuitableMode()) {
-            log.debug("UrlChangeHandler is disabled for '{}' URL handling mode", webConfig.getUrlHandlingMode());
+            log.debug("UrlChangeHandler is disabled for '{}' URL handling mode", uiProperties.getUrlHandlingMode());
             return;
         }
 
@@ -172,14 +172,14 @@ public class UrlChangeHandler implements InitializingBean {
             return false;
         }
 
-        boolean allowAnonymousAccess = webConfig.getAllowAnonymousAccess();
+        boolean allowAnonymousAccess = uiProperties.isAllowAnonymousAccess();
 
         return !allowAnonymousAccess
                 || !security.isScreenPermitted(windowInfo.getId());
     }
 
     public void redirect(NavigationState navigationState) {
-        String loginScreenId = webConfig.getLoginScreenId();
+        String loginScreenId = uiProperties.getLoginScreenId();
 
         Screen loginScreen = ui.getScreens().create(loginScreenId, OpenMode.ROOT);
 
@@ -329,7 +329,7 @@ public class UrlChangeHandler implements InitializingBean {
     }
 
     protected boolean notSuitableMode() {
-        return UrlHandlingMode.URL_ROUTES != webConfig.getUrlHandlingMode();
+        return UrlHandlingMode.URL_ROUTES != uiProperties.getUrlHandlingMode();
     }
 
     protected Screens.OpenedScreens getOpenedScreens() {
@@ -343,7 +343,7 @@ public class UrlChangeHandler implements InitializingBean {
             return true;
         }
 
-        if (webConfig.getDefaultScreenCanBeClosed()) {
+        if (uiProperties.isDefaultScreenCanBeClosed()) {
             return false;
         }
 

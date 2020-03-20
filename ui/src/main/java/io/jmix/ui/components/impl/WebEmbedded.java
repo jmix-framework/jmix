@@ -18,8 +18,7 @@ package io.jmix.ui.components.impl;
 
 import com.vaadin.server.*;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.Embedded;
 import io.jmix.ui.export.ExportDataProvider;
 import io.jmix.ui.sys.ControllerUtils;
@@ -77,8 +76,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
             } else {
                 File file = new File(src);
                 if (!file.isAbsolute()) {
-                    ConfigInterfaces configuration = AppBeans.get(ConfigInterfaces.NAME);
-                    String root = configuration.getConfig(WebConfig.class).getResourcesRoot();
+                    String root = AppBeans.get(UiProperties.class).getEmbeddedResourcesRoot();
                     if (root != null) {
                         if (!root.endsWith(File.separator)) {
                             root += File.separator;

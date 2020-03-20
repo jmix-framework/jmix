@@ -23,7 +23,10 @@ import com.vaadin.server.*;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
-import io.jmix.core.*;
+import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
+import io.jmix.core.Events;
+import io.jmix.core.Messages;
 import io.jmix.core.security.LoginException;
 import io.jmix.core.security.NoUserSessionException;
 import io.jmix.core.security.UserSession;
@@ -41,7 +44,6 @@ import io.jmix.ui.theme.ThemeConstantsRepository;
 import io.jmix.ui.widgets.AppUIUtils;
 import io.jmix.ui.widgets.CubaTimer;
 import io.jmix.ui.widgets.JmixFileDownloader;
-import io.jmix.ui.widgets.JmixTimer;
 import io.jmix.ui.widgets.client.ui.AppUIClientRpc;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -75,7 +77,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     @Inject
     protected Events events;
     @Inject
-    protected ConfigInterfaces configuration;
+    protected UiProperties properties;
 
 //    @Inject
 //    protected UserSettingsTools userSettingsTools; todo settings
@@ -99,9 +101,6 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     protected BeanLocator beanLocator;
 
     protected TestIdManager testIdManager = new TestIdManager();
-
-    protected boolean testMode = false;
-    protected boolean performanceTestMode = false;
 
     protected JmixFileDownloader fileDownloader;
 
@@ -248,10 +247,6 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         NavigationState requestedState = getUrlRouting().getState();
 
         try {
-            GlobalConfig globalConfig = configuration.getConfig(GlobalConfig.class);
-
-            this.testMode = globalConfig.getTestMode();
-            this.performanceTestMode = globalConfig.getPerformanceTestMode();
             // init error handlers
             setErrorHandler(this);
 
@@ -537,11 +532,11 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
      * @return true if UI test mode is enabled and cuba-id attribute should be added to DOM tree
      */
     public boolean isTestMode() {
-        return testMode;
+        return properties.isTestMode();
     }
 
     public boolean isPerformanceTestMode() {
-        return performanceTestMode;
+        return properties.isPerformanceTestMode();
     }
 
     @Override
@@ -573,8 +568,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
 
         String action = (String) wrappedSession.getAttribute(LAST_REQUEST_ACTION_ATTR);
 
-        WebConfig webConfig = beanLocator.get(ConfigInterfaces.class).getConfig(WebConfig.class);
-        return webConfig.getLinkHandlerActions().contains(action);
+        return beanLocator.get(UiProperties.class).getLinkHandlerActions().contains(action);
     }
 
     protected void processLinkHandlerRequest(VaadinRequest request) {
@@ -598,8 +592,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     protected void processRequest(NavigationState navigationState) {
-        WebConfig webConfig = beanLocator.get(ConfigInterfaces.class).getConfig(WebConfig.class);
-        if (UrlHandlingMode.URL_ROUTES != webConfig.getUrlHandlingMode()
+        if (UrlHandlingMode.URL_ROUTES != beanLocator.get(UiProperties.class).getUrlHandlingMode()
                 || navigationState == null) {
             return;
         }

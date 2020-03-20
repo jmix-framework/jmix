@@ -16,13 +16,12 @@
 
 package io.jmix.ui.actions.picker;
 
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.builders.LookupBuilder;
@@ -68,7 +67,7 @@ public class LookupAction<E extends Entity> extends BaseAction implements Picker
     protected ScreenBuilders screenBuilders;
     protected Icons icons;
     protected Messages messages;
-    protected ConfigInterfaces configuration;
+    protected UiProperties properties;
 
     protected boolean editable = true;
 
@@ -260,13 +259,13 @@ public class LookupAction<E extends Entity> extends BaseAction implements Picker
     }
 
     @Inject
-    protected void setConfiguration(ConfigInterfaces configuration) {
-        this.configuration = configuration;
+    protected void setUiProperties(UiProperties properties) {
+        this.properties = properties;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        setShortcut(configuration.getConfig(ClientConfig.class).getPickerLookupShortcut());
+        setShortcut(properties.getPickerLookupShortcut());
         setDescription(messages.getMessage("pickerField.action.lookup.tooltip")
                 + " (" + getShortcutCombination().format() + ")");
     }

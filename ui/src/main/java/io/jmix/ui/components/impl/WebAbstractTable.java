@@ -42,9 +42,8 @@ import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.components.*;
@@ -132,7 +131,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
 
     // Beans
 
-    protected ConfigInterfaces configuration;
+    protected UiProperties uiProperties;
     protected IconResolver iconResolver;
     protected MetadataTools metadataTools;
     protected Security security;
@@ -209,11 +208,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     @Inject
-    public void setConfiguration(ConfigInterfaces configuration) {
-        this.configuration = configuration;
-
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        ignoreUnfetchedAttributes = clientConfig.getIgnoreUnfetchedAttributesInTable();
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
     }
 
     @Inject
@@ -1202,12 +1198,10 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     protected void setClientCaching() {
-        WebConfig webConfig = configuration.getConfig(WebConfig.class);
-
-        double cacheRate = webConfig.getTableCacheRate();
+        double cacheRate = uiProperties.getTableCacheRate();
         cacheRate = cacheRate >= 0 ? cacheRate : 2;
 
-        int pageLength = webConfig.getTablePageLength();
+        int pageLength = uiProperties.getTablePageLength();
         pageLength = pageLength >= 0 ? pageLength : 15;
 
         componentComposition.setClientCaching(cacheRate, pageLength);
@@ -2061,10 +2055,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
                 loadedIds.add(colElem.attributeValue("id"));
             }
 
-            ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-
-            if (clientConfig.getLoadObsoleteSettingsForTable()
-                    || CollectionUtils.isEqualCollection(modelIds, loadedIds)) {
+            if (CollectionUtils.isEqualCollection(modelIds, loadedIds)) {
                 applyColumnSettings(element);
             }
 

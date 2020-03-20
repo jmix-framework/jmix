@@ -61,7 +61,7 @@ public class WebUrlRouting implements UrlRouting {
     @Inject
     protected Events events;
     @Inject
-    protected WebConfig webConfig;
+    protected UiProperties uiProperties;
     @Inject
     protected WindowConfig windowConfig;
     @Inject
@@ -97,8 +97,8 @@ public class WebUrlRouting implements UrlRouting {
 
     @Override
     public NavigationState getState() {
-        if (UrlHandlingMode.URL_ROUTES != webConfig.getUrlHandlingMode()) {
-            log.debug("UrlRouting is disabled for '{}' URL handling mode", webConfig.getUrlHandlingMode());
+        if (UrlHandlingMode.URL_ROUTES != uiProperties.getUrlHandlingMode()) {
+            log.debug("UrlRouting is disabled for '{}' URL handling mode", uiProperties.getUrlHandlingMode());
             return NavigationState.EMPTY;
         }
 
@@ -369,8 +369,8 @@ public class WebUrlRouting implements UrlRouting {
     }
 
     protected boolean checkConditions(Screen screen, Map<String, String> urlParams) {
-        if (UrlHandlingMode.URL_ROUTES != webConfig.getUrlHandlingMode()) {
-            log.debug("UrlRouting is disabled for '{}' URL handling mode", webConfig.getUrlHandlingMode());
+        if (UrlHandlingMode.URL_ROUTES != uiProperties.getUrlHandlingMode()) {
+            log.debug("UrlRouting is disabled for '{}' URL handling mode", uiProperties.getUrlHandlingMode());
             return false;
         }
 

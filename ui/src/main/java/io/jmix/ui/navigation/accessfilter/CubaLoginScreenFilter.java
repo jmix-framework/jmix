@@ -17,7 +17,7 @@
 package io.jmix.ui.navigation.accessfilter;
 
 import io.jmix.ui.AppUI;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.navigation.NavigationState;
 import org.springframework.core.annotation.Order;
@@ -33,11 +33,11 @@ public class CubaLoginScreenFilter implements NavigationFilter {
     @Inject
     protected WindowConfig windowConfig;
     @Inject
-    protected WebConfig webConfig;
+    protected UiProperties uiProperties;
 
     @Override
     public AccessCheckResult allowed(NavigationState fromState, NavigationState toState) {
-        String loginWindowRoute = windowConfig.findRoute(webConfig.getLoginScreenId());
+        String loginWindowRoute = windowConfig.findRoute(uiProperties.getLoginScreenId());
 
         if (!Objects.equals(loginWindowRoute, toState.getRoot())) {
             return AccessCheckResult.allowed();

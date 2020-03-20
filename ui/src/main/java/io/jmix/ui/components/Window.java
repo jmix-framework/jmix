@@ -19,7 +19,6 @@ import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.validation.groups.UiCrossFieldChecks;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
 import io.jmix.ui.components.compatibility.*;
@@ -593,7 +592,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     void removeBeforeWindowCloseListener(Consumer<BeforeCloseEvent> listener);
 
     /**
-     * An event that is fired before a screen is closed with {@link ClientConfig#getCloseShortcut()}.
+     * An event that is fired before a screen is closed with {@link io.jmix.ui.UiProperties#getCloseShortcut()}.
      *
      * @deprecated Use {@link BeforeCloseEvent} with {@link CloseOrigin}
      */

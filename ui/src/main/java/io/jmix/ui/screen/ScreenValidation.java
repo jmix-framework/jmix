@@ -18,18 +18,17 @@ package io.jmix.ui.screen;
 
 import com.google.common.collect.Iterables;
 import io.jmix.core.BeanValidation;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.core.validation.groups.UiCrossFieldChecks;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.Dialogs;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.Notifications.NotificationType;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.*;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.Icons;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class ScreenValidation {
     public static final String NAME = "jmix_ScreenValidation";
 
     @Inject
-    protected ConfigInterfaces configuration;
+    protected UiProperties properties;
     @Inject
     protected Messages messages;
     @Inject
@@ -131,9 +130,7 @@ public class ScreenValidation {
             buffer.append(error.description).append("\n");
         }
 
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-
-        String validationNotificationType = clientConfig.getValidationNotificationType();
+        String validationNotificationType = properties.getValidationNotificationType();
         if (validationNotificationType.endsWith("_HTML")) {
             // HTML validation notification types are not supported
             validationNotificationType = validationNotificationType.replace("_HTML", "");

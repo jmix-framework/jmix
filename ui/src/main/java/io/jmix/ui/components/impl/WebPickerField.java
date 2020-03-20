@@ -20,7 +20,6 @@ import com.vaadin.data.ValueProvider;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.Registration;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.events.Subscription;
@@ -28,13 +27,9 @@ import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.ActionsPermissions;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.components.PickerField;
-import io.jmix.ui.components.SecuredActionsHolder;
+import io.jmix.ui.components.*;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.valueproviders.EntityNameValueProvider;
@@ -88,8 +83,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
     }
 
     @Inject
-    protected void setConfiguration(ConfigInterfaces configuration) {
-        actionHandler = new WebPickerFieldActionHandler(configuration);
+    protected void setUiProperties(UiProperties properties) {
+        actionHandler = new WebPickerFieldActionHandler(properties);
         component.addActionHandler(actionHandler);
     }
 
@@ -547,9 +542,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
 
         protected List<Action> actionList = new ArrayList<>(4);
 
-        public WebPickerFieldActionHandler(ConfigInterfaces configuration) {
-            ClientConfig config = configuration.getConfig(ClientConfig.class);
-            String[] strModifiers = StringUtils.split(config.getPickerShortcutModifiers().toUpperCase(), "-");
+        public WebPickerFieldActionHandler(UiProperties properties) {
+            String[] strModifiers = StringUtils.split(properties.getPickerShortcutModifiers().toUpperCase(), "-");
             modifiers = new int[strModifiers.length];
             for (int i = 0; i < modifiers.length; i++) {
                 modifiers[i] = KeyCombination.Modifier.valueOf(strModifiers[i]).getCode();

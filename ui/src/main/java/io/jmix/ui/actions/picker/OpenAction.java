@@ -16,15 +16,14 @@
 
 package io.jmix.ui.actions.picker;
 
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.builders.EditorBuilder;
@@ -63,7 +62,7 @@ public class OpenAction extends BaseAction implements PickerField.PickerFieldAct
     protected Icons icons;
 
     protected Messages messages;
-    protected ConfigInterfaces configuration;
+    protected UiProperties properties;
 
     @Inject
     protected ScreenBuilders screenBuilders;
@@ -183,13 +182,13 @@ public class OpenAction extends BaseAction implements PickerField.PickerFieldAct
     }
 
     @Inject
-    protected void setConfiguration(ConfigInterfaces configuration) {
-        this.configuration = configuration;
+    protected void setUiProperties(UiProperties properties) {
+        this.properties = properties;
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        setShortcut(configuration.getConfig(ClientConfig.class).getPickerOpenShortcut());
+        setShortcut(properties.getPickerOpenShortcut());
         setDescription(messages.getMessage("pickerField.action.open.tooltip")
                 + " (" + getShortcutCombination().format() + ")");
     }

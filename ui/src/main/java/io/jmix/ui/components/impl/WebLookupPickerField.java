@@ -18,11 +18,10 @@ package io.jmix.ui.components.impl;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.LookupPickerField;
 import io.jmix.ui.components.SecuredActionsHolder;
 import io.jmix.ui.components.data.Options;
@@ -97,9 +96,7 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        setPageLength(clientConfig.getLookupFieldPageLength());
+        setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
     }
 
     @Override

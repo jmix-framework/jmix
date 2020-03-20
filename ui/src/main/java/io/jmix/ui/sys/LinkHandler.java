@@ -20,7 +20,6 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.WrappedSession;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.WebConfig;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.sys.linkhandling.ExternalLinkContext;
 import io.jmix.ui.sys.linkhandling.LinkHandlerProcessor;
@@ -33,7 +32,7 @@ import java.util.Map;
 /**
  * Handles links from outside of the application.
  * <br> This bean is used particularly when a request URL contains one of
- * {@link WebConfig#getLinkHandlerActions()} actions.
+ * {@link io.jmix.ui.UiProperties#getLinkHandlerActions()} actions.
  * <br> The bean traverses all implementations of {@link LinkHandlerProcessor}
  * by their priority and gives control to first possible to handle processor.
  */

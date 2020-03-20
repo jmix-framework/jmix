@@ -25,15 +25,10 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.ClientConfig;
-import io.jmix.ui.WebConfig;
-import io.jmix.ui.components.*;
-import io.jmix.ui.Screens;
+import io.jmix.ui.*;
 import io.jmix.ui.Screens.OpenedScreens;
 import io.jmix.ui.Screens.WindowStack;
-import io.jmix.ui.UiComponents;
+import io.jmix.ui.components.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.util.OperationResult;
@@ -202,9 +197,6 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     }
 
     protected HasTabSheetBehaviour createTabbedModeContainer() {
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        WebConfig webConfig = configuration.getConfig(WebConfig.class);
-
         //if (webConfig.getMainTabSheetMode() == MainTabSheetMode.DEFAULT) {
             JmixMainTabSheet cubaTabSheet = new JmixMainTabSheet();
 
@@ -522,9 +514,8 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     }
 
     protected ShortcutListener createCloseShortcut(RootWindow topLevelWindow) {
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        String closeShortcut = clientConfig.getCloseShortcut();
+        UiProperties properties = beanLocator.get(UiProperties.class);
+        String closeShortcut = properties.getCloseShortcut();
         KeyCombination combination = KeyCombination.create(closeShortcut);
 
         return new ShortcutListenerDelegate("onClose", combination.getKey().getCode(),
@@ -535,10 +526,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     }
 
     protected ShortcutListener createNextWindowTabShortcut(RootWindow topLevelWindow) {
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-
-        String nextTabShortcut = clientConfig.getNextTabShortcut();
+        String nextTabShortcut = beanLocator.get(UiProperties.class).getNextTabShortcut();
         KeyCombination combination = KeyCombination.create(nextTabShortcut);
 
         return new ShortcutListenerDelegate(
@@ -564,10 +552,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     }
 
     protected ShortcutListener createPreviousWindowTabShortcut(RootWindow topLevelWindow) {
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-
-        String previousTabShortcut = clientConfig.getPreviousTabShortcut();
+        String previousTabShortcut = beanLocator.get(UiProperties.class).getPreviousTabShortcut();
         KeyCombination combination = KeyCombination.create(previousTabShortcut);
 
         return new ShortcutListenerDelegate("onPreviousTab", combination.getKey().getCode(),
@@ -703,10 +688,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
             return true;
         }
 
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        WebConfig webConfig = configuration.getConfig(WebConfig.class);
-
-        if (webConfig.getDefaultScreenCanBeClosed()) {
+        if (beanLocator.get(UiProperties.class).isDefaultScreenCanBeClosed()) {
             return false;
         }
 

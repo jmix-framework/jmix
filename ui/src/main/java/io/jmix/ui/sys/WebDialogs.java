@@ -22,10 +22,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import io.jmix.core.Messages;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.ClientConfig;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.*;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.DialogAction;
@@ -76,7 +73,7 @@ public class WebDialogs implements Dialogs {
     @Inject
     protected Icons icons;
     @Inject
-    protected ClientConfig clientConfig;
+    protected UiProperties properties;
     protected ScreenBuilders screenBuilders;
 
     public WebDialogs(AppUI ui) {
@@ -368,9 +365,9 @@ public class WebDialogs implements Dialogs {
                 }
 
                 if (action == firstCommitAction) {
-                    setClickShortcut(button, clientConfig.getCommitShortcut());
+                    setClickShortcut(button, properties.getCommitShortcut());
                 } else if (action == firstDeclineAction) {
-                    setClickShortcut(button, clientConfig.getCloseShortcut());
+                    setClickShortcut(button, properties.getCloseShortcut());
                 }
             }
 
@@ -634,7 +631,7 @@ public class WebDialogs implements Dialogs {
         }
 
         protected void initShortcuts() {
-            String closeShortcut = clientConfig.getCloseShortcut();
+            String closeShortcut = properties.getCloseShortcut();
             KeyCombination closeCombination = KeyCombination.create(closeShortcut);
 
             window.addAction(

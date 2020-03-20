@@ -19,13 +19,11 @@ package io.jmix.ui.executors.impl;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Events;
 import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.WebConfig;
 import io.jmix.ui.events.BackgroundTaskUnhandledExceptionEvent;
 import io.jmix.ui.executors.*;
 import org.slf4j.Logger;
@@ -65,7 +63,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
     @Inject
     protected Events events;
 
-    protected ConfigInterfaces configuration;
+    protected UiBackgroundTaskProperties properties;
 
     protected ExecutorService executorService;
 
@@ -73,8 +71,8 @@ public class WebBackgroundWorker implements BackgroundWorker {
     }
 
     @Inject
-    public void setConfiguration(ConfigInterfaces configuration) {
-        this.configuration = configuration;
+    public void setProperties(UiBackgroundTaskProperties properties) {
+        this.properties = properties;
 
         createThreadPoolExecutor();
     }
@@ -84,10 +82,9 @@ public class WebBackgroundWorker implements BackgroundWorker {
             return;
         }
 
-        WebConfig webConfig = configuration.getConfig(WebConfig.class);
         this.executorService = new ThreadPoolExecutor(
-                webConfig.getMinBackgroundThreadsCount(),
-                webConfig.getMaxActiveBackgroundTasksCount(),
+                properties.getMinThreadsCount(),
+                properties.getMaxActiveTasksCount(),
                 10L, TimeUnit.MINUTES,
                 new LinkedBlockingQueue<>(),
                 new ThreadFactoryBuilder()

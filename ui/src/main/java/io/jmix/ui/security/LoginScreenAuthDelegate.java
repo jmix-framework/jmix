@@ -17,23 +17,16 @@
 package io.jmix.ui.security;
 
 import com.vaadin.spring.annotation.VaadinSessionScope;
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.core.GlobalConfig;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.util.URLEncodeUtils;
-import io.jmix.core.entity.User;
 import io.jmix.core.security.*;
 import io.jmix.ui.App;
 import io.jmix.ui.Connection;
-import io.jmix.ui.WebAuthConfig;
-import io.jmix.ui.WebConfig;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -47,7 +40,7 @@ import static io.jmix.ui.App.*;
  */
 @Component(LoginScreenAuthDelegate.NAME)
 @VaadinSessionScope
-public class LoginScreenAuthDelegate implements InitializingBean {
+public class LoginScreenAuthDelegate {
     public static final String NAME = "cuba_LoginScreenAuthDelegate";
 
     private static final Logger log = LoggerFactory.getLogger(LoginScreenAuthDelegate.class);
@@ -55,16 +48,13 @@ public class LoginScreenAuthDelegate implements InitializingBean {
     protected App app;
     protected Connection connection;
 
-    protected GlobalConfig globalConfig;
-    protected WebConfig webConfig;
-    protected WebAuthConfig webAuthConfig;
+    protected CoreProperties coreProperties;
+    protected UiLoginProperties uiLoginProperties;
 
     /*protected UserManagementService userManagementService;*/
     protected Messages messages;
 
     protected MessageTools messageTools;
-
-    protected ConfigInterfaces configInterfaces;
 
     @Inject
     protected void setApp(App app) {
@@ -77,16 +67,21 @@ public class LoginScreenAuthDelegate implements InitializingBean {
     }
 
     @Inject
-    protected void setConfigInterfaces(ConfigInterfaces configInterfaces) {
-        this.configInterfaces = configInterfaces;
+    public void setCoreProperties(CoreProperties coreProperties) {
+        this.coreProperties = coreProperties;
+    }
+
+    @Inject
+    public void setUiLoginProperties(UiLoginProperties uiLoginProperties) {
+        this.uiLoginProperties = uiLoginProperties;
     }
 
     /*
-    @Inject
-    protected void setUserManagementService(UserManagementService userManagementService) {
-        this.userManagementService = userManagementService;
-    }
-    */
+        @Inject
+        protected void setUserManagementService(UserManagementService userManagementService) {
+            this.userManagementService = userManagementService;
+        }
+        */
     @Inject
     protected void setMessages(Messages messages) {
         this.messages = messages;
@@ -95,13 +90,6 @@ public class LoginScreenAuthDelegate implements InitializingBean {
     @Inject
     protected void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        globalConfig = configInterfaces.getConfig(GlobalConfig.class);
-        webAuthConfig = configInterfaces.getConfig(WebAuthConfig.class);
-        webConfig = configInterfaces.getConfig(WebConfig.class);
     }
 
     /**
@@ -126,7 +114,7 @@ public class LoginScreenAuthDelegate implements InitializingBean {
         if (connection.getSession() != null) {
             Locale loggedInLocale = connection.getSession().getLocale();
 
-            if (globalConfig.getLocaleSelectVisible()) {
+            if (coreProperties.isLocaleSelectVisible()) {
                 app.addCookie(App.COOKIE_LOCALE, loggedInLocale.toLanguageTag());
             }
         }
@@ -156,7 +144,7 @@ public class LoginScreenAuthDelegate implements InitializingBean {
      * @param isLocalesSelectVisible is locales field visible
      */
     public void doRememberMeLogin(boolean isLocalesSelectVisible) {
-        if (!webConfig.getRememberMeEnabled()) {
+        if (!uiLoginProperties.isRememberMeEnabled()) {
             return;
         }
 
@@ -189,7 +177,7 @@ public class LoginScreenAuthDelegate implements InitializingBean {
         String lastLocale = app.getCookieValue(COOKIE_LOCALE);
         if (lastLocale != null
                 && !lastLocale.isEmpty()) {
-            Map<String, Locale> availableLocales = globalConfig.getAvailableLocales();
+            Map<String, Locale> availableLocales = coreProperties.getAvailableLocales();
             for (Locale availableLocale : availableLocales.values()) {
                 if (availableLocale.toLanguageTag().equals(lastLocale)) {
                     locale = availableLocale;
@@ -218,7 +206,7 @@ public class LoginScreenAuthDelegate implements InitializingBean {
      * @param login login to save.
      */
     public void setRememberMeCookies(String login) {
-        if (connection.isAuthenticated() && webConfig.getRememberMeEnabled()) {
+        if (connection.isAuthenticated() && uiLoginProperties.isRememberMeEnabled()) {
             /* todo
             int rememberMeExpiration = globalConfig.getRememberMeExpirationTimeoutSec();
 

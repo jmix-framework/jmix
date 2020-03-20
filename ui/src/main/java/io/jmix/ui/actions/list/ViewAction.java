@@ -16,13 +16,12 @@
 
 package io.jmix.ui.actions.list;
 
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.builders.EditorBuilder;
 import io.jmix.ui.components.Component;
@@ -205,9 +204,8 @@ public class ViewAction<E extends Entity> extends SecuredListAction {
     }
 
     @Inject
-    protected void setConfiguration(ConfigInterfaces configuration) {
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        setShortcut(clientConfig.getTableViewShortcut());
+    protected void setUiProperties(UiProperties properties) {
+        setShortcut(properties.getTableViewShortcut());
     }
 
     @Override

@@ -18,10 +18,8 @@ package io.jmix.ui.sys;
 
 import com.google.common.base.Strings;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
-import io.jmix.core.config.Config;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.Notifications;
@@ -602,11 +600,6 @@ public class UiControllerDependencyInjector {
             ExportDisplay exportDisplay = beanLocator.get(ExportDisplay.NAME);
             exportDisplay.setFrame(frame);
             return exportDisplay;
-
-        } else if (Config.class.isAssignableFrom(type)) {
-            ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-            //noinspection unchecked
-            return configuration.getConfig((Class<? extends Config>) type);
 
         } else if (Logger.class == type && element instanceof Field) {
             // injecting logger

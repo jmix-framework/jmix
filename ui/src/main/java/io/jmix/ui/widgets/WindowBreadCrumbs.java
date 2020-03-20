@@ -24,10 +24,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.AppWorkArea.Mode;
 import io.jmix.ui.components.CloseOriginType;
 import io.jmix.ui.components.Window;
@@ -101,9 +100,7 @@ public class WindowBreadCrumbs extends CssLayout {
         addComponent(logoLayout);
         addComponent(enclosingLayout);
 
-        boolean controlsVisible = beanLocator.get(ConfigInterfaces.class)
-                .getConfig(WebConfig.class)
-                .getShowBreadCrumbs();
+        boolean controlsVisible = beanLocator.get(UiProperties.class).isShowBreadCrumbs();
 
         enclosingLayout.setVisible(controlsVisible);
 

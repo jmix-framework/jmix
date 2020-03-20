@@ -24,12 +24,15 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Screens;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.components.*;
-import io.jmix.ui.components.data.*;
+import io.jmix.ui.components.data.DataUnit;
+import io.jmix.ui.components.data.HasValueSource;
+import io.jmix.ui.components.data.Options;
+import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
 import io.jmix.ui.components.data.meta.EntityOptions;
 import io.jmix.ui.components.data.meta.EntityValueSource;
@@ -56,7 +59,7 @@ public class EditorBuilderProcessor {
     @Inject
     protected WindowConfig windowConfig;
     @Inject
-    protected ClientConfig clientConfig;
+    protected UiProperties properties;
 
     @SuppressWarnings("unchecked")
     public  <E extends Entity, S extends Screen> S buildEditor(EditorBuilder<E> builder) {
@@ -99,7 +102,7 @@ public class EditorBuilderProcessor {
                         boolean addsFirst;
 
                         if (!(ct instanceof Nested)) {
-                            addsFirst = clientConfig.getCreateActionAddsFirst();
+                            addsFirst = properties.isCreateActionAddsFirst();
                             if (builder.getAddFirst() != null) {
                                 addsFirst = builder.getAddFirst();
                             }

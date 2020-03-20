@@ -18,7 +18,7 @@ package io.jmix.ui.navigation;
 
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.UiProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public class WebHistory implements History {
     private static final Logger log = LoggerFactory.getLogger(WebHistory.class);
 
     @Inject
-    protected WebConfig webConfig;
+    protected UiProperties uiProperties;
 
     protected AppUI ui;
 
@@ -183,10 +183,10 @@ public class WebHistory implements History {
     }
 
     protected boolean checkNotNativeUrlHandlingMode() {
-        boolean nativeMode = UrlHandlingMode.URL_ROUTES == webConfig.getUrlHandlingMode();
+        boolean nativeMode = UrlHandlingMode.URL_ROUTES == uiProperties.getUrlHandlingMode();
 
         if (!nativeMode) {
-            log.debug("History bean invocations are ignored for {} URL handling mode", webConfig.getUrlHandlingMode());
+            log.debug("History bean invocations are ignored for {} URL handling mode", uiProperties.getUrlHandlingMode());
         }
 
         return !nativeMode;

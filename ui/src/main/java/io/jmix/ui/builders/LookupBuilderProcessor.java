@@ -23,8 +23,8 @@ import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Screens;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.components.HasValue;
 import io.jmix.ui.components.ListComponent;
@@ -61,7 +61,7 @@ public class LookupBuilderProcessor {
     @Inject
     protected WindowConfig windowConfig;
     @Inject
-    protected ClientConfig clientConfig;
+    protected UiProperties properties;
     @Inject
     protected ExtendedEntities extendedEntities;
     @Inject
@@ -189,7 +189,7 @@ public class LookupBuilderProcessor {
 
         Entity newValue = selectedItems.iterator().next();
 
-        FetchPlan fetchPlanForField = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() && metadataTools.isPersistent(newValue.getClass()) ?
+        FetchPlan fetchPlanForField = properties.isReloadUnfetchedAttributesFromLookupScreens() && metadataTools.isPersistent(newValue.getClass()) ?
                 getFetchPlanForField(field) :
                 null;
         if (fetchPlanForField != null && !entityStates.isLoadedWithFetchPlan(newValue, fetchPlanForField)) {
@@ -254,7 +254,7 @@ public class LookupBuilderProcessor {
         DataContext dataContext = UiControllerUtils.getScreenData(builder.getOrigin()).getDataContext();
 
         List<E> mergedItems = new ArrayList<>(selectedItems.size());
-        FetchPlan viewForCollectionContainer = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() &&
+        FetchPlan viewForCollectionContainer = properties.isReloadUnfetchedAttributesFromLookupScreens() &&
                 collectionDc.getEntityMetaClass() != null && metadataTools.isPersistent(collectionDc.getEntityMetaClass()) ?
                 getFetchPlanForCollectionContainer(collectionDc, initializeMasterReference, inverseMetaProperty) :
                 null;

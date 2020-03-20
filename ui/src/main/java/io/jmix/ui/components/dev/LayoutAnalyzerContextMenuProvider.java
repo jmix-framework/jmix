@@ -18,12 +18,11 @@ package io.jmix.ui.components.dev;
 
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.MenuBar;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.app.core.dev.LayoutAnalyzer;
 import io.jmix.ui.app.core.dev.LayoutAnalyzerScreen;
 import io.jmix.ui.app.core.dev.LayoutTip;
@@ -47,11 +46,10 @@ public class LayoutAnalyzerContextMenuProvider {
     @Inject
     protected Messages messages;
     @Inject
-    protected ConfigInterfaces configInterfaces;
+    protected UiProperties properties;
 
     public void initContextMenu(Screen screen, io.jmix.ui.components.Component contextMenuTarget) {
-        ClientConfig clientConfig = configInterfaces.getConfig(ClientConfig.class);
-        if (clientConfig.getLayoutAnalyzerEnabled()) {
+        if (properties.isLayoutAnalyzerEnabled()) {
             ContextMenu contextMenu = new ContextMenu(contextMenuTarget.unwrap(AbstractComponent.class), true);
             MenuBar.MenuItem menuItem = contextMenu.addItem(messages.getMessage("actions.analyzeLayout"), c -> {
                 LayoutAnalyzer analyzer = new LayoutAnalyzer();

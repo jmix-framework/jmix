@@ -16,8 +16,7 @@
 
 package io.jmix.ui.executors.impl;
 
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.executors.UiBackgroundTaskProperties;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -27,19 +26,17 @@ import java.util.concurrent.TimeUnit;
 public class WebTasksWatchDog extends TasksWatchDog {
 
     @Inject
-    protected ConfigInterfaces configuration;
+    protected UiBackgroundTaskProperties properties;
 
     @Override
     protected ExecutionStatus getExecutionStatus(long actualTimeMs, TaskHandlerImpl taskHandler) {
-        WebConfig webConfig = configuration.getConfig(WebConfig.class);
-
         long timeout = taskHandler.getTimeoutMs();
         if (timeout > 0 && (actualTimeMs - taskHandler.getStartTimeStamp()) > timeout) {
             return ExecutionStatus.TIMEOUT_EXCEEDED;
         }
 
         // kill tasks, which do not update status for latency milliseconds
-        long latencyMs = TimeUnit.SECONDS.toMillis(webConfig.getClientBackgroundTasksLatencySeconds());
+        long latencyMs = TimeUnit.SECONDS.toMillis(properties.getTimeoutSeconds());
         if (timeout > 0 && (actualTimeMs - taskHandler.getStartTimeStamp()) > timeout + latencyMs) {
             return ExecutionStatus.SHOULD_BE_KILLED;
         }

@@ -21,17 +21,11 @@ import com.vaadin.ui.*;
 import io.jmix.core.*;
 import io.jmix.core.security.Security;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.ui.App;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.ClientConfig;
-import io.jmix.ui.Connection;
+import io.jmix.ui.*;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.Dialogs;
 import io.jmix.ui.Dialogs.MessageType;
-import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.WindowConfig;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -74,7 +68,7 @@ public class ExceptionDialog extends JmixWindow {
 
     protected WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
 
-    protected ClientConfig clientConfig = AppBeans.get(ConfigInterfaces.class).getConfig(ClientConfig.class);
+    protected UiProperties properties = AppBeans.get(UiProperties.class);
 
     protected UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
 
@@ -89,7 +83,7 @@ public class ExceptionDialog extends JmixWindow {
     public ExceptionDialog(Throwable throwable, @Nullable String caption, @Nullable String message) {
         AppUI ui = AppUI.getCurrent();
 
-        String closeShortcut = clientConfig.getCloseShortcut();
+        String closeShortcut = properties.getCloseShortcut();
         KeyCombination closeCombination = KeyCombination.create(closeShortcut);
 
         com.vaadin.event.ShortcutAction closeShortcutAction = new com.vaadin.event.ShortcutAction(
@@ -181,7 +175,7 @@ public class ExceptionDialog extends JmixWindow {
         }*/
 
         if (userSessionSource.getUserSession() != null) {
-            if (!StringUtils.isBlank(clientConfig.getSupportEmail())) {
+            if (!StringUtils.isBlank(properties.getSupportEmail())) {
                 Button reportButton = new JmixButton(messages.getMessage("exceptionDialog.reportBtn"));
                 reportButton.addClickListener(event -> {
                     sendSupportEmail(text, stackTrace);

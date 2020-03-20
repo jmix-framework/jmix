@@ -17,14 +17,12 @@
 package io.jmix.ui.components.impl;
 
 import com.vaadin.server.Resource;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.ui.App;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.SearchPickerField;
 import io.jmix.ui.components.SecuredActionsHolder;
@@ -40,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -101,9 +98,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME, ConfigInterfaces.class);
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        setPageLength(clientConfig.getLookupFieldPageLength());
+        setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
     }
 
     @Override

@@ -16,15 +16,14 @@
 
 package io.jmix.ui.components.impl;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
@@ -86,7 +85,7 @@ public class WebTokenList<V extends Entity>
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected WindowConfig windowConfig;
-    protected ClientConfig clientConfig;
+    protected UiProperties properties;
     protected ScreenBuilders screenBuilders;
     protected Icons icons;
     protected EntityStates entityStates;
@@ -138,8 +137,8 @@ public class WebTokenList<V extends Entity>
     }
 
     @Inject
-    public void setWindowConfig(ClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
+    public void setUiProperties(UiProperties properties) {
+        this.properties = properties;
     }
 
     @Inject
@@ -496,7 +495,7 @@ public class WebTokenList<V extends Entity>
     protected void handleSelection(Collection<V> selected) {
         Collection<V> reloadedSelected = new ArrayList<>();
         //check that selected items are loaded with the correct view and reload selected items if not all the required fields are loaded
-        FetchPlan viewForField = clientConfig.getReloadUnfetchedAttributesFromLookupScreens() ?
+        FetchPlan viewForField = properties.isReloadUnfetchedAttributesFromLookupScreens() ?
                 getViewForField() :
                 null;
         if (viewForField != null) {

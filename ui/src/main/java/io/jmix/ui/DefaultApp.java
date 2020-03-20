@@ -84,14 +84,12 @@ public class DefaultApp extends App {
 
                 currentUi.setUserSession(connection.getSession());
 
-                WebConfig webConfig = configInterfaces.getConfig(WebConfig.class);
-
                 getAppUIs()
                         .stream()
                         .filter(ui ->
                                 ui.hasAuthenticatedSession()
                                         && (Objects.equals(ui.getUserSession(), oldUserSession)
-                                                || webConfig.getForceRefreshAuthenticatedTabs()))
+                                                || uiProperties.isForceRefreshAuthenticatedTabs()))
                         .forEach(ui -> ui.setUserSession(userSession));
             }
 
@@ -237,12 +235,11 @@ public class DefaultApp extends App {
 
         UserSession appUserSession = userSessionSource.getUserSession();
 
-        WebConfig webConfig = configInterfaces.getConfig(WebConfig.class);
         for (AppUI ui : getAppUIs()) {
             if (currentUi != ui
                     && Objects.equals(appUserSession, ui.getUserSession())
                     || (ui.hasAuthenticatedSession()
-                            && webConfig.getForceRefreshAuthenticatedTabs())) {
+                            && uiProperties.isForceRefreshAuthenticatedTabs())) {
                 ui.accessSynchronously(() ->
                         createTopLevelWindow(ui));
             }
@@ -250,16 +247,14 @@ public class DefaultApp extends App {
     }
 
     protected void preventSessionFixation(Connection connection, UserSession userSession) {
-        WebConfig webConfig = configInterfaces.getConfig(WebConfig.class);
         if (connection.isAuthenticated()
                 // && !isLoggedInWithExternalAuth(userSession) todo external authentication
-                && webConfig.getUseSessionFixationProtection()
                 && VaadinService.getCurrentRequest() != null) {
 
             VaadinService.reinitializeSession(VaadinService.getCurrentRequest());
 
             WrappedSession session = VaadinSession.getCurrent().getSession();
-            int timeout = webConfig.getHttpSessionExpirationTimeoutSec();
+            int timeout = uiProperties.getHttpSessionExpirationTimeoutSec();
             session.setMaxInactiveInterval(timeout);
 
             HttpSession httpSession = session instanceof WrappedHttpSession ?
@@ -271,13 +266,11 @@ public class DefaultApp extends App {
 
     @Override
     protected String routeTopLevelWindowId() {
-        WebConfig webConfig = configInterfaces.getConfig(WebConfig.class);
-
         if (connection.isAuthenticated()) {
-            return webConfig.getMainScreenId();
+            return uiProperties.getMainScreenId();
         } else {
-            String loginScreenId = webConfig.getLoginScreenId();
-            String initialScreenId = webConfig.getInitialScreenId();
+            String loginScreenId = uiProperties.getLoginScreenId();
+            String initialScreenId = uiProperties.getInitialScreenId();
 
             if (StringUtils.isEmpty(initialScreenId)) {
                 return loginScreenId;

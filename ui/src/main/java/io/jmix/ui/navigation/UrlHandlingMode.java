@@ -16,7 +16,6 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.ui.WebConfig;
 import io.jmix.ui.widgets.CubaHistoryControl;
 
 /**
@@ -26,14 +25,10 @@ public enum UrlHandlingMode {
 
     /**
      * URL changes are not handled at all.
-     * <p>
-     * Replacement for disabled {@link WebConfig#getAllowHandleBrowserHistoryBack()}.
      */
     NONE,
     /**
      * {@link CubaHistoryControl} is used to handle changes.
-     * <p>
-     * Replacement for enabled {@link WebConfig#getAllowHandleBrowserHistoryBack()}.
      */
     BACK_ONLY,
     /**

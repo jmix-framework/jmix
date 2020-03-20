@@ -22,6 +22,7 @@ import io.jmix.core.annotation.JmixProperty;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,6 +32,7 @@ import java.util.Collections;
 
 @Configuration
 @ComponentScan
+@ConfigurationPropertiesScan
 @JmixModule(dependsOn = JmixCoreConfiguration.class, properties = {
         @JmixProperty(name = "jmix.themeConfig", value = "io/jmix/ui/theme/halo-theme.properties"),
 })

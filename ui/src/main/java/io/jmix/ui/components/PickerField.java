@@ -16,14 +16,16 @@
 package io.jmix.ui.components;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.*;
+import io.jmix.core.AppBeans;
+import io.jmix.core.DevelopmentException;
+import io.jmix.core.Metadata;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
@@ -220,7 +222,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
 
         protected boolean editable = true;
 
-        protected ClientConfig clientConfig = AppBeans.<ConfigInterfaces>get(ConfigInterfaces.NAME).getConfig(ClientConfig.class);
+        protected UiProperties properties = AppBeans.get(UiProperties.class);
 
         public StandardAction(String id, PickerField pickerField) {
             super(id);
@@ -304,7 +306,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
             caption = "";
             icon = AppBeans.get(Icons.class)
                     .get(CubaIcon.PICKERFIELD_LOOKUP);
-            setShortcut(clientConfig.getPickerLookupShortcut());
+            setShortcut(properties.getPickerLookupShortcut());
         }
 
         public void setAfterLookupCloseHandler(AfterLookupCloseHandler afterLookupCloseHandler) {
@@ -543,7 +545,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
             caption = "";
             icon = AppBeans.get(Icons.class)
                     .get(CubaIcon.PICKERFIELD_CLEAR);
-            setShortcut(clientConfig.getPickerClearShortcut());
+            setShortcut(properties.getPickerClearShortcut());
         }
 
         @SuppressWarnings("unchecked")
@@ -624,7 +626,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
             caption = "";
             icon = AppBeans.get(Icons.class)
                     .get(CubaIcon.PICKERFIELD_OPEN);
-            setShortcut(clientConfig.getPickerOpenShortcut());
+            setShortcut(properties.getPickerOpenShortcut());
         }
 
         public String getEditScreen() {

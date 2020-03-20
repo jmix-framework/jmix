@@ -88,6 +88,8 @@ public abstract class App {
     protected ExceptionHandlers exceptionHandlers;
 
     @Inject
+    protected CoreProperties coreProperties;
+    @Inject
     protected WindowConfig windowConfig;
     @Inject
     protected ThemeConstantsRepository themeConstantsRepository;
@@ -103,7 +105,7 @@ public abstract class App {
     @Inject
     protected BeanLocator beanLocator;
     @Inject
-    protected ConfigInterfaces configInterfaces;
+    protected UiProperties uiProperties;
 
     protected AppCookies cookies;
 
@@ -118,11 +120,8 @@ public abstract class App {
     }
 
     protected ThemeConstants loadTheme() {
-        WebConfig webConfig = configInterfaces.getConfig(WebConfig.class);
-        GlobalConfig globalConfig = configInterfaces.getConfig(GlobalConfig.class);
-
-        String appWindowTheme = webConfig.getAppWindowTheme();
-        String userAppTheme = cookies.getCookieValue(APP_THEME_COOKIE_PREFIX + globalConfig.getWebContextName());
+        String appWindowTheme = uiProperties.getAppWindowTheme();
+        String userAppTheme = cookies.getCookieValue(APP_THEME_COOKIE_PREFIX + coreProperties.getWebContextName());
         if (userAppTheme != null) {
             if (!Objects.equals(userAppTheme, appWindowTheme)) {
                 // check theme support
@@ -215,9 +214,7 @@ public abstract class App {
 
         log.debug("Initializing application");
 
-        WebConfig webConfig = configInterfaces.getConfig(WebConfig.class);
-
-        appLog = new AppLog(webConfig.getAppLogMaxItemsCount(), beanLocator.get(TimeSource.NAME));
+        appLog = new AppLog(10, beanLocator.get(TimeSource.NAME));
 
         connection = createConnection();
         exceptionHandlers = new ExceptionHandlers(this, beanLocator);
@@ -231,11 +228,9 @@ public abstract class App {
     }
 
     protected Locale resolveLocale(@Nullable Locale requestLocale) {
-        GlobalConfig globalConfig = configInterfaces.getConfig(GlobalConfig.class);
+        Map<String, Locale> locales = coreProperties.getAvailableLocales();
 
-        Map<String, Locale> locales = globalConfig.getAvailableLocales();
-
-        if (globalConfig.getLocaleSelectVisible()) {
+        if (coreProperties.isLocaleSelectVisible()) {
             String lastLocale = getCookieValue(COOKIE_LOCALE);
             if (lastLocale != null) {
                 for (Locale locale : locales.values()) {
@@ -454,9 +449,7 @@ public abstract class App {
     }
 
     public void setUserAppTheme(String themeName) {
-        GlobalConfig globalConfig = configInterfaces.getConfig(GlobalConfig.class);
-
-        addCookie(APP_THEME_COOKIE_PREFIX + globalConfig.getWebContextName(), themeName);
+        addCookie(APP_THEME_COOKIE_PREFIX + coreProperties.getWebContextName(), themeName);
     }
 
     public void addBackgroundTask(Future task) {
@@ -476,14 +469,13 @@ public abstract class App {
      */
     public void removeAllWindows() {
         UserSession currentSession = AppUI.getCurrent().getUserSession();
-        WebConfig webConfig = configInterfaces.getConfig(WebConfig.class);
 
         List<AppUI> authenticatedUIs = getAppUIs()
                 .stream()
                 .filter(ui ->
                         ui.hasAuthenticatedSession()
                                 && (Objects.equals(ui.getUserSession(), currentSession)
-                                || webConfig.getForceRefreshAuthenticatedTabs()))
+                                || uiProperties.isForceRefreshAuthenticatedTabs()))
                 .collect(Collectors.toList());
 
         removeAllWindows(authenticatedUIs);

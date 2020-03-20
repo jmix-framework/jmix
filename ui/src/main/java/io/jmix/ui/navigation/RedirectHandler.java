@@ -19,7 +19,7 @@ package io.jmix.ui.navigation;
 import io.jmix.core.Events;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
 import io.jmix.ui.components.RootWindow;
@@ -49,7 +49,7 @@ public class RedirectHandler {
     protected Events events;
 
     @Inject
-    protected WebConfig webConfig;
+    protected UiProperties uiProperties;
 
     @Inject
     protected WindowConfig windowConfig;
@@ -63,7 +63,7 @@ public class RedirectHandler {
     }
 
     public void schedule(NavigationState redirect) {
-        UrlHandlingMode urlHandlingMode = webConfig.getUrlHandlingMode();
+        UrlHandlingMode urlHandlingMode = uiProperties.getUrlHandlingMode();
         if (UrlHandlingMode.URL_ROUTES != urlHandlingMode) {
             log.debug("RedirectHandler is disabled for {} URL handling mode", urlHandlingMode);
             return;
@@ -101,7 +101,7 @@ public class RedirectHandler {
     }
 
     public void redirect() {
-        UrlHandlingMode urlHandlingMode = webConfig.getUrlHandlingMode();
+        UrlHandlingMode urlHandlingMode = uiProperties.getUrlHandlingMode();
         if (UrlHandlingMode.URL_ROUTES != urlHandlingMode) {
             log.debug("RedirectHandler is disabled for {} URL handling mode", urlHandlingMode);
             return;

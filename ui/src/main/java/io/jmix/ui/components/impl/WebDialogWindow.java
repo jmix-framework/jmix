@@ -21,10 +21,9 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Component;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.*;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.screen.StandardCloseAction;
@@ -75,9 +74,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     protected void setupDialogShortcuts() {
-        ClientConfig clientConfig = getClientConfig();
-
-        String closeShortcut = clientConfig.getCloseShortcut();
+        String closeShortcut = getUiProperties().getCloseShortcut();
         KeyCombination closeCombination = KeyCombination.create(closeShortcut);
 
         ShortcutListenerDelegate exitAction = new ShortcutListenerDelegate(
@@ -103,9 +100,8 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
         });
     }
 
-    protected ClientConfig getClientConfig() {
-        ConfigInterfaces configuration = beanLocator.get(ConfigInterfaces.NAME);
-        return configuration.getConfig(ClientConfig.class);
+    protected UiProperties getUiProperties() {
+        return beanLocator.get(UiProperties.class);
     }
 
     protected void onCloseButtonClick(JmixWindow.PreCloseEvent preCloseEvent) {
@@ -344,12 +340,12 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
 
             List<Action> actions = new ArrayList<>(3);
 
-            ClientConfig clientConfig = getClientConfig();
-            if (clientConfig.getManualScreenSettingsSaving()) {
+            UiProperties properties = getUiProperties();
+            if (properties.isManualScreenSettingsSaving()) {
                 actions.add(saveSettingsAction);
                 actions.add(restoreToDefaultsAction);
             }
-            if (clientConfig.getLayoutAnalyzerEnabled()) {
+            if (properties.isLayoutAnalyzerEnabled()) {
                 actions.add(analyzeAction);
             }
 

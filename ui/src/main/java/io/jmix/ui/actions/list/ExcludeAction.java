@@ -16,13 +16,12 @@
 
 package io.jmix.ui.actions.list;
 
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.ClientConfig;
 import io.jmix.ui.RemoveOperation;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.components.Component;
@@ -165,9 +164,8 @@ public class ExcludeAction<E extends Entity> extends SecuredListAction implement
     }
 
     @Inject
-    protected void setConfiguration(ConfigInterfaces configuration) {
-        ClientConfig clientConfig = configuration.getConfig(ClientConfig.class);
-        setShortcut(clientConfig.getTableRemoveShortcut());
+    protected void setUiProperties(UiProperties properties) {
+        setShortcut(properties.getTableRemoveShortcut());
     }
 
     @Override

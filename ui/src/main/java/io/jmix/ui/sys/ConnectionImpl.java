@@ -21,7 +21,10 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WebBrowser;
 import com.vaadin.spring.annotation.VaadinSessionScope;
-import io.jmix.core.*;
+import io.jmix.core.ClientType;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.Events;
+import io.jmix.core.Messages;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.entity.User;
 import io.jmix.core.security.*;
@@ -58,7 +61,7 @@ public class ConnectionImpl implements Connection {
     @Inject
     protected BackgroundWorker backgroundWorker;
     @Inject
-    protected ConfigInterfaces configInterfaces;
+    protected CoreProperties properties;
 
     // initial or used on login IP of the user
     protected String userRemoteAddress = null;
@@ -119,13 +122,11 @@ public class ConnectionImpl implements Connection {
         // timezone info is passed only on VaadinSession creation
         WebBrowser webBrowser = getWebBrowserDetails();
 
-        GlobalConfig globalConfig = configInterfaces.getConfig(GlobalConfig.class);
-
         //noinspection UnnecessaryLocalVariable
         String serverInfo = String.format("Web (%s:%s/%s) %s",
-                globalConfig.getWebHostName(),
-                globalConfig.getWebPort(),
-                globalConfig.getWebContextName(),
+                properties.getWebHostName(),
+                properties.getWebPort(),
+                properties.getWebContextName(),
                 webBrowser.getBrowserApplication());
 
         return serverInfo;

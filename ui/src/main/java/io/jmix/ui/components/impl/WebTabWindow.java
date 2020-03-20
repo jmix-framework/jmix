@@ -20,8 +20,7 @@ import com.google.common.base.Strings;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.ui.WebConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.TabWindow;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.widgets.JmixSingleModeContainer;
@@ -171,10 +170,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
     public String formatTabCaption() {
         String s = formatTabDescription();
 
-        WebConfig webConfig = beanLocator.get(ConfigInterfaces.class)
-                .getConfig(WebConfig.class);
-
-        int maxLength = webConfig.getMainTabCaptionLength();
+        int maxLength = beanLocator.get(UiProperties.class).getMainTabCaptionLength();
         if (s.length() > maxLength) {
             return s.substring(0, maxLength) + "...";
         } else {

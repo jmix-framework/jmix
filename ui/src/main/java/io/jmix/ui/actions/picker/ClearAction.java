@@ -16,11 +16,10 @@
 
 package io.jmix.ui.actions.picker;
 
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.components.Component;
@@ -52,7 +51,7 @@ public class ClearAction extends BaseAction implements PickerField.PickerFieldAc
     protected PickerField pickerField;
     protected Icons icons;
     protected Messages messages;
-    protected ConfigInterfaces configuration;
+    protected UiProperties properties;
 
     protected boolean editable = true;
 
@@ -65,8 +64,8 @@ public class ClearAction extends BaseAction implements PickerField.PickerFieldAc
     }
 
     @Inject
-    protected void setConfiguration(ConfigInterfaces configuration) {
-        this.configuration = configuration;
+    protected void setUiProperties(UiProperties properties) {
+        this.properties = properties;
     }
 
     @Inject
@@ -76,7 +75,7 @@ public class ClearAction extends BaseAction implements PickerField.PickerFieldAc
 
     @Override
     public void afterPropertiesSet() {
-        setShortcut(configuration.getConfig(ClientConfig.class).getPickerClearShortcut());
+        setShortcut(properties.getPickerClearShortcut());
         setDescription(messages.getMessage("pickerField.action.clear.tooltip")
                 + " (" + getShortcutCombination().format() + ")");
     }

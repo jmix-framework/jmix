@@ -17,10 +17,9 @@
 package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
-import io.jmix.core.ConfigInterfaces;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.components.Component;
@@ -53,11 +52,10 @@ public class StandardLookup<T extends Entity> extends Screen implements LookupSc
     protected void initActions(@SuppressWarnings("unused") InitEvent event) {
         Window window = getWindow();
 
-        ConfigInterfaces configuration = getBeanLocator().get(ConfigInterfaces.NAME);
         Messages messages = getBeanLocator().get(Messages.class);
         Icons icons = getBeanLocator().get(Icons.NAME);
 
-        String commitShortcut = configuration.getConfig(ClientConfig.class).getCommitShortcut();
+        String commitShortcut = getBeanLocator().get(UiProperties.class).getCommitShortcut();
 
         Action commitAction = new BaseAction(LOOKUP_SELECT_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Select"))

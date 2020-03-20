@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
 
 public class QueryFilter extends FilterParser implements Serializable {
 
-    protected boolean enableSessionParams = AppBeans.get(ConfigInterfaces.class)
-            .getConfig(GlobalConfig.class).getEnableSessionParamsInQueryFilter();
+    protected static final boolean ENABLE_SESSION_PARAMS = true;
 
     public QueryFilter(Condition condition) {
         super(condition);
@@ -112,7 +111,7 @@ public class QueryFilter extends FilterParser implements Serializable {
 
         if (declaredParams.isEmpty())
             return true;
-        if (enableSessionParams) {
+        if (ENABLE_SESSION_PARAMS) {
             Predicate<ParameterInfo> paramHasValue = paramInfo -> params.contains(paramInfo.getName());
             if (condition.getConditions().isEmpty()) {
                 // for leaf condition all parameters must have values

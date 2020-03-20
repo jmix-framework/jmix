@@ -17,25 +17,26 @@
 package io.jmix.ui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import io.jmix.core.*;
+import io.jmix.core.BeanLocator;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.Scripting;
 import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.compatibility.AppContext;
-import io.jmix.core.config.Config;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
-import io.jmix.ui.ClientConfig;
+import io.jmix.ui.Actions;
+import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.UiComponents;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.actions.ItemTrackingAction;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.Component.Alignment;
-import io.jmix.ui.components.data.value.ContainerValueSource;
 import io.jmix.ui.components.data.HasValueSource;
-import io.jmix.ui.Actions;
-import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.UiComponents;
+import io.jmix.ui.components.data.value.ContainerValueSource;
 import io.jmix.ui.components.validators.*;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.model.CollectionContainer;
@@ -61,7 +62,6 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -72,22 +72,23 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public abstract class AbstractComponentLoader<T extends Component> implements ComponentLoader<T> {
 
-    protected static final Map<String, Function<ClientConfig, String>> SHORTCUT_ALIASES =
-            ImmutableMap.<String, Function<ClientConfig, String>>builder()
-                    .put("TABLE_EDIT_SHORTCUT", ClientConfig::getTableEditShortcut)
-                    .put("TABLE_INSERT_SHORTCUT", ClientConfig::getTableInsertShortcut)
-                    .put("TABLE_ADD_SHORTCUT", ClientConfig::getTableAddShortcut)
-                    .put("TABLE_REMOVE_SHORTCUT", ClientConfig::getTableRemoveShortcut)
-                    .put("COMMIT_SHORTCUT", ClientConfig::getCommitShortcut)
-                    .put("CLOSE_SHORTCUT", ClientConfig::getCloseShortcut)
-                    .put("FILTER_APPLY_SHORTCUT", ClientConfig::getFilterApplyShortcut)
-                    .put("FILTER_SELECT_SHORTCUT", ClientConfig::getFilterSelectShortcut)
-                    .put("NEXT_TAB_SHORTCUT", ClientConfig::getNextTabShortcut)
-                    .put("PREVIOUS_TAB_SHORTCUT", ClientConfig::getPreviousTabShortcut)
-                    .put("PICKER_LOOKUP_SHORTCUT", ClientConfig::getPickerLookupShortcut)
-                    .put("PICKER_OPEN_SHORTCUT", ClientConfig::getPickerOpenShortcut)
-                    .put("PICKER_CLEAR_SHORTCUT", ClientConfig::getPickerClearShortcut)
-                    .build();
+    // todo shortcuts https://github.com/jmix-framework/jmix/issues/312
+//    protected static final Map<String, Function<UiProperties, String>> SHORTCUT_ALIASES =
+//            ImmutableMap.<String, Function<ClientConfig, String>>builder()
+//                    .put("TABLE_EDIT_SHORTCUT", UiProperties::getTableEditShortcut)
+//                    .put("TABLE_INSERT_SHORTCUT", UiProperties::getTableInsertShortcut)
+//                    .put("TABLE_ADD_SHORTCUT", UiProperties::getTableAddShortcut)
+//                    .put("TABLE_REMOVE_SHORTCUT", UiProperties::getTableRemoveShortcut)
+//                    .put("COMMIT_SHORTCUT", UiProperties::getCommitShortcut)
+//                    .put("CLOSE_SHORTCUT", UiProperties::getCloseShortcut)
+//                    .put("FILTER_APPLY_SHORTCUT", UiProperties::getFilterApplyShortcut) // moved to jmix-cuba
+//                    .put("FILTER_SELECT_SHORTCUT", UiProperties::getFilterSelectShortcut) // moved to jmix-cuba
+//                    .put("NEXT_TAB_SHORTCUT", UiProperties::getNextTabShortcut)
+//                    .put("PREVIOUS_TAB_SHORTCUT", UiProperties::getPreviousTabShortcut)
+//                    .put("PICKER_LOOKUP_SHORTCUT", UiProperties::getPickerLookupShortcut)
+//                    .put("PICKER_OPEN_SHORTCUT", UiProperties::getPickerOpenShortcut)
+//                    .put("PICKER_CLEAR_SHORTCUT", UiProperties::getPickerClearShortcut)
+//                    .build();
 
     protected Context context;
 
@@ -197,8 +198,8 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return beanLocator.get(Scripting.NAME);
     }
 
-    protected ConfigInterfaces getConfiguration() {
-        return beanLocator.get(ConfigInterfaces.NAME);
+    protected UiProperties getProperties() {
+        return beanLocator.get(UiProperties.class);
     }
 
     protected ThemeConstants getTheme() {
@@ -775,31 +776,36 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
                 throw new GuiDevelopmentException(message, context);
             }
 
-            String fqnConfigName = splittedShortcut[0].substring(2);
+            String classFqn = splittedShortcut[0].substring(2);
             String methodName = splittedShortcut[1].substring(0, splittedShortcut[1].length() - 1);
 
-            //noinspection unchecked
-            Class<Config> configClass = (Class<Config>) getScripting().loadClass(fqnConfigName);
-            if (configClass != null) {
-                Config config = getConfiguration().getConfig(configClass);
+            Class beanClass;
+            try {
+                beanClass = ReflectionHelper.loadClass(classFqn);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalStateException(e);
+            }
+            if (beanClass != null) {
+                //noinspection unchecked
+                Object bean = beanLocator.get(beanClass);
 
                 try {
-                    String shortcutValue = (String) MethodUtils.invokeMethod(config, methodName);
+                    String shortcutValue = (String) MethodUtils.invokeMethod(bean, methodName);
                     if (StringUtils.isNotEmpty(shortcutValue)) {
                         return shortcutValue;
                     }
                 } catch (NoSuchMethodException e) {
                     String message = String.format("An error occurred while loading shortcut: " +
-                            "can't find method \"%s\" in \"%s\"", methodName, fqnConfigName);
+                            "can't find method \"%s\" in \"%s\"", methodName, classFqn);
                     throw new GuiDevelopmentException(message, context);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     String message = String.format("An error occurred while loading shortcut: " +
-                            "can't invoke method \"%s\" in \"%s\"", methodName, fqnConfigName);
+                            "can't invoke method \"%s\" in \"%s\"", methodName, classFqn);
                     throw new GuiDevelopmentException(message, context);
                 }
             } else {
                 String message = String.format("An error occurred while loading shortcut: " +
-                        "can't find config interface \"%s\"", fqnConfigName);
+                        "can't find config interface \"%s\"", classFqn);
                 throw new GuiDevelopmentException(message, context);
             }
         }
@@ -807,17 +813,17 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected String loadShortcutFromAlias(String shortcut) {
-        if (shortcut.endsWith("_SHORTCUT}")) {
-            String alias = shortcut.substring(2, shortcut.length() - 1);
-            if (SHORTCUT_ALIASES.containsKey(alias)) {
-                ClientConfig clientConfig = getConfiguration().getConfig(ClientConfig.class);
-                return SHORTCUT_ALIASES.get(alias).apply(clientConfig);
-            } else {
-                String message = String.format("An error occurred while loading shortcut. " +
-                        "Can't find shortcut for alias \"%s\"", alias);
-                throw new GuiDevelopmentException(message, context);
-            }
-        }
+        // todo shortcuts https://github.com/jmix-framework/jmix/issues/312
+//        if (shortcut.endsWith("_SHORTCUT}")) {
+//            String alias = shortcut.substring(2, shortcut.length() - 1);
+//            if (SHORTCUT_ALIASES.containsKey(alias)) {
+//                return SHORTCUT_ALIASES.get(alias).apply(getProperties());
+//            } else {
+//                String message = String.format("An error occurred while loading shortcut. " +
+//                        "Can't find shortcut for alias \"%s\"", alias);
+//                throw new GuiDevelopmentException(message, context);
+//            }
+//        }
         return null;
     }
 

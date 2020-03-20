@@ -23,6 +23,7 @@ import io.jmix.core.entity.*;
 import io.jmix.core.event.AppContextInitializedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.security.SecurityProperties;
 import io.jmix.security.SecurityTokenException;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,11 +48,11 @@ public class SecurityTokenManager {
     private static final Logger log = LoggerFactory.getLogger(SecurityTokenManager.class);
 
     @Inject
-    protected ServerConfig config;
+    protected SecurityProperties properties;
     @Inject
     protected Metadata metadata;
     @Inject
-    private MetadataTools metadataTools;
+    protected MetadataTools metadataTools;
 
     protected static final String ENTITY_NAME_KEY = "__entityName";
     protected static final String ENTITY_ID_KEY = "__entityId";
@@ -152,7 +153,7 @@ public class SecurityTokenManager {
     protected Cipher getCipher(int mode) {
         try {
             Cipher cipher = Cipher.getInstance("AES");
-            byte[] encryptionKey = rightPad(substring(config.getKeyForSecurityTokenEncryption(), 0, 16), 16)
+            byte[] encryptionKey = rightPad(substring(properties.getKeyForSecurityTokenEncryption(), 0, 16), 16)
                     .getBytes(StandardCharsets.UTF_8);
 
             SecretKeySpec sKeySpec = new SecretKeySpec(encryptionKey, "AES");
@@ -234,7 +235,7 @@ public class SecurityTokenManager {
 
     @EventListener(AppContextInitializedEvent.class)
     protected void applicationInitialized() {
-        if ("CUBA.Platform".equals(config.getKeyForSecurityTokenEncryption())) {
+        if ("CUBA.Platform".equals(properties.getKeyForSecurityTokenEncryption())) {
             log.warn("\nWARNING:\n" +
                     "=================================================================\n" +
                     "'cuba.keyForSecurityTokenEncryption' app property is set to\n " +

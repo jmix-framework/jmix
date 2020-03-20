@@ -19,6 +19,7 @@ package io.jmix.security;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.security.impl.StandardUserDetailsService;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Conditional;
@@ -35,6 +36,7 @@ import javax.persistence.PersistenceUnit;
 
 @Configuration
 @ComponentScan
+@ConfigurationPropertiesScan
 @Conditional(OnStandardSecurityImplementation.class)
 @EnableWebSecurity
 public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter {

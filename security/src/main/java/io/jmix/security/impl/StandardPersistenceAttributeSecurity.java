@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.Security;
 import io.jmix.data.PersistenceAttributeSecurity;
 import io.jmix.data.impl.JmixEntityFetchGroup;
+import io.jmix.security.SecurityProperties;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
@@ -49,7 +50,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
     protected Security security;
 
     @Inject
-    protected ServerConfig config;
+    protected SecurityProperties properties;
 
     @Inject
     protected EntityStates entityStates;
@@ -62,7 +63,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      */
     @Override
     public FetchPlan createRestrictedFetchPlan(FetchPlan fetchPlan) {
-        if (!config.getEntityAttributePermissionChecking()) {
+        if (!properties.isEntityAttributePermissionChecking()) {
             return fetchPlan;
         }
         Preconditions.checkNotNullArgument(fetchPlan, "fetch plan is null");
@@ -96,7 +97,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      */
     @Override
     public void afterLoad(Entity entity) {
-        if (!config.getEntityAttributePermissionChecking()) {
+        if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
         if (entity != null) {
@@ -125,7 +126,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      */
     @Override
     public void beforePersist(Entity entity) {
-        if (!config.getEntityAttributePermissionChecking()) {
+        if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
         // check only immediate attributes, otherwise persisted entity can be unusable for calling code
@@ -146,7 +147,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      */
     @Override
     public void beforeMerge(Entity entity) {
-        if (!config.getEntityAttributePermissionChecking()) {
+        if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
         applySecurityToFetchGroup(entity);
@@ -167,7 +168,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      */
     @Override
     public void afterCommit(Entity entity) {
-        if (!config.getEntityAttributePermissionChecking()) {
+        if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
         if (entity != null) {

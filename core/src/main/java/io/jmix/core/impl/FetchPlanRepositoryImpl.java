@@ -111,7 +111,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         storage.clear();
         readFileNames.clear();
 
-        String configName = environment.getProperty("jmix.viewsConfig");
+        String configName = environment.getProperty("jmix.core.fetchPlansConfig");
         if (!StringUtils.isBlank(configName)) {
             Element rootElem = DocumentHelper.createDocument().addElement("views");
 

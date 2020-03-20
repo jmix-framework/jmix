@@ -62,12 +62,8 @@ public class MessageTools {
     @Inject
     protected ExtendedEntities extendedEntities;
 
-    protected GlobalConfig globalConfig;
-
     @Inject
-    public MessageTools(ConfigInterfaces configuration) {
-        globalConfig = configuration.getConfig(GlobalConfig.class);
-    }
+    protected CoreProperties properties;
 
     /**
      * Get localized message by reference provided in the full format.
@@ -369,12 +365,12 @@ public class MessageTools {
 
     /**
      * @return whether to use a full locale representation, or language only. Returns true if all locales listed
-     * in {@code cuba.availableLocales} app property are language only.
+     * in {@code jmix.core.availableLocales} app property are language only.
      */
     public boolean useLocaleLanguageOnly() {
         if (useLocaleLanguageOnly == null) {
             boolean found = false;
-            for (Locale locale : globalConfig.getAvailableLocales().values()) {
+            for (Locale locale : properties.getAvailableLocales().values()) {
                 if (!StringUtils.isEmpty(locale.getCountry()) || !StringUtils.isEmpty(locale.getVariant())
                         || !StringUtils.isEmpty(locale.getScript())) {
                     useLocaleLanguageOnly = false;
@@ -412,13 +408,13 @@ public class MessageTools {
     }
 
     /**
-     * @return first locale from the list defined in {@code cuba.availableLocales} app property, taking into
+     * @return first locale from the list defined in {@code jmix.core.availableLocales} app property, taking into
      * account {@link #useLocaleLanguageOnly()} return value.
      */
     public Locale getDefaultLocale() {
-        if (globalConfig.getAvailableLocales().isEmpty())
-            throw new DevelopmentException("Invalid cuba.availableLocales application property");
-        return globalConfig.getAvailableLocales().entrySet().iterator().next().getValue();
+        if (properties.getAvailableLocales().isEmpty())
+            throw new DevelopmentException("Invalid jmix.core.availableLocales application property");
+        return properties.getAvailableLocales().entrySet().iterator().next().getValue();
     }
 
     /**

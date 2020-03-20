@@ -100,9 +100,6 @@ public class MetadataTools {
     @Inject
     protected PersistentAttributesLoadChecker persistentAttributesLoadChecker;
 
-    @Inject
-    protected GlobalConfig globalConfig;
-
     protected volatile Collection<Class> enums;
 
     /**
@@ -1146,10 +1143,6 @@ public class MetadataTools {
 
             if (srcProperty.getRange().isClass()) {
                 Class refClass = srcProperty.getRange().asClass().getJavaClass();
-                if (!globalConfig.getDeepCopyNonPersistentReferences() && !isPersistent(refClass)) {
-                    continue;
-                }
-
                 if (srcProperty.getRange().getCardinality().isMany()) {
                     @SuppressWarnings("unchecked")
                     Collection<Entity> srcCollection = (Collection) value;

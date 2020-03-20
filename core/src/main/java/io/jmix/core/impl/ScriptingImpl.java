@@ -16,11 +16,8 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.core.GlobalConfig;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Scripting;
-import io.jmix.core.ServerConfig;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +31,10 @@ public class ScriptingImpl extends AbstractScripting {
     @Inject
     public ScriptingImpl(Environment environment,
                          JavaClassLoader javaClassLoader,
-                         ConfigInterfaces configInterfaces,
+                         CoreProperties properties,
                          SpringBeanLoader springBeanLoader) {
-        super(environment, javaClassLoader, configInterfaces, springBeanLoader);
-        scriptEngineRoots = new String[] {
-                configInterfaces.getConfig(GlobalConfig.class).getConfDir(),
-                configInterfaces.getConfig(ServerConfig.class).getDbDir()
-        };
+        super(environment, javaClassLoader, properties.getConfDir(), springBeanLoader);
+        scriptEngineRoots = new String[] { properties.getConfDir(), properties.getDbDir() };
     }
 
     @Override

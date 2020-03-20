@@ -141,41 +141,6 @@ public interface UserSessions {
     /**
      * INTERNAL.
      *
-     * @return session expiration timeout in the cache
-     * @see #setExpirationTimeoutSec(int)
-     */
-    int getExpirationTimeoutSec();
-
-    /**
-     * INTERNAL.
-     *
-     * Set session expiration timeout for the cache.
-     * @param value timeout in seconds
-     */
-    void setExpirationTimeoutSec(int value);
-
-    /**
-     * INTERNAL.
-     *
-     * @return session sending timeout in cluster
-     * @see #setSendTimeoutSec(int)
-     */
-    int getSendTimeoutSec();
-
-    /**
-     * INTERNAL.
-     *
-     * Set user session ping timeout in cluster.
-     * If ping is performed by {@link UserSessions#getAndRefresh},
-     * the user session is sent to the cluster only after the specified timeout.
-     *
-     * @param timeout in seconds
-     */
-    void setSendTimeoutSec(int timeout);
-
-    /**
-     * INTERNAL.
-     *
      * Evict timed out sessions from the cache.
      */
     void processEviction();

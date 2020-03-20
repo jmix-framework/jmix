@@ -15,7 +15,9 @@
  */
 package io.jmix.core.security.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.Metadata;
+import io.jmix.core.TimeSource;
 import io.jmix.core.cluster.ClusterListener;
 import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.commons.util.Preconditions;
@@ -84,17 +86,12 @@ public class UserSessionsImpl implements UserSessions {
 
     protected Map<UUID, UserSessionInfo> cache = new ConcurrentHashMap<>();
 
-    protected volatile int expirationTimeout = 1800;
-
-    protected volatile int sendTimeout = 10;
-
-    protected volatile int touchTimeout = 1;
-
     protected ClusterManager clusterManager;
 
     protected UserSession NO_USER_SESSION;
 
-    protected ServerConfig serverConfig;
+    @Inject
+    protected CoreProperties properties;
 
     @Inject
     protected TimeSource timeSource;
@@ -139,14 +136,6 @@ public class UserSessionsImpl implements UserSessions {
 //            }
 //        };
 //    }
-
-    @Inject
-    public void setConfiguration(ConfigInterfaces configuration) {
-        serverConfig = configuration.getConfig(ServerConfig.class);
-        setExpirationTimeoutSec(serverConfig.getUserSessionExpirationTimeoutSec());
-        setSendTimeoutSec(serverConfig.getUserSessionSendTimeoutSec());
-        touchTimeout = serverConfig.getUserSessionTouchTimeoutSec();
-    }
 
     @Inject
     public void setClusterManager(ClusterManager clusterManager) {
@@ -231,7 +220,7 @@ public class UserSessionsImpl implements UserSessions {
         UserSessionInfo usi = new UserSessionInfo(session, timeSource.currentTimeMillis());
         putSessionInfo(session.getId(), usi);
 
-        if (serverConfig.getSyncNewUserSessionReplication())
+        if (properties.isSyncNewUserSessionReplication())
             clusterManager.sendSync(usi);
         else
             clusterManager.send(usi);
@@ -299,13 +288,13 @@ public class UserSessionsImpl implements UserSessions {
             if (touch) {
                 long now = timeSource.currentTimeMillis();
 
-                if (now > (usi.lastUsedTs + toMillis(touchTimeout))) {
+                if (now > (usi.lastUsedTs + toMillis(properties.getUserSessionTouchTimeoutSec()))) {
                     usi.lastUsedTs = now;
                     putSessionInfo(id, usi);
                 }
 
                 if (propagate) {
-                    if (now > (usi.lastSentTs + toMillis(sendTimeout))) {
+                    if (now > (usi.lastSentTs + toMillis(properties.getUserSessionSendTimeoutSec()))) {
                         usi.lastSentTs = now;
                         clusterManager.send(usi);
                     }
@@ -326,26 +315,6 @@ public class UserSessionsImpl implements UserSessions {
             putSessionInfo(id, usi);
             clusterManager.send(usi);
         }
-    }
-
-    @Override
-    public int getExpirationTimeoutSec() {
-        return expirationTimeout;
-    }
-
-    @Override
-    public void setExpirationTimeoutSec(int value) {
-        expirationTimeout = value;
-    }
-
-    @Override
-    public int getSendTimeoutSec() {
-        return sendTimeout;
-    }
-
-    @Override
-    public void setSendTimeoutSec(int timeout) {
-        this.sendTimeout = timeout;
     }
 
     @Override
@@ -412,7 +381,7 @@ public class UserSessionsImpl implements UserSessions {
         long now = timeSource.currentTimeMillis();
 
         getSessionInfoStream()
-                .filter(info -> now > (info.lastUsedTs + toMillis(expirationTimeout)))
+                .filter(info -> now > (info.lastUsedTs + toMillis(properties.getUserSessionExpirationTimeoutSec())))
                 .forEach(usi -> {
                     log.debug("Removing session due to timeout: {}", usi);
 

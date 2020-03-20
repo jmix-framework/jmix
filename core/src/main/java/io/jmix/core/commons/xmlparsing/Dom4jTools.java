@@ -16,7 +16,7 @@
 
 package io.jmix.core.commons.xmlparsing;
 
-import io.jmix.core.GlobalConfig;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.commons.util.Dom4j;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -44,9 +44,7 @@ public class Dom4jTools {
 
     public static final String NAME = "cuba_Dom4jTools";
 
-    protected Dom4jToolsConfig config;
-
-    protected GlobalConfig globalConfig;
+    protected CoreProperties properties;
 
     protected GenericObjectPool<SAXParser> pool;
 
@@ -54,21 +52,19 @@ public class Dom4jTools {
      * INTERNAL
      */
     @Inject
-    public Dom4jTools(GlobalConfig globalConfig, Dom4jToolsConfig config) {
-        this.globalConfig = globalConfig;
-        this.config = config;
-
+    public Dom4jTools(CoreProperties properties) {
+        this.properties = properties;
         initPool();
     }
 
     protected void initPool() {
-        int poolSize = config.getMaxPoolSize();
+        int poolSize = properties.getDom4jMaxPoolSize();
         GenericObjectPoolConfig<SAXParser> poolConfig = new GenericObjectPoolConfig<>();
         poolConfig.setMaxIdle(poolSize);
         poolConfig.setMaxTotal(poolSize);
-        poolConfig.setMaxWaitMillis(config.getMaxBorrowWaitMillis());
+        poolConfig.setMaxWaitMillis(properties.getDom4jMaxBorrowWaitMillis());
 
-        String jmxName = "dom4JTools-" + globalConfig.getWebContextName();
+        String jmxName = "dom4JTools-" + properties.getWebContextName();
         poolConfig.setJmxNamePrefix(jmxName);
 
         PooledObjectFactory<SAXParser> factory = new SAXParserObjectFactory();

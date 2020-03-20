@@ -24,8 +24,6 @@ import groovy.util.GroovyScriptEngine;
 import groovy.util.ResourceConnector;
 import groovy.util.ResourceException;
 import groovy.util.ScriptException;
-import io.jmix.core.ConfigInterfaces;
-import io.jmix.core.GlobalConfig;
 import io.jmix.core.ScriptExecutionPolicy;
 import io.jmix.core.Scripting;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +56,7 @@ public abstract class AbstractScripting implements Scripting {
 
     private static final Pattern IMPORT_PATTERN = Pattern.compile("\\bimport\\b\\s+");
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("\\bpackage\\b\\s+.+");
+    private final Environment environment;
     protected JavaClassLoader javaClassLoader;
     protected SpringBeanLoader springBeanLoader;
     protected String groovyClassPath;
@@ -68,19 +67,15 @@ public abstract class AbstractScripting implements Scripting {
     protected volatile CubaGroovyClassLoader gcl;
     protected GenericKeyedObjectPool<String, Script> pool;
 
-    protected GlobalConfig globalConfig;
-
     public AbstractScripting(Environment environment,
                              JavaClassLoader javaClassLoader,
-                             ConfigInterfaces configInterfaces,
+                             String confDir,
                              SpringBeanLoader springBeanLoader) {
+        this.environment = environment;
         this.javaClassLoader = javaClassLoader;
         this.springBeanLoader = springBeanLoader;
 
-        this.globalConfig = configInterfaces.getConfig(GlobalConfig.class);
-
-        StringBuilder groovyClassPathBuilder = new StringBuilder(globalConfig.getConfDir())
-                .append(File.pathSeparator);
+        StringBuilder groovyClassPathBuilder = new StringBuilder(confDir).append(File.pathSeparator);
 
         String classPathProp = environment.getProperty("cuba.groovyClassPath");
         if (StringUtils.isNotBlank(classPathProp)) {
@@ -136,7 +131,7 @@ public abstract class AbstractScripting implements Scripting {
         if (pool == null) {
             GenericKeyedObjectPoolConfig<Script> poolConfig = new GenericKeyedObjectPoolConfig<>();
             poolConfig.setMaxTotalPerKey(-1);
-            poolConfig.setMaxIdlePerKey(globalConfig.getGroovyEvaluationPoolMaxIdle());
+            poolConfig.setMaxIdlePerKey(Integer.parseInt(environment.getProperty("cuba.groovyEvaluationPoolMaxIdle", "8"))); // todo properties
             pool = new GenericKeyedObjectPool<>(
                     new BaseKeyedPooledObjectFactory<String, Script>() {
                         @Override

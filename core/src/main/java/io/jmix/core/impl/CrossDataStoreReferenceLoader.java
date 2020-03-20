@@ -55,7 +55,7 @@ public class CrossDataStoreReferenceLoader {
     private DataManager dataManager;
 
     @Inject
-    private ServerConfig serverConfig;
+    private CoreProperties properties;
 
     private MetaClass metaClass;
 
@@ -178,7 +178,7 @@ public class CrossDataStoreReferenceLoader {
     }
 
     private void loadMany(CrossDataStoreProperty crossDataStoreProperty, List<Entity> entities) {
-        int offset = 0, limit = serverConfig.getCrossDataStoreReferenceLoadingBatchSize();
+        int offset = 0, limit = properties.getCrossDataStoreReferenceLoadingBatchSize();
         while (true) {
             int end = offset + limit;
             List<Entity> batch = entities.subList(offset, Math.min(end, entities.size()));

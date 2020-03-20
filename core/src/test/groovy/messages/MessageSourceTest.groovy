@@ -75,7 +75,7 @@ class MessageSourceTest extends Specification {
         def properties = new Properties()
         properties.load(new InputStreamReader(getClass().getResourceAsStream('/test_support/app/messages.properties'), 'UTF-8'))
         properties.setProperty('messageToOverrideByConf', 'conf value')
-        def dir = new File(environment.getProperty('jmix.confDir'), 'test_support/app')
+        def dir = new File(environment.getProperty('jmix.core.confDir'), 'test_support/app')
         dir.mkdirs()
         def file = new File(dir, 'messages.properties')
         def stream = new FileOutputStream(file)

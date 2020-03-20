@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
  * <br>
  * Configured by {@link io.jmix.audit.entity.LoggedEntity} and
  * {@link io.jmix.audit.entity.LoggedAttribute} entities.
- * See also {@link io.jmix.audit.EntityLogConfig} configuration interface.
  */
 public interface EntityLogAPI {
 

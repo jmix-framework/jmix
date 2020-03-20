@@ -19,12 +19,14 @@ package io.jmix.audit;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.JmixDataConfiguration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @ComponentScan
+@ConfigurationPropertiesScan
 @JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDataConfiguration.class})
 @EnableTransactionManagement
 public class JmixAuditConfiguration {

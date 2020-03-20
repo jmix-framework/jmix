@@ -107,11 +107,10 @@ public class EntityLog implements EntityLogAPI, PersistenceLifecycleListener {
 
     @Inject
     protected DataManager dataManager;
-    @Inject
-    protected ServerConfig serverConfig;
-    @Inject
-    protected EntityLogConfig config;
 
+    protected AuditProperties properties;
+
+    protected volatile boolean enabled;
     protected volatile boolean loaded;
 
     @GuardedBy("lock")
@@ -121,6 +120,12 @@ public class EntityLog implements EntityLogAPI, PersistenceLifecycleListener {
 
     protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     protected ThreadLocal<Boolean> entityLogSwitchedOn = new ThreadLocal<>();
+
+    @Inject
+    public void setProperties(AuditProperties properties) {
+        this.properties = properties;
+        this.enabled = properties.isEnabled();
+    }
 
     @Override
     public void processLoggingForCurrentThread(boolean enabled) {
@@ -299,14 +304,12 @@ public class EntityLog implements EntityLogAPI, PersistenceLifecycleListener {
 
     @Override
     public synchronized boolean isEnabled() {
-        return config.getEnabled() && isLoggingForCurrentThread();
+        return enabled && isLoggingForCurrentThread();
     }
 
     @Override
     public synchronized void setEnabled(boolean enabled) {
-        if (enabled != config.getEnabled()) {
-            config.setEnabled(enabled);
-        }
+        this.enabled = enabled;
     }
 
     @Override
@@ -507,7 +510,7 @@ public class EntityLog implements EntityLogAPI, PersistenceLifecycleListener {
         if (AppContext.isStarted() && currentUserId != null)
             return auditInfoProvider.getCurrentUserLogin();
         else {
-            String login = serverConfig.getSystemUserLogin();
+            String login = properties.getSystemUserLogin();
             if (login != null)
                 return login;
             else

@@ -50,9 +50,11 @@ dependencies {
     api 'org.eclipse.persistence:jakarta.persistence'
     api 'org.antlr:antlr-runtime'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
 }
 
@@ -63,6 +65,10 @@ jar {
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier = 'sources'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 publishing {

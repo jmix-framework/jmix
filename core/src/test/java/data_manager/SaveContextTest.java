@@ -16,29 +16,23 @@
 
 package data_manager;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.core.SaveContext;
-import io.jmix.core.Entity;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.jmix.core.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.addon1.TestAddon1Configuration;
 import test_support.app.TestAppConfiguration;
 import test_support.app.entity.Owner;
 import test_support.app.entity.Pet;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {JmixCoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
 public class SaveContextTest {
 

@@ -16,11 +16,14 @@
 
 package view_builder;
 
-import io.jmix.core.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.LoadContext;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.addon1.TestAddon1Configuration;
 import test_support.app.TestAppConfiguration;
 import test_support.app.entity.Pet;
@@ -29,9 +32,9 @@ import javax.inject.Inject;
 import java.util.UUID;
 
 import static io.jmix.core.FluentLoaderTestAccess.createLoadContext;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {JmixCoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
 public class FluentLoaderViewBuilderTest {
 

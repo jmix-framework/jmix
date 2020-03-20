@@ -22,11 +22,12 @@ import io.jmix.core.impl.jpql.QueryParserAstBased;
 import io.jmix.core.impl.jpql.model.EntityBuilder;
 import io.jmix.core.impl.jpql.model.JpqlEntityModel;
 import io.jmix.core.impl.jpql.transform.QueryTransformerAstBased;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class QueryParserAstBasedTest {
 

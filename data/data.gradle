@@ -32,9 +32,11 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
 
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"
     testImplementation "org.spockframework:spock-spring"
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }
@@ -44,6 +46,7 @@ entitiesEnhancing {
 }
 
 test {
+    useJUnitPlatform()
     systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")
     systemProperty("org.slf4j.simpleLogger.log.eclipselink.sql", "debug")
 }

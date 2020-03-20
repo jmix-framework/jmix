@@ -19,7 +19,7 @@ package persistence_beans;
 import io.jmix.autoconfigure.data.JmixDataAutoConfiguration;
 import io.jmix.core.Stores;
 import io.jmix.data.impl.JmixTransactionManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;

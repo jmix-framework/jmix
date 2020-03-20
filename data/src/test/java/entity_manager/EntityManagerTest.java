@@ -23,16 +23,16 @@ import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.data.OrmProperties;
 import io.jmix.data.event.EntityChangedEvent;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.JmixDataTestConfiguration;
 import test_support.TestCustomerListener;
@@ -47,9 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixDataTestConfiguration.class})
 public class EntityManagerTest {
 
@@ -73,15 +73,15 @@ public class EntityManagerTest {
 
     List<EntityChangedEvent<Customer, UUID>> customerEvents = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setup() {
         customerListener.changedEventConsumer = event -> {
             customerEvents.add(event);
         };
     }
 
-    @Before
-    @After
+    @BeforeEach
+    @AfterEach
     public void cleanup() throws Exception {
         customerEvents.clear();
         try {
@@ -108,7 +108,7 @@ public class EntityManagerTest {
         assertEquals(1, customerEvents.size());
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testApplicationEm() {
         Customer customer = new Customer();

@@ -6,7 +6,7 @@
 package test_support.entity.multidb;
 
 
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.Store;
 
 import javax.persistence.*;
@@ -32,7 +32,7 @@ public class Db1Order implements io.jmix.core.Entity<Long> {
     private Db1Customer customer;
 
     @Transient
-    @MetaProperty(related = "mem1CustomerId")
+    @ModelProperty(related = "mem1CustomerId")
     private Mem1Customer mem1Customer;
 
     @Column(name = "MEM_CUST_ID")

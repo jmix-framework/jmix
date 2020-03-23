@@ -16,15 +16,15 @@
 
 package test_support.entity;
 
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.data.entity.StandardEntity;
 
 
-@MetaClass(name = "test_TestNotStoredEntity")
+@ModelObject(name = "test_TestNotStoredEntity")
 public class TestNotStoredEntity extends StandardEntity {
 
-    @MetaProperty
+    @ModelProperty
     private String name;
 
     public String getName() {

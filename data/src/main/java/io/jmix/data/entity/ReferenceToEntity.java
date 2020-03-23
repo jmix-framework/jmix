@@ -18,14 +18,14 @@ package io.jmix.data.entity;
 
 import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.UUID;
 
 @Embeddable
-@MetaClass(name = "test$ReferenceToEntity")
+@ModelObject(name = "test$ReferenceToEntity")
 @SystemLevel
 public class ReferenceToEntity implements Entity<Object> {
     private static final long serialVersionUID = -3667689055952380345L;

@@ -17,7 +17,7 @@ package io.jmix.data.entity;
 
 import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 
 import javax.persistence.*;
 
@@ -25,7 +25,7 @@ import javax.persistence.*;
  * Base class for entities with Integer Identity identifier.
  */
 @MappedSuperclass
-@MetaClass(name = "sys$BaseIntIdentityIdEntity")
+@ModelObject(name = "sys$BaseIntIdentityIdEntity")
 @UnavailableInSecurityConstraints
 public abstract class BaseIntIdentityIdEntity implements Entity<Integer> {
 

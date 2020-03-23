@@ -18,7 +18,7 @@ package io.jmix.data.entity;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 
 import javax.persistence.Column;
@@ -32,7 +32,7 @@ import java.util.UUID;
  * Inherit from it if you need an entity without optimistic locking, create, update and soft deletion info.
  */
 @MappedSuperclass
-@MetaClass(name = "sys_BaseUuidEntity")
+@ModelObject(name = "sys_BaseUuidEntity")
 @UnavailableInSecurityConstraints
 public abstract class BaseUuidEntity implements Entity<UUID>, HasUuid {
 

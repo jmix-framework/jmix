@@ -6,17 +6,17 @@
 package test_support.entity.multidb;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.annotations.Store;
 
-@MetaClass(name = "test_Mem1Customer")
+@ModelObject(name = "test_Mem1Customer")
 @NamePattern("%s|name")
 @Store(name = "mem1")
 public class Mem1Customer extends BaseUuidEntity {
 
-    @MetaProperty
+    @ModelProperty
     private String name;
 
     public String getName() {

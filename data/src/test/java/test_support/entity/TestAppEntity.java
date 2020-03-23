@@ -18,7 +18,7 @@ package test_support.entity;
 
 import test_support.entity.sec.User;
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -70,12 +70,12 @@ public class TestAppEntity extends StandardEntity {
         this.items = items;
     }
 
-    @MetaProperty(related = "appDate")
+    @ModelProperty(related = "appDate")
     public Date getChangeDate() {
         return this.appDate;
     }
 
-    @MetaProperty(related = {"author,number"})
+    @ModelProperty(related = {"author,number"})
     public String getLabel() {
         return String.format("%s-%s", author != null ? author.getLogin() : "", number);
     }

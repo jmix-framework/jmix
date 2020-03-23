@@ -16,7 +16,7 @@
 package io.jmix.data.entity;
 
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 
 import javax.persistence.Column;
@@ -27,7 +27,7 @@ import javax.persistence.MappedSuperclass;
  * Base class for entities with Long identifier.
  */
 @MappedSuperclass
-@MetaClass(name = "sys$BaseLongIdEntity")
+@ModelObject(name = "sys$BaseLongIdEntity")
 @UnavailableInSecurityConstraints
 public abstract class BaseLongIdEntity implements Entity<Long> {
 

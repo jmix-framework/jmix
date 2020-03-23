@@ -16,7 +16,7 @@
 package io.jmix.data.entity;
 
 import io.jmix.core.entity.*;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 
 import javax.persistence.Column;
@@ -29,7 +29,7 @@ import java.util.Date;
  * Optimistically locked, implements Updatable and SoftDelete.
  */
 @MappedSuperclass
-@MetaClass(name = "sys$StandardEntity")
+@ModelObject(name = "sys$StandardEntity")
 @UnavailableInSecurityConstraints
 public abstract class StandardEntity extends BaseUuidEntity implements Versioned, Creatable, Updatable, SoftDelete {
 

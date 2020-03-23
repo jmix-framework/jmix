@@ -31,6 +31,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -133,6 +134,7 @@ public class StandardUserSessionFactory implements UserSessionFactory {
         }
     }
 
+    @Nullable
     protected String convertToExtendedEntityTarget(Permission permission) {
         if (permission.getType() == PermissionType.ENTITY_OP || permission.getType() == PermissionType.ENTITY_ATTR) {
             String target = permission.getTarget();

@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.text.ParseException;
 import java.util.*;
@@ -260,6 +261,7 @@ public class StandardSecurity implements Security {
     }
 
     @SuppressWarnings({"unused", "unchecked"})
+    @Nullable
     protected Object parseValue(Class<?> clazz, String strValue) {
         try {
             if (Entity.class.isAssignableFrom(clazz)) {

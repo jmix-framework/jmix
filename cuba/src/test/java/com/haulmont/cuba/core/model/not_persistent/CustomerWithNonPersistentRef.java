@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.not_persistent;
 
 import com.haulmont.cuba.core.model.primary_keys.EntityKey;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.*;
@@ -33,7 +33,7 @@ public class CustomerWithNonPersistentRef extends BaseEntityWithNonPersistentPro
     @Embedded
     private EntityKey entityKey;
 
-    @MetaProperty
+    @ModelProperty
     @Transient
     private TestNotPersistentEntity notPersistentEntity;
 

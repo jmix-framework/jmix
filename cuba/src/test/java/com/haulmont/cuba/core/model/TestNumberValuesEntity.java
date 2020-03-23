@@ -17,8 +17,8 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NumberFormat;
 
 import java.math.BigDecimal;
@@ -26,66 +26,66 @@ import java.math.BigDecimal;
 /**
  *
  */
-@MetaClass(name = "sys$TestNumberValuesEntity")
+@ModelObject(name = "sys$TestNumberValuesEntity")
 public class TestNumberValuesEntity extends BaseUuidEntity {
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#,###.###")
     private BigDecimal decimalField1;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "0.00")
     private BigDecimal decimalField2;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#")
     private BigDecimal decimalField3;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#,###.###", decimalSeparator = "_", groupingSeparator = "`")
     private BigDecimal decimalField4;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#,###.###")
     private Double doubleField1;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "0.00")
     private Double doubleField2;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#")
     private Double doubleField3;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#,###.###")
     private Float floatField1;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "0.00")
     private Float floatField2;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#")
     private Float floatField3;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#")
     private Integer intField1;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#,##0")
     private Integer intField2;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#")
     private Long longField1;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#,##0")
     private Long longField2;
 
-    @MetaProperty
+    @ModelProperty
     @NumberFormat(pattern = "#%")
     private BigDecimal percentField;
 

@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.Column;
@@ -38,12 +38,12 @@ public class EntityWithRelatedProperties extends StandardEntity {
     @Column(name = "NOT_RELATED_ATTR")
     private String notRelatedAttr;
 
-    @MetaProperty(related = "name,surname")
+    @ModelProperty(related = "name,surname")
     public String getNickName() {
         return name + " MegaCool " + surname;
     }
 
-    @MetaProperty(related = "name,surname")
+    @ModelProperty(related = "name,surname")
     public String getSomeAttr() {
         return getNickName() + " additional string";
     }

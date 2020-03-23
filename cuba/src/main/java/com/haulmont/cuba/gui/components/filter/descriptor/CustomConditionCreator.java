@@ -23,13 +23,14 @@ import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.core.AppBeans;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * Condition descriptor is used for creating new custom condition
  */
-@io.jmix.core.metamodel.annotations.MetaClass(name = "sec$CustomConditionCreator")
+@ModelObject(name = "sec$CustomConditionCreator")
 @SystemLevel
 public class CustomConditionCreator extends AbstractConditionDescriptor {
 

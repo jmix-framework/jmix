@@ -17,11 +17,11 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 
 import javax.persistence.Transient;
 
-@MetaClass(name = "test$SettersEntity")
+@ModelObject(name = "test$SettersEntity")
 public class SettersEntity extends BaseUuidEntity {
     private static boolean staticFlag = true;
 

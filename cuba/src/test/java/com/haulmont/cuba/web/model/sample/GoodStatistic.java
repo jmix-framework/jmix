@@ -17,34 +17,34 @@
 package com.haulmont.cuba.web.model.sample;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-@MetaClass(name = "test_GoodStatistic")
+@ModelObject(name = "test_GoodStatistic")
 public class GoodStatistic extends BaseUuidEntity {
 
-    @MetaProperty
+    @ModelProperty
     protected String name;
 
-    @MetaProperty
+    @ModelProperty
     protected Date fromDate;
 
-    @MetaProperty
+    @ModelProperty
     protected Date toDate;
 
-    @MetaProperty
+    @ModelProperty
     protected Integer sales;
 
-    @MetaProperty
+    @ModelProperty
     protected Long count;
 
-    @MetaProperty
+    @ModelProperty
     protected Double usages;
 
-    @MetaProperty
+    @ModelProperty
     protected BigDecimal price;
 
     public String getName() {

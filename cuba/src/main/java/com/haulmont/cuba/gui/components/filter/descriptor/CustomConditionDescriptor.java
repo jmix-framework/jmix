@@ -23,13 +23,14 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Scripting;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.dom4j.Element;
 
 /**
  * Class for existing (described in filter component xml) custom condition descriptor
  */
-@io.jmix.core.metamodel.annotations.MetaClass(name = "sec$CustomConditionDescriptor")
+@ModelObject(name = "sec$CustomConditionDescriptor")
 @SystemLevel
 public class CustomConditionDescriptor extends AbstractConditionDescriptor {
     public CustomConditionDescriptor(Element element,

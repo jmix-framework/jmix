@@ -21,8 +21,8 @@ import io.jmix.core.FetchPlan;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Diff object for Entity Snapshots
  */
-@MetaClass(name = "test$EntityDiff")
+@ModelObject(name = "test$EntityDiff")
 @SystemLevel
 public class EntityDiff extends BaseUuidEntity {
 
@@ -100,7 +100,7 @@ public class EntityDiff extends BaseUuidEntity {
         this.propertyDiffs = propertyDiffs;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getLabel(){
         String label = "";
         if (beforeSnapshot != null)

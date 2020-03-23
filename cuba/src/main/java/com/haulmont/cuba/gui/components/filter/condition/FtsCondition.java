@@ -25,7 +25,7 @@ import com.haulmont.cuba.gui.components.filter.operationedit.FtsOperationEditor;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.ui.filter.ConditionType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.dom4j.Element;
@@ -33,7 +33,7 @@ import org.dom4j.Element;
 /**
  * An FTS condition that is used in regular (not FTS) filter
  */
-@MetaClass(name = "sec$FtsCondition")
+@ModelObject(name = "sec$FtsCondition")
 @SystemLevel
 public class FtsCondition extends AbstractCondition {
 

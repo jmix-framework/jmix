@@ -17,13 +17,13 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@MetaClass(name = "test_PetclinicAddress")
+@ModelObject(name = "test_PetclinicAddress")
 public class Address implements Entity<Object> {
 
     private static final long serialVersionUID = 3973674066005826186L;

@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.common;
 
 import io.jmix.core.entity.annotation.EnableRestore;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import javax.persistence.*;
 
@@ -36,7 +36,7 @@ public class AppFolder extends AbstractSearchFolder {
     @Column(name = "QUANTITY_SCRIPT", length = 200)
     protected String quantityScript;
 
-    @MetaProperty
+    @ModelProperty
     @Transient
     protected Integer quantity;
 

@@ -23,7 +23,7 @@ import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.security.UserSessionSource;
@@ -139,7 +139,7 @@ public class EntitySnapshot extends BaseUuidEntity implements Creatable {
         return author;
     }
 
-    @MetaProperty(related = {"snapshotDate,author"})
+    @ModelProperty(related = {"snapshotDate,author"})
     public String getLabel() {
         String name = "";
         if (author != null && StringUtils.isNotEmpty(this.author.getCaption())) {
@@ -156,7 +156,7 @@ public class EntitySnapshot extends BaseUuidEntity implements Creatable {
         return StringUtils.trim(name);
     }
 
-    @MetaProperty(related = "snapshotDate")
+    @ModelProperty(related = "snapshotDate")
     public Date getChangeDate() {
         return this.snapshotDate;
     }

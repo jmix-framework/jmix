@@ -19,8 +19,8 @@ package com.haulmont.cuba.core.model.common;
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.AppBeans;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
@@ -29,7 +29,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @SystemLevel
-@MetaClass(name = "test$AbstractSearchFolder")
+@ModelObject(name = "test$AbstractSearchFolder")
 public abstract class AbstractSearchFolder extends Folder {
 
     private static final long serialVersionUID = -2234453892776090930L;
@@ -82,7 +82,7 @@ public abstract class AbstractSearchFolder extends Folder {
         this.applyDefault = applyDefault;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getLocName() {
         if (StringUtils.isNotEmpty(name)) {
             Messages messages = AppBeans.get(Messages.NAME);

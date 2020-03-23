@@ -19,35 +19,35 @@ package com.haulmont.cuba.core.model.common;
 
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import java.util.Date;
 
 /**
  * Non-persistent entity to show user sessions list in UI.
  */
-@MetaClass(name = "test$UserSessionEntity")
+@ModelObject(name = "test$UserSessionEntity")
 @SystemLevel
 public class UserSessionEntity extends BaseUuidEntity {
 
     private static final long serialVersionUID = 7730031482721158275L;
 
-    @MetaProperty
+    @ModelProperty
     private String login;
-    @MetaProperty
+    @ModelProperty
     private String userName;
-    @MetaProperty
+    @ModelProperty
     private String address;
-    @MetaProperty
+    @ModelProperty
     private String clientInfo;
-    @MetaProperty
+    @ModelProperty
     private Date since;
-    @MetaProperty
+    @ModelProperty
     private Date lastUsedTs;
-    @MetaProperty
+    @ModelProperty
     private Boolean system;
-    @MetaProperty
+    @ModelProperty
     private String sysTenantId;
 
     public String getLogin() {

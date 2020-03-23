@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.AppBeans;
 import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import javax.persistence.*;
 
@@ -98,7 +98,7 @@ public class SessionAttribute extends StandardEntity {
         this.sysTenantId = sysTenantId;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getDatatypeCaption() {
         Messages messages = AppBeans.get(Messages.NAME);
         return messages.getMainMessage("Datatype." + datatype);

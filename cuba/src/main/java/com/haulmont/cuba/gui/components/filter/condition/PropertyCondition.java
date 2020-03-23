@@ -32,7 +32,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.filter.ConditionType;
@@ -46,7 +46,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@MetaClass(name = "sec$PropertyCondition")
+@ModelObject(name = "sec$PropertyCondition")
 @SystemLevel
 public class PropertyCondition extends AbstractCondition {
 

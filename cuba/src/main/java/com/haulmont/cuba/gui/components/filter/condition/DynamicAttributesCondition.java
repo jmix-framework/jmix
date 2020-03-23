@@ -28,7 +28,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.filter.ConditionType;
@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@MetaClass(name = "sec$DynamicAttributesCondition")
+@ModelObject(name = "sec$DynamicAttributesCondition")
 @SystemLevel
 public class DynamicAttributesCondition extends AbstractCondition {
 

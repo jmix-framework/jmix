@@ -22,8 +22,8 @@ import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Record containing changed entity attribute.
  */
-@MetaClass(name = "test$EntityLogAttr")
+@ModelObject(name = "test$EntityLogAttr")
 @SystemLevel
 public class EntityLogAttr extends BaseUuidEntity {
 
@@ -43,25 +43,25 @@ public class EntityLogAttr extends BaseUuidEntity {
     public static final String OLD_VALUE_SUFFIX = "-oldVl";
     public static final String OLD_VALUE_ID_SUFFIX = "-oldVlId";
 
-    @MetaProperty
+    @ModelProperty
     private EntityLogItem logItem;
 
-    @MetaProperty
+    @ModelProperty
     private String name;
 
-    @MetaProperty
+    @ModelProperty
     private String value;
 
-    @MetaProperty
+    @ModelProperty
     private String oldValue;
 
-    @MetaProperty
+    @ModelProperty
     private String valueId;
 
-    @MetaProperty
+    @ModelProperty
     private String oldValueId;
 
-    @MetaProperty
+    @ModelProperty
     private String messagesPack;
 
     public EntityLogItem getLogItem() {
@@ -96,12 +96,12 @@ public class EntityLogAttr extends BaseUuidEntity {
         this.oldValue = oldValue;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getDisplayValue() {
         return getDisplayValue(getValue());
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getDisplayOldValue() {
         return getDisplayValue(getOldValue());
     }
@@ -174,7 +174,7 @@ public class EntityLogAttr extends BaseUuidEntity {
         this.messagesPack = messagesPack;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getDisplayName() {
         String entityName = getLogItem().getEntity();
         String message;
@@ -194,12 +194,12 @@ public class EntityLogAttr extends BaseUuidEntity {
         return metaClass == null ? null : metadata.getExtendedEntities().getEffectiveMetaClass(metaClass);
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getLocValue() {
         return getLocValue(value);
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getLocOldValue() {
         return getLocValue(oldValue);
     }

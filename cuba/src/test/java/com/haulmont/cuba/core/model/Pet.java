@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.*;
@@ -32,10 +32,10 @@ public class Pet extends StandardEntity {
     @Column(name = "NAME")
     private String name;
 
-    @MetaProperty
+    @ModelProperty
     private String nick;
 
-    @MetaProperty
+    @ModelProperty
     public String getDescription() {
         return "Name: " + name + ", nick: " + nick;
     }

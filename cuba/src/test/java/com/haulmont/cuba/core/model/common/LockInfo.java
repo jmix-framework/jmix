@@ -20,15 +20,15 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.TimeSource;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import java.util.Date;
 
 /**
  * Describes a pessimistic lock of an object.
  */
-@MetaClass(name = "sys$LockInfo")
+@ModelObject(name = "sys$LockInfo")
 @SystemLevel
 public class LockInfo extends BaseUuidEntity {
 
@@ -50,7 +50,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return locked object id
      */
-    @MetaProperty
+    @ModelProperty
     public String getEntityId() {
         return entityId;
     }
@@ -58,7 +58,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return locked object type
      */
-    @MetaProperty
+    @ModelProperty
     public String getEntityName() {
         return entityName;
     }
@@ -66,7 +66,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return when the lock occurred
      */
-    @MetaProperty
+    @ModelProperty
     public Date getSince() {
         return since;
     }
@@ -74,7 +74,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return a user which holds the lock
      */
-    @MetaProperty
+    @ModelProperty
     public User getUser() {
         return user;
     }

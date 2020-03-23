@@ -17,19 +17,19 @@
 package com.haulmont.cuba.core.model.not_persistent;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.data.entity.ReferenceToEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 
-@MetaClass(name = "sys$TestNotPersistentEntity")
+@ModelObject(name = "sys$TestNotPersistentEntity")
 public class TestNotPersistentEntity extends BaseUuidEntity {
 
     private static final long serialVersionUID = 3129839116133901601L;
 
-    @MetaProperty
+    @ModelProperty
     private String name;
 
     // JPA annotations are used intentionally

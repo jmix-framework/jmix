@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.*;
@@ -62,7 +62,7 @@ public class UserRelatedNews extends StandardEntity {
         this.parent = parent;
     }
 
-    @MetaProperty(related = "user")
+    @ModelProperty(related = "user")
     public String getUserLogin() {
         return user.getLogin();
     }

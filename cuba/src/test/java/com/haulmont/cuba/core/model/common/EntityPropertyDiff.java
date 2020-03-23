@@ -21,13 +21,13 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 /**
  * Diff between properties in entity snapshots
  */
-@MetaClass(name = "sys$EntityPropertyDiff")
+@ModelObject(name = "sys$EntityPropertyDiff")
 @SystemLevel
 public abstract class EntityPropertyDiff extends BaseUuidEntity {
     private static final long serialVersionUID = -6467322033937742101L;
@@ -59,22 +59,22 @@ public abstract class EntityPropertyDiff extends BaseUuidEntity {
         return metaClassName;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getName() {
         return propertyCaption;
     }
 
-    @MetaProperty
+    @ModelProperty
     public void setName(String name) {
         propertyCaption = name;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getLabel() {
         return label;
     }
 
-    @MetaProperty
+    @ModelProperty
     public void setLabel(String label) {
         this.label = label;
     }
@@ -91,32 +91,32 @@ public abstract class EntityPropertyDiff extends BaseUuidEntity {
         return null;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getBeforeString() {
         return "";
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getAfterString() {
         return "";
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getBeforeCaption() {
         return getBeforeString();
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getAfterCaption() {
         return getAfterString();
     }
 
-    @MetaProperty
+    @ModelProperty
     public ItemState getItemState() {
         return ItemState.Normal;
     }
 
-    @MetaProperty
+    @ModelProperty
     public void setItemState(ItemState itemState) {
     }
 

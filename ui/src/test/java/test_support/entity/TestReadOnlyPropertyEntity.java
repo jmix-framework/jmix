@@ -17,7 +17,7 @@
 package test_support.entity;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,10 +34,10 @@ public class TestReadOnlyPropertyEntity extends BaseUuidEntity {
     @Column(name = "NAME")
     private String name;
 
-    @MetaProperty
+    @ModelProperty
     private String roName;
 
-    @MetaProperty
+    @ModelProperty
     private List<Foo> roList;
 
     public String getName() {

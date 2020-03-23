@@ -21,13 +21,14 @@ import io.jmix.core.UuidProvider;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import org.dom4j.Element;
 
 import javax.persistence.Id;
 import java.util.UUID;
 
-@io.jmix.core.metamodel.annotations.MetaClass(name = "sec$ScreenComponentDescriptor")
+@ModelObject(name = "sec$ScreenComponentDescriptor")
 @SystemLevel
 public class ScreenComponentDescriptor implements Entity<UUID>, HasUuid {
 
@@ -35,7 +36,7 @@ public class ScreenComponentDescriptor implements Entity<UUID>, HasUuid {
     protected UUID id;
     protected Element element;
 
-    @MetaProperty
+    @ModelProperty
     protected ScreenComponentDescriptor parent;
 
     public ScreenComponentDescriptor(Element element, ScreenComponentDescriptor parent) {
@@ -62,7 +63,7 @@ public class ScreenComponentDescriptor implements Entity<UUID>, HasUuid {
         this.id = uuid;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getCaption() {
         return toString();
     }

@@ -19,7 +19,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import javax.persistence.*;
 
@@ -75,7 +75,7 @@ public class SessionAttribute extends StandardEntity {
         this.group = group;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getDatatypeCaption() {
         Messages messages = AppBeans.get(Messages.NAME);
         return messages.getMessage("Datatype." + datatype);

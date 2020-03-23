@@ -162,7 +162,7 @@ public class AttributeChanges {
         public final String name;
         public final Object oldValue;
 
-        public Change(String name, Object oldValue) {
+        public Change(String name, @Nullable Object oldValue) {
             this.name = name;
             this.oldValue = oldValue;
         }

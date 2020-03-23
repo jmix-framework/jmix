@@ -30,8 +30,6 @@ import java.util.regex.Pattern;
 @Scope("prototype")
 public class EnumQueryMacroHandler extends AbstractQueryMacroHandler {
 
-    protected Map<String, Object> namedParameters;
-
     protected static final Pattern MACRO_PATTERN = Pattern.compile("@enum\\s*\\(([^)]+)\\)");
 
     public EnumQueryMacroHandler() {
@@ -69,7 +67,6 @@ public class EnumQueryMacroHandler extends AbstractQueryMacroHandler {
 
     @Override
     public void setQueryParams(Map<String, Object> namedParameters) {
-        this.namedParameters = namedParameters;
     }
 
     @Override

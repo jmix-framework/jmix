@@ -116,7 +116,7 @@ public class EntityChangedEventManager {
                         }
                     }
                 }
-                if (type != null) {
+                if (type != null && attributeChanges != null) {
                     @SuppressWarnings("unchecked")
                     EntityChangedEvent event = new EntityChangedEvent(this, Id.of(entity), type, attributeChanges);
                     list.add(event);
@@ -133,7 +133,8 @@ public class EntityChangedEventManager {
     }
 
     @SuppressWarnings("unchecked")
-    private AttributeChanges getEntityAttributeChanges(@Nullable Entity entity, ObjectChangeSet changeSet) {
+    @Nullable
+    private AttributeChanges getEntityAttributeChanges(@Nullable Entity entity, @Nullable ObjectChangeSet changeSet) {
         if (changeSet == null)
             return null;
         Set<AttributeChanges.Change> changes = new HashSet<>();

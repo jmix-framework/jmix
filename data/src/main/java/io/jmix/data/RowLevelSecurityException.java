@@ -19,6 +19,8 @@ import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.Logging;
 import io.jmix.core.compatibility.SupportedByClient;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception that is raised on different exceptions related to Row Level Security.
  * <p>
@@ -32,7 +34,7 @@ public class RowLevelSecurityException extends RuntimeException {
     private final String entity;
     private final ConstraintOperationType operationType;
 
-    public RowLevelSecurityException(String message, String entity) {
+    public RowLevelSecurityException(String message, @Nullable String entity) {
         super(message);
         this.entity = entity;
         this.operationType = null;
@@ -44,10 +46,12 @@ public class RowLevelSecurityException extends RuntimeException {
         this.operationType = operationType;
     }
 
+    @Nullable
     public String getEntity() {
         return entity;
     }
 
+    @Nullable
     public ConstraintOperationType getOperationType() {
         return operationType;
     }

@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.DataProperties;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +55,7 @@ public class NumberIdCache {
         protected boolean cached;
 
         public Generator(String entityName,
-                         String sequenceName,
+                         @Nullable String sequenceName,
                          boolean cached) {
             this.entityName = entityName;
             this.sequenceName = sequenceName;
@@ -94,7 +95,7 @@ public class NumberIdCache {
      * @return next id
      */
     public Long createLongId(String entityName) {
-        MetaClass metaClass = metadata.getClass(entityName);
+        MetaClass metaClass = metadata.findClass(entityName);
         final boolean cached;
         final String sequenceName;
         if (metaClass != null) {
@@ -122,7 +123,7 @@ public class NumberIdCache {
         cache.clear();
     }
 
-    protected String getCacheKey(String entityName, String sequenceName) {
+    protected String getCacheKey(String entityName, @Nullable String sequenceName) {
         return sequenceName == null ? entityName : sequenceName;
     }
 }

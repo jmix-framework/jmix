@@ -33,6 +33,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -281,6 +282,7 @@ public class DeletePolicyProcessor {
         });
     }
 
+    @Nullable
     protected Entity getReference(Entity entity, MetaProperty property) {
         if (entityStates.isLoaded(entity, property.getName()))
             return EntityValues.getValue(entity, property.getName());
@@ -289,7 +291,8 @@ public class DeletePolicyProcessor {
                     "select e." + property.getName() + " from " + metadata.getClass(entity.getClass()).getName()
                             + " e where e." + primaryKeyName + " = ?1");
             query.setParameter(1, EntityValues.getId(entity));
-            Object refEntity = query.getFirstResult();
+            List list = query.getResultList();
+            Object refEntity = list.isEmpty() ? null : list.get(0);
             return (Entity) refEntity;
         }
     }

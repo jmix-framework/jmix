@@ -32,6 +32,7 @@ import org.eclipse.persistence.sessions.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -137,21 +138,25 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
+    @Nullable
     public <T> T find(Class<T> entityClass, Object primaryKey) {
         return internalFind(entityClass, primaryKey, LockModeType.NONE, Collections.emptyMap());
     }
 
     @Override
+    @Nullable
     public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
         return internalFind(entityClass, primaryKey, LockModeType.NONE, properties);
     }
 
     @Override
+    @Nullable
     public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode) {
         return internalFind(entityClass, primaryKey, lockMode, Collections.emptyMap());
     }
 
     @Override
+    @Nullable
     public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
         return internalFind(entityClass, primaryKey, lockMode, properties);
     }
@@ -408,6 +413,7 @@ public class JmixEntityManager implements EntityManager {
         return (softDeletionInProps == null || softDeletionInProps) && OrmProperties.isSoftDeletion(delegate);
     }
 
+    @Nullable
     private <T> T internalFind(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(primaryKey, "primaryKey is null");

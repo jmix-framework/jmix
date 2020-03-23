@@ -53,6 +53,7 @@ import org.springframework.transaction.support.ResourceHolderSynchronization;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -320,7 +321,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    protected void fireEntityChange(Entity entity, EntityChangeType type, EntityAttributeChanges changes) {
+    protected void fireEntityChange(Entity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
         if (lifecycleListeners == null) {
             return;
         }

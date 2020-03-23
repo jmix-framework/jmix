@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -183,6 +184,7 @@ public class ConfigStorageImpl implements ConfigStorage {
         clearCache();
     }
 
+    @Nullable
     private ConfigEntity getConfigInstance(String name) {
         TypedQuery<ConfigEntity> query = entityManager.createQuery("select c from sys$Config c where c.name = ?1", ConfigEntity.class);
         query.setParameter(1, name);

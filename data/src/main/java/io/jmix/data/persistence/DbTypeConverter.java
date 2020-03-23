@@ -16,6 +16,7 @@
 
 package io.jmix.data.persistence;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 
 /**
@@ -32,6 +33,7 @@ public interface DbTypeConverter {
      * @param column    ResultSet column number, starting from 1
      * @return corresponding value for an entity attribute
      */
+    @Nullable
     Object getJavaObject(ResultSet resultSet, int column);
 
     /**

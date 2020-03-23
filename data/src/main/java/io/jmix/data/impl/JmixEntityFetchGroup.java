@@ -28,11 +28,12 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.queries.LoadGroup;
 import org.eclipse.persistence.sessions.CopyGroup;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class JmixEntityFetchGroup extends EntityFetchGroup {
+public final class JmixEntityFetchGroup extends EntityFetchGroup {
 
     protected FetchGroup wrappedFetchGroup;
 
@@ -51,6 +52,7 @@ public class JmixEntityFetchGroup extends EntityFetchGroup {
     }
 
     @Override
+    @Nullable
     public String onUnfetchedAttribute(FetchGroupTracker entity, String attributeName) {
         if (entity instanceof Entity) {
             EntityEntry entityEntry = ((Entity<?>) entity).__getEntityEntry();

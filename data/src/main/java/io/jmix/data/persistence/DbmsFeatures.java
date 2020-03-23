@@ -106,6 +106,7 @@ public interface DbmsFeatures {
      * @return maximum number of values that can be used in the "IN" operator in a query.
      * {@code null} is returned if there is no any limit
      */
+    @Nullable
     default Integer getMaxIdsBatchSize() {
         return null;
     }

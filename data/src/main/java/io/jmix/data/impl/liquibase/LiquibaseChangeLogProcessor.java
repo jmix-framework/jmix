@@ -83,7 +83,11 @@ public class LiquibaseChangeLogProcessor {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            outFile.getParentFile().mkdirs();
+            if (!outFile.getParentFile().exists()) {
+                if (!outFile.getParentFile().mkdirs()) {
+                    throw new RuntimeException("Cannot create directory " + outFile.getParentFile());
+                }
+            }
             try (OutputStream os = new FileOutputStream(outFile);
                  Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
                 Dom4j.writeDocument(doc, true, writer);

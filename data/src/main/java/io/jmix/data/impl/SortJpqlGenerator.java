@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -126,6 +127,7 @@ public class SortJpqlGenerator {
         return jpqlSortExpressionProvider.getDatatypeSortExpression(metaPropertyPath, sortDirectionAsc);
     }
 
+    @Nullable
     protected String getLobPropertySortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {
         return supportsLobSorting(metaPropertyPath) ? jpqlSortExpressionProvider.getLobSortExpression(metaPropertyPath, sortDirectionAsc) : null;
     }

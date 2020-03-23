@@ -115,7 +115,11 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             entityManager.setProperty(OrmProperties.SOFT_DELETION, loadContext.isSoftDeletion());
 
             QueryTransformer transformer = QueryTransformerFactory.createTransformer(contextQuery.getQueryString());
-            transformer.replaceWithSelectId(metadataTools.getPrimaryKeyName(metadata.getClass(entityName)));
+            String primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(entityName));
+            if (primaryKeyName == null) {
+                throw new IllegalStateException("Cannot find primarykey name for " + entityName);
+            }
+            transformer.replaceWithSelectId(primaryKeyName);
             transformer.removeOrderBy();
             String queryString = transformer.getResult();
 
@@ -140,6 +144,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             log.debug("Done in " + (System.currentTimeMillis() - start) + "ms : " + logMsg);
             return resultList;
         });
+        assert idList != null;
 
         delete(queryKey);
         insert(queryKey, idList);
@@ -255,6 +260,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             query.setMaxResults(INACTIVE_DELETION_MAX);
             return query.getResultList();
         });
+        assert rows != null;
         if (rows.size() == INACTIVE_DELETION_MAX) {
             log.debug("Processing " + INACTIVE_DELETION_MAX + " records, run again for the rest");
         }

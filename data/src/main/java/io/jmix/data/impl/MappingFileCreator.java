@@ -144,6 +144,7 @@ class MappingFileCreator {
         return list;
     }
 
+    @Nullable
     private Attr.Type getAttrType(Field field) {
         if (field.getAnnotation(OneToOne.class) != null)
             return Attr.Type.ONE_TO_ONE;
@@ -321,7 +322,10 @@ class MappingFileCreator {
             }
 
             protected abstract String getFetch(Field field);
+
+            @Nullable
             protected abstract String getMappedBy(Field field);
+
             protected abstract CascadeType[] getCascade(Field field);
         }
 

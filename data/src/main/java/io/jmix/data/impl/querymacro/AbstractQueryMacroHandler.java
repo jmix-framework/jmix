@@ -23,6 +23,7 @@ import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.data.impl.QueryMacroHandler;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.TimeZone;
@@ -65,6 +66,7 @@ public abstract class AbstractQueryMacroHandler implements QueryMacroHandler {
         this.expandedParamTypes = expandedParamTypes;
     }
 
+    @Nullable
     protected TimeZone getTimeZoneFromArgs(String[] args, int pos) {
         if (pos < args.length) {
             if ("USER_TIMEZONE".equalsIgnoreCase(args[pos].trim())) {

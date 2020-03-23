@@ -24,7 +24,7 @@ import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.BaseUuidEntity;
@@ -107,7 +107,7 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
     private transient io.jmix.core.Entity dbGeneratedIdEntity;
 
     @Transient
-    @MetaProperty
+    @ModelProperty
     private Set<EntityLogAttr> attributes;
 
     @Column(name = "CHANGES")
@@ -147,7 +147,7 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
         this.entity = entity;
     }
 
-    @MetaProperty
+    @ModelProperty
     public String getDisplayedEntityName() {
         Metadata metadata = AppBeans.get(Metadata.NAME);
         ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);

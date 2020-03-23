@@ -16,7 +16,7 @@
 
 package test_support.testmodel;
 
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import javax.persistence.*;
 
@@ -33,7 +33,7 @@ public class StringKeyEntity implements io.jmix.core.Entity<String> {
     @Column(name = "NAME")
     protected String name;
 
-    @MetaProperty
+    @ModelProperty
     @Transient
     protected String description;
 

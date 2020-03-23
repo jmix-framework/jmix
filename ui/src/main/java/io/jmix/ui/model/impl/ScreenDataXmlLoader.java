@@ -17,15 +17,12 @@
 package io.jmix.ui.model.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.Entity;
-import io.jmix.core.DevelopmentException;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.queryconditions.Condition;
 import io.jmix.core.queryconditions.ConditionXmlLoader;
 import io.jmix.ui.model.*;
@@ -54,6 +51,9 @@ public class ScreenDataXmlLoader {
     @Inject
     protected ConditionXmlLoader conditionXmlLoader;
 
+    @Inject
+    protected BeanLocator beanLocator;
+
     public void load(ScreenData screenData, Element element, @Nullable ScreenData hostScreenData) {
         Preconditions.checkNotNullArgument(screenData, "screenData is null");
         Preconditions.checkNotNullArgument(element, "element is null");
@@ -65,8 +65,8 @@ public class ScreenDataXmlLoader {
         if (hostDataContext != null) {
             screenData.setDataContext(hostDataContext);
         } else {
-            boolean readOnly = Boolean.valueOf(element.attributeValue("readOnly"));
-            DataContext dataContext = readOnly ? new NoopDataContext() : factory.createDataContext();
+            boolean readOnly = Boolean.parseBoolean(element.attributeValue("readOnly"));
+            DataContext dataContext = readOnly ? new NoopDataContext(beanLocator) : factory.createDataContext();
             screenData.setDataContext(dataContext);
         }
 
@@ -97,7 +97,7 @@ public class ScreenDataXmlLoader {
         InstanceContainer<Entity> container;
 
         if (checkProvided(element, hostScreenData)) {
-            //noinspection ConstantConditions
+            assert hostScreenData != null;
             container = hostScreenData.getContainer(containerId);
         } else {
             container = factory.createInstanceContainer(getEntityClass(element));
@@ -122,7 +122,7 @@ public class ScreenDataXmlLoader {
         CollectionContainer<Entity> container;
 
         if (checkProvided(element, hostScreenData)) {
-            //noinspection ConstantConditions
+            assert hostScreenData != null;
             container = hostScreenData.getContainer(containerId);
         } else {
             container = factory.createCollectionContainer(getEntityClass(element));
@@ -147,7 +147,7 @@ public class ScreenDataXmlLoader {
         KeyValueCollectionContainer container;
 
         if (checkProvided(element, hostScreenData)) {
-            //noinspection ConstantConditions
+            assert hostScreenData != null;
             container = hostScreenData.getContainer(containerId);
         } else {
             container = factory.createKeyValueCollectionContainer();
@@ -167,12 +167,13 @@ public class ScreenDataXmlLoader {
         }
     }
 
-    protected void loadKeyValueInstanceContainer(ScreenData screenData, Element element, ScreenData hostScreenData) {
+    protected void loadKeyValueInstanceContainer(ScreenData screenData, Element element, @Nullable ScreenData hostScreenData) {
         String containerId = getRequiredAttr(element, "id");
 
         KeyValueContainer container;
 
         if (checkProvided(element, hostScreenData)) {
+            assert hostScreenData != null;
             container = hostScreenData.getContainer(containerId);
         } else {
             container = factory.createKeyValueContainer();
@@ -229,7 +230,7 @@ public class ScreenDataXmlLoader {
         InstanceContainer nestedContainer = null;
 
         if (checkProvided(element, hostScreenData)) {
-            //noinspection ConstantConditions
+            assert hostScreenData != null;
             nestedContainer = hostScreenData.getContainer(containerId);
         } else {
             if (element.getName().equals("collection")) {
@@ -269,7 +270,7 @@ public class ScreenDataXmlLoader {
         }
 
         if (checkProvided(element, hostScreenData)) {
-            //noinspection ConstantConditions
+            assert hostScreenData != null;
             loader = hostScreenData.getLoader(loaderId);
         } else {
             loader = factory.createInstanceLoader();
@@ -295,7 +296,7 @@ public class ScreenDataXmlLoader {
         }
 
         if (checkProvided(element, hostScreenData)) {
-            //noinspection ConstantConditions
+            assert hostScreenData != null;
             loader = hostScreenData.getLoader(loaderId);
         } else {
             loader = factory.createCollectionLoader();
@@ -323,7 +324,7 @@ public class ScreenDataXmlLoader {
         }
 
         if (checkProvided(element, hostScreenData)) {
-            //noinspection ConstantConditions
+            assert hostScreenData != null;
             loader = hostScreenData.getLoader(loaderId);
         } else {
             loader = factory.createKeyValueCollectionLoader();
@@ -342,7 +343,7 @@ public class ScreenDataXmlLoader {
         screenData.registerLoader(loaderId, loader);
     }
 
-    protected void loadKeyValueInstanceLoader(ScreenData screenData, Element element, KeyValueContainer container, ScreenData hostScreenData) {
+    protected void loadKeyValueInstanceLoader(ScreenData screenData, Element element, KeyValueContainer container, @Nullable ScreenData hostScreenData) {
         KeyValueInstanceLoader loader;
 
         String loaderId = element.attributeValue("id");
@@ -351,6 +352,7 @@ public class ScreenDataXmlLoader {
         }
 
         if (checkProvided(element, hostScreenData)) {
+            assert hostScreenData != null;
             loader = hostScreenData.getLoader(loaderId);
         } else {
             loader = factory.createKeyValueInstanceLoader();
@@ -458,7 +460,7 @@ public class ScreenDataXmlLoader {
     protected void loadCacheable(Element element, CollectionLoader<Entity> loader) {
         String cacheableVal = element.attributeValue("cacheable");
         if (!Strings.isNullOrEmpty(cacheableVal))
-            loader.setCacheable(Boolean.valueOf(cacheableVal));
+            loader.setCacheable(Boolean.parseBoolean(cacheableVal));
     }
 
     protected String getRequiredAttr(Element element, String attributeName) {
@@ -468,7 +470,7 @@ public class ScreenDataXmlLoader {
         return id.trim();
     }
 
-    protected boolean checkProvided(Element element, ScreenData hostScreenData) {
+    protected boolean checkProvided(Element element, @Nullable ScreenData hostScreenData) {
         boolean provided = Boolean.parseBoolean(element.attributeValue("provided"));
         if (provided && hostScreenData == null) {
             throw new IllegalStateException("Host ScreenData is null");

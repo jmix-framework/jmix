@@ -259,7 +259,6 @@ public class DataContextImpl implements DataContext {
         mergeSystemState(srcEntity, dstEntity, isRoot);
 
         MetaClass metaClass = getMetadata().getClass(srcEntity.getClass());
-        MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(metaClass);
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
@@ -330,7 +329,7 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected void setPropertyValue(Entity entity, MetaProperty property, Object value) {
+    protected void setPropertyValue(Entity entity, MetaProperty property, @Nullable Object value) {
         if (!property.isReadOnly()) {
             EntityValues.setValue(entity, property.getName(), value);
         } else {

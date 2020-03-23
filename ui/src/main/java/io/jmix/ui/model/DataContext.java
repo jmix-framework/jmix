@@ -375,6 +375,7 @@ public interface DataContext {
     /**
      * Returns a function which will be used to commit data instead of standard implementation.
      */
+    @Nullable
     Function<SaveContext, Set<Entity>> getCommitDelegate();
 
     /**

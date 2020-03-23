@@ -22,6 +22,7 @@ import io.jmix.core.ValueLoadContext;
 import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -150,7 +151,7 @@ public interface KeyValueInstanceLoader extends DataLoader {
 
         private final KeyValueEntity loadedEntity;
 
-        public PostLoadEvent(KeyValueInstanceLoader loader, KeyValueEntity loadedEntity) {
+        public PostLoadEvent(KeyValueInstanceLoader loader, @Nullable KeyValueEntity loadedEntity) {
             super(loader);
             this.loadedEntity = loadedEntity;
         }
@@ -158,7 +159,6 @@ public interface KeyValueInstanceLoader extends DataLoader {
         /**
          * The data loader which sent the event.
          */
-        @SuppressWarnings("unchecked")
         @Override
         public KeyValueInstanceLoader getSource() {
             return (KeyValueInstanceLoader) super.getSource();
@@ -167,6 +167,7 @@ public interface KeyValueInstanceLoader extends DataLoader {
         /**
          * Returns the loaded entity instance.
          */
+        @Nullable
         public KeyValueEntity getLoadedEntity() {
             return loadedEntity;
         }

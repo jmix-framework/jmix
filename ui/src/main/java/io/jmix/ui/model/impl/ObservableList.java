@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-@SuppressWarnings("NullableProblems")
 public class ObservableList<T> extends ForwardingList<T> implements Serializable {
 
     private static final long serialVersionUID = -1887633822578545041L;

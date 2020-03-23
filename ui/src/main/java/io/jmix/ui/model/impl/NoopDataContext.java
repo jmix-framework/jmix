@@ -16,11 +16,9 @@
 
 package io.jmix.ui.model.impl;
 
+import io.jmix.core.*;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.events.sys.VoidSubscription;
-import io.jmix.core.Entity;
-import io.jmix.core.SaveContext;
-import io.jmix.core.EntitySet;
 import io.jmix.ui.model.DataContext;
 
 import javax.annotation.Nullable;
@@ -34,6 +32,12 @@ import java.util.function.Function;
  * Dummy implementation of {@link DataContext} used for read-only screens like entity browsers.
  */
 public class NoopDataContext implements DataContext {
+
+    protected BeanLocator beanLocator;
+
+    public NoopDataContext(BeanLocator beanLocator) {
+        this.beanLocator = beanLocator;
+    }
 
     @Nullable
     @Override
@@ -79,7 +83,7 @@ public class NoopDataContext implements DataContext {
 
     @Override
     public <T extends Entity> T create(Class<T> entityClass) {
-        return null;
+        return beanLocator.get(Metadata.class).create(entityClass);
     }
 
     @Override

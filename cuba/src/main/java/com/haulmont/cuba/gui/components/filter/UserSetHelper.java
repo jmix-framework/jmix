@@ -82,7 +82,10 @@ public class UserSetHelper {
     public static String createIdsString(Set<String> current, Collection entities) {
         Set<String> convertedSet = new HashSet<>();
         for (Object entity : entities) {
-            convertedSet.add(getReferenceToEntitySupport().getReferenceIdForLink((Entity) entity).toString());
+            Object id = getReferenceToEntitySupport().getReferenceIdForLink((Entity) entity);
+            if (id != null) {
+                convertedSet.add(id.toString());
+            }
         }
         current.addAll(convertedSet);
         if (current.isEmpty()) {
@@ -102,7 +105,10 @@ public class UserSetHelper {
     public static String removeIds(Set<String> current, Collection entities) {
         Set<String> convertedSet = new HashSet<>();
         for (Object entity : entities) {
-            convertedSet.add(getReferenceToEntitySupport().getReferenceIdForLink((Entity) entity).toString());
+            Object id = getReferenceToEntitySupport().getReferenceIdForLink((Entity) entity);
+            if (id != null) {
+                convertedSet.add(id.toString());
+            }
         }
         current.removeAll(convertedSet);
         if (current.isEmpty()) {

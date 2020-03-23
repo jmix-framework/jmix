@@ -46,6 +46,7 @@ import org.springframework.test.context.TestPropertySource;
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.haulmont.cuba.core.testsupport.TestAssertions.assertFail;
@@ -863,12 +864,12 @@ public class EntityCacheTestClass {
                 persistence.getEntityManager().getConnection();
                 tx1.commit();
             }
-            FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.class);
-            FetchPlan view = viewRepository.getFetchPlan(metadata.getClass(User.class), "user.browse");
+            FetchPlanRepository fetchPlanRepository = AppBeans.get(FetchPlanRepository.class);
+            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metadata.getClass(User.class), "user.browse");
 
             Query query = persistence.getEntityManager().createQuery("select u from test$User u where u.id = :id")
                     .setParameter("id", user.getId());
-            query.setView(FetchPlan.copy(view).setLoadPartialEntities(true));
+            query.setView(FetchPlan.copy(fetchPlan).setLoadPartialEntities(true));
             ((QueryImpl) query).setSingleResultExpected(true);
             User userL = (User) query.getSingleResult();
             //User userL = persistence.getEntityManager().find(User.class, user.getId(), view);

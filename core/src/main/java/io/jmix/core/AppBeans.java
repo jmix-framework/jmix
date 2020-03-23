@@ -54,12 +54,12 @@ public class AppBeans {
     /**
      * Return an instance of the specified bean.
      * @param name      the name of the bean to retrieve
-     * @param beanType  type the bean must match. Can be an interface or superclass of the actual class, or null
-     * for any match. For example, if the value is Object.class, this method will succeed whatever the class of the
-     * returned instance.
+     * @param beanType  type the bean must match. Can be an interface or superclass of the actual class.
+     *                  For example, if the value is Object.class, this method will succeed whatever the class of the
+     *                  returned instance.
      * @return          bean instance
      */
-    public static <T> T get(String name, @Nullable Class<T> beanType) {
+    public static <T> T get(String name, Class<T> beanType) {
         return getBeanLocator().get(name, beanType);
     }
 

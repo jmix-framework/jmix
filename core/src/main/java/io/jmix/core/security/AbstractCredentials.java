@@ -16,6 +16,7 @@
 
 package io.jmix.core.security;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public abstract class AbstractCredentials implements LocalizedCredentials {
 
     private Map<String, Object> params;
 
-    public AbstractCredentials(Locale locale, Map<String, Object> params) {
+    public AbstractCredentials(@Nullable Locale locale, Map<String, Object> params) {
         this.locale = locale;
         this.params = params;
     }

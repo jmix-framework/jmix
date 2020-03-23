@@ -37,7 +37,7 @@ public class OffsetDateTimeDatatype extends AbstractTemporalDatatype<OffsetDateT
         implements TimeZoneAwareDatatype {
 
     @Override
-    public String format(@Nullable Object value, Locale locale, TimeZone timeZone) {
+    public String format(@Nullable Object value, Locale locale, @Nullable TimeZone timeZone) {
         if (timeZone == null || value == null) {
             return format(value, locale);
         }

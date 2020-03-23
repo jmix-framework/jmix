@@ -18,6 +18,7 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.CredentialsContainer;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -39,11 +40,11 @@ public class RememberMeCredentials extends AbstractClientCredentials implements 
         this(login, rememberMeToken, null);
     }
 
-    public RememberMeCredentials(String login, String rememberMeToken, Locale locale) {
+    public RememberMeCredentials(String login, String rememberMeToken, @Nullable Locale locale) {
         this(login, rememberMeToken, locale, Collections.emptyMap());
     }
 
-    public RememberMeCredentials(String login, String rememberMeToken, Locale locale, Map<String, Object> params) {
+    public RememberMeCredentials(String login, String rememberMeToken, @Nullable Locale locale, Map<String, Object> params) {
         super(locale, params);
         this.login = login;
         this.rememberMeToken = rememberMeToken;

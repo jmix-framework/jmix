@@ -24,6 +24,8 @@ import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 
+import javax.annotation.Nullable;
+
 /**
  * Infrastructure interface providing methods to check permissions of the current user.
  */
@@ -178,5 +180,6 @@ public interface Security {
      */
     boolean hasInMemoryConstraints(MetaClass metaClass, ConstraintOperationType... operationTypes);
 
+    @Nullable
     Object evaluateConstraintScript(Entity entity, String groovyScript);
 }

@@ -19,6 +19,7 @@ package io.jmix.core;
 import com.google.common.base.Preconditions;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.time.*;
 import java.util.Date;
 
@@ -53,7 +54,7 @@ public class DateTimeTransformations {
         return transformToZDT(date, null);
     }
 
-    protected ZonedDateTime transformToZDT(Object date, ZoneId fromZoneId) {
+    protected ZonedDateTime transformToZDT(Object date, @Nullable ZoneId fromZoneId) {
         Preconditions.checkNotNull(date);
         ZoneId zoneId = fromZoneId != null ? fromZoneId : ZoneId.systemDefault();
         if (date instanceof java.sql.Date) {

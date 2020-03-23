@@ -17,7 +17,7 @@
 package io.jmix.core.impl.jpql.model;
 
 public class VirtualJpqlEntityModel extends JpqlEntityModelImpl {
-    protected static int idx = 0;
+    static int idx = 0;
 
     public VirtualJpqlEntityModel() {
         super(VirtualJpqlEntityModel.generateName());

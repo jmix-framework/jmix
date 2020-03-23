@@ -18,6 +18,7 @@ package io.jmix.core.security;
 
 import org.springframework.security.core.CredentialsContainer;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -39,11 +40,11 @@ public class LoginPasswordCredentials extends AbstractClientCredentials implemen
         this(login, password, null);
     }
 
-    public LoginPasswordCredentials(String login, String password, Locale locale) {
+    public LoginPasswordCredentials(String login, String password, @Nullable Locale locale) {
         this(login, password, locale, Collections.emptyMap());
     }
 
-    public LoginPasswordCredentials(String login, String password, Locale locale, Map<String, Object> params) {
+    public LoginPasswordCredentials(String login, String password, @Nullable Locale locale, Map<String, Object> params) {
         super(locale, params);
         this.login = login;
         this.password = password;

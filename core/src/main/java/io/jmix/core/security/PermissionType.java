@@ -17,6 +17,7 @@ package io.jmix.core.security;
 
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -53,6 +54,7 @@ public enum PermissionType implements EnumClass<Integer> {
     }
 
     /** Constructs type from corresponding database value */
+    @Nullable
     public static PermissionType fromId(Integer id) {
         for (PermissionType type : PermissionType.values()) {
             if (Objects.equals(type.getId(), id)) {

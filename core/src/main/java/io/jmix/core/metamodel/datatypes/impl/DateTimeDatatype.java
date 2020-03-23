@@ -46,7 +46,7 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
     }
 
     @Override
-    public String format(Object value) {
+    public String format(@Nullable Object value) {
         if (value == null) {
             return "";
         } else {
@@ -61,12 +61,12 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
     }
 
     @Override
-    public String format(Object value, Locale locale) {
+    public String format(@Nullable Object value, Locale locale) {
         return format(value, locale, null);
     }
 
     @Override
-    public String format(@Nullable Object value, Locale locale, TimeZone timeZone) {
+    public String format(@Nullable Object value, Locale locale, @Nullable TimeZone timeZone) {
         if (value == null) {
             return "";
         }
@@ -85,7 +85,7 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
     }
 
     @Override
-    public Date parse(String value) throws ParseException {
+    public Date parse(@Nullable String value) throws ParseException {
         if (StringUtils.isBlank(value)) {
             return null;
         }
@@ -100,12 +100,12 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
     }
 
     @Override
-    public Date parse(String value, Locale locale) throws ParseException {
+    public Date parse(@Nullable String value, Locale locale) throws ParseException {
         return parse(value, locale, null);
     }
 
     @Nullable
-    public Date parse(@Nullable String value, Locale locale, TimeZone timeZone) throws ParseException {
+    public Date parse(@Nullable String value, Locale locale, @Nullable TimeZone timeZone) throws ParseException {
         if (StringUtils.isBlank(value)) {
             return null;
         }

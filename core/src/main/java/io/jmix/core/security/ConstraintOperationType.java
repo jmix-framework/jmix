@@ -18,6 +18,7 @@ package io.jmix.core.security;
 
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -43,6 +44,7 @@ public enum ConstraintOperationType implements EnumClass<String> {
         return id;
     }
 
+    @Nullable
     public static ConstraintOperationType fromId(String id) {
         for (ConstraintOperationType area : ConstraintOperationType.values()) {
             if (Objects.equals(id, area.getId()))

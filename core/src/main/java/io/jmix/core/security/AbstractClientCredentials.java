@@ -20,6 +20,7 @@ import io.jmix.core.ClientType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Locale;
@@ -42,7 +43,7 @@ public abstract class AbstractClientCredentials extends AbstractCredentials
     private Map<String, Serializable> sessionAttributes;
     private TimeZone timeZone;
 
-    public AbstractClientCredentials(Locale locale, Map<String, Object> params) {
+    public AbstractClientCredentials(@Nullable Locale locale, Map<String, Object> params) {
         super(locale, params);
     }
 

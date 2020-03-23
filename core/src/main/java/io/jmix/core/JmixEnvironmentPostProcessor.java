@@ -23,6 +23,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -33,8 +34,8 @@ public class JmixEnvironmentPostProcessor implements EnvironmentPostProcessor {
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         Properties properties = new Properties();
-        try {
-            properties.load(getClass().getResourceAsStream("/io/jmix/core/application.properties"));
+        try (InputStream stream = getClass().getResourceAsStream("/io/jmix/core/application.properties")) {
+            properties.load(stream);
         } catch (IOException e) {
             throw new RuntimeException("Unable to load default Jmix properties", e);
         }

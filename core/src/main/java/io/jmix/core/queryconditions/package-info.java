@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.datatypes;
+@NonNullApi
+package io.jmix.core.queryconditions;
 
-import javax.annotation.Nullable;
-import java.util.Locale;
-import java.util.TimeZone;
-
-/**
- * A {@link Datatype} that supports correct presentation with timezone.
- */
-public interface TimeZoneAwareDatatype {
-    /** Converts value to String taking into account local formats and timezone. Returns an empty string for null value. */
-    String format(@Nullable Object value, Locale locale, @Nullable TimeZone timeZone);
-}
+import org.springframework.lang.NonNullApi;

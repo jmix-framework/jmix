@@ -15,6 +15,8 @@
  */
 package io.jmix.core.security;
 
+import javax.annotation.Nullable;
+
 /**
  * Type of access to an entity attribute.
  */
@@ -33,6 +35,7 @@ public enum EntityAttrAccess {
         return id;
     }
 
+    @Nullable
     public static EntityAttrAccess fromId(int id) {
         switch (id) {
             case 0: return DENY;

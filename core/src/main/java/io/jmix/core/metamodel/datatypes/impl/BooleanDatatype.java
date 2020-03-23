@@ -34,12 +34,12 @@ public class BooleanDatatype implements Datatype<Boolean> {
     protected FormatStringsRegistry formatStringsRegistry;
 
     @Override
-    public String format(Object value) {
+    public String format(@Nullable Object value) {
         return value == null ? "" : Boolean.toString((Boolean) value);
     }
 
     @Override
-    public String format(Object value, Locale locale) {
+    public String format(@Nullable Object value, Locale locale) {
         if (value == null) {
             return "";
         }
@@ -52,6 +52,7 @@ public class BooleanDatatype implements Datatype<Boolean> {
         return (boolean) value ? formatStrings.getTrueString() : formatStrings.getFalseString();
     }
 
+    @Nullable
     protected Boolean parse(@Nullable String value, String trueString, String falseString) throws ParseException {
         if (!StringUtils.isBlank(value)) {
             String lowerCaseValue = StringUtils.lowerCase(value);
@@ -67,12 +68,12 @@ public class BooleanDatatype implements Datatype<Boolean> {
     }
 
     @Override
-    public Boolean parse(String value) throws ParseException {
+    public Boolean parse(@Nullable String value) throws ParseException {
         return parse(value, "true", "false");
     }
 
     @Override
-    public Boolean parse(String value, Locale locale) throws ParseException {
+    public Boolean parse(@Nullable String value, Locale locale) throws ParseException {
         if (StringUtils.isBlank(value)) {
             return null;
         }

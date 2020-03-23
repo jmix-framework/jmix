@@ -123,6 +123,7 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
             try {
                 Object value = EntityValues.getValue(((Entity) entity), property);
                 if (value instanceof Collection) { //check for IndirectCollection behaviour, should fail if property is not loaded
+                    //noinspection ResultOfMethodCallIgnored
                     ((Collection) value).size();
                 }
                 return true;

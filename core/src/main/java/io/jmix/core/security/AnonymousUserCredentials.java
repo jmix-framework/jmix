@@ -16,6 +16,7 @@
 
 package io.jmix.core.security;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class AnonymousUserCredentials extends AbstractClientCredentials {
         super(locale, params);
     }
 
-    public AnonymousUserCredentials(Object principal, Locale locale, Map<String, Object> params) {
+    public AnonymousUserCredentials(Object principal, @Nullable Locale locale, Map<String, Object> params) {
         super(locale, params);
 
         this.principal = principal;

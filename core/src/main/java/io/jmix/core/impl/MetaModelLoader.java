@@ -198,6 +198,7 @@ public class MetaModelLoader {
         }
     }
 
+    @Nullable
     protected String getMetaClassName(Class<?> javaClass) {
         Entity entityAnnotation = javaClass.getAnnotation(Entity.class);
         MappedSuperclass mappedSuperclassAnnotation = javaClass.getAnnotation(MappedSuperclass.class);
@@ -484,6 +485,7 @@ public class MetaModelLoader {
         return false;
     }
 
+    @Nullable
     protected Class getFieldTypeAccordingAnnotations(Field field) {
         OneToOne oneToOneAnnotation = field.getAnnotation(OneToOne.class);
         OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
@@ -503,6 +505,7 @@ public class MetaModelLoader {
         return result;
     }
 
+    @Nullable
     protected Class getTypeOverride(AnnotatedElement element) {
         Temporal temporal = element.getAnnotation(Temporal.class);
         if (temporal != null && temporal.value().equals(TemporalType.DATE))
@@ -566,6 +569,7 @@ public class MetaModelLoader {
         }
     }
 
+    @Nullable
     protected String getInverseField(Field field) {
         OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
         if (oneToManyAnnotation != null)
@@ -949,7 +953,7 @@ public class MetaModelLoader {
         }
 
         @SuppressWarnings("unchecked")
-        public MetadataObjectInfo(T object, Collection<? extends RangeInitTask> tasks) {
+        public MetadataObjectInfo(@Nullable T object, Collection<? extends RangeInitTask> tasks) {
             this.object = object;
             this.tasks = (Collection<RangeInitTask>) tasks;
         }

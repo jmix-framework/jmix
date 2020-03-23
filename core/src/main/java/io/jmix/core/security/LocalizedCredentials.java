@@ -16,6 +16,7 @@
 
 package io.jmix.core.security;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 public interface LocalizedCredentials extends Credentials {
@@ -31,5 +32,6 @@ public interface LocalizedCredentials extends Credentials {
      *
      * @return locale
      */
+    @Nullable
     Locale getLocale();
 }

@@ -15,6 +15,7 @@
  */
 package io.jmix.core;
 
+import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -179,20 +180,26 @@ public class FetchPlan implements Serializable {
         }
     }
 
-    public static FetchPlan copy(@Nullable FetchPlan view) {
-        if (view == null) {
-            return null;
-        }
+    public static FetchPlan copy(FetchPlan fetchPlan) {
+        Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
 
-        FetchPlanParams viewParams = new FetchPlanParams()
-                .entityClass(view.getEntityClass())
-                .name(view.getName());
-        FetchPlan copy = new FetchPlan(viewParams);
-        for (FetchPlanProperty property : view.getProperties()) {
-            copy.addProperty(property.getName(), copy(property.getFetchPlan()), property.getFetchMode());
+        FetchPlanParams params = new FetchPlanParams()
+                .entityClass(fetchPlan.getEntityClass())
+                .name(fetchPlan.getName());
+        FetchPlan copy = new FetchPlan(params);
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
+            copy.addProperty(property.getName(), copyNullable(property.getFetchPlan()), property.getFetchMode());
         }
 
         return copy;
+    }
+
+    @Nullable
+    public static FetchPlan copyNullable(@Nullable FetchPlan fetchPlan) {
+        if (fetchPlan == null) {
+            return null;
+        }
+        return copy(fetchPlan);
     }
 
     /**

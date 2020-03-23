@@ -49,7 +49,7 @@ public class MetadataBuildSupport {
         public final Object value;
         public final Map<String, Object> attributes = new HashMap<>();
 
-        public XmlAnnotation(Object value) {
+        public XmlAnnotation(@Nullable Object value) {
             this.value = value;
         }
     }
@@ -236,6 +236,7 @@ public class MetadataBuildSupport {
         return result;
     }
 
+    @Nullable
     protected Object getXmlAnnotationAttributeValue(Element attributeEl) {
         String value = attributeEl.attributeValue("value");
         String className = attributeEl.attributeValue("class");
@@ -261,7 +262,8 @@ public class MetadataBuildSupport {
     }
 
     @SuppressWarnings("unchecked")
-    protected Object getXmlAnnotationAttributeValue(String value, String className, String datatypeName) {
+    @Nullable
+    protected Object getXmlAnnotationAttributeValue(String value, @Nullable String className, @Nullable String datatypeName) {
         if (className == null && datatypeName == null)
             return inferMetaAnnotationType(value);
         if (className != null) {
@@ -280,7 +282,8 @@ public class MetadataBuildSupport {
         }
     }
 
-    protected Object inferMetaAnnotationType(String str) {
+    @Nullable
+    protected Object inferMetaAnnotationType(@Nullable String str) {
         Object val;
         if (str != null && (str.equalsIgnoreCase("true") || str.equalsIgnoreCase("false")))
             val = Boolean.valueOf(str);

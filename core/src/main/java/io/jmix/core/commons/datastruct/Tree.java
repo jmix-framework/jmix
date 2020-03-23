@@ -15,6 +15,7 @@
  */
 package io.jmix.core.commons.datastruct;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +45,7 @@ public class Tree<T> implements Serializable {
      *
      * @return the root element.
      */
+    @Nullable
     public Node<T> getRootNode() {
         return rootNodes.isEmpty() ? null : rootNodes.get(0);
     }

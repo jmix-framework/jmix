@@ -285,7 +285,7 @@ public class MetadataLoader {
             ((MetaPropertyImpl) inverseProp).setInverse(metaProperty);
         }
 
-        if (metaProperty.getRange() == null || !metaProperty.getRange().isClass())
+        if (!metaProperty.getRange().isClass())
             return;
 
         AnnotatedElement annotatedElement = metaProperty.getAnnotatedElement();

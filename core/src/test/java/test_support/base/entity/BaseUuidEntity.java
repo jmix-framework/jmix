@@ -17,7 +17,7 @@ package test_support.base.entity;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -25,7 +25,7 @@ import javax.persistence.MappedSuperclass;
 import java.util.UUID;
 
 @MappedSuperclass
-@MetaClass(name = "base_BaseUuidEntity")
+@ModelObject(name = "base_BaseUuidEntity")
 public abstract class BaseUuidEntity extends BaseGenericIdEntity<UUID> implements HasUuid {
 
     private static final long serialVersionUID = -2217624132287086972L;

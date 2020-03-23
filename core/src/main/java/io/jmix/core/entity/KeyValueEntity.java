@@ -21,6 +21,7 @@ import io.jmix.core.EntityEntry;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import java.util.LinkedHashMap;
@@ -41,7 +42,7 @@ import java.util.UUID;
  * person.setValue("lastName", "Simpson");
  * </pre>
  */
-@io.jmix.core.metamodel.annotations.MetaClass(name = "sys_KeyValueEntity")
+@ModelObject(name = "sys_KeyValueEntity")
 @SystemLevel
 @DisableEnhancing
 public class KeyValueEntity

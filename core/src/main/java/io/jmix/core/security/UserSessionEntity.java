@@ -20,8 +20,8 @@ import io.jmix.core.UuidProvider;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 
 import javax.persistence.Id;
 import java.util.Date;
@@ -30,7 +30,7 @@ import java.util.UUID;
 /**
  * Non-persistent entity to show user sessions list in UI.
  */
-@MetaClass(name = "sec$UserSessionEntity")
+@ModelObject(name = "sec$UserSessionEntity")
 @SystemLevel
 public class UserSessionEntity implements Entity<UUID>, HasUuid {
 
@@ -38,19 +38,19 @@ public class UserSessionEntity implements Entity<UUID>, HasUuid {
 
     @Id
     private UUID id;
-    @MetaProperty
+    @ModelProperty
     private String login;
-    @MetaProperty
+    @ModelProperty
     private String userName;
-    @MetaProperty
+    @ModelProperty
     private String address;
-    @MetaProperty
+    @ModelProperty
     private String clientInfo;
-    @MetaProperty
+    @ModelProperty
     private Date since;
-    @MetaProperty
+    @ModelProperty
     private Date lastUsedTs;
-    @MetaProperty
+    @ModelProperty
     private Boolean system;
 
     public UserSessionEntity() {

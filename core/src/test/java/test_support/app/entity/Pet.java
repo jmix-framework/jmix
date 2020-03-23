@@ -16,7 +16,7 @@
 
 package test_support.app.entity;
 
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 import test_support.base.entity.StandardEntity;
 
@@ -31,10 +31,10 @@ public class Pet extends StandardEntity {
     @Column(name = "NAME")
     private String name;
 
-    @MetaProperty
+    @ModelProperty
     private String nick;
 
-    @MetaProperty
+    @ModelProperty
     public String getDescription() {
         return "Name: " + name + ", nick: " + nick;
     }

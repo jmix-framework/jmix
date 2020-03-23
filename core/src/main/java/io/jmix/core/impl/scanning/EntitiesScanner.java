@@ -18,7 +18,7 @@ package io.jmix.core.impl.scanning;
 
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -97,7 +97,7 @@ public class EntitiesScanner extends AbstractClasspathScanner {
 
     protected boolean isCandidateEntity(MetadataReader metadataReader) {
         return (metadataReader.getAnnotationMetadata().hasAnnotation(Entity.class.getName())
-                || metadataReader.getAnnotationMetadata().hasAnnotation(MetaClass.class.getName()))
+                || metadataReader.getAnnotationMetadata().hasAnnotation(ModelObject.class.getName()))
                 || metadataReader.getAnnotationMetadata().hasAnnotation(Embeddable.class.getName());
     }
 

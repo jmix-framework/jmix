@@ -16,14 +16,14 @@
 
 package test_support.addon1.entity;
 
-import io.jmix.core.metamodel.annotations.MetaClass;
-import io.jmix.core.metamodel.annotations.MetaProperty;
+import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import test_support.base.entity.StandardEntity;
 
-@MetaClass(name = "addon1_TestEntity")
+@ModelObject(name = "addon1_TestEntity")
 public class TestAddon1Entity extends StandardEntity {
 
-    @MetaProperty
+    @ModelProperty
     private String name;
 
     public String getName() {

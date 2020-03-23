@@ -17,10 +17,10 @@
 package io.jmix.core;
 
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.*;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
@@ -858,7 +858,7 @@ public class MetadataTools {
     }
 
     /**
-     * @return list of related properties defined in {@link io.jmix.core.metamodel.annotations.MetaProperty#related()}
+     * @return list of related properties defined in {@link ModelProperty#related()}
      * or empty list
      */
     public List<String> getRelatedProperties(Class<?> entityClass, String property) {
@@ -869,7 +869,7 @@ public class MetadataTools {
     }
 
     /**
-     * @return list of related properties defined in {@link io.jmix.core.metamodel.annotations.MetaProperty#related()}
+     * @return list of related properties defined in {@link ModelProperty#related()}
      * or empty list
      */
     public List<String> getRelatedProperties(MetaProperty metaProperty) {

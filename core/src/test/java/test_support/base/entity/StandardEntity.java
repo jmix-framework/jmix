@@ -19,7 +19,7 @@ import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.Updatable;
 import io.jmix.core.entity.Versioned;
-import io.jmix.core.metamodel.annotations.MetaClass;
+import io.jmix.core.metamodel.annotations.ModelObject;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -27,7 +27,7 @@ import javax.persistence.Version;
 import java.util.Date;
 
 @MappedSuperclass
-@MetaClass(name = "base$StandardEntity")
+@ModelObject(name = "base$StandardEntity")
 public abstract class StandardEntity extends BaseUuidEntity implements Versioned, Creatable, Updatable, SoftDelete {
 
     private static final long serialVersionUID = 5642226839555253331L;

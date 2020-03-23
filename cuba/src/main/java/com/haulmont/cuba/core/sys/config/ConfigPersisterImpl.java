@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.sys.config;
 import io.jmix.core.compatibility.AppContext;
 import com.haulmont.cuba.core.config.ConfigPersister;
 import com.haulmont.cuba.core.config.SourceType;
-import io.jmix.core.impl.ConfigStorage;
+import com.haulmont.cuba.core.app.ConfigStorageAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class ConfigPersisterImpl implements ConfigPersister {
         }
     }
 
-    protected ConfigStorage getConfigStorage() {
-        return (ConfigStorage) applicationContext.getBean(ConfigStorage.NAME);
+    protected ConfigStorageAPI getConfigStorage() {
+        return (ConfigStorageAPI) applicationContext.getBean(ConfigStorageAPI.NAME);
     }
 }

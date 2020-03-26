@@ -24,6 +24,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Grid;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
+import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.components.TreeDataGrid;
 import io.jmix.ui.components.data.BindingState;
 import io.jmix.ui.components.data.DataGridItems;
@@ -297,5 +298,18 @@ public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<CubaT
         }
 
         return settingsChanged;
+    }
+
+    @Override
+    public void scrollTo(E item, ScrollDestination destination) {
+        Preconditions.checkNotNullArgument(item);
+        Preconditions.checkNotNullArgument(destination);
+
+        int rowIndex = getVisibleItemsConsideringHierarchy().indexOf(item);
+        if (rowIndex == -1) {
+            return;
+        }
+
+        component.scrollTo(rowIndex, WebWrapperUtils.convertToGridScrollDestination(destination));
     }
 }

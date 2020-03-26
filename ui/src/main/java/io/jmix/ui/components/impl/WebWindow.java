@@ -985,6 +985,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         this.urlStateMark = urlStateMark;
     }
 
+    @Nullable
     public NavigationState getResolvedState() {
         return resolvedState;
     }

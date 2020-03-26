@@ -638,6 +638,7 @@ $cuba-sidemenu-userindicator-font-weight: $v-font-weight !default;
     .c-ftsfield {
       padding-left: $v-layout-margin-left;
       padding-right: $v-layout-margin-right + $v-unit-size;
+      padding-bottom: $v-layout-margin-bottom;
     }
 
     .#{$primary-stylename} {

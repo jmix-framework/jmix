@@ -30,6 +30,8 @@ public class WebScreenTools implements ScreenTools {
     /*@Inject
     protected WebConfig webConfig;
     @Inject
+    protected Metadata metadata;
+    @Inject
     protected WindowConfig windowConfig;
     @Inject
     protected UserSettingService userSettingService;*/
@@ -58,6 +60,10 @@ public class WebScreenTools implements ScreenTools {
 
         Screen screen = screens.create(defaultScreenId, OpenMode.NEW_TAB);
 
+        if (screen instanceof EditorScreen) {
+            ((EditorScreen) screen).setEntityToEdit(getEntityToEdit(defaultScreenId));
+        }
+
         screen.show();
 
         Window window = screen.getWindow();
@@ -74,4 +80,17 @@ public class WebScreenTools implements ScreenTools {
             window.setCloseable(false);
         }*/
     }
+
+    /*protected Entity getEntityToEdit(String screenId) {
+        WindowInfo windowInfo = windowConfig.getWindowInfo(screenId);
+        Class<? extends Entity> entityClass = EditorTypeExtractor.extractEntityClass(windowInfo);
+
+        if (entityClass == null) {
+            throw new UnsupportedOperationException(
+                    String.format("Unable to open default screen '%s'. Failed to determine editor entity type",
+                            screenId));
+        }
+
+        return metadata.create(entityClass);
+    }*/
 }

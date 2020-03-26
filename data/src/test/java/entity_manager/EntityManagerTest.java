@@ -21,7 +21,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.data.JmixDataConfiguration;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.event.EntityChangedEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -155,7 +155,7 @@ public class EntityManagerTest {
         FetchPlan fetchPlan = FetchPlanBuilder.of(Customer.class).add("name").build();
         fetchPlan.setLoadPartialEntities(true);
 
-        Customer customer1 = entityManager.find(Customer.class, customer.getId(), OrmProperties.builder().withFetchPlan(fetchPlan).build());
+        Customer customer1 = entityManager.find(Customer.class, customer.getId(), PersistenceHints.builder().withFetchPlan(fetchPlan).build());
 
         // then:
         assertTrue(entityStates.isLoaded(customer1, "name"));
@@ -222,7 +222,7 @@ public class EntityManagerTest {
         // when:
         tx.executeWithoutResult(status -> {
             Customer customer1 = entityManager.find(Customer.class, customer.getId());
-            entityManager.setProperty(OrmProperties.SOFT_DELETION, false);
+            entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
             entityManager.remove(customer1);
         });
 

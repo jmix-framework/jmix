@@ -24,7 +24,7 @@ import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.AuditInfoProvider;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.eclipse.persistence.internal.helper.CubaUtil;
@@ -128,7 +128,7 @@ public class JmixEntityManager implements EntityManager {
         if (entityStates.isDetached(entity)) {
             entity = internalMerge(entity);
         }
-        if (entity instanceof SoftDelete && OrmProperties.isSoftDeletion(delegate)) {
+        if (entity instanceof SoftDelete && PersistenceHints.isSoftDeletion(delegate)) {
             ((SoftDelete) entity).setDeleteTs(timeSource.currentTimestamp());
             ((SoftDelete) entity).setDeletedBy(auditInfoProvider.getCurrentUserLogin());
         } else {
@@ -242,7 +242,7 @@ public class JmixEntityManager implements EntityManager {
 
     @Override
     public void setProperty(String propertyName, Object value) {
-        if (OrmProperties.SOFT_DELETION.equals(propertyName)) {
+        if (PersistenceHints.SOFT_DELETION.equals(propertyName)) {
             Preconditions.checkNotNullArgument(value, "soft deletion value must not be null");
             setSoftDeletion((Boolean) value);
         } else {
@@ -403,14 +403,14 @@ public class JmixEntityManager implements EntityManager {
     }
 
     private void setSoftDeletion(boolean softDeletion) {
-        delegate.setProperty(OrmProperties.SOFT_DELETION, softDeletion);
+        delegate.setProperty(PersistenceHints.SOFT_DELETION, softDeletion);
         CubaUtil.setSoftDeletion(softDeletion);
         CubaUtil.setOriginalSoftDeletion(softDeletion);
     }
 
     private boolean isSoftDeletion(Map<String, Object> properties) {
-        Boolean softDeletionInProps = properties == null ? null : (Boolean) properties.get(OrmProperties.SOFT_DELETION);
-        return (softDeletionInProps == null || softDeletionInProps) && OrmProperties.isSoftDeletion(delegate);
+        Boolean softDeletionInProps = properties == null ? null : (Boolean) properties.get(PersistenceHints.SOFT_DELETION);
+        return (softDeletionInProps == null || softDeletionInProps) && PersistenceHints.isSoftDeletion(delegate);
     }
 
     @Nullable
@@ -420,7 +420,7 @@ public class JmixEntityManager implements EntityManager {
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(entityClass);
 
-        Collection<FetchPlan> fetchPlans = OrmProperties.getFetchPlans(properties);
+        Collection<FetchPlan> fetchPlans = PersistenceHints.getFetchPlans(properties);
         if (!fetchPlans.isEmpty()) {
             return findPartial(metaClass, primaryKey, fetchPlans);
         }
@@ -447,7 +447,7 @@ public class JmixEntityManager implements EntityManager {
         JmixQuery query = (JmixQuery) createQuery(String.format("select e from %s e where e.%s = ?1", metaClass.getName(), pkName));
         query.setSingleResultExpected(true);
         query.setParameter(1, realId);
-        query.setHint(OrmProperties.FETCH_PLAN, fetchPlans);
+        query.setHint(PersistenceHints.FETCH_PLAN, fetchPlans);
 
         //noinspection unchecked
         return (T) query.getSingleResultOrNull();
@@ -491,7 +491,7 @@ public class JmixEntityManager implements EntityManager {
 
             return merged;
         } finally {
-            boolean softDeletion = OrmProperties.isSoftDeletion(delegate);
+            boolean softDeletion = PersistenceHints.isSoftDeletion(delegate);
             CubaUtil.setSoftDeletion(softDeletion);
             CubaUtil.setOriginalSoftDeletion(softDeletion);
         }

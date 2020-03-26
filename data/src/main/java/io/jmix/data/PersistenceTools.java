@@ -184,7 +184,7 @@ public class PersistenceTools {
             if (objectChanges != null) { // can be null for example in AFTER_DELETE entity listener
                 ChangeRecord changeRecord = objectChanges.getChangesForAttributeNamed(attribute);
                 if (changeRecord instanceof CollectionChangeRecord) {
-                    if (OrmProperties.isSoftDeletion(entityManager) && changeRecord.getOldValue() != null) {
+                    if (PersistenceHints.isSoftDeletion(entityManager) && changeRecord.getOldValue() != null) {
                         MetaProperty metaProperty = metadata.getClass(entity).getProperty(attribute);
                         if (SoftDelete.class.isAssignableFrom(metaProperty.getRange().asClass().getJavaClass())) {
                             Collection oldValue = (Collection) changeRecord.getOldValue();

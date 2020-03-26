@@ -28,7 +28,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.data.DataProperties;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,7 +103,7 @@ public class QueryCacheManager {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
             }
             for (Object id : queryResult.getResult()) {
-                resultList.add(em.find(metaClass.getJavaClass(), id, OrmProperties.builder().withFetchPlans(views).build()));
+                resultList.add(em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(views).build()));
             }
         } else {
             log.debug("Query results are not found in cache: {}", queryKey.printDescription());
@@ -132,7 +132,7 @@ public class QueryCacheManager {
             String storeName = metadataTools.getStoreName(metaClass);
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
             for (Object id : queryResult.getResult()) {
-                return (T) em.find(metaClass.getJavaClass(), id, OrmProperties.builder().withFetchPlans(views).build());
+                return (T) em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(views).build());
             }
         }
         log.debug("Query results are not found in cache: {}", queryKey.printDescription());

@@ -165,7 +165,7 @@ public class OrmDataStore implements DataStore {
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
             if (!context.isSoftDeletion())
-                em.setProperty(OrmProperties.SOFT_DELETION, false);
+                em.setProperty(PersistenceHints.SOFT_DELETION, false);
 
             // If maxResults=1 and the query is not by ID we should not use getSingleResult() for backward compatibility
             boolean singleResult = !(context.getQuery() != null
@@ -175,7 +175,7 @@ public class OrmDataStore implements DataStore {
 
             FetchPlan fetchPlan = createRestrictedFetchPlan(context);
             Query query = createQuery(em, context, singleResult, false);
-            query.setHint(OrmProperties.FETCH_PLAN, fetchPlan);
+            query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
 
             //noinspection unchecked
             List<E> resultList = executeQuery(query, singleResult);
@@ -244,7 +244,7 @@ public class OrmDataStore implements DataStore {
         TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
         try {
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
-            em.setProperty(OrmProperties.SOFT_DELETION, context.isSoftDeletion());
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
             boolean ensureDistinct = false;
             if (properties.isInMemoryDistinct() && context.getQuery() != null) {
@@ -265,7 +265,7 @@ public class OrmDataStore implements DataStore {
                 entities = loadListByBatchesOfIds(context, em, fetchPlan, maxIdsBatchSize);
             } else {
                 Query query = createQuery(em, context, false, false);
-                query.setHint(OrmProperties.FETCH_PLAN, fetchPlan);
+                query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
                 entities = getResultList(context, query, ensureDistinct);
             }
             if (context.getIds().isEmpty()) {
@@ -321,7 +321,7 @@ public class OrmDataStore implements DataStore {
         for (Object id : context.getIds()) {
             contextCopy.setId(id);
             Query query = createQuery(em, contextCopy, true, false);
-            query.setHint(OrmProperties.FETCH_PLAN, fetchPlan);
+            query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
             List<E> list = executeQuery(query, true);
             entities.addAll(list);
         }
@@ -338,7 +338,7 @@ public class OrmDataStore implements DataStore {
             contextCopy.setIds(partition);
 
             Query query = createQuery(em, contextCopy, false, false);
-            query.setHint(OrmProperties.FETCH_PLAN, view);
+            query.setHint(PersistenceHints.FETCH_PLAN, view);
             List<E> list = executeQuery(query, false);
             entities.addAll(list);
         }
@@ -388,7 +388,7 @@ public class OrmDataStore implements DataStore {
             TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
             try {
                 EntityManager em = storeAwareLocator.getEntityManager(storeName);
-                em.setProperty(OrmProperties.SOFT_DELETION, context.isSoftDeletion());
+                em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
                 boolean ensureDistinct = false;
                 if (properties.isInMemoryDistinct() && context.getQuery() != null) {
@@ -403,7 +403,7 @@ public class OrmDataStore implements DataStore {
                 context.getQuery().setMaxResults(0);
 
                 Query query = createQuery(em, context, false, false);
-                query.setHint(OrmProperties.FETCH_PLAN, createRestrictedFetchPlan(context));
+                query.setHint(PersistenceHints.FETCH_PLAN, createRestrictedFetchPlan(context));
 
                 resultList = getResultList(context, query, ensureDistinct);
 
@@ -422,7 +422,7 @@ public class OrmDataStore implements DataStore {
             TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
             try {
                 EntityManager em = storeAwareLocator.getEntityManager(storeName);
-                em.setProperty(OrmProperties.SOFT_DELETION, context.isSoftDeletion());
+                em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
                 Query query = createQuery(em, context, false, true);
                 result = (Number) query.getSingleResult();
@@ -461,7 +461,7 @@ public class OrmDataStore implements DataStore {
                 checkPermissions(context);
 
                 if (!context.isSoftDeletion())
-                    em.setProperty(OrmProperties.SOFT_DELETION, false);
+                    em.setProperty(PersistenceHints.SOFT_DELETION, false);
 
                 // todo dynamic attributes
                 //            List<BaseGenericIdEntity> entitiesToStoreDynamicAttributes = new ArrayList<>();
@@ -668,7 +668,7 @@ public class OrmDataStore implements DataStore {
         TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
         try {
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
-            em.setProperty(OrmProperties.SOFT_DELETION, context.isSoftDeletion());
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
             List<String> keys = context.getProperties();
 
@@ -792,7 +792,7 @@ public class OrmDataStore implements DataStore {
             if (contextQuery.getMaxResults() != 0)
                 query.setMaxResults(contextQuery.getMaxResults());
             if (contextQuery.isCacheable()) {
-                query.setHint(OrmProperties.CACHEABLE, contextQuery.isCacheable());
+                query.setHint(PersistenceHints.CACHEABLE, contextQuery.isCacheable());
             }
         }
 

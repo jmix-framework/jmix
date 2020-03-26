@@ -22,7 +22,7 @@ import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.core.security.UserSessions;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.persistence.DbTypeConverter;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.slf4j.Logger;
@@ -112,7 +112,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             return;
 
         List idList = transaction.execute(status -> {
-            entityManager.setProperty(OrmProperties.SOFT_DELETION, loadContext.isSoftDeletion());
+            entityManager.setProperty(PersistenceHints.SOFT_DELETION, loadContext.isSoftDeletion());
 
             QueryTransformer transformer = QueryTransformerFactory.createTransformer(contextQuery.getQueryString());
             String primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(entityName));

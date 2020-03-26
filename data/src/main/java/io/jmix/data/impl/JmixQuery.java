@@ -30,7 +30,7 @@ import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.EntityFetcher;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.impl.entitycache.QueryKey;
 import io.jmix.data.persistence.DbmsFeatures;
@@ -170,7 +170,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
 
     @Override
     public TypedQuery<E> setHint(String hintName, Object value) {
-        if (OrmProperties.FETCH_PLAN.equals(hintName)) {
+        if (PersistenceHints.FETCH_PLAN.equals(hintName)) {
             if (isNative)
                 throw new UnsupportedOperationException("FetchPlan is not supported for native queries");
             if (value == null) {
@@ -181,7 +181,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
             } else {
                 fetchPlans.add((FetchPlan) value);
             }
-        } else if (OrmProperties.CACHEABLE.equals(hintName)) {
+        } else if (PersistenceHints.CACHEABLE.equals(hintName)) {
             cacheable = (boolean) value;
         }
         if (hints == null) {
@@ -268,7 +268,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         boolean isDeleteQuery = databaseQuery.isDeleteObjectQuery() || databaseQuery.isDeleteAllQuery();
         boolean enableDeleteInSoftDeleteMode =
                 Boolean.parseBoolean(AppContext.getProperty("cuba.enableDeleteStatementInSoftDeleteMode"));
-        if (!enableDeleteInSoftDeleteMode && OrmProperties.isSoftDeletion(entityManager) && isDeleteQuery) {
+        if (!enableDeleteInSoftDeleteMode && PersistenceHints.isSoftDeletion(entityManager) && isDeleteQuery) {
             if (SoftDelete.class.isAssignableFrom(referenceClass)) {
                 throw new UnsupportedOperationException("Delete queries are not supported with enabled soft deletion. " +
                         "Use 'cuba.enableDeleteStatementInSoftDeleteMode' application property to roll back to legacy behavior.");
@@ -732,7 +732,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
             useQueryCache = parser.isEntitySelect(entityName);
             QueryKey queryKey = null;
             if (useQueryCache) {
-                queryKey = QueryKey.create(transformedQueryString, OrmProperties.isSoftDeletion(entityManager), singleResult, jpaQuery);
+                queryKey = QueryKey.create(transformedQueryString, PersistenceHints.isSoftDeletion(entityManager), singleResult, jpaQuery);
                 result = singleResult ? queryCacheMgr.getSingleResultFromCache(queryKey, fetchPlans) :
                         queryCacheMgr.getResultListFromCache(queryKey, fetchPlans);
                 if (result != null) {

@@ -19,7 +19,7 @@ package entity_manager;
 import io.jmix.core.DataManager;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.data.JmixDataConfiguration;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.JmixQuery;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -123,7 +123,7 @@ public class QueryTest {
 
         // when:
         list = tx.execute(status -> {
-            entityManager.setProperty(OrmProperties.SOFT_DELETION, false);
+            entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
             TypedQuery<Customer> query = entityManager.createQuery("select c from sales$Customer c where c.id = ?1", Customer.class);
             query.setParameter(1, customer.getId());
             return query.getResultList();

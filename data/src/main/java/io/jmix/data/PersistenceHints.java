@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import java.util.*;
 
-public class OrmProperties {
+public class PersistenceHints {
 
     public static final String SOFT_DELETION = "jmix.softDeletion";
 

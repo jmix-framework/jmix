@@ -299,6 +299,7 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
     .c-workarea {
       flex-grow: 1;
       flex-shrink: 1;
+      min-width: 100px;
     }
 
     .c-sidemenu-container {

@@ -20,10 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.Screens;
+import io.jmix.ui.*;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.Component.HasXmlDescriptor;
@@ -634,6 +631,10 @@ public class UiControllerDependencyInjector {
             // Injecting a Theme
             ThemeConstantsManager themeManager = beanLocator.get(ThemeConstantsManager.NAME);
             return themeManager.getConstants();
+
+        } else if (WebBrowserTools.class.isAssignableFrom(type)) {
+            // Injecting WebBrowserTools
+            return getScreenContext(frameOwner).getWebBrowserTools();
 
         } else {
             Object instance;

@@ -33,4 +33,6 @@ public interface ScreenContext {
     Fragments getFragments();
 
     UrlRouting getUrlRouting();
+
+    WebBrowserTools getWebBrowserTools();
 }

@@ -17,6 +17,7 @@
 package com.haulmont.cuba.web.app.login;
 
 import com.haulmont.cuba.core.global.Messages;
+import com.vaadin.server.ErrorEvent;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.Credentials;
 import io.jmix.core.security.LoginException;
@@ -26,6 +27,7 @@ import io.jmix.ui.Connection;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
 import io.jmix.ui.components.*;
+import io.jmix.ui.exception.ExceptionHandlers;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.*;
@@ -256,9 +258,14 @@ public class LoginScreen extends Screen {
             String message = StringUtils.abbreviate(e.getMessage(), 1000);
             showLoginException(message);
         } catch (Exception e) {
-            log.warn("Unable to login", e);
+            if (connection.isAuthenticated()) {
+                ExceptionHandlers handlers = app.getExceptionHandlers();
+                handlers.handle(new ErrorEvent(e));
+            } else {
+                log.warn("Unable to login", e);
 
-            showUnhandledExceptionOnLogin(e);
+                showUnhandledExceptionOnLogin(e);
+            }
         }
     }
 

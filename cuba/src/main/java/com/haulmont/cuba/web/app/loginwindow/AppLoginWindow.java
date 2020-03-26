@@ -18,6 +18,7 @@ package com.haulmont.cuba.web.app.loginwindow;
 
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.web.app.login.LoginScreen;
+import com.vaadin.server.ErrorEvent;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.Credentials;
 import io.jmix.core.security.LoginException;
@@ -25,6 +26,7 @@ import io.jmix.core.security.LoginPasswordCredentials;
 import io.jmix.ui.App;
 import io.jmix.ui.Connection;
 import io.jmix.ui.components.*;
+import io.jmix.ui.exception.ExceptionHandlers;
 import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.security.LoginScreenAuthDelegate;
 import io.jmix.ui.security.UiLoginProperties;
@@ -257,9 +259,14 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
             String message = StringUtils.abbreviate(e.getMessage(), 1000);
             showLoginException(message);
         } catch (Exception e) {
-            log.warn("Unable to login", e);
+            if (connection.isAuthenticated()) {
+                ExceptionHandlers handlers = app.getExceptionHandlers();
+                handlers.handle(new ErrorEvent(e));
+            } else {
+                log.warn("Unable to login", e);
 
-            showUnhandledExceptionOnLogin(e);
+                showUnhandledExceptionOnLogin(e);
+            }
         }
     }
 

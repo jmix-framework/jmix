@@ -1321,6 +1321,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     protected void removeAllClickListeners() {
         for (Column column : columnsOrder) {
             component.removeClickListener(column.getId());
+            component.removeTableCellClickListener(column.getId());
         }
     }
 
@@ -3015,6 +3016,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     @Override
+    @Deprecated
     public void setCellClickListener(String columnId, Consumer<CellClickEvent<E>> clickListener) {
         checkNotNullArgument(getColumn(columnId), String.format("column with id '%s' not found", columnId));
 
@@ -3031,10 +3033,46 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     @Override
+    @Deprecated
     public void removeClickListener(String columnId) {
         component.removeClickListener(getColumn(columnId).getId());
     }
 
+    @Override
+    public void addCellClickListener(String columnId) {
+        Table.Column<E> column = getColumn(columnId);
+        checkNotNullArgument(column, String.format("column with id '%s' not found", columnId));
+
+        component.addTableCellClickListener(column.getId(), this::onCellClick);
+    }
+
+    protected void onCellClick(CubaEnhancedTable.TableCellClickEvent event) {
+        TableItems<E> tableItems = getItems();
+        if (tableItems == null) {
+            return;
+        }
+
+        E item = tableItems.getItem(event.getItemId());
+        if (item == null) {
+            return;
+        }
+
+        Table.Column<E> column = getColumn(String.valueOf(event.getColumnId()));
+        if (column == null) {
+            return;
+        }
+
+        Column.ClickEvent<E> clickEvent = new Column.ClickEvent<>(column, item, event.isText());
+        column.fireClickEvent(clickEvent);
+    }
+
+    @Override
+    public void removeCellClickListener(String columnId) {
+        Table.Column<E> column = getColumn(columnId);
+        checkNotNullArgument(column, String.format("column with id '%s' not found", columnId));
+
+        component.removeTableCellClickListener(column.getId());
+    }
     @SuppressWarnings("unchecked")
     @Override
     public Subscription addSelectionListener(Consumer<SelectionEvent<E>> listener) {

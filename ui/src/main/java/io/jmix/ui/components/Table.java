@@ -19,6 +19,7 @@ import com.google.common.reflect.TypeToken;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
+import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -655,9 +656,9 @@ public interface Table<E extends Entity>
      * Web specific: cell value will be wrapped in span with cuba-table-clickable-cell style name.<br>
      * You can use .cuba-table-clickable-cell for CSS rules to specify custom representation of cell value.
      *
-     * @param columnId id of column
+     * @param columnId      id of column
      * @param clickListener click listener
-     * @deprecated Use {@link #setCellClickListener(String, Consumer)} instead
+     * @deprecated Use {@link Column#addClickListener(Consumer)} instead
      */
     @Deprecated
     default void setClickListener(String columnId, CellClickListener<? super E> clickListener) {
@@ -666,31 +667,38 @@ public interface Table<E extends Entity>
     }
 
     /**
-     * Add lightweight click handler for column cells.<br>
+     * Add lightweight click handler for text in column cells.<br>
      * Web specific: cell value will be wrapped in span with cuba-table-clickable-cell style name.<br>
      * You can use .cuba-table-clickable-cell for CSS rules to specify custom representation of cell value.
+     * <p>
+     * You cannot use cellClickListener for column with maxTextLength attribute, since cellClickListener is
+     * already defined to display abbreviated cell text.
      *
-     * @param columnId id of column
-     * @param clickListener click listener
+     * @param columnId      id of column
+     * @param clickListener cell text click listener
+     * @deprecated Use {@link Column#addClickListener(Consumer)} instead
      */
+    @Deprecated
     void setCellClickListener(String columnId, Consumer<CellClickEvent<E>> clickListener);
 
     /**
      * Remove click listener.
      *
      * @param columnId id of column
+     * @deprecated Use {@link Subscription} instead
      */
+    @Deprecated
     void removeClickListener(String columnId);
 
     /**
      * Lightweight click listener for table cells.
      *
-     * @deprecated Use {@link #setCellClickListener(String, Consumer)} instead.
+     * @deprecated Use {@link Column#addClickListener(Consumer)}  instead.
      */
     @Deprecated
     interface CellClickListener<T extends Entity> {
         /**
-         * @param item row item
+         * @param item     row item
          * @param columnId id of column
          */
         void onClick(T item, String columnId);
@@ -889,6 +897,8 @@ public interface Table<E extends Entity>
 
         // vaadin8 add a separate interface for notifying parent
         protected Table<T> owner;
+
+        private EventHub eventHub;
 
         public Column(Object id) {
             this.id = id;
@@ -1235,6 +1245,103 @@ public interface Table<E extends Entity>
         public Float getExpandRatio() {
             return expandRatio;
         }
+
+        /**
+         * Adds a click listener for column.
+         *
+         * @param listener a listener to add
+         * @return subscription
+         */
+        public Subscription addClickListener(Consumer<ClickEvent<T>> listener) {
+            getEventHub().subscribe(ClickEvent.class, (Consumer) listener);
+
+            if (owner != null) {
+                ((ColumnManager) owner).addCellClickListener(getStringId());
+            }
+
+            return () -> removeClickListener(listener);
+        }
+
+        /**
+         * INTERNAL.
+         * <p>
+         * Fires a {@link ClickEvent} for all click listeners.
+         *
+         * @param event event to be fired
+         */
+        public void fireClickEvent(ClickEvent<T> event) {
+            getEventHub().publish(ClickEvent.class, event);
+        }
+
+        /**
+         * Removes a given click listener.
+         *
+         * @param listener a listener to remove
+         */
+        protected void removeClickListener(Consumer<ClickEvent<T>> listener) {
+            getEventHub().unsubscribe(ClickEvent.class, (Consumer) listener);
+
+            if (owner != null) {
+                ((ColumnManager) owner).removeCellClickListener(getStringId());
+            }
+        }
+
+        /**
+         * @return the EventHub for the column
+         */
+        protected EventHub getEventHub() {
+            if (eventHub == null) {
+                eventHub = new EventHub();
+            }
+            return eventHub;
+        }
+
+        /**
+         * An event is fired when the user clicks inside the table cell that belongs to the current column.
+         *
+         * @param <E> an entity class
+         */
+        public static class ClickEvent<E extends Entity> extends EventObject {
+
+            protected final E item;
+            protected final boolean isText;
+
+            /**
+             * Constructor for a click event.
+             *
+             * @param source the Table column from which this event originates
+             * @param item   an entity instance represented by the clicked row
+             * @param isText {@code true} if the user clicks on text inside the table cell, {@code false} otherwise
+             */
+            public ClickEvent(Table.Column<E> source, E item, boolean isText) {
+                super(source);
+                this.item = item;
+                this.isText = isText;
+            }
+
+            /**
+             * @return the Table column from which this event originates
+             */
+            @SuppressWarnings("unchecked")
+            @Override
+            public Table.Column<E> getSource() {
+                return (Table.Column<E>) super.getSource();
+            }
+
+            /**
+             * @return an entity instance represented by the clicked row
+             */
+            public E getItem() {
+                return item;
+            }
+
+            /**
+             * @return {@code true} if the user clicks on text inside the table cell, {@code false} otherwise
+             */
+            public boolean isText() {
+                return isText;
+            }
+        }
     }
 
     /**
@@ -1242,7 +1349,7 @@ public interface Table<E extends Entity>
      * Very useful for heavy tables to decrease rendering time in browser.
      */
     class PlainTextCell implements Component {
-        
+
         protected Component parent;
         protected String text;
 

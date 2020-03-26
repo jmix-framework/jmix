@@ -17,5 +17,5 @@
 package io.jmix.ui.widgets.client.tableshared;
 
 public interface TableCellClickListener {
-    void onClick(String columnKey, int rowKey);
+    void onClick(String columnKey, int rowKey, boolean isText);
 }

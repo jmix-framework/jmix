@@ -160,7 +160,7 @@ public class PersistenceImpl implements Persistence {
 
         EntityManager entityManager = createEntityManager(jpaEm);
 
-        Boolean softDeletion = (Boolean) jpaEm.getProperties().get(OrmProperties.SOFT_DELETION);
+        Boolean softDeletion = (Boolean) jpaEm.getProperties().get(PersistenceHints.SOFT_DELETION);
         if (softDeletion == null) { // new EntityManager
             entityManager.setSoftDeletion(this.softDeletion);
         }

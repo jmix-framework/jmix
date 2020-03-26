@@ -236,27 +236,27 @@ public class SoftDeleteTest {
     public void testMultipleTransactions() throws Exception {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            assertTrue(OrmProperties.isSoftDeletion(em.getDelegate()));
+            assertTrue(PersistenceHints.isSoftDeletion(em.getDelegate()));
 
             em.setSoftDeletion(false);
-            assertFalse(OrmProperties.isSoftDeletion(em.getDelegate()));
+            assertFalse(PersistenceHints.isSoftDeletion(em.getDelegate()));
 
             tx.commit();
         }
 
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            assertTrue(OrmProperties.isSoftDeletion(em.getDelegate()));
+            assertTrue(PersistenceHints.isSoftDeletion(em.getDelegate()));
 
             em.setSoftDeletion(false);
-            assertFalse(OrmProperties.isSoftDeletion(em.getDelegate()));
+            assertFalse(PersistenceHints.isSoftDeletion(em.getDelegate()));
 
             try (Transaction tx1 = persistence.createTransaction()) {
-                assertTrue(OrmProperties.isSoftDeletion(persistence.getEntityManager().getDelegate()));
+                assertTrue(PersistenceHints.isSoftDeletion(persistence.getEntityManager().getDelegate()));
 
                 tx1.commit();
             }
-            assertFalse(OrmProperties.isSoftDeletion(persistence.getEntityManager().getDelegate()));
+            assertFalse(PersistenceHints.isSoftDeletion(persistence.getEntityManager().getDelegate()));
 
             tx.commit();
         }

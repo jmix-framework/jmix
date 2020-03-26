@@ -24,7 +24,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.IdProxy;
 import com.haulmont.cuba.core.EntityManager;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.TypedQuery;
 import io.jmix.data.impl.JmixEntityManager;
@@ -66,12 +66,12 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     public boolean isSoftDeletion() {
-        return OrmProperties.isSoftDeletion(delegate);
+        return PersistenceHints.isSoftDeletion(delegate);
     }
 
     @Override
     public void setSoftDeletion(boolean softDeletion) {
-        delegate.setProperty(OrmProperties.SOFT_DELETION, softDeletion);
+        delegate.setProperty(PersistenceHints.SOFT_DELETION, softDeletion);
     }
 
     @Override
@@ -117,7 +117,7 @@ public class EntityManagerImpl implements EntityManager {
     @Nullable
     @Override
     public <T extends Entity<K>, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans) {
-        return delegate.find(entityClass, id, OrmProperties.builder().withFetchPlans(fetchPlans).build());
+        return delegate.find(entityClass, id, PersistenceHints.builder().withFetchPlans(fetchPlans).build());
     }
 
     @Nullable

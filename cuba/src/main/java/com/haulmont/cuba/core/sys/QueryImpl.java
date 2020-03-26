@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.sys;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Entity;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.TypedQuery;
 import io.jmix.data.impl.JmixQuery;
@@ -137,8 +137,8 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
     @Override
     public TypedQuery<T> setView(FetchPlan fetchPlan) {
-        delegate.setHint(OrmProperties.FETCH_PLAN, null);
-        delegate.setHint(OrmProperties.FETCH_PLAN, fetchPlan);
+        delegate.setHint(PersistenceHints.FETCH_PLAN, null);
+        delegate.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
         return this;
     }
 
@@ -160,7 +160,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
     @Override
     public TypedQuery<T> addView(FetchPlan fetchPlan) {
-        delegate.setHint(OrmProperties.FETCH_PLAN, fetchPlan);
+        delegate.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
         return this;
     }
 
@@ -198,7 +198,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
     @Override
     public TypedQuery<T> setCacheable(boolean cacheable) {
-        delegate.setHint(OrmProperties.CACHEABLE, cacheable);
+        delegate.setHint(PersistenceHints.CACHEABLE, cacheable);
         return this;
     }
 

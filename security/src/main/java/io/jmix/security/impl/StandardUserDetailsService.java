@@ -17,7 +17,7 @@
 package io.jmix.security.impl;
 
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.data.OrmProperties;
+import io.jmix.data.PersistenceHints;
 import io.jmix.security.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -43,7 +43,7 @@ public class StandardUserDetailsService implements UserDetailsService {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         List<User> users = entityManager.createQuery("select u from sec_User u where u.loginLowerCase = ?1", User.class)
                     .setParameter(1, username)
-                    .setHint(OrmProperties.FETCH_PLAN, fetchPlanRepository.getFetchPlan(User.class, "user-login"))
+                    .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(User.class, "user-login"))
                     .getResultList();
 
         if (!users.isEmpty()) {

@@ -618,6 +618,13 @@ public class InputDialog extends Screen {
                 return ActionType.CANCEL;
             }
         }
+
+        /**
+         * Checks that the dialog was closed with the given {@code outcome}.
+         */
+        public boolean closedWith(DialogOutcome outcome) {
+            return outcome.getCloseAction().equals(closeAction);
+        }
     }
 
     /**

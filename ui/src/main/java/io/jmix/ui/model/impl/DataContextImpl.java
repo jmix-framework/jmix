@@ -17,8 +17,6 @@
 package io.jmix.ui.model.impl;
 
 import com.google.common.collect.Sets;
-import io.jmix.core.SaveContext;
-import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
@@ -640,6 +638,11 @@ public class DataContextImpl implements DataContext {
         SaveContext saveContext = new SaveContext()
                 .saving(isolate(filterCommittedInstances(modifiedInstances)))
                 .removing(isolate(filterCommittedInstances(removedInstances)));
+
+        for (Entity entity : saveContext.getEntitiesToSave()) {
+            saveContext.getFetchPlans().put(entity, getEntityStates().getCurrentFetchPlan(entity));
+        }
+
         if (commitDelegate == null) {
             return getDataManager().save(saveContext);
         } else {

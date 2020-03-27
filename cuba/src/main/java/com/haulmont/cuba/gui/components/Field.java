@@ -25,11 +25,17 @@ import io.jmix.ui.components.data.value.ContainerValueSource;
 
 import javax.annotation.Nullable;
 
+/**
+ * Component compatible with {@link Datasource}.
+ *
+ * @param <V> type of value
+ * @deprecated Use {@link io.jmix.ui.components.Field} instead
+ */
+@Deprecated
 public interface Field<V> extends io.jmix.ui.components.Field<V>, DatasourceComponent<V> {
 
     /**
      * @return datasource instance
-     *
      * @deprecated Use {@link #getValueSource()} instead
      */
     @Deprecated
@@ -59,7 +65,6 @@ public interface Field<V> extends io.jmix.ui.components.Field<V>, DatasourceComp
 
     /**
      * @return datasource property path
-     *
      * @deprecated Use {@link #getValueSource()} instead
      */
     @Deprecated

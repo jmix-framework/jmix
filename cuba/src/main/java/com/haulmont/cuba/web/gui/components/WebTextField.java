@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
-import com.haulmont.cuba.web.components.TextField;
+import com.haulmont.cuba.gui.components.TextField;
 
 @Deprecated
 public class WebTextField<V>

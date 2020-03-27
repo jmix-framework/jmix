@@ -17,6 +17,7 @@
 
 package com.haulmont.cuba.web.components;
 
+import com.haulmont.cuba.gui.components.DateField;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;

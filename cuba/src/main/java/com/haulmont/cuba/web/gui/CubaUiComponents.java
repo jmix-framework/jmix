@@ -18,18 +18,8 @@ package com.haulmont.cuba.web.gui;
 
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.Filter;
-import com.haulmont.cuba.web.components.CheckBox;
-import com.haulmont.cuba.web.components.DateField;
-import com.haulmont.cuba.web.components.DatePicker;
-import com.haulmont.cuba.web.components.Label;
-import com.haulmont.cuba.web.components.OptionsList;
 import com.haulmont.cuba.web.gui.components.*;
-import io.jmix.ui.components.LookupField;
-import io.jmix.ui.components.LookupPickerField;
-import io.jmix.ui.components.OptionsGroup;
-import io.jmix.ui.components.PickerField;
-import io.jmix.ui.components.SearchField;
-import io.jmix.ui.components.TextField;
+import io.jmix.ui.components.*;
 import io.jmix.ui.sys.WebUiComponents;
 
 public class CubaUiComponents extends WebUiComponents {
@@ -37,6 +27,31 @@ public class CubaUiComponents extends WebUiComponents {
     public static final String NAME = "cuba_UiComponents";
 
     {
+        classes.put(RowsCount.NAME, WebRowsCount.class);
+        classes.put(Calendar.NAME, WebCalendar.class);
+        classes.put(Tree.NAME, WebTree.class);
+        classes.put(DataGrid.NAME, WebDataGrid.class);
+        classes.put(TreeDataGrid.NAME, WebTreeDataGrid.class);
+        classes.put(Table.NAME, WebTable.class);
+        classes.put(GroupTable.NAME, WebGroupTable.class);
+        classes.put(TreeTable.NAME, WebTreeTable.class);
+        classes.put(TokenList.NAME, WebTokenList.class);
+        classes.put(TwinColumn.NAME, WebTwinColumn.class);
+        classes.put(Image.NAME, WebImage.class);
+        classes.put(CheckBoxGroup.NAME, WebCheckBoxGroup.class);
+        classes.put(RadioButtonGroup.NAME, WebRadioButtonGroup.class);
+        classes.put(SuggestionPickerField.NAME, WebSuggestionPickerField.class);
+        classes.put(SuggestionField.NAME, WebSuggestionField.class);
+        classes.put(Slider.NAME, WebSlider.class);
+        classes.put(CurrencyField.NAME, WebCurrencyField.class);
+        classes.put(ColorPicker.NAME, WebColorPicker.class);
+        classes.put(TimeField.NAME, WebTimeField.class);
+        classes.put(RichTextArea.NAME, WebRichTextArea.class);
+        classes.put(SourceCodeEditor.NAME, WebSourceCodeEditor.class);
+        classes.put(PasswordField.NAME, WebPasswordField.class);
+        classes.put(MaskedField.NAME, WebMaskedField.class);
+        classes.put(ResizableTextArea.NAME, WebResizableTextArea.class);
+        classes.put(TextArea.NAME, WebTextArea.class);
         classes.put(TextField.NAME, WebTextField.class);
         classes.put(CheckBox.NAME, WebCheckBox.class);
         classes.put(DateField.NAME, WebDateField.class);
@@ -49,6 +64,7 @@ public class CubaUiComponents extends WebUiComponents {
 
         classes.put(PickerField.NAME, WebPickerField.class);
         classes.put(SearchField.NAME, WebSearchField.class);
+        classes.put(SearchPickerField.NAME, WebSearchPickerField.class);
         classes.put(FieldGroup.NAME, WebFieldGroup.class);
 
         classes.put(Filter.NAME, WebFilter.class);

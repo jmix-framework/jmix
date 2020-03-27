@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.web.gui.components;
 
-import com.haulmont.cuba.web.components.OptionsList;
+import com.haulmont.cuba.gui.components.OptionsList;
 
-public class WebOptionsList<V, I> extends io.jmix.ui.components.impl.WebOptionsList<V, I>
-        implements OptionsList<V, I> {
+@Deprecated
+public class WebOptionsList<V, I> extends io.jmix.ui.components.impl.WebOptionsList<V, I> implements OptionsList<V, I> {
 }

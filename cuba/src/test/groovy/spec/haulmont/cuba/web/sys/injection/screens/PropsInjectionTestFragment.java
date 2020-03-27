@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.sys.injection.screens;
 
-import com.haulmont.cuba.web.components.Label;
+import com.haulmont.cuba.gui.components.Label;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiController;

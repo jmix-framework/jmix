@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.composite.components.stepper;
 
-import com.haulmont.cuba.web.components.TextField;
+import com.haulmont.cuba.gui.components.TextField;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import io.jmix.core.commons.events.Subscription;

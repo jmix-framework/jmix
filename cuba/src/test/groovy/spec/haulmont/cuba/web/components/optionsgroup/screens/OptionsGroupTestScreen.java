@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.sales.Catalog;
 import com.haulmont.cuba.core.model.sales.Order;
 import com.haulmont.cuba.core.model.sales.OrderLine;
 import com.haulmont.cuba.core.model.sales.Product;
-import com.haulmont.cuba.web.components.OptionsGroup;
+import com.haulmont.cuba.gui.components.OptionsGroup;
 import io.jmix.core.Metadata;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;

@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.Calendar;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -26,7 +27,8 @@ import io.jmix.ui.components.calendar.ContainerCalendarEventProvider;
 
 import javax.annotation.Nullable;
 
-public class WebCalendar extends io.jmix.ui.components.impl.WebCalendar {
+@Deprecated
+public class WebCalendar<V> extends io.jmix.ui.components.impl.WebCalendar<V> implements Calendar<V> {
 
     /**
      * Set collection datasource for the calendar component with a collection of events.
@@ -35,8 +37,7 @@ public class WebCalendar extends io.jmix.ui.components.impl.WebCalendar {
      * @deprecated @deprecated Use {@link #setEventProvider(CalendarEventProvider)}
      * with {@link EntityCalendarEventProvider} instead
      */
-    @Deprecated
-    void setDatasource(CollectionDatasource datasource) {
+    public void setDatasource(CollectionDatasource datasource) {
         if (datasource == null) {
             setEventProvider(null);
         } else {
@@ -49,10 +50,7 @@ public class WebCalendar extends io.jmix.ui.components.impl.WebCalendar {
      * @return a datasource
      * @deprecated Use {@link #getEventProvider()} instead
      */
-
-    @Nullable
-    @Deprecated
-    CollectionDatasource getDatasource() {
+    public CollectionDatasource getDatasource() {
         return (calendarEventProvider instanceof EntityCalendarEventProvider)
                 ? ((EntityCalendarEventProvider) calendarEventProvider)
                 .getDatasource()

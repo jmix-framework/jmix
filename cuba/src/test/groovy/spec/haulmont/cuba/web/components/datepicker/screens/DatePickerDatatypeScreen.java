@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.datepicker.screens;
 
-import com.haulmont.cuba.web.components.DatePicker;
+import com.haulmont.cuba.gui.components.DatePicker;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;

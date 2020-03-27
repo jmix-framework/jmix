@@ -17,7 +17,7 @@
 package spec.haulmont.cuba.web.components.composite.components.comments;
 
 import com.google.common.base.Strings;
-import com.haulmont.cuba.web.components.TextField;
+import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.web.model.compositecomponent.Comment;
 import io.jmix.core.MetadataTools;
 import io.jmix.ui.components.Button;

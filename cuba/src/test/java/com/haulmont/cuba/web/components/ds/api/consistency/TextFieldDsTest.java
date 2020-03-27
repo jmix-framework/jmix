@@ -17,7 +17,7 @@
 package com.haulmont.cuba.web.components.ds.api.consistency;
 
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.web.components.TextField;
+import com.haulmont.cuba.gui.components.TextField;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.security.entity.User;
 import io.jmix.ui.components.HasValue;

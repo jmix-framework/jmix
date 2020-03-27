@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
-import com.haulmont.cuba.web.components.PickerField;
+import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.Entity;
 
 public class WebPickerField<V extends Entity>

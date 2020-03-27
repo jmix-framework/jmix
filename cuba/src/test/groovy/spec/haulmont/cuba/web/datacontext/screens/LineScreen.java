@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.datacontext.screens;
 
 import com.haulmont.cuba.core.model.sales.OrderLine;
 import com.haulmont.cuba.core.model.sales.OrderLineParam;
-import com.haulmont.cuba.web.components.TextField;
+import com.haulmont.cuba.gui.components.TextField;
 import io.jmix.ui.components.Table;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.DataComponents;

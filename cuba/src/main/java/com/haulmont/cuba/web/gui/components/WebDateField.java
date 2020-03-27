@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
-import com.haulmont.cuba.web.components.DateField;
+import com.haulmont.cuba.gui.components.DateField;
 
 @Deprecated
 public class WebDateField<V extends Comparable<V>>

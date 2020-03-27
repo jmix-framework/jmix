@@ -16,14 +16,21 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import com.haulmont.cuba.web.gui.components.WebTextField;
-import io.jmix.ui.components.TextField;
+import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.ui.xml.layout.loaders.TextFieldLoader;
+import org.dom4j.Element;
 
-public class CubaTextFieldLoader extends AbstractFieldLoader<WebTextField> {
+public class CubaTextFieldLoader extends TextFieldLoader {
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void createComponent() {
-        resultComponent = factory.create(TextField.NAME);
-        loadId(resultComponent, element);
+    protected void loadData(io.jmix.ui.components.TextField component, Element element) {
+        super.loadData(component, element);
+
+        DatasourceLoaderHelper
+                .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
+                        (ComponentLoaderContext) getComponentContext())
+                .ifPresent(component::setValueSource);
     }
 }

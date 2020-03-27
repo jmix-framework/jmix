@@ -7,7 +7,7 @@ package com.haulmont.cuba.web.components.ds.api.consistency;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.web.components.SearchField;
+import com.haulmont.cuba.gui.components.SearchField;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.security.entity.Group;
 import io.jmix.security.entity.User;

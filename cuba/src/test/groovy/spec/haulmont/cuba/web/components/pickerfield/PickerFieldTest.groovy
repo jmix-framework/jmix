@@ -19,7 +19,7 @@ package spec.haulmont.cuba.web.components.pickerfield
 import com.haulmont.cuba.gui.data.Datasource
 import com.haulmont.cuba.gui.data.DsBuilder
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl
-import com.haulmont.cuba.web.components.PickerField
+import com.haulmont.cuba.gui.components.PickerField
 import io.jmix.core.FetchPlan
 import io.jmix.core.commons.events.Subscription
 import io.jmix.core.impl.StandardSerialization

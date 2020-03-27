@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.screenfacet.screens;
 
-import com.haulmont.cuba.web.components.Label;
+import com.haulmont.cuba.gui.components.Label;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;

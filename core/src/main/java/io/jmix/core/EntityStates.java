@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
@@ -382,6 +383,49 @@ public class EntityStates {
         checkNotNullArgument(fetchPlanName);
 
         return isLoadedWithFetchPlan(entity, viewRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
+    }
+
+    /**
+     * Returns a fetch plan that corresponds to the loaded attributes of the given entity instance.
+     * @param entity entity instance
+     * @return fetch plan
+     */
+    public FetchPlan getCurrentFetchPlan(Entity entity) {
+        checkNotNullArgument(entity);
+
+        FetchPlan fetchPlan = new FetchPlan(entity.getClass(), false);
+        recursivelyGetCurrentFetchPlan(entity, fetchPlan, new HashSet<>());
+        return fetchPlan;
+    }
+
+    protected void recursivelyGetCurrentFetchPlan(Entity entity, FetchPlan fetchPlan, HashSet<Object> visited) {
+        if (visited.contains(entity))
+            return;
+        visited.add(entity);
+
+        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
+            if (!isLoaded(entity, property.getName()))
+                continue;
+
+            if (property.getRange().isClass()) {
+                FetchPlan propertyFetchPlan = new FetchPlan(property.getRange().asClass().getJavaClass());
+                fetchPlan.addProperty(property.getName(), propertyFetchPlan);
+                if (isLoaded(entity, property.getName())) {
+                    Object value = EntityValues.getValue(entity, property.getName());
+                    if (value != null) {
+                        if (value instanceof Collection) {
+                            for (Object item : ((Collection) value)) {
+                                recursivelyGetCurrentFetchPlan((Entity) item, propertyFetchPlan, visited);
+                            }
+                        } else {
+                            recursivelyGetCurrentFetchPlan((Entity) value, propertyFetchPlan, visited);
+                        }
+                    }
+                }
+            } else {
+                fetchPlan.addProperty(property.getName());
+            }
+        }
     }
 
     /**

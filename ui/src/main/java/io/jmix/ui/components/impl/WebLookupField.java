@@ -22,6 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.LookupField;
+import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
@@ -174,9 +175,8 @@ public class WebLookupField<V> extends WebV8AbstractField<CubaComboBox<V>, V, V>
         super.valueBindingConnected(valueSource);
 
         if (valueSource instanceof EntityValueSource) {
-//TODO VM
-            //            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
-//            dataAwareComponentsTools.setupOptions(this, (EntityValueSource) valueSource);
+            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            dataAwareComponentsTools.setupOptions(this, (EntityValueSource) valueSource);
         }
     }
 

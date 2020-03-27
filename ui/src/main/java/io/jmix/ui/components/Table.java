@@ -111,42 +111,6 @@ public interface Table<E extends Entity>
     @Override
     TableItems<E> getItems();
 
-    /**
-     * @param datasource datasource
-     * @deprecated Use {@link #setItems(TableItems)} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    default void setDatasource(CollectionDatasource datasource) {
-        if (datasource == null) {
-            setItems(null);
-        } else {
-            TableItems<E> tableItems;
-            if (datasource instanceof CollectionDatasource.Sortable) {
-                tableItems = new SortableDatasourceTableItems((CollectionDatasource.Sortable) datasource);
-            } else {
-                tableItems = new DatasourceTableItems(datasource);
-            }
-            setItems(tableItems);
-        }
-    }*/
-
-    /**
-     * @return datasource
-     * @deprecated Use {@link #getItems()} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    @Override
-    default CollectionDatasource getDatasource() {
-        TableItems<E> tableItems = getItems();
-        return tableItems instanceof DatasourceTableItems
-                ? ((DatasourceTableItems) tableItems).getDatasource()
-                : null;
-    }*/
-
     void setRequired(Column<E> column, boolean required, String message);
 
     /**

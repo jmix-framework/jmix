@@ -36,6 +36,7 @@ import io.jmix.ui.components.data.table.EmptyTableItems;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.xml.DeclarativeColumnGenerator;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -106,7 +107,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         loadEmptyStateMessage(resultComponent, element);
         loadEmptyStateLinkMessage(resultComponent, element);
 
-        Element columnsElement = element.element("columns");
         Element rowsElement = element.element("rows");
 
         if (rowsElement != null) {
@@ -132,66 +132,35 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
         loadRowsCount(resultComponent, element); // must be before datasource setting
 
-        MetaClass metaClass = null;
-        CollectionContainer collectionContainer = null;
-        DataLoader dataLoader = null;
-        // TODO: legacy-ui
-        // Datasource datasource = null;
+        loadTableData();
 
-        String containerId = element.attributeValue("dataContainer");
-        if (containerId != null) {
-            FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
-            ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
-            InstanceContainer container = screenData.getContainer(containerId);
-            if (container instanceof CollectionContainer) {
-                collectionContainer = (CollectionContainer) container;
-            } else {
-                throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
-            }
-            metaClass = collectionContainer.getEntityMetaClass();
-            if (collectionContainer instanceof HasLoader) {
-                dataLoader = ((HasLoader) collectionContainer).getLoader();
-            }
+        String multiselect = element.attributeValue("multiselect");
+        if (StringUtils.isNotEmpty(multiselect)) {
+            resultComponent.setMultiSelect(Boolean.parseBoolean(multiselect));
+        }
+    }
 
-        } else if (rowsElement != null) {
-            String datasourceId = rowsElement.attributeValue("datasource");
-            if (StringUtils.isBlank(datasourceId)) {
-                throw new GuiDevelopmentException("Table 'rows' element doesn't have 'datasource' attribute",
-                        context, "Table ID", element.attributeValue("id"));
-            }
-
-            /*
-            TODO: legacy-ui
-            datasource = getComponentContext().getDsContext().get(datasourceId);
-            if (datasource == null) {
-                throw new GuiDevelopmentException("Can't find datasource by name: " + datasourceId, context);
-            }
-
-            if (!(datasource instanceof CollectionDatasource)) {
-                throw new GuiDevelopmentException("Not a CollectionDatasource: " + datasourceId, context);
-            }
-
-            metaClass = datasource.getMetaClass();*/
-        } else {
+    protected void loadTableData() {
+        TableDataHolder holder = initTableDataHolder();
+        if (!holder.isContainerLoaded()) {
             String metaClassStr = element.attributeValue("metaClass");
             if (Strings.isNullOrEmpty(metaClassStr)) {
                 throw new GuiDevelopmentException("Table doesn't have data binding",
                         context, "Table ID", element.attributeValue("id"));
             }
 
-            metaClass = getMetadata().getClass(metaClassStr);
+            holder.setMetaClass(getMetadata().getClass(metaClassStr));
         }
 
         List<Table.Column> availableColumns;
 
+        Element columnsElement = element.element("columns");
         if (columnsElement != null) {
-            /*
-            TODO: legacy-ui
-            View view = collectionContainer != null ? collectionContainer.getView()
-                    : datasource != null ? datasource.getView()
-                    : getViewRepository().getView(metaClass.getJavaClass(), View.LOCAL);*/
-            // todo get FetchPlan
-            availableColumns = loadColumns(resultComponent, columnsElement, metaClass, null);
+            FetchPlan fetchPlan = holder.getFetchPlan();
+            if (fetchPlan == null) {
+                fetchPlan = getViewRepository().getFetchPlan(holder.getMetaClass(), FetchPlan.BASE);
+            }
+            availableColumns = loadColumns(resultComponent, columnsElement, holder.getMetaClass(), fetchPlan);
         } else {
             availableColumns = new ArrayList<>();
         }
@@ -202,26 +171,13 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             loadRequired(resultComponent, column);
         }
 
-        if (collectionContainer != null) {
-            //todo dynamic attributes
-//            if (dataLoader instanceof CollectionLoader) {
-//                addDynamicAttributes(resultComponent, metaClass, null, (CollectionLoader) dataLoader, availableColumns);
-//            } else if (collectionContainer instanceof CollectionPropertyContainer) {
-//                addDynamicAttributes(resultComponent, metaClass, null, null, availableColumns);
-//            }
-            //noinspection unchecked
-            resultComponent.setItems(createContainerTableSource(collectionContainer));
-        } /*
-        TODO: legacy-ui
-        else if (datasource != null) {
-            //todo dynamic attributes
-//            addDynamicAttributes(resultComponent, metaClass, datasource, null, availableColumns);
-            resultComponent.setDatasource((CollectionDatasource) datasource);
-        } else {
+        setupDataContainer(holder);
+
+        if (resultComponent.getItems() == null) {
             //todo dynamic attributes
 //            addDynamicAttributes(resultComponent, metaClass, null, null, availableColumns);
             //noinspection unchecked
-            resultComponent.setItems(createEmptyTableItems(metaClass));
+            resultComponent.setItems(createEmptyTableItems(holder.getMetaClass()));
         }
 
         for (Table.Column column : availableColumns) {
@@ -233,11 +189,50 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                             beanLocator.getPrototype(DeclarativeColumnGenerator.NAME, resultComponent, generatorMethod));
                 }
             }
-        }*/
+        }
+    }
 
-        String multiselect = element.attributeValue("multiselect");
-        if (StringUtils.isNotEmpty(multiselect)) {
-            resultComponent.setMultiSelect(Boolean.parseBoolean(multiselect));
+    protected TableDataHolder initTableDataHolder() {
+        TableDataHolder holder = new TableDataHolder();
+
+        String containerId = element.attributeValue("dataContainer");
+        if (containerId == null) {
+            return holder;
+        }
+
+        FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
+        ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
+        InstanceContainer container = screenData.getContainer(containerId);
+
+        CollectionContainer collectionContainer;
+        if (container instanceof CollectionContainer) {
+            collectionContainer = ((CollectionContainer) container);
+        } else {
+            throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
+        }
+
+        if (collectionContainer instanceof HasLoader) {
+            holder.setDataLoader(((HasLoader) collectionContainer).getLoader());
+        }
+
+        holder.setMetaClass(collectionContainer.getEntityMetaClass());
+        holder.setContainer(collectionContainer);
+        holder.setFetchPlan(collectionContainer.getFetchPlan());
+
+        return holder;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void setupDataContainer(TableDataHolder holder) {
+        /* //todo dynamic attributes
+            if (dataLoader instanceof CollectionLoader) {
+                addDynamicAttributes(resultComponent, metaClass, null, (CollectionLoader) dataLoader, availableColumns);
+            } else if (collectionContainer instanceof CollectionPropertyContainer) {
+                addDynamicAttributes(resultComponent, metaClass, null, null, availableColumns);
+            }*/
+
+        if (holder.getContainer() != null) {
+            resultComponent.setItems(createContainerTableSource(holder.getContainer()));
         }
     }
 
@@ -827,10 +822,61 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             table.setEmptyStateMessage(loadResourceString(emptyStateMessage));
         }
     }
+
     protected void loadEmptyStateLinkMessage(Table table, Element element) {
         String emptyStateLinkMessage = element.attributeValue("emptyStateLinkMessage");
         if (!Strings.isNullOrEmpty(emptyStateLinkMessage)) {
             table.setEmptyStateLinkMessage(loadResourceString(emptyStateLinkMessage));
+        }
+    }
+
+    /**
+     * Contains information about metaclass, data container, loader, fetch plan.
+     */
+    protected static class TableDataHolder {
+
+        protected MetaClass metaClass;
+        protected CollectionContainer container;
+        protected DataLoader dataLoader;
+        protected FetchPlan fetchPlan;
+
+        public TableDataHolder() {
+        }
+
+        public MetaClass getMetaClass() {
+            return metaClass;
+        }
+
+        public void setMetaClass(MetaClass metaClass) {
+            this.metaClass = metaClass;
+        }
+
+        public CollectionContainer getContainer() {
+            return container;
+        }
+
+        public void setContainer(CollectionContainer container) {
+            this.container = container;
+        }
+
+        public DataLoader getDataLoader() {
+            return dataLoader;
+        }
+
+        public void setDataLoader(DataLoader dataLoader) {
+            this.dataLoader = dataLoader;
+        }
+
+        public FetchPlan getFetchPlan() {
+            return fetchPlan;
+        }
+
+        public void setFetchPlan(FetchPlan fetchPlan) {
+            this.fetchPlan = fetchPlan;
+        }
+
+        public boolean isContainerLoaded() {
+            return container != null;
         }
     }
 }

@@ -41,7 +41,7 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
         assignXmlDescriptor(resultComponent, element);
         assignFrame(resultComponent);
 
-        loadTokenListItems(element);
+        loadData(resultComponent, element);
 
         loadVisible(resultComponent, element);
         loadEditable(resultComponent, element);
@@ -79,13 +79,6 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
 
         loadRefreshOptionsOnLookupClose(resultComponent, element);
         loadResponsive(resultComponent, element);
-    }
-
-    protected void loadTokenListItems(Element element) {
-        loadContainer(resultComponent, element);
-        if (resultComponent.getValueSource() == null) {
-            loadDatasource(resultComponent, element);
-        }
     }
 
     protected void loadRefreshOptionsOnLookupClose(TokenList component, Element element) {
@@ -174,16 +167,6 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
         }
 
         loadOptionsContainer(component, lookupElement);
-        if (component.getOptions() == null) {
-            String optionsDatasource = lookupElement.attributeValue("optionsDatasource");
-            if (!StringUtils.isEmpty(optionsDatasource)) {
-                /*
-                TODO: legacy-ui
-                CollectionDatasource ds =
-                        (CollectionDatasource) getComponentContext().getDsContext().get(optionsDatasource);
-                component.setOptionsDatasource(ds);*/
-            }
-        }
 
         String optionsCaptionProperty = lookupElement.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(optionsCaptionProperty)) {
@@ -239,28 +222,6 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
             component.setCaptionMode(CaptionMode.PROPERTY);
             component.setCaptionProperty(captionProperty);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void loadDatasource(TokenList tokenList, Element element) {
-        /*
-        TODO: legacy-ui
-        final String datasourceId = element.attributeValue("datasource");
-        if (StringUtils.isNotEmpty(datasourceId)) {
-            Datasource datasource = getComponentContext().getDsContext().get(datasourceId);
-            if (datasource == null) {
-                throw new GuiDevelopmentException(String.format("Datasource '%s' is not defined", datasourceId),
-                        context);
-            }
-
-            if (!(datasource instanceof CollectionDatasource)) {
-                throw new GuiDevelopmentException(
-                        String.format("Can't set datasource '%s' for TokenList because it supports only CollectionDatasources",
-                                datasourceId), context);
-            }
-
-            tokenList.setValueSource(new LegacyCollectionDsValueSource((CollectionDatasource) datasource));
-        }*/
     }
 
     protected void loadFilterMode(TokenList component, Element element) {

@@ -52,19 +52,6 @@ public class TwinColumnLoader extends AbstractFieldLoader<TwinColumn> {
         loadTabIndex(resultComponent, element);
     }
 
-    /*
-    TODO: legacy-ui
-    @Override
-    protected void loadDatasource(DatasourceComponent component, Element element) {
-        String datasource = element.attributeValue("optionsDatasource");
-        if (!StringUtils.isEmpty(datasource)) {
-            Datasource ds = getComponentContext().getDsContext().get(datasource);
-            ((TwinColumn) component).setOptionsDatasource((CollectionDatasource) ds);
-        }
-
-        super.loadDatasource(component, element);
-    }*/
-
     protected void loadOptionsContainer(TwinColumn component, Element element) {
         String containerId = element.attributeValue("optionsContainer");
         if (containerId != null) {

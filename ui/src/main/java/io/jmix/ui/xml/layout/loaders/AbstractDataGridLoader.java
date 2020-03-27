@@ -131,84 +131,93 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         loadAggregatable(resultComponent, element);
         loadAggregationPosition(resultComponent, element);
 
-        Element columnsElement = element.element("columns");
-
         loadButtonsPanel(resultComponent);
 
         loadRowsCount(resultComponent, element); // must be before datasource setting
 
-        MetaClass metaClass = null;
-        CollectionContainer collectionContainer = null;
-        DataLoader dataLoader = null;
-        // Datasource datasource = null; TODO: legacy-ui
+        loadDataGridData();
 
-        String containerId = element.attributeValue("dataContainer");
-        String datasourceId = element.attributeValue("datasource");
-        if (!Strings.isNullOrEmpty(containerId)) {
-            FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
-            ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
-            InstanceContainer container = screenData.getContainer(containerId);
-            if (container instanceof CollectionContainer) {
-                collectionContainer = (CollectionContainer) container;
-            } else {
-                throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
-            }
-            metaClass = collectionContainer.getEntityMetaClass();
-            if (collectionContainer instanceof HasLoader) {
-                dataLoader = ((HasLoader) collectionContainer).getLoader();
-            }
-        } else if (!Strings.isNullOrEmpty(datasourceId)) {
-            /*
-            TODO: legacy-ui
-            datasource = getComponentContext().getDsContext().get(datasourceId);            if (datasource == null) {
-                throw new GuiDevelopmentException("Can't find datasource by name: " + datasourceId, context);
-            }
-            if (!(datasource instanceof CollectionDatasource)) {
-                throw new GuiDevelopmentException("Not a CollectionDatasource: " + datasource, context);
-            }
-            metaClass = datasource.getMetaClass();*/
-        } else {
+        loadSelectionMode(resultComponent, element);
+        loadFrozenColumnCount(resultComponent, element);
+        loadTabIndex(resultComponent, element);
+    }
+
+    protected void loadDataGridData() {
+        DataGridDataHolder holder= initDataGridDataHolder();
+        if (!holder.isContainerLoaded()) {
             String metaClassStr = element.attributeValue("metaClass");
             if (Strings.isNullOrEmpty(metaClassStr)) {
                 throw new GuiDevelopmentException("DataGrid doesn't have data binding",
                         context, "DataGrid ID", element.attributeValue("id"));
             }
 
-            metaClass = getMetadata().getClass(metaClassStr);
+            holder.setMetaClass(getMetadata().getClass(metaClassStr));
         }
 
         List<Column> availableColumns;
 
+        Element columnsElement = element.element("columns");
         if (columnsElement != null) {
-            FetchPlan view = collectionContainer != null ? collectionContainer.getFetchPlan()
-                    /*: datasource != null ? datasource.getView()*/
-                    : getViewRepository().getFetchPlan(metaClass.getJavaClass(), FetchPlan.LOCAL);
-            availableColumns = loadColumns(resultComponent, columnsElement, metaClass, view);
+            FetchPlan fetchPlan = holder.getFetchPlan();
+            if (fetchPlan == null) {
+                getViewRepository().getFetchPlan(holder.getMetaClass(), FetchPlan.LOCAL);
+            }
+
+            availableColumns = loadColumns(resultComponent, columnsElement, holder.getMetaClass(), fetchPlan);
         } else {
             availableColumns = new ArrayList<>();
         }
 
-        if (collectionContainer != null) {
-            // todo dynamic attributes
-//            if (dataLoader instanceof CollectionLoader) {
-//                addDynamicAttributes(resultComponent, metaClass, null, (CollectionLoader) dataLoader, availableColumns);
-//            }
-            //noinspection unchecked
-            resultComponent.setItems(createContainerDataGridSource(collectionContainer));
-        } /*else if (datasource != null) { TODO: legacy-ui
-            // todo dynamic attributes
-//            addDynamicAttributes(resultComponent, metaClass, datasource, null, availableColumns);
-            // resultComponent.setDatasource((CollectionDatasource) datasource); TODO: legacy-ui
-        }*/ else {
+        setupDataContainer(holder);
+
+        if (resultComponent.getItems() == null) {
             // todo dynamic attributes
 //            addDynamicAttributes(resultComponent, metaClass, null, null, availableColumns);
             //noinspection unchecked
-            // resultComponent.setItems(createEmptyDataGridItems(metaClass)); TODO: legacy-ui
+            resultComponent.setItems(createEmptyDataGridItems(holder.getMetaClass()));
+        }
+    }
+
+    protected DataGridDataHolder initDataGridDataHolder() {
+        DataGridDataHolder holder = new DataGridDataHolder();
+
+        String containerId = element.attributeValue("dataContainer");
+        if (Strings.isNullOrEmpty(containerId)) {
+            return holder;
         }
 
-        loadSelectionMode(resultComponent, element);
-        loadFrozenColumnCount(resultComponent, element);
-        loadTabIndex(resultComponent, element);
+        FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
+        ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
+        InstanceContainer container = screenData.getContainer(containerId);
+
+        CollectionContainer collectionContainer;
+        if (container instanceof CollectionContainer) {
+            collectionContainer = (CollectionContainer) container;
+        } else {
+            throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
+        }
+
+        if (collectionContainer instanceof HasLoader) {
+            holder.setDataLoader(((HasLoader) collectionContainer).getLoader());
+        }
+
+        holder.setMetaClass(collectionContainer.getEntityMetaClass());
+        holder.setContainer(collectionContainer);
+        holder.setFetchPlan(collectionContainer.getFetchPlan());
+
+        return holder;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void setupDataContainer(DataGridDataHolder holder) {
+       /* // todo dynamic attributes
+            if (dataLoader instanceof CollectionLoader) {
+                addDynamicAttributes(resultComponent, metaClass, null, (CollectionLoader) dataLoader, availableColumns);
+            }*/
+
+        if (holder.getContainer() != null) {
+            resultComponent.setItems(createContainerDataGridSource(holder.getContainer()));
+        }
     }
 
     protected Scripting getScripting() {
@@ -841,6 +850,56 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             } catch (Exception e) {
                 throw new RuntimeException("Unable to instantiate strategy for aggregation", e);
             }
+        }
+    }
+
+    /**
+     * Contains information about metaclass, data container, loader, fetch plan.
+     */
+    protected static class DataGridDataHolder {
+
+        protected MetaClass metaClass;
+        protected CollectionContainer container;
+        protected DataLoader dataLoader;
+        protected FetchPlan fetchPlan;
+
+        public DataGridDataHolder() {
+        }
+
+        public MetaClass getMetaClass() {
+            return metaClass;
+        }
+
+        public void setMetaClass(MetaClass metaClass) {
+            this.metaClass = metaClass;
+        }
+
+        public CollectionContainer getContainer() {
+            return container;
+        }
+
+        public void setContainer(CollectionContainer container) {
+            this.container = container;
+        }
+
+        public DataLoader getDataLoader() {
+            return dataLoader;
+        }
+
+        public void setDataLoader(DataLoader dataLoader) {
+            this.dataLoader = dataLoader;
+        }
+
+        public FetchPlan getFetchPlan() {
+            return fetchPlan;
+        }
+
+        public void setFetchPlan(FetchPlan fetchPlan) {
+            this.fetchPlan = fetchPlan;
+        }
+
+        public boolean isContainerLoaded() {
+            return container != null;
         }
     }
 }

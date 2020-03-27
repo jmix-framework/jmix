@@ -35,8 +35,7 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
         assignFrame(resultComponent);
         assignXmlDescriptor(resultComponent, element);
 
-        loadContainer(resultComponent, element);
-
+        loadData(resultComponent, element);
 
         loadVisible(resultComponent, element);
         loadEditable(resultComponent, element);

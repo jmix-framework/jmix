@@ -39,40 +39,6 @@ public interface GroupTable<E extends Entity> extends Table<E> {
         return new TypeToken<GroupTable<T>>() {};
     }
 
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    @Override
-    default GroupDatasource getDatasource() {
-        TableItems<E> tableItems = getItems();
-        if (tableItems == null) {
-            return null;
-        }
-
-        if (tableItems instanceof DatasourceTableItems) {
-            DatasourceTableItems adapter = (DatasourceTableItems) tableItems;
-            return (GroupDatasource) adapter.getDatasource();
-        }
-
-        return null;
-    }*/
-
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    @Override
-    default void setDatasource(CollectionDatasource datasource) {
-        if (datasource == null) {
-            setItems(null);
-        } else {
-            if (!(datasource instanceof GroupDatasource)) {
-                throw new IllegalArgumentException("GroupTable supports only GroupDatasource");
-            }
-
-            setItems(new DatasourceGroupTableItems((GroupDatasource) datasource));
-        }
-    }*/
-
     /**
      * Performs grouping by the given {@code properties}.
      *

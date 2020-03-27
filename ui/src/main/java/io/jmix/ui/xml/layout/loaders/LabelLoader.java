@@ -31,7 +31,7 @@ public class LabelLoader extends AbstractComponentLoader<Label> {
     public void loadComponent() {
         assignXmlDescriptor(resultComponent, element);
 
-        loadContainer(resultComponent, element);
+        loadData(resultComponent, element);
 
         loadVisible(resultComponent, element);
         loadAlign(resultComponent, element);

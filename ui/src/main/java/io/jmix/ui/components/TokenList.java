@@ -40,36 +40,6 @@ public interface TokenList<V extends Entity> extends Field<Collection<V>>,
     String NAME = "tokenList";
 
     /**
-     * Binds the given {@code datasource} with field.
-     *
-     * @param datasource {@code CollectionDatasource} instance
-     *
-     * @deprecated use {@link HasValueSource#setValueSource(ValueSource)} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    default void setDatasource(CollectionDatasource datasource) {
-        setValueSource(datasource == null ? null : new LegacyCollectionDsValueSource<>(datasource));
-    }*/
-
-    /**
-     * @return bound {@code CollectionDatasource} instance
-     *
-     * @deprecated use {@link HasValueSource#getValueSource()} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    @Override
-    default CollectionDatasource getDatasource() {
-        ValueSource<Collection<V>> valueSource = getValueSource();
-        return valueSource instanceof LegacyCollectionDsValueSource
-                ? ((LegacyCollectionDsValueSource) valueSource).getDatasource()
-                : null;
-    }*/
-
-    /**
      * Sets field options.
      *
      * @param options field options
@@ -80,37 +50,6 @@ public interface TokenList<V extends Entity> extends Field<Collection<V>>,
      * @return field options
      */
     Options<V> getOptions();
-
-    /**
-     * Sets the given {@code datasource} as options datasource.
-     *
-     * @param datasource options datasource
-     *
-     * @deprecated use {@link TokenList#setOptions(Options)} instead
-     */
-    /*
-    TODO: legacy-ui
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    default void setOptionsDatasource(CollectionDatasource datasource) {
-        setOptions(datasource == null ? null : new DatasourceOptions(datasource));
-    }*/
-
-    /**
-     * @return {@code CollectionDatasource} instance that stores field options
-     *
-     * @deprecated use {@link TokenList#getOptions()} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    default CollectionDatasource getOptionsDatasource() {
-        Options<V> options = getOptions();
-        if (options instanceof DatasourceOptions) {
-            return ((DatasourceOptions) options).getDatasource();
-        }
-        return null;
-    }*/
 
     /**
      * @return options filter mode

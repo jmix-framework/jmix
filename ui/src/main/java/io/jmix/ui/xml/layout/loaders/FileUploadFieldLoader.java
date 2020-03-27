@@ -29,9 +29,9 @@ public class FileUploadFieldLoader extends AbstractFieldLoader<FileUploadField> 
     public void loadComponent() {
         assignFrame(resultComponent);
 
-        loadContainer(resultComponent, element);
+        loadData(resultComponent, element);
         if (resultComponent.getValueSource() == null) {
-            // TODO: legacy-ui
+            // TODO: move to legacy loader
             // loadDatasource(resultComponent, element);
         }
 

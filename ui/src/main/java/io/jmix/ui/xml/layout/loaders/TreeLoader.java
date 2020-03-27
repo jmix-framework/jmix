@@ -86,7 +86,23 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
     protected void loadTreeChildren() {
         Element itemsElem = element.element("treechildren");
 
+        loadDataContainer();
+
+        String captionProperty = element.attributeValue("captionProperty");
+        if (captionProperty == null && itemsElem != null) {
+            captionProperty = itemsElem.attributeValue("captionProperty");
+        }
+
+        if (!StringUtils.isEmpty(captionProperty)) {
+            resultComponent.setCaptionProperty(captionProperty);
+            resultComponent.setCaptionMode(CaptionMode.PROPERTY);
+        }
+    }
+
+    protected void loadDataContainer() {
+        Element itemsElem = element.element("treechildren");
         String containerId = element.attributeValue("dataContainer");
+
         if (containerId != null) {
             FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
             ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
@@ -108,24 +124,6 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
                         context, "Tree ID", element.attributeValue("id"));
             }
             resultComponent.setItems(new ContainerTreeItems(collectionContainer, hierarchyProperty));
-        } else if (itemsElem != null) {
-            String datasource = itemsElem.attributeValue("datasource");
-            if (!StringUtils.isBlank(datasource)) {
-                /*
-                TODO: legacy-ui
-                HierarchicalDatasource ds =
-                        (HierarchicalDatasource) getComponentContext().getDsContext().get(datasource);
-                resultComponent.setDatasource(ds);*/
-            }
-        }
-        String captionProperty = element.attributeValue("captionProperty");
-        if (captionProperty == null && itemsElem != null) {
-            captionProperty = itemsElem.attributeValue("captionProperty");
-        }
-
-        if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setCaptionProperty(captionProperty);
-            resultComponent.setCaptionMode(CaptionMode.PROPERTY);
         }
     }
 

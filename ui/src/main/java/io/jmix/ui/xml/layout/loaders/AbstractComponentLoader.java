@@ -937,6 +937,10 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return null;
     }
 
+    protected void loadData(T component, Element element) {
+        loadContainer(component, element);
+    }
+
     @SuppressWarnings("unchecked")
     protected void loadContainer(T component, Element element) {
         if (component instanceof HasValueSource) {

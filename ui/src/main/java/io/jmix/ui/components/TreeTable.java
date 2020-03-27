@@ -50,40 +50,4 @@ public interface TreeTable<E extends Entity> extends Table<E> {
     int getLevel(Object itemId);
 
     boolean isExpanded(Object itemId);
-
-    /*
-    TODO: legacy-ui
-    @Override
-    @Deprecated
-    default HierarchicalDatasource getDatasource() {
-        TableItems<E> tableItems = getItems();
-        if (tableItems == null) {
-            return null;
-        }
-
-        if (tableItems instanceof DatasourceTreeTableItems) {
-            DatasourceTreeTableItems adapter = (DatasourceTreeTableItems) tableItems;
-            return (HierarchicalDatasource) adapter.getDatasource();
-        }
-
-        return null;
-    }
-
-    @Override
-    default void setDatasource(CollectionDatasource datasource) {
-        if (datasource == null) {
-            setItems(null);
-        } else {
-            if (!(datasource instanceof HierarchicalDatasource)) {
-                throw new IllegalArgumentException("TreeTable supports only HierarchicalDatasource");
-            }
-
-            setItems(new DatasourceTreeTableItems((HierarchicalDatasource) datasource));
-        }
-    }
-
-    @Deprecated
-    default void setDatasource(HierarchicalDatasource datasource) {
-        setDatasource((CollectionDatasource) datasource);
-    }*/
 }

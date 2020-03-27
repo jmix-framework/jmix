@@ -21,7 +21,6 @@ import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.ui.components.data.DataGridItems;
 import io.jmix.ui.components.data.TreeDataGridItems;
-import io.jmix.ui.components.data.datagrid.DatasourceTreeDataGridItems;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -43,35 +42,6 @@ public interface TreeDataGrid<E extends Entity> extends DataGrid<E> {
     static <T extends Entity> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<TreeDataGrid<T>>() {};
     }
-
-    /*
-    TODO: legacy-ui
-    @Override
-    default HierarchicalDatasource getDatasource() {
-        DataGridItems<E> dataGridItems = getItems();
-        return dataGridItems instanceof DatasourceTreeDataGridItems
-                ? (HierarchicalDatasource) ((DatasourceTreeDataGridItems) dataGridItems).getDatasource()
-                : null;
-    }
-
-    @Deprecated
-    default void setDatasource(HierarchicalDatasource datasource) {
-        setDatasource((CollectionDatasource) datasource);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    default void setDatasource(CollectionDatasource datasource) {
-        if (datasource == null) {
-            setItems(null);
-        } else {
-            if (!(datasource instanceof HierarchicalDatasource)) {
-                throw new IllegalArgumentException("TreeDataGrid supports only HierarchicalDatasource");
-            }
-
-            setItems(new DatasourceTreeDataGridItems((HierarchicalDatasource) datasource));
-        }
-    }*/
 
     /**
      * Returns the hierarchy level of an item.

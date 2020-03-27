@@ -73,27 +73,6 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
 
     String getHierarchyProperty();
 
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    default void setDatasource(HierarchicalDatasource datasource) {
-        //noinspection unchecked
-        setItems(datasource != null
-                ? new DatasourceTreeItems(datasource)
-                : null);
-    }*/
-
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    @Override
-    default HierarchicalDatasource getDatasource() {
-        TreeItems<E> treeItems = getItems();
-        return treeItems != null
-                ? ((DatasourceTreeItems) treeItems).getDatasource()
-                : null;
-    }*/
-
     @Override
     TreeItems<E> getItems();
     void setItems(TreeItems<E> treeItems);

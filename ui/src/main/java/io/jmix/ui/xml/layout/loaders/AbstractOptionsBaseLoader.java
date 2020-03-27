@@ -44,24 +44,10 @@ public abstract class AbstractOptionsBaseLoader<T extends OptionsField> extends 
         }
     }
 
-    /*
-    TODO: legacy-ui
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    protected void loadDatasource(DatasourceComponent component, Element element) {
-        String datasource = element.attributeValue("optionsDatasource");
-        if (!StringUtils.isEmpty(datasource)) {
-            Datasource ds = getComponentContext().getDsContext().get(datasource);
-            ((T) component).setOptionsDatasource((CollectionDatasource) ds);
-        }
-
-        super.loadDatasource(component, element);
-    }*/
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void loadContainer(T component, Element element) {
-        super.loadContainer(component, element);
+    protected void loadData(T component, Element element) {
+        super.loadData(component, element);
 
         loadOptionsContainer(element).ifPresent(optionsContainer ->
                 component.setOptions(new ContainerOptions(optionsContainer)));

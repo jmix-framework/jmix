@@ -17,13 +17,9 @@
 package io.jmix.ui.components;
 
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.entity.FileDescriptor;
 import io.jmix.ui.components.data.HasValueSource;
-import io.jmix.ui.components.data.ValueSource;
-import io.jmix.ui.components.data.meta.EntityValueSource;
 
-import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -32,49 +28,6 @@ import java.util.function.Consumer;
  */
 public interface Image extends ResourceView, HasValueSource<FileDescriptor> {
     String NAME = "image";
-
-    /**
-     * Sets datasource and its property.
-     * @deprecated Use {@link #setValueSource(ValueSource)} instead.
-     */
-    /*
-    TODO: legacy-ui
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    default void setDatasource(Datasource datasource, String property) {
-        if (datasource != null) {
-            this.setValueSource(new DatasourceValueSource(datasource, property));
-        } else {
-            this.setValueSource(null);
-        }
-    }*/
-
-    /**
-     * @return datasource instance
-     * @deprecated Use {@link #getValueSource()} instead.
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    default Datasource getDatasource() {
-        ValueSource<FileDescriptor> valueSource = getValueSource();
-        return valueSource instanceof DatasourceValueSource ?
-                ((DatasourceValueSource) valueSource).getDatasource() : null;
-    }*/
-
-    /**
-     * @return return null if value source is not EntityValueSource or value source is not defined
-     */
-    @Nullable
-    default MetaPropertyPath getMetaPropertyPath() {
-        if (getValueSource() == null) {
-            return null;
-        }
-
-        ValueSource<FileDescriptor> valueSource = getValueSource();
-        return valueSource instanceof EntityValueSource ?
-                ((EntityValueSource) valueSource).getMetaPropertyPath() : null;
-    }
 
     /**
      * Resets the component source and disposes of the corresponding resource.

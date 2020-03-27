@@ -117,27 +117,6 @@ public class WebRowsCount extends WebAbstractComponent<CubaRowsCount> implements
         return StringUtils.normalizeSpace(super.getStyleName().replace(TABLE_ROWS_COUNT_STYLENAME, ""));
     }
 
-    /*
-    TODO: legacy-ui
-    @Override
-    public CollectionDatasource getDatasource() {
-        return adapter instanceof AbstractDatasourceAdapter
-                ? ((AbstractDatasourceAdapter) adapter).getDatasource()
-                : null;
-    }
-
-    @Override
-    public void setDatasource(CollectionDatasource datasource) {
-        checkNotNullArgument(datasource, "datasource is null");
-
-        if (adapter != null) {
-            adapter.unbind();
-        }
-        adapter = createDatasourceAdapter(datasource);
-
-        initButtonListeners();
-    }*/
-
     protected void initButtonListeners() {
         unregisterListeners();
         onLinkClickRegistration = component.getCountButton().addClickListener(event -> onLinkClick());
@@ -187,17 +166,18 @@ public class WebRowsCount extends WebAbstractComponent<CubaRowsCount> implements
     protected Adapter createAdapter(RowsCountTarget target) {
         if (target instanceof ListComponent) {
             DataUnit items = ((ListComponent) target).getItems();
-            /*if (items instanceof DatasourceDataUnit) {
-                // TODO: legacy-ui
-                // return createDatasourceAdapter(((DatasourceDataUnit) items).getDatasource());
-            } else */ if (items instanceof ContainerDataUnit) {
-                return createLoaderAdapter(((ContainerDataUnit) items).getContainer());
-            }
-
-            throw new IllegalStateException("Unsupported data unit type: " + items);
+            return createDefaultAdapter(items);
         }
 
         throw new UnsupportedOperationException("Unsupported RowsCountTarget: " + target);
+    }
+
+    protected Adapter createDefaultAdapter(DataUnit items) {
+        if (items instanceof ContainerDataUnit) {
+            return createLoaderAdapter(((ContainerDataUnit) items).getContainer());
+        }
+
+        throw new IllegalStateException("Unsupported data unit type: " + items);
     }
 
     protected Adapter createLoaderAdapter(CollectionContainer container) {
@@ -210,16 +190,6 @@ public class WebRowsCount extends WebAbstractComponent<CubaRowsCount> implements
         }
         return new LoaderAdapter(container, (BaseCollectionLoader) loader);
     }
-
-    /*
-    TODO: legacy-ui
-    protected Adapter createDatasourceAdapter(CollectionDatasource datasource) {
-        if (datasource instanceof CollectionDatasource.SupportsPaging) {
-            return new DatasourceAdapter((CollectionDatasource.SupportsPaging) datasource);
-        } else {
-            return new NoPagingDatasourceAdapter(datasource);
-        }
-    }*/
 
     @Override
     public void setRowsCountTarget(RowsCountTarget target) {
@@ -648,126 +618,4 @@ public class WebRowsCount extends WebAbstractComponent<CubaRowsCount> implements
                 loader.load();
         }
     }
-
-    /*
-    TODO: legacy-ui
-    protected class DatasourceAdapter extends AbstractDatasourceAdapter {
-
-        public DatasourceAdapter(CollectionDatasource.SupportsPaging datasource) {
-            super(datasource);
-        }
-
-        @Override
-        public int getFirstResult() {
-            return ((CollectionDatasource.SupportsPaging) datasource).getFirstResult();
-        }
-
-        @Override
-        public int getMaxResults() {
-            return datasource.getMaxResults();
-        }
-
-        @Override
-        public void setFirstResult(int startPosition) {
-            ((CollectionDatasource.SupportsPaging) datasource).setFirstResult(startPosition);
-        }
-
-        @Override
-        public void setMaxResults(int maxResults) {
-            datasource.setMaxResults(maxResults);
-        }
-
-        @Override
-        public int getCount() {
-            return ((CollectionDatasource.SupportsPaging) datasource).getCount();
-        }
-
-        @Override
-        public void refresh() {
-            datasource.refresh();
-        }
-    }*/
-
-    /*
-    TODO: legacy-ui
-    protected class NoPagingDatasourceAdapter extends AbstractDatasourceAdapter {
-
-        public NoPagingDatasourceAdapter(CollectionDatasource datasource) {
-            super(datasource);
-        }
-
-        @Override
-        public int getFirstResult() {
-            return 0;
-        }
-
-        @Override
-        public int getMaxResults() {
-            return Integer.MAX_VALUE;
-        }
-
-        @Override
-        public void setFirstResult(int startPosition) {
-            // do nothing
-        }
-
-        @Override
-        public void setMaxResults(int maxResults) {
-            // do nothing
-        }
-
-        @Override
-        public int getCount() {
-            return size();
-        }
-
-        @Override
-        public void refresh() {
-            // do nothing
-        }
-    }*/
-
-    /*
-    TODO: legacy-ui
-    protected abstract class AbstractDatasourceAdapter implements Adapter {
-
-        protected CollectionDatasource datasource;
-
-        protected CollectionDatasource.CollectionChangeListener datasourceCollectionChangeListener;
-        protected WeakCollectionChangeListener weakDatasourceCollectionChangeListener;
-
-        public AbstractDatasourceAdapter(CollectionDatasource datasource) {
-            this.datasource = datasource;
-
-            datasourceCollectionChangeListener = e -> {
-                samePage = CollectionDatasource.Operation.REFRESH != e.getOperation()
-                        && CollectionDatasource.Operation.CLEAR != e.getOperation();
-                onCollectionChanged();
-            };
-
-            weakDatasourceCollectionChangeListener = new WeakCollectionChangeListener(datasource, datasourceCollectionChangeListener);
-            //noinspection unchecked
-            datasource.addCollectionChangeListener(weakDatasourceCollectionChangeListener);
-
-            if (datasource.getState() == Datasource.State.VALID) {
-                onCollectionChanged();
-            }
-        }
-
-        @Override
-        public void unbind() {
-            //noinspection unchecked
-            datasource.removeCollectionChangeListener(weakDatasourceCollectionChangeListener);
-            weakDatasourceCollectionChangeListener = null;
-        }
-
-        @Override
-        public int size() {
-            return datasource.size();
-        }
-
-        public CollectionDatasource getDatasource() {
-            return datasource;
-        }
-    }*/
 }

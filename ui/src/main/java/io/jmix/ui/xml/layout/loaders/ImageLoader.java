@@ -16,9 +16,7 @@
 
 package io.jmix.ui.xml.layout.loaders;
 
-import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.Image;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class ImageLoader extends AbstractResourceViewLoader<Image> {
@@ -33,11 +31,7 @@ public class ImageLoader extends AbstractResourceViewLoader<Image> {
     public void loadComponent() {
         super.loadComponent();
 
-        loadContainer(resultComponent, element);
-        if (resultComponent.getValueSource() == null) {
-            loadDatasource(resultComponent, element);
-        }
-
+        loadData(resultComponent, element);
         loadScaleMode(resultComponent, element);
     }
 
@@ -48,26 +42,5 @@ public class ImageLoader extends AbstractResourceViewLoader<Image> {
             scaleMode = Image.ScaleMode.valueOf(scaleModeString);
         }
         image.setScaleMode(scaleMode);
-    }
-
-    protected void loadDatasource(Image component, Element element) {
-        final String datasource = element.attributeValue("datasource");
-        if (!StringUtils.isEmpty(datasource)) {
-            /*
-            TODO: legacy-ui
-            Datasource ds = getComponentContext().getDsContext().get(datasource);
-            if (ds == null) {
-                throw new GuiDevelopmentException(String.format("Datasource '%s' is not defined", datasource),
-                        getContext(), "Component ID", component.getId());
-            }
-            String property = element.attributeValue("property");
-            if (StringUtils.isEmpty(property)) {
-                throw new GuiDevelopmentException(
-                        String.format("Can't set datasource '%s' for component '%s' because 'property' " +
-                                "attribute is not defined", datasource, component.getId()), context);
-            }
-
-            component.setDatasource(ds, property);*/
-        }
     }
 }

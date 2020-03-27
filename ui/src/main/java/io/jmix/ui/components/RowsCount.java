@@ -48,21 +48,6 @@ public interface RowsCount extends Component.BelongToFrame {
     void setAutoLoad(boolean autoLoad);
 
     /**
-     * @deprecated assign {@link RowsCountTarget} instead.
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    CollectionDatasource getDatasource();*/
-    /**
-     * @deprecated assign {@link RowsCountTarget} instead.
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    void setDatasource(CollectionDatasource datasource);*/
-
-    /**
      * @return a component that displays data from the same datasource, usually a {@link Table}. Can be null.
      */
     @Deprecated

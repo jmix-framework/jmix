@@ -242,27 +242,6 @@ public class WebCalendar<V> extends WebAbstractComponent<CubaCalendar>
         return component.getTimeZone();
     }
 
-    /*
-    TODO: legacy-ui
-    Override
-    public void setDatasource(CollectionDatasource datasource) {
-        if (datasource == null) {
-            setEventProvider(null);
-        } else {
-            CollectionDsHelper.autoRefreshInvalid(datasource, true);
-            setEventProvider(new com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider(datasource));
-        }
-    }
-
-    @Nullable
-    @Override
-    public CollectionDatasource getDatasource() {
-        return (calendarEventProvider instanceof com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider)
-                ? ((com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider) calendarEventProvider)
-                .getDatasource()
-                : null;
-    }*/
-
     @Override
     public void setTimeFormat(TimeFormat format) {
         if (format == TimeFormat.FORMAT_12H) {

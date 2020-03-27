@@ -130,8 +130,8 @@ public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void loadContainer(LookupField component, Element element) {
-        super.loadContainer(component, element);
+    protected void loadData(LookupField component, Element element) {
+        super.loadData(component, element);
 
         loadOptionsContainer(element).ifPresent(optionsContainer ->
                 component.setOptions(new ContainerOptions(optionsContainer)));

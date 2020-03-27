@@ -18,6 +18,7 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.UserRelatedNews;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
@@ -266,6 +267,26 @@ public class CheckLoadedStateTest {
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().contains("parent is not loaded"));
         }
+    }
+
+    @Test
+    public void testGetCurrentFetchPlan() {
+        DataManager dataManager = AppBeans.get(DataManager.class);
+        EntityStates entityStates = AppBeans.get(EntityStates.class);
+
+        User user = dataManager.load(User.class)
+                .id(userId)
+                .fetchPlan("user.edit")
+                .one();
+
+        FetchPlan fetchPlan = entityStates.getCurrentFetchPlan(user);
+
+        User user1 = dataManager.load(User.class)
+                .id(userId)
+                .fetchPlan(fetchPlan)
+                .one();
+
+        entityStates.checkLoadedWithFetchPlan(user1, "user.edit");
     }
 
     @AfterEach

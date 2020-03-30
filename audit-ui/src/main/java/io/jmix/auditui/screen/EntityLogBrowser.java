@@ -16,7 +16,7 @@
 
 package io.jmix.auditui.screen;
 
-import io.jmix.audit.EntityLogAPI;
+import io.jmix.audit.EntityLog;
 import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;
@@ -64,7 +64,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     @Inject
     protected ExtendedEntities extendedEntities;
     @Inject
-    protected EntityLogAPI entityLog;
+    protected EntityLog entityLog;
     @Inject
     protected UiComponents uiComponents;
     @Inject

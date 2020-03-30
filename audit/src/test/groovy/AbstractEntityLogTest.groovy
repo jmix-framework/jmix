@@ -1,4 +1,4 @@
-import io.jmix.audit.EntityLogAPI
+import io.jmix.audit.EntityLog
 import io.jmix.audit.JmixAuditConfiguration
 import io.jmix.audit.entity.EntityLogItem
 import io.jmix.audit.entity.LoggedAttribute
@@ -43,7 +43,7 @@ import javax.persistence.TypedQuery
 @ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixAuditConfiguration, JmixAuditTestConfiguration])
 class AbstractEntityLogTest extends Specification {
     @Inject
-    protected EntityLogAPI entityLog
+    protected EntityLog entityLog
     @Inject
     protected PersistenceTools persistenceTools
     @Inject
@@ -153,7 +153,7 @@ class AbstractEntityLogTest extends Specification {
     }
 
     protected void initEntityLogAPI() {
-        entityLog = AppBeans.get(EntityLogAPI.class)
+        entityLog = AppBeans.get(EntityLog.class)
         entityLog.invalidateCache()
     }
 }

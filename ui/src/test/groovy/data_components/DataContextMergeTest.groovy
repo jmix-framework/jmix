@@ -723,6 +723,7 @@ class DataContextMergeTest extends DataContextSpec {
         then:
         mergedEntity.getRoName() == 'roValue'
         mergedEntity.getRoList().size() == 1
+        mergedEntity.getRoFoo() != null
     }
 
     def "commit and merge partially loaded entity"() {

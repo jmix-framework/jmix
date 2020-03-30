@@ -307,7 +307,7 @@ public class DataContextImpl implements DataContext {
                     Entity srcRef = (Entity) value;
                     if (!mergedMap.containsKey(srcRef)) {
                         Entity managedRef = internalMerge(srcRef, mergedMap, false);
-                        EntityValues.setValue(dstEntity, propertyName, managedRef, false);
+                        setPropertyValue(dstEntity, property, managedRef, false);
                         if (getMetadataTools().isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
                             managedRef.__getEntityEntry().addPropertyChangeListener(listener);
@@ -316,7 +316,7 @@ public class DataContextImpl implements DataContext {
                     } else {
                         Entity managedRef = mergedMap.get(srcRef);
                         if (managedRef != null) {
-                            EntityValues.setValue(dstEntity, propertyName, managedRef, false);
+                            setPropertyValue(dstEntity, property, managedRef, false);
                         } else {
                             // should never happen
                             log.debug("Instance was merged but managed instance is null: {}", srcRef);
@@ -328,8 +328,12 @@ public class DataContextImpl implements DataContext {
     }
 
     protected void setPropertyValue(Entity entity, MetaProperty property, @Nullable Object value) {
+        setPropertyValue(entity, property, value, true);
+    }
+
+    protected void setPropertyValue(Entity entity, MetaProperty property, @Nullable Object value, boolean checkEquals) {
         if (!property.isReadOnly()) {
-            EntityValues.setValue(entity, property.getName(), value);
+            EntityValues.setValue(entity, property.getName(), value, checkEquals);
         } else {
             AnnotatedElement annotatedElement = property.getAnnotatedElement();
             if (annotatedElement instanceof Field) {

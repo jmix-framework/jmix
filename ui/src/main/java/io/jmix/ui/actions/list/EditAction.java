@@ -38,6 +38,7 @@ import io.jmix.ui.sys.ActionScreenInitializer;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
@@ -64,6 +65,8 @@ public class EditAction<E extends Entity> extends SecuredListAction implements A
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
 
     protected Consumer<E> afterCommitHandler;
+
+    protected Function<E, E> transformation;
 
     // Set default caption only once
     protected boolean captionInitialized = false;
@@ -196,6 +199,21 @@ public class EditAction<E extends Entity> extends SecuredListAction implements A
         this.afterCommitHandler = afterCommitHandler;
     }
 
+    /**
+     * Sets the function to transform the committed in the editor screen entity before setting it to the target data container.
+     * <p>
+     * The preferred way to set the function is using a controller method annotated with {@link Install}, e.g.:
+     * <pre>
+     * &#64;Install(to = "petsTable.edit", subject = "transformation")
+     * protected Pet petsTableEditTransformation(Pet entity) {
+     *     return doTransform(entity);
+     * }
+     * </pre>
+     */
+    public void setTransformation(Function<E, E> transformation) {
+        this.transformation = transformation;
+    }
+
     @Inject
     protected void setIcons(Icons icons) {
         this.icon = icons.get(CubaIcon.EDIT_ACTION);
@@ -295,6 +313,10 @@ public class EditAction<E extends Entity> extends SecuredListAction implements A
                 .editEntity(editedEntity);
 
         builder = screenInitializer.initBuilder(builder);
+
+        if (transformation != null) {
+            builder.withTransformation(transformation);
+        }
 
         Screen editor = builder.build();
 

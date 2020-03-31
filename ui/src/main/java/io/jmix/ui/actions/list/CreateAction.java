@@ -40,6 +40,7 @@ import io.jmix.ui.sys.ActionScreenInitializer;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
@@ -70,6 +71,7 @@ public class CreateAction<E extends Entity> extends ListAction implements Action
     protected Supplier<E> newEntitySupplier;
     protected Consumer<E> initializer;
     protected Consumer<E> afterCommitHandler;
+    protected Function<E, E> transformation;
 
     public CreateAction() {
         this(ID);
@@ -234,6 +236,21 @@ public class CreateAction<E extends Entity> extends ListAction implements Action
         this.afterCommitHandler = afterCommitHandler;
     }
 
+    /**
+     * Sets the function to transform the committed in the editor screen entity before setting it to the target data container.
+     * <p>
+     * The preferred way to set the function is using a controller method annotated with {@link Install}, e.g.:
+     * <pre>
+     * &#64;Install(to = "petsTable.create", subject = "transformation")
+     * protected Pet petsTableCreateTransformation(Pet entity) {
+     *     return doTransform(entity);
+     * }
+     * </pre>
+     */
+    public void setTransformation(Function<E, E> transformation) {
+        this.transformation = transformation;
+    }
+
     @Inject
     protected void setMessages(Messages messages) {
         this.caption = messages.getMessage("actions.Create");
@@ -310,6 +327,10 @@ public class CreateAction<E extends Entity> extends ListAction implements Action
         }
 
         builder = screenInitializer.initBuilder(builder);
+
+        if (transformation != null) {
+            builder.withTransformation(transformation);
+        }
 
         Screen editor = builder.build();
 

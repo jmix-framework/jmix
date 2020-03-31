@@ -16,6 +16,7 @@
 
 package test_support.entity.sales;
 
+import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import test_support.entity.sec.User;
 import io.jmix.core.DeletePolicy;
 import io.jmix.data.entity.StandardEntity;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @Entity(name = "sales_Order")
 @Table(name = "SALES_ORDER")
+@PublishEntityChangedEvents
 public class Order extends StandardEntity {
     private static final long serialVersionUID = -7505471093968920870L;
 

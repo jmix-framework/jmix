@@ -18,6 +18,8 @@ package data_manager
 
 import io.jmix.core.Id
 import io.jmix.core.SaveContext
+import io.jmix.core.FetchPlan
+import test_support.TestOrderChangedEventListener
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
 import test_support.entity.TestSecondAppEntity
@@ -25,6 +27,8 @@ import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlanBuilder
 import test_support.DataSpec
+import test_support.entity.sales.Customer
+import test_support.entity.sales.Order
 
 import javax.inject.Inject
 
@@ -35,6 +39,9 @@ class DataManagerCommitTest extends DataSpec {
 
     @Inject
     EntityStates entityStates
+
+    @Inject
+    TestOrderChangedEventListener orderChangedEventListener
 
     TestAppEntity appEntity
     TestAppEntityItem appEntityItem
@@ -81,5 +88,26 @@ class DataManagerCommitTest extends DataSpec {
 
         entityStates.isLoaded(entity1.appEntity, 'createTs')
         entityStates.isLoaded(entity1.appEntity.items[0], 'name')
+    }
+
+    def "commit returns object fetched according to passed view even if it was reloaded in EntityChangedEvent listener"() {
+        given:
+        def customer = dataManager.save(new Customer(name: 'c1'))
+        def order = new Order(number: '1', customer: customer)
+
+        orderChangedEventListener.enabled = true
+
+        when:
+        def fetchPlan = FetchPlanBuilder.of(Order).addFetchPlan(FetchPlan.LOCAL).add('customer.name').build()
+        def committedOrder = dataManager.save(new SaveContext().saving(order, fetchPlan)).get(order)
+
+        then:
+        entityStates.isLoaded(committedOrder, 'customer')
+        committedOrder.customer.name == customer.name
+
+        cleanup:
+        orderChangedEventListener.enabled = false
+        dataManager.remove(Id.of(order))
+        dataManager.remove(Id.of(customer))
     }
 }

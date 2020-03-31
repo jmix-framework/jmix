@@ -604,8 +604,6 @@ public class OrmDataStore implements DataStore {
             handleCascadePersistException(e);
         }
 
-        Set<Entity> resultEntities = savedEntitiesHolder.getEntities(saved);
-
         // todo dynamic attributes
 //        if (!attributeValuesToRemove.isEmpty()) {
 //            try (Transaction tx = getSaveTransaction(Stores.MAIN, context.isJoinTransaction())) {
@@ -627,6 +625,10 @@ public class OrmDataStore implements DataStore {
 //            }
 //        }
 
+        Set<Entity> resultEntities = savedEntitiesHolder.getEntities(saved);
+
+        reloadIfUnfetched(resultEntities, context);
+
         if (!context.isDiscardSaved() && isAuthorizationRequired(context) && security.hasConstraints()) {
             persistenceSecurity.applyConstraints(resultEntities);
         }
@@ -644,6 +646,40 @@ public class OrmDataStore implements DataStore {
         }
 
         return context.isDiscardSaved() ? Collections.emptySet() : resultEntities;
+    }
+
+    protected void reloadIfUnfetched(Set<Entity> resultEntities, SaveContext context) {
+        if (context.getFetchPlans().isEmpty())
+            return;
+
+        List<Entity> entitiesToReload = resultEntities.stream()
+                .filter(entity -> {
+                    FetchPlan fetchPlan = context.getFetchPlans().get(entity);
+                    return fetchPlan != null && !entityStates.isLoadedWithFetchPlan(entity, fetchPlan);
+                })
+                .collect(Collectors.toList());
+
+        if (!entitiesToReload.isEmpty()) {
+            TransactionStatus txStatus = beginSaveTransaction(context.isJoinTransaction());
+            try {
+                EntityManager em = storeAwareLocator.getEntityManager(storeName);
+
+                for (Entity entity : entitiesToReload) {
+                    FetchPlan fetchPlan = context.getFetchPlans().get(entity);
+                    log.debug("Reloading {} according to the requested fetchPlan", entity);
+                    Entity reloadedEntity = em.find(entity.getClass(), EntityValues.getId(entity),
+                            PersistenceHints.builder().withFetchPlan(fetchPlan).build());
+                    resultEntities.remove(entity);
+                    if (reloadedEntity != null) {
+                        resultEntities.add(reloadedEntity);
+                    }
+                }
+            } catch (RuntimeException e) {
+                rollbackTransaction(txStatus);
+                throw e;
+            }
+            commitTransaction(txStatus);
+        }
     }
 
     @Override

@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 public interface FieldGroup extends Component, Component.BelongToFrame, Component.HasCaption, Component.HasIcon,
                                     HasBorder, HasContextHelp, Component.Editable, Validatable,
                                     EditableChangeNotifier, ChildEditableController,
-                                    ComponentContainer, HasSubParts {
+                                    ComponentContainer, HasSubParts, HasHtmlSanitizer {
     String NAME = "fieldGroup";
 
     /**

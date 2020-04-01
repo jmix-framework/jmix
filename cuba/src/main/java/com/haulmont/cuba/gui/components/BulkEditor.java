@@ -21,6 +21,7 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Field;
 import io.jmix.ui.components.HasHtmlCaption;
 import io.jmix.ui.components.HasHtmlDescription;
+import io.jmix.ui.components.HasHtmlSanitizer;
 import io.jmix.ui.gui.OpenType;
 
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.Map;
  * see io.jmix.ui.BulkEditors
  */
 public interface BulkEditor extends Component, Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
-                                    Component.Focusable, HasHtmlCaption, HasHtmlDescription {
+                                    Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "bulkEditor";
     String PERMISSION = "cuba.gui.bulkEdit";

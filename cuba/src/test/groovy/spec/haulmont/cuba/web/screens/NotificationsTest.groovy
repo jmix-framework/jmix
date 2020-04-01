@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2018 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,26 +18,17 @@ package spec.haulmont.cuba.web.screens
 
 import com.vaadin.shared.Position
 import com.vaadin.ui.Notification
-import io.jmix.ui.AppUI
 import io.jmix.ui.Notifications
 import io.jmix.ui.components.ContentMode
-import io.jmix.ui.executors.BackgroundWorker
-import io.jmix.ui.sys.WebNotifications
-import spock.lang.Ignore
-import spock.lang.Specification
+import spec.haulmont.cuba.web.UiScreenSpec
 
 @SuppressWarnings(["GroovyPointlessBoolean", "GroovyAccessibility"])
-class NotificationsTest extends Specification {
+class NotificationsTest extends UiScreenSpec {
 
-    @Ignore
     def "Notification can be show"() {
-        def ui = new AppUI()
-        def notifications = new WebNotifications(ui)
-        notifications.backgroundWorker = Mock(BackgroundWorker)
-
         when:
 
-        def notification = notifications.create()
+        def notification = vaadinUi.notifications.create()
 
         then:
 
@@ -57,15 +48,15 @@ class NotificationsTest extends Specification {
 
         notification.caption == 'Greeting'
         notification.description == 'Hello world'
-        notification.position == com.haulmont.cuba.gui.Notifications.Position.BOTTOM_CENTER
-        notification.type == com.haulmont.cuba.gui.Notifications.NotificationType.WARNING
+        notification.position == Notifications.Position.BOTTOM_CENTER
+        notification.type == Notifications.NotificationType.WARNING
         notification.contentMode == ContentMode.HTML
         notification.styleName == 'open-notification'
 
         when:
 
         notification.show()
-        def extensions = ui.getExtensions()
+        def extensions = vaadinUi.getExtensions()
         def vNotification = extensions.find { it instanceof Notification } as Notification
 
         then:
@@ -79,12 +70,9 @@ class NotificationsTest extends Specification {
     }
 
     def "Notification does not support ContentMode.PREFORMATTED"() {
-        def notifications = new WebNotifications(new AppUI())
-        notifications.backgroundWorker = Mock(BackgroundWorker)
-
         when:
 
-        def notification = notifications.create()
+        def notification = vaadinUi.notifications.create()
         notification.withContentMode(ContentMode.PREFORMATTED)
 
         then:

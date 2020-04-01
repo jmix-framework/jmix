@@ -86,6 +86,8 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         loadContextHelp(resultComponent, element);
         loadCss(resultComponent, element);
 
+        loadHtmlSanitizerEnabled(resultComponent, element);
+
         loadAlign(resultComponent, element);
 
         loadCaptionPosition(resultComponent, element);

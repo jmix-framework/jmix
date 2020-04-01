@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.jmix.ui.components;
 
-public interface BoxLayout extends ExpandingLayout, OrderedContainer, HasSpacing, HasMargin,
-                                   Component.BelongToFrame, Component.HasCaption, Component.HasIcon,
-                                   LayoutClickNotifier, ShortcutNotifier, SupportsExpandRatio,
-                                   HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator,
-                                   HasHtmlSanitizer {
+public interface HasHtmlSanitizer {
 
+    /**
+     * @return html sanitizer is enabled
+     */
+    boolean isHtmlSanitizerEnabled();
+
+    /**
+     * Sets whether html sanitizer is enabled or not.
+     *
+     * @param htmlSanitizerEnabled specifies whether html sanitizer is enabled
+     */
+    void setHtmlSanitizerEnabled(boolean htmlSanitizerEnabled);
 }

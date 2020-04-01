@@ -20,7 +20,7 @@ package io.jmix.ui.components;
  * A flow layout arranges components in a directional flow, much like lines of text in a paragraph.
  */
 public interface FlowBoxLayout extends OrderedContainer, Component.BelongToFrame, HasMargin,
-        HasSpacing, Component.HasCaption, Component.HasIcon, HasContextHelp,
+        HasSpacing, Component.HasCaption, Component.HasIcon, HasContextHelp, HasHtmlSanitizer,
         LayoutClickNotifier, ShortcutNotifier, HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator {
 
     String NAME = "flowBox";

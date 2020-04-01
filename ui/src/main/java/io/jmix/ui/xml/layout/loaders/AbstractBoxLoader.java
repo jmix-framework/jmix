@@ -44,6 +44,8 @@ public abstract class AbstractBoxLoader<T extends BoxLayout> extends ContainerLo
         loadContextHelp(resultComponent, element);
         loadRequiredIndicatorVisible(resultComponent, element);
 
+        loadHtmlSanitizerEnabled(resultComponent, element);
+
         loadSubComponentsAndExpand(resultComponent, element);
         loadResponsive(resultComponent, element);
         loadCss(resultComponent, element);

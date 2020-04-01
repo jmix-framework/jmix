@@ -19,6 +19,7 @@ package io.jmix.ui.facets;
 import io.jmix.core.MessageTools;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.ActionsAwareDialogFacet;
 import io.jmix.ui.components.ContentMode;
 import io.jmix.ui.components.OptionDialogFacet;
@@ -51,6 +52,8 @@ public class OptionDialogFacetProvider
     protected Icons icons;
     @Inject
     protected ThemeConstantsManager themeConstantsManager;
+    @Inject
+    protected UiProperties uiProperties;
 
     @Override
     public Class<OptionDialogFacet> getFacetClass() {
@@ -81,6 +84,8 @@ public class OptionDialogFacetProvider
         loadContentMode(facet, element);
         loadMaximized(facet, element);
         loadStyleName(facet, element);
+
+        loadHtmlSanitizerEnabled(facet, element);
 
         loadTarget(facet, element, context);
 
@@ -196,6 +201,15 @@ public class OptionDialogFacetProvider
         boolean primary = Boolean.parseBoolean(element.attributeValue("primary"));
 
         return new ActionsAwareDialogFacet.DialogAction(id, caption, description, icon, primary);
+    }
+
+    protected void loadHtmlSanitizerEnabled(OptionDialogFacet facet, Element element) {
+        String htmlSanitizerEnabledString = element.attributeValue("htmlSanitizerEnabled");
+        boolean htmlSanitizerEnabled = isNotEmpty(htmlSanitizerEnabledString)
+                ? Boolean.parseBoolean(htmlSanitizerEnabledString)
+                : uiProperties.isHtmlSanitizerEnabled();
+
+        facet.setHtmlSanitizerEnabled(htmlSanitizerEnabled);
     }
 
     protected String loadResourceString(ComponentLoader.ComponentContext context, String caption) {

@@ -17,6 +17,7 @@
 package io.jmix.ui;
 
 import io.jmix.ui.navigation.UrlHandlingMode;
+import io.jmix.ui.sanitizer.HtmlSanitizer;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -69,6 +70,7 @@ public class UiProperties {
     String initialScreenId;
     boolean forceRefreshAuthenticatedTabs;
     boolean allowAnonymousAccess;
+    boolean htmlSanitizerEnabled;
 
     public UiProperties(
             boolean testMode,
@@ -112,7 +114,8 @@ public class UiProperties {
             @DefaultValue("main") String mainScreenId,
             String initialScreenId,
             @DefaultValue("false") boolean forceRefreshAuthenticatedTabs,
-            @DefaultValue("false") boolean allowAnonymousAccess
+            @DefaultValue("false") boolean allowAnonymousAccess,
+            @DefaultValue("true") boolean htmlSanitizerEnabled
     ) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
@@ -156,6 +159,7 @@ public class UiProperties {
         this.initialScreenId = initialScreenId;
         this.forceRefreshAuthenticatedTabs = forceRefreshAuthenticatedTabs;
         this.allowAnonymousAccess = allowAnonymousAccess;
+        this.htmlSanitizerEnabled = htmlSanitizerEnabled;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -369,5 +373,13 @@ public class UiProperties {
 
     public boolean isAllowAnonymousAccess() {
         return allowAnonymousAccess;
+    }
+
+    /**
+     * Defines whether to sanitize the value of components using {@link HtmlSanitizer}
+     * to prevent Cross-site Scripting (XSS) in HTML context.
+     */
+    public boolean isHtmlSanitizerEnabled() {
+        return htmlSanitizerEnabled;
     }
 }

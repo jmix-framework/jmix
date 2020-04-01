@@ -25,9 +25,11 @@ import io.jmix.core.BeanLocator;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.*;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
+import io.jmix.ui.sanitizer.HtmlSanitizer;
 import io.jmix.ui.sys.TestIdManager;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -39,7 +41,8 @@ import java.util.function.Consumer;
 
 public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         implements Component, Component.Wrapper, Component.HasXmlDescriptor, Component.BelongToFrame, Component.HasIcon,
-                   Component.HasCaption, HasDebugId, HasContextHelp, HasHtmlCaption, HasHtmlDescription, AttachNotifier {
+                   Component.HasCaption, HasDebugId, HasContextHelp, HasHtmlCaption, HasHtmlDescription, AttachNotifier,
+                   HasHtmlSanitizer {
 
     public static final String ICON_STYLE = "icon";
 
@@ -54,6 +57,8 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     protected String icon;
 
     protected boolean descriptionAsHtml = false;
+
+    protected Boolean htmlSanitizerEnabled;
 
     protected Consumer<ContextHelpIconClickEvent> contextHelpIconClickHandler;
     protected Registration contextHelpIconClickListener;
@@ -308,6 +313,10 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
 
     @Override
     public void setCaption(String caption) {
+        if (isCaptionAsHtml()) {
+            caption = sanitize(caption);
+        }
+
         component.setCaption(caption);
     }
 
@@ -318,7 +327,11 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
 
     @Override
     public void setCaptionAsHtml(boolean captionAsHtml) {
-        ((AbstractComponent) component).setCaptionAsHtml(captionAsHtml);
+        if (isCaptionAsHtml() != captionAsHtml) {
+            ((AbstractComponent) component).setCaptionAsHtml(captionAsHtml);
+
+            setCaption(getCaption());
+        }
     }
 
     @Override
@@ -328,6 +341,10 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
 
     @Override
     public void setDescription(String description) {
+        if (isDescriptionAsHtml()) {
+            description = sanitize(description);
+        }
+
         ((AbstractComponent) component).setDescription(description, descriptionAsHtml
                 ? com.vaadin.shared.ui.ContentMode.HTML
                 : com.vaadin.shared.ui.ContentMode.PREFORMATTED);
@@ -464,6 +481,10 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
 
     @Override
     public void setContextHelpText(String contextHelpText) {
+        if (isContextHelpTextHtmlEnabled()) {
+            contextHelpText = sanitize(contextHelpText);
+        }
+
         ((AbstractComponent) getComposition()).setContextHelpText(contextHelpText);
     }
 
@@ -474,7 +495,11 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
 
     @Override
     public void setContextHelpTextHtmlEnabled(boolean enabled) {
-        ((AbstractComponent) getComposition()).setContextHelpTextHtmlEnabled(enabled);
+        if (isContextHelpTextHtmlEnabled() != enabled) {
+            ((AbstractComponent) getComposition()).setContextHelpTextHtmlEnabled(enabled);
+
+            setContextHelpText(getContextHelpText());
+        }
     }
 
     @Override
@@ -561,5 +586,32 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
                 composition.setComponentError(new UserError(errorMessage));
             }
         }
+    }
+
+    @Override
+    public boolean isHtmlSanitizerEnabled() {
+        return htmlSanitizerEnabled != null
+                ? htmlSanitizerEnabled
+                : getUiProperties().isHtmlSanitizerEnabled();
+    }
+
+    @Override
+    public void setHtmlSanitizerEnabled(boolean htmlSanitizerEnabled) {
+        this.htmlSanitizerEnabled = htmlSanitizerEnabled;
+    }
+
+    @Nullable
+    protected String sanitize(@Nullable String html) {
+        return isHtmlSanitizerEnabled()
+                ? getHtmlSanitizer().sanitize(html)
+                : html;
+    }
+
+    protected UiProperties getUiProperties() {
+        return beanLocator.get(UiProperties.class);
+    }
+
+    protected HtmlSanitizer getHtmlSanitizer() {
+        return beanLocator.get(HtmlSanitizer.class);
     }
 }

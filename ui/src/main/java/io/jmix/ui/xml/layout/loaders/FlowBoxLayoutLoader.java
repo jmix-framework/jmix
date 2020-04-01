@@ -49,6 +49,8 @@ public class FlowBoxLayoutLoader extends ContainerLoader<FlowBoxLayout> {
         loadRequiredIndicatorVisible(resultComponent, element);
         loadCss(resultComponent, element);
 
+        loadHtmlSanitizerEnabled(resultComponent, element);
+
         loadSubComponents();
     }
 }

@@ -22,7 +22,7 @@ package io.jmix.ui.components;
  */
 public interface CssLayout extends OrderedContainer, Component.BelongToFrame, Component.HasCaption,
         Component.HasIcon, HasContextHelp, LayoutClickNotifier, ShortcutNotifier, HasHtmlCaption, HasHtmlDescription,
-        HasRequiredIndicator {
+        HasRequiredIndicator, HasHtmlSanitizer {
 
     String NAME = "cssLayout";
 }

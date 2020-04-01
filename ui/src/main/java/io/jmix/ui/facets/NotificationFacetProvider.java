@@ -19,6 +19,7 @@ package io.jmix.ui.facets;
 import io.jmix.core.MessageTools;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.ContentMode;
 import io.jmix.ui.components.NotificationFacet;
 import io.jmix.ui.components.impl.WebNotificationFacet;
@@ -39,6 +40,8 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
 
     @Inject
     protected MessageTools messageTools;
+    @Inject
+    protected UiProperties uiProperties;
 
     @Override
     public Class<NotificationFacet> getFacetClass() {
@@ -66,6 +69,7 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
         loadContentMode(facet, element);
         loadStyleName(facet, element);
         loadPosition(facet, element);
+        loadHtmlSanitizerEnabled(facet, element);
         loadTarget(facet, element, context);
     }
 
@@ -143,6 +147,15 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
         } else if (isNotEmpty(buttonTarget)) {
             facet.setButtonTarget(buttonTarget);
         }
+    }
+
+    protected void loadHtmlSanitizerEnabled(NotificationFacet facet, Element element) {
+        String htmlSanitizerEnabledString = element.attributeValue("htmlSanitizerEnabled");
+        boolean htmlSanitizerEnabled = isNotEmpty(htmlSanitizerEnabledString)
+                ? Boolean.parseBoolean(htmlSanitizerEnabledString)
+                : uiProperties.isHtmlSanitizerEnabled();
+
+        facet.setHtmlSanitizerEnabled(htmlSanitizerEnabled);
     }
 
     protected String loadResourceString(ComponentLoader.ComponentContext context, String caption) {

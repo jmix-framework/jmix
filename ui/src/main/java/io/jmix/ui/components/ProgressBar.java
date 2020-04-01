@@ -26,7 +26,7 @@ import io.jmix.ui.components.data.HasValueSource;
  */
 public interface ProgressBar extends Component, Component.BelongToFrame,
         HasValue<Double>, HasValueSource<Double>,
-        Component.HasIcon, Component.HasCaption, HasContextHelp, HasHtmlCaption, HasHtmlDescription {
+        Component.HasIcon, Component.HasCaption, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "progressBar";
 

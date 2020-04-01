@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widgets;
 
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.GridSelectionModel;
 import io.jmix.ui.widgets.grid.CubaEditorField;
@@ -83,6 +84,8 @@ public interface CubaEnhancedGrid<T> {
     void removeAggregationPropertyId(String propertyId);
 
     Collection<String> getAggregationPropertyIds();
+
+    ContentMode getRowDescriptionContentMode();
 
     /**
      * Defines the position of aggregation row.

@@ -19,6 +19,7 @@ package io.jmix.ui.facets;
 import io.jmix.core.MessageTools;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.ContentMode;
 import io.jmix.ui.components.MessageDialogFacet;
 import io.jmix.ui.components.impl.WebMessageDialogFacet;
@@ -39,6 +40,8 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
 
     @Inject
     protected MessageTools messageTools;
+    @Inject
+    protected UiProperties uiProperties;
 
     @Override
     public Class<MessageDialogFacet> getFacetClass() {
@@ -70,6 +73,8 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
         loadModal(facet, element);
         loadStyleName(facet, element);
         loadCloseOnClickOutside(facet, element);
+
+        loadHtmlSanitizerEnabled(facet, element);
 
         loadTarget(facet, element, context);
     }
@@ -169,6 +174,15 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
         if (isNotEmpty(closeOnClickOutside)) {
             facet.setCloseOnClickOutside(Boolean.parseBoolean(closeOnClickOutside));
         }
+    }
+
+    protected void loadHtmlSanitizerEnabled(MessageDialogFacet facet, Element element) {
+        String htmlSanitizerEnabledString = element.attributeValue("htmlSanitizerEnabled");
+        boolean htmlSanitizerEnabled = isNotEmpty(htmlSanitizerEnabledString)
+                ? Boolean.parseBoolean(htmlSanitizerEnabledString)
+                : uiProperties.isHtmlSanitizerEnabled();
+
+        facet.setHtmlSanitizerEnabled(htmlSanitizerEnabled);
     }
 
     protected String loadResourceString(ComponentLoader.ComponentContext context, String caption) {

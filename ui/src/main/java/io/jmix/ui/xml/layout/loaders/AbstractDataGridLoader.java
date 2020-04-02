@@ -30,11 +30,7 @@ import io.jmix.ui.components.data.DataGridItems;
 import io.jmix.ui.components.data.aggregation.AggregationStrategy;
 import io.jmix.ui.components.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.components.data.datagrid.EmptyDataGridItems;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.HasLoader;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -220,10 +216,6 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         if (holder.getContainer() != null) {
             resultComponent.setItems(createContainerDataGridSource(holder.getContainer()));
         }
-    }
-
-    protected Scripting getScripting() {
-        return beanLocator.get(Scripting.NAME);
     }
 
     protected Metadata getMetadata() {
@@ -584,7 +576,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         if (StringUtils.isEmpty(rendererType)) {
             return null;
         }
-        Class<?> rendererClass = getScripting().loadClassNN(rendererType);
+        Class<?> rendererClass = getHotDeployManager().loadClass(rendererType);
 
         return resultComponent.createRenderer(rendererClass);
     }
@@ -592,7 +584,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     protected Class loadGeneratedType(Element columnElement) {
         String colGenType = columnElement.attributeValue("generatedType");
         if (StringUtils.isNotEmpty(colGenType)) {
-            return getScripting().loadClassNN(colGenType);
+            return getHotDeployManager().loadClass(colGenType);
         }
         return null;
     }
@@ -840,7 +832,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     protected void loadStrategyClass(AggregationInfo aggregation, Element aggregationElement) {
         String strategyClass = aggregationElement.attributeValue("strategyClass");
         if (StringUtils.isNotEmpty(strategyClass)) {
-            Class<?> aggregationClass = getScripting().loadClass(strategyClass);
+            Class<?> aggregationClass = getHotDeployManager().findClass(strategyClass);
             if (aggregationClass == null) {
                 throw new GuiDevelopmentException(String.format("Class %s is not found", strategyClass), context);
             }

@@ -76,7 +76,7 @@ public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
     protected void loadOptionsEnum(LookupField resultComponent, Element element) {
         String optionsEnumClass = element.attributeValue("optionsEnum");
         if (StringUtils.isNotEmpty(optionsEnumClass)) {
-            resultComponent.setOptionsEnum(getScripting().loadClass(optionsEnumClass));
+            resultComponent.setOptionsEnum(getHotDeployManager().findClass(optionsEnumClass));
         }
     }
 

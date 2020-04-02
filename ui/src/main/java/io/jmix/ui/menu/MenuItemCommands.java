@@ -17,8 +17,6 @@
 package io.jmix.ui.menu;
 
 import com.google.common.collect.ImmutableMap;
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.compatibility.AppContext;
@@ -72,7 +70,7 @@ public class MenuItemCommands {
     @Inject
     protected WindowConfig windowConfig;
     @Inject
-    protected Scripting scripting;
+    protected HotDeployManager hotDeployManager;
     @Inject
     protected Metadata metadata;
     @Inject
@@ -483,7 +481,7 @@ public class MenuItemCommands {
 
             StopWatch sw = createStopWatch(item);
 
-            Class<?> clazz = scripting.loadClass(runnableClass);
+            Class<?> clazz = hotDeployManager.findClass(runnableClass);
             if (clazz == null) {
                 throw new IllegalStateException(String.format("Can't load class: %s", runnableClass));
             }

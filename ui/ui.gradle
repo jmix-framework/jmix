@@ -30,8 +30,6 @@ dependencies {
     api 'com.vaadin:vaadin-push'
     api 'com.vaadin:vaadin-spring'
 
-    api 'org.perf4j:perf4j'
-
     api 'org.springframework:spring-websocket'
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

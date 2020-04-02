@@ -16,10 +16,10 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.core.Scripting;
+import io.jmix.core.HotDeployManager;
+import io.jmix.ui.Actions;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.ActionType;
-import io.jmix.ui.Actions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -49,7 +49,7 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
     protected List<ActionsConfiguration> configurations = Collections.emptyList();
 
     @Inject
-    protected Scripting scripting;
+    protected HotDeployManager hotDeployManager;
     @Inject
     protected ApplicationContext applicationContext;
 
@@ -181,7 +181,7 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
             classes.clear();
 
             for (Map.Entry<String, String> entry : squashedMap.entrySet()) {
-                Class clazz = scripting.loadClassNN(entry.getValue());
+                Class clazz = hotDeployManager.loadClass(entry.getValue());
                 classes.put(entry.getKey(), clazz);
             }
 

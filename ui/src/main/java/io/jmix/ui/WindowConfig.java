@@ -20,9 +20,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.ExtendedEntities;
+import io.jmix.core.HotDeployManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
-import io.jmix.core.Scripting;
 import io.jmix.core.commons.util.Dom4j;
 import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.Entity;
@@ -89,7 +89,7 @@ public class WindowConfig {
     @Inject
     protected Resources resources;
     @Inject
-    protected Scripting scripting;
+    protected HotDeployManager hotDeployManager;
     @Inject
     protected Metadata metadata;
     @Inject
@@ -204,7 +204,7 @@ public class WindowConfig {
 
     @SuppressWarnings("unchecked")
     protected Class<? extends FrameOwner> loadDefinedScreenClass(String className) {
-        return (Class<? extends FrameOwner>) scripting.loadClassNN(className);
+        return (Class<? extends FrameOwner>) hotDeployManager.loadClass(className);
     }
 
     protected void checkInitialized() {

@@ -17,10 +17,10 @@
 package io.jmix.ui.sys;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.Scripting;
+import io.jmix.core.HotDeployManager;
+import io.jmix.ui.WindowInfo;
 import io.jmix.ui.components.Fragment;
 import io.jmix.ui.components.Frame;
-import io.jmix.ui.WindowInfo;
 import io.jmix.ui.logging.ScreenLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
@@ -55,7 +55,7 @@ public class FragmentHelper {
     @Inject
     protected ScreenXmlLoader screenXmlLoader;
     @Inject
-    protected Scripting scripting;
+    protected HotDeployManager hotDeployManager;
 
     public static final String NAME = "jmix_FragmentHelper";
 
@@ -103,7 +103,7 @@ public class FragmentHelper {
 
         String className = windowElement.attributeValue("class");
         if (StringUtils.isNotEmpty(className)) {
-            fragmentClass = (Class<? extends ScreenFragment>) scripting.loadClassNN(className);
+            fragmentClass = (Class<? extends ScreenFragment>) hotDeployManager.loadClass(className);
         } else {
             // fragmentClass = AbstractFrame.class; todo
             throw new UnsupportedOperationException();

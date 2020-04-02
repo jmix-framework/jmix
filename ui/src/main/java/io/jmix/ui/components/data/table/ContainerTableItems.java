@@ -203,6 +203,8 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
 
     @Override
     public Object nextItemId(Object itemId) {
+        if (itemId == null)
+            return null;
         List<E> items = container.getItems();
         int index = container.getItemIndex(itemId);
         return index == items.size() - 1 ? null : EntityValues.getId(items.get(index + 1));
@@ -210,6 +212,8 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
 
     @Override
     public Object prevItemId(Object itemId) {
+        if (itemId == null)
+            return null;
         int index = container.getItemIndex(itemId);
         return index <= 0 ? null : EntityValues.getId(container.getItems().get(index - 1));
     }
@@ -231,12 +235,16 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
 
     @Override
     public boolean isFirstId(Object itemId) {
+        if (itemId == null)
+            return false;
         int index = container.getItemIndex(itemId);
         return index == 0;
     }
 
     @Override
     public boolean isLastId(Object itemId) {
+        if (itemId == null)
+            return false;
         int index = container.getItemIndex(itemId);
         return index == container.getItems().size() - 1;
     }

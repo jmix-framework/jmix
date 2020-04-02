@@ -27,6 +27,8 @@ import javax.persistence.*;
 @Entity(name = "sales_OrderLine")
 @NamePattern("%s %s|product,quantity")
 @PublishEntityChangedEvents
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 public class OrderLine extends StandardEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 

@@ -151,6 +151,17 @@ public class AppContext {
                 ((ConfigurableApplicationContext) context).close();
             }
         }
+
+        public static void onContextClosed(ApplicationContext applicationContext) {
+            if (started && applicationContext == context) {
+                Events events = getApplicationContext().getBean(Events.NAME, Events.class);
+                events.publish(new AppContextStoppedEvent(context));
+
+                started = false;
+                listenersNotified = false;
+                context = null;
+            }
+        }
     }
 
     public interface SecuredOperation<T> {

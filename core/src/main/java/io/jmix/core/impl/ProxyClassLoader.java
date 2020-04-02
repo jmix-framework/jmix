@@ -16,6 +16,7 @@
 
 package io.jmix.core.impl;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ public class ProxyClassLoader extends ClassLoader {
         }
     }
 
+    @Nullable
     public TimestampClass removeFromCache(String className) {
         Map<String, TimestampClass> removedFromCompilationMap = removedFromLoading.get();
         if (removedFromCompilationMap == null) {

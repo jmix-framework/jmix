@@ -403,7 +403,12 @@ public class EntityStates {
             return;
         visited.add(entity);
 
-        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
+        // Using MetaClass of the fetchPlan helps in the case when the entity is an item of a collection, and the collection
+        // can contain instances of different subclasses. So we don't want to add specific properties of subclasses
+        // to the resulting view.
+        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
+
+        for (MetaProperty property : metaClass.getProperties()) {
             if (!isLoaded(entity, property.getName()))
                 continue;
 

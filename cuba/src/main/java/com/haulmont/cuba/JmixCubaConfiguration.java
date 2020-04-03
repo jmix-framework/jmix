@@ -56,7 +56,7 @@ import java.util.Collections;
                 JmixDataConfiguration.class,
                 JmixUiConfiguration.class},
         properties = {
-                @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "/com/haulmont/cuba/cuba-views.xml", append = true),
+                @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "/com/haulmont/cuba/cuba-fetch-plans.xml", append = true),
                 @JmixProperty(name = "cuba.windowConfig", value = "/com/haulmont/cuba/web-screens.xml", append = true)
         })
 public class JmixCubaConfiguration {

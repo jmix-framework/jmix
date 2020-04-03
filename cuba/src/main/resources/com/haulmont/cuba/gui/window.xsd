@@ -19,12 +19,12 @@
 <xs:schema targetNamespace="http://schemas.haulmont.com/cuba/window.xsd"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns="http://schemas.haulmont.com/cuba/window.xsd"
-           xmlns:views="http://schemas.haulmont.com/jmix/views.xsd"
+           xmlns:views="http://jmix.io/schema/core/fetch-plans"
            xmlns:layout="http://schemas.haulmont.com/cuba/screen/layout.xsd"
            elementFormDefault="qualified">
 
-    <xs:import namespace="http://schemas.haulmont.com/jmix/views.xsd"
-               schemaLocation="http://schemas.haulmont.com/jmix/views.xsd"/>
+    <xs:import namespace="http://jmix.io/schema/core/fetch-plans"
+               schemaLocation="http://jmix.io/schema/core/fetch-plans"/>
 
     <xs:include schemaLocation="http://schemas.haulmont.com/cuba/screen/layout.xsd"/>
 

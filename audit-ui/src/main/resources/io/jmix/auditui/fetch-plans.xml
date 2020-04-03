@@ -14,17 +14,17 @@
   ~ limitations under the License.
   -->
 
-<views xmlns="http://schemas.haulmont.com/jmix/views.xsd">
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
-    <view class="io.jmix.audit.entity.LoggedEntity" name="loggedAttrs">
-        <property name="attributes" view="_local"/>
+    <fetchPlan class="io.jmix.audit.entity.LoggedEntity" name="loggedAttrs">
+        <property name="attributes" fetchPlan="_local"/>
         <property name="auto"/>
         <property name="manual"/>
         <property name="name"/>
-    </view>
+    </fetchPlan>
 
-    <view class="io.jmix.audit.entity.EntityLogItem" extends="_local" name="logView">
-        <property name="entityRef" view="_local"/>
-    </view>
+    <fetchPlan class="io.jmix.audit.entity.EntityLogItem" extends="_local" name="logView">
+        <property name="entityRef" fetchPlan="_local"/>
+    </fetchPlan>
 
-</views>
+</fetchPlans>

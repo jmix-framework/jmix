@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixAuditConfiguration.class, JmixUiConfiguration.class},
-        properties = @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "io/jmix/auditui/views.xml", append = true))
+        properties = @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "io/jmix/auditui/fetch-plans.xml", append = true))
 @ComponentScan
 @EnableTransactionManagement
 public class JmixAuditUiConfiguration {

@@ -14,25 +14,25 @@
   ~ limitations under the License.
   -->
 
-<views xmlns="http://schemas.haulmont.com/jmix/views.xsd">
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
-    <view class="test_support.entity.sec.User" name="user.edit" extends="_local">
+    <fetchPlan class="test_support.entity.sec.User" name="user.edit" extends="_local">
         <property name="group">
             <property name="name"/>
         </property>
-        <property name="userRoles" view="user.edit"/>
-    </view>
+        <property name="userRoles" fetchPlan="user.edit"/>
+    </fetchPlan>
 
-    <view class="test_support.entity.sec.UserRole" name="user.edit">
+    <fetchPlan class="test_support.entity.sec.UserRole" name="user.edit">
         <property name="role">
             <property name="name"/>
             <property name="locName"/>
             <property name="defaultRole"/>
         </property>
-    </view>
+    </fetchPlan>
 
-    <view class="test_support.entity.sec.User" name="user.browse" extends="_local" systemProperties="true">
-        <property name="group" view="_minimal"/>
-    </view>
+    <fetchPlan class="test_support.entity.sec.User" name="user.browse" extends="_local" systemProperties="true">
+        <property name="group" fetchPlan="_minimal"/>
+    </fetchPlan>
 
-</views>
+</fetchPlans>

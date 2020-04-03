@@ -41,7 +41,7 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource("classpath:/test_support/test-data-app.properties")
 @JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixCoreSecurityConfiguration.class}, properties = {
-        @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "test_support/test-views.xml", append = true)
+        @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "test_support/test-fetch-plans.xml", append = true)
 })
 public class DataContextTestConfiguration {
 

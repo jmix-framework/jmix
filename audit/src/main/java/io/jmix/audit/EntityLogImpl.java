@@ -138,7 +138,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
     }
 
     @Override
-    public void onEntityChange(Entity entity, EntityChangeType type, EntityAttributeChanges changes) {
+    public void onEntityChange(Entity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
         if (entity instanceof EntityLogItem) {
             return;
         }
@@ -325,6 +325,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
         }
     }
 
+    @Nullable
     protected Set<String> getLoggedAttributes(String entity, boolean auto) {
         lock.readLock().lock();
         try {
@@ -398,7 +399,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
         return extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
     }
 
-    protected boolean doNotRegister(Entity entity) {
+    protected boolean doNotRegister(@Nullable Entity entity) {
         if (entity == null) {
             return true;
         }
@@ -413,8 +414,6 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
 
     @Override
     public void registerCreate(Entity entity) {
-        if (entity == null)
-            return;
         registerCreate(entity, false);
     }
 
@@ -470,7 +469,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
         } else {
             item = generateEntityLogItem(entity, entityName, attributes, EntityLogItem.Type.CREATE);
         }
-
+        assert item != null;
         enqueueItem(item, storeName);
     }
 
@@ -767,6 +766,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
         } else {
             item = generateEntityLogItem(entity, entityName, attributes, EntityLogItem.Type.DELETE);
         }
+        assert item != null;
         enqueueItem(item, storeName);
     }
 
@@ -816,7 +816,8 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
         return attributes;
     }
 
-    protected Object getValueId(Object value) {
+    @Nullable
+    protected Object getValueId(@Nullable Object value) {
         if (value instanceof Entity) {
             if (((Entity<?>) value).__getEntityEntry().isEmbeddable()) {
                 return null;
@@ -828,7 +829,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
         }
     }
 
-    protected String stringify(Object value, MetaProperty metaProperty) {
+    protected String stringify(@Nullable Object value, MetaProperty metaProperty) {
         if (value == null)
             return "";
         else if (value instanceof Entity) {
@@ -869,7 +870,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
 //        return null;
 //    }
 
-    protected Set<String> calculateDirtyFields(Entity entity, EntityAttributeChanges changes) {
+    protected Set<String> calculateDirtyFields(Entity entity, @Nullable EntityAttributeChanges changes) {
         if (changes == null) {
             if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
                 return Collections.emptySet();
@@ -885,6 +886,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
         return changes.getAttributes();
     }
 
+    @Nullable
     protected String getIdAttributePath(MetaPropertyPath propertyPath, String storeName) {
         String idAttribute = metadataTools.getCrossDataStoreReferenceIdProperty(storeName, propertyPath.getMetaProperty());
         if (idAttribute != null) {
@@ -937,6 +939,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
 
         protected Map<String, List<EntityLogItem>> itemsMap = new HashMap<>();
 
+        @Nullable
         protected List<EntityLogItem> getItems(String storeName) {
             return itemsMap.get(storeName);
         }

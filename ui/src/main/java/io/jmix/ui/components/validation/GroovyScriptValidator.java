@@ -18,7 +18,6 @@ package io.jmix.ui.components.validation;
 
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
-import io.jmix.core.Scripting;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.security.UserSessionSource;
@@ -28,8 +27,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 /**
  * GroovyScript validator runs a custom Groovy script. If the script returns any object,
@@ -51,9 +51,6 @@ import java.util.Map;
 public class GroovyScriptValidator<T> extends AbstractValidator<T> {
 
     public static final String NAME = "jmix_GroovyScriptValidator";
-
-    @Inject
-    protected Scripting scripting;
 
     protected String validatorGroovyScript;
 
@@ -88,10 +85,15 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
             return;
         }
 
-        Map<String, Object> context = new HashMap<>();
-        context.put("value", value);
-
-        Object scriptResult = scripting.evaluateGroovy(validatorGroovyScript, context);
+        ScriptEngineManager factory = new ScriptEngineManager();
+        ScriptEngine engine = factory.getEngineByName("groovy");
+        engine.put("value", value);
+        Object scriptResult;
+        try {
+            scriptResult = engine.eval(validatorGroovyScript);
+        } catch (ScriptException e) {
+            throw new RuntimeException("Error evaluating Groovy expression", e);
+        }
 
         if (scriptResult != null) {
             setMessage(scriptResult.toString());

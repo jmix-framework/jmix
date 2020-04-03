@@ -18,12 +18,18 @@ package io.jmix.ui.components.validators;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
-import io.jmix.core.Scripting;
+import io.jmix.core.Resources;
 import io.jmix.ui.components.Field;
 import io.jmix.ui.components.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +43,8 @@ public class ScriptValidator implements Field.Validator {
     private Map<String, Object> params;
     protected Messages messages = AppBeans.get(Messages.NAME);
     protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+    protected Resources resources = AppBeans.get(Resources.NAME);
+    protected ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 
     public ScriptValidator(Element element, String messagesPack) {
         this.script = element.getText();
@@ -45,6 +53,13 @@ public class ScriptValidator implements Field.Validator {
             scriptPath = element.attributeValue("script");
         }
         message = element.attributeValue("message");
+        this.messagesPack = messagesPack;
+    }
+
+    public ScriptValidator(String path, String messagesPack) {
+        this.scriptPath = path;
+        innerScript = false;
+        message = "Not sure of it";
         this.messagesPack = messagesPack;
     }
 
@@ -65,16 +80,29 @@ public class ScriptValidator implements Field.Validator {
     public void validate(Object value) throws ValidationException {
         Boolean isValid = false;
         if (params == null) {
-              params = new HashMap<>();
-              params.put("value", value);
-        } else {
-            params.put("value", value);
+            params = new HashMap<>();
         }
-        Scripting scripting = AppBeans.get(Scripting.NAME);
+        params.put("value", value);
+        ScriptEngine engine = scriptEngineManager.getEngineByName("groovy");
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            engine.put(entry.getKey(), entry.getValue());
+        }
         if (innerScript) {
-            isValid = scripting.evaluateGroovy(script, params);
+            try {
+                isValid = (Boolean) engine.eval(script);
+            } catch (ScriptException e) {
+                throw new RuntimeException("Error evaluating Groovy expression", e);
+            }
         } else if (scriptPath != null) {
-            isValid = scripting.runGroovyScript(scriptPath, params);
+            try (FileReader reader = new FileReader(resources.getResource(scriptPath).getFile())) {
+                isValid = (Boolean) engine.eval(reader);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Groovy script file not found", e);
+            } catch (ScriptException e) {
+                throw new RuntimeException("Error evaluating Groovy expression", e);
+            } catch (IOException e) {
+                throw new RuntimeException("Groovy script file I/O exception", e);
+            }
         }
         if (!isValid) {
             String msg = message != null ? messageTools.loadString(messagesPack, message) : "Invalid value '%s'";

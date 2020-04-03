@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd">
+<window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <instance id="taskDc" class="com.haulmont.cuba.core.model.common.ScheduledTask" view="_local">
             <loader/>

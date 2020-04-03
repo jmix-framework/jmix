@@ -14,6 +14,6 @@
   ~ limitations under the License.
   -->
 
-<fragment xmlns="http://schemas.haulmont.com/cuba/screen/fragment.xsd">
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
     <layout/>
 </fragment>

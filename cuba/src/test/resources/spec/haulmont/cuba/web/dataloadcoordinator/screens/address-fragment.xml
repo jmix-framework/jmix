@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<fragment xmlns="http://schemas.haulmont.com/cuba/screen/fragment.xsd">
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
     <data>
         <instance id="addressDc"
                   class="com.haulmont.cuba.web.testmodel.petclinic.Address"

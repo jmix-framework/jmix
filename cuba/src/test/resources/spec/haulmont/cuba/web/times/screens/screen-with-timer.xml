@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd">
+<window xmlns="http://jmix.io/schema/ui/window">
     <facets>
         <timer id="testTimer" delay="2000" autostart="true" repeating="true"/>
     </facets>

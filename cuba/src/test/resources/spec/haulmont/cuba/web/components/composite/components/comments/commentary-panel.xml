@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<composite xmlns="http://schemas.haulmont.com/cuba/screen/composite.xsd">
+<composite xmlns="http://jmix.io/schema/ui/composite">
     <vbox id="rootPanel"
           expand="commentsDataGrid"
           margin="true"

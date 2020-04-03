@@ -20,7 +20,7 @@
            elementFormDefault="qualified"
            targetNamespace="http://schemas.haulmont.com/composite-test/0.1/test-ui-component.xsd"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:layout="http://schemas.haulmont.com/cuba/screen/layout.xsd">
+           xmlns:layout="http://jmix.io/schema/ui/layout">
 
     <xs:element name="testCommentaryPanel">
         <xs:complexType>

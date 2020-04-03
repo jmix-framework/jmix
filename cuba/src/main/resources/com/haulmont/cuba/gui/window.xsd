@@ -20,13 +20,13 @@
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns="http://schemas.haulmont.com/cuba/window.xsd"
            xmlns:views="http://jmix.io/schema/core/fetch-plans"
-           xmlns:layout="http://schemas.haulmont.com/cuba/screen/layout.xsd"
+           xmlns:layout="http://jmix.io/schema/ui/layout"
            elementFormDefault="qualified">
 
     <xs:import namespace="http://jmix.io/schema/core/fetch-plans"
                schemaLocation="http://jmix.io/schema/core/fetch-plans"/>
 
-    <xs:include schemaLocation="http://schemas.haulmont.com/cuba/screen/layout.xsd"/>
+    <xs:include schemaLocation="http://jmix.io/schema/ui/layout"/>
 
     <xs:attributeGroup name="isDatasource">
         <xs:attribute name="id" type="xs:string" use="required"/>

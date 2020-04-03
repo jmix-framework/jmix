@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
+<window xmlns="http://jmix.io/schema/ui/window"
         xmlns:app="http://schemas.haulmont.com/composite-test/0.1/test-ui-component.xsd">
     <data>
         <collection id="commentsDc" class="com.haulmont.cuba.web.testmodel.compositecomponent.Comment"

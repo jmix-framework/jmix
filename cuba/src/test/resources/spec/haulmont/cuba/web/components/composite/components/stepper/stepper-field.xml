@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<composite xmlns="http://schemas.haulmont.com/cuba/screen/composite.xsd">
+<composite xmlns="http://jmix.io/schema/ui/composite">
     <cssLayout id="stepper_rootBox" width="100%" stylename="v-component-group stepper-field">
         <textField id="stepper_valueField" width="100%"/>
         <button id="stepper_upBtn"

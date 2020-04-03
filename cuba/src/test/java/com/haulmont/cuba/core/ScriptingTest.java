@@ -20,7 +20,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import groovy.lang.Binding;
-import io.jmix.core.Scripting;
+import com.haulmont.cuba.core.global.Scripting;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;

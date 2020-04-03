@@ -26,7 +26,7 @@ import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Metadata;
-import io.jmix.core.Scripting;
+import com.haulmont.cuba.core.global.Scripting;
 import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.datatypes.Datatype;

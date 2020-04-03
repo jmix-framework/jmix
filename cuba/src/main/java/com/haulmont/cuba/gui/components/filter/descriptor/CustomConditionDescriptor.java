@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Scripting;
+import com.haulmont.cuba.core.global.Scripting;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.model.MetaClass;

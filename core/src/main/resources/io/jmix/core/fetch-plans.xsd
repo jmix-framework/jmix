@@ -15,21 +15,21 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://schemas.haulmont.com/jmix/views.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/core/fetch-plans"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://schemas.haulmont.com/jmix/views.xsd"
+           xmlns="http://jmix.io/schema/core/fetch-plans"
            elementFormDefault="qualified">
 
-    <xs:element name="views">
+    <xs:element name="fetchPlans">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="include" type="includeType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="view" type="viewType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="fetchPlan" type="fetchPlanType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="viewType">
+    <xs:complexType name="fetchPlanType">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
             <xs:element name="property" type="propertyType"/>
         </xs:sequence>
@@ -46,7 +46,7 @@
             <xs:element name="property" type="propertyType"/>
         </xs:sequence>
         <xs:attribute name="name"/>
-        <xs:attribute name="view"/>
+        <xs:attribute name="fetchPlan"/>
         <xs:attribute name="fetch" type="fetchModeType"/>
     </xs:complexType>
 

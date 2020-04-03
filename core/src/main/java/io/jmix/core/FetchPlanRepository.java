@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * Represents a repository of {@link FetchPlan} objects, accessible by names.
+ * Represents a repository of shared {@link FetchPlan} objects, accessible by names.
  * <br>Repository contains all fetch plans defined in XML and deployed at runtime.
  */
 public interface FetchPlanRepository {
@@ -40,35 +40,35 @@ public interface FetchPlanRepository {
     FetchPlan getFetchPlan(Class<? extends Entity> entityClass, String name);
 
     /**
-     * Get View for an entity.
+     * Get FetchPlan for an entity.
      *
      * @param metaClass     entity class
-     * @param name          view name
-     * @return              view instance. Throws {@link FetchPlanNotFoundException} if not found.
+     * @param name          fetch plan name
+     * @return              fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
     FetchPlan getFetchPlan(MetaClass metaClass, String name);
 
     /**
-     * Searches for a View for an entity.
+     * Searches for a FetchPlan for an entity.
      *
      * @param metaClass     entity class
-     * @param name          view name
-     * @return              view instance or null if no view found
+     * @param name          fetch plan name
+     * @return              fetch plan instance or null if no fetch plan found
      */
     @Nullable
     FetchPlan findFetchPlan(MetaClass metaClass, String name);
 
     /**
-     * Returns names of views defined for the metaClass
+     * Returns names of fetch plans defined for the metaClass
      * @param metaClass entity class
-     * @return names of views
+     * @return names of fetch plans
      */
     Collection<String> getFetchPlanNames(MetaClass metaClass);
 
     /**
-     * Returns names of views defined for the entityClass
+     * Returns names of fetch plans defined for the entityClass
      * @param entityClass entity class
-     * @return names of views
+     * @return names of fetch plans
      */
     Collection<String> getFetchPlanNames(Class<? extends Entity> entityClass);
 }

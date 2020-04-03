@@ -9,7 +9,7 @@ import test_support.base.BaseConfiguration;
 @Configuration
 @ComponentScan
 @JmixModule(dependsOn = BaseConfiguration.class, properties = {
-        @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "test_support/addon1/views.xml", append = true),
+        @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "test_support/addon1/fetch-plans.xml", append = true),
         @JmixProperty(name = "prop1", value = "addon1_prop1", append = true),
         @JmixProperty(name = "prop2", value = "addon1_prop2", append = true),
         @JmixProperty(name = "prop_to_override", value = "addon1_prop3")

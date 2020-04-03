@@ -45,7 +45,6 @@ import org.springframework.core.annotation.Order;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {}, properties = {
-        @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "io/jmix/core/views.xml"),
         @JmixProperty(name = "jmix.core.workDir", value = "${user.dir}/.jmix/work"),
         @JmixProperty(name = "jmix.core.confDir", value = "${user.dir}/.jmix/conf")
 })

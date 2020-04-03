@@ -61,20 +61,18 @@ class JmixModulesTest extends Specification {
     def "configuration properties of components"() {
         expect:
 
-        def jmixCore = modules.get('io.jmix.core')
         def addon1 = modules.get('test_support.addon1')
         def app = modules.get('test_support.app')
 
-        jmixCore.getProperty('jmix.core.fetchPlansConfig') == 'io/jmix/core/views.xml'
-        addon1.getProperty('jmix.core.fetchPlansConfig') == 'test_support/addon1/views.xml'
-        app.getProperty('jmix.core.fetchPlansConfig') == 'test_support/app/views.xml'
+        addon1.getProperty('jmix.core.fetchPlansConfig') == 'test_support/addon1/fetch-plans.xml'
+        app.getProperty('jmix.core.fetchPlansConfig') == 'test_support/app/fetch-plans.xml'
 
     }
 
     def "resulting configuration properties"() {
         expect:
 
-        modules.getProperty('jmix.core.fetchPlansConfig') == 'io/jmix/core/views.xml test_support/addon1/views.xml test_support/app/views.xml'
+        modules.getProperty('jmix.core.fetchPlansConfig') == 'test_support/addon1/fetch-plans.xml test_support/app/fetch-plans.xml'
         modules.getProperty('prop1') == 'addon1_prop1 app_prop1'
         modules.getProperty('prop2') == 'app_prop2'
         modules.getProperty('prop3') == 'app_prop3'

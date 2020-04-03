@@ -18,7 +18,6 @@ package io.jmix.data.impl.querymacro;
 import com.google.common.base.Strings;
 import groovy.lang.Binding;
 import io.jmix.core.DateTimeTransformations;
-import io.jmix.core.Scripting;
 import io.jmix.core.TimeSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -39,8 +38,6 @@ public class DateBeforeMacroHandler extends AbstractQueryMacroHandler {
 
     @Inject
     protected DateTimeTransformations transformations;
-    @Inject
-    protected Scripting scripting;
     @Inject
     protected TimeSource timeSource;
 
@@ -69,7 +66,8 @@ public class DateBeforeMacroHandler extends AbstractQueryMacroHandler {
             try {
                 String expr = matcher.group(2);
                 if (!Strings.isNullOrEmpty(expr)) {
-                    offset = scripting.evaluateGroovy(expr, new Binding());
+                    expr = expr.replaceAll("\\s+","");
+                    offset = Integer.parseInt(expr);
                 }
             } catch (NumberFormatException e) {
                 throw new RuntimeException("Invalid macro argument: " + param, e);

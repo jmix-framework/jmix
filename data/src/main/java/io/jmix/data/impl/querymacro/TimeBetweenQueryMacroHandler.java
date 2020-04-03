@@ -19,7 +19,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import groovy.lang.Binding;
 import io.jmix.core.DateTimeTransformations;
-import io.jmix.core.Scripting;
 import io.jmix.core.TimeSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -64,8 +63,6 @@ public class TimeBetweenQueryMacroHandler extends AbstractQueryMacroHandler {
 
     @Inject
     protected DateTimeTransformations transformations;
-    @Inject
-    protected Scripting scripting;
     @Inject
     protected TimeSource timeSource;
 
@@ -161,7 +158,8 @@ public class TimeBetweenQueryMacroHandler extends AbstractQueryMacroHandler {
         try {
             String expr = matcher.group(2);
             if (!Strings.isNullOrEmpty(expr)) {
-                num = scripting.evaluateGroovy(expr, new Binding());
+                expr = expr.replaceAll("\\s+","");
+                num = Integer.parseInt(expr);
             }
         } catch (NumberFormatException e) {
             throw new RuntimeException("Invalid macro argument: " + arg, e);

@@ -16,9 +16,9 @@
   -->
 
 <xs:schema
-        targetNamespace="http://schemas.haulmont.com/jmix/default-permission-values.xsd"
+        targetNamespace="http://jmix.io/schema/security/default-permission-values"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns="http://schemas.haulmont.com/jmix/default-permission-values.xsd"
+        xmlns="http://jmix.io/schema/security/default-permission-values"
         elementFormDefault="qualified"
         attributeFormDefault="unqualified"
         >

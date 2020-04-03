@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<default-permission-values xmlns="http://schemas.haulmont.com/jmix/default-permission-values.xsd">
+<default-permission-values xmlns="http://jmix.io/schema/security/default-permission-values">
 
     <!-- Screens -->
     <permission target="inputDialog" value="1" type="10"/>

@@ -16,11 +16,10 @@
 
 package io.jmix.security.impl;
 
+import io.jmix.core.Entity;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Scripting;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.metamodel.datatypes.Datatype;
@@ -40,6 +39,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -69,8 +71,7 @@ public class StandardSecurity implements Security {
     @Inject
     protected DatatypeRegistry datatypeRegistry;
 
-    @Inject
-    protected Scripting scripting;
+    protected ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 
     private StandardUserSession getUserSession() {
         return (StandardUserSession) userSessionSource.getUserSession();
@@ -194,7 +195,17 @@ public class StandardSecurity implements Security {
         context.put("parse", new MethodClosure(this, "parseValue"));
         context.put("userSession", userSessionSource.getUserSession());
         fillGroovyConstraintsContext(context);
-        return scripting.evaluateGroovy(groovyScript.replace("{E}", "__entity__"), context);
+        ScriptEngine engine = scriptEngineManager.getEngineByName("groovy");
+        for (Map.Entry<String, Object> entry : context.entrySet()) {
+            engine.put(entry.getKey(), entry.getValue());
+        }
+        Object result;
+        try {
+            result = engine.eval(groovyScript.replace("{E}", "__entity__"));
+        } catch (ScriptException e) {
+            throw new RuntimeException("Error evaluating Groovy expression", e);
+        }
+        return result;
     }
 
     protected boolean isEntityAttrPermitted(MetaClass metaClass, MetaPropertyPath propertyPath, EntityAttrAccess access) {

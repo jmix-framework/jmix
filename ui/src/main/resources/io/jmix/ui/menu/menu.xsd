@@ -16,9 +16,9 @@
   ~
   -->
 
-<xs:schema targetNamespace="http://schemas.haulmont.com/jmix/menu.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/ui/menu"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://schemas.haulmont.com/jmix/menu.xsd"
+           xmlns="http://jmix.io/schema/ui/menu"
            elementFormDefault="qualified">
 
     <xs:element name="menu-config" type="menuOrItem"/>

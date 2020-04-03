@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://schemas.haulmont.com/cuba/screen/layout.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/ui/layout"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://schemas.haulmont.com/cuba/screen/layout.xsd"
+           xmlns="http://jmix.io/schema/ui/layout"
            elementFormDefault="qualified">
 
     <!-- Enums -->

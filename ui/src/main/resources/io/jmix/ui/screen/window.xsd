@@ -15,15 +15,15 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://schemas.haulmont.com/cuba/screen/window.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/ui/window"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
-           xmlns:data="http://schemas.haulmont.com/cuba/screen/data.xsd"
-           xmlns:layout="http://schemas.haulmont.com/cuba/screen/layout.xsd"
+           xmlns="http://jmix.io/schema/ui/window"
+           xmlns:data="http://jmix.io/schema/ui/data"
+           xmlns:layout="http://jmix.io/schema/ui/layout"
            elementFormDefault="qualified">
 
-    <xs:include schemaLocation="http://schemas.haulmont.com/cuba/screen/data.xsd"/>
-    <xs:include schemaLocation="http://schemas.haulmont.com/cuba/screen/layout.xsd"/>
+    <xs:include schemaLocation="http://jmix.io/schema/ui/data"/>
+    <xs:include schemaLocation="http://jmix.io/schema/ui/layout"/>
 
     <!-- Window -->
     <xs:element name="window">

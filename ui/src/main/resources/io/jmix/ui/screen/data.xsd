@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://schemas.haulmont.com/cuba/screen/data.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/ui/data"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://schemas.haulmont.com/cuba/screen/data.xsd"
+           xmlns="http://jmix.io/schema/ui/data"
            elementFormDefault="qualified">
 
     <xs:complexType name="screenData">

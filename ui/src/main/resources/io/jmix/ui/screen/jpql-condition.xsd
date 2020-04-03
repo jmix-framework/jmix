@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/ui/jpql-condition"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://schemas.haulmont.com/cuba/screen/jpql_condition.xsd"
+           xmlns="http://jmix.io/schema/ui/jpql-condition"
            elementFormDefault="qualified">
 
     <xs:element name="jpql">

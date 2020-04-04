@@ -71,6 +71,7 @@ public class UiProperties {
     boolean forceRefreshAuthenticatedTabs;
     boolean allowAnonymousAccess;
     boolean htmlSanitizerEnabled;
+    String iconsConfig;
 
     public UiProperties(
             boolean testMode,
@@ -115,7 +116,8 @@ public class UiProperties {
             String initialScreenId,
             @DefaultValue("false") boolean forceRefreshAuthenticatedTabs,
             @DefaultValue("false") boolean allowAnonymousAccess,
-            @DefaultValue("true") boolean htmlSanitizerEnabled
+            @DefaultValue("true") boolean htmlSanitizerEnabled,
+            @DefaultValue("io.jmix.ui.icons.CubaIcon") String iconsConfig
     ) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
@@ -160,6 +162,7 @@ public class UiProperties {
         this.forceRefreshAuthenticatedTabs = forceRefreshAuthenticatedTabs;
         this.allowAnonymousAccess = allowAnonymousAccess;
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
+        this.iconsConfig = iconsConfig;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -381,5 +384,9 @@ public class UiProperties {
      */
     public boolean isHtmlSanitizerEnabled() {
         return htmlSanitizerEnabled;
+    }
+
+    public String getIconsConfig() {
+        return iconsConfig;
     }
 }

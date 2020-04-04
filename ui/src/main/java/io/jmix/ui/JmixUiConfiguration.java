@@ -34,7 +34,8 @@ import java.util.Collections;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = JmixCoreConfiguration.class, properties = {
-        @JmixProperty(name = "jmix.themeConfig", value = "io/jmix/ui/theme/halo-theme.properties"),
+        @JmixProperty(name = "server.servlet.session.persistent", value = "false"),
+        @JmixProperty(name = "jmix.ui.themeConfig", value = "io/jmix/ui/theme/halo-theme.properties")
 })
 public class JmixUiConfiguration {
 

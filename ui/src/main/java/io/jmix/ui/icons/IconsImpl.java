@@ -22,13 +22,13 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import io.jmix.core.Events;
 import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.compatibility.AppContext;
-import io.jmix.core.event.AppContextInitializedEvent;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -47,6 +47,9 @@ public class IconsImpl implements Icons {
     @Inject
     protected ThemeConstantsManager themeConstantsManager;
 
+    @Inject
+    protected UiProperties uiProperties;
+
     protected LoadingCache<String, String> iconsCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<String, String>() {
                 @Override
@@ -57,10 +60,10 @@ public class IconsImpl implements Icons {
 
     protected List<Class<? extends Icon>> iconSets = new ArrayList<>();
 
-    @EventListener(AppContextInitializedEvent.class)
+    @EventListener(ContextRefreshedEvent.class)
     @Order(Events.HIGHEST_CORE_PRECEDENCE + 100)
     public void init() {
-        String iconSetsProp = AppContext.getProperty("cuba.iconsConfig");
+        String iconSetsProp = uiProperties.getIconsConfig();
         if (StringUtils.isEmpty(iconSetsProp)) {
             return;
         }

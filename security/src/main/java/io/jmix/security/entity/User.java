@@ -304,8 +304,8 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
     public String getCaption() {
         // todo rework when new instance name is ready
         String pattern =/* AppContext.getProperty("cuba.user.namePattern");
-        if (StringUtils.isBlank(pattern)) {*/
-            pattern = "{1} [{0}]";
+        if (StringUtils.isBlank(pattern)) {
+            pattern =*/ "{1} [{0}]";
         /*}*/
         MessageFormat fmt = new MessageFormat(pattern);
         return StringUtils.trimToEmpty(fmt.format(new Object[]{

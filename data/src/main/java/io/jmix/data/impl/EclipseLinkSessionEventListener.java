@@ -17,13 +17,8 @@
 package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.AppBeans;
-import io.jmix.core.EntityStates;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.commons.datastruct.Pair;
-import io.jmix.core.compatibility.AppContext;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.JmixSettersEnhanced;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.DisableEnhancing;
@@ -229,7 +224,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
             }
             message.append("\n=================================================================");
             log.error(message.toString());
-            if (!Boolean.parseBoolean(AppContext.getProperty("cuba.disableEntityEnhancementCheck"))) {
+            if (!Boolean.parseBoolean(environment.getProperty("jmix.data.disableEntityEnhancementCheck"))) {
                 StringBuilder exceptionMessage = new StringBuilder();
                 for (Pair me : missingEnhancements) {
                     exceptionMessage.append(me.getFirst());

@@ -16,7 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.compatibility.AppContext;
+import io.jmix.core.AppBeans;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 
@@ -24,7 +24,7 @@ public class AppContextTestExecutionListener implements TestExecutionListener {
     @Override
     public void beforeTestClass(TestContext testContext) throws Exception {
         if (testContext.hasApplicationContext()) {
-            AppContext.Internals.setApplicationContext(testContext.getApplicationContext(), false);
+            AppBeans.setApplicationContext(testContext.getApplicationContext());
         }
     }
 }

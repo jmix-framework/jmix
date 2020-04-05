@@ -23,7 +23,6 @@ import io.jmix.core.Entity;
 import io.jmix.core.Id;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.entity.SoftDelete;
@@ -47,6 +46,7 @@ import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.queries.ObjectLevelReadQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
@@ -62,6 +62,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
     private final EntityManager entityManager;
     private Class<E> resultClass;
 
+    protected Environment environment;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected ExtendedEntities extendedEntities;
@@ -96,6 +97,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         this.queryString = qlString;
         this.resultClass = resultClass;
 
+        environment = beanLocator.get(Environment.class);
         metadata = beanLocator.get(Metadata.NAME);
         metadataTools = beanLocator.get(MetadataTools.NAME);
         extendedEntities = beanLocator.get(ExtendedEntities.NAME);
@@ -267,7 +269,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         Class referenceClass = databaseQuery.getReferenceClass();
         boolean isDeleteQuery = databaseQuery.isDeleteObjectQuery() || databaseQuery.isDeleteAllQuery();
         boolean enableDeleteInSoftDeleteMode =
-                Boolean.parseBoolean(AppContext.getProperty("cuba.enableDeleteStatementInSoftDeleteMode"));
+                Boolean.parseBoolean(environment.getProperty("jmix.data.enableDeleteStatementInSoftDeleteMode"));
         if (!enableDeleteInSoftDeleteMode && PersistenceHints.isSoftDeletion(entityManager) && isDeleteQuery) {
             if (SoftDelete.class.isAssignableFrom(referenceClass)) {
                 throw new UnsupportedOperationException("Delete queries are not supported with enabled soft deletion. " +

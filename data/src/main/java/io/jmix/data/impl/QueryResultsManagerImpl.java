@@ -18,7 +18,6 @@ package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionSource;
 import io.jmix.core.security.UserSessions;
@@ -245,7 +244,7 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     @Override
     public void deleteForInactiveSessions() {
-        if (!AppContext.isStarted() || !clusterManager.isMaster())
+        if (!clusterManager.isMaster())
             return;
 
         internalDeleteForInactiveSessions();

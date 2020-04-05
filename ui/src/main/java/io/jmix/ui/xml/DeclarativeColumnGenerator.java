@@ -33,7 +33,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Scope(SCOPE_PROTOTYPE)
 public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
 
-    public static final String NAME = "cuba_DeclarativeColumnGenerator";
+    public static final String NAME = "jmix_DeclarativeColumnGenerator";
 
     protected final String methodName;
     protected final Table table;

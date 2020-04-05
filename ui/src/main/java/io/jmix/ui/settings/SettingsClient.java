@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  */
 public interface SettingsClient {
 
-    String NAME = "cuba_SettingsClient";
+    String NAME = "jmix_SettingsClient";
 
     String getSetting(String name);
     void setSetting(String name, @Nullable String value);

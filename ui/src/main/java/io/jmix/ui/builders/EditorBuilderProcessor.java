@@ -49,7 +49,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component("cuba_EditorBuilderProcessor")
+@Component("jmix_EditorBuilderProcessor")
 public class EditorBuilderProcessor {
 
     @Inject

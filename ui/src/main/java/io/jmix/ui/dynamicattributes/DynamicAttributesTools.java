@@ -29,7 +29,7 @@ import java.util.UUID;
 @Component(DynamicAttributesTools.NAME)
 public class DynamicAttributesTools {
 
-    public static final String NAME = "cuba_DynamicAttributesTools";
+    public static final String NAME = "jmix_DynamicAttributesTools";
 
     /**
      * Get special meta property path object for dynamic attribute by code

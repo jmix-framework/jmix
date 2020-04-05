@@ -54,7 +54,7 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 @Component(RemoveOperation.NAME)
 public class RemoveOperation {
 
-    public static final String NAME = "cuba_RemoveHelper";
+    public static final String NAME = "jmix_RemoveHelper";
 
     @Inject
     protected WindowConfig windowConfig;

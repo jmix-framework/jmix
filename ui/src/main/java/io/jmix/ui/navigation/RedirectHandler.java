@@ -39,7 +39,7 @@ import java.util.Objects;
 @Scope("prototype")
 public class RedirectHandler {
 
-    public static final String NAME = "cuba_RedirectHandler";
+    public static final String NAME = "jmix_RedirectHandler";
 
     private static final Logger log = LoggerFactory.getLogger(RedirectHandler.class);
 

@@ -28,7 +28,7 @@ import io.jmix.ui.components.*;
 @Deprecated
 public interface ComponentsFactory {
 
-    String NAME = "cuba_ComponentsFactory";
+    String NAME = "jmix_ComponentsFactory";
 
     /**
      * Create a component instance by its name.

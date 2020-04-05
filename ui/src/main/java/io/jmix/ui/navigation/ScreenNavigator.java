@@ -32,7 +32,7 @@ import java.util.List;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenNavigator {
 
-    public static final String NAME = "cuba_ScreenNavigator";
+    public static final String NAME = "jmix_ScreenNavigator";
 
     @Inject
     protected List<NavigationHandler> navigationHandlers;

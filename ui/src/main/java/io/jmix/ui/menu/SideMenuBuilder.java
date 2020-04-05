@@ -46,7 +46,7 @@ import static io.jmix.ui.components.KeyCombination.getShortcutModifiers;
 @Component(SideMenuBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SideMenuBuilder {
-    public static final String NAME = "cuba_SideMenuBuilder";
+    public static final String NAME = "jmix_SideMenuBuilder";
 
     @Inject
     protected Security security;

@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * Handles {@link EntityAccessException}.
  *
  */
-@Component("cuba_EntityAccessExceptionHandler")
+@Component("jmix_EntityAccessExceptionHandler")
 public class EntityAccessExceptionHandler extends AbstractGenericExceptionHandler {
 
     @Inject

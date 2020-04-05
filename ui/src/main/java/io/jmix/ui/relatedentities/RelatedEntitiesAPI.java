@@ -27,7 +27,7 @@ import java.util.Map;
 
 public interface RelatedEntitiesAPI {
 
-    String NAME = "cuba_RelatedEntities";
+    String NAME = "jmix_RelatedEntities";
 
     /**
      * Creates a related screen builder.

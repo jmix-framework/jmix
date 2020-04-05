@@ -44,7 +44,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *   &lt;bean id="cuba_DecimalMaxValidator" class="io.jmix.ui.components.validation.DecimalMaxValidator" scope="prototype"/&gt;
+ *   &lt;bean id="jmix_DecimalMaxValidator" class="io.jmix.ui.components.validation.DecimalMaxValidator" scope="prototype"/&gt;
  *   </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -54,7 +54,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DecimalMaxValidator<T> extends AbstractValidator<T> {
 
-    public static final String NAME = "cuba_DecimalMaxValidator";
+    public static final String NAME = "jmix_DecimalMaxValidator";
 
     protected BigDecimal max;
     protected boolean inclusive = true;

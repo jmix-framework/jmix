@@ -42,7 +42,7 @@ import java.util.Objects;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class HistoryNavigator {
 
-    public static final String NAME = "cuba_HistoryNavigator";
+    public static final String NAME = "jmix_HistoryNavigator";
 
     private static final Logger log = LoggerFactory.getLogger(HistoryNavigator.class);
 

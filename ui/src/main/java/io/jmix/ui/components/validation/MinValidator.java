@@ -49,7 +49,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MinValidator<T extends Number> extends AbstractValidator<T> {
 
-    public static final String NAME = "cuba_MinValidator";
+    public static final String NAME = "jmix_MinValidator";
 
     protected long min;
 

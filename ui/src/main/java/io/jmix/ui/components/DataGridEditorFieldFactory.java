@@ -22,7 +22,7 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
  * Factory that generates components for {@link DataGrid} editor.
  */
 public interface DataGridEditorFieldFactory {
-    String NAME = "cuba_DataGridEditorFieldFactory";
+    String NAME = "jmix_DataGridEditorFieldFactory";
 
     /**
      * Generates component for {@link DataGrid} editor.

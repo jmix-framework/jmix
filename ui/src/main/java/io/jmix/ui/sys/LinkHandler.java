@@ -40,7 +40,7 @@ import java.util.Map;
 @Scope("prototype")
 public class LinkHandler {
 
-    public static final String NAME = "cuba_LinkHandler";
+    public static final String NAME = "jmix_LinkHandler";
 
     @Inject
     protected List<LinkHandlerProcessor> processors;

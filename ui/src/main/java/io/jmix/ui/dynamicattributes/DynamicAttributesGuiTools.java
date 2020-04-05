@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 @Component(DynamicAttributesGuiTools.NAME)
 public class DynamicAttributesGuiTools {
-    public static final String NAME = "cuba_DynamicAttributesGuiTools";
+    public static final String NAME = "jmix_DynamicAttributesGuiTools";
 
     /**
      * Enforce the datasource to change modified status if dynamic attribute is changed

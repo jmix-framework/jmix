@@ -29,7 +29,7 @@ import javax.inject.Inject;
 
 @org.springframework.stereotype.Component(DefaultComponentGenerationStrategy.NAME)
 public class DefaultComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-    public static final String NAME = "cuba_DefaultMetaComponentStrategy";
+    public static final String NAME = "jmix_DefaultMetaComponentStrategy";
 
     @Inject
     public DefaultComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,

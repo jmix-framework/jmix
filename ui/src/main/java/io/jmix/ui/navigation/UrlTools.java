@@ -39,7 +39,7 @@ import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 @Component(UrlTools.NAME)
 public class UrlTools {
 
-    public static final String NAME = "cuba_UrlTools";
+    public static final String NAME = "jmix_UrlTools";
 
     private static final Logger log = LoggerFactory.getLogger(UrlTools.class);
 

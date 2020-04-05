@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-@Component("cuba_AccessDeniedHandler")
+@Component("jmix_AccessDeniedHandler")
 public class AccessDeniedHandler extends AbstractGenericExceptionHandler implements Ordered {
 
     @Inject

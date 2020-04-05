@@ -39,7 +39,7 @@ import static io.jmix.ui.screen.EditorScreen.WINDOW_CLOSE;
  */
 @org.springframework.stereotype.Component(ReadOnlyScreensSupport.NAME)
 public class ReadOnlyScreensSupport {
-    public static final String NAME = "cuba_ReadOnlyScreensSupport";
+    public static final String NAME = "jmix_ReadOnlyScreensSupport";
 
     protected Security security;
 

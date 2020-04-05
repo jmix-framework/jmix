@@ -37,7 +37,7 @@ import javax.inject.Inject;
 @org.springframework.stereotype.Component(CustomDatatypesComponentGenerationStrategy.NAME)
 public class CustomDatatypesComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
-    public static final String NAME = "cuba_CustomDatatypesComponentGenerationStrategy";
+    public static final String NAME = "jmix_CustomDatatypesComponentGenerationStrategy";
 
     @Inject
     public CustomDatatypesComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,

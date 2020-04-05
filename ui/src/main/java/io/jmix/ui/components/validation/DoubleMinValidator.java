@@ -43,7 +43,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *   &lt;bean id="cuba_DoubleMinValidator" class="io.jmix.ui.components.validation.DoubleMinValidator" scope="prototype"/&gt;
+ *   &lt;bean id="jmix_DoubleMinValidator" class="io.jmix.ui.components.validation.DoubleMinValidator" scope="prototype"/&gt;
  *   </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -53,7 +53,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DoubleMinValidator<T> extends AbstractValidator<T> {
 
-    public static final String NAME = "cuba_DoubleMinValidator";
+    public static final String NAME = "jmix_DoubleMinValidator";
 
     protected Double min;
     protected boolean inclusive = true;

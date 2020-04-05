@@ -29,7 +29,7 @@ import javax.inject.Inject;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-@Component("cuba_ScreenBuilders")
+@Component("jmix_ScreenBuilders")
 public class ScreenBuilders {
     @Inject
     protected EditorBuilderProcessor editorBuilderProcessor;

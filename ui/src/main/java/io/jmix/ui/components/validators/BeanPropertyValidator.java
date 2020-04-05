@@ -35,7 +35,7 @@ import javax.inject.Inject;
 @Component(BeanPropertyValidator.NAME)
 public class BeanPropertyValidator extends AbstractBeanValidator {
 
-    public static final String NAME = "cuba_BeanPropertyValidator";
+    public static final String NAME = "jmix_BeanPropertyValidator";
 
     public BeanPropertyValidator(Class beanClass, String beanProperty) {
         super(beanClass, beanProperty);

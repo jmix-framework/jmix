@@ -42,7 +42,7 @@ import java.util.function.Consumer;
 @Component(MenuBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MenuBuilder {
-    public static final String NAME = "cuba_AppMenuBuilder";
+    public static final String NAME = "jmix_AppMenuBuilder";
 
     @Inject
     protected Security security;

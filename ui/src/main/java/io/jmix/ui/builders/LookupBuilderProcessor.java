@@ -55,7 +55,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component("cuba_LookupBuilderProcessor")
+@Component("jmix_LookupBuilderProcessor")
 public class LookupBuilderProcessor {
 
     @Inject

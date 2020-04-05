@@ -39,7 +39,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="cuba_PositiveValidator" class="io.jmix.ui.components.validation.PositiveValidator" scope="prototype"/&gt;
+ *     &lt;bean id="jmix_PositiveValidator" class="io.jmix.ui.components.validation.PositiveValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -49,7 +49,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PositiveValidator<T extends Number> extends AbstractValidator<T> {
 
-    public static final String NAME = "cuba_PositiveValidator";
+    public static final String NAME = "jmix_PositiveValidator";
 
     public PositiveValidator() {
     }

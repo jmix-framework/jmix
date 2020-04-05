@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Primary
 public class PersistenceManagerClient {
 
-    public static final String NAME = "cuba_PersistenceManagerClient";
+    public static final String NAME = "jmix_PersistenceManagerClient";
 
     public boolean useLookupScreen(String entityName) {
         return false;

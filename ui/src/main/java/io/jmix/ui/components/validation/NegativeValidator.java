@@ -40,7 +40,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="cuba_NegativeValidator" class="io.jmix.ui.components.validation.NegativeValidator" scope="prototype"/&gt;
+ *     &lt;bean id="jmix_NegativeValidator" class="io.jmix.ui.components.validation.NegativeValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -50,7 +50,7 @@ import static io.jmix.ui.components.validation.ValidatorHelper.getNumberConstrai
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NegativeValidator<T extends Number> extends AbstractValidator<T> {
 
-    public static final String NAME = "cuba_NegativeValidator";
+    public static final String NAME = "jmix_NegativeValidator";
 
     public NegativeValidator() {
     }

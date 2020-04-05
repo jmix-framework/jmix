@@ -41,7 +41,7 @@ import javax.inject.Inject;
 
 @org.springframework.stereotype.Component(DataGridEditorComponentGenerationStrategy.NAME)
 public class DataGridEditorComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-    public static final String NAME = "cuba_DataGridEditorMetaComponentStrategy";
+    public static final String NAME = "jmix_DataGridEditorMetaComponentStrategy";
 
     protected DataComponents dataComponents;
     protected GuiActionSupport guiActionSupport;

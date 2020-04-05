@@ -31,7 +31,7 @@ import javax.inject.Inject;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="cuba_NotNullValidator" class="io.jmix.ui.components.validation.NotNullValidator" scope="prototype"/&gt;
+ *     &lt;bean id="jmix_NotNullValidator" class="io.jmix.ui.components.validation.NotNullValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -41,7 +41,7 @@ import javax.inject.Inject;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotNullValidator<T> extends AbstractValidator<T> {
 
-    public static final String NAME = "cuba_NotNullValidator";
+    public static final String NAME = "jmix_NotNullValidator";
 
     public NotNullValidator() {
     }

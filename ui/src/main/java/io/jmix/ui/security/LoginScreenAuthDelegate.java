@@ -41,7 +41,7 @@ import static io.jmix.ui.App.*;
 @Component(LoginScreenAuthDelegate.NAME)
 @VaadinSessionScope
 public class LoginScreenAuthDelegate {
-    public static final String NAME = "cuba_LoginScreenAuthDelegate";
+    public static final String NAME = "jmix_LoginScreenAuthDelegate";
 
     private static final Logger log = LoggerFactory.getLogger(LoginScreenAuthDelegate.class);
 

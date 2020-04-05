@@ -32,7 +32,7 @@ import javax.inject.Inject;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="cuba_NotBlankValidator" class="io.jmix.ui.components.validation.NotBlankValidator" scope="prototype"/&gt;
+ *     &lt;bean id="jmix_NotBlankValidator" class="io.jmix.ui.components.validation.NotBlankValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  */
@@ -40,7 +40,7 @@ import javax.inject.Inject;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotBlankValidator extends AbstractValidator<String> {
 
-    public static final String NAME = "cuba_NotBlankValidator";
+    public static final String NAME = "jmix_NotBlankValidator";
 
     public NotBlankValidator() {
     }

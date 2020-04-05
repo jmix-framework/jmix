@@ -40,7 +40,7 @@ import java.util.Map;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *   &lt;bean id="cuba_GroovyScriptValidator" class="io.jmix.ui.components.validation.GroovyScriptValidator" scope="prototype"/&gt;
+ *   &lt;bean id="jmix_GroovyScriptValidator" class="io.jmix.ui.components.validation.GroovyScriptValidator" scope="prototype"/&gt;
  *   </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -50,7 +50,7 @@ import java.util.Map;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class GroovyScriptValidator<T> extends AbstractValidator<T> {
 
-    public static final String NAME = "cuba_GroovyScriptValidator";
+    public static final String NAME = "jmix_GroovyScriptValidator";
 
     @Inject
     protected Scripting scripting;

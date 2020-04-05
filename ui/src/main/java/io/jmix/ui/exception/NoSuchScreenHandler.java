@@ -29,7 +29,7 @@ import javax.inject.Inject;
  * Handles {@link NoSuchScreenException}.
  *
  */
-@Component("cuba_NoSuchScreenHandler")
+@Component("jmix_NoSuchScreenHandler")
 public class NoSuchScreenHandler extends AbstractGenericExceptionHandler implements Ordered {
 
     @Inject

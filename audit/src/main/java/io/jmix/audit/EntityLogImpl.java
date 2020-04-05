@@ -22,7 +22,6 @@ import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.IdProxy;
@@ -506,7 +505,7 @@ public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
 
     protected String findUserLogin() {
         UUID currentUserId = auditInfoProvider.getCurrentUserId();
-        if (AppContext.isStarted() && currentUserId != null)
+        if (currentUserId != null)
             return auditInfoProvider.getCurrentUserLogin();
         else {
             String login = properties.getSystemUserLogin();

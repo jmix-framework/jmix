@@ -19,8 +19,10 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import io.jmix.core.*;
-import io.jmix.core.entity.*;
-import io.jmix.core.event.AppContextInitializedEvent;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.HasUuid;
+import io.jmix.core.entity.IdProxy;
+import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.security.SecurityProperties;
@@ -29,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -233,7 +236,7 @@ public class SecurityTokenManager {
         filteredData.putAll(property, ids);
     }
 
-    @EventListener(AppContextInitializedEvent.class)
+    @EventListener(ContextRefreshedEvent.class)
     protected void applicationInitialized() {
         if ("CUBA.Platform".equals(properties.getKeyForSecurityTokenEncryption())) {
             log.warn("\nWARNING:\n" +

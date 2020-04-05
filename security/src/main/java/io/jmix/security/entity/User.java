@@ -16,13 +16,12 @@
 package io.jmix.security.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.compatibility.AppContext;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotations.Composition;
 import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -303,10 +302,11 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
     }
 
     public String getCaption() {
-        String pattern = AppContext.getProperty("cuba.user.namePattern");
-        if (StringUtils.isBlank(pattern)) {
+        // todo rework when new instance name is ready
+        String pattern =/* AppContext.getProperty("cuba.user.namePattern");
+        if (StringUtils.isBlank(pattern)) {*/
             pattern = "{1} [{0}]";
-        }
+        /*}*/
         MessageFormat fmt = new MessageFormat(pattern);
         return StringUtils.trimToEmpty(fmt.format(new Object[]{
                 StringUtils.trimToEmpty(login),

@@ -85,12 +85,12 @@ public class WebTestConfiguration {
         return new UserEntityListener();
     }
 
-    @Bean(name = "cuba_UserSessionSource")
+    @Bean(name = UserSessionSource.NAME)
     UserSessionSource userSessionSource() {
         return new TestUserSessionSource();
     }
 
-    @Bean(name = "cuba_JpqlSortExpressionProvider")
+    @Bean(name = JpqlSortExpressionProvider.NAME)
     JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
     }

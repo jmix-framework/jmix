@@ -15,8 +15,6 @@
  */
 package io.jmix.core;
 
-import io.jmix.core.compatibility.AppContext;
-
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -28,21 +26,12 @@ public final class UuidProvider {
     private UuidProvider() {
     }
 
-    private static volatile UuidSource uuidSource;
-
     /**
      * @return new UUID
      */
     public static UUID createUuid() {
-        if (AppContext.getApplicationContext() == null) {
-            ThreadLocalRandom random = ThreadLocalRandom.current();
-            return new UUID(random.nextLong(), random.nextLong());
-        }
-
-        if (uuidSource == null) {
-            uuidSource = AppBeans.get(UuidSource.NAME, UuidSource.class);
-        }
-        return uuidSource.createUuid();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        return new UUID(random.nextLong(), random.nextLong());
     }
 
     /**

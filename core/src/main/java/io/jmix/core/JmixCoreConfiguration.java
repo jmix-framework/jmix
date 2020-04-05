@@ -18,7 +18,6 @@ package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.JmixProperty;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.JmixCoreSecurityConfiguration;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -28,7 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.PriorityOrdered;
@@ -66,20 +64,8 @@ public class JmixCoreConfiguration {
     }
 
     @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(Events.HIGHEST_CORE_PRECEDENCE + 5)
     public void onApplicationContextRefreshFirst(ContextRefreshedEvent event) {
-        AppContext.Internals.setApplicationContext(event.getApplicationContext());
-    }
-
-    @EventListener
-    @Order(Events.LOWEST_CORE_PRECEDENCE - 10)
-    public void onApplicationContextRefreshLast(ContextRefreshedEvent event) {
-        AppContext.Internals.startContext();
-    }
-
-    @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
-    public void onApplicationContextClosedEvent(ContextClosedEvent event) {
-        AppContext.Internals.onContextClosed(event.getApplicationContext());
+        AppBeans.setApplicationContext(event.getApplicationContext());
     }
 }

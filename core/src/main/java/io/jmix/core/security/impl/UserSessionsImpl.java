@@ -21,7 +21,6 @@ import io.jmix.core.TimeSource;
 import io.jmix.core.cluster.ClusterListener;
 import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.security.NoUserSessionException;
 import io.jmix.core.security.UserSession;
 import io.jmix.core.security.UserSessionEntity;
@@ -87,8 +86,6 @@ public class UserSessionsImpl implements UserSessions {
     protected Map<UUID, UserSessionInfo> cache = new ConcurrentHashMap<>();
 
     protected ClusterManager clusterManager;
-
-    protected UserSession NO_USER_SESSION;
 
     @Inject
     protected CoreProperties properties;
@@ -280,9 +277,6 @@ public class UserSessionsImpl implements UserSessions {
 
     @Nullable
     protected UserSession internalGet(UUID id, boolean touch, boolean propagate) {
-        if (!AppContext.isStarted())
-            return NO_USER_SESSION;
-
         UserSessionInfo usi = getSessionInfo(id);
         if (usi != null) {
             if (touch) {
@@ -374,9 +368,6 @@ public class UserSessionsImpl implements UserSessions {
 
     @Override
     public void processEviction() {
-        if (!AppContext.isStarted())
-            return;
-
         log.trace("Processing eviction");
         long now = timeSource.currentTimeMillis();
 

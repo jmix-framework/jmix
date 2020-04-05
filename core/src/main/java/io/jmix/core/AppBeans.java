@@ -16,7 +16,6 @@
 
 package io.jmix.core;
 
-import io.jmix.core.compatibility.AppContext;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
@@ -28,6 +27,8 @@ import java.util.Map;
  * @see BeanLocator
  */
 public class AppBeans {
+
+    private static ApplicationContext applicationContext;
 
     /**
      * Return the bean instance that matches the given object type.
@@ -105,10 +106,16 @@ public class AppBeans {
         return getBeanLocator().containsBean(name);
     }
 
+    /**
+     * INTERNAL
+     */
+    public static void setApplicationContext(@Nullable ApplicationContext applicationContext) {
+        AppBeans.applicationContext = applicationContext;
+    }
+
     private static BeanLocator getBeanLocator() {
-        ApplicationContext applicationContext = AppContext.getApplicationContext();
         if (applicationContext == null)
-            throw new IllegalStateException("ApplicationContext is not initialized");
+            throw new IllegalStateException("ApplicationContext is not set");
         return applicationContext.getBean(BeanLocator.NAME, BeanLocator.class);
     }
 }

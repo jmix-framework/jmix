@@ -17,14 +17,14 @@
 package io.jmix.core.commons.xmlparsing;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.event.AppContextStoppedEvent;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Dom4jToolsShutdownListener {
 
-    @EventListener(AppContextStoppedEvent.class)
+    @EventListener(ContextClosedEvent.class)
     public void appContextStopped() {
         AppBeans.get(Dom4jTools.class).shutdown();
     }

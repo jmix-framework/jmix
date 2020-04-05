@@ -23,7 +23,6 @@ import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.metamodel.model.impl.*;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.*;
-import io.jmix.core.impl.MetadataBuildSupport.XmlAnnotation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,22 +234,22 @@ public class MetadataLoader {
 //        }
 //    }
 
-    @SuppressWarnings("unchecked")
-    protected void assignMetaAnnotationValueFromXml(String annName, XmlAnnotation xmlAnn, Map<String, Object> metaAnnotations) {
-        if (xmlAnn.value != null) {
-            metaAnnotations.put(annName, xmlAnn.value);
-            if (!xmlAnn.attributes.isEmpty()) {
-                log.warn("Attributes of {} meta-annotation are ignored because a value is set", annName);
-            }
-        } else {
-            Object annValue = metaAnnotations.computeIfAbsent(annName, k -> new LinkedHashMap<>());
-            if (annValue instanceof Map) {
-                ((Map) annValue).putAll(xmlAnn.attributes);
-            } else {
-                log.warn("Meta-annotation {} has value {} and cannot be re-assigned by annotation attributes", annName, annValue);
-            }
-        }
-    }
+//    @SuppressWarnings("unchecked")
+//    protected void assignMetaAnnotationValueFromXml(String annName, XmlAnnotation xmlAnn, Map<String, Object> metaAnnotations) {
+//        if (xmlAnn.value != null) {
+//            metaAnnotations.put(annName, xmlAnn.value);
+//            if (!xmlAnn.attributes.isEmpty()) {
+//                log.warn("Attributes of {} meta-annotation are ignored because a value is set", annName);
+//            }
+//        } else {
+//            Object annValue = metaAnnotations.computeIfAbsent(annName, k -> new LinkedHashMap<>());
+//            if (annValue instanceof Map) {
+//                ((Map) annValue).putAll(xmlAnn.attributes);
+//            } else {
+//                log.warn("Meta-annotation {} has value {} and cannot be re-assigned by annotation attributes", annName, annValue);
+//            }
+//        }
+//    }
 
     protected void postProcessClass(MetaClass metaClass) {
         for (MetaProperty property : metaClass.getOwnProperties()) {

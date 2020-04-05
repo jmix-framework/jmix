@@ -36,7 +36,7 @@ import java.util.List;
  */
 @Entity(name = "sec_User")
 @Table(name = "SEC_USER")
-//@Listeners("cuba_UserEntityListener")
+//@Listeners("jmix_UserEntityListener")
 @NamePattern("#getCaption|login,name")
 @TrackEditScreenHistory
 public class User extends StandardEntity implements io.jmix.core.entity.User {

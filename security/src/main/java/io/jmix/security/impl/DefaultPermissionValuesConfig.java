@@ -43,7 +43,7 @@ import java.util.Map;
  * Default permission values are used when no role defines an explicit value for permission target.
  * Default permissions are loaded from the set of files defined by the {@code cuba.defaultPermissionValuesConfig} app property.
  */
-@Component("cuba_DefaultPermissionValuesConfig")
+@Component("jmix_DefaultPermissionValuesConfig")
 public class DefaultPermissionValuesConfig {
 
     private final Logger log = LoggerFactory.getLogger(DefaultPermissionValuesConfig.class);

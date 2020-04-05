@@ -46,7 +46,7 @@ import static org.apache.commons.lang3.StringUtils.substring;
 
 @Component(SecurityTokenManager.NAME)
 public class SecurityTokenManager {
-    public static final String NAME = "cuba_SecurityTokenManager";
+    public static final String NAME = "jmix_SecurityTokenManager";
 
     private static final Logger log = LoggerFactory.getLogger(SecurityTokenManager.class);
 

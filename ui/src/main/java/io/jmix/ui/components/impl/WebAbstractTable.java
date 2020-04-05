@@ -30,14 +30,15 @@ import com.vaadin.v7.ui.Table.ColumnHeaderMode;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.compatibility.AppContext;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.Presentation;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.metamodel.model.*;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
 import io.jmix.core.security.UserSessionSource;
@@ -63,7 +64,6 @@ import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
 import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.model.*;
-import io.jmix.ui.model.impl.KeyValueContainerImpl;
 import io.jmix.ui.presentations.Presentations;
 import io.jmix.ui.presentations.PresentationsImpl;
 import io.jmix.ui.screen.FrameOwner;
@@ -588,7 +588,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
         InstanceContainer<E> instanceContainer;
         MetaClass metaClass = containerTableItems.getEntityMetaClass();
         if (metaClass instanceof KeyValueMetaClass) {
-            instanceContainer = (InstanceContainer<E>) new KeyValueContainerImpl(AppContext.getApplicationContext(), (KeyValueMetaClass) metaClass);
+            instanceContainer = (InstanceContainer<E>) dataComponents.createKeyValueContainer(metaClass);
         } else {
             instanceContainer = dataComponents.createInstanceContainer(metaClass.getJavaClass());
         }

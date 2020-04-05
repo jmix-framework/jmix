@@ -17,7 +17,6 @@
 package io.jmix.ui.executors.impl;
 
 import io.jmix.core.TimeSource;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.ui.executors.WatchDog;
 
 import javax.annotation.concurrent.ThreadSafe;
@@ -49,10 +48,6 @@ public abstract class TasksWatchDog implements WatchDog {
 
     @Override
     public synchronized void cleanupTasks() {
-        if (!AppContext.isStarted()) {
-            return;
-        }
-
         long actual = timeSource.currentTimestamp().getTime();
 
         List<TaskHandlerImpl> forRemove = new ArrayList<>();
@@ -88,10 +83,6 @@ public abstract class TasksWatchDog implements WatchDog {
 
     @Override
     public synchronized void stopTasks() {
-        if (!AppContext.isStarted()) {
-            return;
-        }
-
         // copy watches since task.kill tries to remove task handler from watches
         ArrayList<TaskHandlerImpl> taskHandlers = new ArrayList<>(watches);
         watches.clear();

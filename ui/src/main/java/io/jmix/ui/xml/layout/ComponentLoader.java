@@ -23,6 +23,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.ScreenOptions;
 import org.dom4j.Element;
+import org.springframework.core.env.Environment;
 
 import java.util.Map;
 
@@ -133,6 +134,7 @@ public interface ComponentLoader<T extends Component> {
     void setElement(Element element);
 
     void setBeanLocator(BeanLocator beanLocator);
+    void setEnvironment(Environment environment);
 
     /**
      * Creates result component by XML-element and loads its Id. Also creates all nested components.

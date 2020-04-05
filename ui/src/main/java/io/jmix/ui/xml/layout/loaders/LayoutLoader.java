@@ -26,6 +26,7 @@ import io.jmix.ui.xml.layout.LoaderResolver;
 import org.dom4j.Element;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -45,6 +46,7 @@ public class LayoutLoader {
     protected LoaderResolver loaderResolver;
 
     protected BeanLocator beanLocator;
+    protected Environment environment;
 
     public LayoutLoader(ComponentLoader.Context context) {
         this.context = context;
@@ -53,6 +55,11 @@ public class LayoutLoader {
     @Inject
     protected void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
+    }
+
+    @Inject
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
 
     @Inject
@@ -109,6 +116,7 @@ public class LayoutLoader {
         }
 
         loader.setBeanLocator(beanLocator);
+        loader.setEnvironment(environment);
 
         loader.setContext(context);
         loader.setLayoutLoaderConfig(config);

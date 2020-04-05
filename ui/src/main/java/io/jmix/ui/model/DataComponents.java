@@ -19,6 +19,7 @@ package io.jmix.ui.model;
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.Security;
 import io.jmix.ui.model.impl.*;
 import io.jmix.core.security.EntityOp;
@@ -137,6 +138,13 @@ public class DataComponents implements ApplicationContextAware {
      */
     public KeyValueContainer createKeyValueContainer() {
         return new KeyValueContainerImpl(applicationContext);
+    }
+
+    /**
+     * Creates {@code KeyValueContainer} for the given MetaClass.
+     */
+    public KeyValueContainer createKeyValueContainer(MetaClass metaClass) {
+        return new KeyValueContainerImpl(applicationContext, metaClass);
     }
 
     /**

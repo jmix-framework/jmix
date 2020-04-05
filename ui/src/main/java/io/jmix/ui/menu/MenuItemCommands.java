@@ -19,9 +19,7 @@ package io.jmix.ui.menu;
 import com.google.common.collect.ImmutableMap;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.core.compatibility.EntityLoadInfo;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -44,6 +42,7 @@ import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -79,7 +78,8 @@ public class MenuItemCommands {
     private FetchPlanRepository fetchPlanRepository;
     @Inject
     protected ScreenBuilders screenBuilders;
-
+    @Inject
+    protected Environment environment;
     @Inject
     protected BeanLocator beanLocator;
 
@@ -125,7 +125,7 @@ public class MenuItemCommands {
                     builder.put(element.attributeValue("name"), booleanValue);
                 } else {
                     if (value.startsWith("${") && value.endsWith("}")) {
-                        String property = AppContext.getProperty(value.substring(2, value.length() - 1));
+                        String property = environment.getProperty(value.substring(2, value.length() - 1));
                         if (!StringUtils.isEmpty(property)) {
                             value = property;
                         }

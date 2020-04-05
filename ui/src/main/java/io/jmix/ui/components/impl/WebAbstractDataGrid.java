@@ -34,18 +34,13 @@ import com.vaadin.server.WebBrowser;
 import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.DescriptionGenerator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.MenuBar.MenuItem;
-import com.vaadin.ui.components.grid.EditorCancelEvent;
-import com.vaadin.ui.components.grid.EditorSaveEvent;
-import com.vaadin.ui.components.grid.Footer;
-import com.vaadin.ui.components.grid.Header;
-import com.vaadin.ui.components.grid.StaticSection;
+import com.vaadin.ui.components.grid.*;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.compatibility.AppContext;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -73,18 +68,9 @@ import io.jmix.ui.components.datagrid.DataGridItemsEventsDelegate;
 import io.jmix.ui.components.datagrid.SortableDataGridDataProvider;
 import io.jmix.ui.components.formatters.CollectionFormatter;
 import io.jmix.ui.components.renderers.*;
-import io.jmix.ui.components.valueproviders.DataGridConverterBasedValueProvider;
-import io.jmix.ui.components.valueproviders.EntityValueProvider;
-import io.jmix.ui.components.valueproviders.FormatterBasedValueProvider;
-import io.jmix.ui.components.valueproviders.StringPresentationValueProvider;
-import io.jmix.ui.components.valueproviders.YesNoIconPresentationValueProvider;
+import io.jmix.ui.components.valueproviders.*;
 import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.DataComponents;
-import io.jmix.ui.model.HasLoader;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.impl.KeyValueContainerImpl;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.ScreenValidation;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShortcutsDelegate;
@@ -1439,7 +1425,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         InstanceContainer<E> instanceContainer;
         if (metaClass instanceof KeyValueMetaClass) {
             //noinspection unchecked
-            instanceContainer = (InstanceContainer<E>) new KeyValueContainerImpl(AppContext.getApplicationContext(), (KeyValueMetaClass) metaClass);
+            instanceContainer = (InstanceContainer<E>) factory.createKeyValueContainer(metaClass);
         } else {
             instanceContainer = factory.createInstanceContainer(metaClass.getJavaClass());
         }

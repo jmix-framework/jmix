@@ -18,13 +18,13 @@ package io.jmix.ui.sys;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Events;
-import io.jmix.core.event.AppContextInitializedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.Resource;
@@ -105,7 +105,7 @@ public class WebJarResourceResolver {
 
     @EventListener
     @Order(Events.HIGHEST_CORE_PRECEDENCE + 200)
-    protected void init(AppContextInitializedEvent event) {
+    protected void init(ContextRefreshedEvent event) {
         StopWatch stopWatch = new Slf4JStopWatch("WebJARs");
         try {
             ApplicationContext applicationContext = event.getApplicationContext();

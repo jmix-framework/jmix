@@ -20,7 +20,6 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Resources;
 import io.jmix.core.commons.xmlparsing.Dom4jTools;
-import io.jmix.core.compatibility.AppContext;
 import io.jmix.ui.components.KeyCombination;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.theme.ThemeConstants;
@@ -30,6 +29,7 @@ import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +54,7 @@ public class MenuConfig {
 
     public static final String NAME = "jmix_MenuConfig";
 
-    public static final String MENU_CONFIG_XML_PROP = "jmix.menuConfig";
+    public static final String MENU_CONFIG_XML_PROP = "jmix.ui.menuConfig";
 
     protected List<MenuItem> rootItems = new ArrayList<>();
 
@@ -72,6 +72,9 @@ public class MenuConfig {
 
     @Inject
     protected Dom4jTools dom4JTools;
+
+    @Inject
+    protected Environment environment;
 
     protected volatile boolean initialized;
 
@@ -123,7 +126,7 @@ public class MenuConfig {
     protected void init() {
         rootItems.clear();
 
-        String configName = AppContext.getProperty(MENU_CONFIG_XML_PROP);
+        String configName = environment.getProperty(MENU_CONFIG_XML_PROP);
 
         StringTokenizer tokenizer = new StringTokenizer(configName);
         for (String location : tokenizer.getTokenArray()) {
@@ -390,7 +393,7 @@ public class MenuConfig {
         }
         // If the shortcut string looks like a property, try to get it from the application properties
         if (shortcut.startsWith("${") && shortcut.endsWith("}")) {
-            String property = AppContext.getProperty(shortcut.substring(2, shortcut.length() - 1));
+            String property = environment.getProperty(shortcut.substring(2, shortcut.length() - 1));
             if (!StringUtils.isEmpty(property))
                 shortcut = property;
             else

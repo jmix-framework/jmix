@@ -19,7 +19,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
-import io.jmix.core.UuidSource;
+import io.jmix.core.UuidProvider;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
 import io.jmix.core.security.Security;
@@ -89,8 +89,6 @@ public class WebScreens implements Screens {
     protected WindowConfig windowConfig;
     @Inject
     protected Security security;
-    @Inject
-    protected UuidSource uuidSource;
     @Inject
     protected UiComponents uiComponents;
     @Inject
@@ -1167,7 +1165,7 @@ public class WebScreens implements Screens {
 
             TabSheetBehaviour tabSheet = workArea.getTabbedWindowContainer().getTabSheetBehaviour();
 
-            String tabId = "tab_" + uuidSource.createUuid();
+            String tabId = "tab_" + UuidProvider.createUuid();
 
             tabSheet.addTab(windowContainer, tabId);
 

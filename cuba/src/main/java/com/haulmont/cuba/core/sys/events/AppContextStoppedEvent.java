@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.testsupport;
+package com.haulmont.cuba.core.sys.events;
 
-import com.haulmont.cuba.core.sys.AppContext;
-import org.springframework.context.event.EventListener;
-import org.springframework.test.context.event.BeforeTestClassEvent;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.event.ApplicationContextEvent;
 
-public class TestEventsListener {
-    @EventListener
-    protected void beforeTestClassEvent(BeforeTestClassEvent event) {
-        if (event.getTestContext().hasApplicationContext()) {
-            AppContext.Internals.setApplicationContext(event.getTestContext().getApplicationContext(), false);
-        }
+/**
+ * Application lifecycle event. Published before application shutdown.
+ */
+public class AppContextStoppedEvent extends ApplicationContextEvent {
+
+    public AppContextStoppedEvent(ApplicationContext source) {
+        super(source);
     }
 }

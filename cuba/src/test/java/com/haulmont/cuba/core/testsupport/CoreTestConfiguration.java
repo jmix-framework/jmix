@@ -82,4 +82,9 @@ public class CoreTestConfiguration {
     TestEventsListener testEventsListener() {
         return new TestEventsListener();
     }
+
+    @Bean
+    TestAppContextLifecycleListener testAppContextLifecycleListener() {
+        return new TestAppContextLifecycleListener();
+    }
 }

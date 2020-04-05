@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.testsupport;
+package com.haulmont.cuba.core.sys;
 
-import com.haulmont.cuba.core.sys.AppContext;
-import org.springframework.context.event.EventListener;
-import org.springframework.test.context.event.BeforeTestClassEvent;
+import com.haulmont.cuba.core.global.UuidSource;
+import io.jmix.core.UuidProvider;
+import org.springframework.stereotype.Component;
 
-public class TestEventsListener {
-    @EventListener
-    protected void beforeTestClassEvent(BeforeTestClassEvent event) {
-        if (event.getTestContext().hasApplicationContext()) {
-            AppContext.Internals.setApplicationContext(event.getTestContext().getApplicationContext(), false);
-        }
+import java.util.UUID;
+
+@Component(UuidSource.NAME)
+public class UuidSourceImpl implements UuidSource {
+
+    @Override
+    public UUID createUuid() {
+        return UuidProvider.createUuid();
     }
 }

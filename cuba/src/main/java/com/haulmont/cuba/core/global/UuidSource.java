@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.testsupport;
+package com.haulmont.cuba.core.global;
 
-import com.haulmont.cuba.core.sys.AppContext;
-import org.springframework.context.event.EventListener;
-import org.springframework.test.context.event.BeforeTestClassEvent;
+import java.util.UUID;
 
-public class TestEventsListener {
-    @EventListener
-    protected void beforeTestClassEvent(BeforeTestClassEvent event) {
-        if (event.getTestContext().hasApplicationContext()) {
-            AppContext.Internals.setApplicationContext(event.getTestContext().getApplicationContext(), false);
-        }
-    }
+/**
+ * Global interface to create UUIDs.
+ *
+ */
+public interface UuidSource {
+
+    String NAME = "cuba_UuidSource";
+
+    /**
+     * @return new UUID
+     */
+    UUID createUuid();
 }

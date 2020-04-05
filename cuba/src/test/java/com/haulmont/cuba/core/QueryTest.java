@@ -25,7 +25,7 @@ import com.haulmont.cuba.core.model.common.RoleType;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.compatibility.AppContext;
+import com.haulmont.cuba.core.sys.AppContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -605,12 +605,12 @@ public class QueryTest {
             }
 
             try {
-                AppContext.setProperty("cuba.enableDeleteStatementInSoftDeleteMode", "true");
+                AppContext.setProperty("jmix.data.enableDeleteStatementInSoftDeleteMode", "true");
                 em.createQuery("delete from test$FileDescriptor f").executeUpdate();
             } catch (javax.persistence.PersistenceException e) {
                 //It's OK integrity constraint violation
             } finally {
-                AppContext.setProperty("cuba.enableDeleteStatementInSoftDeleteMode", "false");
+                AppContext.setProperty("jmix.data.enableDeleteStatementInSoftDeleteMode", "false");
             }
         } finally {
             try {

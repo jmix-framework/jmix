@@ -17,8 +17,7 @@
 package spec.haulmont.cuba.web
 
 
-import io.jmix.core.compatibility.AppProperties
-import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
+import com.haulmont.cuba.core.sys.AppProperties
 import io.jmix.ui.Screens
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.screen.Screen

@@ -16,15 +16,20 @@
 
 package spec.haulmont.cuba.web.sys.hotdeploy
 
-import io.jmix.core.compatibility.AppContext
+
 import io.jmix.ui.NoSuchScreenException
-import io.jmix.ui.WindowConfig
 import io.jmix.ui.screen.OpenMode
+import org.springframework.core.env.Environment
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
+import javax.inject.Inject
+
 @Ignore
 class ScreenHotDeployTest extends UiScreenSpec {
+
+    @Inject
+    Environment environment
 
     protected static final String SCREEN_TO_HOT_DEPLOY = '''
 package spec.haulmont.cuba.web.sys.hotdeploy.screens;
@@ -42,7 +47,7 @@ public class HotDeployTestScreen extends Screen {
 
         showMainScreen()
 
-        def confDirLocation = AppContext.getProperty('cuba.confDir')
+        def confDirLocation = environment.getProperty('jmix.core.confDir')
         def confDir = new File(confDirLocation)
         if (!confDir.exists()) {
             confDir.mkdirs()

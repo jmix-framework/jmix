@@ -24,7 +24,6 @@ import com.haulmont.cuba.core.testsupport.TestUserSessionSource;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WebBrowser;
-import io.jmix.core.compatibility.AppProperties;
 import io.jmix.core.metamodel.datatypes.FormatStrings;
 import io.jmix.core.metamodel.datatypes.FormatStringsRegistry;
 import io.jmix.core.security.UserSessionSource;
@@ -54,17 +53,12 @@ public class WebTestConfiguration {
     @Inject
     protected FormatStringsRegistry formatStringsRegistry;
 
-    @Inject
-    protected AppProperties appProperties;
-
     protected VaadinSession vaadinSession;
 
     @EventListener
     public void init(ContextRefreshedEvent event) {
         // saving session to avoid it be GC'ed
         VaadinSession.setCurrent(vaadinSession = createTestVaadinSession());
-
-        appProperties.setProperty("cuba.iconsConfig", "io.jmix.ui.icons.CubaIcon");
 
         formatStringsRegistry.setFormatStrings(Locale.ENGLISH, new FormatStrings(
                 '.', ',',

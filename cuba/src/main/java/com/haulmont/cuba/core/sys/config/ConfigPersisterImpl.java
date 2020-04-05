@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.sys.config;
 
-import io.jmix.core.compatibility.AppContext;
+import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.config.ConfigPersister;
 import com.haulmont.cuba.core.config.SourceType;
 import com.haulmont.cuba.core.app.ConfigStorageAPI;

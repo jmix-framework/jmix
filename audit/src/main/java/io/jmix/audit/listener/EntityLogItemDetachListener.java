@@ -32,7 +32,7 @@ import java.util.*;
 
 import static io.jmix.audit.entity.EntityLogAttr.*;
 
-@Component("cuba_EntityLogItemDetachListener")
+@Component("jmix_EntityLogItemDetachListener")
 public class EntityLogItemDetachListener implements BeforeDetachEntityListener<EntityLogItem> {
 
     private final Logger log = LoggerFactory.getLogger(EntityLogItemDetachListener.class);

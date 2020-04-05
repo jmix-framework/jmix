@@ -41,7 +41,7 @@ import java.util.Set;
  */
 @Entity(name = "sec$EntityLog")
 @Table(name = "SEC_ENTITY_LOG")
-@Listeners("cuba_EntityLogItemDetachListener")
+@Listeners("jmix_EntityLogItemDetachListener")
 @SystemLevel
 public class EntityLogItem extends BaseUuidEntity implements Creatable {
 

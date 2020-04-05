@@ -15,9 +15,8 @@
  */
 package io.jmix.data;
 
-import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.Logging;
-import io.jmix.core.compatibility.SupportedByClient;
+import io.jmix.core.security.ConstraintOperationType;
 
 import javax.annotation.Nullable;
 
@@ -26,7 +25,6 @@ import javax.annotation.Nullable;
  * <p>
  *
  */
-@SupportedByClient
 @Logging(Logging.Type.BRIEF)
 public class RowLevelSecurityException extends RuntimeException {
     private static final long serialVersionUID = -3097861878301424338L;

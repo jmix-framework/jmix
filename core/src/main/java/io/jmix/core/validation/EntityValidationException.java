@@ -16,14 +16,11 @@
 
 package io.jmix.core.validation;
 
-import io.jmix.core.compatibility.SupportedByClient;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@SupportedByClient
 public class EntityValidationException extends ConstraintViolationException {
     public EntityValidationException(String message, Set<? extends ConstraintViolation<?>> constraintViolations) {
         super(message, constraintViolations);

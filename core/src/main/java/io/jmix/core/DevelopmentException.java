@@ -16,12 +16,9 @@
 
 package io.jmix.core;
 
-import io.jmix.core.compatibility.SupportedByClient;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@SupportedByClient
 public class DevelopmentException extends RuntimeException {
 
     protected final Map<String, Object> params = new LinkedHashMap<>(1);

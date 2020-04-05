@@ -16,7 +16,6 @@
 package io.jmix.core.security;
 
 import io.jmix.core.Logging;
-import io.jmix.core.compatibility.SupportedByClient;
 
 /**
  * Exception that is raised on attempt to violate a security constraint.
@@ -24,7 +23,6 @@ import io.jmix.core.compatibility.SupportedByClient;
  * You can throw this exception in application code if you want a standard notification about "access denied"
  * to be shown to the user and the event to be logged.
  */
-@SupportedByClient
 @Logging(Logging.Type.BRIEF)
 public class AccessDeniedException extends RuntimeException
 {

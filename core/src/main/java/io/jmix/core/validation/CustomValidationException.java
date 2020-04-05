@@ -16,11 +16,8 @@
 
 package io.jmix.core.validation;
 
-import io.jmix.core.compatibility.SupportedByClient;
-
 import javax.validation.ValidationException;
 
-@SupportedByClient
 public class CustomValidationException extends ValidationException {
     public CustomValidationException(String message) {
         super(message);

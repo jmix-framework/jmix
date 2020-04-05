@@ -16,12 +16,10 @@
 package io.jmix.core.security;
 
 import io.jmix.core.Logging;
-import io.jmix.core.compatibility.SupportedByClient;
 
 /**
  * Login error. Contains message localized accordingly to the current user locale. 
  */
-@SupportedByClient
 @Logging(Logging.Type.BRIEF)
 public class LoginException extends RuntimeException {
 

@@ -16,14 +16,12 @@
 package io.jmix.core.security;
 
 import io.jmix.core.Logging;
-import io.jmix.core.compatibility.SupportedByClient;
 
 import java.util.UUID;
 
 /**
  * Thrown if there is no {@link UserSession} on the current thread or if it is expired.
  */
-@SupportedByClient
 @Logging(Logging.Type.BRIEF)
 public class NoUserSessionException extends RuntimeException {
 

@@ -16,13 +16,11 @@
 
 package io.jmix.core;
 
-import io.jmix.core.compatibility.SupportedByClient;
 import io.jmix.core.metamodel.model.MetaClass;
 
 /**
  * This exception is raised on attempt to load a deleted object.
  */
-@SupportedByClient
 public class EntityAccessException extends RuntimeException {
     public static final String ERR_MESSAGE_1 = "Unable to load entity ";
     public static final String ERR_MESSAGE_2 = "because it has been deleted or access denied";

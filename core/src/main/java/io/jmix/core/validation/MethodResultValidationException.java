@@ -16,13 +16,10 @@
 
 package io.jmix.core.validation;
 
-import io.jmix.core.compatibility.SupportedByClient;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.Set;
 
-@SupportedByClient
 public class MethodResultValidationException extends ConstraintViolationException {
     public MethodResultValidationException(String message,
                                            Set<? extends ConstraintViolation<?>> constraintViolations) {

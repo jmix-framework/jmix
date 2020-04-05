@@ -16,10 +16,8 @@
 
 package io.jmix.ui.menu;
 
-import com.google.common.collect.ImmutableMap;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.compatibility.EntityLoadInfo;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -42,7 +40,6 @@ import org.perf4j.StopWatch;
 import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -56,14 +53,16 @@ import java.util.stream.Collectors;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component("cuba_MenuItemCommands")
+@Component(MenuItemCommands.NAME)
 public class MenuItemCommands {
+
+    public static final String NAME = "jmix_MenuItemCommands";
 
     private static final Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
     private static final Logger log = LoggerFactory.getLogger(MenuItemCommands.class);
 
     @Inject
-    protected DataManager dataService;
+    protected DataManager dataManager;
     @Inject
     protected MenuConfig menuConfig;
     @Inject
@@ -75,11 +74,9 @@ public class MenuItemCommands {
     @Inject
     protected MetadataTools metadataTools;
     @Inject
-    private FetchPlanRepository fetchPlanRepository;
+    protected FetchPlanRepository fetchPlanRepository;
     @Inject
     protected ScreenBuilders screenBuilders;
-    @Inject
-    protected Environment environment;
     @Inject
     protected BeanLocator beanLocator;
 
@@ -109,47 +106,7 @@ public class MenuItemCommands {
     }
 
     protected Map<String, Object> loadParams(MenuItem item) {
-        Element descriptor = item.getDescriptor();
-        if (descriptor == null) {
-            return Collections.emptyMap();
-        }
-
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-
-        for (Element element : descriptor.elements("param")) {
-            String value = element.attributeValue("value");
-            EntityLoadInfo info = EntityLoadInfo.parse(value);
-            if (info == null) {
-                if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-                    Boolean booleanValue = Boolean.valueOf(value);
-                    builder.put(element.attributeValue("name"), booleanValue);
-                } else {
-                    if (value.startsWith("${") && value.endsWith("}")) {
-                        String property = environment.getProperty(value.substring(2, value.length() - 1));
-                        if (!StringUtils.isEmpty(property)) {
-                            value = property;
-                        }
-                    }
-                    builder.put(element.attributeValue("name"), value);
-                }
-            } else {
-                builder.put(element.attributeValue("name"), loadEntityInstance(info));
-            }
-        }
-
-        String screen = item.getScreen();
-
-        if (StringUtils.isNotEmpty(screen)) {
-            WindowInfo windowInfo = windowConfig.getWindowInfo(screen);
-            // caption is passed only for legacy screens
-            if (windowInfo.getDescriptor() != null) {
-                String caption = menuConfig.getItemCaption(item);
-
-                builder.put("caption", caption);
-            }
-        }
-
-        return builder.build();
+        return Collections.emptyMap();
     }
 
     protected List<UiControllerProperty> loadProperties(Element menuItemDescriptor) {
@@ -210,7 +167,7 @@ public class MenuItemCommands {
         }
 
         //noinspection unchecked
-        Entity entity = dataService.load(ctx);
+        Entity entity = dataManager.load(ctx);
         if (entity == null) {
             throw new RuntimeException(String.format("Unable to load entity of class '%s' with id '%s'",
                     entityClass, entityId));
@@ -247,16 +204,6 @@ public class MenuItemCommands {
         }
 
         return id;
-    }
-
-    protected Entity loadEntityInstance(EntityLoadInfo info) {
-        LoadContext ctx = new LoadContext(info.getMetaClass()).setId(info.getId());
-        if (info.getViewName() != null) {
-            ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(info.getMetaClass(), info.getViewName()));
-        }
-
-        //noinspection unchecked
-        return dataService.load(ctx);
     }
 
     protected StopWatch createStopWatch(MenuItem item) {

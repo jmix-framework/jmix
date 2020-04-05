@@ -16,10 +16,12 @@
 
 package io.jmix.ui.sys.linkhandling;
 
+import io.jmix.ui.sys.LinkHandler;
+
 /**
- * Interface that is used by {@link com.haulmont.cuba.web.sys.LinkHandler}
+ * Interface that is used by {@link LinkHandler}
  * to handle links from outside of the application.
- * <br> {@link com.haulmont.cuba.web.sys.LinkHandler} traverses processors to find first able to handle link.
+ * <br> {@link LinkHandler} traverses processors to find first able to handle link.
  * <br> To set processor priority use {@link org.springframework.core.annotation.Order @Order},
  * {@link org.springframework.core.Ordered} or {@link javax.annotation.Priority @Priority}.
  */

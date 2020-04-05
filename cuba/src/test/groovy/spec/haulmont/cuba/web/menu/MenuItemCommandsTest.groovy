@@ -71,7 +71,7 @@ class MenuItemCommandsTest extends UiScreenSpec {
         def dataService = Mock(DataService)
         dataService.load(_ as LoadContext) >> user
 
-        menuCommands.dataService = dataService
+        menuCommands.dataManager = dataService
 
         when: 'Screen menu item command with params and properties is running'
         def screenCmd = menuCommands.create(mainWindow, createScreenMenuItem()) as MenuItemCommands.ScreenCommand

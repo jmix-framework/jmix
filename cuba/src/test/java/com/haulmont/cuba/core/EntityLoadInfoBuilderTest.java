@@ -18,8 +18,8 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.AppBeans;
-import io.jmix.core.compatibility.EntityLoadInfo;
-import io.jmix.core.compatibility.EntityLoadInfoBuilder;
+import com.haulmont.cuba.core.global.EntityLoadInfo;
+import com.haulmont.cuba.core.global.EntityLoadInfoBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

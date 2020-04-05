@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.global.impl.CubaMetadata;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
+import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.annotation.JmixProperty;
@@ -29,6 +30,7 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.ui.JmixUiConfiguration;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.UiControllerDependencyInjector;
@@ -107,6 +109,11 @@ public class JmixCubaConfiguration {
         injector.setBeanLocator(beanLocator);
         injector.setReflectionInspector(uiControllerReflectionInspector);
         return injector;
+    }
+
+    @Bean(MenuItemCommands.NAME)
+    protected MenuItemCommands menuItemCommands() {
+        return new CubaMenuItemCommands();
     }
 
     @EventListener

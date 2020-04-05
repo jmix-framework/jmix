@@ -20,7 +20,7 @@ package com.haulmont.cuba.core.config.type;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.LoadContext;
-import io.jmix.core.compatibility.EntityLoadInfo;
+import com.haulmont.cuba.core.global.EntityLoadInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

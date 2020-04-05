@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.config.type;
 
-import io.jmix.core.compatibility.OriginalEntityLoadInfo;
+import com.haulmont.cuba.core.global.OriginalEntityLoadInfo;
 import io.jmix.core.Entity;
 
 public class EntityStringify extends TypeStringify {

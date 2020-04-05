@@ -34,7 +34,7 @@ import javax.inject.Inject;
 @Component(NumberIdWorker.NAME)
 public class NumberIdWorker {
 
-    public static final String NAME = "cuba_NumberIdWorker";
+    public static final String NAME = "jmix_NumberIdWorker";
 
     @Inject
     protected Metadata metadata;

@@ -26,7 +26,7 @@ import javax.inject.Inject;
 @Component(EntityPersistingEventManager.NAME)
 public class EntityPersistingEventManager {
 
-    public static final String NAME = "cuba_EntityPersistingEventManager";
+    public static final String NAME = "jmix_EntityPersistingEventManager";
 
     @Inject
     protected Events events;

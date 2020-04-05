@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface QueryResultsManager {
 
-    String NAME = "cuba_QueryResultsManager";
+    String NAME = "jmix_QueryResultsManager";
 
     void savePreviousQueryResults(LoadContext loadContext);
 

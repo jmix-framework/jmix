@@ -26,7 +26,7 @@ import java.util.UUID;
  */
 public interface AuditInfoProvider {
 
-    String NAME = "cuba_AuditInfoProvider";
+    String NAME = "jmix_AuditInfoProvider";
 
     @Nullable
     String getCurrentUserLogin();

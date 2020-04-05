@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
  */
 public interface JpqlSortExpressionProvider {
 
-    String NAME = "cuba_JpqlSortExpressionProvider";
+    String NAME = "jmix_JpqlSortExpressionProvider";
 
     /**
      * Returns JPQL order expression for specified property,

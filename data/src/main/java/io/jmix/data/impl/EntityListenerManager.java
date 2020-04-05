@@ -41,7 +41,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Component(EntityListenerManager.NAME)
 public class EntityListenerManager {
 
-    public static final String NAME = "cuba_EntityListenerManager";
+    public static final String NAME = "jmix_EntityListenerManager";
 
     protected static class Key {
         private final Class entityClass;

@@ -32,7 +32,7 @@ import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("cuba_TimeBetweenQueryMacroHandler")
+@Component("jmix_TimeBetweenQueryMacroHandler")
 @Scope("prototype")
 public class TimeBetweenQueryMacroHandler extends AbstractQueryMacroHandler {
 

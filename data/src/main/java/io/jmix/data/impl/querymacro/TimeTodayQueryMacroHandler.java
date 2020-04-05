@@ -26,7 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.regex.Pattern;
 
-@Component("cuba_TimeTodayQueryMacroHandler")
+@Component("jmix_TimeTodayQueryMacroHandler")
 @Scope("prototype")
 public class TimeTodayQueryMacroHandler extends AbstractQueryMacroHandler {
 

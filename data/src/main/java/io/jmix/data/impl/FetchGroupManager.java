@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @Component(FetchGroupManager.NAME)
 public class FetchGroupManager {
 
-    public static final String NAME = "cuba_FetchGroupManager";
+    public static final String NAME = "jmix_FetchGroupManager";
 
     private final Logger log = LoggerFactory.getLogger(FetchGroupManager.class);
 

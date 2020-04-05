@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component(EntityChangedEventManager.NAME)
 public class EntityChangedEventManager {
 
-    public static final String NAME = "cuba_EntityChangedEventManager";
+    public static final String NAME = "jmix_EntityChangedEventManager";
 
     private static final Logger log = LoggerFactory.getLogger(EntityChangedEventManager.class);
 

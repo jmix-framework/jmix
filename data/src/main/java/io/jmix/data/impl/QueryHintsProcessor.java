@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
 
 @Component(QueryHintsProcessor.NAME)
 public class QueryHintsProcessor {
-    public static final String NAME = "cuba_QueryHintsProcessor";
+    public static final String NAME = "jmix_QueryHintsProcessor";
 
     protected Map<String, BiConsumer<JpaQuery, Object>> hintHandlers = new HashMap<>();
 

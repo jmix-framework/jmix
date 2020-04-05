@@ -25,7 +25,7 @@ import java.util.Date;
 
 @Component(DateTimeTransformations.NAME)
 public class DateTimeTransformations {
-    public static final String NAME = "cuba_DateTimeTransformations";
+    public static final String NAME = "jmix_DateTimeTransformations";
 
     /**
      * Converts a date instance to the passed java type corresponding to one of the date types.

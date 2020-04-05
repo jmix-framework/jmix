@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Component(ConditionJpqlGenerator.NAME)
 public class ConditionJpqlGenerator {
 
-    public static final String NAME = "cuba_ConditionJpqlGenerator";
+    public static final String NAME = "jmix_ConditionJpqlGenerator";
 
     @Inject
     private QueryTransformerFactory queryTransformerFactory;

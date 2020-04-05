@@ -22,7 +22,7 @@ import java.util.Set;
  *
  */
 public interface QueryTransformer {
-    String NAME = "cuba_QueryTransformer";
+    String NAME = "jmix_QueryTransformer";
 
     /** Main entity alias placeholder  */
     String ALIAS_PLACEHOLDER = "{E}";

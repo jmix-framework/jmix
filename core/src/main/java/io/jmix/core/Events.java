@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationEventPublisher;
  * Simple facade for {@link ApplicationEventPublisher}.
  */
 public interface Events {
-    String NAME = "cuba_Events";
+    String NAME = "jmix_Events";
 
     // todo move to JmixCoreConfiguration
     /**

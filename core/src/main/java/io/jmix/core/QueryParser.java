@@ -24,7 +24,7 @@ import java.util.Set;
  * Parses JPQL query and returns some information about it.
  */
 public interface QueryParser {
-    String NAME = "cuba_QueryParser";
+    String NAME = "jmix_QueryParser";
 
     /**
      * Get all parameter names

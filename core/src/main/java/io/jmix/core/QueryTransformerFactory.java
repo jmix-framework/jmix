@@ -27,7 +27,7 @@ import javax.inject.Inject;
 @Component(QueryTransformerFactory.NAME)
 public class QueryTransformerFactory {
 
-    public static final String NAME = "cuba_QueryTransformerFactory";
+    public static final String NAME = "jmix_QueryTransformerFactory";
 
     protected volatile DomainModel domainModel;
 

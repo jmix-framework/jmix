@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Component(QueryStringProcessor.NAME)
 public class QueryStringProcessor {
 
-    public static final String NAME = "cuba_QueryStringProcessor";
+    public static final String NAME = "jmix_QueryStringProcessor";
 
     public static final Pattern START_PATTERN = Pattern.compile("^(\\w+)\\s");
 

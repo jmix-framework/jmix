@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public interface BeanLocator {
 
-    String NAME = "cuba_BeanLocator";
+    String NAME = "jmix_BeanLocator";
 
     /**
      * Returns the bean instance that matches the given object type.

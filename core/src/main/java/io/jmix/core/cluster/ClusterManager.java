@@ -22,7 +22,7 @@ import java.io.Serializable;
  */
 public interface ClusterManager {
 
-    String NAME = "cuba_ClusterManager";
+    String NAME = "jmix_ClusterManager";
 
     /**
      * Send a message to all active cluster nodes.

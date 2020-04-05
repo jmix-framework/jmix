@@ -24,7 +24,7 @@ import java.util.UUID;
  */
 public interface UserSessionSource {
 
-    String NAME = "cuba_UserSessionSource";
+    String NAME = "jmix_UserSessionSource";
 
     /**
      * @return true if the current user session is valid and calling {@link #getUserSession()} is safe

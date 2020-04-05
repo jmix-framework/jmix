@@ -26,7 +26,7 @@ import java.util.Date;
  */
 public interface TimeSource {
 
-    String NAME = "cuba_TimeSource";
+    String NAME = "jmix_TimeSource";
 
     /**
      * Return current timestamp as Date instance.

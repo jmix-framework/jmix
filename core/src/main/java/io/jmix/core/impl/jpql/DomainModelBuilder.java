@@ -37,7 +37,7 @@ import java.util.Collection;
 @Component(DomainModelBuilder.NAME)
 public class DomainModelBuilder {
 
-    public static final String NAME = "cuba_DomainModelBuilder";
+    public static final String NAME = "jmix_DomainModelBuilder";
 
     @Inject
     protected Metadata metadata;

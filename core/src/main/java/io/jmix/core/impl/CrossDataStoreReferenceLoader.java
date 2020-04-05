@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Scope("prototype")
 public class CrossDataStoreReferenceLoader {
 
-    public static final String NAME = "cuba_CrossDataStoreReferenceLoader";
+    public static final String NAME = "jmix_CrossDataStoreReferenceLoader";
 
     private static final Logger log = LoggerFactory.getLogger(CrossDataStoreReferenceLoader.class);
 

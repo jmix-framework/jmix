@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  */
 public interface UserSessions {
 
-    String NAME = "cuba_UserSessions";
+    String NAME = "jmix_UserSessions";
     
     /**
      * Get user session from cache.

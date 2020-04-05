@@ -34,7 +34,7 @@ import java.util.UUID;
 @Component(ReferenceToEntitySupport.NAME)
 public class ReferenceToEntitySupport {
 
-    public static final String NAME = "cuba_ReferenceToEntitySupport";
+    public static final String NAME = "jmix_ReferenceToEntitySupport";
 
     @Inject
     protected MetadataTools metadataTools;

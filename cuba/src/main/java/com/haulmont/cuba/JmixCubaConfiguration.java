@@ -18,13 +18,12 @@ package com.haulmont.cuba;
 
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
+import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.annotation.JmixProperty;
-import com.haulmont.cuba.core.sys.AppContext;
 import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.data.JmixDataConfiguration;
@@ -40,10 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -54,15 +50,8 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(
-        dependsOn = {
-                JmixCoreConfiguration.class,
-                JmixDataConfiguration.class,
-                JmixUiConfiguration.class},
-        properties = {
-                @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "/com/haulmont/cuba/cuba-fetch-plans.xml", append = true),
-                @JmixProperty(name = "cuba.windowConfig", value = "/com/haulmont/cuba/web-screens.xml", append = true)
-        })
+@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixUiConfiguration.class})
+@PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 public class JmixCubaConfiguration {
 
     protected BeanLocator beanLocator;

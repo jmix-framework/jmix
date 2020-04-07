@@ -19,16 +19,16 @@ package io.jmix.auditui;
 import io.jmix.audit.JmixAuditConfiguration;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.annotation.JmixProperty;
 import io.jmix.ui.JmixUiConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixAuditConfiguration.class, JmixUiConfiguration.class},
-        properties = @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "io/jmix/auditui/fetch-plans.xml", append = true))
 @ComponentScan
 @EnableTransactionManagement
+@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixAuditConfiguration.class, JmixUiConfiguration.class})
+@PropertySource(name = "io.jmix.auditui", value = "classpath:/io/jmix/auditui/module.properties")
 public class JmixAuditUiConfiguration {
 }

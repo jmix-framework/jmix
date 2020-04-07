@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.annotation.JmixProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -29,25 +28,20 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.ClassUtils;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor, EnvironmentAware, PriorityOrdered {
 
     private static final Logger log = LoggerFactory.getLogger(JmixModulesProcessor.class);
-    private Environment environment;
+    private ConfigurableEnvironment environment;
     private JmixModules jmixModules;
 
     public JmixModules getJmixModules() {
@@ -85,7 +79,7 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            JmixModule moduleAnnotation = AnnotationUtils.findAnnotation(beanClass, JmixModule.class);
+            JmixModule moduleAnnotation = beanClass.getAnnotation(JmixModule.class);
             String moduleId = getModuleId(moduleAnnotation, beanClass);
             if (!moduleIds.contains(moduleId)) {
                 moduleIds.add(moduleId);
@@ -125,15 +119,15 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
 
         log.info("Using Jmix modules: {}", modules);
 
-        jmixModules = new JmixModules(modules);
+        jmixModules = new JmixModules(modules, environment);
 
-        if (environment instanceof ConfigurableEnvironment) {
-            MutablePropertySources sources = ((ConfigurableEnvironment) environment).getPropertySources();
-            sources.addLast(new JmixPropertySource(jmixModules));
-        } else {
-            throw new IllegalStateException("Not a ConfigurableEnvironment, cannot register JmixModules property source");
+        for (int i = modules.size() - 1; i >= 0; i--) {
+            JmixModuleDescriptor module = modules.get(i);
+            PropertySource source = module.getPropertySource();
+            if (source != null) {
+                environment.getPropertySources().addLast(source);
+            }
         }
-
     }
 
     private boolean isDependingOnAll(@Nullable JmixModule moduleAnnotation) {
@@ -156,7 +150,7 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
                       List<JmixModuleDescriptor> modules) {
         if (!isDependingOnAll(moduleAnnotation)) {
             for (Class<?> depClass : moduleAnnotation.dependsOn()) {
-                JmixModule depModuleAnnotation = AnnotationUtils.findAnnotation(depClass, JmixModule.class);
+                JmixModule depModuleAnnotation = depClass.getAnnotation(JmixModule.class);
                 if (depModuleAnnotation == null) {
                     log.warn("Dependency class {} is not annotated with {}, ignoring it", depClass.getName(), JmixModule.class.getName());
                     continue;
@@ -175,12 +169,7 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
                 module.addDependency(depModule);
             }
         }
-
-        if (moduleAnnotation != null) {
-            for (JmixProperty propertyAnn : moduleAnnotation.properties()) {
-                module.setProperty(propertyAnn.name(), propertyAnn.value(), propertyAnn.append());
-            }
-        }
+        module.setPropertySource(environment.getPropertySources().remove(module.getId()));
     }
 
     @Override
@@ -195,29 +184,6 @@ public class JmixModulesProcessor implements BeanDefinitionRegistryPostProcessor
 
     @Override
     public void setEnvironment(Environment environment) {
-        this.environment = environment;
+        this.environment = (ConfigurableEnvironment) environment;
     }
-
-    private static class JmixPropertySource extends EnumerablePropertySource<JmixModules> {
-
-        public JmixPropertySource(JmixModules source) {
-            super("JmixModules properties", source);
-        }
-
-        @Nonnull
-        @Override
-        public String[] getPropertyNames() {
-            Set<String> propertyNames = new HashSet<>();
-            for (JmixModuleDescriptor module : source.getAll()) {
-                propertyNames.addAll(module.getPropertyNames());
-            }
-            return propertyNames.toArray(new String[0]);
-        }
-
-        @Override
-        public Object getProperty(String name) {
-            return source.getProperty(name);
-        }
-    }
-
 }

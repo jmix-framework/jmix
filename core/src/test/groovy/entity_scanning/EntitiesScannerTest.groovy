@@ -24,9 +24,9 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 import test_support.AppContextTestExecutionListener
-import test_support.base.BaseConfiguration
+import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, BaseConfiguration])
+@ContextConfiguration(classes = [JmixCoreConfiguration, TestBaseConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class EntitiesScannerTest extends Specification {

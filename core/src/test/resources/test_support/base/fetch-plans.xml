@@ -17,8 +17,4 @@
 
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
-    <fetchPlan class="test_support.addon1.entity.TestAddon1Entity" name="test-fp-1">
-        <property name="name"/>
-    </fetchPlan>
-
 </fetchPlans>

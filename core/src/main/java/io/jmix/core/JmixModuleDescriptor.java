@@ -16,8 +16,11 @@
 
 package io.jmix.core;
 
+import org.springframework.core.env.PropertySource;
+
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Describes a Jmix module which the current application depends on.
@@ -26,8 +29,7 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
 
     private final String id;
     private final List<JmixModuleDescriptor> dependencies = new ArrayList<>();
-    private Properties properties;
-    private Set<String> additiveProperties;
+    private PropertySource<?> propertySource;
 
     public JmixModuleDescriptor(String id) {
         this.id = id;
@@ -73,45 +75,26 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
 
     /**
      * INTERNAL.
-     * Set a file-based app property defined in this module.
+     * Set the module's PropertySource.
      */
-    public void setProperty(String name, String value, boolean additive) {
-        if (properties == null)
-            properties = new Properties();
-
-        if (additive) {
-            if (additiveProperties == null) {
-                additiveProperties = new HashSet<>();
-            }
-            additiveProperties.add(name);
-        } else if (additiveProperties != null) {
-            additiveProperties.remove(name);
-        }
-
-        properties.setProperty(name, value);
+    public void setPropertySource(@Nullable PropertySource<?> propertySource) {
+        this.propertySource = propertySource;
     }
 
     /**
-     * @return a file-based app property defined in this module or null if not found
+     * Get the module's PropertySource.
+     */
+    @Nullable
+    public PropertySource<?> getPropertySource() {
+        return propertySource;
+    }
+
+    /**
+     * @return a property defined in this module's PropertySource or null if not found
      */
     @Nullable
     public String getProperty(String property) {
-        return properties == null ? null : properties.getProperty(property);
-    }
-
-    public boolean isAdditiveProperty(String property) {
-        return additiveProperties != null && additiveProperties.contains(property);
-    }
-
-    /**
-     * @return names of properties exported by this module, sorted in natural order
-     */
-    public List<String> getPropertyNames() {
-        if (properties == null)
-            return Collections.emptyList();
-        List<String> list = new ArrayList<>(properties.stringPropertyNames());
-        list.sort(Comparator.naturalOrder());
-        return list;
+        return propertySource == null ? null : (String) propertySource.getProperty(property);
     }
 
     @Override

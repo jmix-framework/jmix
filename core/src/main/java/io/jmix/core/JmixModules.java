@@ -16,27 +16,26 @@
 
 package io.jmix.core;
 
-import com.google.common.base.Splitter;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.PropertySource;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.regex.Pattern;
 
 /**
  * Holds the list of {@link JmixModuleDescriptor}s.
  */
 public class JmixModules {
 
-    public static final Pattern SEPARATOR_PATTERN = Pattern.compile("\\s");
-
     private final List<JmixModuleDescriptor> moduleDescriptors;
+    private final Environment environment;
 
-    public JmixModules(List<JmixModuleDescriptor> moduleDescriptors) {
+    public JmixModules(List<JmixModuleDescriptor> moduleDescriptors, Environment environment) {
         this.moduleDescriptors = moduleDescriptors;
+        this.environment = environment;
     }
 
     /**
@@ -68,39 +67,28 @@ public class JmixModules {
         return moduleDescriptors.get(moduleDescriptors.size() - 1);
     }
 
-    @Nullable
-    public String getProperty(String name) {
-        List<String> values = new ArrayList<>();
-
-        List<JmixModuleDescriptor> descriptors = getAll();
-        ListIterator<JmixModuleDescriptor> iterator = descriptors.listIterator(descriptors.size());
-
-        int index;
-        while (iterator.hasPrevious()) {
-            JmixModuleDescriptor module = iterator.previous();
-
-            String moduleValue = module.getProperty(name);
-            if (StringUtils.isNotEmpty(moduleValue)) {
-                if (module.isAdditiveProperty(name)) {
-                    index = 0;
-                    for (String valuePart : split(moduleValue)) {
-                        if (!values.contains(valuePart)) {
-                            values.add(index, valuePart);
-                            index++;
-                        }
-                    }
-                } else {
-                    values.add(0, moduleValue);
-                    // we found overwrite, stop iteration
-                    break;
+    /**
+     * Returns the list of property values from all modules in the order of their dependencies, from the core
+     * to the application. The last item in the list is the value obtained from {@link Environment}.
+     * <p>
+     * This method is convenient for getting values of "additive" properties like {@code jmix.core.fetchPlanConfig}.
+     */
+    public List<String> getPropertyValues(String propertyName) {
+        LinkedHashSet<String> set = new LinkedHashSet<>();
+        for (JmixModuleDescriptor module : moduleDescriptors) {
+            PropertySource<?> propertySource = module.getPropertySource();
+            if (propertySource != null) {
+                String value = (String) propertySource.getProperty(propertyName);
+                if (value != null) {
+                    set.add(value);
                 }
             }
         }
-
-        return values.isEmpty() ? null : String.join(" ", values);
+        String value = environment.getProperty(propertyName);
+        if (value != null) {
+            set.add(value);
+        }
+        return new ArrayList<>(set);
     }
 
-    private Iterable<String> split(String moduleValue) {
-        return Splitter.on(SEPARATOR_PATTERN).omitEmptyStrings().split(moduleValue);
-    }
 }

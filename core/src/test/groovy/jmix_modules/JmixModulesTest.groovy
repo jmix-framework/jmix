@@ -16,10 +16,7 @@
 
 package jmix_modules
 
-import test_support.addon1.TestAddon1Configuration
-import test_support.AppContextTestExecutionListener
-import test_support.app.TestAppConfiguration
-import test_support.app.TestBean
+import io.jmix.core.EnvironmentUtils
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.JmixModules
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,17 +24,18 @@ import org.springframework.core.env.Environment
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
+import test_support.AppContextTestExecutionListener
+import test_support.addon1.TestAddon1Configuration
+import test_support.app.TestAppConfiguration
+import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [TestAppConfiguration, TestAddon1Configuration, JmixCoreConfiguration])
+@ContextConfiguration(classes = [TestAppConfiguration, TestAddon1Configuration, TestBaseConfiguration, JmixCoreConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class JmixModulesTest extends Specification {
 
     @Autowired
     private JmixModules modules
-
-    @Autowired
-    private TestBean testBean
 
     @Autowired
     private Environment environment
@@ -58,35 +56,36 @@ class JmixModulesTest extends Specification {
         app.dependsOn(jmixCore)
     }
 
-    def "configuration properties of components"() {
+    def "properties of components"() {
         expect:
 
+        def base = modules.get('test_support.base')
         def addon1 = modules.get('test_support.addon1')
         def app = modules.get('test_support.app')
 
+        base.getProperty('jmix.core.fetchPlansConfig') == 'test_support/base/fetch-plans.xml'
+
         addon1.getProperty('jmix.core.fetchPlansConfig') == 'test_support/addon1/fetch-plans.xml'
-        app.getProperty('jmix.core.fetchPlansConfig') == 'test_support/app/fetch-plans.xml'
+        addon1.getProperty('prop1') == 'addon1_prop1'
+        addon1.getProperty('prop2') == 'addon1_prop2'
 
+        // because @PropertySource has no name in TestAppConfiguration
+        app.getProperty('jmix.core.fetchPlansConfig') == null
+        app.getProperty('prop2') == null
+        // app values
+        environment.getProperty('jmix.core.fetchPlansConfig') == 'test_support/app/fetch-plans.xml'
+        environment.getProperty('prop2') == 'app_prop2'
     }
 
-    def "resulting configuration properties"() {
+    def "resulting properties"() {
         expect:
 
-        modules.getProperty('jmix.core.fetchPlansConfig') == 'test_support/addon1/fetch-plans.xml test_support/app/fetch-plans.xml'
-        modules.getProperty('prop1') == 'addon1_prop1 app_prop1'
-        modules.getProperty('prop2') == 'app_prop2'
-        modules.getProperty('prop3') == 'app_prop3'
-    }
+        environment.getProperty('jmix.core.fetchPlansConfig') == 'test_support/app/fetch-plans.xml'
+        environment.getProperty('prop1') == 'addon1_prop1'
+        environment.getProperty('prop2') == 'app_prop2'
 
-    def "using configuration properties"() {
-        expect:
-
-        testBean.prop1 == 'addon1_prop1 app_prop1'
-    }
-
-    def "app property file overrides JmixProperty"() {
-        expect:
-
-        environment.getProperty('prop_to_override') == 'app_properties_file_prop3'
+        modules.getPropertyValues('jmix.core.fetchPlansConfig') == [
+                'test_support/base/fetch-plans.xml', 'test_support/addon1/fetch-plans.xml', 'test_support/app/fetch-plans.xml'
+        ]
     }
 }

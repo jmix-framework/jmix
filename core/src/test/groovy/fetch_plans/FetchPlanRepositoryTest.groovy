@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package fetch_plans
 
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
@@ -33,38 +33,38 @@ import javax.inject.Inject
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-class ViewRepositoryTest extends Specification {
+class FetchPlanRepositoryTest extends Specification {
 
     @Inject
-    FetchPlanRepository viewRepository
+    FetchPlanRepository repository
 
-    def "view is deployed from add-on's view.xml file"() {
+    def "fetchPlan is deployed from add-on's fetch-plans.xml file"() {
         when:
 
-        def view = viewRepository.getFetchPlan(TestAddon1Entity, 'test-view-1')
+        def fetchPlan = repository.getFetchPlan(TestAddon1Entity, 'test-fp-1')
 
         then:
 
-        view.containsProperty('name')
+        fetchPlan.containsProperty('name')
     }
 
-    def "predefined views do not contain system properties"() {
+    def "predefined fetch plans do not contain system properties"() {
 
-        def localView = viewRepository.getFetchPlan(Pet.class, FetchPlan.LOCAL)
+        def localFetchPlan = repository.getFetchPlan(Pet.class, FetchPlan.LOCAL)
 
         expect:
-        !containsSystemProperties(localView)
+        !containsSystemProperties(localFetchPlan)
 
     }
 
-    private boolean containsSystemProperties(FetchPlan view) {
-        return view.containsProperty("id") ||
-            view.containsProperty("version") ||
-            view.containsProperty("deleteTs") ||
-            view.containsProperty("deletedBy") ||
-            view.containsProperty("createTs") ||
-            view.containsProperty("createdBy") ||
-            view.containsProperty("updateTs") ||
-            view.containsProperty("updatedBy")
+    private boolean containsSystemProperties(FetchPlan fetchPlan) {
+        return fetchPlan.containsProperty("id") ||
+            fetchPlan.containsProperty("version") ||
+            fetchPlan.containsProperty("deleteTs") ||
+            fetchPlan.containsProperty("deletedBy") ||
+            fetchPlan.containsProperty("createTs") ||
+            fetchPlan.containsProperty("createdBy") ||
+            fetchPlan.containsProperty("updateTs") ||
+            fetchPlan.containsProperty("updatedBy")
     }
 }

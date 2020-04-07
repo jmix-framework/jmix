@@ -24,7 +24,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -81,6 +80,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     @Inject
     protected Resources resources;
 
+    @Inject
+    protected JmixModules modules;
+
     protected volatile boolean initialized;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -109,20 +111,16 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         storage.clear();
         readFileNames.clear();
 
-        String configName = environment.getProperty("jmix.core.fetchPlansConfig");
-        if (!StringUtils.isBlank(configName)) {
-            Element rootElem = DocumentHelper.createDocument().addElement("fetchPlans");
+        Element rootElem = DocumentHelper.createDocument().addElement("fetchPlans");
 
-            StringTokenizer tokenizer = new StringTokenizer(configName);
-            for (String fileName : tokenizer.getTokenArray()) {
-                addFile(rootElem, fileName);
-            }
+        for (String location : modules.getPropertyValues("jmix.core.fetchPlansConfig")) {
+            addFile(rootElem, location);
+        }
 
-            checkDuplicates(rootElem);
+        checkDuplicates(rootElem);
 
-            for (Element viewElem : getFetchPlanElements(rootElem)) {
-                deployFetchPlan(rootElem, viewElem, new HashSet<>());
-            }
+        for (Element viewElem : getFetchPlanElements(rootElem)) {
+            deployFetchPlan(rootElem, viewElem, new HashSet<>());
         }
 
 //        initTiming.stop();

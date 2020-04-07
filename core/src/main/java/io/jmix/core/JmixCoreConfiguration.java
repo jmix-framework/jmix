@@ -17,16 +17,12 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.annotation.JmixProperty;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.JmixCoreSecurityConfiguration;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.PriorityOrdered;
@@ -42,10 +38,8 @@ import org.springframework.core.annotation.Order;
 @Import(JmixCoreSecurityConfiguration.class)
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {}, properties = {
-        @JmixProperty(name = "jmix.core.workDir", value = "${user.dir}/.jmix/work"),
-        @JmixProperty(name = "jmix.core.confDir", value = "${user.dir}/.jmix/conf")
-})
+@JmixModule(dependsOn = {})
+@PropertySource(name = "io.jmix.core", value = "classpath:/io/jmix/core/module.properties")
 public class JmixCoreConfiguration {
 
     @Bean("jmix_ModulesProcessor")

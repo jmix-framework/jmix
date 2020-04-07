@@ -25,11 +25,6 @@ import java.lang.annotation.Target;
  * Indicates that the {@code @Configuration} class is a main configuration of a Jmix module.
  *
  * <p>Specifies what this module depends on using the {@link #dependsOn()} attribute.
- *
- * <p>Contains a list of {@link org.springframework.core.env.Environment} properties provided by this module in
- * the {@link #properties()} attribute. Property values are overridden or appended according to the module
- * dependencies tree. This property source has the lowest precedence so the {@link JmixProperty} values can be
- * overridden in the application properties file.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -45,12 +40,6 @@ public @interface JmixModule {
      * themselves.
      */
     Class[] dependsOn() default AllModules.class;
-
-    /**
-     * The list of properties provided by this module. Actual values in the application are defined as a result of
-     * overriding or appending according to the module dependencies tree.
-     */
-    JmixProperty[] properties() default {};
 
     class AllModules {
     }

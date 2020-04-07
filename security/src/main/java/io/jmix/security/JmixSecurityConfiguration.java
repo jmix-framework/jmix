@@ -18,15 +18,13 @@ package io.jmix.security;
 
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.annotation.JmixProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@JmixModule(dependsOn = JmixCoreConfiguration.class, properties = {
-        @JmixProperty(name = "jmix.core.fetchPlansConfig", value = "io/jmix/security/fetch-plans.xml", append = true),
-        @JmixProperty(name = "jmix.defaultPermissionValuesConfig", value = "io/jmix/security/default-permission-values.xml")
-})
+@JmixModule(dependsOn = JmixCoreConfiguration.class)
+@PropertySource(name = "io.jmix.security", value = "classpath:/io/jmix/security/module.properties")
 @Import(StandardSecurityConfiguration.class)
 public class JmixSecurityConfiguration {
 }

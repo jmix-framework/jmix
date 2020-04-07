@@ -17,20 +17,18 @@
 package io.jmix.security.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.JmixModules;
 import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
 import io.jmix.core.commons.util.Dom4j;
 import io.jmix.core.security.PermissionType;
 import io.jmix.security.entity.Permission;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -41,7 +39,7 @@ import java.util.Map;
 /**
  * Class used for working with default permissions.
  * Default permission values are used when no role defines an explicit value for permission target.
- * Default permissions are loaded from the set of files defined by the {@code cuba.defaultPermissionValuesConfig} app property.
+ * Default permissions are loaded from the set of files defined by the {@code jmix.security.defaultPermissionValuesConfig} app property.
  */
 @Component("jmix_DefaultPermissionValuesConfig")
 public class DefaultPermissionValuesConfig {
@@ -57,19 +55,15 @@ public class DefaultPermissionValuesConfig {
     protected Metadata metadata;
 
     @Inject
-    protected Environment environment;
+    protected JmixModules modules;
 
     @EventListener
     protected void init(ContextRefreshedEvent event) {
         log.info("Initializing default permission values");
         permissionValues.clear();
 
-        String configName = environment.getProperty("jmix.defaultPermissionValuesConfig");
-        if (!StringUtils.isBlank(configName)) {
-            StringTokenizer tokenizer = new StringTokenizer(configName);
-            for (String fileName : tokenizer.getTokenArray()) {
-                parseConfigFile(fileName);
-            }
+        for (String location : modules.getPropertyValues("jmix.security.defaultPermissionValuesConfig")) {
+            parseConfigFile(location);
         }
     }
 

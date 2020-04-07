@@ -18,7 +18,6 @@ package io.jmix.ui;
 
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.annotation.JmixProperty;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
@@ -27,16 +26,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Collections;
 
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = JmixCoreConfiguration.class, properties = {
-        @JmixProperty(name = "server.servlet.session.persistent", value = "false"),
-        @JmixProperty(name = "jmix.ui.themeConfig", value = "io/jmix/ui/theme/halo-theme.properties")
-})
+@JmixModule(dependsOn = JmixCoreConfiguration.class)
+@PropertySource(name = "io.jmix.ui", value = "classpath:/io/jmix/ui/module.properties")
 public class JmixUiConfiguration {
 
     @Bean("jmix_UiControllers")

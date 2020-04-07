@@ -27,7 +27,6 @@ import io.jmix.ui.components.Window;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +96,8 @@ public class WindowConfig {
     protected ApplicationContext applicationContext;
     @Inject
     protected AnnotationScanMetadataReaderFactory metadataReaderFactory;
+    @Inject
+    protected JmixModules modules;
 
     protected volatile boolean initialized;
 
@@ -263,9 +264,7 @@ public class WindowConfig {
     }
 
     protected void loadScreensXml() {
-        String configName = environment.getProperty(WINDOW_CONFIG_XML_PROP);
-        StringTokenizer tokenizer = new StringTokenizer(configName);
-        for (String location : tokenizer.getTokenArray()) {
+        for (String location : modules.getPropertyValues(WINDOW_CONFIG_XML_PROP)) {
             Resource resource = resources.getResource(location);
             if (resource.exists()) {
                 try (InputStream stream = resource.getInputStream()) {

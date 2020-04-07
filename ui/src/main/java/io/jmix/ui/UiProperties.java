@@ -72,6 +72,7 @@ public class UiProperties {
     boolean allowAnonymousAccess;
     boolean htmlSanitizerEnabled;
     String iconsConfig;
+    private boolean compositeMenu;
 
     public UiProperties(
             boolean testMode,
@@ -117,7 +118,9 @@ public class UiProperties {
             @DefaultValue("false") boolean forceRefreshAuthenticatedTabs,
             @DefaultValue("false") boolean allowAnonymousAccess,
             @DefaultValue("true") boolean htmlSanitizerEnabled,
-            @DefaultValue("io.jmix.ui.icons.CubaIcon") String iconsConfig
+            @DefaultValue("io.jmix.ui.icons.CubaIcon") String iconsConfig,
+            @DefaultValue("true") boolean compositeMenu
+
     ) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
@@ -163,6 +166,7 @@ public class UiProperties {
         this.allowAnonymousAccess = allowAnonymousAccess;
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
         this.iconsConfig = iconsConfig;
+        this.compositeMenu = compositeMenu;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -388,5 +392,9 @@ public class UiProperties {
 
     public String getIconsConfig() {
         return iconsConfig;
+    }
+
+    public boolean isCompositeMenu() {
+        return compositeMenu;
     }
 }

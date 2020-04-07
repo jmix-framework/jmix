@@ -15,17 +15,14 @@
  */
 package io.jmix.ui.menu;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
-import io.jmix.core.Resources;
+import io.jmix.core.*;
 import io.jmix.core.commons.xmlparsing.Dom4jTools;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.KeyCombination;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +72,12 @@ public class MenuConfig {
 
     @Inject
     protected Environment environment;
+
+    @Inject
+    protected UiProperties uiProperties;
+
+    @Inject
+    protected JmixModules modules;
 
     protected volatile boolean initialized;
 
@@ -126,10 +129,11 @@ public class MenuConfig {
     protected void init() {
         rootItems.clear();
 
-        String configName = environment.getProperty(MENU_CONFIG_XML_PROP);
+        List<String> locations = uiProperties.isCompositeMenu() ?
+                modules.getPropertyValues(MENU_CONFIG_XML_PROP) :
+                Collections.singletonList(environment.getProperty(MENU_CONFIG_XML_PROP));
 
-        StringTokenizer tokenizer = new StringTokenizer(configName);
-        for (String location : tokenizer.getTokenArray()) {
+        for (String location : locations) {
             Resource resource = resources.getResource(location);
             if (resource.exists()) {
                 try (InputStream stream = resource.getInputStream()) {

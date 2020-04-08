@@ -199,10 +199,10 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
 
             setSecurityState(entry.getSecurityState());
 
-            if (entry.getExtraState() != null) {
-                for (EntityEntryExtraState extraState : entry.getExtraState()) {
+            if (entry.getAllExtraState() != null) {
+                for (EntityEntryExtraState extraState : entry.getAllExtraState()) {
                     try {
-                        EntityEntryExtraState newExtraState = ReflectionHelper.newInstance(extraState.getClass());
+                        EntityEntryExtraState newExtraState = ReflectionHelper.newInstance(extraState.getClass(), this);
                         newExtraState.copy(extraState);
                         addExtraState(newExtraState);
                     } catch (NoSuchMethodException e) {
@@ -235,7 +235,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
 
     @Nullable
     @Override
-    public Collection<EntityEntryExtraState> getExtraState() {
+    public Collection<EntityEntryExtraState> getAllExtraState() {
         return extraStateMap == null ? null : Collections.unmodifiableCollection(extraStateMap.values());
     }
 }

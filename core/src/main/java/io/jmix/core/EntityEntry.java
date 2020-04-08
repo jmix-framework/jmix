@@ -93,5 +93,5 @@ public interface EntityEntry<K> extends Serializable {
     <T extends EntityEntryExtraState> T getExtraState(Class<T> extraStateType);
 
     @Nullable
-    Collection<EntityEntryExtraState> getExtraState();
+    Collection<EntityEntryExtraState> getAllExtraState();
 }

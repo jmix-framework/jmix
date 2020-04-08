@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.entity.SoftDelete;
@@ -34,6 +33,7 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -108,10 +108,6 @@ public class OrmDataStore implements DataStore {
     @Inject
     protected QueryResultsManager queryResultsManager;
 
-    // todo dynamic attributes
-//    @Inject
-//    protected DynamicAttributesManagerAPI dynamicAttributesManagerAPI;
-
     @Inject
     protected QueryTransformerFactory queryTransformerFactory;
 
@@ -129,6 +125,9 @@ public class OrmDataStore implements DataStore {
 
     @Inject
     protected StoreAwareLocator storeAwareLocator;
+
+    @Autowired(required = false)
+    protected List<OrmLifecycleListener> ormLifecycleListeners;
 
     protected String storeName;
 
@@ -190,12 +189,10 @@ public class OrmDataStore implements DataStore {
                 persistenceSecurity.calculateFilteredData(result);
             }
 
-            // todo dynamic attributes
-//            if (result instanceof BaseGenericIdEntity && context.isLoadDynamicAttributes()) {
-//                dynamicAttributesManagerAPI.fetchDynamicAttributes(Collections.singletonList((BaseGenericIdEntity) result),
-//                        collectEntityClassesWithDynamicAttributes(context.getView()));
-//            }
 
+            if (result != null) {
+                fireLoadListeners(Collections.singletonList(result), context);
+            }
 
             if (context.isJoinTransaction()) {
                 em.flush();
@@ -219,6 +216,7 @@ public class OrmDataStore implements DataStore {
 
         return result;
     }
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -274,12 +272,10 @@ public class OrmDataStore implements DataStore {
                 resultList = checkAndReorderLoadedEntities(context.getIds(), entities, metaClass);
             }
 
-            // Fetch dynamic attributes
-            // todo dynamic attributes
-//            if (!resultList.isEmpty() && resultList.get(0) instanceof BaseGenericIdEntity && context.isLoadDynamicAttributes()) {
-//                dynamicAttributesManagerAPI.fetchDynamicAttributes((List<BaseGenericIdEntity>) resultList,
-//                        collectEntityClassesWithDynamicAttributes(context.getFetchPlan()));
-//            }
+            if (!resultList.isEmpty()) {
+                //noinspection rawtypes
+                fireLoadListeners((List<Entity>) resultList, context);
+            }
 
             if (needToApplyInMemoryReadConstraints) {
                 persistenceSecurity.calculateFilteredData((Collection<Entity>) resultList);
@@ -485,14 +481,6 @@ public class OrmDataStore implements DataStore {
                             entityFetcher.fetch(entity, view, true);
                         }
 
-                        // todo dynamic attributes
-                        //                    if (entityHasDynamicAttributes(entity)) {
-                        //                        if (entity instanceof BaseDbGeneratedIdEntity) {
-                        //                            identityEntitiesToStoreDynamicAttributes.add((BaseGenericIdEntity) entity);
-                        //                        } else {
-                        //                            entitiesToStoreDynamicAttributes.add((BaseGenericIdEntity) entity);
-                        //                        }
-                        //                    }
                     }
                 }
 
@@ -516,21 +504,16 @@ public class OrmDataStore implements DataStore {
                         if (isAuthorizationRequired(context))
                             checkOperationPermitted(merged, ConstraintOperationType.UPDATE);
 
-                        // todo dynamic attributes
-                        //                    if (entityHasDynamicAttributes(entity)) {
-                        //                        BaseGenericIdEntity originalBaseGenericIdEntity = (BaseGenericIdEntity) entity;
-                        //                        BaseGenericIdEntity mergedBaseGenericIdEntity = (BaseGenericIdEntity) merged;
-                        //
-                        //                        mergedBaseGenericIdEntity.setDynamicAttributes(originalBaseGenericIdEntity.getDynamicAttributes());
-                        //                        entitiesToStoreDynamicAttributes.add(mergedBaseGenericIdEntity);
-                        //                    }
                     }
                 }
+
 
                 // todo dynamic attributes
                 //            for (BaseGenericIdEntity entity : entitiesToStoreDynamicAttributes) {
                 //                dynamicAttributesManagerAPI.storeDynamicAttributes(entity);
                 //            }
+
+                fireSaveListeners(context.getEntitiesToSave());
 
                 // remove
                 for (Entity entity : context.getEntitiesToRemove()) {
@@ -1259,6 +1242,23 @@ public class OrmDataStore implements DataStore {
                 }
             }
         });
+    }
+
+    protected void fireLoadListeners(Collection<Entity> entities, LoadContext<?> context) {
+        if (ormLifecycleListeners != null) {
+            for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
+                //noinspection unchecked
+                lifecycleListener.onLoad(entities, context);
+            }
+        }
+    }
+
+    protected void fireSaveListeners(Collection<Entity> entities) {
+        if (ormLifecycleListeners != null) {
+            for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
+                lifecycleListener.onSave(entities);
+            }
+        }
     }
 
     protected void handleCascadePersistException(IllegalStateException e) throws IllegalStateException {

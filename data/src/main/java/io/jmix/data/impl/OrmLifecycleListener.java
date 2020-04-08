@@ -17,14 +17,17 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.Entity;
+import io.jmix.core.LoadContext;
 import io.jmix.data.EntityChangeType;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Interface for persistence lifecycle listeners notified by {@link PersistenceSupport} before commit.
  */
-public interface PersistenceLifecycleListener {
+public interface OrmLifecycleListener {
 
     /**
      * Invoked before entity commit.
@@ -43,5 +46,17 @@ public interface PersistenceLifecycleListener {
      * @param storeName name of data store
      */
     default void onFlush(String storeName) {
+    }
+
+    /**
+     * Invoked when entities are loaded from ORM store
+     */
+    default void onLoad(Collection<Entity> entities, LoadContext loadContext) {
+    }
+
+    /**
+     * Invoked when entities are saved in ORM store
+     */
+    default void onSave(Collection<Entity> entities) {
     }
 }

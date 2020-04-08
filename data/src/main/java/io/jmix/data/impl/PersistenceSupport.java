@@ -89,7 +89,7 @@ public class PersistenceSupport implements ApplicationContextAware {
     protected EntityChangedEventManager entityChangedEventManager;
 
     @Autowired(required = false)
-    protected List<PersistenceLifecycleListener> lifecycleListeners = new ArrayList<>();
+    protected List<OrmLifecycleListener> lifecycleListeners = new ArrayList<>();
 
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 
@@ -316,7 +316,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         if (lifecycleListeners == null) {
             return;
         }
-        for (PersistenceLifecycleListener listener : lifecycleListeners) {
+        for (OrmLifecycleListener listener : lifecycleListeners) {
             listener.onFlush(storeName);
         }
     }
@@ -325,7 +325,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         if (lifecycleListeners == null) {
             return;
         }
-        for (PersistenceLifecycleListener listener : lifecycleListeners) {
+        for (OrmLifecycleListener listener : lifecycleListeners) {
             listener.onEntityChange(entity, type, changes);
         }
     }

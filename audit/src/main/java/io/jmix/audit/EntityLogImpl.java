@@ -36,7 +36,7 @@ import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.PersistenceTools;
 import io.jmix.data.impl.EntityAttributeChanges;
-import io.jmix.data.impl.PersistenceLifecycleListener;
+import io.jmix.data.impl.OrmLifecycleListener;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component(EntityLog.NAME)
-public class EntityLogImpl implements EntityLog, PersistenceLifecycleListener {
+public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 
     private static final Logger log = LoggerFactory.getLogger(EntityLogImpl.class);
 

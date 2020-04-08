@@ -166,7 +166,7 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlanBuilder addFetchPlan(String planName) {
-        addView(viewRepository.getFetchPlan(metaClass, planName));
+        addFetchPlan(viewRepository.getFetchPlan(metaClass, planName));
         return this;
     }
 }

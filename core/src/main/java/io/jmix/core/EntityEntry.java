@@ -19,7 +19,9 @@ package io.jmix.core;
 import io.jmix.core.entity.EntityPropertyChangeListener;
 import io.jmix.core.entity.SecurityState;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Collection;
 
 public interface EntityEntry<K> extends Serializable {
 
@@ -84,4 +86,12 @@ public interface EntityEntry<K> extends Serializable {
      * Copies the state.
      */
     void copy(EntityEntry<?> entry);
+
+    void addExtraState(EntityEntryExtraState extraState);
+
+    @Nullable
+    <T extends EntityEntryExtraState> T getExtraState(Class<T> extraStateType);
+
+    @Nullable
+    Collection<EntityEntryExtraState> getExtraState();
 }

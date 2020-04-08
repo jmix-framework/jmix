@@ -18,13 +18,15 @@ package io.jmix.core.entity;
 
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
+import io.jmix.core.EntityEntryExtraState;
+import io.jmix.core.EntityValuesProvider;
+import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
 
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
@@ -32,6 +34,8 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     protected SecurityState securityState = new SecurityState();
     protected transient Collection<WeakReference<EntityPropertyChangeListener>> propertyChangeListeners;
     protected Entity<K> source;
+    protected Map<Class, EntityEntryExtraState> extraStateMap;
+    protected List<EntityValuesProvider> entityValuesProviders;
 
     public static final int NEW = 1;
     public static final int DETACHED = 2;
@@ -52,16 +56,34 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getAttributeValue(String name) {
+        if (entityValuesProviders != null) {
+            for (EntityValuesProvider valuesProvider : entityValuesProviders) {
+                if (valuesProvider.supportAttribute(name)) {
+                    return valuesProvider.getAttributeValue(name);
+                }
+            }
+        }
         return (T) MethodsCache.getOrCreate(getSource().getClass()).getGetterNN(name).apply(getSource());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void setAttributeValue(String name, Object value, boolean checkEquals) {
-        Object oldValue = getAttributeValue(name);
-        if ((!checkEquals) || (!EntityValues.propertyValueEquals(oldValue, value))) {
-            BiConsumer setter = MethodsCache.getOrCreate(getSource().getClass()).getSetterNN(name);
-            setter.accept(getSource(), value);
+        EntityValuesProvider valuesProvider = null;
+        if (entityValuesProviders != null) {
+            valuesProvider = entityValuesProviders.stream()
+                    .filter(provider -> provider.supportAttribute(name))
+                    .findFirst()
+                    .orElse(null);
+        }
+        if (valuesProvider != null) {
+            valuesProvider.setAttributeValue(name, value, checkEquals);
+        } else {
+            Object oldValue = getAttributeValue(name);
+            if (!checkEquals || !EntityValues.propertyValueEquals(oldValue, value)) {
+                BiConsumer setter = MethodsCache.getOrCreate(getSource().getClass()).getSetterNN(name);
+                setter.accept(getSource(), value);
+            }
         }
     }
 
@@ -176,6 +198,44 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
             setRemoved(entry.isRemoved());
 
             setSecurityState(entry.getSecurityState());
+
+            if (entry.getExtraState() != null) {
+                for (EntityEntryExtraState extraState : entry.getExtraState()) {
+                    try {
+                        EntityEntryExtraState newExtraState = ReflectionHelper.newInstance(extraState.getClass());
+                        newExtraState.copy(extraState);
+                        addExtraState(newExtraState);
+                    } catch (NoSuchMethodException e) {
+                        throw new IllegalStateException(String.format("Error while create extra state of type: %s", extraState.getClass().getSimpleName()), e);
+                    }
+                }
+            }
         }
+    }
+
+    @Override
+    public void addExtraState(EntityEntryExtraState extraState) {
+        if (extraStateMap == null) {
+            extraStateMap = new HashMap<>();
+        }
+        extraStateMap.put(extraState.getClass(), extraState);
+        if (extraState instanceof EntityValuesProvider) {
+            if (entityValuesProviders == null) {
+                entityValuesProviders = new ArrayList<>();
+            }
+            entityValuesProviders.add((EntityValuesProvider) extraState);
+        }
+    }
+
+    @Override
+    public <T extends EntityEntryExtraState> T getExtraState(Class<T> extraStateType) {
+        //noinspection unchecked
+        return extraStateMap == null ? null : (T) extraStateMap.get(extraStateType);
+    }
+
+    @Nullable
+    @Override
+    public Collection<EntityEntryExtraState> getExtraState() {
+        return extraStateMap == null ? null : Collections.unmodifiableCollection(extraStateMap.values());
     }
 }

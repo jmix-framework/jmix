@@ -116,7 +116,7 @@ class QuerySortTest extends DataSpec {
         JpqlQueryBuilder queryBuilder
 
         setup:
-        ((TestJpqlSortExpressionProvider)sortExpressionProvider).addToUpperPath(metadata.getClass('sales_Order').getPropertyPath('number'))
+        ((TestJpqlSortExpressionProvider) sortExpressionProvider).addToUpperPath(metadata.getClass('sales_Order').getPropertyPath('number'))
 
         when:
 
@@ -130,7 +130,7 @@ class QuerySortTest extends DataSpec {
         queryBuilder.getResultQueryString() == 'select e from sales_Order e order by upper( e.number) asc nulls first, e.id'
 
         cleanup:
-        ((TestJpqlSortExpressionProvider)sortExpressionProvider).resetToUpperPaths()
+        ((TestJpqlSortExpressionProvider) sortExpressionProvider).resetToUpperPaths()
     }
 
     def "sort by multiple properties in different directions is not supported"() {
@@ -234,5 +234,21 @@ class QuerySortTest extends DataSpec {
         then:
 
         queryBuilder.getResultQueryString() == 'select e.id, min(e.name) from test_TestAppEntity e group by e.id order by min(e.name)'
+    }
+
+    def "sort by column of composite primary key"() {
+
+        JpqlQueryBuilder queryBuilder
+
+        when:
+
+        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder.setQueryString('select e from test_TestCompositeKeyEntity e')
+                .setSort(Sort.by(Sort.Direction.DESC, 'id.tenant'))
+                .setEntityName("test_TestCompositeKeyEntity")
+
+        then:
+
+        queryBuilder.getResultQueryString() == 'select e from test_TestCompositeKeyEntity e order by e.id.tenant desc, e.id.entityId desc'
     }
 }

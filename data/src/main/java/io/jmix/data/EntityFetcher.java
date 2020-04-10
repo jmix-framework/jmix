@@ -17,7 +17,6 @@
 package io.jmix.data;
 
 import io.jmix.core.*;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -31,6 +30,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Fetches entities by fetch plans by accessing reference attributes.
@@ -103,6 +103,7 @@ public class EntityFetcher {
         fetch(instance, fetchPlan, new HashMap<>(), optimizeForDetached);
     }
 
+    @SuppressWarnings("unchecked")
     protected void fetch(Entity entity, FetchPlan fetchPlan, Map<Entity, Set<FetchPlan>> visited, boolean optimizeForDetached) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {
@@ -127,34 +128,56 @@ public class EntityFetcher {
             FetchPlan propertyFetchPlan = property.getFetchPlan();
             if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
-                    for (Object item : ((Collection) value)) {
-                        if (item instanceof Entity)
-                            fetch((Entity) item, propertyFetchPlan, visited, optimizeForDetached);
+                    for (Object item : new ArrayList(((Collection) value))) {
+                        if (item instanceof Entity) {
+                            Entity e = (Entity) item;
+                            if (entityStates.isDetached(e)) {
+                                fetchReloaded(e, propertyFetchPlan, visited, optimizeForDetached, managed -> {
+                                    if (value instanceof List) {
+                                        List list = (List) value;
+                                        list.set(list.indexOf(e), managed);
+                                    } else {
+                                        Collection collection = (Collection) value;
+                                        collection.remove(e);
+                                        collection.add(managed);
+                                    }
+                                });
+                            } else {
+                                fetch((Entity) item, propertyFetchPlan, visited, optimizeForDetached);
+                            }
+                        }
                     }
                 } else if (value instanceof Entity) {
                     Entity e = (Entity) value;
                     boolean isEmbeddable =  e.__getEntityEntry().isEmbeddable();
                     if (!metaProperty.isReadOnly() && entityStates.isDetached(value) && !isEmbeddable) {
-                        if (!optimizeForDetached || needReloading(e, propertyFetchPlan)) {
-                            if (log.isTraceEnabled()) {
-                                log.trace("Object " + value + " is detached, loading it");
-                            }
-                            String storeName = metadataTools.getStoreName(metadata.getClass(e));
-                            if (storeName != null) {
-                                storeAwareLocator.getTransactionTemplate(storeName).executeWithoutResult(transactionStatus -> {
-                                    EntityManager em = storeAwareLocator.getEntityManager(storeName);
-                                    Entity managed = em.find(e.getClass(), EntityValues.getId(e));
-                                    if (managed != null) { // the instance here can be null if it has been deleted
-                                        EntityValues.setValue(entity, property.getName(), managed);
-                                        fetch(managed, propertyFetchPlan, visited, optimizeForDetached);
-                                    }
-                                });
-                            }
-                        }
+                        fetchReloaded(e, propertyFetchPlan, visited, optimizeForDetached, managed -> {
+                            EntityValues.setValue(entity, property.getName(), managed);
+                        });
                     } else {
                         fetch(e, propertyFetchPlan, visited, optimizeForDetached);
                     }
                 }
+            }
+        }
+    }
+
+    protected void fetchReloaded(Entity entity, FetchPlan fetchPlan, Map<Entity, Set<FetchPlan>> visited, boolean optimizeForDetached,
+                                 Consumer<Entity> managedEntityConsumer) {
+        if (!optimizeForDetached || needReloading(entity, fetchPlan)) {
+            if (log.isTraceEnabled()) {
+                log.trace("Object " + entity + " is detached, loading it");
+            }
+            String storeName = metadataTools.getStoreName(metadata.getClass(entity));
+            if (storeName != null) {
+                storeAwareLocator.getTransactionTemplate(storeName).executeWithoutResult(transactionStatus -> {
+                    EntityManager em = storeAwareLocator.getEntityManager(storeName);
+                    Entity managed = em.find(entity.getClass(), EntityValues.getId(entity));
+                    if (managed != null) { // the instance here can be null if it has been deleted
+                        managedEntityConsumer.accept(managed);
+                        fetch(managed, fetchPlan, visited, optimizeForDetached);
+                    }
+                });
             }
         }
     }

@@ -1,9 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 
-group = 'io.jmix.starter.ui'
-version = rootProject.jmixVersion
-
 dependencies {
     api project(':modules:core')
     api project(':modules:ui')

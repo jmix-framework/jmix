@@ -18,8 +18,6 @@ import io.jmix.gradle.JmixPlugin
 
 apply plugin: 'java'
 
-version = rootProject.jmixVersion
-
 def uiThemes = project(':modules:ui-themes')
 def inputDir = new File(uiThemes.buildDir, 'themes')
 

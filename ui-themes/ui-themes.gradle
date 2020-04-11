@@ -18,8 +18,6 @@ import io.jmix.gradle.ui.ThemeCompile
 
 apply plugin: 'java'
 
-version = rootProject.jmixVersion
-
 configurations {
     themes
 }

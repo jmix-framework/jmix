@@ -19,8 +19,6 @@ import io.jmix.gradle.ui.WidgetsCompile
 apply plugin: 'java'
 apply plugin: 'java-library'
 
-version = rootProject.jmixVersion
-
 def jmixUi = rootProject.project(':modules:ui')
 
 dependencies {

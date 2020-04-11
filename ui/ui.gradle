@@ -52,10 +52,6 @@ jar {
     }
 }
 
-entitiesEnhancing {
-    enabled = true
-}
-
 jar {
     archivesBaseName = 'jmix-ui'
 }

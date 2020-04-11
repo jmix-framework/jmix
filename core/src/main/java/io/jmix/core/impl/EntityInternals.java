@@ -22,6 +22,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.EntityEntry;
 
+import javax.annotation.Nullable;
 import java.io.ObjectOutputStream;
 import java.util.Objects;
 
@@ -50,7 +51,7 @@ public class EntityInternals {
         return entity.getClass().getName() + "-" + entityEntry.getEntityId() + " [" + state + "]";
     }
 
-    public static boolean equals(Entity<?> o1, Object o2) {
+    public static boolean equals(Entity<?> o1, @Nullable Object o2) {
         if (o1 == o2)
             return true;
 

@@ -42,10 +42,6 @@ dependencies {
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }
 
-entitiesEnhancing {
-    enabled = true
-}
-
 test {
     useJUnitPlatform()
     systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")

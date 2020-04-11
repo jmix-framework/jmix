@@ -38,10 +38,6 @@ dependencies {
     testRuntimeOnly 'org.slf4j:slf4j-simple'
 }
 
-entitiesEnhancing {
-    enabled = true
-}
-
 jar {
     archivesBaseName = 'jmix-audit-ui'
 }

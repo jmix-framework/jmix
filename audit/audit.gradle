@@ -36,10 +36,6 @@ dependencies {
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }
 
-entitiesEnhancing {
-    enabled = true
-}
-
 jar {
     archivesBaseName = 'jmix-audit'
 }

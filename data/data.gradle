@@ -19,8 +19,6 @@ apply plugin: 'groovy'
 apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
-version = rootProject.jmixVersion
-
 dependencies {
     api platform(project(':jmix-platform'))
 

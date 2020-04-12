@@ -5,8 +5,9 @@ dependencies {
     api project(':modules:core')
     api project(':modules:data')
 
+    api 'com.zaxxer:HikariCP'
+    api 'org.liquibase:liquibase-core'
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    implementation 'org.liquibase:liquibase-core'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.hsqldb:hsqldb'

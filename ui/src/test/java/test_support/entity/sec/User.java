@@ -98,7 +98,7 @@ public class User extends StandardEntity {
     @Transient
     protected boolean disabledDefaultRoles;
 
-    @InstanceName
+    @InstanceName(relatedProperties = {"login","name"})
     public String getCaption(){
         return String.format("%s[%s]",getLogin(),getName());
     }

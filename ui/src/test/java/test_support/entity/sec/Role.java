@@ -46,7 +46,7 @@ public class Role extends StandardEntity {
     @Column(name = "IS_DEFAULT_ROLE")
     private Boolean defaultRole;
 
-    @InstanceName
+    @InstanceName(relatedProperties = {"locName","name"})
     public String getCaption(){
         return String.format("%s [%s]",getLocName(),getName());
     }

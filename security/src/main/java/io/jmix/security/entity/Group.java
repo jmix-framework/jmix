@@ -16,12 +16,12 @@
 package io.jmix.security.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotations.Composition;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -33,13 +33,13 @@ import java.util.Set;
 @Entity(name = "sec_Group")
 @Table(name = "SEC_GROUP")
 @Listeners("jmix_GroupEntityListener")
-@NamePattern("%s|name")
 @TrackEditScreenHistory
 public class Group extends StandardEntity {
 
     private static final long serialVersionUID = -4581386806900761785L;
 
     @Column(name = "NAME", nullable = false, unique = true)
+    @InstanceName
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

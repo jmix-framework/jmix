@@ -16,11 +16,11 @@
 package io.jmix.security.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotations.Composition;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +33,6 @@ import java.util.Set;
  */
 @Entity(name = "sec_Role")
 @Table(name = "SEC_ROLE")
-@NamePattern("%s [%s]|locName,name")
 @TrackEditScreenHistory
 public class Role extends StandardEntity {
 
@@ -58,6 +57,11 @@ public class Role extends StandardEntity {
     @OnDelete(DeletePolicy.CASCADE)
     @Composition
     private Set<Permission> permissions;
+
+    @InstanceName
+    public String getCaption(){
+        return String.format("%s [%s]",getLocName(),getName());
+    }
 
     public String getName() {
         return name;

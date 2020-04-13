@@ -20,7 +20,7 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotations.Composition;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,7 +37,6 @@ import java.util.List;
 @Entity(name = "sec_User")
 @Table(name = "SEC_USER")
 //@Listeners("jmix_UserEntityListener")
-@NamePattern("#getCaption|login,name")
 @TrackEditScreenHistory
 public class User extends StandardEntity implements io.jmix.core.entity.User {
 
@@ -301,6 +300,7 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
         this.ipMask = ipMask;
     }
 
+    @InstanceName
     public String getCaption() {
         // todo rework when new instance name is ready
         String pattern =/* AppContext.getProperty("cuba.user.namePattern");

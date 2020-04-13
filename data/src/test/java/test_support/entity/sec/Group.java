@@ -15,8 +15,8 @@
  */
 package test_support.entity.sec;
 
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.*;
 
@@ -25,11 +25,11 @@ import javax.persistence.*;
  */
 @Entity(name = "sec$Group")
 @Table(name = "SEC_GROUP")
-@NamePattern("%s|name")
 public class Group extends StandardEntity {
     private static final long serialVersionUID = -4581386806900761785L;
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)

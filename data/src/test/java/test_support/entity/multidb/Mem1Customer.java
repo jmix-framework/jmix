@@ -5,18 +5,18 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.data.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.annotations.Store;
+import io.jmix.data.entity.BaseUuidEntity;
 
 @ModelObject(name = "test_Mem1Customer")
-@NamePattern("%s|name")
 @Store(name = "mem1")
 public class Mem1Customer extends BaseUuidEntity {
 
     @ModelProperty
+    @InstanceName
     private String name;
 
     public String getName() {

@@ -16,9 +16,9 @@
 package test_support.entity.sec;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 

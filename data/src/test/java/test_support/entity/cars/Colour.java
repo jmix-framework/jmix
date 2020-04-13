@@ -4,8 +4,8 @@
  */
 package test_support.entity.cars;
 
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,12 +13,12 @@ import javax.persistence.Table;
 
 @Entity(name = "cars_Colour")
 @Table(name = "CARS_COLOUR")
-@NamePattern("%s|name")
 public class Colour extends StandardEntity {
 
     private static final long serialVersionUID = -6966135766799019463L;
 
     @Column(name = "NAME", nullable = false)
+    @InstanceName
     private String name;
 
     @Column(name = "DESCRIPTION", nullable = false)

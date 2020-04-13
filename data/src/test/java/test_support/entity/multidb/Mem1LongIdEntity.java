@@ -5,18 +5,18 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.data.entity.BaseLongIdEntity;
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.annotations.Store;
+import io.jmix.data.entity.BaseLongIdEntity;
 
 @ModelObject(name = "test_Mem1LongIdEntity")
-@NamePattern("%s|name")
 @Store(name = "mem1")
 public class Mem1LongIdEntity extends BaseLongIdEntity {
 
     @ModelProperty
+    @InstanceName
     private String name;
 
     public String getName() {

@@ -16,12 +16,12 @@
 
 package test_support.entity.sales;
 
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
-import test_support.entity.sec.User;
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotations.Composition;
+import io.jmix.data.entity.StandardEntity;
+import test_support.entity.sec.User;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

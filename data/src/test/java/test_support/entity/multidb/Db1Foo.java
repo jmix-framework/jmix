@@ -5,9 +5,9 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.data.entity.BaseLongIdEntity;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.annotations.Store;
+import io.jmix.data.entity.BaseLongIdEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,11 +15,11 @@ import javax.persistence.Table;
 
 @Entity(name = "test_Db1Foo")
 @Table(name = "FOO")
-@NamePattern("%s|name")
 @Store(name = "db1")
 public class Db1Foo extends BaseLongIdEntity {
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
 
     public String getName() {

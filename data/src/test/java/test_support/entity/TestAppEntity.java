@@ -16,9 +16,9 @@
 
 package test_support.entity;
 
-import test_support.entity.sec.User;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.data.entity.StandardEntity;
+import test_support.entity.sec.User;
 
 import javax.persistence.*;
 import java.util.Date;

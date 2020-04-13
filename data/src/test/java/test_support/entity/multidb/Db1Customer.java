@@ -5,7 +5,7 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.annotations.Store;
 
 import javax.persistence.*;
@@ -13,7 +13,6 @@ import java.util.List;
 
 @Entity(name = "test_Db1Customer")
 @Table(name = "CUSTOMER")
-@NamePattern("%s|name")
 @Store(name = "db1")
 public class Db1Customer implements io.jmix.core.Entity<Long> {
 
@@ -27,6 +26,7 @@ public class Db1Customer implements io.jmix.core.Entity<Long> {
     protected List<Db1Order> orders;
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
 
     public void setId(Long id) {

@@ -17,15 +17,14 @@
 package test_support.entity.sales;
 
 
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 
 @Table(name = "SALES_ORDER_LINE")
 @Entity(name = "sales_OrderLine")
-@NamePattern("%s %s|product,quantity")
 @PublishEntityChangedEvents
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
@@ -42,6 +41,11 @@ public class OrderLine extends StandardEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
+
+    @InstanceName
+    public String getCaption() {
+        return getProduct().getName() + " " + getQuantity();
+    }
 
     public void setOrder(Order order) {
         this.order = order;

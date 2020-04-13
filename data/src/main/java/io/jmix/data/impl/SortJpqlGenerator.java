@@ -133,7 +133,7 @@ public class SortJpqlGenerator {
     }
 
     protected List<String> getEntityPropertySortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {
-        Collection<MetaProperty> properties = metadataTools.getNamePatternProperties(
+        Collection<MetaProperty> properties = metadataTools.getInstanceNameRelatedProperties(
                 metaPropertyPath.getMetaProperty().getRange().asClass());
 
         if (!properties.isEmpty()) {

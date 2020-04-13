@@ -16,19 +16,19 @@
 
 package test_support.entity.petclinic;
 
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "app_Pet")
-@NamePattern("%s|name")
 public class Pet extends StandardEntity {
 
     private static final long serialVersionUID = 6106462788935207865L;
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
 
     @ModelProperty

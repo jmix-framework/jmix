@@ -15,8 +15,8 @@
  */
 package test_support.entity.sec;
 
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +27,6 @@ import javax.persistence.Table;
  */
 @Entity(name = "sec$Role")
 @Table(name = "SEC_ROLE")
-@NamePattern("%s [%s]|locName,name")
 public class Role extends StandardEntity {
     private static final long serialVersionUID = -4889116218059626402L;
 
@@ -45,6 +44,11 @@ public class Role extends StandardEntity {
 
     @Column(name = "IS_DEFAULT_ROLE")
     private Boolean defaultRole;
+
+    @InstanceName
+    public String getCaption(){
+        return String.format("%s [%s]",getLocName(),getName());
+    }
 
     public String getName() {
         return name;

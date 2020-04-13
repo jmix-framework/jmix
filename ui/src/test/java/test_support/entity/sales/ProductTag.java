@@ -16,8 +16,8 @@
 
 package test_support.entity.sales;
 
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,12 +25,12 @@ import javax.persistence.Table;
 
 @Entity(name = "test$Producttag")
 @Table(name = "TEST_PRODUCT_TAG")
-@NamePattern("%s|name")
 public class ProductTag extends StandardEntity {
 
     private static final long serialVersionUID = 8176440331297951916L;
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
 
     public String getName() {

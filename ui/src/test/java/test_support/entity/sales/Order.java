@@ -17,10 +17,10 @@
 package test_support.entity.sales;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotations.Composition;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.data.entity.StandardEntity;
 import test_support.entity.sec.User;
 
 import javax.persistence.*;
@@ -30,7 +30,6 @@ import java.util.List;
 
 @Entity(name = "test$Order")
 @Table(name = "TEST_ORDER")
-@NamePattern("No %s for %s|number,customer")
 public class Order extends StandardEntity {
 
     private static final long serialVersionUID = -7408892681168157038L;
@@ -103,6 +102,11 @@ public class Order extends StandardEntity {
 
     public void setOrderLines(List<OrderLine> orderLines) {
         this.orderLines = orderLines;
+    }
+
+    @InstanceName
+    public String getCaption(){
+        return String.format("No %s for %s",getNumber(),getCustomer().getName());
     }
 
     @Override

@@ -16,11 +16,11 @@
 package test_support.entity.sec;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.Composition;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -30,7 +30,6 @@ import java.util.List;
  */
 @Entity(name = "sec$User")
 @Table(name = "SEC_USER")
-@NamePattern("%s[%s]|login,name")
 public class User extends StandardEntity {
 
     private static final long serialVersionUID = 5007187642916030394L;
@@ -98,6 +97,11 @@ public class User extends StandardEntity {
 
     @Transient
     protected boolean disabledDefaultRoles;
+
+    @InstanceName
+    public String getCaption(){
+        return String.format("%s[%s]",getLogin(),getName());
+    }
 
     public boolean isDisabledDefaultRoles() {
         return disabledDefaultRoles;

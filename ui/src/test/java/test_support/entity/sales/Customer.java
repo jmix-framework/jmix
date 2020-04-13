@@ -16,20 +16,20 @@
 
 package test_support.entity.sales;
 
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "test$Customer")
 @Table(name = "TEST_CUSTOMER")
-@NamePattern("%s|name")
 public class Customer extends StandardEntity {
 
     private static final long serialVersionUID = -5023394946853765350L;
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
 
     @Column(name = "EMAIL")

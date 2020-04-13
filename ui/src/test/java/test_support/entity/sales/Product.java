@@ -16,8 +16,8 @@
 
 package test_support.entity.sales;
 
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.NamePattern;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -25,12 +25,12 @@ import java.util.List;
 
 @Entity(name = "test$Product")
 @Table(name = "TEST_PRODUCT")
-@NamePattern("%s|name")
 public class Product extends StandardEntity {
 
     private static final long serialVersionUID = -7245110045640511010L;
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
 
     @Column(name = "PRICE")

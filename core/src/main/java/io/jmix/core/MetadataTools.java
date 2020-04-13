@@ -20,8 +20,8 @@ import com.google.common.collect.ImmutableList;
 import io.jmix.core.entity.*;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.datatypes.TimeZoneAwareDatatype;
@@ -42,10 +42,7 @@ import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
@@ -57,8 +54,6 @@ import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
  */
 @Component(MetadataTools.NAME)
 public class MetadataTools {
-
-    private static final Pattern INSTANCE_NAME_SPLIT_PATTERN = Pattern.compile("[,;]");
 
     public static final String NAME = "jmix_MetadataTools";
 
@@ -86,6 +81,9 @@ public class MetadataTools {
 
     @Inject
     protected Messages messages;
+
+    @Inject
+    protected InstanceNameProvider instanceNameProvider;
 
     // todo dynamic attributes
 //    @Inject
@@ -192,87 +190,11 @@ public class MetadataTools {
 
     /**
      * @param instance instance
-     * @return Instance name as defined by {@link io.jmix.core.metamodel.annotations.NamePattern}
+     * @return Instance name as defined by {@link io.jmix.core.metamodel.annotations.InstanceName}
      * or <code>toString()</code>.
      */
     public String getInstanceName(Entity instance) {
-        checkNotNullArgument(instance, "instance is null");
-
-        MetaClass metaClass = metadata.getClass(instance.getClass());
-
-        NamePatternRec rec = parseNamePattern(metaClass);
-        if (rec == null) {
-            return instance.toString();
-        }
-
-        if (rec.methodName != null) {
-            try {
-                Method method = instance.getClass().getMethod(rec.methodName);
-                Object result = method.invoke(instance);
-                return (String) result;
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException("Error getting instance name", e);
-            }
-        }
-
-        Object[] values = new Object[rec.fields.length];
-        for (int i = 0; i < rec.fields.length; i++) {
-            String fieldName = rec.fields[i];
-            MetaProperty property = metaClass.getProperty(fieldName);
-
-            Object value = EntityValues.getValue(instance, fieldName);
-            values[i] = format(value, property);
-        }
-
-        return String.format(rec.format, values);
-    }
-
-    /**
-     * Parse a name pattern defined by {@link NamePattern} annotation.
-     *
-     * @param metaClass entity meta-class
-     * @return record containing the name pattern properties, or null if the @NamePattern is not defined for the meta-class
-     */
-    @Nullable
-    public NamePatternRec parseNamePattern(MetaClass metaClass) {
-        Map attributes = (Map) metaClass.getAnnotations().get(NamePattern.class.getName());
-        if (attributes == null)
-            return null;
-        String pattern = (String) attributes.get("value");
-        if (StringUtils.isBlank(pattern))
-            return null;
-
-        int pos = pattern.indexOf("|");
-        if (pos < 0)
-            throw new DevelopmentException("Invalid name pattern: " + pattern);
-
-        String format = StringUtils.substring(pattern, 0, pos);
-        String trimmedFormat = format.trim();
-        String methodName = trimmedFormat.startsWith("#") ? trimmedFormat.substring(1) : null;
-        String fieldsStr = StringUtils.substring(pattern, pos + 1);
-        String[] fields = INSTANCE_NAME_SPLIT_PATTERN.split(fieldsStr);
-        return new NamePatternRec(format, methodName, fields);
-    }
-
-    public static class NamePatternRec {
-        /**
-         * Name pattern string format
-         */
-        public final String format;
-        /**
-         * Formatting method name or null
-         */
-        public final String methodName;
-        /**
-         * Array of property names
-         */
-        public final String[] fields;
-
-        public NamePatternRec(String format, @Nullable String methodName, String[] fields) {
-            this.fields = fields;
-            this.format = format;
-            this.methodName = methodName;
-        }
+        return instanceNameProvider.getInstanceName(instance);
     }
 
     /**
@@ -645,51 +567,28 @@ public class MetadataTools {
     }
 
     /**
-     * Return a collection of properties included into entity's name pattern (see {@link NamePattern}).
+     * Return a collection of properties included into entity's name pattern (see {@link InstanceName}).
      *
      * @param metaClass entity metaclass
      * @return collection of the name pattern properties
      */
     @Nonnull
-    public Collection<MetaProperty> getNamePatternProperties(MetaClass metaClass) {
-        return getNamePatternProperties(metaClass, false);
+    public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass) {
+        return getInstanceNameRelatedProperties(metaClass, false);
     }
 
     /**
-     * Return a collection of properties included into entity's name pattern (see {@link NamePattern}).
+     * Return a collection of properties included into entity's name pattern (see {@link InstanceName}).
      *
      * @param metaClass   entity metaclass
-     * @param useOriginal if true, and if the given metaclass doesn't define a {@link NamePattern} and if it is an
+     * @param useOriginal if true, and if the given metaclass doesn't define a {@link InstanceName} and if it is an
      *                    extended entity, this method tries to find a name pattern in an original entity
      * @return collection of the name pattern properties
      */
-    @Nonnull
-    public Collection<MetaProperty> getNamePatternProperties(MetaClass metaClass, boolean useOriginal) {
-        Collection<MetaProperty> properties = new ArrayList<>();
-        String pattern = (String) getMetaAnnotationAttributes(metaClass.getAnnotations(), NamePattern.class).get("value");
-        if (pattern == null && useOriginal) {
-            MetaClass original = extendedEntities.getOriginalMetaClass(metaClass);
-            if (original != null) {
-                pattern = (String) getMetaAnnotationAttributes(original.getAnnotations(), NamePattern.class).get("value");
-            }
-        }
-        if (!StringUtils.isBlank(pattern)) {
-            String value = StringUtils.substringAfter(pattern, "|");
-            String[] fields = StringUtils.splitPreserveAllTokens(value, ",");
-            for (String field : fields) {
-                String fieldName = StringUtils.trim(field);
 
-                MetaProperty property = metaClass.findProperty(fieldName);
-                if (property != null) {
-                    properties.add(metaClass.findProperty(fieldName));
-                } else {
-                    throw new DevelopmentException(
-                            String.format("Property '%s' is not found in %s", field, metaClass.toString()),
-                            "NamePattern", pattern);
-                }
-            }
-        }
-        return properties;
+    @Nonnull
+    public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass, boolean useOriginal) {
+        return instanceNameProvider.getInstanceNameRelatedProperties(metaClass,useOriginal);
     }
 
     /**

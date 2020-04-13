@@ -18,10 +18,13 @@ package test_support.app.entity;
 
 
 import io.jmix.core.Entity;
+import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.annotations.ModelObject;
+import org.apache.commons.lang3.LocaleUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Locale;
 
 @Embeddable
 @ModelObject(name = "app_Address")
@@ -34,6 +37,14 @@ public class Address implements Entity<Object> {
 
     @Column(name = "ZIP", length = 10)
     protected String zip;
+
+    @InstanceName(relatedProperties = {"city","zip"})
+    public String getName(Locale locale) {
+        if (LocaleUtils.toLocale("ru").equals(locale))
+            return "Город: " + city + ", индекс: " + zip;
+
+        return "City: " + city + ", zip: " + zip;
+    }
 
     public String getCity() {
         return city;

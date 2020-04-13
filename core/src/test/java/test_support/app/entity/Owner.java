@@ -17,6 +17,7 @@
 package test_support.app.entity;
 
 
+import io.jmix.core.metamodel.annotations.InstanceName;
 import test_support.base.entity.StandardEntity;
 
 import javax.persistence.Column;
@@ -29,6 +30,7 @@ public class Owner extends StandardEntity {
     private static final long serialVersionUID = -552022260926623206L;
 
     @Column(name = "name")
+    @InstanceName
     private String name;
 
     @Embedded

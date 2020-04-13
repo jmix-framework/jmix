@@ -87,12 +87,12 @@ public class FetchPlan implements Serializable {
     public static final String LOCAL = "_local";
 
     /**
-     * Includes only properties contained in {@link io.jmix.core.metamodel.annotations.NamePattern}.
+     * Includes only properties contained in {@link io.jmix.core.metamodel.annotations.InstanceName}.
      */
     public static final String MINIMAL = "_minimal";
 
     /**
-     * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotations.NamePattern}
+     * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotations.InstanceName}
      * (effectively {@link #MINIMAL} + {@link #LOCAL}).
      */
     public static final String BASE = "_base";

@@ -325,7 +325,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected void addAttributesToMinimalFetchPlan(MetaClass metaClass, FetchPlan fetchPlan, FetchPlanInfo info, Set<FetchPlanInfo> visited) {
-        Collection<MetaProperty> metaProperties = metadataTools.getNamePatternProperties(metaClass, true);
+        Collection<MetaProperty> metaProperties = metadataTools.getInstanceNameRelatedProperties(metaClass, true);
         for (MetaProperty metaProperty : metaProperties) {
             if (metadataTools.isPersistent(metaProperty)) {
                 addPersistentAttributeToMinimalFetchPlan(metaClass, visited, info, fetchPlan, metaProperty);

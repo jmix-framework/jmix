@@ -16,13 +16,14 @@
 
 package io.jmix.core.impl;
 
+import io.jmix.core.Entity;
+import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.scanning.EntitiesScanner;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Session;
-import io.jmix.core.metamodel.model.impl.*;
-import io.jmix.core.Entity;
-import io.jmix.core.entity.annotation.*;
+import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
+import io.jmix.core.metamodel.model.impl.SessionImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,10 @@ import org.springframework.stereotype.Component;
 import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * INTERNAL.

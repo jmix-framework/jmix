@@ -85,6 +85,7 @@ class InstanceNameTest extends Specification {
 
         def owner = metadata.create(Owner)
         owner.name = "John"
+        authenticator.begin()
 
         expect:
 
@@ -92,5 +93,8 @@ class InstanceNameTest extends Specification {
         instanceNameProvider.getInstanceNameRelatedProperties(metadata.getClass(Owner),true).stream()
                 .map{p->p.getName()}
                 .collect(Collectors.toSet()) == ["name"] as Set
+
+        cleanup:
+        authenticator.end()
     }
 }

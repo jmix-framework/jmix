@@ -550,7 +550,7 @@ public abstract class AbstractCollectionDatasource<T extends Entity<K>, K>
                     q.setParameter(entry.getKey(), entry.getValue());
             }
         } else if (!(context instanceof ValueLoadContext)) {
-            Collection<MetaProperty> properties = metadata.getTools().getNamePatternProperties(metaClass);
+            Collection<MetaProperty> properties = metadata.getTools().getInstanceNameRelatedProperties(metaClass);
             if (!properties.isEmpty()) {
                 String orderBy = properties.stream()
                         .filter(m -> m != null

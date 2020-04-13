@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.core.model;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test_PetclinicOwner")
 @Table(name = "TEST_PC_OWNER")
+@NamePattern("#getCaption|name")
 public class Owner extends StandardEntity {
 
     private static final long serialVersionUID = -552022260926623206L;
@@ -49,5 +51,9 @@ public class Owner extends StandardEntity {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getCaption(){
+        return getName();
     }
 }

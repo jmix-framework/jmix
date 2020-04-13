@@ -23,7 +23,7 @@ import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.Updatable;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import com.haulmont.chile.core.annotations.NamePattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

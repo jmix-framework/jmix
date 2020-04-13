@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.fetchjoin;
 
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.NamePattern;
+import com.haulmont.chile.core.annotations.NamePattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

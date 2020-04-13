@@ -15,6 +15,7 @@
  */
 package com.haulmont.cuba.core.global;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Entity;
@@ -48,12 +49,12 @@ public class View extends FetchPlan {
     public static final String LOCAL = FetchPlan.LOCAL;
 
     /**
-     * Includes only properties contained in {@link io.jmix.core.metamodel.annotations.NamePattern}.
+     * Includes only properties contained in {@link NamePattern}.
      */
     public static final String MINIMAL = FetchPlan.MINIMAL;
 
     /**
-     * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotations.NamePattern}
+     * Includes all local non-system properties and properties defined by {@link NamePattern}
      * (effectively {@link #MINIMAL} + {@link #LOCAL}).
      */
     public static final String BASE = FetchPlan.BASE;

@@ -15,13 +15,13 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotations.Composition;
-import io.jmix.core.metamodel.annotations.NamePattern;
 import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 

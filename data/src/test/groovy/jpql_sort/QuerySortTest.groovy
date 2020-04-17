@@ -16,6 +16,7 @@
 
 package jpql_sort
 
+import spock.lang.Ignore
 import test_support.TestJpqlSortExpressionProvider
 import io.jmix.core.AppBeans
 import io.jmix.core.Metadata
@@ -236,6 +237,7 @@ class QuerySortTest extends DataSpec {
         queryBuilder.getResultQueryString() == 'select e.id, min(e.name) from test_TestAppEntity e group by e.id order by min(e.name)'
     }
 
+    @Ignore
     def "sort by column of composite primary key"() {
 
         JpqlQueryBuilder queryBuilder

@@ -16,7 +16,11 @@
 
 package metadata
 
+import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
+import io.jmix.core.metamodel.model.MetaClass
+import io.jmix.core.metamodel.model.MetaPropertyPath
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.petclinic.Owner
 import test_support.entity.petclinic.Pet
@@ -27,6 +31,8 @@ class MetadataToolsTest extends DataSpec {
 
     @Inject
     private MetadataTools metadataTools
+    @Inject
+    private Metadata metadata
 
     def "deepCopy handles entities with same ids correctly #73"() {
         def id = new UUID(0, 1)
@@ -39,5 +45,16 @@ class MetadataToolsTest extends DataSpec {
         then:
         petCopy.owner == owner
         !petCopy.owner.is(owner)
+    }
+
+    @Ignore
+    def "check persistent for composite primary key"() {
+        when:
+
+        MetaClass metaClass = metadata.getClass('test_TestCompositeKeyEntity')
+        def propertyPath = metadataTools.resolveMetaPropertyPath(metaClass, 'id.tenant')
+
+        then:
+        metadataTools.isPersistent(propertyPath)
     }
 }

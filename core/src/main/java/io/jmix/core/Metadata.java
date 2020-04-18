@@ -16,12 +16,8 @@
 
 package io.jmix.core;
 
-import io.jmix.core.Entity;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
-
-import java.util.List;
 
 /**
  * Central interface to provide metadata-related functionality.
@@ -64,9 +60,4 @@ public interface Metadata extends Session {
      * @return              entity instance
      */
     Entity create(String entityName);
-
-    /**
-     * @return list of root packages of all application components and the application itself
-     */
-    List<String> getRootPackages();
 }

@@ -79,7 +79,7 @@ public class MetaModelLoader {
         this.stores = stores;
     }
 
-    public void loadModel(Session session, List<String> classNames) {
+    public void loadModel(Session session, Set<String> classNames) {
         checkNotNullArgument(classNames, "classInfos is null");
 
         Set<Class<?>> classes = new LinkedHashSet<>();

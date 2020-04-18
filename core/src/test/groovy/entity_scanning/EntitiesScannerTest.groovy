@@ -17,7 +17,8 @@
 package entity_scanning
 
 import io.jmix.core.JmixCoreConfiguration
-import io.jmix.core.impl.scanning.EntitiesScanner
+import io.jmix.core.impl.scanning.JmixModulesClasspathScanner
+import io.jmix.core.impl.scanning.EntityDetector
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
@@ -38,7 +39,7 @@ class EntitiesScannerTest extends Specification {
 
         when:
 
-        def scanner = context.getBean(EntitiesScanner)
+        def scanner = context.getBean(JmixModulesClasspathScanner)
 
         then:
 
@@ -49,7 +50,7 @@ class EntitiesScannerTest extends Specification {
 
         when:
 
-        def entityDefList = scanner.getEntityClassNames()
+        def entityDefList = scanner.getClassNames(EntityDetector)
 
         then:
 

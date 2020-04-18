@@ -16,15 +16,15 @@
 
 package metadata
 
-import test_support.base.entity.BaseUuidEntity
-import test_support.addon1.TestAddon1Configuration
-import test_support.addon1.entity.TestAddon1Entity
-import test_support.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.impl.MetadataLoader
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
+import test_support.AppContextTestExecutionListener
+import test_support.addon1.TestAddon1Configuration
+import test_support.addon1.entity.TestAddon1Entity
+import test_support.base.entity.BaseUuidEntity
 
 import javax.inject.Inject
 
@@ -43,7 +43,5 @@ class MetadataLoaderTest extends Specification {
 
         session.findClass(BaseUuidEntity) != null
         session.findClass(TestAddon1Entity) != null
-
-        metadataLoader.getRootPackages() == ['io.jmix.core', 'test_support.base', 'test_support.addon1']
     }
 }

@@ -18,7 +18,6 @@ package io.jmix.core.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,6 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Component(Metadata.NAME)
@@ -36,7 +34,7 @@ public class MetadataImpl implements Metadata {
 
     protected volatile Session session;
 
-    protected volatile List<String> rootPackages;
+//    protected volatile List<String> rootPackages;
 
     @Inject
     protected ExtendedEntities extendedEntities;
@@ -52,7 +50,7 @@ public class MetadataImpl implements Metadata {
 
     @Inject
     public MetadataImpl(MetadataLoader metadataLoader) {
-        rootPackages = metadataLoader.getRootPackages();
+//        rootPackages = metadataLoader.getRootPackages();
         session = metadataLoader.getSession();
     }
 
@@ -117,11 +115,6 @@ public class MetadataImpl implements Metadata {
     public Entity create(String entityName) {
         MetaClass metaClass = getSession().getClass(entityName);
         return __create(metaClass.getJavaClass());
-    }
-
-    @Override
-    public List<String> getRootPackages() {
-        return Collections.unmodifiableList(rootPackages);
     }
 
     @Nullable

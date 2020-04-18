@@ -42,8 +42,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    systemProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug")
-    systemProperty("org.slf4j.simpleLogger.log.eclipselink.sql", "debug")
 }
 
 jar {

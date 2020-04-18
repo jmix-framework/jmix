@@ -21,6 +21,8 @@ import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.commons.util.Dom4j;
 import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
+import io.jmix.core.impl.scanning.JpaConverterDetector;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.PersistenceXmlPostProcessor;
 import org.dom4j.Document;
@@ -43,20 +45,25 @@ import java.util.stream.Collectors;
  * Generates a working persistence.xml file combining classes and properties from a set of given persistence.xml files,
  * defined in <code>cuba.persistenceConfig</code> app property.
  */
-@Component
+@Component(PersistenceConfigProcessor.NAME)
 public class PersistenceConfigProcessor {
+
+    public static final String NAME = "jmix_PersistenceConfigProcessor";
 
     private static final Logger log = LoggerFactory.getLogger(PersistenceConfigProcessor.class);
 
     protected DbmsSpecifics dbmsSpecifics;
+    private JmixModulesClasspathScanner classpathScanner;
     protected Environment environment;
     protected Metadata metadata;
 
     @Inject
-    public PersistenceConfigProcessor(Environment environment, Metadata metadata, DbmsSpecifics dbmsSpecifics) {
+    public PersistenceConfigProcessor(Environment environment, Metadata metadata, DbmsSpecifics dbmsSpecifics,
+                                      JmixModulesClasspathScanner classpathScanner) {
         this.environment = environment;
         this.metadata = metadata;
         this.dbmsSpecifics = dbmsSpecifics;
+        this.classpathScanner = classpathScanner;
     }
 
     public String create(String storeName) {
@@ -67,6 +74,8 @@ public class PersistenceConfigProcessor {
                         && metaClass.getStore().getName().equals(storeName))
                 .map(metaClass -> metaClass.getJavaClass().getName())
                 .collect(Collectors.toList());
+
+        classes.addAll(classpathScanner.getClassNames(JpaConverterDetector.class));
 
         Map<String, String> properties = new HashMap<>(dbmsSpecifics.getDbmsFeatures(storeName).getJpaParameters());
 

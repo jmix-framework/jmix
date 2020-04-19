@@ -19,12 +19,12 @@ package io.jmix.ui.sys;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Resources;
-import io.jmix.ui.logging.ScreenLifeCycle;
-import io.jmix.ui.logging.UIPerformanceLogger;
+import io.jmix.ui.monitoring.ScreenLifeCycle;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.perf4j.StopWatch;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
+import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 
 /**
  * Loads screen XML descriptors.
@@ -49,6 +51,8 @@ public class ScreenXmlLoader {
     protected ScreenXmlParser screenXmlParser;
     @Inject
     protected BeanLocator beanLocator;
+    @Inject
+    protected MeterRegistry meterRegistry;
 
     /**
      * Loads a descriptor.
@@ -59,12 +63,12 @@ public class ScreenXmlLoader {
      * @return root XML element
      */
     public Element load(String resourcePath, String id, Map<String, Object> params) {
-        StopWatch xmlLoadWatch = UIPerformanceLogger.createStopWatch(ScreenLifeCycle.XML, id);
+        Timer.Sample sample = Timer.start(meterRegistry);
 
         String template = loadTemplate(resourcePath);
         Document document = getDocument(template, params);
 
-        xmlLoadWatch.stop();
+        sample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.LOAD, id));
         return document.getRootElement();
     }
 

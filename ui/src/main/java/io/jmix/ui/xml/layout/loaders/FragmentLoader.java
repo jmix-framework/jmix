@@ -192,11 +192,7 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
                 if (fragment.getFrameOwner() instanceof AbstractFrame) {
                     Element companionsElem = element.element("companions");
                     if (companionsElem != null) {
-                        StopWatch companionStopWatch = createStopWatch(ScreenLifeCycle.COMPANION, loggingId);
-
                         initCompanion(companionsElem, (AbstractFrame) fragment.getFrameOwner());
-
-                        companionStopWatch.stop();
                     }
                 }
             } catch (Throwable e) {

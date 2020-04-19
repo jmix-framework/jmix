@@ -18,16 +18,12 @@ package io.jmix.ui.sys;
 
 import io.jmix.core.BeanLocator;
 import io.jmix.core.security.UserSessionSource;
-import io.jmix.ui.AppUI;
+import io.jmix.ui.*;
 import io.jmix.ui.components.Fragment;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.impl.FragmentImplementation;
 import io.jmix.ui.components.impl.FrameImplementation;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.WindowConfig;
-import io.jmix.ui.WindowInfo;
-import io.jmix.ui.logging.ScreenLifeCycle;
+import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.model.impl.ScreenDataImpl;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInitTask;
@@ -35,14 +31,15 @@ import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInjectTask;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.loaders.ComponentLoaderContext;
 import io.jmix.ui.xml.layout.loaders.LayoutLoader;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.dom4j.Element;
-import org.perf4j.StopWatch;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.inject.Inject;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
-import static io.jmix.ui.logging.UIPerformanceLogger.createStopWatch;
+import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 import static io.jmix.ui.screen.UiControllerUtils.*;
 import static java.util.Collections.emptyMap;
 
@@ -59,6 +56,8 @@ public class WebFragments implements Fragments {
     protected UiComponents uiComponents;
     @Inject
     protected UserSessionSource userSessionSource;
+    @Inject
+    protected MeterRegistry meterRegistry;
 
     @Inject
     protected FragmentHelper fragmentHelper;
@@ -110,7 +109,7 @@ public class WebFragments implements Fragments {
             );
         }
 
-        StopWatch createStopWatch = createStopWatch(ScreenLifeCycle.CREATE, windowInfo.getId());
+        Timer.Sample createSample = Timer.start(meterRegistry);
 
         Fragment fragment = uiComponents.create(Fragment.NAME);
         ScreenFragment controller = fragmentHelper.createController(windowInfo, fragment);
@@ -129,9 +128,9 @@ public class WebFragments implements Fragments {
         fragmentImpl.setFrameOwner(controller);
         fragmentImpl.setId(controller.getId());
 
-        createStopWatch.stop();
+        createSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.CREATE, windowInfo.getId()));
 
-        StopWatch loadStopWatch = createStopWatch(ScreenLifeCycle.LOAD, windowInfo.getId());
+        Timer.Sample loadSample = Timer.start(meterRegistry);
 
         Frame parentFrame = getFrame(parent);
 
@@ -179,7 +178,7 @@ public class WebFragments implements Fragments {
         loaderContext.addInjectTask(new FragmentLoaderInjectTask(fragment, options, beanLocator));
         loaderContext.addInitTask(new FragmentLoaderInitTask(fragment, options, loaderContext, beanLocator));
 
-        loadStopWatch.stop();
+        loadSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.LOAD, windowInfo.getId()));
 
         loaderContext.executeInjectTasks();
 

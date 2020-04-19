@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.logging;
+package io.jmix.ui.monitoring;
 
 public enum ScreenLifeCycle {
-    CREATE("create", "#create"),
-    LOAD("load", "#load"),
-    XML("xml", "#xml"),
-    INIT("init", "#init"),
-    BEFORE_SHOW("afterShow", "#beforeShow"),
-    AFTER_SHOW("afterShow", "#afterShow"),
-    UI_PERMISSIONS("uiPermissions", "#uiPermissions"),
-    INJECTION("inject", "#inject"),
-    COMPANION("companion", "#companion");
+    CREATE("create"),
+    LOAD("load"),
+    XML("xml"),
+    INIT("init"),
+    BEFORE_SHOW("afterShow"),
+    AFTER_SHOW("afterShow"),
+    UI_PERMISSIONS("uiPermissions"),
+    INJECTION("inject");
 
     private String name;
-    private String suffix;
 
-    ScreenLifeCycle(String name, String suffix) {
+    ScreenLifeCycle(String name) {
         this.name = name;
-        this.suffix = suffix;
     }
 
     @Override
@@ -42,9 +39,5 @@ public enum ScreenLifeCycle {
 
     public String getName() {
         return name;
-    }
-
-    public String getSuffix() {
-        return suffix;
     }
 }

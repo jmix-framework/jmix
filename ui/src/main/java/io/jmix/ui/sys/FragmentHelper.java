@@ -21,16 +21,17 @@ import io.jmix.core.HotDeployManager;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.components.Fragment;
 import io.jmix.ui.components.Frame;
-import io.jmix.ui.logging.ScreenLifeCycle;
+import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.loaders.ComponentLoaderContext;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.perf4j.StopWatch;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -41,7 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.jmix.ui.components.ComponentsHelper.getFullFrameId;
-import static io.jmix.ui.logging.UIPerformanceLogger.createStopWatch;
+import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 import static io.jmix.ui.screen.UiControllerUtils.fireEvent;
 import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructor;
 
@@ -146,16 +147,15 @@ public class FragmentHelper {
 
         @Override
         public void execute(ComponentLoader.ComponentContext windowContext, Frame window) {
-            String loggingId = getFullFrameId(this.fragment);
-
-            StopWatch injectStopWatch = createStopWatch(ScreenLifeCycle.INJECTION, loggingId);
+            MeterRegistry meterRegistry = beanLocator.get(MeterRegistry.class);
+            Timer.Sample sample = Timer.start(meterRegistry);
 
             FrameOwner controller = fragment.getFrameOwner();
             UiControllerDependencyInjector dependencyInjector =
                     beanLocator.getPrototype(UiControllerDependencyInjector.NAME, controller, options);
             dependencyInjector.inject();
 
-            injectStopWatch.stop();
+            sample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, getFullFrameId(this.fragment)));
         }
     }
 
@@ -175,17 +175,15 @@ public class FragmentHelper {
 
         @Override
         public void execute(ComponentLoader.ComponentContext windowContext, Frame window) {
-            String loggingId = getFullFrameId(this.fragment);
-
-            StopWatch stopWatch = createStopWatch(ScreenLifeCycle.INIT, loggingId);
+            MeterRegistry meterRegistry = beanLocator.get(MeterRegistry.class);
+            Timer.Sample sample = Timer.start(meterRegistry);
 
             ScreenFragment frameOwner = fragment.getFrameOwner();
 
             fireEvent(frameOwner, ScreenFragment.InitEvent.class,
                     new ScreenFragment.InitEvent(frameOwner, options));
 
-
-            stopWatch.stop();
+            sample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INIT, getFullFrameId(this.fragment)));
 
             fireEvent(frameOwner, ScreenFragment.AfterInitEvent.class,
                     new ScreenFragment.AfterInitEvent(frameOwner, options));

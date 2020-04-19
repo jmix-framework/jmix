@@ -21,7 +21,7 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.components.Fragment;
 import io.jmix.ui.components.impl.FragmentImplementation;
 import io.jmix.ui.components.impl.FrameImplementation;
-import io.jmix.ui.logging.ScreenLifeCycle;
+import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.model.impl.ScreenDataImpl;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
@@ -29,15 +29,15 @@ import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.*;
 import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInitTask;
 import io.jmix.ui.xml.layout.ComponentLoader;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
-import org.perf4j.StopWatch;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static io.jmix.ui.logging.UIPerformanceLogger.createStopWatch;
+import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 import static io.jmix.ui.screen.UiControllerUtils.*;
 import static io.jmix.ui.sys.FragmentHelper.FragmentLoaderInjectTask;
 import static io.jmix.ui.sys.FragmentHelper.NAME;
@@ -76,7 +76,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
             windowInfo = fragmentHelper.createFakeWindowInfo(src, fragmentId);
         }
 
-        StopWatch createStopWatch = createStopWatch(ScreenLifeCycle.CREATE, windowInfo.getId());
+        Timer.Sample createSample = Timer.start(getMeterRegistry());
 
         Fragment fragment = factory.create(Fragment.NAME);
         ScreenFragment controller = fragmentHelper.createController(windowInfo, fragment);
@@ -132,7 +132,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
             this.fragmentLoader = layoutLoader.createFragmentContent(fragment, rootElement);
         }
 
-        createStopWatch.stop();
+        createSample.stop(createScreenTimer(getMeterRegistry(), ScreenLifeCycle.CREATE, windowInfo.getId()));
 
         this.resultComponent = fragment;
     }
@@ -162,7 +162,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
             }
         }
 
-        StopWatch loadStopWatch = createStopWatch(ScreenLifeCycle.LOAD, screenPath);
+        Timer.Sample sample = Timer.start(getMeterRegistry());
 
         // if fragment has XML descriptor
 
@@ -189,7 +189,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
         loadCaption(resultComponent, element);
         loadDescription(resultComponent, element);
 
-        loadStopWatch.stop();
+        sample.stop(createScreenTimer(getMeterRegistry(), ScreenLifeCycle.LOAD, screenPath));
 
         // propagate init phases
 

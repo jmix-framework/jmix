@@ -51,6 +51,7 @@ import io.jmix.ui.xml.DeclarativeTrackingAction;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
 import io.jmix.ui.xml.layout.LoaderResolver;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Attribute;
@@ -206,6 +207,10 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     protected UiProperties getProperties() {
         return beanLocator.get(UiProperties.class);
+    }
+
+    protected MeterRegistry getMeterRegistry() {
+        return beanLocator.get(MeterRegistry.class);
     }
 
     protected ThemeConstants getTheme() {

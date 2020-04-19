@@ -28,16 +28,16 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.logging.UIPerformanceLogger;
 import io.jmix.ui.logging.UserActionsLogger;
+import io.jmix.ui.monitoring.UiMonitoring;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.UiControllerProperty;
 import io.jmix.ui.sys.UiControllerPropertyInjector;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Element;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -79,6 +79,8 @@ public class MenuItemCommands {
     protected ScreenBuilders screenBuilders;
     @Inject
     protected BeanLocator beanLocator;
+    @Inject
+    protected MeterRegistry meterRegistry;
 
     /**
      * Create menu command.
@@ -206,10 +208,6 @@ public class MenuItemCommands {
         return id;
     }
 
-    protected StopWatch createStopWatch(MenuItem item) {
-        return new Slf4JStopWatch("MenuItem." + item.getId(), LoggerFactory.getLogger(UIPerformanceLogger.class));
-    }
-
     protected class ScreenCommand implements MenuItemCommand {
         protected FrameOwner origin;
         protected MenuItem item;
@@ -233,7 +231,7 @@ public class MenuItemCommands {
         public void run() {
             userActionsLog.trace("Menu item {} triggered", item.getId());
 
-            StopWatch sw = createStopWatch(item);
+            Timer.Sample sample = Timer.start(meterRegistry);
 
             OpenType openType = OpenType.NEW_TAB;
             String openTypeStr = descriptor.attributeValue("openType");
@@ -291,7 +289,7 @@ public class MenuItemCommands {
 
             screens.showFromNavigation(screen);
 
-            sw.stop();
+            sample.stop(UiMonitoring.createMenuTimer(meterRegistry, item.getId()));
         }
 
         protected Entity getEntityToEdit(String screenId) {
@@ -375,7 +373,7 @@ public class MenuItemCommands {
         public void run() {
             userActionsLog.trace("Menu item {} triggered", item.getId());
 
-            StopWatch sw = createStopWatch(item);
+            Timer.Sample sample = Timer.start(meterRegistry);
 
             Object beanInstance = beanLocator.get(bean);
             try {
@@ -396,7 +394,7 @@ public class MenuItemCommands {
                 throw new RuntimeException("Unable to execute bean method", e);
             }
 
-            sw.stop();
+            sample.stop(UiMonitoring.createMenuTimer(meterRegistry, item.getId()));
         }
 
         @Override
@@ -426,7 +424,7 @@ public class MenuItemCommands {
         public void run() {
             userActionsLog.trace("Menu item {} triggered", item.getId());
 
-            StopWatch sw = createStopWatch(item);
+            Timer.Sample sample = Timer.start(meterRegistry);
 
             Class<?> clazz = hotDeployManager.findClass(runnableClass);
             if (clazz == null) {
@@ -468,7 +466,7 @@ public class MenuItemCommands {
                 ((Runnable) classInstance).run();
             }
 
-            sw.stop();
+            sample.stop(UiMonitoring.createMenuTimer(meterRegistry, item.getId()));
         }
 
         @Override

@@ -41,7 +41,7 @@ import io.jmix.ui.gui.data.compatibility.DsSupport;
 import io.jmix.ui.icons.CubaIcon;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
-import io.jmix.ui.logging.ScreenLifeCycle;
+import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.logging.UserActionsLogger;
 import io.jmix.ui.model.impl.ScreenDataImpl;
 import io.jmix.ui.screen.*;
@@ -54,9 +54,10 @@ import io.jmix.ui.widgets.*;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.loaders.ComponentLoaderContext;
 import io.jmix.ui.xml.layout.loaders.LayoutLoader;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
-import org.perf4j.StopWatch;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
@@ -72,7 +73,7 @@ import java.util.stream.Stream;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.components.AppWorkArea.Mode;
 import static io.jmix.ui.components.AppWorkArea.State;
-import static io.jmix.ui.logging.UIPerformanceLogger.createStopWatch;
+import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 import static io.jmix.ui.screen.FrameOwner.WINDOW_CLOSE_ACTION;
 import static io.jmix.ui.screen.UiControllerUtils.*;
 import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructor;
@@ -103,6 +104,8 @@ public class WebScreens implements Screens {
     protected WindowCreationHelper windowCreationHelper;
     @Inject
     protected ScreenViewsLoader screenViewsLoader;
+    @Inject
+    protected MeterRegistry meterRegistry;
 
     // todo implement
     /*@Inject
@@ -159,7 +162,7 @@ public class WebScreens implements Screens {
 
         checkPermissions(openDetails.getOpenMode(), windowInfo);
 
-        StopWatch createStopWatch = createStopWatch(ScreenLifeCycle.CREATE, windowInfo.getId());
+        Timer.Sample createSample = Timer.start(meterRegistry);
 
         Window window = createWindow(windowInfo, resolvedScreenClass, openDetails);
 
@@ -184,11 +187,11 @@ public class WebScreens implements Screens {
         windowImpl.setFrameOwner(controller);
         windowImpl.setId(controller.getId());
 
-        createStopWatch.stop();
+        createSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.CREATE, windowInfo.getId()));
 
         // load UI from XML
 
-        StopWatch loadStopWatch = createStopWatch(ScreenLifeCycle.LOAD, windowInfo.getId());
+        Timer.Sample loadSample = Timer.start(meterRegistry);
 
         ComponentLoaderContext componentLoaderContext = !(controller instanceof CubaLegacyFrame)
                 ? new ComponentLoaderContext(options)
@@ -203,27 +206,27 @@ public class WebScreens implements Screens {
             loadWindowFromXml(element, windowInfo, window, controller, componentLoaderContext);
         }
 
-        loadStopWatch.stop();
+        loadSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.LOAD, windowInfo.getId()));
 
         // inject top level screen dependencies
-        StopWatch injectStopWatch = createStopWatch(ScreenLifeCycle.INJECTION, windowInfo.getId());
+        Timer.Sample injectSample = Timer.start(meterRegistry);
 
         UiControllerDependencyInjector dependencyInjector =
                 beanLocator.getPrototype(UiControllerDependencyInjector.NAME, controller, options);
         dependencyInjector.inject();
 
-        injectStopWatch.stop();
+        injectSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, windowInfo.getId()));
 
         // perform injection in nested fragments
         componentLoaderContext.executeInjectTasks();
 
         // run init
 
-        StopWatch initStopWatch = createStopWatch(ScreenLifeCycle.INIT, windowInfo.getId());
+        Timer.Sample initSample = Timer.start(meterRegistry);
 
         fireEvent(controller, InitEvent.class, new InitEvent(controller, options));
 
-        initStopWatch.stop();
+        initSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INIT, windowInfo.getId()));
 
         componentLoaderContext.executeInitTasks();
         componentLoaderContext.executePostInitTasks();
@@ -348,19 +351,19 @@ public class WebScreens implements Screens {
         checkNotNullArgument(screen);
         checkNotYetOpened(screen);
 
-        StopWatch uiPermissionsWatch = createStopWatch(ScreenLifeCycle.UI_PERMISSIONS, screen.getId());
+        Timer.Sample uiPermissionsSample = Timer.start(meterRegistry);
 
         windowCreationHelper.applyUiPermissions(screen.getWindow());
 
-        uiPermissionsWatch.stop();
+        uiPermissionsSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.UI_PERMISSIONS, screen.getId()));
 
-        StopWatch beforeShowWatch = createStopWatch(ScreenLifeCycle.BEFORE_SHOW, screen.getId());
+        Timer.Sample beforeShowSample = Timer.start(meterRegistry);
 
         fireEvent(screen, BeforeShowEvent.class, new BeforeShowEvent(screen));
 
         loadDataBeforeShow(screen);
 
-        beforeShowWatch.stop();
+        beforeShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.BEFORE_SHOW, screen.getId()));
 
         LaunchMode launchMode = screen.getWindow().getContext().getLaunchMode();
 
@@ -396,11 +399,11 @@ public class WebScreens implements Screens {
 
         changeUrl(screen);
 
-        StopWatch afterShowWatch = createStopWatch(ScreenLifeCycle.AFTER_SHOW, screen.getId());
+        Timer.Sample afterShowSample = Timer.start(meterRegistry);
 
         fireEvent(screen, AfterShowEvent.class, new AfterShowEvent(screen));
 
-        afterShowWatch.stop();
+        afterShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.AFTER_SHOW, screen.getId()));
     }
 
     @Override

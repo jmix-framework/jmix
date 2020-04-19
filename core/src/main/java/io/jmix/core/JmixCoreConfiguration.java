@@ -19,6 +19,8 @@ package io.jmix.core;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.JmixCoreSecurityConfiguration;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.MessageSource;
@@ -55,6 +57,11 @@ public class JmixCoreConfiguration {
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {
         return new JmixMessageSource(modules, resources);
+    }
+
+    @Bean
+    public MeterRegistry simpleMeterRegistry() {
+        return new SimpleMeterRegistry();
     }
 
     @EventListener

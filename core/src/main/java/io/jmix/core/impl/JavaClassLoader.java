@@ -20,10 +20,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.TimeSource;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -60,6 +60,8 @@ public class JavaClassLoader extends URLClassLoader {
     protected TimeSource timeSource;
     @Inject
     protected SpringBeanLoader springBeanLoader;
+    @Inject
+    protected MeterRegistry meterRegistry;
 
     @Inject
     public JavaClassLoader(CoreProperties coreProperties) {
@@ -96,7 +98,7 @@ public class JavaClassLoader extends URLClassLoader {
     public Class loadClass(final String fullClassName, boolean resolve) throws ClassNotFoundException {
         String containerClassName = StringUtils.substringBefore(fullClassName, "$");
 
-        StopWatch loadingWatch = new Slf4JStopWatch("LoadClass");
+        Timer.Sample sample = Timer.start(meterRegistry);
         try {
             lock(containerClassName);
             Class clazz;
@@ -114,7 +116,7 @@ public class JavaClassLoader extends URLClassLoader {
             return clazz;
         } finally {
             unlock(containerClassName);
-            loadingWatch.stop();
+            sample.stop(meterRegistry.timer("jmix.JavaClassLoader.loadClass"));
         }
     }
 

@@ -105,9 +105,6 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected void init() {
-        // todo perf4j
-//        StopWatch initTiming = new Slf4JStopWatch("ViewRepository.init." + getClass().getSimpleName());
-
         storage.clear();
         readFileNames.clear();
 
@@ -122,8 +119,6 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         for (Element viewElem : getFetchPlanElements(rootElem)) {
             deployFetchPlan(rootElem, viewElem, new HashSet<>());
         }
-
-//        initTiming.stop();
     }
 
     protected List<Element> getFetchPlanElements(Element element) {
@@ -494,9 +489,6 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected void replaceOverridden(FetchPlan replacementView) {
-        // todo perf4j
-//        StopWatch replaceTiming = new Slf4JStopWatch("ViewRepository.replaceOverridden");
-
         HashSet<FetchPlan> checked = new HashSet<>();
 
         for (FetchPlan view : getAllInitialized()) {
@@ -504,8 +496,6 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                 replaceOverridden(view, replacementView, checked);
             }
         }
-
-//        replaceTiming.stop();
     }
 
     protected void replaceOverridden(FetchPlan root, FetchPlan replacementView, HashSet<FetchPlan> checked) {

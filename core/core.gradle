@@ -27,7 +27,7 @@ dependencies {
     api 'org.springframework:spring-webmvc'
     api 'org.apache.commons:commons-lang3'
     api 'org.slf4j:slf4j-api'
-    api 'org.perf4j:perf4j'
+    api 'io.micrometer:micrometer-core'
     api 'org.codehaus.groovy:groovy'
     api 'org.apache.commons:commons-pool2'
     api 'javax.servlet:javax.servlet-api'

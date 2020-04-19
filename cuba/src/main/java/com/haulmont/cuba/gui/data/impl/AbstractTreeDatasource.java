@@ -17,22 +17,12 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
+import io.jmix.core.Entity;
 import io.jmix.core.commons.datastruct.Node;
 import io.jmix.core.commons.datastruct.Tree;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.ui.logging.UIPerformanceLogger;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @param <T> Entity
@@ -48,9 +38,6 @@ public abstract class AbstractTreeDatasource<T extends Entity<K>, K>
 
     @Override
     protected void loadData(Map<String, Object> params) {
-        String tag = getLoggingTag("TDS");
-        StopWatch sw = new Slf4JStopWatch(tag, LoggerFactory.getLogger(UIPerformanceLogger.class));
-
         clear();
 
         this.tree = loadTree(params);
@@ -69,8 +56,6 @@ public abstract class AbstractTreeDatasource<T extends Entity<K>, K>
         }
 
         this.nodes = targetNodes;
-
-        sw.stop();
     }
 
     protected abstract Tree<T> loadTree(Map<String, Object> params);

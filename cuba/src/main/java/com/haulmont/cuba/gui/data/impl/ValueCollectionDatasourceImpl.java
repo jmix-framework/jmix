@@ -16,18 +16,14 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.DataSupplier;
+import com.haulmont.cuba.gui.data.DsContext;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.logging.UIPerformanceLogger;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.DataSupplier;
-import com.haulmont.cuba.gui.data.DsContext;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -76,12 +72,7 @@ public class ValueCollectionDatasourceImpl
 
     @Override
     protected void loadData(Map<String, Object> params) {
-        String tag = getLoggingTag("VDS");
-        StopWatch sw = new Slf4JStopWatch(tag, LoggerFactory.getLogger(UIPerformanceLogger.class));
-
         delegate.loadData(params);
-
-        sw.stop();
     }
 
     @Override

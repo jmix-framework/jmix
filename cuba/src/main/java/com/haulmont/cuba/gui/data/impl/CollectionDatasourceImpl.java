@@ -31,11 +31,9 @@ import io.jmix.ui.filter.DenyingClause;
 import io.jmix.ui.filter.LogicalCondition;
 import io.jmix.ui.filter.LogicalOp;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
-import io.jmix.ui.logging.UIPerformanceLogger;
+import io.jmix.ui.monitoring.UiMonitoring;
 import io.jmix.ui.sys.PersistenceHelper;
 import org.apache.commons.collections4.map.LinkedMap;
-import org.perf4j.StopWatch;
-import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -614,9 +612,6 @@ public class CollectionDatasourceImpl<T extends Entity<K>, K>
             return;
         }
 
-        String tag = getLoggingTag("CDS");
-        StopWatch sw = new Slf4JStopWatch(tag, LoggerFactory.getLogger(UIPerformanceLogger.class));
-
         if (needLoading()) {
             LoadContext context = beforeLoadData(params);
             if (context == null) {
@@ -630,8 +625,6 @@ public class CollectionDatasourceImpl<T extends Entity<K>, K>
                 dataLoadError = e;
             }
         }
-
-        sw.stop();
     }
 
     /**

@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class AuditProperties {
 
     boolean enabled;
+    //ToDo: make system user name globally configurable?
     String systemUserLogin;
 
     public AuditProperties(

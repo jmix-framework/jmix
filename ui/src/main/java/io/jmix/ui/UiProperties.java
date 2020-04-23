@@ -57,7 +57,7 @@ public class UiProperties {
     boolean showBreadCrumbs;
     int mainTabCaptionLength;
     UrlHandlingMode urlHandlingMode;
-    String appWindowTheme;
+    String theme;
     String embeddedResourcesRoot;
     List<String> linkHandlerActions;
     int tablePageLength;
@@ -104,7 +104,7 @@ public class UiProperties {
             @DefaultValue("true") boolean showBreadCrumbs,
             @DefaultValue("25") int mainTabCaptionLength,
             @DefaultValue("URL_ROUTES") UrlHandlingMode urlHandlingMode,
-            @DefaultValue("halo") String appWindowTheme,
+            @DefaultValue("halo") String theme,
             String embeddedResourcesRoot,
             @DefaultValue("open,o") List<String> linkHandlerActions,
             @DefaultValue("15") int tablePageLength,
@@ -151,7 +151,7 @@ public class UiProperties {
         this.showBreadCrumbs = showBreadCrumbs;
         this.mainTabCaptionLength = mainTabCaptionLength;
         this.urlHandlingMode = urlHandlingMode;
-        this.appWindowTheme = appWindowTheme;
+        this.theme = theme;
         this.embeddedResourcesRoot = embeddedResourcesRoot;
         this.linkHandlerActions = linkHandlerActions;
         this.tablePageLength = tablePageLength;
@@ -302,8 +302,8 @@ public class UiProperties {
         return urlHandlingMode;
     }
 
-    public String getAppWindowTheme() {
-        return appWindowTheme;
+    public String getTheme() {
+        return theme;
     }
 
     public String getEmbeddedResourcesRoot() {

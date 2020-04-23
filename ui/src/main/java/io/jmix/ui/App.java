@@ -120,7 +120,7 @@ public abstract class App {
     }
 
     protected ThemeConstants loadTheme() {
-        String appWindowTheme = uiProperties.getAppWindowTheme();
+        String appWindowTheme = uiProperties.getTheme();
         String userAppTheme = cookies.getCookieValue(APP_THEME_COOKIE_PREFIX + coreProperties.getWebContextName());
         if (userAppTheme != null) {
             if (!Objects.equals(userAppTheme, appWindowTheme)) {

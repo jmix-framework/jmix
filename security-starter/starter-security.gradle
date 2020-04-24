@@ -1,25 +1,31 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 
+group = 'io.jmix.starter.security'
+
 dependencies {
     api project(':modules:security')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = 'sources'
+jar {
+    archivesBaseName = 'jmix-starter-security'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.starter.security'
             artifactId = 'jmix-starter-security'
-
             from components.java
-            artifact sourcesJar
         }
     }
 }

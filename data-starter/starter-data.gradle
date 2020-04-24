@@ -1,6 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 
+group = 'io.jmix.starter.data'
+
 dependencies {
     api project(':modules:core')
     api project(':modules:data')
@@ -13,9 +15,16 @@ dependencies {
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = 'sources'
+jar {
+    archivesBaseName = 'jmix-starter-data'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 test {
@@ -25,11 +34,8 @@ test {
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.starter.data'
             artifactId = 'jmix-starter-data'
-
             from components.java
-            artifact sourcesJar
         }
     }
 }

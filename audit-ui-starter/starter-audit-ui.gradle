@@ -1,6 +1,8 @@
 apply plugin: 'java'
 apply plugin: 'java-library'
 
+group = 'io.jmix.starter.auditui'
+
 dependencies {
     api project(':modules:core')
     api project(':modules:ui')
@@ -10,19 +12,23 @@ dependencies {
     api 'org.springframework.boot:spring-boot-autoconfigure'
 }
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = 'sources'
+jar {
+    archivesBaseName = 'jmix-starter-audit-ui'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.starter.auditui'
             artifactId = 'jmix-starter-audit-ui'
-
             from components.java
-            artifact sourcesJar
         }
     }
 }

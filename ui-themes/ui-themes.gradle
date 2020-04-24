@@ -18,6 +18,8 @@ import io.jmix.gradle.ui.ThemeCompile
 
 apply plugin: 'java'
 
+group = 'io.jmix.ui-themes'
+
 configurations {
     themes
 }
@@ -42,9 +44,7 @@ jar {
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.ui-themes'
             artifactId = 'jmix-ui-themes'
-
             from components.java
         }
     }

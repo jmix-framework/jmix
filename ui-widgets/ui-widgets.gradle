@@ -19,6 +19,8 @@ import io.jmix.gradle.ui.WidgetsCompile
 apply plugin: 'java'
 apply plugin: 'java-library'
 
+group = 'io.jmix.ui-widgets'
+
 def jmixUi = rootProject.project(':modules:ui')
 
 dependencies {
@@ -46,9 +48,7 @@ task compileWidgets(type: WidgetsCompile, dependsOn: classes)
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.ui-widgets'
             artifactId = 'jmix-ui-widgets'
-
             from components.java
         }
     }

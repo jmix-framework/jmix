@@ -18,6 +18,8 @@ import io.jmix.gradle.JmixPlugin
 
 apply plugin: 'java'
 
+group = 'io.jmix.ui-widgets-compiled'
+
 def uiWidgets = project(':modules:ui-widgets')
 def inputDir = new File(uiWidgets.buildDir, 'widgets')
 
@@ -30,9 +32,7 @@ jar {
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.ui-widgets-compiled'
             artifactId = 'jmix-ui-widgets-compiled'
-
             from components.java
         }
     }

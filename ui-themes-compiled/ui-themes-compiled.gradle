@@ -18,6 +18,8 @@ import io.jmix.gradle.JmixPlugin
 
 apply plugin: 'java'
 
+group = 'io.jmix.ui-themes-compiled'
+
 def uiThemes = project(':modules:ui-themes')
 def inputDir = new File(uiThemes.buildDir, 'themes')
 
@@ -30,9 +32,7 @@ jar {
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.ui-themes-compiled'
             artifactId = 'jmix-ui-themes-compiled'
-
             from components.java
         }
     }

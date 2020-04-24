@@ -19,6 +19,8 @@ apply plugin: 'groovy'
 apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
+group = 'io.jmix.core'
+
 dependencies {
     api platform(project(':jmix-platform'))
     
@@ -62,9 +64,12 @@ jar {
     archivesBaseName = 'jmix-core'
 }
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = 'sources'
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 test {
@@ -74,11 +79,8 @@ test {
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.core'
             artifactId = 'jmix-core'
-
             from components.java
-            artifact sourcesJar
         }
     }
 }

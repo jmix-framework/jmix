@@ -34,7 +34,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 /**
- * Utility class for accessing registered data source names.
+ * Utility class for accessing registered data store names.
  */
 @Component(Stores.NAME)
 public class Stores {
@@ -85,7 +85,7 @@ public class Stores {
 
     @Nullable
     protected StoreDescriptor getStoreDescriptor(String storeName) {
-        String descriptorName = environment.getProperty("jmix." + storeName + "StoreDescriptor");
+        String descriptorName = environment.getProperty("jmix.core.storeDescriptor_" + storeName);
         if (descriptorName != null) {
             StoreDescriptor descriptor = descriptors.get(descriptorName);
             if (descriptor != null) {
@@ -125,10 +125,10 @@ public class Stores {
     }
 
     /**
-     * @return the list of additional data store names registered in the {@code cuba.additionalStores} app property
+     * @return the list of additional data store names registered in the {@code jmix.core.additionalStores} property
      */
     public List<String> getAdditional() {
-        String property = environment.getProperty("jmix.additionalStores");
+        String property = environment.getProperty("jmix.core.additionalStores");
         if (!Strings.isNullOrEmpty(property))
             return SPLITTER.splitToList(property);
         else

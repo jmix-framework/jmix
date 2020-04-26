@@ -43,7 +43,7 @@ public class DbmsType {
     }
 
     public String getType(String storeName) {
-        String propName = "jmix.dbmsType";
+        String propName = "jmix.data.dbmsType";
         if (!Stores.isMain(storeName))
             propName = propName + "_" + storeName;
 

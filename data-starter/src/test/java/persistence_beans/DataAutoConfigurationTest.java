@@ -36,7 +36,7 @@ public class DataAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(DataSourceAutoConfiguration.class, JmixDataAutoConfiguration.class))
-            .withPropertyValues("jmix.dbmsType=hsql", "spring.datasource.url=jdbc:hsqldb:mem:testdb", "spring.datasource.username=sa");
+            .withPropertyValues("jmix.data.dbmsType=hsql", "spring.datasource.url=jdbc:hsqldb:mem:testdb", "spring.datasource.username=sa");
 
     @Test
     public void testCustomBeans() {

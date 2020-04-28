@@ -23,11 +23,12 @@ group = 'io.jmix.core'
 
 dependencies {
     api platform(project(':jmix-platform'))
-    
+
     api 'org.springframework.boot:spring-boot'
     api 'org.springframework:spring-context'
     api 'org.springframework:spring-webmvc'
     api 'org.apache.commons:commons-lang3'
+    api 'org.apache.commons:commons-compress'
     api 'org.slf4j:slf4j-api'
     api 'io.micrometer:micrometer-core'
     api 'org.codehaus.groovy:groovy'
@@ -45,6 +46,7 @@ dependencies {
     api 'commons-io:commons-io'
     api 'org.apache.commons:commons-text'
     api 'com.google.guava:guava'
+    api 'com.google.code.gson:gson'
     api 'org.dom4j:dom4j'
     api 'javax.annotation:javax.annotation-api'
 

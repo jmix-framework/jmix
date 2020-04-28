@@ -19,6 +19,7 @@ package io.jmix.core.security;
 import io.jmix.core.security.impl.AnonymousAuthenticationProvider;
 import io.jmix.core.security.impl.CoreUserDetailsService;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -43,13 +44,21 @@ public class JmixCoreSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Inject
     protected UserSessionCleanupInterceptor userSessionCleanupInterceptor;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        UserDetailsService userDetailsService = new CoreUserDetailsService();
+//        auth.userDetailsService(userDetailsService);
+//    }
+
+    @Autowired
+    protected AuthenticationManagerBuilder configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         UserDetailsService userDetailsService = new CoreUserDetailsService();
         auth.userDetailsService(userDetailsService);
 
         auth.authenticationProvider(new SystemAuthenticationProvider(userDetailsService));
         auth.authenticationProvider(new AnonymousAuthenticationProvider(userDetailsService));
+
+        return auth;
     }
 
     @Override

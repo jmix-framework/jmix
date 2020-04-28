@@ -300,7 +300,6 @@ public class EntityImportExportImpl implements EntityImportExport {
         //we must specify a view here because otherwise we may get UnfetchedAttributeException during merge
         saveContext.saving(dstEntity, regularView);
 
-        SecurityState dstSecurityState = new SecurityState();
         SecurityState srcSecurityState = new SecurityState();
         //todo persistenceSecurity
 //        if (dstEntity instanceof BaseGenericIdEntity && !createOp) {
@@ -387,7 +386,7 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected void importReference(Entity srcEntity,
                                    Entity dstEntity,
                                    EntityImportViewProperty importViewProperty,
-                                   FetchPlan regularView,
+                                   @Nullable FetchPlan regularView,
                                    SaveContext saveContext,
                                    Collection<ReferenceInfo> referenceInfoList,
                                    boolean optimisticLocking) {
@@ -536,8 +535,7 @@ public class EntityImportExportImpl implements EntityImportExport {
             dstEmbeddedEntity = metadata.create(embeddedAttrMetaClass);
         }
 
-        SecurityState dstSecurityState = null;
-        SecurityState srcSecurityState = null;
+        SecurityState srcSecurityState = new SecurityState();
 //        if (dstEntity instanceof BaseGenericIdEntity && !createOp) {
 //            String storeName = metadataTools.getStoreName(metadata.getClass(dstEntity));
 //            DataStore dataStore = storeFactory.get(storeName);
@@ -727,7 +725,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 //        return globalConfig.getRestRequiresSecurityToken();
 //    }
 
-    protected Entity findReferenceEntity(Entity entity, EntityImportViewProperty viewProperty, SaveContext saveContext,
+    protected @Nullable Entity findReferenceEntity(Entity entity, EntityImportViewProperty viewProperty, SaveContext saveContext,
                                          Set<Entity> loadedEntities) {
         Entity result = Stream.concat(loadedEntities.stream(), saveContext.getEntitiesToSave().stream())
                 .filter(item -> item.equals(entity))

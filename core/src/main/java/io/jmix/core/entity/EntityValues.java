@@ -47,7 +47,7 @@ public class EntityValues {
      * @param name  attribute name according to JavaBeans notation
      * @param value attribute value
      */
-    public static void setValue(Entity<?> entity, String name, Object value) {
+    public static void setValue(Entity<?> entity, String name, @Nullable Object value) {
         entity.__getEntityEntry().setAttributeValue(name, value, true);
     }
 

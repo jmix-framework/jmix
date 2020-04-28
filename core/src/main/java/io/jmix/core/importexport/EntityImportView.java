@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class describing how entity fields should be saved during the import performed by {@link EntityImportExportService
- * EntityImportExportService} <p> Only fields that are added as properties to the {@code EntityImportView} will be
+ * Class describing how entity fields should be saved during the import performed by {@link EntityImportExport}.
+ * <p> Only fields that are added as properties to the {@code EntityImportView} will be
  * saved.</p> <p> For local entity property the rule is simple: if property name is added to the view, then the property
  * will be saved. Use {@link #addLocalProperty(String)} method for adding local property to the view. <p> For
  * <b>many-to-one</b> references there are two possible options: <ul> <li>Create or update the referenced entity. Use
@@ -44,7 +44,7 @@ import java.util.Map;
  * #addOneToOneProperty(String, ReferenceImportBehaviour)}.
  * <p>
  * For <b>one-to-many</b> references you must specify the {@link EntityImportView} which defines how entities from the
- * collection must be saved. The second parameter is the {@link CollectionImportPolicy} which specifies what to do with
+ * collection must be saved. The second parameter is the {@link io.jmix.core.importexport.CollectionImportPolicy} which specifies what to do with
  * collection items that weren't passed to the import: they can be removed or remained.
  * <p>
  * For <b>many-to-many</b> references the following things must be defined: <ul> <li>Whether the passed collection
@@ -67,7 +67,7 @@ import java.util.Map;
  */
 public class EntityImportView implements Serializable {
 
-    private Map<String, EntityImportViewProperty> properties = new HashMap<>();
+    private final Map<String, EntityImportViewProperty> properties = new HashMap<>();
 
     private Class<? extends Entity> entityClass;
 

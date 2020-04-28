@@ -17,14 +17,14 @@
 package io.jmix.core.serialization;
 
 /**
- * An object that configures how to serialize a view to JSON. Objects of this type are used by methods of the {@link
- * FetchPlanSerializationAPI}. This object may be also used during the deserialization.
+ * An object that configures how to serialize a fetch plan to JSON. Objects of this type are used by methods of the {@link
+ * FetchPlanSerialization}. This object may be also used during the deserialization.
  */
 public enum FetchPlanSerializationOption {
 
     /**
-     * Specifies that view is serialized in the compact format. In compact format repeated nested views are replaced
-     * with just a view name. For example view for {@code customerGroup2} is defined with a string:
+     * Specifies that fetch plan is serialized in the compact format. In compact format repeated nested fetch plans are replaced
+     * with just a fetch plan name. For example fetch plan for {@code customerGroup2} is defined with a string:
      * <pre>
      * {
      *  "name": "test.customer-view",

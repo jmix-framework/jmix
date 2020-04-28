@@ -18,7 +18,7 @@ package io.jmix.core.serialization;
 
 /**
  * An object that configures how to serialize the entity to JSON. Objects of this type are used by methods of the {@link
- * EntitySerializationAPI}. This object may be also used during the deserialization.
+ * EntitySerialization}. This object may be also used during the deserialization.
  */
 public enum EntitySerializationOption {
 

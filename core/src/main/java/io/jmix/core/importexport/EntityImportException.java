@@ -16,12 +16,9 @@
 
 package io.jmix.core.importexport;
 
-import io.jmix.core.Logging;
-
 /**
  *
  */
-@Logging(Logging.Type.BRIEF)
 public class EntityImportException extends RuntimeException {
 
     public EntityImportException(String message) {

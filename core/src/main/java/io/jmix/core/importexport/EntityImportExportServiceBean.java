@@ -27,7 +27,7 @@ import java.util.Collection;
 public class EntityImportExportServiceBean implements EntityImportExportService {
 
     @Inject
-    protected EntityImportExportAPI entityImportExport;
+    protected EntityImportExport entityImportExport;
 
     @Override
     public byte[] exportEntitiesToZIP(Collection<? extends Entity> entities) {

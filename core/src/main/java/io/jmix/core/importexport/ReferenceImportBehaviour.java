@@ -19,7 +19,6 @@ package io.jmix.core.importexport;
 /**
  * Enum describes a behavior for references during entities import: missing reference can be ignored
  * or an exception can be thrown.
- *
  */
 public enum ReferenceImportBehaviour {
     IGNORE_MISSING,

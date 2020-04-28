@@ -16,14 +16,10 @@
 
 package io.jmix.rest.api.service;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.serialization.EntitySerialization;
-import io.jmix.core.serialization.EntitySerializationOption;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.config.RestServicesConfiguration;

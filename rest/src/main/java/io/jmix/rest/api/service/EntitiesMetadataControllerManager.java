@@ -20,7 +20,6 @@ import com.google.common.base.Joiner;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.serialization.FetchPlanSerialization;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.service.filter.data.MetaClassInfo;

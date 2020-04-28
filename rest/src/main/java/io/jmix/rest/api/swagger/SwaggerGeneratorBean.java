@@ -44,8 +44,8 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.jmix.core.serialization.EntitySerializationImpl.ENTITY_NAME_PROP;
-import static io.jmix.core.serialization.EntitySerializationImpl.INSTANCE_NAME_PROP;
+import static io.jmix.core.impl.serialization.EntitySerializationImpl.ENTITY_NAME_PROP;
+import static io.jmix.core.impl.serialization.EntitySerializationImpl.INSTANCE_NAME_PROP;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component(SwaggerGenerator.NAME)

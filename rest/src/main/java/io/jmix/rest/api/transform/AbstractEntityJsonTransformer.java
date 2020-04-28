@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.*;
 
-import static io.jmix.core.serialization.EntitySerialization.ENTITY_NAME_PROP;
+import static io.jmix.core.EntitySerialization.ENTITY_NAME_PROP;
 
 /**
  * Class containing a basic functionality of standard JSON transformer. It doest the following transformations:
@@ -71,6 +71,7 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
     /**
      * Method checks whether the passed JSON is an array of entities and if so it executes the {@link #transformEntityJson(ObjectNode, ObjectMapper)}
      * method for each array element. Method executes the {@link #transformEntityJson(ObjectNode, ObjectMapper)} method otherwise.
+     *
      * @param json JSON containing an entity or a list of entities
      * @return transformed JSON
      */

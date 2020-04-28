@@ -46,12 +46,13 @@ dependencies {
     api 'commons-io:commons-io'
     api 'org.apache.commons:commons-text'
     api 'com.google.guava:guava'
-    api 'com.google.code.gson:gson'
     api 'org.dom4j:dom4j'
     api 'javax.annotation:javax.annotation-api'
 
     api 'org.eclipse.persistence:jakarta.persistence'
     api 'org.antlr:antlr-runtime'
+
+    implementation'com.google.code.gson:gson'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

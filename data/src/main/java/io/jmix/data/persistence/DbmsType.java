@@ -58,7 +58,7 @@ public class DbmsType {
     }
 
     public String getVersion(String storeName) {
-        String propName = "jmix.dbmsVersion";
+        String propName = "jmix.data.dbmsVersion";
         if (!Stores.isMain(storeName))
             propName = propName + "_" + storeName;
 

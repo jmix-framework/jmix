@@ -27,26 +27,27 @@ dependencies {
     api project(':modules:core')
     api project(':modules:data')
 
-    api 'commons-fileupload:commons-fileupload'
-
-    api 'com.fasterxml.jackson.core:jackson-databind'
-    api 'com.fasterxml.jackson.core:jackson-annotations'
-    api 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-
-    api 'io.swagger:swagger-models'
-
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'
     api 'org.springframework.security:spring-security-web'
-    api 'org.springframework.security.oauth:spring-security-oauth2'
     api 'org.springframework:spring-webmvc'
     api 'org.springframework:spring-context'
+
+    implementation 'commons-fileupload:commons-fileupload'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
     implementation ('org.springframework.ldap:spring-ldap-core') {
         // removed because it defines its own Log4j LogFactory via JDK services mechanism
         exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
     }
+
+    implementation'com.google.code.gson:gson'
+    implementation 'org.springframework.security.oauth:spring-security-oauth2'
+    implementation 'io.swagger:swagger-models'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'

@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
  */
 public interface EntityImportViewBuilder {
 
-    String NAME = "jmix_EntityImportViewBuilderAPI";
+    String NAME = "jmix_EntityImportViewBuilder";
 
     /**
      * Builds an {@link EntityImportView} that contains all fields that are presented in the JSON object.

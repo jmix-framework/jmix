@@ -513,6 +513,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         }
     }
 
+    @Nullable
     protected Entity importEmbeddedAttribute(Entity srcEntity,
                                              Entity dstEntity,
                                              boolean createOp,
@@ -719,13 +720,12 @@ public class EntityImportExportImpl implements EntityImportExport {
         return entities;
     }
 
-//    protected boolean useSecurityToken() {
+    //    protected boolean useSecurityToken() {
 //        return globalConfig.getRestRequiresSecurityToken();
 //    }
-
-    protected @Nullable
-    Entity findReferenceEntity(Entity entity, EntityImportViewProperty viewProperty, SaveContext saveContext,
-                               Set<Entity> loadedEntities) {
+    @Nullable
+    protected Entity findReferenceEntity(Entity entity, EntityImportViewProperty viewProperty, SaveContext saveContext,
+                                         Set<Entity> loadedEntities) {
         Entity result = Stream.concat(loadedEntities.stream(), saveContext.getEntitiesToSave().stream())
                 .filter(item -> item.equals(entity))
                 .findFirst().orElse(null);

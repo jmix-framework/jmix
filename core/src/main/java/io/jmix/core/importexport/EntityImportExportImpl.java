@@ -300,8 +300,8 @@ public class EntityImportExportImpl implements EntityImportExport {
         //we must specify a view here because otherwise we may get UnfetchedAttributeException during merge
         saveContext.saving(dstEntity, regularView);
 
-        SecurityState dstSecurityState = null;
-        SecurityState srcSecurityState = null;
+        SecurityState dstSecurityState = new SecurityState();
+        SecurityState srcSecurityState = new SecurityState();
         //todo persistenceSecurity
 //        if (dstEntity instanceof BaseGenericIdEntity && !createOp) {
 //            String storeName = metadataTools.getStoreName(metadata.getClass(dstEntity));
@@ -468,7 +468,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                                                        Entity dstEntity,
                                                        SecurityState srcSecurityState,
                                                        EntityImportViewProperty viewProperty,
-                                                       FetchPlan regularView,
+                                                       @Nullable FetchPlan regularView,
                                                        SaveContext saveContext,
                                                        Collection<ReferenceInfo> referenceInfoList,
                                                        boolean optimisticLocking) {

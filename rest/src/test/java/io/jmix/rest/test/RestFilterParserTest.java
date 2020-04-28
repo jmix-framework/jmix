@@ -16,30 +16,6 @@
 
 package io.jmix.rest.test;
 
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.rest.api.service.filter.RestFilterOpManagerImpl;
-import io.jmix.rest.api.service.filter.RestFilterParseException;
-import io.jmix.rest.api.service.filter.RestFilterParseResult;
-import io.jmix.rest.api.service.filter.RestFilterParser;
-import mockit.Expectations;
-import mockit.Mocked;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-
 public class RestFilterParserTest /*extends CubaClientTestCase*/ {
     //todo CubaClientTestCase
 //    private RestFilterParser restFilterParser;

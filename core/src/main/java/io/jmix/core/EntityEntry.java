@@ -37,7 +37,7 @@ public interface EntityEntry<K> extends Serializable {
         setAttributeValue(name, value, true);
     }
 
-    void setAttributeValue(String name, Object value, boolean checkEquals);
+    void setAttributeValue(String name, @Nullable Object value, boolean checkEquals);
 
     default boolean isEmbeddable() {
         return false;

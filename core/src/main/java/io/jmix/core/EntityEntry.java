@@ -27,13 +27,15 @@ public interface EntityEntry<K> extends Serializable {
 
     Entity<K> getSource();
 
+    @Nullable
     K getEntityId();
 
-    void setEntityId(K id);
+    void setEntityId(@Nullable K id);
 
+    @Nullable
     <T> T getAttributeValue(String name);
 
-    default void setAttributeValue(String name, Object value) {
+    default void setAttributeValue(String name, @Nullable Object value) {
         setAttributeValue(name, value, true);
     }
 
@@ -59,9 +61,10 @@ public interface EntityEntry<K> extends Serializable {
 
     void setRemoved(boolean removed);
 
+    @Nullable
     SecurityState getSecurityState();
 
-    void setSecurityState(SecurityState securityState);
+    void setSecurityState(@Nullable SecurityState securityState);
 
     /**
      * Add listener to track attributes changes.
@@ -85,13 +88,12 @@ public interface EntityEntry<K> extends Serializable {
     /**
      * Copies the state.
      */
-    void copy(EntityEntry<?> entry);
+    void copy(@Nullable EntityEntry<?> entry);
 
-    void addExtraState(EntityEntryExtraState extraState);
-
-    @Nullable
-    <T extends EntityEntryExtraState> T getExtraState(Class<T> extraStateType);
+    void addExtraState(EntityEntryExtraState<?> extraState);
 
     @Nullable
-    Collection<EntityEntryExtraState> getAllExtraState();
+    EntityEntryExtraState<?> getExtraState(Class<?> extraStateType);
+
+    Collection<EntityEntryExtraState<?>> getAllExtraState();
 }

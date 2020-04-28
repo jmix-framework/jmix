@@ -23,6 +23,7 @@ import io.jmix.core.EntityValuesProvider;
 import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
+import org.springframework.lang.NonNull;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -34,7 +35,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     protected SecurityState securityState = new SecurityState();
     protected transient Collection<WeakReference<EntityPropertyChangeListener>> propertyChangeListeners;
     protected Entity<K> source;
-    protected Map<Class, EntityEntryExtraState> extraStateMap;
+    protected Map<Class<?>, EntityEntryExtraState<?>> extraStateMap;
     protected List<EntityValuesProvider> entityValuesProviders;
 
     public static final int NEW = 1;
@@ -49,13 +50,14 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
+    @NonNull
     public Entity<K> getSource() {
         return source;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getAttributeValue(String name) {
+    public <T> T getAttributeValue(@NonNull String name) {
         if (entityValuesProviders != null) {
             for (EntityValuesProvider valuesProvider : entityValuesProviders) {
                 if (valuesProvider.supportAttribute(name)) {
@@ -68,7 +70,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void setAttributeValue(String name, Object value, boolean checkEquals) {
+    public void setAttributeValue(@NonNull String name, Object value, boolean checkEquals) {
         EntityValuesProvider valuesProvider = null;
         if (entityValuesProviders != null) {
             valuesProvider = entityValuesProviders.stream()
@@ -138,7 +140,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
-    public void addPropertyChangeListener(EntityPropertyChangeListener listener) {
+    public void addPropertyChangeListener(@NonNull EntityPropertyChangeListener listener) {
         if (propertyChangeListeners == null) {
             propertyChangeListeners = new ArrayList<>(PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY);
         }
@@ -146,7 +148,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
-    public void removePropertyChangeListener(EntityPropertyChangeListener listener) {
+    public void removePropertyChangeListener(@NonNull EntityPropertyChangeListener listener) {
         if (propertyChangeListeners != null) {
             for (Iterator<WeakReference<EntityPropertyChangeListener>> it = propertyChangeListeners.iterator(); it.hasNext(); ) {
                 EntityPropertyChangeListener iteratorListener = it.next().get();
@@ -190,7 +192,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
-    public void copy(EntityEntry<?> entry) {
+    public void copy(@Nullable EntityEntry<?> entry) {
         if (entry != null) {
             setNew(entry.isNew());
             setDetached(entry.isDetached());
@@ -199,22 +201,22 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
 
             setSecurityState(entry.getSecurityState());
 
-            if (entry.getAllExtraState() != null) {
-                for (EntityEntryExtraState extraState : entry.getAllExtraState()) {
-                    try {
-                        EntityEntryExtraState newExtraState = ReflectionHelper.newInstance(extraState.getClass(), this);
-                        newExtraState.copy(extraState);
-                        addExtraState(newExtraState);
-                    } catch (NoSuchMethodException e) {
-                        throw new IllegalStateException(String.format("Error while create extra state of type: %s", extraState.getClass().getSimpleName()), e);
-                    }
+            for (EntityEntryExtraState<?> extraState : entry.getAllExtraState()) {
+                try {
+                    @SuppressWarnings("unchecked")
+                    EntityEntryExtraState<K> newExtraState = ReflectionHelper.newInstance(extraState.getClass(), this);
+                    newExtraState.copy(extraState);
+                    addExtraState(newExtraState);
+                } catch (NoSuchMethodException e) {
+                    throw new IllegalStateException(String.format("Error while create extra state of type: %s", extraState.getClass().getSimpleName()), e);
                 }
             }
+
         }
     }
 
     @Override
-    public void addExtraState(EntityEntryExtraState extraState) {
+    public void addExtraState(@NonNull EntityEntryExtraState<?> extraState) {
         if (extraStateMap == null) {
             extraStateMap = new HashMap<>();
         }
@@ -228,14 +230,13 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
-    public <T extends EntityEntryExtraState> T getExtraState(Class<T> extraStateType) {
-        //noinspection unchecked
-        return extraStateMap == null ? null : (T) extraStateMap.get(extraStateType);
+    public EntityEntryExtraState<?> getExtraState(@NonNull Class<?> extraStateType) {
+        return extraStateMap == null ? null : extraStateMap.get(extraStateType);
     }
 
-    @Nullable
+    @NonNull
     @Override
-    public Collection<EntityEntryExtraState> getAllExtraState() {
-        return extraStateMap == null ? null : Collections.unmodifiableCollection(extraStateMap.values());
+    public Collection<EntityEntryExtraState<?>> getAllExtraState() {
+        return extraStateMap == null ? Collections.emptyList() : Collections.unmodifiableCollection(extraStateMap.values());
     }
 }

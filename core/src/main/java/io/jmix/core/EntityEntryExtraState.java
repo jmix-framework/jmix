@@ -20,7 +20,7 @@ public interface EntityEntryExtraState<K> {
     /**
      * Copies the extra state.
      */
-    default void copy(EntityEntryExtraState extraState) {
+    default void copy(EntityEntryExtraState<?> extraState) {
     }
 
     EntityEntry<K> getEntityEntry();

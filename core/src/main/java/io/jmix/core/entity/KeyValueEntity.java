@@ -23,6 +23,7 @@ import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.model.MetaClass;
+import org.springframework.lang.NonNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -74,12 +75,12 @@ public class KeyValueEntity
         }
 
         @Override
-        public <T> T getAttributeValue(String name) {
+        public <T> T getAttributeValue(@NonNull String name) {
             return ((KeyValueEntity) source).getValue(name);
         }
 
         @Override
-        public void setAttributeValue(String name, Object value, boolean checkEquals) {
+        public void setAttributeValue(@NonNull String name, Object value, boolean checkEquals) {
             ((KeyValueEntity) source).setValue(name, value, checkEquals);
         }
     }

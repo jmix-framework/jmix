@@ -18,6 +18,7 @@ package io.jmix.rest.api.service;
 
 import com.google.common.base.Joiner;
 import io.jmix.core.*;
+import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.serialization.FetchPlanSerialization;
 import io.jmix.rest.api.common.RestControllerUtils;
@@ -48,6 +49,9 @@ public class EntitiesMetadataControllerManager {
     protected MetadataTools metadataTools;
 
     @Inject
+    protected MessageTools messageTools;
+
+    @Inject
     protected RestControllerUtils restControllersUtils;
 
     @Inject
@@ -57,14 +61,14 @@ public class EntitiesMetadataControllerManager {
     protected FetchPlanRepository viewRepository;
 
     @Inject
-    protected Messages messages;
+    protected DatatypeRegistry datatypeRegistry;
 
     @Inject
     protected ExtendedEntities extendedEntities;
 
     public MetaClassInfo getMetaClassInfo(String entityName) {
         MetaClass metaClass = restControllersUtils.getMetaClass(entityName);
-        return new MetaClassInfo(metaClass);
+        return new MetaClassInfo(metaClass, messageTools, datatypeRegistry, metadataTools);
     }
 
     public Collection<MetaClassInfo> getAllMetaClassesInfo() {
@@ -73,7 +77,7 @@ public class EntitiesMetadataControllerManager {
 
         return metaClasses.stream()
                 .filter(metaClass -> extendedEntities.getExtendedClass(metaClass) == null)
-                .map(MetaClassInfo::new)
+                .map(metaClass -> new MetaClassInfo(metaClass, messageTools, datatypeRegistry, metadataTools))
                 .collect(Collectors.toList());
     }
 

@@ -16,6 +16,9 @@
 
 package io.jmix.rest.api.service.filter.data;
 
+import io.jmix.core.MessageTools;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import java.util.ArrayList;
@@ -27,11 +30,14 @@ public class MetaClassInfo {
     public String ancestor;
     public List<MetaPropertyInfo> properties = new ArrayList<>();
 
-    public MetaClassInfo(MetaClass metaClass) {
+    public MetaClassInfo(MetaClass metaClass,
+                         MessageTools messageTools,
+                         DatatypeRegistry datatypeRegistry,
+                         MetadataTools metadataTools) {
         this.entityName = metaClass.getName();
         this.ancestor = metaClass.getAncestor() != null ? metaClass.getAncestor().getName() : null;
         properties.addAll(metaClass.getProperties().stream()
-                .map(MetaPropertyInfo::new)
+                .map(metaProperty -> new MetaPropertyInfo(metaProperty, messageTools, datatypeRegistry, metadataTools))
                 .collect(Collectors.toList()));
     }
 }

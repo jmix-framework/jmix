@@ -36,10 +36,10 @@ public class MetaPropertyInfo {
     @Deprecated
     boolean isTransient;
 
-    public MetaPropertyInfo(MetaProperty metaProperty) {
-        MessageTools messageTools = AppBeans.get(MessageTools.class);
-        DatatypeRegistry datatypeRegistry = AppBeans.get(DatatypeRegistry.class);
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
+    public MetaPropertyInfo(MetaProperty metaProperty,
+                            MessageTools messageTools,
+                            DatatypeRegistry datatypeRegistry,
+                            MetadataTools metadataTools) {
         this.name = metaProperty.getName();
         this.attributeType = metaProperty.getType();
         switch (attributeType) {

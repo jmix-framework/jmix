@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.core.serialization;
+package io.jmix.core.impl.serialization;
 
 import org.springframework.lang.NonNullApi;

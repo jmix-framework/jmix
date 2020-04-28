@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+@NonNullApi
+package io.jmix.core.impl.importexport;
 
-/**
- * Enum describes a behavior for references during entities import: missing reference can be ignored
- * or an exception can be thrown.
- */
-public enum ReferenceImportBehaviour {
-    IGNORE_MISSING,
-    ERROR_ON_MISSING
-}
+import org.springframework.lang.NonNullApi;

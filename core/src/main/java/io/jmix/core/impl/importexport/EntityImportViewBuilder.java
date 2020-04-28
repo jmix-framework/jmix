@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+package io.jmix.core.impl.importexport;
 
+import io.jmix.core.EntityImportView;
+import io.jmix.core.EntityImportViewProperty;
+import io.jmix.core.ReferenceImportBehaviour;
 import io.jmix.core.metamodel.model.MetaClass;
 
 /**
@@ -28,9 +31,9 @@ public interface EntityImportViewBuilder {
     /**
      * Builds an {@link EntityImportView} that contains all fields that are presented in the JSON object.
      * <p>
-     * All references will be added to the view as a {@link io.jmix.core.importexport.ReferenceImportBehaviour#ERROR_ON_MISSING}
+     * All references will be added to the view as a {@link ReferenceImportBehaviour#ERROR_ON_MISSING}
      * behavior. All references that have a @Composition annotation will be added to the view with a property that has a
-     * {@link io.jmix.core.importexport.EntityImportViewProperty}. This means that compositions will be
+     * {@link EntityImportViewProperty}. This means that compositions will be
      * persisted during the import. Absent collection items will be removed from the database.
      * <p>
      * For many-to-many association items corresponding entities will be searched in the database. If any of them is

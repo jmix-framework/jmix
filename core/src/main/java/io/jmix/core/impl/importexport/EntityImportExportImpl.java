@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+package io.jmix.core.impl.importexport;
 
 import io.jmix.core.*;
-import io.jmix.core.serialization.EntitySerialization;
-import io.jmix.core.serialization.EntitySerializationOption;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.entity.SoftDelete;
@@ -725,8 +723,9 @@ public class EntityImportExportImpl implements EntityImportExport {
 //        return globalConfig.getRestRequiresSecurityToken();
 //    }
 
-    protected @Nullable Entity findReferenceEntity(Entity entity, EntityImportViewProperty viewProperty, SaveContext saveContext,
-                                         Set<Entity> loadedEntities) {
+    protected @Nullable
+    Entity findReferenceEntity(Entity entity, EntityImportViewProperty viewProperty, SaveContext saveContext,
+                               Set<Entity> loadedEntities) {
         Entity result = Stream.concat(loadedEntities.stream(), saveContext.getEntitiesToSave().stream())
                 .filter(item -> item.equals(entity))
                 .findFirst().orElse(null);

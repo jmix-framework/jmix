@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+package io.jmix.core.impl.importexport;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.jmix.core.Metadata;
-
-import io.jmix.core.Entity;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -38,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ *
  */
 @Component(EntityImportViewBuilder.NAME)
 public class EntityImportViewBuilderImpl implements EntityImportViewBuilder {
@@ -152,6 +150,7 @@ public class EntityImportViewBuilderImpl implements EntityImportViewBuilder {
      * Builds a EntityImportView that contains properties from all collection members.
      * If the first member contains the property A, and the second one contains a property B then a result view will contain
      * both properties A and B. Views for nested collections (2nd level compositions) are also merged.
+     *
      * @param jsonArray a JsonArray
      * @param metaClass a metaClass of entities that are in the jsonArray
      * @return an EntityImportView

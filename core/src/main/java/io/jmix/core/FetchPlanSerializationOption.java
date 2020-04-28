@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.serialization;
+package io.jmix.core;
 
 /**
  * An object that configures how to serialize a fetch plan to JSON. Objects of this type are used by methods of the {@link

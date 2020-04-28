@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.serialization;
+package io.jmix.core.impl.serialization;
 
 import com.google.gson.*;
 import io.jmix.core.*;
@@ -33,8 +33,8 @@ import java.util.Collection;
 import java.util.List;
 
 import static io.jmix.core.FetchMode.AUTO;
-import static io.jmix.core.serialization.FetchPlanSerializationOption.COMPACT_FORMAT;
-import static io.jmix.core.serialization.FetchPlanSerializationOption.INCLUDE_FETCH_MODE;
+import static io.jmix.core.FetchPlanSerializationOption.COMPACT_FORMAT;
+import static io.jmix.core.FetchPlanSerializationOption.INCLUDE_FETCH_MODE;
 
 /**
  *

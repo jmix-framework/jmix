@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+package io.jmix.core.impl.importexport;
 
 import io.jmix.core.Entity;
 

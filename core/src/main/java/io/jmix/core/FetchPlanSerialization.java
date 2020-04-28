@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.serialization;
-
-import io.jmix.core.FetchPlan;
+package io.jmix.core;
 
 /**
  * Class that is used for serialization and deserialization of fetch plan to JSON.
@@ -37,8 +35,8 @@ public interface FetchPlanSerialization {
     /**
      * Serializes a fetch plan to JSON object
      *
-     * @param fetchPlan    a fetchPlan
-     * @param options options specifying how a JSON object graph should be serialized
+     * @param fetchPlan a fetchPlan
+     * @param options   options specifying how a JSON object graph should be serialized
      * @return a string that represents a JSON object
      */
     String toJson(FetchPlan fetchPlan, FetchPlanSerializationOption... options);

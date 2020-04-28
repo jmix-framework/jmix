@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+package io.jmix.core;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import java.io.Serializable;
@@ -44,7 +40,7 @@ import java.util.Map;
  * #addOneToOneProperty(String, ReferenceImportBehaviour)}.
  * <p>
  * For <b>one-to-many</b> references you must specify the {@link EntityImportView} which defines how entities from the
- * collection must be saved. The second parameter is the {@link io.jmix.core.importexport.CollectionImportPolicy} which specifies what to do with
+ * collection must be saved. The second parameter is the {@link CollectionImportPolicy} which specifies what to do with
  * collection items that weren't passed to the import: they can be removed or remained.
  * <p>
  * For <b>many-to-many</b> references the following things must be defined: <ul> <li>Whether the passed collection

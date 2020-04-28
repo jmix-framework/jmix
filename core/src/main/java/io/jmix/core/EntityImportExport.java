@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
-
-import io.jmix.core.Entity;
-import io.jmix.core.FetchPlan;
+package io.jmix.core;
 
 import java.util.Collection;
 
@@ -29,9 +26,9 @@ public interface EntityImportExport {
     String NAME = "jmix_EntityImportExport";
 
     /**
-     * <p>Serializes a collection of entities to JSON using {@link io.jmix.core.serialization.EntitySerialization}
+     * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
      * and packs the JSON file into ZIP archive.</p> <p>Serialization is described in the {@link
-     * io.jmix.core.serialization.EntitySerialization#toJson(Collection)}
+     * EntitySerialization#toJson(Collection)}
      * method documentation</p>
      *
      * @param entities a collection of entities to export
@@ -40,10 +37,10 @@ public interface EntityImportExport {
     byte[] exportEntitiesToZIP(Collection<? extends Entity> entities);
 
     /**
-     * <p>Serializes a collection of entities to JSON using {@link io.jmix.core.serialization.EntitySerialization}
+     * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
      * and packs the JSON file into ZIP archive. Before the serialization entities will be
      * reloaded with the view passed as method parameter.</p> <p>Serialization is described in the {@link
-     * io.jmix.core.serialization.EntitySerialization#toJson(Collection)}
+     * EntitySerialization#toJson(Collection)}
      * method documentation</p>
      *
      * @param entities  a collection of entities to export
@@ -53,9 +50,9 @@ public interface EntityImportExport {
     byte[] exportEntitiesToZIP(Collection<? extends Entity> entities, FetchPlan fetchPlan);
 
     /**
-     * <p>Serializes a collection of entities to JSON using {@link io.jmix.core.serialization.EntitySerialization}.
+     * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.
      * Before the serialization entities will be reloaded with the view passed as method
-     * parameter.</p> <p>Serialization is described in the {@link io.jmix.core.serialization.EntitySerialization#toJson(Collection)}
+     * parameter.</p> <p>Serialization is described in the {@link EntitySerialization#toJson(Collection)}
      * method documentation</p>
      *
      * @param entities  a collection of entities to export
@@ -65,8 +62,8 @@ public interface EntityImportExport {
     String exportEntitiesToJSON(Collection<? extends Entity> entities, FetchPlan fetchPlan);
 
     /**
-     * <p>Serializes a collection of entities to JSON using {@link io.jmix.core.serialization.EntitySerialization}.</p>
-     * <p>Serialization is described in the {@link io.jmix.core.serialization.EntitySerialization#toJson(Collection)}
+     * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.</p>
+     * <p>Serialization is described in the {@link EntitySerialization#toJson(Collection)}
      * method documentation</p>
      *
      * @param entities a collection of entities to export
@@ -82,7 +79,7 @@ public interface EntityImportExport {
      * @param json JSON file containing entities
      * @param view {@code EntityImportView} with the rules that describes how entities should be persisted.
      * @return a collection of entities that have been imported
-     * @see io.jmix.core.importexport.EntityImportView
+     * @see EntityImportView
      */
     Collection<Entity> importEntitiesFromJson(String json, EntityImportView view);
 
@@ -95,7 +92,7 @@ public interface EntityImportExport {
      * @param zipBytes         byte array of ZIP archive with JSON file
      * @param entityImportView {@code EntityImportView} with the rules that describes how entities should be persisted.
      * @return a collection of entities that have been imported
-     * @see io.jmix.core.importexport.EntityImportView
+     * @see EntityImportView
      */
     Collection<Entity> importEntitiesFromZIP(byte[] zipBytes, EntityImportView entityImportView);
 
@@ -128,10 +125,10 @@ public interface EntityImportExport {
      * If the view contains a property for composition attribute then all composition collection members that are absent
      * in the passed entity will be removed.
      *
-     * @param importView {@code EntityImportView} with the rules that describes how entities should be persisted.
-     * @param validate   whether the passed entities should be validated by the bean validation
-     *                   mechanism before entities are persisted
-     * @param optimisticLocking    whether the passed entities versions should be validated before entities are persisted
+     * @param importView        {@code EntityImportView} with the rules that describes how entities should be persisted.
+     * @param validate          whether the passed entities should be validated by the bean validation
+     *                          mechanism before entities are persisted
+     * @param optimisticLocking whether the passed entities versions should be validated before entities are persisted
      * @return a collection of entities that have been imported
      */
     Collection<Entity> importEntities(Collection<? extends Entity> entities, EntityImportView importView, boolean validate, boolean optimisticLocking);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,13 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package io.jmix.core.serialization;
+package io.jmix.core;
 
-import io.jmix.core.Entity;
-import io.jmix.core.FetchPlan;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
@@ -43,13 +40,13 @@ public interface EntitySerialization {
      * <p>
      * The {@code options} parameter specify some additional options for the serialization process. For example,
      * repeated entities may be replaced with the object with the only "id" property, making the result JSON more
-     * compact. See {@link io.jmix.core.serialization.EntitySerializationOption} for details.
+     * compact. See {@link EntitySerializationOption} for details.
      * <p>
      * Additionally, an "_entityName" property is added to the JSON objects that represent an entity.
      *
-     * @param entity  an entity to be serialized
-     * @param fetchPlan    a fetch plan that defines which entity properties should be added to the result JSON object
-     * @param options options specifying how an entity should be serialized
+     * @param entity    an entity to be serialized
+     * @param fetchPlan a fetch plan that defines which entity properties should be added to the result JSON object
+     * @param options   options specifying how an entity should be serialized
      * @return a string that represents a JSON object
      */
     String toJson(Entity entity,
@@ -60,9 +57,9 @@ public interface EntitySerialization {
      * Serializes a collection of entities to the JSON array. Method works like the {@link #toJson(Entity, FetchPlan,
      * EntitySerializationOption...)}, but return a JSON array as a result.
      *
-     * @param entities a list of entities to be serialized
-     * @param fetchPlan     a fetch plan that defines which entity properties should be added to the result JSON object
-     * @param options  options specifying how an entity should be serialized
+     * @param entities  a list of entities to be serialized
+     * @param fetchPlan a fetch plan that defines which entity properties should be added to the result JSON object
+     * @param options   options specifying how an entity should be serialized
      * @return a string that represents a JSON array of objects.
      */
     String toJson(Collection<? extends Entity> entities,

@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.core.importexport;
+package io.jmix.core;
 
-import org.springframework.lang.NonNullApi;
+/**
+ * Enum describes the policy of processing collection members when importing the entity with the {@link EntityImportView}
+ */
+public enum CollectionImportPolicy {
+
+    /**
+     * Absent collection items will be keep.
+     */
+    KEEP_ABSENT_ITEMS,
+
+    /**
+     * Absent collection items will be removed from the database or excluded from the collection.
+     */
+    REMOVE_ABSENT_ITEMS
+}

@@ -12,29 +12,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package io.jmix.core.serialization;
+package io.jmix.core.impl.serialization;
 
-public class EntitySerializationException extends RuntimeException {
-
-    public EntitySerializationException() {
+/**
+ *
+ */
+public class FetchPlanSerializationException extends RuntimeException {
+    public FetchPlanSerializationException() {
     }
 
-    public EntitySerializationException(String message) {
+    public FetchPlanSerializationException(String message) {
         super(message);
     }
 
-    public EntitySerializationException(String message, Throwable cause) {
+    public FetchPlanSerializationException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public EntitySerializationException(Throwable cause) {
+    public FetchPlanSerializationException(Throwable cause) {
         super(cause);
     }
 
-    public EntitySerializationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public FetchPlanSerializationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

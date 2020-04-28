@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+package io.jmix.core;
 
 /**
- *
+ * Enum describes a behavior for references during entities import: missing reference can be ignored
+ * or an exception can be thrown.
  */
-public class EntityImportException extends RuntimeException {
-
-    public EntityImportException(String message) {
-        super(message);
-    }
-
-    public EntityImportException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public enum ReferenceImportBehaviour {
+    IGNORE_MISSING,
+    ERROR_ON_MISSING
 }

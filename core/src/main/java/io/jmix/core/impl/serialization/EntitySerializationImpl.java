@@ -15,7 +15,7 @@
  *
  */
 
-package io.jmix.core.serialization;
+package io.jmix.core.impl.serialization;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;

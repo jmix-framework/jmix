@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.core.importexport;
+package io.jmix.core.impl.importexport;
 
 /**
- * Enum describes the policy of processing collection members when importing the entity with the {@link EntityImportView}
+ *
  */
-public enum CollectionImportPolicy {
+public class EntityImportException extends RuntimeException {
 
-    /**
-     * Absent collection items will be keep.
-     */
-    KEEP_ABSENT_ITEMS,
+    public EntityImportException(String message) {
+        super(message);
+    }
 
-    /**
-     * Absent collection items will be removed from the database or excluded from the collection.
-     */
-    REMOVE_ABSENT_ITEMS
+    public EntityImportException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

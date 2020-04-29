@@ -342,27 +342,6 @@ public class MetadataTools {
     }
 
     /**
-     * Determine whether the given property is not persistent. Inverse of {@link #isPersistent(MetaProperty)}.
-     * <p>
-     * For objects and properties not registered in metadata this method returns {@code true}.
-     */
-    public boolean isNotPersistent(Object object, String property) {
-        Objects.requireNonNull(object, "object is null");
-        MetaClass metaClass = metadata.getSession().findClass(object.getClass());
-        if (metaClass == null)
-            return true;
-        MetaProperty metaProperty = metaClass.findProperty(property);
-        return metaProperty == null || !isPersistent(metaProperty);
-    }
-
-    /**
-     * Determine whether the given property is not persistent. Inverse of {@link #isPersistent(MetaProperty)}.
-     */
-    public boolean isNotPersistent(MetaProperty metaProperty) {
-        return !isPersistent(metaProperty);
-    }
-
-    /**
      * Determine whether the given property denotes an embedded object.
      *
      * @see Embedded
@@ -480,49 +459,21 @@ public class MetadataTools {
     /**
      * Determine whether the given metaclass represents a persistent entity.
      * <p>
-     * A persistent entity is an entity that is managed by ORM (i.e. registered in a persistence.xml file)
-     * and is not a MappedSuperclass or Embeddable.
+     * A persistent entity is an entity that is managed by ORM and is not a MappedSuperclass.
      */
     public boolean isPersistent(MetaClass metaClass) {
         checkNotNullArgument(metaClass, "metaClass is null");
-        return metaClass.getStore().getDescriptor().isPersistent()
-                && metaClass.getJavaClass().isAnnotationPresent(javax.persistence.Entity.class);
+        return metaClass.getStore().getDescriptor().isPersistent();
     }
 
     /**
      * Determine whether the given class represents a persistent entity.
      * <p>
-     * A persistent entity is an entity that is managed by ORM (i.e. registered in a persistence.xml file)
-     * and is not a MappedSuperclass or Embeddable.
+     * A persistent entity is an entity that is managed by ORM and is not a MappedSuperclass.
      */
     public boolean isPersistent(Class aClass) {
         checkNotNullArgument(aClass, "class is null");
         return isPersistent(metadata.getClass(aClass));
-    }
-
-    /**
-     * Determine whether the given metaclass represents a non-persistent entity.
-     * <p>
-     * A non-persistent entity is not managed by ORM.
-     * <p>
-     * Note that {@code isNotPersistent()} is not the same as {@code !isPersistent()}, because the latter does not
-     * include MappedSuperclass and Embeddable entities that are still managed by ORM.
-     */
-    public boolean isNotPersistent(MetaClass metaClass) {
-        return !metaClass.getStore().getDescriptor().isPersistent();
-    }
-
-    /**
-     * Determine whether the given class represents a non-persistent entity.
-     * <p>
-     * A non-persistent entity is not managed by ORM (i.e. registered in a metadata.xml file).
-     * <p>
-     * Note that {@code isNotPersistent()} is not the same as {@code !isPersistent()}, because the latter does not
-     * include MappedSuperclass and Embeddable entities that a still managed by ORM.
-     */
-    public boolean isNotPersistent(Class aClass) {
-        checkNotNullArgument(aClass, "class is null");
-        return isNotPersistent(metadata.getClass(aClass));
     }
 
     /**
@@ -1162,41 +1113,5 @@ public class MetadataTools {
         return e instanceof IllegalStateException
                 || e.getClass().getName().equals("org.eclipse.persistence.exceptions.ValidationException") && e.getMessage() != null
                 && e.getMessage().contains("An attempt was made to traverse a relationship using indirection that had a null Session");
-    }
-
-    /**
-     * DEPRECATED!
-     * Use {@link #isNotPersistent(MetaClass)}.
-     */
-    @Deprecated
-    public boolean isTransient(MetaClass metaClass) {
-        return isNotPersistent(metaClass);
-    }
-
-    /**
-     * DEPRECATED!
-     * Use {@link #isNotPersistent(Class)}.
-     */
-    @Deprecated
-    public boolean isTransient(Class aClass) {
-        return isNotPersistent(aClass);
-    }
-
-    /**
-     * DEPRECATED!
-     * Use {@link #isNotPersistent(Object, String)}.
-     */
-    @Deprecated
-    public boolean isTransient(Object object, String property) {
-        return isNotPersistent(object, property);
-    }
-
-    /**
-     * DEPRECATED!
-     * Use {@link #isNotPersistent(MetaProperty)}.
-     */
-    @Deprecated
-    public boolean isTransient(MetaProperty metaProperty) {
-        return !isPersistent(metaProperty);
     }
 }

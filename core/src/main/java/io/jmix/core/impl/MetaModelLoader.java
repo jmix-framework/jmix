@@ -155,12 +155,10 @@ public class MetaModelLoader {
         if (storeAnn != null) {
             store = stores.get(storeAnn.name());
         } else {
-            Entity entityAnn = javaClass.getAnnotation(Entity.class);
-            if (entityAnn != null) {
+            if (javaClass.getAnnotation(Entity.class) != null || javaClass.getAnnotation(Embeddable.class) != null) {
                 store = stores.get(Stores.MAIN);
             } else {
-                if (javaClass.getAnnotation(Embedded.class) != null
-                        || javaClass.getAnnotation(MappedSuperclass.class) != null) {
+                if (javaClass.getAnnotation(MappedSuperclass.class) != null) {
                     store = stores.get(Stores.UNDEFINED);
                 } else {
                     store = stores.get(Stores.NOOP);

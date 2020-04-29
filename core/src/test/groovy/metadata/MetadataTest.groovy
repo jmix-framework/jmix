@@ -22,6 +22,8 @@ import io.jmix.core.Stores
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
+import test_support.app.entity.Address
+import test_support.app.entity.Owner
 import test_support.base.entity.BaseGenericIdEntity
 import test_support.base.entity.BaseUuidEntity
 import test_support.base.entity.StandardEntity
@@ -115,6 +117,27 @@ class MetadataTest extends Specification {
 
         metaClass.store != null
         metaClass.store.name == Stores.UNDEFINED
+    }
+
+    def "store of embeddable and its properties is MAIN"() {
+
+        def metaClass = metadata.getClass(Address)
+
+        expect:
+
+        metaClass.store != null
+        metaClass.store.name == Stores.MAIN
+        metaClass.getProperty('city').store.name == Stores.MAIN
+    }
+
+    def "store of embedded property is MAIN"() {
+
+        def metaClass = metadata.getClass(Owner)
+        def property = metaClass.getProperty('address')
+
+        expect:
+
+        property.store.name == Stores.MAIN
     }
 
     def "store of entity property is NOOP"() {

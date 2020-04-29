@@ -48,7 +48,7 @@ public class MessagesImpl extends io.jmix.core.impl.MessagesImpl implements Mess
 
     @Override
     public String formatMainMessage(String key, Object... params) {
-        return formatMessage(key, params);
+        return formatMessage("", key, params);
     }
 
     @Override

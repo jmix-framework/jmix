@@ -93,8 +93,7 @@ public class MessageTools {
      * </ul>
      * @return localized message or input string itself if it doesn't begin with {@code msg://}
      */
-    @Nullable
-    public String loadString(@Nullable String group, @Nullable String ref) {
+    public String loadString(@Nullable String group, String ref) {
         return loadString(group, ref, null);
     }
 
@@ -109,28 +108,35 @@ public class MessageTools {
      * </ul>
      * @return localized message or input string itself if it doesn't begin with {@code msg://}
      */
-    @Nullable
-    public String loadString(@Nullable String group, @Nullable String ref, @Nullable Locale locale) {
-        if (ref != null) {
-            if (ref.startsWith(MARK)) {
-                String path = ref.substring(6);
-                final String[] strings = path.split("/");
-                if (strings.length == 1 && group != null) {
+    public String loadString(@Nullable String group, String ref, @Nullable Locale locale) {
+        if (ref == null)
+            return "";
+        if (ref.startsWith(MARK)) {
+            String path = ref.substring(6);
+            final String[] strings = path.split("/");
+            if (strings.length == 1) {
+                if (group != null) {
                     if (locale == null) {
                         ref = messages.getMessage(group, strings[0]);
                     } else {
                         ref = messages.getMessage(group, strings[0], locale);
                     }
-                } else if (strings.length == 2) {
-                    if (locale == null) {
-                        ref = messages.getMessage(strings[0], strings[1]);
-                    } else {
-                        ref = messages.getMessage(strings[0], strings[1], locale);
-                    }
                 } else {
-                    throw new UnsupportedOperationException("Unsupported resource string format: '" + ref
-                            + "', group=" + group);
+                    if (locale == null) {
+                        ref = messages.getMessage(strings[0]);
+                    } else {
+                        ref = messages.getMessage(strings[0], locale);
+                    }
                 }
+            } else if (strings.length == 2) {
+                if (locale == null) {
+                    ref = messages.getMessage(strings[0], strings[1]);
+                } else {
+                    ref = messages.getMessage(strings[0], strings[1], locale);
+                }
+            } else {
+                throw new UnsupportedOperationException("Unsupported resource string format: '" + ref
+                        + "', group=" + group);
             }
         }
         return ref;

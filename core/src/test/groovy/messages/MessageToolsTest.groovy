@@ -51,6 +51,9 @@ class MessageToolsTest extends Specification {
 
         messageTools.loadString('test_support.app.entity','msg://Pet.name', LOC_EN) == 'Name'
         messageTools.loadString('test_support.app.entity','msg://Pet.name', LOC_RU) == 'Имя'
+
+        messageTools.loadString('msg://menuCaption', LOC_EN) == 'Application'
+        messageTools.loadString('msg://menuCaption', LOC_RU) == 'Приложение'
     }
 
     def "test getEntityCaption"() {

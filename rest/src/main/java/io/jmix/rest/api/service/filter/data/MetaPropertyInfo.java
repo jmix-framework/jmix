@@ -63,7 +63,7 @@ public class MetaPropertyInfo {
         this.readOnly = metaProperty.isReadOnly();
         this.mandatory = metaProperty.isMandatory();
         this.isPersistent = metadataTools.isPersistent(metaProperty);
-        this.isTransient = metadataTools.isNotPersistent(metaProperty);
+        this.isTransient = !metadataTools.isPersistent(metaProperty);
         this.description = messageTools.getPropertyCaption(metaProperty);
     }
 

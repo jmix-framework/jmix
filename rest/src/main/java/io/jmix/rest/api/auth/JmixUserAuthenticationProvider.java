@@ -171,7 +171,7 @@ public class JmixUserAuthenticationProvider implements AuthenticationProvider {
     }
 
     protected String getInvalidCredentialsMessage(String login, Locale locale) {
-        return messages.formatMessage("LoginException.InvalidLoginOrPassword", locale, login);
+        return messages.formatMessage("", "LoginException.InvalidLoginOrPassword", locale, login);
     }
 
     protected String makeClientInfo(String userAgent) {

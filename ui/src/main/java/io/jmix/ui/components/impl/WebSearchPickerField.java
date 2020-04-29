@@ -184,7 +184,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
             public void needMinSearchStringLength(String filterString, int minSearchStringLength) {
                 Messages messages = beanLocator.get(Messages.NAME);
 
-                String message = messages.formatMessage("searchSelect.minimumLengthOfFilter", minSearchStringLength);
+                String message = messages.formatMessage("", "searchSelect.minimumLengthOfFilter", minSearchStringLength);
                 // TODO: legacy-ui
                 // App.getInstance().getWindowManager().showNotification(message, defaultNotificationType);
             }

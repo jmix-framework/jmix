@@ -72,7 +72,7 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
 
             @Override
             public void needMinSearchStringLength(String filterString, int minSearchStringLength) {
-                String message = messages.formatMessage("searchSelect.minimumLengthOfFilter", minSearchStringLength);
+                String message = messages.formatMessage("", "searchSelect.minimumLengthOfFilter", minSearchStringLength);
                 // TODO: legacy-ui
                 // App.getInstance().getWindowManager().showNotification(message, defaultNotificationType);
             }

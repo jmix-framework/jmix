@@ -122,24 +122,6 @@ public class MessagesImpl implements Messages {
     }
 
     @Override
-    public String formatMessage(String key, Object... params) {
-        try {
-            return String.format(getMessage(key), params);
-        } catch (IllegalFormatException e) {
-            return key;
-        }
-    }
-
-    @Override
-    public String formatMessage(String key, Locale locale, Object... params) {
-        try {
-            return String.format(getMessage(key, locale), params);
-        } catch (IllegalFormatException e) {
-            return key;
-        }
-    }
-
-    @Override
     public String formatMessage(Class caller, String key, Object... params) {
         try {
             return String.format(getMessage(caller, key), params);

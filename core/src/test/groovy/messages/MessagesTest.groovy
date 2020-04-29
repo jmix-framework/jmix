@@ -85,7 +85,7 @@ class MessagesTest extends Specification {
     def "format message"() {
         expect:
 
-        messages.formatMessage('formattedMessage', LOC_EN, 'abc') == 'value abc'
-        messages.formatMessage('formattedMessage', LOC_RU, 'abc') == 'значение abc'
+        messages.formatMessage('', 'formattedMessage', LOC_EN, 'abc') == 'value abc'
+        messages.formatMessage('', 'formattedMessage', LOC_RU, 'abc') == 'значение abc'
     }
 }

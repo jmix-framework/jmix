@@ -114,26 +114,6 @@ public interface Messages {
      * Get localized message and use it as a format string for parameters provided.<br>
      * Locale is determined by the current user session.
      *
-     * @param key    message key
-     * @param params parameter values
-     * @return formatted string or the key in case of IllegalFormatException
-     */
-    String formatMessage(String key, Object... params);
-
-    /**
-     * Get localized message and use it as a format string for parameters provided.<br>
-     *
-     * @param key    message key
-     * @param locale message locale
-     * @param params parameter values
-     * @return formatted string or the key in case of IllegalFormatException
-     */
-    String formatMessage(String key, Locale locale, Object... params);
-
-    /**
-     * Get localized message and use it as a format string for parameters provided.<br>
-     * Locale is determined by the current user session.
-     *
      * @param caller determines the message group as class' package name
      * @param key    message key
      * @param params parameter values

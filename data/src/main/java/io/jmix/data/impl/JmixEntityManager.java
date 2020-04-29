@@ -473,7 +473,7 @@ public class JmixEntityManager implements EntityManager {
 
             // copy non-persistent attributes to the resulting merged instance
             for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
-                if (metadataTools.isNotPersistent(property) && !property.isReadOnly()) {
+                if (!metadataTools.isPersistent(property) && !property.isReadOnly()) {
                     // copy using reflection to avoid executing getter/setter code
                     Field field = FieldUtils.getField(entity.getClass(), property.getName(), true);
                     if (field != null) {

@@ -1117,7 +1117,7 @@ public class OrmDataStore implements DataStore {
                     Entity value = getValue(entity, property.getName());
                     if (value != null) {
                         if (Objects.equals(getId(value), getId(refEntity))) {
-                            if (property.isReadOnly() && metadataTools.isNotPersistent(property)) {
+                            if (property.isReadOnly() && !metadataTools.isPersistent(property)) {
                                 continue;
                             }
                             EntityValues.setValue(entity, property.getName(), refEntity, false);

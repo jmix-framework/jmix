@@ -27,7 +27,7 @@ import io.jmix.core.AppBeans;
 import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.sys.AppContext;
-import io.jmix.data.entity.ConfigEntity;
+import com.haulmont.cuba.core.entity.Config;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -72,8 +72,8 @@ public class ConfigProviderTest {
             EntityManager em = persistence.getEntityManager();
             Query query = em.createQuery("select c from sys$Config c where c.name like ?1");
             query.setParameter(1, "cuba.test.%");
-            List<ConfigEntity> list = query.getResultList();
-            for (ConfigEntity config : list) {
+            List<Config> list = query.getResultList();
+            for (Config config : list) {
                 em.remove(config);
             }
             tx.commit();

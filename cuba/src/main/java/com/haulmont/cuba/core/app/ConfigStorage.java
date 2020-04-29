@@ -19,7 +19,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.cluster.ClusterListenerAdapter;
 import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.data.entity.ConfigEntity;
+import com.haulmont.cuba.core.entity.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -164,10 +164,10 @@ public class ConfigStorage implements ConfigStorageAPI {
         Preconditions.checkNotNullArgument(name, "name is null");
 
         transaction.executeWithoutResult(transactionStatus -> {
-            ConfigEntity instance = getConfigInstance(name);
+            Config instance = getConfigInstance(name);
             if (value != null) {
                 if (instance == null) {
-                    instance = metadata.create(ConfigEntity.class);
+                    instance = metadata.create(Config.class);
                     instance.setName(name.trim());
                     instance.setValue(value.trim());
                     entityManager.persist(instance);
@@ -184,10 +184,10 @@ public class ConfigStorage implements ConfigStorageAPI {
     }
 
     @Nullable
-    private ConfigEntity getConfigInstance(String name) {
-        TypedQuery<ConfigEntity> query = entityManager.createQuery("select c from sys$Config c where c.name = ?1", ConfigEntity.class);
+    private Config getConfigInstance(String name) {
+        TypedQuery<Config> query = entityManager.createQuery("select c from sys$Config c where c.name = ?1", Config.class);
         query.setParameter(1, name);
-        List<ConfigEntity> list = query.getResultList();
+        List<Config> list = query.getResultList();
         if (list.isEmpty())
             return null;
         else

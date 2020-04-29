@@ -69,7 +69,7 @@ public class CollectionDsHelper {
 
             // add all non-persistent properties
             for (MetaProperty metaProperty : metaClass.getProperties()) {
-                if (metadataTools.isNotPersistent(metaProperty)) {
+                if (!metadataTools.isPersistent(metaProperty)) {
                     properties.add(new MetaPropertyPath(metaClass, metaProperty));
                 }
             }

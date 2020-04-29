@@ -254,7 +254,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
     protected class FillingInaccessibleAttributesVisitor implements EntityAttributeVisitor {
         @Override
         public boolean skip(MetaProperty property) {
-            return metadataTools.isNotPersistent(property);
+            return !metadataTools.isPersistent(property);
         }
 
         @Override

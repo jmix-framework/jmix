@@ -17,6 +17,7 @@
 package data_components
 
 import io.jmix.core.DataManager
+import io.jmix.core.ValueLoadContext
 import io.jmix.core.entity.KeyValueEntity
 import io.jmix.data.PersistenceTools
 import io.jmix.ui.model.DataComponents
@@ -27,6 +28,7 @@ import test_support.entity.Foo
 
 import javax.inject.Inject
 import java.util.function.Consumer
+import java.util.function.Function
 
 class KeyValueCollectionLoaderTest extends DataContextSpec {
 
@@ -70,6 +72,41 @@ class KeyValueCollectionLoaderTest extends DataContextSpec {
         cleanup:
 
         persistenceTools.deleteRecord(foo)
+    }
+
+    def "fail if query is null and loader is null"() {
+        KeyValueCollectionLoader loader = factory.createKeyValueCollectionLoader()
+        KeyValueCollectionContainer container = factory.createKeyValueCollectionContainer()
+
+        when:
+        loader.setContainer(container)
+        loader.load()
+
+        then:
+        IllegalStateException exception = thrown()
+    }
+
+    def "proceed if query is null and loader is not null"() {
+        KeyValueCollectionLoader loader = factory.createKeyValueCollectionLoader()
+        KeyValueCollectionContainer container = factory.createKeyValueCollectionContainer()
+
+        def kv = new KeyValueEntity()
+
+        when:
+
+        loader.setContainer(container)
+        loader.setLoadDelegate(new Function<ValueLoadContext, List<KeyValueEntity>>() {
+            @Override
+            List<KeyValueEntity> apply(ValueLoadContext valueLoadContext) {
+                return [kv].asList()
+            }
+        })
+        loader.load()
+
+        then:
+
+        container.getItems().size() == 1
+        container.getItems().contains(kv)
     }
 
     def "prevent load by PreLoadEvent"() {

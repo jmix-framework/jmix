@@ -21,6 +21,10 @@
         <when-type-is class="com.vaadin.client.VTooltip"/>
     </replace-with>
 
+    <replace-with class="io.jmix.ui.widgets.client.datefield.CubaDateCalendarPanel">
+        <when-type-is class="com.vaadin.client.ui.VDateCalendarPanel"/>
+    </replace-with>
+
     <replace-with class="io.jmix.ui.widgets.client.appui.AppUIConnector">
         <when-type-is class="com.vaadin.client.ui.ui.UIConnector"/>
     </replace-with>

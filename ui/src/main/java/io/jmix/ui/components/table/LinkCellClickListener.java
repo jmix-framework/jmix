@@ -160,6 +160,11 @@ public class LinkCellClickListener implements Table.CellClickListener {
 
     protected void callControllerInvoke(Entity rowItem, String columnId, String invokeMethodName) {
         FrameOwner controller = table.getFrame().getFrameOwner();
+        /* todo legacy-ui
+        if (controller instanceof LegacyFragmentAdapter) {
+            controller = ((LegacyFragmentAdapter) controller).getRealScreen();
+        }*/
+
         Method method;
         method = findLinkInvokeMethod(controller.getClass(), invokeMethodName);
         if (method != null) {

@@ -30,6 +30,16 @@ $c-timefield-ampm-width: 62px !default;
     height: $v-unit-size;
   }
 
+  .#{$primary-stylename}-wrapper.v-has-width {
+    .#{$primary-stylename}-layout {
+      display: inline-flex;
+    }
+
+    .#{$primary-stylename} {
+      width: 100%;
+    }
+  }
+
   .#{$primary-stylename}.v-readonly {
     @include valo-textfield-readonly-style;
 

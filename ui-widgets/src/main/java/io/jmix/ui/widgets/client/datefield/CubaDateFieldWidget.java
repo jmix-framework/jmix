@@ -98,6 +98,13 @@ public class CubaDateFieldWidget extends VPopupCalendar implements ShortcutActio
     }
 
     @Override
+    public void buildDate() {
+        super.buildDate();
+
+        updateTextState();
+    }
+
+    @Override
     public void setReadonly(boolean readonly) {
         super.setReadonly(readonly);
 

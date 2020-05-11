@@ -25,7 +25,7 @@ import io.jmix.core.entity.EntityPropertyChangeEvent
 import io.jmix.core.entity.EntityPropertyChangeListener
 import io.jmix.core.entity.SecurityState
 
-import io.jmix.security.entity.User
+import com.haulmont.cuba.core.model.common.User
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.DataContext
 import org.eclipse.persistence.internal.queries.EntityFetchGroup

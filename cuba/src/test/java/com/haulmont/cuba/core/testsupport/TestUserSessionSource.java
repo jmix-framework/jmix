@@ -17,13 +17,11 @@
 
 package com.haulmont.cuba.core.testsupport;
 
-import io.jmix.core.security.NoUserSessionException;
-import io.jmix.core.security.SystemAuthenticationToken;
-import io.jmix.core.security.UserSession;
+import com.haulmont.cuba.core.global.impl.UserSessionSourceImpl;
+import com.haulmont.cuba.security.global.NoUserSessionException;
+import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.security.impl.CoreUser;
-import io.jmix.core.security.impl.UserSessionSourceImpl;
 
-import java.util.Collections;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -51,8 +49,8 @@ public class TestUserSessionSource extends UserSessionSourceImpl {
         if (session == null) {
             CoreUser user = new CoreUser("test_admin", "test_admin", "Test Administrator");
             user.setId(UUID.fromString(USER_ID));
-            SystemAuthenticationToken authentication = new SystemAuthenticationToken(user, Collections.emptyList());
-            session = new UserSession(authentication);
+            session = new UserSession();
+            session.setUser(user);
             session.setLocale(Locale.ENGLISH);
         }
         return session;

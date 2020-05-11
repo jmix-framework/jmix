@@ -18,7 +18,7 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <instance id="userDc"
-                  class="io.jmix.security.entity.User">
+                  class="com.haulmont.cuba.core.model.common.User">
             <view extends="_local" systemProperties="true">
                 <property name="group">
                     <property name="name"/>

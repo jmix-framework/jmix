@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.menu.commandtargets;
 
-import io.jmix.security.entity.User;
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 

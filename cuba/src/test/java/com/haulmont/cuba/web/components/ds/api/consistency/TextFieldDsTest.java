@@ -19,7 +19,7 @@ package com.haulmont.cuba.web.components.ds.api.consistency;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.components.TextField;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.security.entity.User;
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.ui.components.HasValue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

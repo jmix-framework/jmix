@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byinterface;
 
-import io.jmix.security.entity.User;
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.Screen;
 

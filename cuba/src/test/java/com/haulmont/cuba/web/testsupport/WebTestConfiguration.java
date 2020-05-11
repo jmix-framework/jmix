@@ -26,7 +26,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WebBrowser;
 import io.jmix.core.metamodel.datatypes.FormatStrings;
 import io.jmix.core.metamodel.datatypes.FormatStringsRegistry;
-import io.jmix.core.security.UserSessionSource;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.security.JmixSecurityConfiguration;
 import io.jmix.ui.UiComponents;

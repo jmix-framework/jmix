@@ -16,8 +16,8 @@
 
 package spec.haulmont.cuba.web.components
 
-import io.jmix.security.entity.Role
-import io.jmix.security.entity.User
+import com.haulmont.cuba.core.model.common.Role
+import com.haulmont.cuba.core.model.common.User
 import io.jmix.ui.components.PickerField
 import spec.haulmont.cuba.web.WebSpec
 

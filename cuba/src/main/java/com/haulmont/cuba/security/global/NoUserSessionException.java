@@ -13,30 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.haulmont.cuba.security.global;
 
-package com.haulmont.cuba.web.testsupport;
+import io.jmix.core.Logging;
 
-import com.haulmont.cuba.core.global.impl.UserSessionSourceImpl;
-import com.haulmont.cuba.security.global.UserSession;
+import java.util.UUID;
 
-public class TestUserSessionSource extends UserSessionSourceImpl {
+/**
+ * Thrown if there is no {@link UserSession} on the current thread or if it is expired.
+ */
+@Logging(Logging.Type.BRIEF)
+public class NoUserSessionException extends RuntimeException {
 
-    private UserSession session;
+    private static final long serialVersionUID = 4820628023682230319L;
 
-    @Override
-    public boolean checkCurrentUserSession() {
-        return true;
+    public NoUserSessionException() {
+        super("No UserSession bound to the current thread");
     }
 
-    @Override
-    public synchronized UserSession getUserSession() {
-        if (session == null) {
-            session = createTestSession();
-        }
-        return session;
-    }
-
-    public UserSession createTestSession() {
-        return new UserSession(null);
+    public NoUserSessionException(UUID sessionId) {
+        super(String.format("User session not found: %s", sessionId.toString()));
     }
 }

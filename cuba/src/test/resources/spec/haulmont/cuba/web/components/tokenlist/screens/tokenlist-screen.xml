@@ -17,7 +17,7 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <instance id="groupDc"
-                  class="io.jmix.security.entity.Group"
+                  class="com.haulmont.cuba.core.model.common.Group"
                   view="group.browse">
             <loader/>
             <collection id="constraintsDc"

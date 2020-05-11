@@ -17,10 +17,10 @@
 package com.haulmont.cuba.core.testsupport;
 
 import com.haulmont.cuba.JmixCubaConfiguration;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.core.model.common.UserEntityListener;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.Stores;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;

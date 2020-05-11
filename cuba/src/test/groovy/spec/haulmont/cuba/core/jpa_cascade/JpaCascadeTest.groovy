@@ -16,15 +16,19 @@
 
 package spec.haulmont.cuba.core.jpa_cascade
 
+import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeBar
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeFoo
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeItem
 import io.jmix.core.AppBeans
 import io.jmix.core.EntityStates
 import io.jmix.core.Metadata
-import com.haulmont.cuba.core.Persistence
+import io.jmix.core.security.SecurityContextHelper
+import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.data.impl.EntityListenerManager
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.core.Authentication
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -36,6 +40,8 @@ class JpaCascadeTest extends CoreTestSpecification {
     private Persistence persistence
     @Inject
     private EntityStates entityStates
+    @Inject
+    private AuthenticationManager authenticationManager
 
     void setup() {
         AppBeans.get(EntityListenerManager).addListener(JpaCascadeBar, TestJpaCascadeBarListener)
@@ -44,6 +50,9 @@ class JpaCascadeTest extends CoreTestSpecification {
         TestJpaCascadeFooListener.messages.clear()
         TestJpaCascadeBarListener.messages.clear()
         TestJpaCascadeItemListener.messages.clear()
+
+        Authentication authentication = authenticationManager.authenticate(new SystemAuthenticationToken(null))
+        SecurityContextHelper.setAuthentication(authentication)
     }
 
     void cleanup() {

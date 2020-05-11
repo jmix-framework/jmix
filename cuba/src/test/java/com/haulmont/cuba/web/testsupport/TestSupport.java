@@ -16,7 +16,12 @@
 
 package com.haulmont.cuba.web.testsupport;
 
+import com.haulmont.cuba.core.model.common.User;
+import io.jmix.core.security.SecurityContextHelper;
+import io.jmix.core.security.SystemAuthenticationToken;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import static io.jmix.core.impl.StandardSerialization.deserialize;
 import static io.jmix.core.impl.StandardSerialization.serialize;
@@ -30,5 +35,13 @@ public class TestSupport {
         }
 
         return (T) deserialize(serialize(object));
+    }
+
+    public static void setAuthenticationToSecurityContext() {
+        User user = new User();
+        user.setLogin("test_admin");
+        user.setLoginLowerCase("test_admin");
+        SystemAuthenticationToken authentication = new SystemAuthenticationToken(user, new ArrayList<>());
+        SecurityContextHelper.setAuthentication(authentication);
     }
 }

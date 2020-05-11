@@ -43,7 +43,7 @@
                                enumClass="io.jmix.ui.filter.Op"/>
                 <entityParameter id="entityParam"
                                  caption="User Entity param"
-                                 entityClass="io.jmix.security.entity.User"/>
+                                 entityClass="com.haulmont.cuba.core.model.common.User"/>
             </parameters>
         </inputDialog>
 

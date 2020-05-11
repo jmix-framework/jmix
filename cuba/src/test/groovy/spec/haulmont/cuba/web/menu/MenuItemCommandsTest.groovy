@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.menu
 
 
 import com.haulmont.cuba.core.global.LoadContext
-import io.jmix.security.entity.User
+import com.haulmont.cuba.core.model.common.User
 import io.jmix.ui.menu.MenuItem
 import io.jmix.ui.menu.MenuItemCommands
 import io.jmix.ui.screen.OpenMode

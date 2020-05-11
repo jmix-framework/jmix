@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global.impl;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.jmix.core.LocaleResolver;
-import io.jmix.core.security.UserSessionSource;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;

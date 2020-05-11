@@ -22,7 +22,7 @@ import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
 import io.jmix.core.security.Security;
-import io.jmix.core.security.UserSessionSource;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentsHelper;

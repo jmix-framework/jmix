@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.view.screens;
 
-import io.jmix.security.entity.User;
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.EditedEntityContainer;
 import io.jmix.ui.screen.LoadDataBeforeShow;

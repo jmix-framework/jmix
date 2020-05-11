@@ -23,8 +23,8 @@ import com.haulmont.cuba.gui.components.PickerField
 import io.jmix.core.FetchPlan
 import io.jmix.core.commons.events.Subscription
 import io.jmix.core.impl.StandardSerialization
-import io.jmix.security.entity.Group
-import io.jmix.security.entity.User
+import com.haulmont.cuba.core.model.common.Group
+import com.haulmont.cuba.core.model.common.User
 import io.jmix.ui.components.Component
 import io.jmix.ui.components.HasValue
 import spec.haulmont.cuba.web.UiScreenSpec

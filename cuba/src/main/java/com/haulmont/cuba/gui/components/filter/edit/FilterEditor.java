@@ -36,7 +36,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.commons.datastruct.Node;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.UserSessionSource;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.DialogAction;

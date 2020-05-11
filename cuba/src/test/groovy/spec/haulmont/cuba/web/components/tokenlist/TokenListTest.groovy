@@ -17,7 +17,7 @@
 package spec.haulmont.cuba.web.components.tokenlist
 
 import com.google.common.collect.Lists
-import io.jmix.security.entity.Constraint
+import com.haulmont.cuba.core.model.common.Constraint
 import io.jmix.ui.components.data.options.ContainerOptions
 import io.jmix.ui.components.data.options.ListEntityOptions
 import io.jmix.ui.components.data.options.MapEntityOptions

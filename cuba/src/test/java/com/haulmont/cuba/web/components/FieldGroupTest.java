@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;
 import com.vaadin.ui.GridLayout;
 import io.jmix.core.FetchPlan;
-import io.jmix.security.entity.User;
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.TextArea;
 import org.apache.commons.lang3.reflect.MethodUtils;

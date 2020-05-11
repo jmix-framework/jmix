@@ -23,8 +23,8 @@ import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.datatypes.TimeZoneAwareDatatype;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import com.haulmont.cuba.security.global.UserSession;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.components.ListEditor;
 
 import javax.annotation.Nullable;

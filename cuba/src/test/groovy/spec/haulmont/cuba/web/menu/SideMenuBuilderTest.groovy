@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.menu
 
 
 import io.jmix.core.MessageTools
-import io.jmix.core.security.UserSession
+import com.haulmont.cuba.security.global.UserSession
 import io.jmix.ui.components.mainwindow.SideMenu
 import io.jmix.ui.components.mainwindow.impl.WebSideMenu
 import io.jmix.ui.menu.MenuConfig

@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.navigation.entityinference
 
-import io.jmix.security.entity.User
+import com.haulmont.cuba.core.model.common.User
 import io.jmix.ui.WindowInfo
 import io.jmix.ui.navigation.EditorTypeExtractor
 import io.jmix.ui.screen.FrameOwner

@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.view
 
-import io.jmix.security.entity.User
+import com.haulmont.cuba.core.model.common.User
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.view.screens.UserEditEmbeddedViewScreen
 import spock.lang.Ignore

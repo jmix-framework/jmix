@@ -17,7 +17,7 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <collection id="userDc"
-                    class="io.jmix.security.entity.User"/>
+                    class="com.haulmont.cuba.core.model.common.User"/>
     </data>
     <actions>
         <action id="screenAction"/>

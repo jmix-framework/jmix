@@ -18,6 +18,7 @@
 package com.haulmont.cuba.core.testsupport;
 
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Entity;
@@ -25,10 +26,13 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.core.Persistence;
+import io.jmix.core.security.SecurityContextHelper;
+import io.jmix.core.security.SystemAuthenticationToken;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class TestSupport {
 
@@ -79,5 +83,13 @@ public class TestSupport {
 
             deleteRecord(table, primaryKey, EntityValues.<Object>getId(entity));
         }
+    }
+
+    public static void setAuthenticationToSecurityContext() {
+        User user = new User();
+        user.setLogin("test_admin");
+        user.setLoginLowerCase("test_admin");
+        SystemAuthenticationToken authentication = new SystemAuthenticationToken(user, new ArrayList<>());
+        SecurityContextHelper.setAuthentication(authentication);
     }
 }

@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.components.TextField
 import io.jmix.core.FetchPlan
 import io.jmix.core.commons.events.Subscription
 import io.jmix.core.metamodel.datatypes.Datatypes
-import io.jmix.security.entity.User
+import com.haulmont.cuba.core.model.common.User
 import io.jmix.ui.components.Component
 import io.jmix.ui.components.HasValue
 import spec.haulmont.cuba.web.UiScreenSpec

@@ -29,8 +29,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import com.haulmont.cuba.security.global.UserSession;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.FrameContext;
@@ -411,8 +411,8 @@ public abstract class AbstractCollectionDatasource<T extends Entity<K>, K>
         }
 
         String sessionPrefix = ParameterInfo.Type.SESSION.getPrefix() + "$";
-        templateParams.put(sessionPrefix + "userId", userSession.getUser().getId());
-        templateParams.put(sessionPrefix + "userLogin", userSession.getUser().getLoginLowerCase());
+        templateParams.put(sessionPrefix + "userId", UUID.fromString(userSession.getUser().getKey()));
+        templateParams.put(sessionPrefix + "userLogin", userSession.getUser().getUsername());
         for (String name : userSession.getAttributeNames()) {
             templateParams.put(sessionPrefix + name, userSession.getAttribute(name));
         }

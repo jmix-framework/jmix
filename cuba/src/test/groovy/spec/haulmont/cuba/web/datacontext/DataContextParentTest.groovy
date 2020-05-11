@@ -19,9 +19,9 @@ package spec.haulmont.cuba.web.datacontext
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import io.jmix.core.EntityStates
-import io.jmix.security.entity.Role
-import io.jmix.security.entity.User
-import io.jmix.security.entity.UserRole
+import com.haulmont.cuba.core.model.common.Role
+import com.haulmont.cuba.core.model.common.User
+import com.haulmont.cuba.core.model.common.UserRole
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.DataContext
 import org.eclipse.persistence.internal.queries.EntityFetchGroup

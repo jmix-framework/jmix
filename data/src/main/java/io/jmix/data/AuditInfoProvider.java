@@ -29,8 +29,8 @@ public interface AuditInfoProvider {
     String NAME = "jmix_AuditInfoProvider";
 
     @Nullable
-    String getCurrentUserLogin();
+    String getCurrentUserUsername();
 
     @Nullable
-    UUID getCurrentUserId();
+    String getCurrentUserKey();
 }

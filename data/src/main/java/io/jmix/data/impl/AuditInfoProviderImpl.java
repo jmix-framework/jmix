@@ -16,28 +16,29 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.AuditInfoProvider;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
-import java.util.UUID;
 
 @Component(AuditInfoProvider.NAME)
 public class AuditInfoProviderImpl implements AuditInfoProvider {
 
     @Inject
-    private UserSessionSource userSessionSource;
+    private CurrentAuthentication currentAuthentication;
 
     @Override
-    public String getCurrentUserLogin() {
-        return userSessionSource.checkCurrentUserSession() ?
-                userSessionSource.getUserSession().getUser().getLogin() : null;
+    public String getCurrentUserUsername() {
+        return currentAuthentication.getAuthentication() != null ?
+                currentAuthentication.getUser().getUsername() :
+                null;
     }
 
     @Override
-    public UUID getCurrentUserId() {
-        return userSessionSource.checkCurrentUserSession() ?
-                userSessionSource.getUserSession().getUser().getId() : null;
+    public String getCurrentUserKey() {
+        return currentAuthentication.getAuthentication() != null ?
+                currentAuthentication.getUser().getKey() :
+                null;
     }
 }

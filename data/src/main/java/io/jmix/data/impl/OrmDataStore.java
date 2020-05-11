@@ -103,7 +103,7 @@ public class OrmDataStore implements DataStore {
     protected PersistenceAttributeSecurity attributeSecurity;
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     @Inject
     protected QueryResultsManager queryResultsManager;
@@ -800,7 +800,8 @@ public class OrmDataStore implements DataStore {
 
         if (!context.getPreviousQueries().isEmpty()) {
             log.debug("Restrict query by previous results");
-            queryBuilder.setPreviousResults(userSessionSource.getUserSession().getId(), context.getQueryKey());
+            //todo MG maybe use user key instead of session id
+//            queryBuilder.setPreviousResults(userSessionSource.getUserSession().getId(), context.getQueryKey());
         }
 
         Query query = queryBuilder.getQuery(em);

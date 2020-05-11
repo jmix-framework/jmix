@@ -161,7 +161,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         Date ts = timeSource.currentTimestamp();
 
         if (entity instanceof Creatable) {
-            ((Creatable) entity).setCreatedBy(auditInfoProvider.getCurrentUserLogin());
+            ((Creatable) entity).setCreatedBy(auditInfoProvider.getCurrentUserUsername());
             ((Creatable) entity).setCreateTs(ts);
         }
         if (entity instanceof Updatable) {
@@ -178,7 +178,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         Entity entity = (Entity) event.getObject();
         if (!((entity instanceof SoftDelete) && justDeleted((SoftDelete) entity)) && (entity instanceof Updatable)) {
             Updatable updatable = (Updatable) event.getObject();
-            updatable.setUpdatedBy(auditInfoProvider.getCurrentUserLogin());
+            updatable.setUpdatedBy(auditInfoProvider.getCurrentUserUsername());
             updatable.setUpdateTs(timeSource.currentTimestamp());
         }
     }

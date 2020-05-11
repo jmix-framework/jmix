@@ -130,7 +130,7 @@ public class JmixEntityManager implements EntityManager {
         }
         if (entity instanceof SoftDelete && PersistenceHints.isSoftDeletion(delegate)) {
             ((SoftDelete) entity).setDeleteTs(timeSource.currentTimestamp());
-            ((SoftDelete) entity).setDeletedBy(auditInfoProvider.getCurrentUserLogin());
+            ((SoftDelete) entity).setDeletedBy(auditInfoProvider.getCurrentUserUsername());
         } else {
             delegate.remove(entity);
             entity.__getEntityEntry().setRemoved(true);

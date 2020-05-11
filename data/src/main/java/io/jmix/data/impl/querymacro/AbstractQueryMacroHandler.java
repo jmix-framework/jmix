@@ -17,10 +17,7 @@
 package io.jmix.data.impl.querymacro;
 
 
-
-import io.jmix.core.security.ClientDetails;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.impl.QueryMacroHandler;
 
 import javax.annotation.Nullable;
@@ -36,15 +33,15 @@ public abstract class AbstractQueryMacroHandler implements QueryMacroHandler {
     protected final Pattern macroPattern;
     protected Map<String, Class> expandedParamTypes;
 
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     protected AbstractQueryMacroHandler(Pattern macroPattern) {
         this.macroPattern = macroPattern;
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.userSessionSource = userSessionSource;
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
     }
 
     @Override
@@ -70,11 +67,7 @@ public abstract class AbstractQueryMacroHandler implements QueryMacroHandler {
     protected TimeZone getTimeZoneFromArgs(String[] args, int pos) {
         if (pos < args.length) {
             if ("USER_TIMEZONE".equalsIgnoreCase(args[pos].trim())) {
-                if (userSessionSource.checkCurrentUserSession()) {
-                    UserSession userSession = userSessionSource.getUserSession();
-                    ClientDetails details = userSession.getClientDetails();
-                    return details == null ? null : details.getTimeZone();
-                }
+                return currentAuthentication.getTimeZone();
             }
         }
         return null;

@@ -24,7 +24,7 @@ import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.entity.User;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -83,9 +83,9 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     @Inject
     protected CollectionLoader<EntityLogItem> entityLogDl;
     @Inject
-    protected CollectionLoader<User> usersDl;
+    protected CollectionLoader<BaseUser> usersDl;
     @Inject
-    protected CollectionContainer<User> usersDc;
+    protected CollectionContainer<BaseUser> usersDc;
     @Inject
     protected CollectionContainer<LoggedAttribute> loggedAttrDc;
     @Inject
@@ -251,8 +251,8 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     public TreeMap<String, String> getUsersMap() {
         TreeMap<String, String> options = new TreeMap<>();
         usersDl.load();
-        for (User user : usersDc.getItems()) {
-            options.put(metadataTools.getInstanceName(user), user.getLogin());
+        for (BaseUser user : usersDc.getItems()) {
+            options.put(metadataTools.getInstanceName(user), user.getUsername());
         }
         return options;
     }

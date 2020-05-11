@@ -24,9 +24,9 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.datatypes.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.config.RestQueriesConfiguration;
@@ -72,7 +72,7 @@ public class QueriesControllerManager {
     protected RestParseUtils restParseUtils;
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     public String executeQueryGet(String entityName,
                                   String queryName,
@@ -214,14 +214,15 @@ public class QueriesControllerManager {
             query.setParameter(paramName, objectParamValue);
         }
 
-        if (queryInfo.getJpql().contains(":session$userId")) {
-            query.setParameter("session$userId", userSessionSource.currentOrSubstitutedUserId());
-        }
-        if (queryInfo.getJpql().contains(":session$userLogin")) {
-            // todo user substitution
-            // query.setParameter("session$userLogin", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getLoginLowerCase());
-            query.setParameter("session$userLogin", userSessionSource.getUserSession().getUser().getLoginLowerCase());
-        }
+        //todo query parameters
+//        if (queryInfo.getJpql().contains(":session$userId")) {
+//            query.setParameter("session$userId", currentAuthentication.getUser().getKey());
+//        }
+//        if (queryInfo.getJpql().contains(":session$userLogin")) {
+//            // todo user substitution
+//            // query.setParameter("session$userLogin", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getLoginLowerCase());
+//            query.setParameter("session$userLogin", currentAuthentication.getUserSession().getUser().getLoginLowerCase());
+//        }
 
         query.setCacheable(queryInfo.isCacheable());
         ctx.setQuery(query);

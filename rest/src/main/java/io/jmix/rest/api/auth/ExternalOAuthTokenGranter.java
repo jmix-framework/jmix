@@ -30,6 +30,7 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 import javax.inject.Inject;
 import java.util.*;
 
+//todo fix ExternalOAuthTokenGranter?
 public class ExternalOAuthTokenGranter extends AbstractTokenGranter implements OAuthTokenIssuer {
 
     protected static final String USERNAME_DETAILS_ATTRIBUTE = "username";

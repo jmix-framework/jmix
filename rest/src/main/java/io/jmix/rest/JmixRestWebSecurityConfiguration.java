@@ -16,53 +16,43 @@
 
 package io.jmix.rest;
 
-import io.jmix.rest.api.auth.JmixUserAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
-@Configuration
-@EnableWebSecurity
-@Order(200)
+//@Configuration
+//@EnableWebSecurity
+//@Order(200)
+//todo remove JmixRestWebSecurityConfiguration ?
 public class JmixRestWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private static final String REST_API = "rest-api";
-
-    @Autowired
-    protected UserDetailsService userDetailsService;
-
-    @Bean
-    protected JmixUserAuthenticationProvider cubaUserAuthenticationProvider() {
-        return new JmixUserAuthenticationProvider(userDetailsService);
-    }
-
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint() {
-        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
-        entryPoint.setRealmName(REST_API);
-        return entryPoint;
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic().authenticationEntryPoint(authenticationEntryPoint());
-    }
-
-    @Autowired
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(cubaUserAuthenticationProvider());
-    }
+//    private static final String REST_API = "rest-api";
+//
+//    @Autowired
+//    protected UserDetailsService userDetailsService;
+//
+//    @Bean
+//    protected JmixUserAuthenticationProvider cubaUserAuthenticationProvider() {
+//        return new JmixUserAuthenticationProvider(userDetailsService);
+//    }
+//
+//    @Bean
+//    public AuthenticationEntryPoint authenticationEntryPoint() {
+//        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
+//        entryPoint.setRealmName(REST_API);
+//        return entryPoint;
+//    }
+//
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        http
+//                .authorizeRequests()
+//                .anyRequest().authenticated()
+//                .and()
+//                .httpBasic().authenticationEntryPoint(authenticationEntryPoint());
+//    }
+//
+//    @Autowired
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) {
+//        auth.authenticationProvider(cubaUserAuthenticationProvider());
+//    }
 }

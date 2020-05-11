@@ -19,7 +19,6 @@ package io.jmix.rest.api.controllers;
 import io.jmix.core.DataManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.entity.FileDescriptor;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -41,7 +40,7 @@ import java.util.UUID;
  * REST API controller that is used for downloading files by the {@link FileDescriptor} identifier
  */
 @RestController("jmix_FileDownloadController")
-@RequestMapping("/v2/files")
+@RequestMapping("/rest/files")
 public class FileDownloadController {
     //todo file storage
     private static final Logger log = LoggerFactory.getLogger(FileDownloadController.class);

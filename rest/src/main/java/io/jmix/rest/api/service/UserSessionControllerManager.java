@@ -17,7 +17,6 @@
 
 package io.jmix.rest.api.service;
 
-import io.jmix.core.security.UserSession;
 import io.jmix.rest.api.common.RestAuthUtils;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.springframework.http.HttpStatus;
@@ -38,11 +37,11 @@ public class UserSessionControllerManager {
         Locale locale = restAuthUtils.extractLocaleFromRequestHeader(request);
 
         if (locale != null) {
-            UserSession userSession = (UserSession) SecurityContextHolder.getContext().getAuthentication();
-            if (userSession != null) {
-                userSession.setLocale(locale);
-                return;
-            }
+//            UserSession userSession = (UserSession) SecurityContextHolder.getContext().getAuthentication();
+//            if (userSession != null) {
+//                userSession.setLocale(locale);
+//                return;
+//            }
         }
 
         throw new RestAPIException("Could not change user session locale", null, HttpStatus.UNPROCESSABLE_ENTITY);

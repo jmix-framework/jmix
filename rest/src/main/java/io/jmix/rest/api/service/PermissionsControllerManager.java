@@ -17,18 +17,9 @@
 package io.jmix.rest.api.service;
 
 import io.jmix.core.security.PermissionType;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.rest.api.exception.RestAPIException;
-import io.jmix.rest.api.service.filter.data.EffectiveRoleInfo;
-import io.jmix.rest.api.service.filter.data.ExplicitPermissionsInfo;
-import io.jmix.rest.api.service.filter.data.PermissionInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * Class is used for getting current user permissions for the REST API. It contains a business logic required by the
@@ -36,9 +27,6 @@ import java.util.Map;
  */
 @Component("jmix_PermissionsControllerManager")
 public class PermissionsControllerManager {
-
-    @Inject
-    protected UserSessionSource userSessionSource;
 
 
     //todo RolesService

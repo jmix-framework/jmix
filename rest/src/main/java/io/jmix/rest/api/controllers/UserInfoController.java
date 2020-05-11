@@ -29,7 +29,7 @@ import javax.inject.Inject;
  * REST controller that is used for getting an information about the current user
  */
 @RestController("jmix_UserInfoController")
-@RequestMapping(value = "/v2/userInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/rest/userInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserInfoController {
 
     @Inject

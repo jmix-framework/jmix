@@ -26,26 +26,28 @@ import java.util.Set;
 @Component(ServerTokenStoreMBean.NAME)
 public class ServerTokenStore implements ServerTokenStoreMBean {
 
-    @Inject
-    protected io.jmix.rest.rest.ServerTokenStore serverTokenStore;
+//    @Inject
+//    protected io.jmix.rest.rest.ServerTokenStore serverTokenStore;
 
+    //todo MG
     @Override
     public String removeTokensByUserLogin(String userLogin) {
-        if (StringUtils.isEmpty(userLogin)) {
-            return "Please specify the user's login";
-        }
-
-        try {
-            Set<String> tokens = serverTokenStore.getAccessTokenValuesByUserLogin(userLogin);
-            if (tokens.isEmpty()) {
-                return String.format("No tokens found for user '%s'", userLogin);
-            }
-
-            tokens.forEach(serverTokenStore::removeAccessToken);
-
-            return String.format("%s tokens were removed for user '%s' successfully.", tokens.size(), userLogin);
-        } catch (Throwable t) {
-            return ExceptionUtils.getStackTrace(t);
-        }
+//        if (StringUtils.isEmpty(userLogin)) {
+//            return "Please specify the user's login";
+//        }
+//
+//        try {
+//            Set<String> tokens = serverTokenStore.getAccessTokenValuesByUserLogin(userLogin);
+//            if (tokens.isEmpty()) {
+//                return String.format("No tokens found for user '%s'", userLogin);
+//            }
+//
+//            tokens.forEach(serverTokenStore::removeAccessToken);
+//
+//            return String.format("%s tokens were removed for user '%s' successfully.", tokens.size(), userLogin);
+//        } catch (Throwable t) {
+//            return ExceptionUtils.getStackTrace(t);
+//        }
+        return null;
     }
 }

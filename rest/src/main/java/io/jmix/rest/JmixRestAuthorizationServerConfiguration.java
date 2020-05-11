@@ -16,28 +16,27 @@
 
 package io.jmix.rest;
 
-import io.jmix.core.security.UserSessionManager;
-import io.jmix.rest.api.auth.ClientProxyTokenStore;
-import io.jmix.rest.api.auth.ExternalOAuthTokenGranter;
 import io.jmix.rest.api.auth.UniqueAuthenticationKeyGenerator;
+import io.jmix.rest.property.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 @EnableAuthorizationServer
-@PropertySource("classpath:/io/jmix/rest/application.properties")
+@PropertySource("classpath:/io/jmix/rest/module.properties")
 public class JmixRestAuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     private static final String REST_API = "rest-api";
@@ -47,6 +46,12 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
 
     @Value("${jmix.rest.client.secret}")
     protected String secret;
+
+    @Value("${jmix.rest.supportRefreshToken}")
+    protected boolean supportRefreshToken;
+
+    @Value("${jmix.rest.reuseRefreshToken}")
+    protected boolean reuseRefreshToken;
 
     @Value("${jmix.rest.client.authorizedGrantTypes}")
     protected String[] authorizedGrantTypes;
@@ -60,9 +65,6 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
     @Autowired
     protected AuthenticationManager authenticationManager;
 
-    @Autowired
-    protected UserSessionManager userSessionManager;
-
     @Bean
     protected UniqueAuthenticationKeyGenerator authenticationKeyGenerator() {
         return new UniqueAuthenticationKeyGenerator();
@@ -70,9 +72,18 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
 
     @Bean(name = "jmix_tokenStore")
     protected TokenStore tokenStore() {
-        ClientProxyTokenStore clientProxyTokenStore = new ClientProxyTokenStore();
-        clientProxyTokenStore.setAuthenticationKeyGenerator(authenticationKeyGenerator());
-        return clientProxyTokenStore;
+        //todo MG database token storage support
+        return new InMemoryTokenStore();
+    }
+
+    @Bean(name = "jmix_tokenServices")
+    public AuthorizationServerTokenServices tokenServices() {
+        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setSupportRefreshToken(supportRefreshToken);
+        defaultTokenServices.setReuseRefreshToken(reuseRefreshToken);
+//        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
+        return defaultTokenServices;
     }
 
     @Override
@@ -90,14 +101,14 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
-                .tokenGranter(new JmixRestTokenGranter(
-                        userSessionManager,
-                        authenticationManager,
-                        endpoints.getTokenServices(),
-                        endpoints.getClientDetailsService(),
-                        endpoints.getOAuth2RequestFactory()))
-                .pathMapping("/oauth/token", "/v2/oauth/token")
+//                .tokenGranter(new JmixRestTokenGranter(
+//                        authenticationManager,
+//                        endpoints.getTokenServices(),
+//                        endpoints.getClientDetailsService(),
+//                        endpoints.getOAuth2RequestFactory()))
+                .pathMapping("/oauth/token", "/rest/oauth/token")
                 .authenticationManager(authenticationManager)
+                .tokenServices(tokenServices())
                 .tokenStore(tokenStore());
     }
 }

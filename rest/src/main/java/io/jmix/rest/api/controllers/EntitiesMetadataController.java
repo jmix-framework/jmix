@@ -32,7 +32,7 @@ import java.util.Collection;
  * at the moment.
  */
 @RestController("jmix_EntitiesMetadataController")
-@RequestMapping(value = "/v2/metadata", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/rest/metadata", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class EntitiesMetadataController {
     @Inject
     protected EntitiesMetadataControllerManager controllerManager;

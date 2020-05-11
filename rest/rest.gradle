@@ -49,6 +49,9 @@ dependencies {
     implementation 'org.springframework.security.oauth:spring-security-oauth2'
     implementation 'io.swagger:swagger-models'
 
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

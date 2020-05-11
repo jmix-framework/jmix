@@ -22,6 +22,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+//todo MG check that we need this
 /**
  * The interceptor is used for cleaning up the thread-local SecurityContext after each request
  */

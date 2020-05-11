@@ -16,7 +16,7 @@
 
 package io.jmix.rest.api.service.filter.data;
 
-import io.jmix.core.entity.User;
+import io.jmix.core.entity.BaseUser;
 
 /**
  */
@@ -35,10 +35,10 @@ public class UserInfo {
     public String _instanceName;
     public String locale;
 
-    public UserInfo(User user) {
-        this.id = user.getId().toString();
-        this.login = user.getLogin();
-        this.name = user.getName();
+    public UserInfo(BaseUser user) {
+        this.id = user.getKey();
+//        this.login = user.getLogin();
+//        this.name = user.getName();
 
         //todo User
 //        this.firstName = user.getFirstName();

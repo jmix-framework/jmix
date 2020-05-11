@@ -16,8 +16,8 @@
 
 package io.jmix.rest.api.service;
 
-import io.jmix.core.entity.User;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.entity.BaseUser;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.rest.api.controllers.UserInfoController;
 import io.jmix.rest.api.service.filter.data.UserInfo;
 import org.springframework.stereotype.Component;
@@ -32,14 +32,14 @@ import javax.inject.Inject;
 public class UserInfoControllerManager {
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     public UserInfo getUserInfo() {
         // todo user substitution
 //        User user = userSessionSource.getUserSession().getCurrentOrSubstitutedUser();
-        User user = userSessionSource.getUserSession().getUser();
+        BaseUser user = currentAuthentication.getUser();
         UserInfo userInfo = new UserInfo(user);
-        userInfo.setLocale(userSessionSource.getUserSession().getLocale().toString());
+        userInfo.setLocale(currentAuthentication.getLocale().toString());
         return userInfo;
     }
 }

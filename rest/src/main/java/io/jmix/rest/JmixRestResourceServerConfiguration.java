@@ -16,38 +16,34 @@
 
 package io.jmix.rest;
 
+import io.jmix.core.CoreProperties;
 import io.jmix.core.Events;
-import io.jmix.core.security.UserSessions;
-import io.jmix.rest.api.auth.ClientProxyTokenStore;
-import io.jmix.rest.api.auth.JmixAnonymousAuthenticationFilter;
+import io.jmix.core.JmixModules;
+import io.jmix.core.security.UserRepository;
 import io.jmix.rest.api.auth.JmixRestLastSecurityFilter;
-import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.common.RestTokenMasker;
-import io.jmix.rest.api.config.RestQueriesConfiguration;
-import io.jmix.rest.api.config.RestServicesConfiguration;
 import io.jmix.rest.api.sys.JmixRestExceptionLoggingFilter;
-import io.jmix.rest.property.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 
-import javax.annotation.Resource;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableResourceServer
 public class JmixRestResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
-    @Resource(name = "jmix_tokenStore")
-    protected ClientProxyTokenStore tokenStore;
-
     @Autowired
-    protected UserSessions userSessions;
+    @Qualifier("jmix_tokenStore")
+    protected TokenStore tokenStore;
 
     @Autowired
     protected Events events;
@@ -56,43 +52,48 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
     protected RestTokenMasker restTokenMasker;
 
     @Autowired
-    protected RestProperties restProperties;
+    private CoreProperties coreProperties;
 
     @Autowired
-    protected RestServicesConfiguration restServicesConfiguration;
+    private UserRepository userRepository;
 
     @Autowired
-    protected RestQueriesConfiguration restQueriesConfiguration;
+    protected JmixModules jmixModules;
 
-    @Autowired
-    protected AuthenticationManager authenticationManager;
-
-    @Autowired
-    protected RestParseUtils restParseUtils;
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources
+//                .tokenServices(tokenServices)
+                .tokenStore(tokenStore);
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        JmixRestAuthorizationFilter jmixRestAuthorizationFilter = new JmixRestAuthorizationFilter(tokenStore, userSessions);
+        List<String> authenticatedUrlPatternsProperties = jmixModules.getPropertyValues("jmix.rest.authenticatedUrlPatterns");
+        String[] authenticatedUrlPatterns = authenticatedUrlPatternsProperties.stream()
+                .flatMap(s -> Arrays.stream(s.split(",")))
+                .toArray(String[]::new);
 
-        JmixRestExceptionLoggingFilter jmixRestExceptionLoggingFilter = new JmixRestExceptionLoggingFilter();
+        List<String> anonymousUrlPatternsProperties = jmixModules.getPropertyValues("jmix.rest.anonymousUrlPatterns");
+        String[] anonymousUrlPatterns = anonymousUrlPatternsProperties.stream()
+                .flatMap(s -> Arrays.stream(s.split(",")))
+                .toArray(String[]::new);
+
 
         JmixRestLastSecurityFilter jmixRestLastSecurityFilter = new JmixRestLastSecurityFilter(events, restTokenMasker);
-
-        JmixAnonymousAuthenticationFilter jmixAnonymousAuthenticationFilter = new JmixAnonymousAuthenticationFilter(
-                restProperties,
-                restServicesConfiguration,
-                restQueriesConfiguration,
-                authenticationManager,
-                restParseUtils);
+        JmixRestExceptionLoggingFilter jmixRestExceptionLoggingFilter = new JmixRestExceptionLoggingFilter();
 
         http
-                .anonymous().disable()
+                .csrf().disable()
+                .anonymous(anonymousConfigurer -> {
+                    anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
+                    anonymousConfigurer.principal(userRepository.getAnonymousUser());
+                })
                 .authorizeRequests()
-                .antMatchers("/**").authenticated()
+                .antMatchers(anonymousUrlPatterns).permitAll()
+                .antMatchers(authenticatedUrlPatterns).authenticated()
                 .and()
                 .addFilterBefore(jmixRestExceptionLoggingFilter, WebAsyncManagerIntegrationFilter.class)
-                .addFilterBefore(jmixAnonymousAuthenticationFilter, BasicAuthenticationFilter.class)
-                .addFilterAfter(jmixRestAuthorizationFilter, BasicAuthenticationFilter.class)
                 .addFilterAfter(jmixRestLastSecurityFilter, FilterSecurityInterceptor.class);
     }
 }

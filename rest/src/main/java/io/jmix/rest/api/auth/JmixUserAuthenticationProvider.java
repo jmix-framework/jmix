@@ -23,9 +23,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.security.LoginException;
-import io.jmix.core.security.LoginPasswordCredentials;
 import io.jmix.core.security.SystemAuthenticationToken;
-import io.jmix.core.security.UserSession;
 import io.jmix.rest.api.common.RestAuthUtils;
 import io.jmix.rest.exception.RestApiAccessDeniedException;
 import io.jmix.rest.property.RestProperties;
@@ -102,37 +100,37 @@ public class JmixUserAuthenticationProvider implements AuthenticationProvider {
             //noinspection unchecked
             Map<String, Object> details = (Map<String, Object>) authentication.getDetails();
 
-            UserSession session;
-            try {
-                LoginPasswordCredentials credentials = new LoginPasswordCredentials(login, (String) token.getCredentials());
-                credentials.setIpAddress(ipAddress);
-                //credentials.setClientType(ClientType.REST_API);
-                credentials.setClientType(new ClientType("REST API"));
-                credentials.setClientInfo(makeClientInfo(request.getHeader(HttpHeaders.USER_AGENT)));
-                //credentials.setSecurityScope(restApiConfig.getSecurityScope());
-                credentials.setParams(details);
-
-                //if the locale value is explicitly passed in the Accept-Language header then set its value to the
-                //credentials. Otherwise, the locale of the user should be used
-                Locale locale = restAuthUtils.extractLocaleFromRequestHeader(request);
-                if (locale != null) {
-                    credentials.setLocale(locale);
-                    credentials.setOverrideLocale(true);
-                } else {
-                    credentials.setOverrideLocale(false);
-                }
-
-                return loginUser(credentials);
-//            } catch (AccountLockedException le) {
-//                log.info("Blocked user login attempt: login={}, ip={}", login, ipAddress);
-//                throw new LockedException("User temporarily blocked");
-            } catch (RestApiAccessDeniedException ex) {
-                log.info("User is not allowed to use the REST API {}", login);
-                throw new BadCredentialsException("User is not allowed to use the REST API");
-            } catch (LoginException e) {
-                log.info("REST API authentication failed: {} {}", login, ipAddress);
-                throw new BadCredentialsException("Bad credentials");
-            }
+//            UserSession session;
+//            try {
+//                LoginPasswordCredentials credentials = new LoginPasswordCredentials(login, (String) token.getCredentials());
+//                credentials.setIpAddress(ipAddress);
+//                //credentials.setClientType(ClientType.REST_API);
+//                credentials.setClientType(new ClientType("REST API"));
+//                credentials.setClientInfo(makeClientInfo(request.getHeader(HttpHeaders.USER_AGENT)));
+//                //credentials.setSecurityScope(restApiConfig.getSecurityScope());
+//                credentials.setParams(details);
+//
+//                //if the locale value is explicitly passed in the Accept-Language header then set its value to the
+//                //credentials. Otherwise, the locale of the user should be used
+//                Locale locale = restAuthUtils.extractLocaleFromRequestHeader(request);
+//                if (locale != null) {
+//                    credentials.setLocale(locale);
+//                    credentials.setOverrideLocale(true);
+//                } else {
+//                    credentials.setOverrideLocale(false);
+//                }
+//
+//                return loginUser(credentials);
+////            } catch (AccountLockedException le) {
+////                log.info("Blocked user login attempt: login={}, ip={}", login, ipAddress);
+////                throw new LockedException("User temporarily blocked");
+//            } catch (RestApiAccessDeniedException ex) {
+//                log.info("User is not allowed to use the REST API {}", login);
+//                throw new BadCredentialsException("User is not allowed to use the REST API");
+//            } catch (LoginException e) {
+//                log.info("REST API authentication failed: {} {}", login, ipAddress);
+//                throw new BadCredentialsException("Bad credentials");
+//            }
         }
         return null;
     }
@@ -141,34 +139,34 @@ public class JmixUserAuthenticationProvider implements AuthenticationProvider {
 //        return authenticationService.login(credentials);
 //    }
 
-    protected SystemAuthenticationToken loginUser(LoginPasswordCredentials loginPasswordCredentials) {
-        String login = loginPasswordCredentials.getName();
-
-        Locale credentialsLocale = loginPasswordCredentials.getLocale() == null ?
-                messageTools.getDefaultLocale() : loginPasswordCredentials.getLocale();
-
-        if (Strings.isNullOrEmpty(login)) {
-            // empty login is not valid
-            throw new LoginException(getInvalidCredentialsMessage(login, credentialsLocale));
-        }
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(login);
-        if (userDetails == null) {
-            throw new LoginException(getInvalidCredentialsMessage(login, credentialsLocale));
-        }
-        // todo PasswordEncryption
-//        if (!passwordEncryption.checkPassword(user, credentials.getPassword())) {
+//    protected SystemAuthenticationToken loginUser(LoginPasswordCredentials loginPasswordCredentials) {
+//        String login = loginPasswordCredentials.getName();
+//
+//        Locale credentialsLocale = loginPasswordCredentials.getLocale() == null ?
+//                messageTools.getDefaultLocale() : loginPasswordCredentials.getLocale();
+//
+//        if (Strings.isNullOrEmpty(login)) {¶
+//            // empty login is not valid
 //            throw new LoginException(getInvalidCredentialsMessage(login, credentialsLocale));
 //        }
-
-        if (!passwordEncoder.matches(loginPasswordCredentials.getPassword(), userDetails.getPassword())) {
-            throw new LoginException(getInvalidCredentialsMessage(login, credentialsLocale));
-        }
-
-        SystemAuthenticationToken result = new SystemAuthenticationToken(userDetails, Collections.emptyList());
-        result.setDetails(loginPasswordCredentials.getParams());
-        return result;
-    }
+//
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(login);
+//        if (userDetails == null) {
+//            throw new LoginException(getInvalidCredentialsMessage(login, credentialsLocale));
+//        }
+//        // todo PasswordEncryption
+////        if (!passwordEncryption.checkPassword(user, credentials.getPassword())) {
+////            throw new LoginException(getInvalidCredentialsMessage(login, credentialsLocale));
+////        }
+//
+//        if (!passwordEncoder.matches(loginPasswordCredentials.getPassword(), userDetails.getPassword())) {
+//            throw new LoginException(getInvalidCredentialsMessage(login, credentialsLocale));
+//        }
+//
+//        SystemAuthenticationToken result = new SystemAuthenticationToken(userDetails, Collections.emptyList());
+//        result.setDetails(loginPasswordCredentials.getParams());
+//        return result;
+//    }
 
     protected String getInvalidCredentialsMessage(String login, Locale locale) {
         return messages.formatMessage("", "LoginException.InvalidLoginOrPassword", locale, login);

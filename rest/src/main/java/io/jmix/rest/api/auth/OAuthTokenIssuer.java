@@ -16,7 +16,6 @@
 
 package io.jmix.rest.api.auth;
 
-import io.jmix.core.security.UserSession;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
@@ -54,16 +53,10 @@ public interface OAuthTokenIssuer {
      * Result of programmatic access token generation.
      */
     class OAuth2AccessTokenResult {
-        private final UserSession userSession;
         private final OAuth2AccessToken accessToken;
 
-        public OAuth2AccessTokenResult(UserSession userSession, OAuth2AccessToken accessToken) {
-            this.userSession = userSession;
+        public OAuth2AccessTokenResult(OAuth2AccessToken accessToken) {
             this.accessToken = accessToken;
-        }
-
-        public UserSession getUserSession() {
-            return userSession;
         }
 
         public OAuth2AccessToken getAccessToken() {

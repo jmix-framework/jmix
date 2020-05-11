@@ -49,7 +49,7 @@ public class OAuthTokenController {
     @Inject
     protected Events events;
 
-    @PostMapping("/v2/oauth/revoke")
+    @PostMapping("/rest/oauth/revoke")
     public ResponseEntity revokeToken(@RequestParam("token") String token,
                                       @RequestParam(value = "token_type_hint", required = false) String tokenTypeHint,
                                       Principal principal) {

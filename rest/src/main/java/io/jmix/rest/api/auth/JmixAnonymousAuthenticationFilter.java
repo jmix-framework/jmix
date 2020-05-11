@@ -17,7 +17,6 @@
 package io.jmix.rest.api.auth;
 
 
-import io.jmix.core.security.AnonymousUserCredentials;
 import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.config.RestQueriesConfiguration;
 import io.jmix.rest.api.config.RestServicesConfiguration;
@@ -51,6 +50,7 @@ import java.util.regex.Pattern;
  * SecurityContext} and the request will be authenticated. This filter must be invoked after the {@link
  * org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter}
  */
+//todo remove class
 public class JmixAnonymousAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JmixAnonymousAuthenticationFilter.class);
@@ -149,8 +149,8 @@ public class JmixAnonymousAuthenticationFilter extends OncePerRequestFilter {
 //        CubaAnonymousAuthenticationToken anonymousAuthenticationToken =
 //                new CubaAnonymousAuthenticationToken("anonymous", AuthorityUtils.createAuthorityList("ROLE_CUBA_ANONYMOUS"));
 
-        AnonymousUserCredentials credentials = new AnonymousUserCredentials();
-        Authentication authentication = authenticationManager.authenticate(credentials);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        AnonymousUserCredentials credentials = new AnonymousUserCredentials();
+//        Authentication authentication = authenticationManager.authenticate(credentials);
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

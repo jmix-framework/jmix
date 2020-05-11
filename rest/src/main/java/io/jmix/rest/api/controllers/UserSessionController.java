@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController("jmix_UserSessionController")
-@RequestMapping(path = "/v2/user-session")
+@RequestMapping(path = "/rest/user-session")
 public class UserSessionController {
 
     @Inject

@@ -32,7 +32,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @ComponentScan("io.jmix.rest")
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixCoreSecurityConfiguration.class})
-@PropertySource("classpath:/io/jmix/rest/application.properties")
+@PropertySource("classpath:/io/jmix/rest/module.properties")
 public class JmixRestConfiguration {
 
     @Value("${jmix.rest.maxUploadSize}")

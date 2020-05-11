@@ -16,8 +16,6 @@
 
 package io.jmix.rest;
 
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionManager;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -28,15 +26,13 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+//todo MG do we need JmixRestTokenGranter?
 public class JmixRestTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
     private static final String SESSION_ID = "sessionId";
 
-    protected UserSessionManager userSessionManager;
-
-    public JmixRestTokenGranter(UserSessionManager userSessionManager, AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
+    public JmixRestTokenGranter(AuthenticationManager authenticationManager, AuthorizationServerTokenServices tokenServices, ClientDetailsService clientDetailsService, OAuth2RequestFactory requestFactory) {
         super(authenticationManager, tokenServices, clientDetailsService, requestFactory);
-        this.userSessionManager = userSessionManager;
     }
 
     @Override
@@ -50,13 +46,13 @@ public class JmixRestTokenGranter extends ResourceOwnerPasswordTokenGranter {
         Authentication userAuth = new UsernamePasswordAuthenticationToken(username, password);
         ((AbstractAuthenticationToken) userAuth).setDetails(parameters);
         try {
-            UserSession userSession = userSessionManager.createSession(userAuth);
-            userAuth = userSession.getAuthentication();
-
-            //noinspection unchecked
-            Map<String, Object> details = (Map<String, Object>) userAuth.getDetails();
-            details.put(SESSION_ID, userSession.getId().toString());
-            ((AbstractAuthenticationToken) userAuth).setDetails(details);
+//            UserSession userSession = userSessionManager.createSession(userAuth);
+//            userAuth = userSession.getAuthentication();
+//
+//            //noinspection unchecked
+//            Map<String, Object> details = (Map<String, Object>) userAuth.getDetails();
+//            details.put(SESSION_ID, userSession.getId().toString());
+//            ((AbstractAuthenticationToken) userAuth).setDetails(details);
         } catch (AccountStatusException ase) {
             //covers expired, locked, disabled cases (mentioned in section 5.2, draft 31)
             throw new InvalidGrantException(ase.getMessage());

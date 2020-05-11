@@ -29,7 +29,7 @@ import javax.inject.Inject;
  * Controller that is used for getting datatypes information.
  */
 @RestController("jmix_DatatypesController")
-@RequestMapping(value = "/v2/metadata/datatypes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = "/rest/metadata/datatypes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class DatatypesController {
     @Inject
     protected DatatypesControllerManager datatypesControllerManager;

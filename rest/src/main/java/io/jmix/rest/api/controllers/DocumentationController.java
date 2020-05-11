@@ -38,7 +38,7 @@ import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.WRITE_
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController("jmix_DocumentationController")
-@RequestMapping("/v2/docs")
+@RequestMapping("/rest/docs")
 public class DocumentationController {
 
     @Inject

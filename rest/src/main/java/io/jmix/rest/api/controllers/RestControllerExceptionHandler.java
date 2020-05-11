@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.validation.CustomValidationException;
 import io.jmix.core.validation.MethodParametersValidationException;
 import io.jmix.core.validation.MethodResultValidationException;
@@ -54,7 +54,7 @@ public class RestControllerExceptionHandler {
             Arrays.asList(String.class, Date.class, Number.class, Enum.class, UUID.class);
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     @Inject
     protected Metadata metadata;
@@ -178,7 +178,7 @@ public class RestControllerExceptionHandler {
                 if (serializable) {
                     if (invalidValue instanceof Date) {
                         Datatype datatype = getDatatype(violation);
-                        info.setInvalidValue(datatype.format(invalidValue, userSessionSource.getLocale()));
+                        info.setInvalidValue(datatype.format(invalidValue, currentAuthentication.getLocale()));
                     } else {
                         info.setInvalidValue(invalidValue);
                     }

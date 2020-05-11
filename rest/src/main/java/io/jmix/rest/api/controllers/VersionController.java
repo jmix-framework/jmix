@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * REST controller that is used for getting REST API version
  */
 @RestController("jmix_VersionController")
-@RequestMapping(path = "/v2/version")
+@RequestMapping(path = "/rest/version")
 public class VersionController {
 
     @Inject

@@ -22,12 +22,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
 @EnableWebMvc
 @Configuration
-@PropertySource("classpath:/io/jmix/rest/application.properties")
+@PropertySource("classpath:/io/jmix/rest/module.properties")
 public class JmixRestMvcConfiguration implements WebMvcConfigurer {
 
     @Value("${jmix.rest.allowedOrigins}")

@@ -16,22 +16,7 @@
 
 package io.jmix.rest.security;
 
-import io.jmix.core.Events;
-import io.jmix.core.entity.User;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.impl.UserSessionsImpl;
-import io.jmix.rest.rest.ServerTokenStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Component("jmix_UserInvalidationListener")
 public class UserInvalidationListener {

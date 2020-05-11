@@ -19,8 +19,6 @@ package io.jmix.rest.api.controllers;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.entity.FileDescriptor;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.service.filter.data.FileInfo;
 import org.apache.commons.io.FilenameUtils;
@@ -50,7 +48,7 @@ import java.util.UUID;
  * REST API controller that is used for uploading files
  */
 @RestController("jmix_FileUploadController")
-@RequestMapping(path = "/v2/files")
+@RequestMapping(path = "/rest/files")
 public class FileUploadController {
     //todo file storage
     private static final Logger log = LoggerFactory.getLogger(FileUploadController.class);
@@ -59,9 +57,6 @@ public class FileUploadController {
     // of ServerSelector type to work with different middleware blocks
 //    @Resource(name = ServerSelector.NAME)
 //    protected ServerSelector serverSelector;
-
-    @Inject
-    protected UserSessionSource userSessionSource;
 
     @Inject
     protected Metadata metadata;

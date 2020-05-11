@@ -38,14 +38,14 @@ public class PermissionsController {
     @Inject
     protected PermissionsControllerManager permissionsControllerManager;
 
-    @GetMapping("/v2/permissions")
+    @GetMapping("/rest/permissions")
     public Collection<PermissionInfo> getPermissions() {
         //todo security
 //        return permissionsControllerManager.getPermissionInfos();
         return null;
     }
 
-    @GetMapping("/v2/permissions/effective")
+    @GetMapping("/rest/permissions/effective")
     public EffectiveRoleInfo getEffectiveRole(@RequestParam(required = false) boolean entities,
                                               @RequestParam(required = false) boolean entityAttributes,
                                               @RequestParam(required = false) boolean specific) {

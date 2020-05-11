@@ -31,7 +31,7 @@ import java.util.List;
  * REST controller that is used for getting an information about enums
  */
 @RestController("jmix_EnumsController")
-@RequestMapping(path = "/v2/metadata/enums", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(path = "/rest/metadata/enums", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class EnumsController {
     @Inject
     protected EnumsControllerManager enumsControllerManager;

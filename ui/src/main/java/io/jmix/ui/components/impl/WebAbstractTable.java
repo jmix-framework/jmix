@@ -39,9 +39,9 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
@@ -243,8 +243,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     @Inject

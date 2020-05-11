@@ -19,6 +19,7 @@ import com.vaadin.server.ErrorEvent;
 import com.vaadin.ui.Window;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
+import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
@@ -66,7 +67,8 @@ public class DefaultExceptionHandler implements ExceptionHandler {
         }
 
         if (t != null) {
-            if (app.getConnection().getSession() != null) {
+            //todo MG
+            if (SecurityContextHelper.getAuthentication() != null) {
                 showDialog(app, ui, t);
             } else {
                 showNotification(app, ui, t);

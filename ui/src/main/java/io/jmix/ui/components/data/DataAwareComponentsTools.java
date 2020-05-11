@@ -26,7 +26,7 @@ import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.DateField;
 import io.jmix.ui.components.HasRange;
 import io.jmix.ui.components.OptionsField;
@@ -53,7 +53,7 @@ public class DataAwareComponentsTools {
     public static final String NAME = "jmix_DataAwareComponentsTools";
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
     @Inject
     protected MessageTools messageTools;
     @Inject
@@ -144,7 +144,7 @@ public class DataAwareComponentsTools {
             if (dateTimeTransformations.isDateTypeSupportsTimeZones(javaType)) {
                 Boolean ignoreUserTimeZone = metadataTools.getMetaAnnotationValue(metaProperty, IgnoreUserTimeZone.class);
                 if (!Boolean.TRUE.equals(ignoreUserTimeZone)) {
-                    TimeZone timeZone = userSessionSource.getUserSession().getTimeZone();
+                    TimeZone timeZone = currentAuthentication.getTimeZone();
                     component.setTimeZone(timeZone);
                 }
             }

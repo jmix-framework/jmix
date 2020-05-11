@@ -19,7 +19,7 @@ package io.jmix.ui.components.mainwindow.impl;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.User;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.ui.components.impl.WebAbstractComponent;
 import io.jmix.ui.components.mainwindow.UserIndicator;
 import io.jmix.ui.widgets.CubaComboBox;
@@ -34,9 +34,9 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
     protected static final String USER_INDICATOR_STYLENAME = "c-userindicator";
 
     protected Label userNameLabel;
-    protected CubaComboBox<User> userComboBox;
+    protected CubaComboBox<BaseUser> userComboBox;
 
-    protected Function<? super User, String> userNameFormatter;
+    protected Function<? super BaseUser, String> userNameFormatter;
 
     protected MetadataTools metadataTools;
 
@@ -226,14 +226,14 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
     }
 
     @Override
-    public void setUserNameFormatter(Function<? super User, String> userNameFormatter) {
+    public void setUserNameFormatter(Function<? super BaseUser, String> userNameFormatter) {
         this.userNameFormatter = userNameFormatter;
 //        refreshUserSubstitutions();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Function<User, String> getUserNameFormatter() {
-        return (Function<User, String>) userNameFormatter;
+    public Function<BaseUser, String> getUserNameFormatter() {
+        return (Function<BaseUser, String>) userNameFormatter;
     }
 }

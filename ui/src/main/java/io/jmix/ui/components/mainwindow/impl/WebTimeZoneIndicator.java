@@ -18,7 +18,7 @@ package io.jmix.ui.components.mainwindow.impl;
 
 import com.vaadin.ui.Label;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.impl.WebAbstractComponent;
 import io.jmix.ui.components.mainwindow.TimeZoneIndicator;
 import org.apache.commons.lang3.StringUtils;
@@ -40,15 +40,15 @@ public class WebTimeZoneIndicator extends WebAbstractComponent<Label> implements
     public void setBeanLocator(BeanLocator beanLocator) {
         super.setBeanLocator(beanLocator);
 
-        UserSessionSource uss = beanLocator.get(UserSessionSource.NAME);
-        TimeZone timeZone = uss.getUserSession().getTimeZone();
+        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
+        TimeZone timeZone = currentAuthentication.getTimeZone();
         // todo TimeZones
 //        TimeZones timeZones = beanLocator.get(TimeZones.NAME);
 //        component.setValue(timeZones.getDisplayNameShort(timeZone));
-        if (timeZone == null) {
-            // hidden by default if timeZone is null
-            setVisible(false);
-        }
+//        if (timeZone == null) {
+//            // hidden by default if timeZone is null
+//            setVisible(false);
+//        }
     }
 
     @Override

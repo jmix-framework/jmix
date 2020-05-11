@@ -20,7 +20,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.Field;
 import io.jmix.ui.components.ValidationException;
 import org.dom4j.Element;
@@ -69,8 +69,8 @@ public class DoubleValidator implements Field.Validator {
         if (value instanceof String) {
             try {
                 Datatype<Double> datatype = Datatypes.getNN(Double.class);
-                UserSessionSource sessionSource = AppBeans.get(UserSessionSource.NAME);
-                Double num = datatype.parse((String) value, sessionSource.getLocale());
+                CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+                Double num = datatype.parse((String) value, currentAuthentication.getLocale());
                 result = checkDoubleOnPositive(num);
             } catch (ParseException e) {
                 result = false;

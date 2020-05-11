@@ -17,7 +17,7 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.core.MetadataTools;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.SuggestionField;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.executors.BackgroundTask;
@@ -69,8 +69,8 @@ public class WebSuggestionField<V> extends WebV8AbstractField<CubaSuggestionFiel
     }
 
     @Inject
-    protected void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     @Inject

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.components.mainwindow;
 
-import io.jmix.core.entity.User;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.ui.components.Component;
 
 import java.util.function.Function;
@@ -33,10 +33,10 @@ public interface UserIndicator extends Component.BelongToFrame {
      *
      * @param userNameFormatter formatter to be executed.
      */
-    void setUserNameFormatter(Function<? super User, String> userNameFormatter);
+    void setUserNameFormatter(Function<? super BaseUser, String> userNameFormatter);
 
     /**
      * @return formatter that is used or null.
      */
-    Function<User, String> getUserNameFormatter();
+    Function<BaseUser, String> getUserNameFormatter();
 }

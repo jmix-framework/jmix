@@ -19,7 +19,7 @@ package io.jmix.ui.components.validation;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 public abstract class AbstractValidator<T> implements Consumer<T> {
 
     protected Messages messages;
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
     protected DatatypeRegistry datatypeRegistry;
 
     protected String message;
@@ -84,7 +84,7 @@ public abstract class AbstractValidator<T> implements Consumer<T> {
             return value.toString();
         }
 
-        String formattedValue = datatype.format(value, userSessionSource.getLocale());
+        String formattedValue = datatype.format(value, currentAuthentication.getLocale());
         return formattedValue == null ? value.toString() : formattedValue;
     }
 }

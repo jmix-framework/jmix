@@ -17,11 +17,11 @@
 package io.jmix.ui.components.impl;
 
 import com.vaadin.server.Resource;
+import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.Entity;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.SearchPickerField;
@@ -85,8 +85,8 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     @Inject

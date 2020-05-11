@@ -23,7 +23,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.MaskedField;
 import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
@@ -69,8 +69,8 @@ public class WebMaskedField<V> extends WebV8AbstractField<CubaMaskedTextField, S
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     @Override

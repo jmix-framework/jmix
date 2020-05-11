@@ -20,7 +20,7 @@ import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.renderers.Renderer;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.DataGrid;
 import io.jmix.ui.components.impl.WebAbstractDataGrid;
 
@@ -40,7 +40,7 @@ public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Enti
 
     public WebNumberRenderer() {
         super("");
-        locale = AppBeans.get(UserSessionSource.class).getLocale();
+        locale = AppBeans.get(CurrentAuthentication.class).getLocale();
     }
 
     public WebNumberRenderer(NumberFormat numberFormat) {
@@ -54,7 +54,7 @@ public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Enti
     }
 
     public WebNumberRenderer(String formatString) throws IllegalArgumentException {
-        this(formatString, AppBeans.get(UserSessionSource.class).getLocale());
+        this(formatString, AppBeans.get(CurrentAuthentication.class).getLocale());
     }
 
     public WebNumberRenderer(String formatString, Locale locale) throws IllegalArgumentException {

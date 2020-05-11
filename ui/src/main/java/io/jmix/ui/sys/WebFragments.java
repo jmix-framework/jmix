@@ -17,14 +17,13 @@
 package io.jmix.ui.sys;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.*;
 import io.jmix.ui.components.Fragment;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.impl.FragmentImplementation;
 import io.jmix.ui.components.impl.FrameImplementation;
-import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.model.impl.ScreenDataImpl;
+import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInitTask;
 import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInjectTask;
@@ -54,8 +53,6 @@ public class WebFragments implements Fragments {
     protected BeanLocator beanLocator;
     @Inject
     protected UiComponents uiComponents;
-    @Inject
-    protected UserSessionSource userSessionSource;
     @Inject
     protected MeterRegistry meterRegistry;
 

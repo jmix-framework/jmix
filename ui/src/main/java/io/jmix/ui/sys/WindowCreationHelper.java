@@ -16,8 +16,6 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.components.*;
 import io.jmix.ui.security.UiPermissionAware;
 import io.jmix.ui.security.UiPermissionDescriptor;
@@ -26,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,9 +40,6 @@ public class WindowCreationHelper {
 
     private final Logger log = LoggerFactory.getLogger(WindowCreationHelper.class);
 
-    @Inject
-    protected UserSessionSource sessionSource;
-
     private WindowCreationHelper() {
     }
 
@@ -60,8 +54,6 @@ public class WindowCreationHelper {
             log.warn(String.format("Unable to find window for container %s with id '%s'", container.getClass(), container.getId()));
             return;
         }
-
-        UserSession userSession = sessionSource.getUserSession();
 
         String screenId = window.getId();
         // todo UI permissions

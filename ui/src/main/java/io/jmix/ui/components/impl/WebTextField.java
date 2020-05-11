@@ -19,13 +19,13 @@ import com.google.common.base.Strings;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.shared.ui.ValueChangeMode;
+import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.TextField;
 import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
@@ -74,8 +74,8 @@ public class WebTextField<V> extends WebV8AbstractField<CubaTextField, String, V
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     protected CubaTextField createComponent() {

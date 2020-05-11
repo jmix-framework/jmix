@@ -18,10 +18,10 @@ package io.jmix.ui.components.impl;
 
 import com.vaadin.v7.ui.components.calendar.CalendarComponentEvents;
 import io.jmix.core.DateTimeTransformations;
+import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.datatypes.impl.AbstractTemporalDatatype;
@@ -29,7 +29,7 @@ import io.jmix.core.metamodel.datatypes.impl.DateDatatype;
 import io.jmix.core.metamodel.datatypes.impl.DateTimeDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.Calendar;
 import io.jmix.ui.components.calendar.*;
 import io.jmix.ui.components.data.calendar.EntityCalendarEventProvider;
@@ -110,11 +110,9 @@ public class WebCalendar<V> extends WebAbstractComponent<CubaCalendar>
                     String.format("Can't set time format '%s'", messages.getMessage("calendar.timeFormat")));
         }
 
-        UserSessionSource userSessionSource = beanLocator.get(UserSessionSource.NAME);
-        TimeZone userTimeZone = userSessionSource.getUserSession().getTimeZone();
-        if (userTimeZone != null) {
-            setTimeZone(userTimeZone);
-        }
+        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
+        TimeZone userTimeZone = currentAuthentication.getTimeZone();
+        setTimeZone(userTimeZone);
 
         setNavigationButtonsStyle(navigationButtonsVisible);
     }

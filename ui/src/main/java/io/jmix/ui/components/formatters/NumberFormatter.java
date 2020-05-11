@@ -21,7 +21,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.datatypes.FormatStrings;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import org.dom4j.Element;
 
 import java.text.DecimalFormat;
@@ -36,7 +36,7 @@ public class NumberFormatter implements Function<Number, String> {
 
     private Element element;
 
-    protected UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
+    protected CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
     protected Messages messages = AppBeans.get(Messages.NAME);
 
     public NumberFormatter() {
@@ -55,15 +55,15 @@ public class NumberFormatter implements Function<Number, String> {
 
         if (pattern == null) {
             Datatype datatype = Datatypes.getNN(value.getClass());
-            return datatype.format(value, userSessionSource.getLocale());
+            return datatype.format(value, currentAuthentication.getLocale());
         } else {
             if (pattern.startsWith("msg://")) {
                 pattern = messages.getMessage(pattern.substring(6, pattern.length()));
             }
-            FormatStrings formatStrings = Datatypes.getFormatStrings(userSessionSource.getLocale());
+            FormatStrings formatStrings = Datatypes.getFormatStrings(currentAuthentication.getLocale());
             if (formatStrings == null)
                 throw new IllegalStateException("FormatStrings are not defined for " +
-                        LocaleResolver.localeToString(userSessionSource.getLocale()));
+                        LocaleResolver.localeToString(currentAuthentication.getLocale()));
             DecimalFormat format = new DecimalFormat(pattern, formatStrings.getFormatSymbols());
             return format.format(value);
         }

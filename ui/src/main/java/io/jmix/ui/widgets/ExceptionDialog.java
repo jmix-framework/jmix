@@ -18,14 +18,17 @@ package io.jmix.ui.widgets;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.window.WindowMode;
 import com.vaadin.ui.*;
-import io.jmix.core.*;
+import io.jmix.core.AppBeans;
+import io.jmix.core.DevelopmentException;
+import io.jmix.core.Messages;
+import io.jmix.core.TimeSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.Security;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.*;
+import io.jmix.ui.Dialogs.MessageType;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.Dialogs.MessageType;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -70,7 +73,7 @@ public class ExceptionDialog extends JmixWindow {
 
     protected UiProperties properties = AppBeans.get(UiProperties.class);
 
-    protected UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
+    protected CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
 
     protected TimeSource timeSource = AppBeans.get(TimeSource.NAME);
 
@@ -124,7 +127,7 @@ public class ExceptionDialog extends JmixWindow {
         textArea.setHeight(theme.get("cuba.web.ExceptionDialog.textArea.height"));
         textArea.setWidth(100, Sizeable.Unit.PERCENTAGE);
 
-        boolean showExceptionDetails = userSessionSource.getUserSession() != null
+        boolean showExceptionDetails = currentAuthentication.isSet()
                 && security.isSpecificPermitted("cuba.gui.showExceptionDetails");
 
         if (showExceptionDetails) {
@@ -174,7 +177,7 @@ public class ExceptionDialog extends JmixWindow {
             buttonsLayout.addComponent(copyButton);
         }*/
 
-        if (userSessionSource.getUserSession() != null) {
+        if (currentAuthentication.isSet()) {
             if (!StringUtils.isBlank(properties.getSupportEmail())) {
                 Button reportButton = new JmixButton(messages.getMessage("exceptionDialog.reportBtn"));
                 reportButton.addClickListener(event -> {
@@ -390,12 +393,13 @@ public class ExceptionDialog extends JmixWindow {
     protected void forceLogout() {
         AppUI ui = (AppUI) getUI();
 
+        //todo MG logout
         App app = ui.getApp();
         try {
-            Connection connection = app.getConnection();
-            if (connection.isConnected()) {
-                connection.logout();
-            }
+//            Connection connection = app.getConnection();
+//            if (connection.isConnected()) {
+//                connection.logout();
+//            }
         } catch (Exception e) {
             log.warn("Exception on forced logout", e);
         } finally {

@@ -21,7 +21,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.ValidationException;
 import io.jmix.ui.components.validation.numbers.NumberConstraint;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -91,8 +91,8 @@ public class DecimalMinValidator<T> extends AbstractValidator<T> {
     }
 
     @Inject
-    protected void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.userSessionSource = userSessionSource;
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
     }
 
     /**
@@ -152,7 +152,7 @@ public class DecimalMinValidator<T> extends AbstractValidator<T> {
         } else if (value instanceof String) {
             try {
                 Datatype datatype = datatypeRegistry.getNN(BigDecimal.class);
-                Locale locale = userSessionSource.getUserSession().getLocale();
+                Locale locale = currentAuthentication.getLocale();
                 BigDecimal bigDecimal = (BigDecimal) datatype.parse((String) value, locale);
                 if (bigDecimal == null) {
                     fireValidationException(value);

@@ -18,9 +18,9 @@ package io.jmix.ui.components.impl;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
-import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.LookupPickerField;
 import io.jmix.ui.components.SecuredActionsHolder;
@@ -83,8 +83,8 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     @Inject

@@ -17,12 +17,10 @@ package io.jmix.ui.presentations;
 
 import io.jmix.core.*;
 import io.jmix.core.commons.xmlparsing.Dom4jTools;
-import io.jmix.core.Entity;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.Presentation;
-import io.jmix.core.entity.User;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.sys.PersistenceHelper;
@@ -295,10 +293,9 @@ public class PresentationsImpl implements Presentations {
             LoadContext<Presentation> ctx = new LoadContext<>(Presentation.class);
             ctx.setFetchPlan(AppBeans.get(FetchPlanRepository.class).getFetchPlan(Presentation.class, "app"));
 
-            UserSessionSource sessionSource = AppBeans.get(UserSessionSource.NAME);
-            UserSession session = sessionSource.getUserSession();
+            CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
             // todo user substitution
-            User user = session.getUser();
+            BaseUser user = currentAuthentication.getUser();
 
             ctx.setQueryString("select p from sec$Presentation p " +
                     "where p.componentId = :component and (p.user is null or p.user.id = :userId)")

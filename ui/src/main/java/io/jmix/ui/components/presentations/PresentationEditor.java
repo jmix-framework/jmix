@@ -15,21 +15,21 @@
  */
 package io.jmix.ui.components.presentations;
 
-import io.jmix.core.entity.EntityValues;
-import io.jmix.core.security.Security;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.sys.PersistenceHelper;
 import com.vaadin.ui.*;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.util.Dom4j;
+import io.jmix.core.entity.BaseUser;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.Presentation;
-import io.jmix.core.entity.User;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.Security;
 import io.jmix.ui.App;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.components.HasPresentations;
 import io.jmix.ui.presentations.Presentations;
+import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.widgets.CubaButton;
 import io.jmix.ui.widgets.CubaWindow;
@@ -59,7 +59,7 @@ public class PresentationEditor extends CubaWindow {
     protected boolean allowGlobalPresentations;
 
     protected Messages messages;
-    protected UserSessionSource sessionSource;
+    protected CurrentAuthentication currentAuthentication;
     protected Security security;
 
     public PresentationEditor(Presentation presentation, HasPresentations component) {
@@ -67,7 +67,7 @@ public class PresentationEditor extends CubaWindow {
         this.component = component;
 
         messages = AppBeans.get(Messages.NAME);
-        sessionSource = AppBeans.get(UserSessionSource.NAME);
+        currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
         security = AppBeans.get(Security.NAME);
 
         isNew = PersistenceHelper.isNew(presentation);
@@ -184,7 +184,7 @@ public class PresentationEditor extends CubaWindow {
         presentation.setDefault(defaultField.getValue());
 
         // todo user substitution
-        User user = sessionSource.getUserSession().getUser();
+        BaseUser user = currentAuthentication.getUser();
 
         boolean userOnly = !allowGlobalPresentations || !BooleanUtils.isTrue(globalField.getValue());
         presentation.setUser(userOnly ? user : null);

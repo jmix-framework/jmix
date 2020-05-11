@@ -20,8 +20,7 @@ import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.datatypes.FormatStrings;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -47,7 +46,7 @@ public class DateFormatter implements Function<Date, String> {
 
     private Element element;
 
-    protected UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
+    protected CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
     protected Messages messages = AppBeans.get(Messages.NAME);
 
     public DateFormatter(Element element) {
@@ -63,10 +62,10 @@ public class DateFormatter implements Function<Date, String> {
         if (StringUtils.isBlank(format)) {
             String type = element.attributeValue("type");
             if (type != null) {
-                FormatStrings formatStrings = Datatypes.getFormatStrings(userSessionSource.getLocale());
+                FormatStrings formatStrings = Datatypes.getFormatStrings(currentAuthentication.getLocale());
                 if (formatStrings == null)
                     throw new IllegalStateException("FormatStrings are not defined for " +
-                            LocaleResolver.localeToString(userSessionSource.getLocale()));
+                            LocaleResolver.localeToString(currentAuthentication.getLocale()));
                 switch (type) {
                     case "DATE":
                         format = formatStrings.getDateFormat();
@@ -88,14 +87,9 @@ public class DateFormatter implements Function<Date, String> {
             }
             DateFormat df = new SimpleDateFormat(format);
 
-            if (Boolean.parseBoolean(element.attributeValue("useUserTimezone"))) {
-                UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
-                if (userSessionSource.checkCurrentUserSession()) {
-                    UserSession userSession = userSessionSource.getUserSession();
-                    if (userSession.getTimeZone() != null) {
-                        df.setTimeZone(userSession.getTimeZone());
-                    }
-                }
+            if (Boolean.parseBoolean(element.attributeValue("useUserTimezone")) &&
+                    currentAuthentication.isSet()) {
+                df.setTimeZone(currentAuthentication.getTimeZone());
             }
 
             return df.format(value);

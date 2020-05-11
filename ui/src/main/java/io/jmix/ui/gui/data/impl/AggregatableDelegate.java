@@ -19,7 +19,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.components.data.aggregation.Aggregation;
 import io.jmix.ui.components.data.aggregation.AggregationStrategy;
@@ -61,8 +61,8 @@ public abstract class AggregatableDelegate<K> {
                             resultClass = aggregationInfo.getStrategy().getResultClass();
                         }
 
-                        UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
-                        Locale locale = userSessionSource.getLocale();
+                        CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+                        Locale locale = currentAuthentication.getLocale();
                         formattedValue = Datatypes.getNN(resultClass).format(value, locale);
                     } else {
                         formattedValue = value.toString();
@@ -71,8 +71,8 @@ public abstract class AggregatableDelegate<K> {
                     if (aggregationInfo.getStrategy() != null) {
                         Class resultClass = aggregationInfo.getStrategy().getResultClass();
 
-                        UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
-                        Locale locale = userSessionSource.getLocale();
+                        CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+                        Locale locale = currentAuthentication.getLocale();
                         formattedValue = Datatypes.getNN(resultClass).format(value, locale);
                     } else {
                         formattedValue = value.toString();

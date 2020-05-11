@@ -27,7 +27,7 @@ import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
@@ -46,11 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.inject.Inject;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -144,8 +140,8 @@ public class WebDateField<V extends Comparable<V>>
 
     @Override
     public void afterPropertiesSet() {
-        UserSessionSource userSessionSource = beanLocator.get(UserSessionSource.class);
-        Locale locale = userSessionSource.getLocale();
+        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.class);
+        Locale locale = currentAuthentication.getLocale();
 
         FormatStringsRegistry formatStringsRegistry = beanLocator.get(FormatStringsRegistry.NAME);
 

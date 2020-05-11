@@ -21,7 +21,6 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.Security;
-import io.jmix.core.security.UserSession;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.components.KeyCombination;
 import io.jmix.ui.components.Window;

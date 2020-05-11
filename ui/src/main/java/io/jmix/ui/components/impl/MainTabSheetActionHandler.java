@@ -21,8 +21,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Layout;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.widgets.HasTabSheetBehaviour;
@@ -81,8 +80,7 @@ public class MainTabSheetActionHandler implements Action.Handler {
                 actions.add(restoreToDefaults);
             }
 
-            UserSessionSource sessionSource = AppBeans.get(UserSessionSource.NAME);
-            UserSession userSession = sessionSource.getUserSession();
+            CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
             // todo permissions
 //            if (userSession.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION) &&
 //                    findEditor((Layout) target) != null) {

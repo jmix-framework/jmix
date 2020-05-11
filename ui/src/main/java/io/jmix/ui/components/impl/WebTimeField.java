@@ -20,7 +20,7 @@ import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.TimeField;
 import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
@@ -35,10 +35,7 @@ import java.time.LocalTime;
 import java.util.Date;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
-import static io.jmix.ui.components.impl.WebWrapperUtils.fromVaadinTimeMode;
-import static io.jmix.ui.components.impl.WebWrapperUtils.fromVaadinTimeResolution;
-import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinTimeMode;
-import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinTimeResolution;
+import static io.jmix.ui.components.impl.WebWrapperUtils.*;
 
 public class WebTimeField<V> extends WebV8AbstractField<CubaTimeFieldWrapper, LocalTime, V>
         implements TimeField<V>, InitializingBean {
@@ -61,9 +58,9 @@ public class WebTimeField<V> extends WebV8AbstractField<CubaTimeFieldWrapper, Lo
 
     @Override
     public void afterPropertiesSet() {
-        UserSessionSource userSessionSource = beanLocator.get(UserSessionSource.NAME);
+        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
         FormatStringsRegistry formatStringsRegistry = beanLocator.get(FormatStringsRegistry.NAME);
-        String timeFormat = formatStringsRegistry.getFormatStringsNN(userSessionSource.getLocale()).getTimeFormat();
+        String timeFormat = formatStringsRegistry.getFormatStringsNN(currentAuthentication.getLocale()).getTimeFormat();
         setFormat(timeFormat);
     }
 

@@ -16,20 +16,20 @@
 
 package io.jmix.ui.components.impl;
 
+import io.jmix.core.Messages;
 import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.entity.annotation.CurrencyValue;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.ui.components.data.ValueConversionException;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.entity.annotation.CurrencyValue;
-import io.jmix.core.Messages;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.CurrencyField;
 import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
-import io.jmix.ui.components.data.meta.EntityValueSource;
+import io.jmix.ui.components.data.ValueConversionException;
 import io.jmix.ui.components.data.ValueSource;
+import io.jmix.ui.components.data.meta.EntityValueSource;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
@@ -77,8 +77,8 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<CubaC
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     @Override

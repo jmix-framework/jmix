@@ -20,8 +20,8 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Events;
 import io.jmix.core.TimeSource;
 import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.entity.BaseUser;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.events.BackgroundTaskTimeoutEvent;
 import io.jmix.ui.executors.*;
 import io.jmix.ui.screen.FrameOwner;
@@ -45,9 +45,9 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     private volatile boolean timeoutHappens = false;
 
     private long startTimeStamp;
-    private UserSession userSession;
 
     private Subscription afterDetachSubscription;
+    private final BaseUser user;
 
     public TaskHandlerImpl(UIAccessor uiAccessor, TaskExecutor<T, V> taskExecutor, WatchDog watchDog) {
         this.uiAccessor = uiAccessor;
@@ -55,9 +55,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
         this.watchDog = watchDog;
         this.events = AppBeans.get(Events.NAME);
 
-        UserSessionSource sessionSource = AppBeans.get(UserSessionSource.NAME);
-        this.userSession = sessionSource.getUserSession();
-
+        user = AppBeans.get(CurrentAuthentication.class).getUser();
         BackgroundTask<T, V> task = taskExecutor.getTask();
         if (task.getOwnerScreen() != null) {
             Screen ownerFrame = task.getOwnerScreen();
@@ -78,7 +76,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     protected void ownerWindowRemoved(FrameOwner frameOwner) {
         if (log.isTraceEnabled()) {
             String windowClass = frameOwner.getClass().getCanonicalName();
-            log.trace("Window removed. User: {}. Window: {}", getUserSession().getId(), windowClass);
+            log.trace("Window removed. User: {}. Window: {}", user.getKey(), windowClass);
         }
 
         taskExecutor.cancelExecution();
@@ -95,7 +93,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
 
         this.watchDog.manageTask(this);
 
-        log.trace("Run task: {}. User: {}", taskExecutor.getTask(), getUserSession().getId());
+        log.trace("Run task: {}. User: {}", taskExecutor.getTask(), user.getKey());
 
         taskExecutor.startExecution();
     }
@@ -121,9 +119,9 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
                 if (ownerFrame != null) {
                     String windowClass = ownerFrame.getClass().getCanonicalName();
 
-                    log.trace("Task was cancelled. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), getUserSession().getId(), windowClass);
+                    log.trace("Task was cancelled. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), user.getKey(), windowClass);
                 } else {
-                    log.trace("Task was cancelled. Task: {}. User: {}", taskExecutor.getTask(), getUserSession().getId());
+                    log.trace("Task was cancelled. Task: {}. User: {}", taskExecutor.getTask(), user.getKey());
                 }
             }
         } else {
@@ -173,9 +171,9 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
             if (log.isTraceEnabled()) {
                 if (ownerFrame != null) {
                     String windowClass = ownerFrame.getClass().getCanonicalName();
-                    log.trace("Task killed. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), getUserSession().getId(), windowClass);
+                    log.trace("Task killed. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), user.getKey(), windowClass);
                 } else {
-                    log.trace("Task killed. Task: {}. User: {}", taskExecutor.getTask(), getUserSession().getId());
+                    log.trace("Task killed. Task: {}. User: {}", taskExecutor.getTask(), user.getKey());
                 }
             }
 
@@ -240,10 +238,6 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
 
     public final BackgroundTask<T, V> getTask() {
         return taskExecutor.getTask();
-    }
-
-    public final UserSession getUserSession() {
-        return userSession;
     }
 
     public long getStartTimeStamp() {

@@ -19,7 +19,7 @@ package io.jmix.ui.components.impl;
 import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.ComponentContainer;
 import io.jmix.ui.components.UploadField;
@@ -75,8 +75,8 @@ public abstract class WebAbstractUploadField<T extends com.vaadin.ui.AbstractFie
                 Datatype<Double> doubleDatatype = datatypeRegistry.getNN(Double.class);
                 double fileSizeInMb = fileSizeLimit / ((double) BYTES_IN_MEGABYTE);
 
-                UserSessionSource userSessionSource = beanLocator.get(UserSessionSource.NAME);
-                fileSizeLimitString = doubleDatatype.format(fileSizeInMb, userSessionSource.getLocale());
+                CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
+                fileSizeLimitString = doubleDatatype.format(fileSizeInMb, currentAuthentication.getLocale());
             }
         } else {
             fileSizeLimitString = String.valueOf(beanLocator.get(UiProperties.class).getMaxUploadSizeMb());

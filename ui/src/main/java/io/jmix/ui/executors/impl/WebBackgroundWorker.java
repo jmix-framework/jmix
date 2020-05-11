@@ -20,8 +20,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 import io.jmix.core.Events;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.events.BackgroundTaskUnhandledExceptionEvent;
@@ -59,7 +58,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
     @Inject
     protected WatchDog watchDog;
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
     @Inject
     protected Events events;
 
@@ -155,7 +154,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
         private volatile boolean doneHandled = false;
 
         private SecurityContext securityContext;
-        private String userLogin;
+        private String username;
 
         private Map<String, Object> params;
         private TaskHandlerImpl<T, V> taskHandler;
@@ -169,9 +168,8 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     Collections.emptyMap();
 
             // copy security context
-            UserSession userSession = userSessionSource.getUserSession();
             this.securityContext = (SecurityContext) SecurityContextHolder.getContext().getAuthentication();
-            this.userLogin = userSession.getUser().getLogin();
+            this.username = currentAuthentication.getUser().getUsername();
 
             this.future = new FutureTask<V>(this) {
                 @Override
@@ -188,7 +186,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
             String threadName = Thread.currentThread().getName();
             Matcher matcher = THREAD_NAME_PATTERN.matcher(threadName);
             if (matcher.find()) {
-                Thread.currentThread().setName(THREAD_NAME_PREFIX + matcher.group(1) + "-" + userLogin);
+                Thread.currentThread().setName(THREAD_NAME_PREFIX + matcher.group(1) + "-" + username);
             }
 
             // todo Set security permissions
@@ -260,7 +258,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
                 return;
             }
 
-            log.debug("Done task. User: {}", userLogin);
+            log.debug("Done task. User: {}", username);
 
             // do not allow to cancel task from done listeners and exception handler
             isClosed = true;
@@ -313,17 +311,17 @@ public class WebBackgroundWorker implements BackgroundWorker {
 
             unregister();
 
-            log.debug("Cancel task. User: {}", userLogin);
+            log.debug("Cancel task. User: {}", username);
 
             boolean isCanceledNow = future.cancel(true);
             if (isCanceledNow) {
-                log.trace("Task was cancelled. User: {}", userLogin);
+                log.trace("Task was cancelled. User: {}", username);
             } else {
-                log.trace("Cancellation of task isn't processed. User: {}", userLogin);
+                log.trace("Cancellation of task isn't processed. User: {}", username);
             }
 
             if (!doneHandled) {
-                log.trace("Done was not handled. Return 'true' as canceled status. User: {}", userLogin);
+                log.trace("Done was not handled. Return 'true' as canceled status. User: {}", username);
 
                 this.isClosed = true;
                 return true;

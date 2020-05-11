@@ -27,13 +27,10 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Events;
 import io.jmix.core.Messages;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.LoginException;
-import io.jmix.core.security.NoUserSessionException;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.components.RootWindow;
 import io.jmix.ui.events.AppInitializedEvent;
-import io.jmix.ui.events.SessionHeartbeatEvent;
 import io.jmix.ui.events.UIRefreshEvent;
 import io.jmix.ui.exception.UiExceptionHandler;
 import io.jmix.ui.icons.IconResolver;
@@ -85,7 +82,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     protected ThemeConstantsRepository themeConstantsRepository;
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 //    @Inject
 //    protected UserSessionService userSessionService; todo ping session ?
 
@@ -116,16 +113,6 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     protected UrlChangeHandler urlChangeHandler;
     protected UrlRouting urlRouting;
     protected History history;
-
-    protected UserSession userSession;
-
-    public UserSession getUserSession() {
-        return userSession;
-    }
-
-    public void setUserSession(UserSession userSession) {
-        this.userSession = userSession;
-    }
 
     /**
      * Dynamically init external JS libraries.
@@ -268,19 +255,19 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
                 this.app = App.getInstance();
             }
 
-            Connection connection = app.getConnection();
-            if (connection != null && !isUserSessionAlive(connection)) {
-                connection.logout();
-
-                Notification.show(
-                        messages.getMessage("app.sessionExpiredCaption"),
-                        messages.getMessage("app.sessionExpiredMessage"),
-                        Notification.Type.HUMANIZED_MESSAGE);
-            }
-
-            if (connection != null) {
-                setUserSession(connection.getSession());
-            }
+//            Connection connection = app.getConnection();
+//            if (connection != null && !isUserSessionAlive(connection)) {
+//                connection.logout();
+//
+//                Notification.show(
+//                        messages.getMessage("app.sessionExpiredCaption"),
+//                        messages.getMessage("app.sessionExpiredMessage"),
+//                        Notification.Type.HUMANIZED_MESSAGE);
+//            }
+//
+//            if (connection != null) {
+//                setUserSession(connection.getSession());
+//            }
 
             setupUI();
         } catch (Exception e) {
@@ -352,22 +339,23 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         }
     }
 
-    protected boolean isUserSessionAlive(Connection connection) {
-        try {
-            UserSession session = connection.getSession();
+//    protected boolean isUserSessionAlive(Connection connection) {
+//        try {
+//            UserSession session = connection.getSession();
+//
+//            // todo do we need this ?
+//            /*if (session.isAuthenticated()) {
+//                userSessionService.getUserSession(session.getId());
+//            }*/
+//            return true;
+//        } catch (NoUserSessionException e) {
+//            return false;
+//        }
+//    }
 
-            // todo do we need this ?
-            /*if (session.isAuthenticated()) {
-                userSessionService.getUserSession(session.getId());
-            }*/
-            return true;
-        } catch (NoUserSessionException e) {
-            return false;
-        }
-    }
-
+    //todo MG remove
     public boolean hasAuthenticatedSession() {
-        return userSession.isAuthenticated();
+        return currentAuthentication.isSet();
     }
 
     protected void publishAppInitializedEvent(App app) {
@@ -423,11 +411,12 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     protected void setupUI() throws LoginException {
-        if (!app.getConnection().isConnected()) {
-            app.loginOnStart();
-        } else {
-            app.createTopLevelWindow(this);
-        }
+//        if (!app.getConnection().isConnected()) {
+//            app.loginOnStart();
+//        } else {
+//            app.createTopLevelWindow(this);
+//        }
+        app.loginOnStart();
     }
 
     @Override
@@ -436,33 +425,33 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
 
         boolean sessionIsAlive = true;
 
-        Connection connection = app.getConnection();
-
-        if (connection.isAuthenticated()) {
-            // Ping middleware session if connected
-            log.debug("Ping middleware session");
-
-            try {
-                UserSession session = connection.getSession();
-                if (session != null && session.isAuthenticated()) {
-                    // todo do we need this ?
-                    // userSessionService.getUserSession(session.getId());
-
-                    if (hasAuthenticatedSession()
-                            && !Objects.equals(userSession, session)) {
-                        setUserSession(session);
-                    }
-                }
-            } catch (Exception e) {
-                sessionIsAlive = false;
-
-                app.exceptionHandlers.handle(new com.vaadin.server.ErrorEvent(e));
-            }
-
-            if (sessionIsAlive) {
-                events.publish(new SessionHeartbeatEvent(app));
-            }
-        }
+//        Connection connection = app.getConnection();
+//
+//        if (connection.isAuthenticated()) {
+//            // Ping middleware session if connected
+//            log.debug("Ping middleware session");
+//
+//            try {
+//                UserSession session = connection.getSession();
+//                if (session != null && session.isAuthenticated()) {
+//                    // todo do we need this ?
+//                    // userSessionService.getUserSession(session.getId());
+//
+//                    if (hasAuthenticatedSession()
+//                            && !Objects.equals(userSession, session)) {
+//                        setUserSession(session);
+//                    }
+//                }
+//            } catch (Exception e) {
+//                sessionIsAlive = false;
+//
+//                app.exceptionHandlers.handle(new com.vaadin.server.ErrorEvent(e));
+//            }
+//
+//            if (sessionIsAlive) {
+//                events.publish(new SessionHeartbeatEvent(app));
+//            }
+//        }
 
         urlChangeHandler.restoreState();
 
@@ -581,7 +570,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         try {
             String action = (String) wrappedSession.getAttribute(LAST_REQUEST_ACTION_ATTR);
             LinkHandler linkHandler = AppBeans.getPrototype(LinkHandler.NAME, app, action, params);
-            if (app.connection.isConnected() && linkHandler.canHandleLink()) {
+            if (linkHandler.canHandleLink()) {
                 linkHandler.handle();
             } else {
                 app.linkHandler = linkHandler;
@@ -669,9 +658,9 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     protected void updateUiTheme() {
-        UserSession userSession = userSessionSource.getUserSession();
-
-        if (userSession.isAuthenticated()) {
+//        UserSession userSession = userSessionSource.getUserSession();
+//
+//        if (userSession.isAuthenticated()) {
             // load theme from user settings
             // todo settings
             /*String themeName = userSettingsTools.loadAppWindowTheme();
@@ -684,7 +673,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
                     setTheme(themeName);
                 }
             }*/
-        }
+//        }
     }
 
     public JmixFileDownloader getFileDownloader() {

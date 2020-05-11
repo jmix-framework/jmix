@@ -16,11 +16,11 @@
 
 package io.jmix.ui.components.validation;
 
-import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.commons.util.ParamsMap;
+import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.ValidationException;
 import io.jmix.ui.components.validation.numbers.NumberConstraint;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -76,8 +76,8 @@ public class PositiveValidator<T extends Number> extends AbstractValidator<T> {
     }
 
     @Inject
-    protected void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.userSessionSource = userSessionSource;
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
     }
 
     @Override

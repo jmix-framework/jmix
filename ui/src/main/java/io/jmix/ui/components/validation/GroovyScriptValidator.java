@@ -20,7 +20,7 @@ import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.ValidationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -65,8 +65,8 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
     }
 
     @Inject
-    protected void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.userSessionSource = userSessionSource;
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
     }
 
     /**

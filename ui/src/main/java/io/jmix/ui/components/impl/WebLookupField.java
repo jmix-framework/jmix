@@ -19,7 +19,7 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.StyleGenerator;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.LookupField;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
@@ -108,9 +108,9 @@ public class WebLookupField<V> extends WebV8AbstractField<CubaComboBox<V>, V, V>
 
         setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
 
-        UserSessionSource userSessionSource = beanLocator.get(UserSessionSource.class);
+        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.class);
 
-        this.locale = userSessionSource.getLocale();
+        this.locale = currentAuthentication.getLocale();
     }
 
     protected void initComponent(CubaComboBox<V> component) {

@@ -23,8 +23,6 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import io.jmix.core.*;
 import io.jmix.core.security.LoginException;
-import io.jmix.core.security.UserSession;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.actions.DialogAction;
@@ -83,8 +81,6 @@ public abstract class App {
 
     protected AppLog appLog;
 
-    protected Connection connection;
-
     protected ExceptionHandlers exceptionHandlers;
 
     @Inject
@@ -93,8 +89,6 @@ public abstract class App {
     protected WindowConfig windowConfig;
     @Inject
     protected ThemeConstantsRepository themeConstantsRepository;
-    @Inject
-    protected UserSessionSource userSessionSource;
     @Inject
     protected MessageTools messageTools;
     /*@Inject
@@ -187,10 +181,6 @@ public abstract class App {
 
     public abstract void loginOnStart() throws LoginException;
 
-    protected Connection createConnection() {
-        return beanLocator.getPrototype(Connection.NAME);
-    }
-
     /**
      * Called when <em>the first</em> UI of the session is initialized.
      */
@@ -216,7 +206,6 @@ public abstract class App {
 
         appLog = new AppLog(10, beanLocator.get(TimeSource.NAME));
 
-        connection = createConnection();
         exceptionHandlers = new ExceptionHandlers(this, beanLocator);
         cookies = new AppCookies();
 
@@ -365,13 +354,6 @@ public abstract class App {
     }
 
     /**
-     * @return Current connection object
-     */
-    public Connection getConnection() {
-        return connection;
-    }
-
-    /**
      * @return WindowManagerImpl instance or null if the current UI has no MainWindow
      * @deprecated Get screens API from {@link AppUI} instead.
      */
@@ -424,11 +406,6 @@ public abstract class App {
     }
 
     public void setLocale(Locale locale) {
-        UserSession session = getConnection().getSession();
-        if (session != null) {
-            session.setLocale(locale);
-        }
-
         AppUI currentUi = AppUI.getCurrent();
         // it can be null if we handle request in a custom RequestHandler
         if (currentUi != null) {
@@ -468,14 +445,13 @@ public abstract class App {
      * Removes all windows from all UIs.
      */
     public void removeAllWindows() {
-        UserSession currentSession = AppUI.getCurrent().getUserSession();
-
         List<AppUI> authenticatedUIs = getAppUIs()
                 .stream()
                 .filter(ui ->
-                        ui.hasAuthenticatedSession()
-                                && (Objects.equals(ui.getUserSession(), currentSession)
-                                || uiProperties.isForceRefreshAuthenticatedTabs()))
+                                uiProperties.isForceRefreshAuthenticatedTabs()
+//                        ui.hasAuthenticatedSession()
+//                                && (Objects.equals(ui.getUserSession(), currentSession)
+                                )
                 .collect(Collectors.toList());
 
         removeAllWindows(authenticatedUIs);
@@ -521,18 +497,18 @@ public abstract class App {
         }
     }
 
-    /**
-     * Sets UserSession from {@link Connection#getSession()}
-     * and re-initializes the given {@code ui}.
-     */
-    public void recreateUi(AppUI ui) {
-        ui.setUserSession(connection.getSession());
-
-        removeAllWindows(Collections.singletonList(ui));
-        createTopLevelWindow(ui);
-
-        ui.getPage().open(ControllerUtils.getLocationWithoutParams(), "_self");
-    }
+//    /**
+//     * Sets UserSession from {@link Connection#getSession()}
+//     * and re-initializes the given {@code ui}.
+//     */
+//    public void recreateUi(AppUI ui) {
+//        ui.setUserSession(connection.getSession());
+//
+//        removeAllWindows(Collections.singletonList(ui));
+//        createTopLevelWindow(ui);
+//
+//        ui.getPage().open(ControllerUtils.getLocationWithoutParams(), "_self");
+//    }
 
     protected void clearSettingsCache() {
         // ((WebSettingsClient) settingsClient).clearCache(); todo settings
@@ -613,8 +589,8 @@ public abstract class App {
 
     protected void forceLogout() {
         removeAllWindows();
-
-        Connection connection = getConnection();
-        connection.logout();
+        //todo MG
+//        Connection connection = getConnection();
+//        connection.logout();
     }
 }

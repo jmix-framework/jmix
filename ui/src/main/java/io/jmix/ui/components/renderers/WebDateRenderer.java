@@ -19,7 +19,7 @@ package io.jmix.ui.components.renderers;
 import com.vaadin.ui.renderers.DateRenderer;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.DataGrid;
 import io.jmix.ui.components.impl.WebAbstractDataGrid;
 
@@ -41,7 +41,7 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
 
     public WebDateRenderer() {
         super("");
-        locale = AppBeans.get(UserSessionSource.class).getLocale();
+        locale = AppBeans.get(CurrentAuthentication.class).getLocale();
     }
 
     public WebDateRenderer(String formatString) {
@@ -49,7 +49,7 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
     }
 
     public WebDateRenderer(String formatString, String nullRepresentation) {
-        this(formatString, AppBeans.get(UserSessionSource.class).getLocale(), nullRepresentation);
+        this(formatString, AppBeans.get(CurrentAuthentication.class).getLocale(), nullRepresentation);
     }
 
     public WebDateRenderer(String formatString, Locale locale) {

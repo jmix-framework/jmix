@@ -16,9 +16,9 @@
 
 package io.jmix.ui.components.impl;
 
-import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.Entity;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.SecuredActionsHolder;
 import io.jmix.ui.components.SuggestionPickerField;
 import io.jmix.ui.executors.BackgroundTask;
@@ -89,8 +89,8 @@ public class WebSuggestionPickerField<V extends Entity> extends WebPickerField<V
     }
 
     @Inject
-    public void setUserSessionSource(UserSessionSource userSessionSource) {
-        this.locale = userSessionSource.getLocale();
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.locale = currentAuthentication.getLocale();
     }
 
     protected String convertToTextView(V value) {

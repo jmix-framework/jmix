@@ -28,7 +28,6 @@ import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.UserSessionSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -51,9 +50,6 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
 
     @Inject
     protected ExtendedEntities extendedEntities;
-
-    @Inject
-    protected UserSessionSource userSessionSource;
 
     @Inject
     protected DatatypeRegistry datatypeRegistry;

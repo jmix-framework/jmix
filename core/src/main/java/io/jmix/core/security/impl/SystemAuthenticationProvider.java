@@ -16,7 +16,9 @@
 
 package io.jmix.core.security.impl;
 
+import com.google.common.base.Strings;
 import io.jmix.core.security.SystemAuthenticationToken;
+import io.jmix.core.security.UserRepository;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -27,10 +29,10 @@ import java.util.Collections;
 
 public class SystemAuthenticationProvider implements AuthenticationProvider {
 
-    private UserDetailsService userDetailsService;
+    private UserRepository userRepository;
 
-    public SystemAuthenticationProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public SystemAuthenticationProvider(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -40,8 +42,14 @@ public class SystemAuthenticationProvider implements AuthenticationProvider {
                     "%s does not support %s", getClass().getSimpleName(), authentication.getClass()));
         }
 
+        UserDetails userDetails;
         String username = authentication.getName();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        //todo MG check null or 'system'
+        if (Strings.isNullOrEmpty(username)) {
+            userDetails = userRepository.getSystemUser();
+        } else {
+            userDetails = userRepository.loadUserByUsername(username);
+        }
 
         return new SystemAuthenticationToken(userDetails, Collections.emptyList());
     }

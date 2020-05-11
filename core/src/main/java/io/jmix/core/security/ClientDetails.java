@@ -17,6 +17,7 @@
 package io.jmix.core.security;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class ClientDetails implements Serializable {
@@ -25,6 +26,7 @@ public class ClientDetails implements Serializable {
 
     public static final ClientDetails UNKNOWN = builder().build();
 
+    private Locale locale;
     private TimeZone timeZone;
     private String address;
     private String info;
@@ -48,12 +50,21 @@ public class ClientDetails implements Serializable {
         return info;
     }
 
+    public Locale getLocale() {
+        return locale;
+    }
+
     public static class Builder {
         private ClientDetails obj;
 
         public Builder() {
             obj = new ClientDetails();
             obj.timeZone = TimeZone.getDefault();
+        }
+
+        public Builder locale(Locale locale) {
+            obj.locale = locale;
+            return this;
         }
 
         public Builder timeZone(TimeZone timeZone) {

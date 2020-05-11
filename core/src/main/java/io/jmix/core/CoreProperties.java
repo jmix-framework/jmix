@@ -16,7 +16,6 @@
 
 package io.jmix.core;
 
-import io.jmix.core.security.UserSessions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -35,12 +34,9 @@ public class CoreProperties {
     String webPort;
     String confDir;
     String dbDir;
+    private String anonymousAuthenticationTokenKey;
     Map<String, Locale> availableLocales;
     boolean localeSelectVisible;
-    int userSessionExpirationTimeoutSec;
-    int userSessionSendTimeoutSec;
-    int userSessionTouchTimeoutSec;
-    boolean syncNewUserSessionReplication;
     int crossDataStoreReferenceLoadingBatchSize;
     boolean idGenerationForEntitiesInAdditionalDataStoresEnabled;
     int dom4jMaxPoolSize;
@@ -54,20 +50,19 @@ public class CoreProperties {
             String dbDir,
             Map<String, String> availableLocales,
             @DefaultValue("true") boolean localeSelectVisible,
-            @DefaultValue("1800") int userSessionExpirationTimeoutSec,
-            @DefaultValue("10") int userSessionSendTimeoutSec,
-            @DefaultValue("1") int userSessionTouchTimeoutSec,
-            boolean syncNewUserSessionReplication,
             @DefaultValue("50") int crossDataStoreReferenceLoadingBatchSize,
             @DefaultValue("true") boolean idGenerationForEntitiesInAdditionalDataStoresEnabled,
             @DefaultValue("100") int dom4jMaxPoolSize,
-            @DefaultValue("1000") int dom4jMaxBorrowWaitMillis
+            @DefaultValue("1000") int dom4jMaxBorrowWaitMillis,
+            @DefaultValue("de72c623-6d3d-458c-a187-c526de515ecd") String anonymousAuthenticationTokenKey
+
     ) {
         this.webContextName = webContextName;
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
         this.dbDir = dbDir;
+        this.anonymousAuthenticationTokenKey = anonymousAuthenticationTokenKey;
 
         if (availableLocales == null) {
             this.availableLocales = Collections.singletonMap("English", Locale.ENGLISH);
@@ -79,10 +74,6 @@ public class CoreProperties {
         }
 
         this.localeSelectVisible = localeSelectVisible;
-        this.userSessionExpirationTimeoutSec = userSessionExpirationTimeoutSec;
-        this.userSessionSendTimeoutSec = userSessionSendTimeoutSec;
-        this.userSessionTouchTimeoutSec = userSessionTouchTimeoutSec;
-        this.syncNewUserSessionReplication = syncNewUserSessionReplication;
         this.crossDataStoreReferenceLoadingBatchSize = crossDataStoreReferenceLoadingBatchSize;
         this.idGenerationForEntitiesInAdditionalDataStoresEnabled = idGenerationForEntitiesInAdditionalDataStoresEnabled;
         this.dom4jMaxPoolSize = dom4jMaxPoolSize;
@@ -126,30 +117,6 @@ public class CoreProperties {
         return localeSelectVisible;
     }
 
-    /**
-     * User session expiration timeout in seconds.
-     */
-    public int getUserSessionExpirationTimeoutSec() {
-        return userSessionExpirationTimeoutSec;
-    }
-
-    /**
-     * User session ping timeout in cluster.
-     * If ping is performed by {@link UserSessions#getAndRefresh},
-     * the user session is sent to the cluster only after the specified timeout.
-     */
-    public int getUserSessionSendTimeoutSec() {
-        return userSessionSendTimeoutSec;
-    }
-
-    public int getUserSessionTouchTimeoutSec() {
-        return userSessionTouchTimeoutSec;
-    }
-
-    public boolean isSyncNewUserSessionReplication() {
-        return syncNewUserSessionReplication;
-    }
-
     public int getCrossDataStoreReferenceLoadingBatchSize() {
         return crossDataStoreReferenceLoadingBatchSize;
     }
@@ -174,5 +141,13 @@ public class CoreProperties {
      */
     public int getDom4jMaxBorrowWaitMillis() {
         return dom4jMaxBorrowWaitMillis;
+    }
+
+    /**
+     * @return a key that is used in {@link org.springframework.security.authentication.AnonymousAuthenticationProvider}
+     * and {@link org.springframework.security.web.authentication.AnonymousAuthenticationFilter}
+     */
+    public String getAnonymousAuthenticationTokenKey() {
+        return anonymousAuthenticationTokenKey;
     }
 }

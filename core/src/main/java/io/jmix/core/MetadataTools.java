@@ -29,7 +29,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -90,7 +90,7 @@ public class MetadataTools {
 //    protected DynamicAttributesTools dynamicAttributesTools;
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     @Inject
     protected DatatypeRegistry datatypeRegistry;
@@ -140,10 +140,10 @@ public class MetadataTools {
                 Boolean ignoreUserTimeZone = getMetaAnnotationValue(property, IgnoreUserTimeZone.class);
                 if (!Boolean.TRUE.equals(ignoreUserTimeZone)) {
                     return ((TimeZoneAwareDatatype) datatype).format(value,
-                            userSessionSource.getLocale(), userSessionSource.getUserSession().getClientDetails().getTimeZone());
+                            currentAuthentication.getLocale(), currentAuthentication.getTimeZone());
                 }
             }
-            return datatype.format(value, userSessionSource.getLocale());
+            return datatype.format(value, currentAuthentication.getLocale());
         } else if (range.isEnum()) {
             return messages.getMessage((Enum) value);
         } else if (value instanceof Entity) {
@@ -171,7 +171,7 @@ public class MetadataTools {
         } else if (value instanceof Entity) {
             return getInstanceName((Entity) value);
         } else if (value instanceof Enum) {
-            return messages.getMessage((Enum) value, userSessionSource.getLocale());
+            return messages.getMessage((Enum) value, currentAuthentication.getLocale());
         } else if (value instanceof Collection) {
             @SuppressWarnings("unchecked")
             Collection<Object> collection = (Collection<Object>) value;
@@ -181,7 +181,7 @@ public class MetadataTools {
         } else {
             Datatype datatype = datatypeRegistry.get(value.getClass());
             if (datatype != null) {
-                return datatype.format(value, userSessionSource.getLocale());
+                return datatype.format(value, currentAuthentication.getLocale());
             }
 
             return value.toString();

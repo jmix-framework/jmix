@@ -21,13 +21,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 
-public interface User extends UserDetails, Entity<UUID> {
+/**
+ * Base class for users. In most cases projects will use {@code User} implementation from the {@code security} module.
+ * If the project needs custom user class, it must implement this interface;
+ */
+public interface BaseUser extends UserDetails, Entity<UUID> {
 
-    UUID getId();
+    /**
+     * Returns unique representation of the user. It may be a string with user identifier, a combination of tenant id
+     * and login, etc.
+     * <p>
+     * This key will be user by framework mechanisms to refer the user.
+     */
+    String getKey();
 
-    String getLogin();
-
-    String getLoginLowerCase();
-
-    String getName();
 }

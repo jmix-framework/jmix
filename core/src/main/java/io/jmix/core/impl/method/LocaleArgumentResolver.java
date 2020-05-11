@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl.method;
 
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class LocaleArgumentResolver extends TypedArgumentResolver<Locale> {
     public static final String NAME = "jmix_LocaleArgumentResolver";
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     public LocaleArgumentResolver() {
         super(Locale.class);
@@ -46,8 +46,8 @@ public class LocaleArgumentResolver extends TypedArgumentResolver<Locale> {
 
     protected Locale getCurrentLocale() {
         Locale locale;
-        if (userSessionSource.checkCurrentUserSession()) {
-            locale = userSessionSource.getLocale();
+        if (currentAuthentication.isSet()) {
+            locale = currentAuthentication.getLocale();
         } else {
             locale = Locale.getDefault();
         }

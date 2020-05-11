@@ -16,10 +16,9 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.security.impl.AnonymousAuthenticationProvider;
-import io.jmix.core.security.impl.CoreUserDetailsService;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -29,8 +28,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.inject.Inject;
@@ -41,38 +40,44 @@ import javax.inject.Inject;
 @Order(100)
 public class JmixCoreSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
+//    @Inject
+//    protected UserSessionCleanupInterceptor userSessionCleanupInterceptor;
+
     @Inject
-    protected UserSessionCleanupInterceptor userSessionCleanupInterceptor;
+    protected UserRepository userRepository;
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        UserDetailsService userDetailsService = new CoreUserDetailsService();
-//        auth.userDetailsService(userDetailsService);
-//    }
+    @Inject
+    private CoreProperties coreProperties;
 
-    @Autowired
-    protected AuthenticationManagerBuilder configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        UserDetailsService userDetailsService = new CoreUserDetailsService();
-        auth.userDetailsService(userDetailsService);
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
 
-        auth.authenticationProvider(new SystemAuthenticationProvider(userDetailsService));
-        auth.authenticationProvider(new AnonymousAuthenticationProvider(userDetailsService));
-
-        return auth;
+        UserAuthenticationProvider userAuthenticationProvider = new UserAuthenticationProvider();
+        userAuthenticationProvider.setUserDetailsService(userRepository);
+        userAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
+        auth.authenticationProvider(userAuthenticationProvider);
     }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.antMatcher("/**")
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
+                .anonymous(anonymousConfigurer -> {
+                    BaseUser anonymousUser = userRepository.getAnonymousUser();
+                    anonymousConfigurer.principal(anonymousUser);
+                    anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
+                })
                 .csrf().disable();
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userSessionCleanupInterceptor);
-    }
+    //todo MG why?
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(userSessionCleanupInterceptor);
+//    }
 
     @Bean(name = "jmix_authenticationManager")
     @Override
@@ -80,9 +85,14 @@ public class JmixCoreSecurityConfiguration extends WebSecurityConfigurerAdapter 
         return super.authenticationManagerBean();
     }
 
-    @Bean(name = "jmix_userDetailsService")
-    @Override
-    public UserDetailsService userDetailsServiceBean() throws Exception {
-        return super.userDetailsServiceBean();
+//    @Bean(name = "jmix_userDetailsService")
+//    @Override
+//    public UserDetailsService userDetailsServiceBean() throws Exception {
+//        return super.userDetailsServiceBean();
+//    }
+
+    @Bean(name = "jmix_PasswordEncoder")
+    public PasswordEncoder getPasswordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

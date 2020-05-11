@@ -31,9 +31,9 @@ public interface Presentation extends Entity<UUID> {
 
     void setXml(String xml);
 
-    User getUser();
+    BaseUser getUser();
 
-    void setUser(User user);
+    void setUser(BaseUser user);
 
     Boolean getDefault();
 

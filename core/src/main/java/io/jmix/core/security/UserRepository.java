@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,18 @@
 
 package io.jmix.core.security;
 
-import java.io.Serializable;
-import java.util.Map;
+import io.jmix.core.entity.BaseUser;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface SessionAttributesProvider {
-    Map<String, Serializable> getSessionAttributes();
+import java.util.List;
+
+public interface UserRepository extends UserDetailsService {
+
+    String NAME = "jmix_UserRepository";
+
+    BaseUser getSystemUser();
+
+    BaseUser getAnonymousUser();
+
+    List<? extends BaseUser> getAll();
 }

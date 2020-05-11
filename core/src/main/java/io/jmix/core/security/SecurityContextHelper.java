@@ -26,34 +26,27 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import javax.annotation.Nullable;
 
 /**
- * Helper class to get/set UserSession in the current {@link SecurityContext}.
+ * Helper class to get/set Authentication in the current {@link SecurityContext}.
  */
-public class CurrentUserSession {
+public class SecurityContextHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(CurrentUserSession.class);
+    private static final Logger log = LoggerFactory.getLogger(SecurityContextHelper.class);
 
     /**
-     * Returns current UserSession or null if the current context has no Authentication or if the Authentication
-     * is not a UserSession.
+     * Returns current Authentication or null if the current context has no Authentication
      */
     @Nullable
-    public static UserSession get() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || authentication instanceof UserSession) {
-            return (UserSession) authentication;
-        } else {
-            log.trace("Current authentication is not a UserSession: " + authentication.getClass().getName());
-            return null;
-        }
+    public static Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     /**
-     * Sets the UserSession in the current  {@link SecurityContext}.
+     * Sets the Authentication in the current {@link SecurityContext}.
      */
-    public static void set(@Nullable UserSession userSession) {
-        if (userSession != null) {
-            SecurityContextHolder.getContext().setAuthentication(userSession);
-            LogMdc.setup(userSession);
+    public static void setAuthentication(@Nullable Authentication authentication) {
+        if (authentication != null) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            LogMdc.setup(authentication);
         } else {
             SecurityContextHolder.clearContext();
             LogMdc.setup(null);

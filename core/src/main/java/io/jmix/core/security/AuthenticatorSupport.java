@@ -16,7 +16,6 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.security.impl.SystemSessions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -24,41 +23,40 @@ import org.springframework.security.core.Authentication;
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public abstract class AuthenticatorSupport {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticatorSupport.class);
 
-    protected static final UserSession NULL_SESSION = new NullSession();
+    protected static final Authentication NULL_AUTHENTICATION = new NullAuthentication();
 
     protected ThreadLocal<Deque<Authentication>> threadLocalStack = new ThreadLocal<>();
 
-    protected SystemSessions sessions;
-
-    public AuthenticatorSupport(SystemSessions sessions) {
-        this.sessions = sessions;
+    public AuthenticatorSupport() {
     }
 
-    protected UserSession getFromCacheOrCreate(String login, Supplier<UserSession> supplier) {
-        UserSession session = sessions.get(login);
-        if (session == null) {
-            // saved session doesn't exist
-            synchronized (this) {
-                // double check to prevent the same log in by subsequent threads
-                session = sessions.get(login);
-                if (session == null) {
-                    try {
-                        session = supplier.get();
-                    } catch (LoginException e) {
-                        throw new RuntimeException("Unable to perform system login", e);
-                    }
-                    sessions.put(login, session);
-                }
-            }
-        }
-        return session;
+    protected Authentication getFromCacheOrCreate(String login, Supplier<Authentication> supplier) {
+//        UserSession session = sessions.get(login);
+//        if (session == null) {
+//            // saved session doesn't exist
+//            synchronized (this) {
+//                // double check to prevent the same log in by subsequent threads
+//                session = sessions.get(login);
+//                if (session == null) {
+//                    try {
+//                        session = supplier.get();
+//                    } catch (LoginException e) {
+//                        throw new RuntimeException("Unable to perform system login", e);
+//                    }
+//                    sessions.put(login, session);
+//                }
+//            }
+//        }
+//        return session;
+        //todo MG
+        return supplier.get();
+
     }
 
     protected void pushAuthentication(@Nullable Authentication authentication) {
@@ -72,19 +70,19 @@ public abstract class AuthenticatorSupport {
             }
         }
         if (authentication == null) {
-            stack.push(NULL_SESSION);
+            stack.push(NULL_AUTHENTICATION);
         } else {
             stack.push(authentication);
         }
     }
 
     @Nullable
-    protected Authentication popAuthentication() {
+    protected Authentication pollAuthentication() {
         Deque<Authentication> stack = threadLocalStack.get();
         if (stack != null) {
             Authentication authentication = stack.poll();
             if (authentication != null) {
-                if (authentication == NULL_SESSION) {
+                if (authentication == NULL_AUTHENTICATION) {
                     return null;
                 } else {
                     return authentication;
@@ -98,12 +96,30 @@ public abstract class AuthenticatorSupport {
         return null;
     }
 
-    protected static class NullSession extends UserSession {
+    @Nullable
+    protected Authentication peekAuthentication() {
+        Deque<Authentication> stack = threadLocalStack.get();
+        if (stack != null) {
+            Authentication authentication = stack.peek();
+            if (authentication != null) {
+                if (authentication == NULL_AUTHENTICATION) {
+                    return null;
+                } else {
+                    return authentication;
+                }
+            }
+        } else {
+            log.warn("Stack does not exist. Check correctness of begin/end invocations.");
+        }
+        return null;
+    }
+
+    protected static class NullAuthentication extends SystemAuthenticationToken {
 
         private static final long serialVersionUID = 5437664860036209641L;
 
-        public NullSession() {
-            id = new UUID(0L, 0L);
+        public NullAuthentication() {
+            super(null);
         }
     }
 

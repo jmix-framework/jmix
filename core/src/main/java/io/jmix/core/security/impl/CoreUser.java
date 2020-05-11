@@ -16,30 +16,29 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.UuidProvider;
 import io.jmix.core.Entity;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-public class CoreUser implements Entity<UUID>, HasUuid, User {
+public class CoreUser implements Entity<UUID>, HasUuid, BaseUser {
 
     private static final long serialVersionUID = 2032149054729862959L;
 
     private UUID id;
-    private String login;
+    private String username;
     private String password;
     private String name;
 
-    public CoreUser(String login, String password, String name) {
-        id = UuidProvider.createUuid();
-        this.login = login;
+    public CoreUser(String username, String password, String name) {
+        this.username = username;
         this.password = password;
         this.name = name;
+        this.id = UUID.randomUUID();
     }
 
     @Override
@@ -52,7 +51,6 @@ public class CoreUser implements Entity<UUID>, HasUuid, User {
         this.id = uuid;
     }
 
-    @Override
     public UUID getId() {
         return id;
     }
@@ -61,17 +59,6 @@ public class CoreUser implements Entity<UUID>, HasUuid, User {
         this.id = id;
     }
 
-    @Override
-    public String getLogin() {
-        return login;
-    }
-
-    @Override
-    public String getLoginLowerCase() {
-        return login == null ? null : login.toLowerCase();
-    }
-
-    @Override
     public String getName() {
         return name;
     }
@@ -88,7 +75,7 @@ public class CoreUser implements Entity<UUID>, HasUuid, User {
 
     @Override
     public String getUsername() {
-        return getLoginLowerCase();
+        return username;
     }
 
     @Override
@@ -109,5 +96,10 @@ public class CoreUser implements Entity<UUID>, HasUuid, User {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getKey() {
+        return id.toString();
     }
 }

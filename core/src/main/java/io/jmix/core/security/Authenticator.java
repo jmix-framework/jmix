@@ -16,6 +16,8 @@
 
 package io.jmix.core.security;
 
+import org.springframework.security.core.Authentication;
+
 import javax.annotation.Nullable;
 
 /**
@@ -44,14 +46,14 @@ public interface Authenticator {
      * @param login user login. If null, the 'server' system session is started
      * @return new or cached instance of system user session
      */
-    UserSession begin(@Nullable String login);
+    Authentication begin(@Nullable String login);
 
     /**
      * Authenticate with the system session.
      * <br>
      * Same as {@link #begin(String)} with null parameter.
      */
-    UserSession begin();
+    Authentication begin();
 
     /**
      * End of an authenticated code block.

@@ -16,12 +16,9 @@
 
 package security
 
-import test_support.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
-import io.jmix.core.security.CurrentUserSession
+import io.jmix.core.entity.BaseUser
 import io.jmix.core.security.SystemAuthenticationToken
-import io.jmix.core.security.SystemUserSession
-import io.jmix.core.security.UserSession
 import io.jmix.core.security.impl.AuthenticatorImpl
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -29,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
+import test_support.AppContextTestExecutionListener
 
 import javax.inject.Inject
 
@@ -48,12 +46,10 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        UserSession session = CurrentUserSession.get()
-        session.user.loginLowerCase == 'system'
-        session instanceof SystemUserSession
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication()
-        authentication.principal == session.user
+        authentication instanceof SystemAuthenticationToken
+        authentication.principal instanceof BaseUser
+        ((BaseUser) authentication.principal).username == 'system'
 
         when:
 
@@ -61,7 +57,6 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        CurrentUserSession.get() == null
         SecurityContextHolder.getContext().getAuthentication() == null
     }
 
@@ -72,12 +67,10 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        UserSession session = CurrentUserSession.get()
-        session.user.loginLowerCase == 'admin'
-        session.authentication instanceof SystemAuthenticationToken
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication()
-        authentication.principal == session.user
+        authentication instanceof SystemAuthenticationToken
+        authentication.principal instanceof BaseUser
+        ((BaseUser) authentication.principal).username == 'admin'
 
         when:
 
@@ -85,7 +78,6 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        CurrentUserSession.get() == null
         SecurityContextHolder.getContext().getAuthentication() == null
     }
 
@@ -97,11 +89,10 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        UserSession outerSession = CurrentUserSession.get()
-        outerSession.user.loginLowerCase == 'system'
-
         Authentication outerAuth = SecurityContextHolder.getContext().getAuthentication()
-        outerAuth.principal == outerSession.user
+        outerAuth instanceof SystemAuthenticationToken
+        outerAuth.principal instanceof BaseUser
+        ((BaseUser) outerAuth.principal).username == 'system'
 
         when: "inner auth"
 
@@ -109,12 +100,10 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        UserSession innerSession = CurrentUserSession.get()
-        innerSession.user.loginLowerCase == 'admin'
-        innerSession.authentication instanceof SystemAuthenticationToken
-
         Authentication innerAuth = SecurityContextHolder.getContext().getAuthentication()
-        innerAuth.principal == innerSession.user
+        innerAuth instanceof SystemAuthenticationToken
+        innerAuth.principal instanceof BaseUser
+        ((BaseUser) innerAuth.principal).username == 'admin'
 
         when: "end inner"
 
@@ -122,11 +111,10 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        UserSession outerSession1 = CurrentUserSession.get()
-        outerSession1.user.loginLowerCase == 'system'
-
         Authentication outerAuth1 = SecurityContextHolder.getContext().getAuthentication()
-        outerAuth1.principal == outerSession1.user
+        outerAuth1 instanceof SystemAuthenticationToken
+        outerAuth1.principal instanceof BaseUser
+        ((BaseUser) outerAuth1.principal).username == 'system'
 
         when: "end outer"
 
@@ -134,7 +122,6 @@ class AuthenticatorTest extends Specification {
 
         then:
 
-        CurrentUserSession.get() == null
         SecurityContextHolder.getContext().getAuthentication() == null
     }
 }

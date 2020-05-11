@@ -17,7 +17,7 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.security.UserSessionSource;
+import io.jmix.core.security.CurrentAuthentication;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.hibernate.validator.cfg.ConstraintMapping;
@@ -57,7 +57,7 @@ public class BeanValidationImpl implements BeanValidation {
     @Inject
     protected TimeSource timeSource;
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
     @Inject
     protected EntityStates entityStates;
 
@@ -135,8 +135,8 @@ public class BeanValidationImpl implements BeanValidation {
 
     protected Locale getCurrentLocale() {
         Locale locale;
-        if (userSessionSource.checkCurrentUserSession()) {
-            locale = userSessionSource.getLocale();
+        if (currentAuthentication.isSet()) {
+            locale = currentAuthentication.getLocale();
         } else {
             locale = messageTools.getDefaultLocale();
         }

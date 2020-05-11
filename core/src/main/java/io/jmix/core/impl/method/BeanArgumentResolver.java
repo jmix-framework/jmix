@@ -17,7 +17,6 @@
 package io.jmix.core.impl.method;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.security.UserSessionSource;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;

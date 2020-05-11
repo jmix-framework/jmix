@@ -19,7 +19,10 @@ package io.jmix.core.security.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.Events;
 import io.jmix.core.impl.logging.LogMdc;
-import io.jmix.core.security.*;
+import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.AuthenticatorSupport;
+import io.jmix.core.security.SecurityContextHelper;
+import io.jmix.core.security.SystemAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -41,15 +44,9 @@ public class AuthenticatorImpl extends AuthenticatorSupport implements Authentic
     @Inject
     protected AuthenticationManager authenticationManager;
 
-    @Inject
-    protected UserSessionFactory userSessionFactory;
 
     @Inject
-    protected UserSessions userSessions;
-
-    @Inject
-    public AuthenticatorImpl(SystemSessions sessions) {
-        super(sessions);
+    public AuthenticatorImpl() {
     }
 
     @EventListener
@@ -65,41 +62,63 @@ public class AuthenticatorImpl extends AuthenticatorSupport implements Authentic
     }
 
     @Override
-    public UserSession begin(@Nullable String login) {
-        UserSession userSession;
+    public Authentication begin(@Nullable String login) {
+//        UserSession userSession;
+//
+//        if (!Strings.isNullOrEmpty(login)) {
+//            log.trace("Authenticating as {}", login);
+//
+//            userSession = getFromCacheOrCreate(login, () -> {
+//                Authentication authToken = new SystemAuthenticationToken(login);
+//                Authentication authentication = authenticationManager.authenticate(authToken);
+//                UserSession session = userSessionFactory.create(authentication);
+//                session.setClientDetails(ClientDetails.builder().info("System authentication").build());
+//                userSessions.add(session);
+//                return session;
+//            });
+//        } else {
+//            log.trace("Authenticating as system");
+//            userSession = userSessionFactory.getSystemSession();
+//        }
+//
+//        pushAuthentication(SecurityContextHolder.getContext().getAuthentication());
+//
+//        CurrentUserSession.set(userSession);
+//
+//        return userSession;
+
+        Authentication authentication;
 
         if (!Strings.isNullOrEmpty(login)) {
             log.trace("Authenticating as {}", login);
 
-            userSession = getFromCacheOrCreate(login, () -> {
+            authentication = getFromCacheOrCreate(login, () -> {
                 Authentication authToken = new SystemAuthenticationToken(login);
-                Authentication authentication = authenticationManager.authenticate(authToken);
-                UserSession session = userSessionFactory.create(authentication);
-                session.setClientDetails(ClientDetails.builder().info("System authentication").build());
-                userSessions.add(session);
-                return session;
+                return authenticationManager.authenticate(authToken);
             });
         } else {
             log.trace("Authenticating as system");
-            userSession = userSessionFactory.getSystemSession();
+            Authentication authToken = new SystemAuthenticationToken(null);
+            authentication = authenticationManager.authenticate(authToken);
         }
 
-        pushAuthentication(SecurityContextHolder.getContext().getAuthentication());
+        pushAuthentication(authentication);
+        SecurityContextHelper.setAuthentication(authentication);
 
-        CurrentUserSession.set(userSession);
-
-        return userSession;
+        return authentication;
     }
 
     @Override
-    public UserSession begin() {
+    public Authentication begin() {
         return begin(null);
     }
 
     @Override
     public void end() {
         log.trace("Set previous Authentication");
-        Authentication previous = popAuthentication();
+        //remove current authentication from stack
+        pollAuthentication();
+        Authentication previous = peekAuthentication();
         SecurityContextHolder.getContext().setAuthentication(previous);
         LogMdc.setup(previous);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,55 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.entity.User;
+import io.jmix.core.entity.BaseUser;
+import io.jmix.core.security.OnCoreSecurityImplementation;
+import io.jmix.core.security.UserRepository;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class CoreUserDetailsService implements UserDetailsService {
+@Component(UserRepository.NAME)
+@Conditional(OnCoreSecurityImplementation.class)
+public class CoreUserRepository implements UserRepository {
 
-    private List<User> users = Arrays.asList(
+    private CoreUser systemUser;
+    private CoreUser anonymousUser;
+
+    private List<BaseUser> users = Arrays.asList(
             new CoreUser("system", "{noop}", "System"),
             new CoreUser("anonymous", "{noop}", "Anonymous"),
             new CoreUser("admin", "{noop}admin123", "Administrator")
     );
 
+    public CoreUserRepository() {
+        systemUser = new CoreUser("system", null, "system");
+        anonymousUser = new CoreUser("anonymous", null, "anonymous");
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return users.stream()
-                .filter(user -> user.getLoginLowerCase().equals(username))
+                .filter(user -> user.getUsername().equals(username))
                 .findAny()
                 .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
+    }
+
+    @Override
+    public BaseUser getSystemUser() {
+        return systemUser;
+    }
+
+    @Override
+    public BaseUser getAnonymousUser() {
+        return anonymousUser;
+    }
+
+    @Override
+    public List<BaseUser> getAll() {
+        return users;
     }
 }

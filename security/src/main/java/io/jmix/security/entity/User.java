@@ -15,21 +15,20 @@
  */
 package io.jmix.security.entity;
 
-import io.jmix.core.DeletePolicy;
-import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;
-import io.jmix.core.metamodel.annotations.Composition;
 import io.jmix.core.metamodel.annotations.InstanceName;
 import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * User
@@ -38,25 +37,18 @@ import java.util.List;
 @Table(name = "SEC_USER")
 //@Listeners("jmix_UserEntityListener")
 @TrackEditScreenHistory
-public class User extends StandardEntity implements io.jmix.core.entity.User {
+public class User extends StandardEntity implements BaseUser {
 
     private static final long serialVersionUID = 5007187642916030394L;
 
-    @Column(name = "LOGIN", length = 50, nullable = false)
-    protected String login;
-
-    @SystemLevel
-    @Column(name = "LOGIN_LC", length = 50, nullable = false)
-    protected String loginLowerCase;
+    @Column(name = "USERNAME", nullable = false)
+    protected String username;
 
     @SystemLevel
     @Column(name = "PASSWORD")
     protected String password;
 
-    @SystemLevel
-    @Column(name = "PASSWORD_ENCRYPTION", length = 50)
-    protected String passwordEncryption;
-
+    //todo remove?
     @Column(name = "NAME")
     protected String name;
 
@@ -69,10 +61,7 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
     @Column(name = "MIDDLE_NAME")
     protected String middleName;
 
-    @Column(name = "POSITION_")
-    protected String position;
-
-    @Column(name = "EMAIL", length = 100)
+    @Column(name = "EMAIL")
     protected String email;
 
     @Column(name = "LANGUAGE_", length = 20)
@@ -81,66 +70,8 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
     @Column(name = "TIME_ZONE")
     protected String timeZone;
 
-    @Column(name = "TIME_ZONE_AUTO")
-    protected Boolean timeZoneAuto;
-
-    @Column(name = "ACTIVE")
-    protected Boolean active = true;
-
-    @Column(name = "CHANGE_PASSWORD_AT_LOGON")
-    protected Boolean changePasswordAtNextLogon = false;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "GROUP_ID")
-    @OnDeleteInverse(DeletePolicy.DENY)
-    protected Group group;
-
-    @OneToMany(mappedBy = "user")
-    @OrderBy("createTs")
-    @Composition
-    protected List<UserRole> userRoles;
-
-    // todo user substitution
-//    @OneToMany(mappedBy = "user")
-//    @OrderBy("createTs")
-//    @Composition
-//    protected List<UserSubstitution> substitutions;
-
-    @Column(name = "IP_MASK", length = 200)
-    protected String ipMask;
-
-    @Transient
-    protected boolean disabledDefaultRoles;
-
-    @PrePersist
-    @PreUpdate
-    private void updateLoginLowercase() {
-        loginLowerCase = login.toLowerCase();
-    }
-
-    public boolean isDisabledDefaultRoles() {
-        return disabledDefaultRoles;
-    }
-
-    public void setDisabledDefaultRoles(boolean disabledDefaultRoles) {
-        this.disabledDefaultRoles = disabledDefaultRoles;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getLoginLowerCase() {
-        return loginLowerCase;
-    }
-
-    public void setLoginLowerCase(String loginLowerCase) {
-        this.loginLowerCase = loginLowerCase;
-    }
+    @Column(name = "ENABLED")
+    protected Boolean enabled = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -153,39 +84,43 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
 
     @Override
     public String getUsername() {
-        return loginLowerCase;
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return active;
+        return enabled;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return active;
+        return enabled;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return active;
+        return enabled;
     }
 
     @Override
     public boolean isEnabled() {
-        return active;
+        return enabled;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getPasswordEncryption() {
-        return passwordEncryption;
-    }
-
-    public void setPasswordEncryption(String passwordEncryption) {
-        this.passwordEncryption = passwordEncryption;
     }
 
     public String getName() {
@@ -194,22 +129,6 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Group getGroup() {
-        return group;
-    }
-
-    public void setGroup(Group group) {
-        this.group = group;
-    }
-
-    public List<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(List<UserRole> userRoles) {
-        this.userRoles = userRoles;
     }
 
     public String getEmail() {
@@ -236,14 +155,6 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
         this.timeZone = timeZone;
     }
 
-    public Boolean getTimeZoneAuto() {
-        return timeZoneAuto;
-    }
-
-    public void setTimeZoneAuto(Boolean timeZoneAuto) {
-        this.timeZoneAuto = timeZoneAuto;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -268,38 +179,6 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
         this.middleName = middleName;
     }
 
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-//    public List<UserSubstitution> getSubstitutions() {
-//        return substitutions;
-//    }
-//
-//    public void setSubstitutions(List<UserSubstitution> substitutions) {
-//        this.substitutions = substitutions;
-//    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public String getIpMask() {
-        return ipMask;
-    }
-
-    public void setIpMask(String ipMask) {
-        this.ipMask = ipMask;
-    }
-
     @InstanceName
     public String getCaption() {
         // todo rework when new instance name is ready
@@ -309,22 +188,13 @@ public class User extends StandardEntity implements io.jmix.core.entity.User {
         /*}*/
         MessageFormat fmt = new MessageFormat(pattern);
         return StringUtils.trimToEmpty(fmt.format(new Object[]{
-                StringUtils.trimToEmpty(login),
+                StringUtils.trimToEmpty(username),
                 StringUtils.trimToEmpty(name)
         }));
     }
 
-    public Boolean getChangePasswordAtNextLogon() {
-        return changePasswordAtNextLogon;
-    }
-
-    public void setChangePasswordAtNextLogon(Boolean changePasswordAtNextLogon) {
-        this.changePasswordAtNextLogon = changePasswordAtNextLogon;
-    }
-
-    @Transient
-    @Deprecated
-    public String getSalt() {
-        return id != null ? id.toString() : "";
+    @Override
+    public String getKey() {
+        return id.toString();
     }
 }

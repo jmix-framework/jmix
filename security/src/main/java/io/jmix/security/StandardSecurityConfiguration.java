@@ -16,9 +16,10 @@
 
 package io.jmix.security;
 
-import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.security.UserAuthenticationProvider;
+import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
-import io.jmix.security.impl.StandardUserDetailsService;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,13 +27,13 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
 
 @Configuration
 @ComponentScan
@@ -41,17 +42,32 @@ import javax.persistence.PersistenceUnit;
 @EnableWebSecurity
 public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
+    @Inject
+    private UserRepository userRepository;
 
     @Inject
-    private FetchPlanRepository fetchPlanRepository;
+    private CoreProperties coreProperties;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        UserDetailsService userDetailsService = new StandardUserDetailsService(entityManagerFactory, fetchPlanRepository);
-        auth.userDetailsService(userDetailsService);
-        auth.authenticationProvider(new SystemAuthenticationProvider(userDetailsService));
+        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
+
+        UserAuthenticationProvider userAuthenticationProvider = new UserAuthenticationProvider();
+        userAuthenticationProvider.setUserDetailsService(userRepository);
+        userAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
+        auth.authenticationProvider(userAuthenticationProvider);
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.antMatcher("/**")
+                .authorizeRequests().anyRequest().permitAll()
+                .and()
+                .anonymous(anonymousConfigurer -> {
+                    anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
+                    anonymousConfigurer.principal(userRepository.getAnonymousUser());
+                })
+                .csrf().disable();
     }
 
     @Bean(name = "jmix_authenticationManager")
@@ -60,9 +76,15 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
         return super.authenticationManagerBean();
     }
 
-    @Bean(name = "jmix_userDetailsService")
-    @Override
-    public UserDetailsService userDetailsServiceBean() throws Exception {
-        return super.userDetailsServiceBean();
+    //todo MG
+//    @Bean(name = "jmix_userDetailsService")
+//    @Override
+//    public UserDetailsService userDetailsServiceBean() throws Exception {
+//        return super.userDetailsServiceBean();
+//    }
+
+    @Bean(name = "jmix_PasswordEncoder")
+    public PasswordEncoder getPasswordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 }

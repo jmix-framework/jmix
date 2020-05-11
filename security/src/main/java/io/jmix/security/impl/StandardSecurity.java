@@ -30,7 +30,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.*;
 import io.jmix.data.RowLevelSecurityException;
-import io.jmix.security.entity.Permission;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.runtime.MethodClosure;
 import org.slf4j.Logger;
@@ -57,7 +56,7 @@ public class StandardSecurity implements Security {
     private static final Logger log = LoggerFactory.getLogger(StandardSecurity.class);
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     @Inject
     protected Metadata metadata;
@@ -73,19 +72,21 @@ public class StandardSecurity implements Security {
 
     protected ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
 
-    private StandardUserSession getUserSession() {
-        return (StandardUserSession) userSessionSource.getUserSession();
-    }
+//    private StandardUserSession getUserSession() {
+//        return (StandardUserSession) userSessionSource.getUserSession();
+//    }
 
     @Override
     public boolean isScreenPermitted(String windowAlias) {
-        return getUserSession().isPermitted(PermissionType.SCREEN, windowAlias, 1);
+//        return getUserSession().isPermitted(PermissionType.SCREEN, windowAlias, 1);
+        return true;
     }
 
     @Override
     public boolean isEntityOpPermitted(MetaClass metaClass, EntityOp entityOp) {
-        return getUserSession().isPermitted(PermissionType.ENTITY_OP,
-                metaClass.getName() + Permission.TARGET_PATH_DELIMETER + entityOp.getId(), 1);
+//        return getUserSession().isPermitted(PermissionType.ENTITY_OP,
+//                metaClass.getName() + Permission.TARGET_PATH_DELIMETER + entityOp.getId(), 1);
+        return true;
     }
 
     @Override
@@ -95,8 +96,9 @@ public class StandardSecurity implements Security {
 
     @Override
     public boolean isEntityAttrPermitted(MetaClass metaClass, String property, EntityAttrAccess access) {
-        return getUserSession().isPermitted(PermissionType.ENTITY_ATTR,
-                metaClass.getName() + Permission.TARGET_PATH_DELIMETER + property, access.getId());
+//        return getUserSession().isPermitted(PermissionType.ENTITY_ATTR,
+//                metaClass.getName() + Permission.TARGET_PATH_DELIMETER + property, access.getId());
+        return true;
     }
 
     @Override
@@ -139,7 +141,8 @@ public class StandardSecurity implements Security {
 
     @Override
     public boolean isSpecificPermitted(String name) {
-        return getUserSession().isPermitted(PermissionType.SPECIFIC, name, 1);
+//        return getUserSession().isPermitted(PermissionType.SPECIFIC, name, 1);
+        return true;
     }
 
     @Override
@@ -170,7 +173,8 @@ public class StandardSecurity implements Security {
 
     @Override
     public boolean hasConstraints() {
-        return getUserSession().hasConstraints();
+//        return getUserSession().hasConstraints();
+        return false;
     }
 
     @Override
@@ -193,7 +197,8 @@ public class StandardSecurity implements Security {
         Map<String, Object> context = new HashMap<>();
         context.put("__entity__", entity);
         context.put("parse", new MethodClosure(this, "parseValue"));
-        context.put("userSession", userSessionSource.getUserSession());
+        //todo MG
+//        context.put("userSession", currentAuthentication.getUserSession());
         fillGroovyConstraintsContext(context);
         ScriptEngine engine = scriptEngineManager.getEngineByName("groovy");
         for (Map.Entry<String, Object> entry : context.entrySet()) {
@@ -253,14 +258,15 @@ public class StandardSecurity implements Security {
     }
 
     public List<ConstraintData> getConstraints(MetaClass metaClass) {
-        StandardUserSession userSession = getUserSession();
-        MetaClass mainMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-
-        List<ConstraintData> constraints = new ArrayList<>(userSession.getConstraints(mainMetaClass.getName()));
-        for (MetaClass parent : mainMetaClass.getAncestors()) {
-            constraints.addAll(userSession.getConstraints(parent.getName()));
-        }
-        return constraints;
+//        StandardUserSession userSession = getUserSession();
+//        MetaClass mainMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+//
+//        List<ConstraintData> constraints = new ArrayList<>(userSession.getConstraints(mainMetaClass.getName()));
+//        for (MetaClass parent : mainMetaClass.getAncestors()) {
+//            constraints.addAll(userSession.getConstraints(parent.getName()));
+//        }
+//        return constraints;
+        return new ArrayList<>();
     }
 
     /**

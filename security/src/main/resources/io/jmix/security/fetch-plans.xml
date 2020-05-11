@@ -17,8 +17,8 @@
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
     <fetchPlan class="io.jmix.security.entity.User" name="user-login" extends="_local">
-        <property name="group" fetchPlan="group-login"/>
-        <property name="userRoles" fetchPlan="userRole-login"/>
+<!--        <property name="group" fetchPlan="group-login"/>-->
+<!--        <property name="userRoles" fetchPlan="userRole-login"/>-->
     </fetchPlan>
 
     <fetchPlan class="io.jmix.security.entity.Group" name="group-login" extends="_local">

@@ -1,0 +1,50 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'java'
+apply plugin: 'java-library'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.securityui'
+
+dependencies {
+    api platform(project(':jmix-platform'))
+    api project(':modules:core')
+    api project(':modules:security')
+    api project(':modules:ui')
+
+}
+
+jar {
+    archivesBaseName = 'jmix-security-ui'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        javaMaven(MavenPublication) {
+            groupId = 'io.jmix.securityui'
+            artifactId = 'jmix-security-ui'
+        }
+    }
+}

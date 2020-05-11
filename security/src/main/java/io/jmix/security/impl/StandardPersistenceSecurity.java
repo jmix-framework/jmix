@@ -18,13 +18,13 @@ package io.jmix.security.impl;
 
 import com.google.common.collect.Multimap;
 import io.jmix.core.*;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.jpql.JpqlSyntaxException;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.Security;
-import io.jmix.core.security.UserSessionSource;
 import io.jmix.data.PersistenceAttributeSecurity;
 import io.jmix.data.PersistenceSecurity;
 import io.jmix.data.RowLevelSecurityException;
@@ -39,7 +39,6 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.io.Serializable;
 import java.util.*;
 import java.util.function.BiPredicate;
 
@@ -72,14 +71,10 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     protected Metadata metadata;
 
     @Inject
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     @Inject
     protected MetadataTools metadataTools;
-
-    protected StandardUserSession getUserSession() {
-        return (StandardUserSession) userSessionSource.getUserSession();
-    }
 
     @Override
     public boolean applyConstraints(JmixQuery query) {
@@ -112,31 +107,31 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     @Override
     public void setQueryParam(JmixQuery query, String paramName) {
         if (paramName.startsWith(CONSTRAINT_PARAM_SESSION_ATTR)) {
-            StandardUserSession userSession = getUserSession();
-
             String attrName = paramName.substring(CONSTRAINT_PARAM_SESSION_ATTR.length());
 
             if (CONSTRAINT_PARAM_USER_LOGIN.equals(attrName)) {
                 String userLogin = /*userSession.getSubstitutedUser() != null ?
                         userSession.getSubstitutedUser().getLogin() :*/
-                        userSession.getUser().getLogin();
+                        currentAuthentication.getUser().getUsername();
                 query.setParameter(paramName, userLogin);
 
             } else if (CONSTRAINT_PARAM_USER_ID.equals(attrName)) {
                 UUID userId = /*userSession.getSubstitutedUser() != null ?
                         userSession.getSubstitutedUser().getId() :*/
-                        userSession.getUser().getId();
+                        UUID.fromString(currentAuthentication.getUser().getKey());
                 query.setParameter(paramName, userId);
 
             } else if (CONSTRAINT_PARAM_USER_GROUP_ID.equals(attrName)) {
-                Object groupId = /*userSession.getSubstitutedUser() != null ?
-                        userSession.getSubstitutedUser().getGroup().getId() :*/
-                        userSession.getUser().getGroup().getId();
-                query.setParameter(paramName, groupId);
+                //todo MG
+//                Object groupId = /*userSession.getSubstitutedUser() != null ?
+//                        userSession.getSubstitutedUser().getGroup().getId() :*/
+//                        userSession.getUser().getGroup().getId();
+//                query.setParameter(paramName, groupId);
 
             } else {
-                Serializable value = userSession.getAttribute(attrName);
-                query.setParameter(paramName, value);
+                //todo MG
+//                Serializable value = userSession.getAttribute(attrName);
+//                query.setParameter(paramName, value);
             }
         }
     }

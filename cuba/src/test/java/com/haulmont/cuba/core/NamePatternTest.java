@@ -22,9 +22,15 @@ import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.security.SecurityContextHelper;
+import io.jmix.core.security.UserAuthentication;
+import io.jmix.core.security.impl.CoreUser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,6 +41,12 @@ public class NamePatternTest {
 
     @Inject
     protected MetadataTools metadataTools;
+
+    @BeforeEach
+    public void setUp() {
+        UserAuthentication authentication = new UserAuthentication(new CoreUser("test", "test", "test"), Collections.emptyList());
+        SecurityContextHelper.setAuthentication(authentication);
+    }
 
     @Test
     public void test() {

@@ -15,13 +15,10 @@
  */
 package io.jmix.core.impl;
 
-import com.google.common.base.Splitter;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.commons.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -47,10 +44,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Implementation of the {@link FetchPlanRepository}. Contains methods to store {@link FetchPlan} objects and deploy
@@ -83,6 +76,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     @Inject
     protected JmixModules modules;
 
+    @Inject
+    protected FetchPlanLoader fetchPlanLoader;
+
     protected volatile boolean initialized;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -114,41 +110,11 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             addFile(rootElem, location);
         }
 
-        checkDuplicates(rootElem);
+        fetchPlanLoader.checkDuplicates(rootElem);
 
-        for (Element viewElem : getFetchPlanElements(rootElem)) {
-            deployFetchPlan(rootElem, viewElem, new HashSet<>());
+        for (Element fetchPlanElement : fetchPlanLoader.getFetchPlanElements(rootElem)) {
+            deployFetchPlan(rootElem, fetchPlanElement, new HashSet<>());
         }
-    }
-
-    protected List<Element> getFetchPlanElements(Element element) {
-        return element.elements().stream()
-                .filter(el -> el.getName().equals("fetchPlan") || el.getName().equals("view"))
-                .collect(Collectors.toList());
-    }
-
-
-    protected void checkDuplicates(Element rootElem) {
-        Set<String> checked = new HashSet<>();
-        for (Element viewElem : getFetchPlanElements(rootElem)) {
-            String viewName = getFetchPlanName(viewElem);
-            String key = getMetaClass(viewElem) + "/" + viewName;
-            if (!Boolean.parseBoolean(viewElem.attributeValue("overwrite"))) {
-                String extend = viewElem.attributeValue("extends");
-                if (extend != null) {
-                    List<String> ancestors = splitExtends(extend);
-
-                    if (!ancestors.contains(viewName) && checked.contains(key)) {
-                        log.warn("Duplicate fetch plan definition without 'overwrite' attribute and not extending parent fetch plan: " + key);
-                    }
-                }
-            }
-            checked.add(key);
-        }
-    }
-
-    protected List<String> splitExtends(String extend) {
-        return Splitter.on(',').omitEmptyStrings().trimResults().splitToList(extend);
     }
 
     protected void addFile(Element commonRootElem, String fileName) {
@@ -180,8 +146,8 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                     addFile(commonRootElem, incFile);
             }
 
-            for (Element viewElem : getFetchPlanElements(rootElem)) {
-                commonRootElem.add(viewElem.createCopy());
+            for (Element fetchPlanElement : fetchPlanLoader.getFetchPlanElements(rootElem)) {
+                commonRootElem.add(fetchPlanElement.createCopy());
             }
         } finally {
             IOUtils.closeQuietly(stream);
@@ -245,8 +211,8 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         try {
             checkInitialized();
 
-            FetchPlan view = retrieveFetchPlan(metaClass, name, new HashSet<>());
-            return FetchPlan.copyNullable(view);
+            FetchPlan fetchPlan = retrieveFetchPlan(metaClass, name, new HashSet<>());
+            return FetchPlan.copyNullable(fetchPlan);
         } finally {
             lock.readLock().unlock();
         }
@@ -258,9 +224,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         lock.readLock().lock();
         try {
             checkInitialized();
-            Map<String, FetchPlan> viewMap = storage.get(metaClass);
-            if (viewMap != null && !viewMap.isEmpty()) {
-                Set<String> keySet = new HashSet<>(viewMap.keySet());
+            Map<String, FetchPlan> fetchPlanMap = storage.get(metaClass);
+            if (fetchPlanMap != null && !fetchPlanMap.isEmpty()) {
+                Set<String> keySet = new HashSet<>(fetchPlanMap.keySet());
                 keySet.remove(FetchPlan.LOCAL);
                 keySet.remove(FetchPlan.MINIMAL);
                 keySet.remove(FetchPlan.BASE);
@@ -280,33 +246,33 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         return getFetchPlanNames(metaClass);
     }
 
-    protected FetchPlan deployDefaultFetchPlan(MetaClass metaClass, String name, Set<FetchPlanInfo> visited) {
+    protected FetchPlan deployDefaultFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
         Class<? extends Entity> javaClass = metaClass.getJavaClass();
 
-        FetchPlanInfo info = new FetchPlanInfo(javaClass, name);
+        FetchPlanLoader.FetchPlanInfo info = new FetchPlanLoader.FetchPlanInfo(metaClass, name);
         if (visited.contains(info)) {
-            throw new DevelopmentException(String.format("Views cannot have cyclic references. FetchPlan %s for class %s",
+            throw new DevelopmentException(String.format("Fetch plans cannot have cyclic references. FetchPlan %s for class %s",
                     name, metaClass.getName()));
         }
 
-        FetchPlan view;
+        FetchPlan fetchPlan;
         if (FetchPlan.LOCAL.equals(name)) {
-            view = new FetchPlan(javaClass, name, false);
-            addAttributesToLocalFetchPlan(metaClass, view);
+            fetchPlan = new FetchPlan(javaClass, name, false);
+            addAttributesToLocalFetchPlan(metaClass, fetchPlan);
         } else if (FetchPlan.MINIMAL.equals(name)) {
-            view = new FetchPlan(javaClass, name, false);
-            addAttributesToMinimalFetchPlan(metaClass, view, info, visited);
+            fetchPlan = new FetchPlan(javaClass, name, false);
+            addAttributesToMinimalFetchPlan(metaClass, fetchPlan, info, visited);
         } else if (FetchPlan.BASE.equals(name)) {
-            view = new FetchPlan(javaClass, name, false);
-            addAttributesToMinimalFetchPlan(metaClass, view, info, visited);
-            addAttributesToLocalFetchPlan(metaClass, view);
+            fetchPlan = new FetchPlan(javaClass, name, false);
+            addAttributesToMinimalFetchPlan(metaClass, fetchPlan, info, visited);
+            addAttributesToLocalFetchPlan(metaClass, fetchPlan);
         } else {
             throw new UnsupportedOperationException("Unsupported default fetch plan: " + name);
         }
 
-        storeFetchPlan(metaClass, view);
+        storeFetchPlan(metaClass, fetchPlan);
 
-        return view;
+        return fetchPlan;
     }
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlan fetchPlan) {
@@ -319,7 +285,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected void addAttributesToMinimalFetchPlan(MetaClass metaClass, FetchPlan fetchPlan, FetchPlanInfo info, Set<FetchPlanInfo> visited) {
+    protected void addAttributesToMinimalFetchPlan(MetaClass metaClass, FetchPlan fetchPlan, FetchPlanLoader.FetchPlanInfo info, Set<FetchPlanLoader.FetchPlanInfo> visited) {
         Collection<MetaProperty> metaProperties = metadataTools.getInstanceNameRelatedProperties(metaClass, true);
         for (MetaProperty metaProperty : metaProperties) {
             if (metadataTools.isPersistent(metaProperty)) {
@@ -340,21 +306,21 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected void addPersistentAttributeToMinimalFetchPlan(MetaClass metaClass, Set<FetchPlanInfo> visited, FetchPlanInfo info, FetchPlan fetchPlan, MetaProperty metaProperty) {
+    protected void addPersistentAttributeToMinimalFetchPlan(MetaClass metaClass, Set<FetchPlanLoader.FetchPlanInfo> visited, FetchPlanLoader.FetchPlanInfo info, FetchPlan fetchPlan, MetaProperty metaProperty) {
         if (metaProperty.getRange().isClass()
                 && !metaProperty.getRange().getCardinality().isMany()) {
 
-            Map<String, FetchPlan> views = storage.get(metaProperty.getRange().asClass());
-            FetchPlan refMinimalView = (views == null ? null : views.get(FetchPlan.MINIMAL));
+            Map<String, FetchPlan> fetchPlans = storage.get(metaProperty.getRange().asClass());
+            FetchPlan refMinimalFetchPlan = (fetchPlans == null ? null : fetchPlans.get(FetchPlan.MINIMAL));
 
-            if (refMinimalView != null) {
-                fetchPlan.addProperty(metaProperty.getName(), refMinimalView);
+            if (refMinimalFetchPlan != null) {
+                fetchPlan.addProperty(metaProperty.getName(), refMinimalFetchPlan);
             } else {
                 visited.add(info);
-                FetchPlan referenceMinimalView = deployDefaultFetchPlan(metaProperty.getRange().asClass(), FetchPlan.MINIMAL, visited);
+                FetchPlan referenceMinimalFetchPlan = deployDefaultFetchPlan(metaProperty.getRange().asClass(), FetchPlan.MINIMAL, visited);
                 visited.remove(info);
 
-                fetchPlan.addProperty(metaProperty.getName(), referenceMinimalView);
+                fetchPlan.addProperty(metaProperty.getName(), referenceMinimalFetchPlan);
             }
         } else {
             fetchPlan.addProperty(metaProperty.getName());
@@ -369,14 +335,14 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             lock.readLock().unlock();
         }
 
-        Element rootElem = DocumentHelper.createDocument().addElement("views");
+        Element rootElem = DocumentHelper.createDocument().addElement("fetchPlans");
 
         lock.writeLock().lock();
         try {
             addFile(rootElem, resourceUrl);
 
-            for (Element viewElem : getFetchPlanElements(rootElem)) {
-                deployFetchPlan(rootElem, viewElem, new HashSet<>());
+            for (Element fetchPlanElem : fetchPlanLoader.getFetchPlanElements(rootElem)) {
+                deployFetchPlan(rootElem, fetchPlanElem, new HashSet<>());
             }
         } finally {
             lock.writeLock().unlock();
@@ -400,7 +366,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         try {
             doc = reader.read(xml);
         } catch (DocumentException e) {
-            throw new RuntimeException("Unable to read views xml", e);
+            throw new RuntimeException("Unable to read fetch plans xml", e);
         }
         Element rootElem = doc.getRootElement();
 
@@ -410,19 +376,19 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                 deployFetchPlans(file);
         }
 
-        for (Element viewElem : getFetchPlanElements(rootElem)) {
-            deployFetchPlan(rootElem, viewElem);
+        for (Element fetchPlanElem : fetchPlanLoader.getFetchPlanElements(rootElem)) {
+            deployFetchPlan(rootElem, fetchPlanElem);
         }
     }
 
     @Nullable
-    protected FetchPlan retrieveFetchPlan(MetaClass metaClass, String name, Set<FetchPlanInfo> visited) {
-        Map<String, FetchPlan> views = storage.get(metaClass);
-        FetchPlan view = (views == null ? null : views.get(name));
-        if (view == null && (name.equals(FetchPlan.LOCAL) || name.equals(FetchPlan.MINIMAL) || name.equals(FetchPlan.BASE))) {
-            view = deployDefaultFetchPlan(metaClass, name, visited);
+    protected FetchPlan retrieveFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        Map<String, FetchPlan> fetchPlans = storage.get(metaClass);
+        FetchPlan fetchPlan = (fetchPlans == null ? null : fetchPlans.get(name));
+        if (fetchPlan == null && (name.equals(FetchPlan.LOCAL) || name.equals(FetchPlan.MINIMAL) || name.equals(FetchPlan.BASE))) {
+            fetchPlan = deployDefaultFetchPlan(metaClass, name, visited);
         }
-        return view;
+        return fetchPlan;
     }
 
     public FetchPlan deployFetchPlan(Element rootElem, Element fetchPlanElem) {
@@ -434,87 +400,101 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected FetchPlan deployFetchPlan(Element rootElem, Element fetchPlanElem, Set<FetchPlanInfo> visited) {
-        String viewName = getFetchPlanName(fetchPlanElem);
-        MetaClass metaClass = getMetaClass(fetchPlanElem);
+    protected FetchPlan deployFetchPlan(Element rootElem, Element fetchPlanElem, Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        FetchPlanLoader.FetchPlanInfo fetchPlanInfo = fetchPlanLoader.getFetchPlanInfo(fetchPlanElem);
+        MetaClass metaClass = fetchPlanInfo.getMetaClass();
+        String fetchPlanName = fetchPlanInfo.getName();
 
-        FetchPlanInfo info = new FetchPlanInfo(metaClass.getJavaClass(), viewName);
-        if (visited.contains(info)) {
-            throw new DevelopmentException(String.format("FetchPlans cannot have cyclic references. FetchPlan %s for class %s",
-                    viewName, metaClass.getName()));
+        if (StringUtils.isBlank(fetchPlanName)) {
+            throw new DevelopmentException("Invalid fetch plan definition: no 'name' attribute present");
         }
 
-        FetchPlan v = retrieveFetchPlan(metaClass, viewName, visited);
-        boolean overwrite = Boolean.parseBoolean(fetchPlanElem.attributeValue("overwrite"));
-
-        String extended = fetchPlanElem.attributeValue("extends");
-        List<String> ancestors = null;
-
-        if (isNotBlank(extended)) {
-            ancestors = splitExtends(extended);
+        if (visited.contains(fetchPlanInfo)) {
+            throw new DevelopmentException(String.format("Fetch plans cannot have cyclic references. Fetch plan %s for class %s",
+                    fetchPlanName, metaClass.getName()));
         }
 
-        if (!overwrite && ancestors != null) {
-            overwrite = ancestors.contains(viewName);
+        FetchPlan defaultFetchPlan = retrieveFetchPlan(metaClass, fetchPlanName, visited);
+
+        if (defaultFetchPlan != null && !fetchPlanInfo.isOverwrite()) {
+            return defaultFetchPlan;
         }
 
-        if (v != null && !overwrite) {
-            return v;
+        FetchPlan.FetchPlanParams fetchPlanParams = fetchPlanLoader.getFetchPlanParams(
+                fetchPlanInfo,
+                ancestorFetchPlanName -> getAncestorFetchPlan(metaClass, ancestorFetchPlanName, visited)
+        );
+
+        FetchPlan fetchPlan = new FetchPlan(fetchPlanParams);
+
+        visited.add(fetchPlanInfo);
+        fetchPlanLoader.loadFetchPlanProperties(fetchPlanElem, fetchPlan, fetchPlanInfo.isSystemProperties(), (MetaClass refMetaClass, String refFetchPlanName) -> {
+            if (refFetchPlanName == null) {
+                return null;
+            }
+            FetchPlan refFetchPlan = retrieveFetchPlan(refMetaClass, refFetchPlanName, visited);
+            if (refFetchPlan == null) {
+                for (Element e : fetchPlanLoader.getFetchPlanElements(rootElem)) {
+                    if (refMetaClass.equals(fetchPlanLoader.getMetaClass(e.attributeValue("entity"), e.attributeValue("class")))
+                            && refFetchPlanName.equals(e.attributeValue("name"))) {
+                        refFetchPlan = deployFetchPlan(rootElem, e, visited);
+                        break;
+                    }
+                }
+
+                if (refFetchPlan == null) {
+                    MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(refMetaClass);
+                    if (originalMetaClass != null) {
+                        refFetchPlan = retrieveFetchPlan(originalMetaClass, refFetchPlanName, visited);
+                    }
+                }
+
+                if (refFetchPlan == null) {
+                    throw new DevelopmentException(
+                            String.format("Fetch plan %s/%s definition error: unable to find/deploy referenced fetch plan %s/%s",
+                                    metaClass.getName(), fetchPlanName, refMetaClass, refFetchPlanName));
+                }
+            }
+            return refFetchPlan;
+        });
+        visited.remove(fetchPlanInfo);
+
+        storeFetchPlan(metaClass, fetchPlan);
+
+        if (fetchPlanInfo.isOverwrite()) {
+            replaceOverridden(fetchPlan);
         }
 
-        boolean systemProperties = Boolean.valueOf(fetchPlanElem.attributeValue("systemProperties"));
-
-        FetchPlan.FetchPlanParams viewParam = new FetchPlan.FetchPlanParams().entityClass(metaClass.getJavaClass()).name(viewName);
-        if (isNotEmpty(ancestors)) {
-            List<FetchPlan> ancestorsViews = ancestors.stream()
-                    .map(a -> getAncestorFetchPlan(metaClass, a, visited))
-                    .collect(Collectors.toList());
-
-            viewParam.src(ancestorsViews);
-        }
-        viewParam.includeSystemProperties(systemProperties);
-        FetchPlan view = new FetchPlan(viewParam);
-
-        visited.add(info);
-        loadFetchPlan(rootElem, fetchPlanElem, view, systemProperties, visited);
-        visited.remove(info);
-
-        storeFetchPlan(metaClass, view);
-
-        if (overwrite) {
-            replaceOverridden(view);
-        }
-
-        return view;
+        return fetchPlan;
     }
 
-    protected void replaceOverridden(FetchPlan replacementView) {
+    protected void replaceOverridden(FetchPlan replacementFetchPlan) {
         HashSet<FetchPlan> checked = new HashSet<>();
 
-        for (FetchPlan view : getAllInitialized()) {
-            if (!checked.contains(view)) {
-                replaceOverridden(view, replacementView, checked);
+        for (FetchPlan fetchPlan : getAllInitialized()) {
+            if (!checked.contains(fetchPlan)) {
+                replaceOverridden(fetchPlan, replacementFetchPlan, checked);
             }
         }
     }
 
-    protected void replaceOverridden(FetchPlan root, FetchPlan replacementView, HashSet<FetchPlan> checked) {
+    protected void replaceOverridden(FetchPlan root, FetchPlan replacementFetchPlan, HashSet<FetchPlan> checked) {
         checked.add(root);
 
         List<FetchPlanProperty> replacements = null;
 
         for (FetchPlanProperty property : root.getProperties()) {
-            FetchPlan propertyView = property.getFetchPlan();
+            FetchPlan propertyFetchPlan = property.getFetchPlan();
 
-            if (propertyView != null) {
-                if (Objects.equals(propertyView.getName(), replacementView.getName())
-                        && replacementView.getEntityClass() == propertyView.getEntityClass()) {
+            if (propertyFetchPlan != null) {
+                if (Objects.equals(propertyFetchPlan.getName(), replacementFetchPlan.getName())
+                        && replacementFetchPlan.getEntityClass() == propertyFetchPlan.getEntityClass()) {
                     if (replacements == null) {
                         replacements = new LinkedList<>();
                     }
-                    replacements.add(new FetchPlanProperty(property.getName(), replacementView, property.getFetchMode()));
-                } else if (propertyView.getEntityClass() != null && !checked.contains(propertyView)) {
-                    replaceOverridden(propertyView, replacementView, checked);
+                    replacements.add(new FetchPlanProperty(property.getName(), replacementFetchPlan, property.getFetchMode()));
+                } else if (propertyFetchPlan.getEntityClass() != null && !checked.contains(propertyFetchPlan)) {
+                    replaceOverridden(propertyFetchPlan, replacementFetchPlan, checked);
                 }
             }
         }
@@ -526,180 +506,44 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected FetchPlan getAncestorFetchPlan(MetaClass metaClass, String ancestor, Set<FetchPlanInfo> visited) {
-        FetchPlan ancestorView = retrieveFetchPlan(metaClass, ancestor, visited);
-        if (ancestorView == null) {
+    protected FetchPlan getAncestorFetchPlan(MetaClass metaClass, String ancestor, Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        FetchPlan ancestorFetchPlan = retrieveFetchPlan(metaClass, ancestor, visited);
+        if (ancestorFetchPlan == null) {
             MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
             if (originalMetaClass != null) {
-                ancestorView = retrieveFetchPlan(originalMetaClass, ancestor, visited);
+                ancestorFetchPlan = retrieveFetchPlan(originalMetaClass, ancestor, visited);
             }
-            if (ancestorView == null) {
+            if (ancestorFetchPlan == null) {
                 // Last resort - search for all ancestors
                 for (MetaClass ancestorMetaClass : metaClass.getAncestors()) {
                     if (ancestorMetaClass.equals(metaClass)) {
-                        ancestorView = retrieveFetchPlan(ancestorMetaClass, ancestor, visited);
-                        if (ancestorView != null)
+                        ancestorFetchPlan = retrieveFetchPlan(ancestorMetaClass, ancestor, visited);
+                        if (ancestorFetchPlan != null)
                             break;
                     }
                 }
             }
-            if (ancestorView == null) {
+            if (ancestorFetchPlan == null) {
                 throw new DevelopmentException("No ancestor fetch plan found: " + ancestor + " for " + metaClass.getName());
             }
         }
-        return ancestorView;
-    }
-
-    protected void loadFetchPlan(Element rootElem, Element fetchPlanElem, FetchPlan fetchPlan, boolean systemProperties, Set<FetchPlanInfo> visited) {
-        final MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
-        final String viewName = fetchPlan.getName();
-
-        Set<String> propertyNames = new HashSet<>();
-
-        for (Element propElem : fetchPlanElem.elements("property")) {
-            String propertyName = propElem.attributeValue("name");
-
-            if (propertyNames.contains(propertyName)) {
-                throw new DevelopmentException(String.format("FetchPlan %s/%s definition error: fetch plan declared property %s twice",
-                        metaClass.getName(), viewName, propertyName));
-            }
-            propertyNames.add(propertyName);
-
-            MetaProperty metaProperty = metaClass.findProperty(propertyName);
-            if (metaProperty == null) {
-                throw new DevelopmentException(String.format("FetchPlan %s/%s definition error: property %s doesn't exist",
-                        metaClass.getName(), viewName, propertyName));
-            }
-
-            FetchPlan refView = null;
-            String refViewName = propElem.attributeValue("fetchPlan");
-            if (refViewName == null) {
-                refViewName = propElem.attributeValue("view");
-            }
-
-            MetaClass refMetaClass;
-            Range range = metaProperty.getRange();
-            if (range == null) {
-                throw new RuntimeException("cannot find range for meta property: " + metaProperty);
-            }
-
-            final List<Element> propertyElements = propElem.elements("property");
-            boolean inlineView = !propertyElements.isEmpty();
-
-            if (!range.isClass() && (refViewName != null || inlineView)) {
-                throw new DevelopmentException(String.format("FetchPlan %s/%s definition error: property %s is not an entity",
-                        metaClass.getName(), viewName, propertyName));
-            }
-
-            if (refViewName != null) {
-                refMetaClass = getMetaClass(propElem, range);
-
-                refView = retrieveFetchPlan(refMetaClass, refViewName, visited);
-                if (refView == null) {
-                    for (Element e : getFetchPlanElements(rootElem)) {
-                        if (refMetaClass.equals(getMetaClass(e.attributeValue("entity"), e.attributeValue("class")))
-                                && refViewName.equals(e.attributeValue("name"))) {
-                            refView = deployFetchPlan(rootElem, e, visited);
-                            break;
-                        }
-                    }
-
-                    if (refView == null) {
-                        MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(refMetaClass);
-                        if (originalMetaClass != null) {
-                            refView = retrieveFetchPlan(originalMetaClass, refViewName, visited);
-                        }
-                    }
-
-                    if (refView == null) {
-                        throw new DevelopmentException(
-                                String.format("FetchPlan %s/%s definition error: unable to find/deploy referenced fetch plan %s/%s",
-                                        metaClass.getName(), viewName, range.asClass().getName(), refViewName));
-                    }
-                }
-            }
-
-            if (inlineView) {
-                // try to import anonymous views
-                Class<? extends Entity> rangeClass = range.asClass().getJavaClass();
-
-                if (refView != null) {
-                    refView = new FetchPlan(refView, rangeClass, "", false); // system properties are already in the source fetch plan
-                } else {
-                    FetchPlanProperty existingProperty = fetchPlan.getProperty(propertyName);
-                    if (existingProperty != null && existingProperty.getFetchPlan() != null) {
-                        refView = new FetchPlan(existingProperty.getFetchPlan(), rangeClass, "", systemProperties);
-                    } else {
-                        refView = new FetchPlan(rangeClass, systemProperties);
-                    }
-                }
-                loadFetchPlan(rootElem, propElem, refView, systemProperties, visited);
-            }
-
-            FetchMode fetchMode = FetchMode.AUTO;
-            String fetch = propElem.attributeValue("fetch");
-            if (fetch != null)
-                fetchMode = FetchMode.valueOf(fetch);
-
-            fetchPlan.addProperty(propertyName, refView, fetchMode);
-        }
-    }
-
-    protected String getFetchPlanName(Element fetchPlanElem) {
-        String viewName = fetchPlanElem.attributeValue("name");
-        if (StringUtils.isBlank(viewName))
-            throw new DevelopmentException("Invalid fetch plan definition: no 'name' attribute present");
-        return viewName;
-    }
-
-    protected MetaClass getMetaClass(Element viewElem) {
-        MetaClass metaClass;
-        String entity = viewElem.attributeValue("entity");
-        if (StringUtils.isBlank(entity)) {
-            String className = viewElem.attributeValue("class");
-            if (StringUtils.isBlank(className))
-                throw new DevelopmentException("Invalid fetch plan definition: no 'entity' or 'class' attribute present");
-            Class entityClass = ReflectionHelper.getClass(className);
-            metaClass = metadata.getClass(entityClass);
-        } else {
-            metaClass = metadata.getClass(entity);
-        }
-        return metaClass;
-    }
-
-    protected MetaClass getMetaClass(String entityName, String entityClass) {
-        if (entityName != null) {
-            return metadata.getClass(entityName);
-        } else {
-            return metadata.getClass(ReflectionHelper.getClass(entityClass));
-        }
-    }
-
-    protected MetaClass getMetaClass(Element propElem, Range range) {
-        MetaClass refMetaClass;
-        String refEntityName = propElem.attributeValue("entity"); // this attribute is deprecated
-        if (refEntityName == null) {
-            refMetaClass = range.asClass();
-        } else {
-            refMetaClass = metadata.getClass(refEntityName);
-        }
-        return refMetaClass;
+        return ancestorFetchPlan;
     }
 
     protected void storeFetchPlan(MetaClass metaClass, FetchPlan fetchPlan) {
-        Map<String, FetchPlan> views = storage.get(metaClass);
-        if (views == null) {
-            views = new ConcurrentHashMap<>();
+        Map<String, FetchPlan> fetchPlans = storage.get(metaClass);
+        if (fetchPlans == null) {
+            fetchPlans = new ConcurrentHashMap<>();
         }
 
-        views.put(fetchPlan.getName(), fetchPlan);
-        storage.put(metaClass, views);
+        fetchPlans.put(fetchPlan.getName(), fetchPlan);
+        storage.put(metaClass, fetchPlans);
     }
 
     protected List<FetchPlan> getAllInitialized() {
         List<FetchPlan> list = new ArrayList<>();
-        for (Map<String, FetchPlan> viewMap : storage.values()) {
-            list.addAll(viewMap.values());
+        for (Map<String, FetchPlan> fetchPlanMap : storage.values()) {
+            list.addAll(fetchPlanMap.values());
         }
         return list;
     }
@@ -709,55 +553,12 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         try {
             checkInitialized();
             List<FetchPlan> list = new ArrayList<>();
-            for (Map<String, FetchPlan> viewMap : storage.values()) {
-                list.addAll(viewMap.values());
+            for (Map<String, FetchPlan> fetchPlanMap : storage.values()) {
+                list.addAll(fetchPlanMap.values());
             }
             return list;
         } finally {
             lock.readLock().unlock();
-        }
-    }
-
-    protected static class FetchPlanInfo {
-        protected Class javaClass;
-        protected String name;
-
-        public FetchPlanInfo(Class javaClass, String name) {
-            this.javaClass = javaClass;
-            this.name = name;
-        }
-
-        public Class getJavaClass() {
-            return javaClass;
-        }
-
-        public void setJavaClass(Class javaClass) {
-            this.javaClass = javaClass;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof FetchPlanInfo)) {
-                return false;
-            }
-
-            FetchPlanInfo that = (FetchPlanInfo) obj;
-            return this.javaClass == that.javaClass && Objects.equals(this.name, that.name);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = javaClass.hashCode();
-            result = 31 * result + name.hashCode();
-            return result;
         }
     }
 }

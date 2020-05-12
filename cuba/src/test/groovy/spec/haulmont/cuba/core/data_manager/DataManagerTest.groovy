@@ -16,6 +16,7 @@
 
 package spec.haulmont.cuba.core.data_manager
 
+import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.model.common.Group
@@ -24,9 +25,9 @@ import com.haulmont.cuba.core.model.primary_keys.CompositeKeyEntity
 import com.haulmont.cuba.core.model.primary_keys.EntityKey
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
+import com.haulmont.cuba.core.testsupport.TestSupport
 import groovy.sql.Sql
 import io.jmix.core.*
-import com.haulmont.cuba.core.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import javax.inject.Inject
@@ -43,6 +44,8 @@ class DataManagerTest extends CoreTestSpecification {
     Group defaultGroup
 
     void setup() {
+        TestSupport.setAuthenticationToSecurityContext();
+
         defaultGroup = new Group(name: 'Company')
         defaultUser = new User(login: 'admin', group: defaultGroup)
 

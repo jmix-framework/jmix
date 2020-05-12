@@ -17,22 +17,23 @@
 
 package com.haulmont.cuba.core.testsupport;
 
+import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.AppBeans;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.Entity;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
-import com.haulmont.cuba.core.Persistence;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.SystemAuthenticationToken;
+import io.jmix.core.security.UserAuthentication;
+import io.jmix.core.security.impl.CoreUser;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 
 public class TestSupport {
 
@@ -86,10 +87,9 @@ public class TestSupport {
     }
 
     public static void setAuthenticationToSecurityContext() {
-        User user = new User();
-        user.setLogin("test_admin");
-        user.setLoginLowerCase("test_admin");
-        SystemAuthenticationToken authentication = new SystemAuthenticationToken(user, new ArrayList<>());
+        CoreUser user = new CoreUser("test_admin", "test_admin", "test_admin");
+        UserAuthentication authentication = new UserAuthentication(user, Collections.emptyList());
+        authentication.setLocale(Locale.US);
         SecurityContextHelper.setAuthentication(authentication);
     }
 }

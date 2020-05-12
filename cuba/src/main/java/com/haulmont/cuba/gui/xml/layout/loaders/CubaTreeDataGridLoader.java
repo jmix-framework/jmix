@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.components.TreeDataGrid;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.dynattrui.facet.DynAttrInitTask;
 import io.jmix.ui.xml.layout.loaders.TreeDataGridLoader;
 
 @SuppressWarnings("rawtypes")
@@ -51,11 +52,9 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
         if (datasource == null) {
             return;
         }
-
-        // todo dynamic attributes
-        // addDynamicAttributes(resultComponent, metaClass, datasource, null, availableColumns);
-
         ((TreeDataGrid) resultComponent).setDatasource(datasource);
+
+        getComponentContext().addInitTask(beanLocator.get(DynAttrInitTask.class));
     }
 
     protected static class CubaTreeDataGridDataHolder extends DataGridDataHolder {

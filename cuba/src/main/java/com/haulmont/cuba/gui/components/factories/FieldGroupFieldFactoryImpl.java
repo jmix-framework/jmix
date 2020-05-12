@@ -16,28 +16,20 @@
 
 package com.haulmont.cuba.gui.components.factories;
 
-import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.ComponentGenerationContext;
-import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.metamodel.model.MetaClass;
+import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
+import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.RuntimePropsDatasource;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.UiComponentsGenerator;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 
 import javax.inject.Inject;
 
 @org.springframework.stereotype.Component(FieldGroupFieldFactory.NAME)
 public class FieldGroupFieldFactoryImpl implements FieldGroupFieldFactory {
-
-    // @Inject
-    // protected DynamicAttributes dynamicAttributes;
-
     @Inject
     protected UiComponentsGenerator uiComponentsGenerator;
-
-    // todo dynamic attributes
-    // @Inject
-    // protected DynamicAttributeComponentsGenerator dynamicAttributeComponentsGenerator;
 
     @Override
     public GeneratedField createField(FieldGroup.FieldConfig fc) {
@@ -46,17 +38,6 @@ public class FieldGroupFieldFactoryImpl implements FieldGroupFieldFactory {
 
     protected GeneratedField createFieldComponent(FieldGroup.FieldConfig fc) {
         MetaClass metaClass = resolveMetaClass(fc.getTargetDatasource());
-
-        if (DynamicAttributesUtils.isDynamicAttribute(fc.getProperty())) {
-            // todo dynamic attributes
-//            CategoryAttribute attribute = dynamicAttributes.getAttributeForMetaClass(metaClass, fc.getProperty());
-//            if (attribute != null && BooleanUtils.isTrue(attribute.getIsCollection())) {
-//                //noinspection unchecked
-//                DatasourceValueSource valueSource = new DatasourceValueSource(fc.getTargetDatasource(), fc.getProperty());
-//                Component fieldComponent = dynamicAttributeComponentsGenerator.generateComponent(valueSource, attribute);
-//                return new GeneratedField(fieldComponent);
-//            }
-        }
 
         ComponentGenerationContext context = new ComponentGenerationContext(metaClass, fc.getProperty())
                 .setDatasource(fc.getTargetDatasource())
@@ -68,11 +49,9 @@ public class FieldGroupFieldFactoryImpl implements FieldGroupFieldFactory {
         return new GeneratedField(uiComponentsGenerator.generate(context));
     }
 
-
     protected MetaClass resolveMetaClass(Datasource datasource) {
-        // todo dynamic attributes
-        return /*datasource instanceof RuntimePropsDatasource ?
+        return datasource instanceof RuntimePropsDatasource ?
                 ((RuntimePropsDatasource) datasource).resolveCategorizedEntityClass()
-                :*/ datasource.getMetaClass();
+                : datasource.getMetaClass();
     }
 }

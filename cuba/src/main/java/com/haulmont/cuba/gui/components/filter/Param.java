@@ -33,7 +33,6 @@ import io.jmix.core.*;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.Lookup;
@@ -45,11 +44,11 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.data.ValueConversionException;
 import io.jmix.ui.components.data.options.ContainerOptions;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
@@ -114,7 +113,7 @@ public class Param {
     protected boolean required;
     protected boolean isDateInterval;
     protected List<String> runtimeEnum;
-    protected UUID categoryAttrId;
+    protected String categoryAttrId;
     protected Component editComponent;
     protected boolean isFoldersFilterEntitiesSet = false;
 
@@ -163,7 +162,7 @@ public class Param {
         private MetaProperty property;
         private boolean inExpr;
         private boolean required;
-        private UUID categoryAttrId;
+        private String categoryAttrId;
         private boolean isDateInterval;
         private boolean useUserTimeZone;
 
@@ -218,7 +217,7 @@ public class Param {
             return this;
         }
 
-        public Builder setCategoryAttrId(UUID categoryAttrId) {
+        public Builder setCategoryAttrId(String categoryAttrId) {
             this.categoryAttrId = categoryAttrId;
             return this;
         }
@@ -249,7 +248,7 @@ public class Param {
         isDateInterval = builder.isDateInterval;
         useUserTimeZone = builder.useUserTimeZone;
 
-        if (DynamicAttributesUtils.isDynamicAttribute(builder.property)) {
+        if (DynAttrUtils.isDynamicAttributeProperty(builder.property.getName())) {
             // todo dynamic attributes
             /*CategoryAttribute categoryAttribute = DynamicAttributesUtils.getCategoryAttribute(builder.property);
             if (categoryAttribute.getDataType() == PropertyType.ENUMERATION) {

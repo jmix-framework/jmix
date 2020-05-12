@@ -28,6 +28,8 @@ dependencies {
     api project(':modules:data')
     api project(':modules:ui')
     api project(':modules:security')
+    api project(':modules:dynattr-api')
+    api project(':modules:dynattr-ui')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

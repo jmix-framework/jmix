@@ -23,6 +23,7 @@ import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
 import com.haulmont.cuba.gui.data.impl.EntityCopyUtils;
+import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.*;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
@@ -31,6 +32,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
 import io.jmix.core.validation.groups.UiCrossFieldChecks;
+import io.jmix.dynattr.impl.model.Categorized;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.actions.Action;
@@ -39,7 +41,6 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.components.ValidationErrors;
 import io.jmix.ui.components.Window;
-import io.jmix.ui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.ui.screen.ReadOnlyAwareScreen;
 import io.jmix.ui.screen.ReadOnlyScreensSupport;
 import io.jmix.ui.sys.PersistenceHelper;
@@ -240,10 +241,9 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
                 dynamicAttributesGuiTools.initDefaultAttributeValues(item, metadata.getClass(item));
             }
 
-            // todo dynamic attributes
-//            if (item instanceof Categorized) {
-//                dynamicAttributesGuiTools.listenCategoryChanges(ds);
-//            }
+            if (item instanceof Categorized) {
+                dynamicAttributesGuiTools.listenCategoryChanges(ds);
+            }
         }
 
         ds.setItem(item);

@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.TreeTable;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.dynattrui.facet.DynAttrInitTask;
 import io.jmix.ui.xml.layout.loaders.TreeTableLoader;
 import org.dom4j.Element;
 
@@ -50,11 +51,9 @@ public class CubaTreeTableLoader extends TreeTableLoader {
         if (datasource == null) {
             return;
         }
-
-        // todo dynamic attributes
-        // addDynamicAttributes(resultComponent, metaClass, datasource, null, availableColumns);
-
         ((TreeTable) resultComponent).setDatasource(datasource);
+
+        getComponentContext().addInitTask(beanLocator.get(DynAttrInitTask.class));
     }
 
     protected static class CubaTreeTableDataHolder extends TableDataHolder {

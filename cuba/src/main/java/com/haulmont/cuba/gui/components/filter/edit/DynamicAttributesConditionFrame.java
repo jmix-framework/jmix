@@ -18,58 +18,71 @@
 package com.haulmont.cuba.gui.components.filter.edit;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
 import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
 import io.jmix.core.AppBeans;
-import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.Entity;
+import io.jmix.core.ReferenceToEntitySupport;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.CategoryDefinition;
+import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.DynAttrUtils;
+import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.Label;
 import io.jmix.ui.components.LookupField;
 import io.jmix.ui.components.TextField;
-import io.jmix.ui.dynamicattributes.CategoryAttribute;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.filter.Op;
+import io.jmix.ui.filter.OpManager;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.inject.Inject;
-import java.util.Date;
+import java.util.*;
+
+import static io.jmix.ui.filter.Op.*;
 
 public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttributesCondition> {
-    @Inject
-    protected Metadata metadata;
 
-    /*@Inject todo dynamic attributes
-    protected LookupField<Category> categoryLookup;*/
     @Inject
-    protected LookupField<CategoryAttribute> attributeLookup;
+    protected LookupField<CategoryDefinition> categoryLookup;
+    @Inject
+    protected LookupField<AttributeDefinition> attributeLookup;
     @Inject
     protected LookupField<Op> operationLookup;
     @Inject
     protected Label<String> categoryLabel;
+    @Inject
+    protected TextField<String> caption;
 
     @Inject
     protected ReferenceToEntitySupport referenceToEntitySupport;
-
     @Inject
-    protected TextField<String> caption;
+    protected MsgBundleTools msgBundleTools;
+    @Inject
+    protected Metadata metadata;
+    @Inject
+    protected DynAttrMetadata dynAttrMetadata;
+    @Inject
+    protected OpManager opManager;
 
     @Override
     protected void initComponents() {
         super.initComponents();
 
-        /*categoryLookup.addValueChangeListener(e -> {
+        categoryLookup.addValueChangeListener(e -> {
             if (e.getValue() != null) {
                 fillAttributeSelect(e.getValue());
             }
-        });*/
+        });
 
         attributeLookup.addValueChangeListener(e -> {
             if (e.getValue() != null) {
-                CategoryAttribute categoryAttribute = e.getValue();
-                // fillOperationSelect(categoryAttribute);
+                fillOperationSelect(e.getValue());
             }
         });
     }
@@ -77,14 +90,14 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
     @Override
     public void setCondition(DynamicAttributesCondition condition) {
         super.setCondition(condition);
-        // fillCategorySelect();
+        fillCategorySelect();
         caption.setValue(condition.getCaption());
     }
 
     protected String checkCondition() {
-        /*if (categoryLookup.getValue() == null) {
+        if (categoryLookup.getValue() == null) {
             return "filter.dynamicAttributesConditionFrame.selectCategory";
-        }*/
+        }
         if (attributeLookup.getValue() == null) {
             return "filter.dynamicAttributesConditionFrame.selectAttribute";
         }
@@ -105,7 +118,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
             return false;
         }
 
-        CategoryAttribute attribute = attributeLookup.getValue();
+        AttributeDefinition attribute = attributeLookup.getValue();
 
         String cavAlias = "cav" + RandomStringUtils.randomNumeric(5);
 
@@ -113,7 +126,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
         String operation = operationLookup.getValue().forJpql();
         Op op = operationLookup.getValue();
 
-        Class javaClass = DynamicAttributesUtils.getAttributeClass(attribute);
+        Class javaClass = DynAttrUtils.getMetaProperty(attribute).getJavaType();
         String propertyPath = Strings.isNullOrEmpty(condition.getPropertyPath()) ? "" : "." + condition.getPropertyPath();
         ConditionParamBuilder paramBuilder = AppBeans.get(ConditionParamBuilder.class);
         paramName = paramBuilder.createParamName(condition);
@@ -127,11 +140,11 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                     "{E}" +
                     propertyPath +
                     ".id and " + cavAlias + ".categoryAttribute.id='" +
-                    /*attributeLookup.getValue().getId() +*/ "'))";
+                    attributeLookup.getValue().getId() + "'))";
         } else {
             String valueFieldName = "stringValue";
             if (Entity.class.isAssignableFrom(javaClass))
-                valueFieldName = "entityValue." + referenceToEntitySupport.getReferenceIdPropertyName(metadata.getClassNN(javaClass)) ;
+                valueFieldName = "entityValue." + referenceToEntitySupport.getReferenceIdPropertyName(metadata.getClassNN(javaClass));
             else if (String.class.isAssignableFrom(javaClass))
                 valueFieldName = "stringValue";
             else if (Integer.class.isAssignableFrom(javaClass))
@@ -143,7 +156,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
             else if (Date.class.isAssignableFrom(javaClass))
                 valueFieldName = "dateValue";
 
-            if (false/*BooleanUtils.isNotTrue(attribute.getIsCollection())*/) {
+            if (attribute.isCollection()) {
                 condition.setJoin(", sys$CategoryAttributeValue " + cavAlias + " ");
 
                 String paramStr = " ? ";
@@ -155,13 +168,13 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                         " " +
                         operation +
                         (op.isUnary() ? " " : paramStr) + "and " + cavAlias + ".categoryAttribute.id='" +
-                        /*attributeLookup.getValue().getId() +*/ "'";
+                        attributeLookup.getValue().getId() + "'";
                 where = where.replace("?", ":" + paramName);
             } else {
                 where = "(exists (select " + cavAlias + " from sys$CategoryAttributeValue " + cavAlias +
                         " where " + cavAlias + ".entity." + cavEntityId + "=" + "{E}" + propertyPath + ".id and "
                         + cavAlias + "." + valueFieldName + " = :" + paramName + " and " +
-                        cavAlias + ".categoryAttribute.id='" + /*attributeLookup.<CategoryAttribute>getValue().getId() +*/ "'))";
+                        cavAlias + ".categoryAttribute.id='" + attributeLookup.getValue().getId() + "'))";
             }
         }
 
@@ -170,7 +183,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
         condition.setEntityParamView(null);
         condition.setEntityParamWhere(null);
         condition.setInExpr(Op.IN.equals(op) || Op.NOT_IN.equals(op));
-        condition.setOperator(operationLookup.<Op>getValue());
+        condition.setOperator(operationLookup.getValue());
         Class paramJavaClass = op.isUnary() ? Boolean.class : javaClass;
         condition.setJavaClass(javaClass);
 
@@ -178,27 +191,28 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                 .setName(paramName)
                 .setJavaClass(paramJavaClass)
                 .setMetaClass(condition.getEntityMetaClass())
-                .setProperty(DynamicAttributesUtils.getMetaPropertyPath(condition.getEntityMetaClass(), attribute).getMetaProperty())
+                .setProperty(DynAttrUtils.getMetaProperty(attribute))
                 .setInExpr(condition.getInExpr())
                 .setRequired(condition.getRequired())
-                /*.setCategoryAttrId(attribute.getId())*/
+                .setCategoryAttrId(attribute.getId())
                 .build();
 
         Object defaultValue = condition.getParam().getDefaultValue();
         param.setDefaultValue(defaultValue);
 
         condition.setParam(param);
-        /*condition.setCategoryId(Objects.requireNonNull(categoryLookup.getValue()).getId());
-        condition.setCategoryAttributeId(attributeLookup.getValue().getId());
-        condition.setIsCollection(BooleanUtils.isTrue(attributeLookup.getValue().getIsCollection()));
-        condition.setLocCaption(attribute.getLocaleName());*/
+        if (categoryLookup.getValue() != null) {
+            condition.setCategoryId(categoryLookup.getValue().getId());
+        }
+        condition.setCategoryAttributeId(attribute.getId());
+        condition.setIsCollection(attribute.isCollection());
+        condition.setLocCaption(msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName()));
         condition.setCaption(caption.getValue());
 
         return true;
     }
 
-    /*protected void fillCategorySelect() {
-        DynamicAttributes dynamicAttributes = AppBeans.get(DynamicAttributes.NAME);
+    protected void fillCategorySelect() {
         MetaClass metaClass = condition.getEntityMetaClass();
         if (!Strings.isNullOrEmpty(condition.getPropertyPath())) {
             MetaPropertyPath propertyPath = metaClass.getPropertyPath(condition.getPropertyPath());
@@ -206,59 +220,65 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                 throw new RuntimeException("Property path " + condition.getPropertyPath() + " doesn't exist");
             }
             metaClass = propertyPath.getRange().asClass();
-
         }
-        Collection<Category> categories = dynamicAttributes.getCategoriesForMetaClass(metaClass);
-        UUID catId = condition.getCategoryId();
-        Category selectedCategory = null;
-        Map<String, Category> categoriesMap = new TreeMap<>();
-        if (categories.size() == 1 && (catId == null || Objects.equals(catId, categories.iterator().next().getId()))) {
-            Category category = categories.iterator().next();
+
+        Collection<CategoryDefinition> categories = dynAttrMetadata.getCategories(metaClass);
+        CategoryDefinition firstCategory = Iterables.getFirst(categories, null);
+        String currentId = condition.getCategoryId();
+
+        if (categories.size() == 1 && firstCategory != null && (currentId == null || currentId.equals(firstCategory.getId()))) {
+
             categoryLookup.setVisible(false);
             categoryLabel.setVisible(false);
+
             attributeLookup.focus();
-            categoriesMap.put(category.getName(), category);
-            categoryLookup.setOptionsMap(categoriesMap);
-            categoryLookup.setValue(category);
-            fillAttributeSelect(category);
+
+            Map<String, CategoryDefinition> options = new TreeMap<>();
+            options.put(firstCategory.getName(), firstCategory);
+            categoryLookup.setOptionsMap(options);
+
+            categoryLookup.setValue(firstCategory);
+            fillAttributeSelect(firstCategory);
         } else {
             categoryLookup.setVisible(true);
             categoryLabel.setVisible(true);
-            for (Category category : categories) {
-                categoriesMap.put(category.getName(), category);
-                if (category.getId().equals(catId)) {
-                    selectedCategory = category;
+
+            CategoryDefinition selectedCategory = null;
+            Map<String, CategoryDefinition> options = new TreeMap<>();
+            for (CategoryDefinition item : categories) {
+                options.put(item.getName(), item);
+                if (Objects.equals(item.getId(), currentId)) {
+                    selectedCategory = item;
                 }
             }
-            categoryLookup.setOptionsMap(categoriesMap);
+            categoryLookup.setOptionsMap(options);
             categoryLookup.setValue(selectedCategory);
         }
     }
 
-    protected void fillAttributeSelect(Category category) {
-        UUID attrId = condition.getCategoryAttributeId();
-        CategoryAttribute selectedAttribute = null;
-        Map<String, CategoryAttribute> attributesMap = new TreeMap<>();
-        for (CategoryAttribute attribute : category.getCategoryAttrs()) {
-            attributesMap.put(attribute.getLocaleName(), attribute);
-            if (attribute.getId().equals(attrId)) {
+    protected void fillAttributeSelect(CategoryDefinition category) {
+        String currentId = condition.getCategoryAttributeId();
+        AttributeDefinition selectedAttribute = null;
+        Map<String, AttributeDefinition> options = new TreeMap<>();
+        for (AttributeDefinition attribute : category.getAttributeDefinitions()) {
+            options.put(msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName()), attribute);
+            if (Objects.equals(attribute.getId(), currentId)) {
                 selectedAttribute = attribute;
             }
         }
-        attributeLookup.setOptionsMap(attributesMap);
+        attributeLookup.setOptionsMap(options);
         attributeLookup.setValue(selectedAttribute);
     }
 
-    protected void fillOperationSelect(CategoryAttribute categoryAttribute) {
-        Class clazz = DynamicAttributesUtils.getAttributeClass(categoryAttribute);
-        OpManager opManager = AppBeans.get(OpManager.class);
-        EnumSet<Op> availableOps = BooleanUtils.isTrue(categoryAttribute.getIsCollection()) ?
-                opManager.availableOpsForCollectionDynamicAttribute() : opManager.availableOps(clazz);
+    protected void fillOperationSelect(AttributeDefinition attribute) {
+        Class clazz = DynAttrUtils.getMetaProperty(attribute).getJavaType();
+        EnumSet<Op> availableOps = attribute.isCollection() ?
+                EnumSet.of(CONTAINS, DOES_NOT_CONTAIN, NOT_EMPTY) : opManager.availableOps(clazz);
         List<Op> ops = new LinkedList<>(availableOps);
         operationLookup.setOptionsList(ops);
         Op operator = condition.getOperator();
         if (operator != null) {
             operationLookup.setValue(operator);
         }
-    }*/
+    }
 }

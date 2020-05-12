@@ -17,12 +17,12 @@
 package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Entity;
 import io.jmix.ui.Actions;
-import io.jmix.ui.dynamicattributes.DynamicAttributesGuiTools;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -51,11 +51,8 @@ public class GuiActionSupport {
      * dynamic attributes and the entity instance does not contain them.
      */
     public Entity reloadEntityIfNeeded(Entity entity, Datasource targetDatasource) {
-        boolean needDynamicAttributes = false;
-        boolean dynamicAttributesAreLoaded = true;
-        //dynamicAttributesAreLoaded = e.getDynamicAttributes() != null;
-        needDynamicAttributes = targetDatasource.getLoadDynamicAttributes();
-
+        boolean needDynamicAttributes = targetDatasource.getLoadDynamicAttributes();
+        boolean dynamicAttributesAreLoaded = dynamicAttributesGuiTools.hasDynamicAttributes(entity);
 
         FetchPlan view = targetDatasource.getView();
         if (view == null) {

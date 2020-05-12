@@ -19,6 +19,8 @@ package io.jmix.autoconfigure.cuba;
 import com.haulmont.cuba.JmixCubaConfiguration;
 import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.data.JmixDataConfiguration;
+import io.jmix.dynattr.JmixDynAttrConfiguration;
+import io.jmix.dynattrui.JmixDynAttrUiConfiguration;
 import io.jmix.security.JmixSecurityConfiguration;
 import io.jmix.ui.JmixUiConfiguration;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +32,8 @@ import org.springframework.context.annotation.Import;
         JmixDataConfiguration.class,
         JmixSecurityConfiguration.class,
         JmixUiConfiguration.class,
+        JmixDynAttrConfiguration.class,
+        JmixDynAttrUiConfiguration.class,
         JmixCubaConfiguration.class})
 public class JmixCubaAutoConfiguration {
 }

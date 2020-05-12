@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.dynattrui.facet.DynAttrInitTask;
 import org.dom4j.Element;
 
 @SuppressWarnings("rawtypes")
@@ -43,16 +44,17 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loaders.TableLoader {
         return holder;
     }
 
+
+
     @Override
     protected void setupDataContainer(TableDataHolder holder) {
         CollectionDatasource datasource = ((CubaTableDataHolder) holder).getDatasource();
         if (datasource == null) {
             return;
         }
-
-        // todo dynamic attributes
-        // addDynamicAttributes(resultComponent, metaClass, datasource, null, availableColumns);
         ((Table) resultComponent).setDatasource(datasource);
+
+        getComponentContext().addInitTask(beanLocator.get(DynAttrInitTask.class));
     }
 
     protected static class CubaTableDataHolder extends TableDataHolder {

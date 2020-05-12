@@ -27,14 +27,15 @@ import com.haulmont.cuba.gui.components.filter.operationedit.DynamicAttributesOp
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.QueryUtils;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
+import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.filter.ConditionType;
 import io.jmix.ui.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.dom4j.Element;
@@ -52,8 +53,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @SystemLevel
 public class DynamicAttributesCondition extends AbstractCondition {
 
-    protected UUID categoryId;
-    protected UUID categoryAttributeId;
+    protected String categoryId;
+    protected String categoryAttributeId;
     protected boolean isCollection;
     protected String propertyPath;
     protected String join;
@@ -89,16 +90,16 @@ public class DynamicAttributesCondition extends AbstractCondition {
         entityAlias = element.attributeValue("entityAlias");
         text = element.getText();
         join = element.attributeValue("join");
-        categoryId = UUID.fromString(element.attributeValue("category"));
+        categoryId = element.attributeValue("category");
         String categoryAttributeValue = element.attributeValue("categoryAttribute");
         if (!Strings.isNullOrEmpty(categoryAttributeValue)) {
-            categoryAttributeId = UUID.fromString(categoryAttributeValue);
+            categoryAttributeId = categoryAttributeValue;
         } else {
             //for backward compatibility
             List<Element> paramElements = element.elements("param");
             for (Element paramElement : paramElements) {
                 if (BooleanUtils.toBoolean(paramElement.attributeValue("hidden", "false"), "true", "false")) {
-                    categoryAttributeId = UUID.fromString(paramElement.getText());
+                    categoryAttributeId = paramElement.getText();
                     String paramName = paramElement.attributeValue("name");
                     text = text.replace(":" + paramName, "'" + categoryAttributeId + "'");
                 }
@@ -130,19 +131,19 @@ public class DynamicAttributesCondition extends AbstractCondition {
         }
     }
 
-    public UUID getCategoryId() {
+    public String getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(UUID id) {
+    public void setCategoryId(String id) {
         categoryId = id;
     }
 
-    public UUID getCategoryAttributeId() {
+    public String getCategoryAttributeId() {
         return categoryAttributeId;
     }
 
-    public void setCategoryAttributeId(UUID categoryAttributeId) {
+    public void setCategoryAttributeId(String categoryAttributeId) {
         this.categoryAttributeId = categoryAttributeId;
     }
 
@@ -257,10 +258,14 @@ public class DynamicAttributesCondition extends AbstractCondition {
             return messageTools.loadString(messagesPack, caption);
         }
 
-        MetaPropertyPath mpp = DynamicAttributesUtils.getMetaPropertyPath(metaClass, getCategoryAttributeId());
-        if (mpp != null) {
-            throw new NotImplementedException("Dynamic attributes");
-            // return DynamicAttributesUtils.getCategoryAttribute(mpp.getMetaProperty()).getLocaleName();
+        DynAttrMetadata dynamicModelMetadata = AppBeans.get(DynAttrMetadata.class);
+        AttributeDefinition attribute = dynamicModelMetadata.getAttributes(metaClass).stream()
+                .filter(attr -> Objects.equals(EntityValues.getId(attr.getSource()), getCategoryAttributeId()))
+                .findFirst()
+                .orElse(null);
+        if (attribute != null) {
+            MsgBundleTools msgBundleTools = AppBeans.get(MsgBundleTools.class);
+            return msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName());
         }
 
         return super.getLocCaption();

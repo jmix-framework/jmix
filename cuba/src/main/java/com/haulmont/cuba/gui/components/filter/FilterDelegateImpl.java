@@ -46,12 +46,12 @@ import io.jmix.core.commons.datastruct.Pair;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.commons.xmlparsing.Dom4jTools;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.queryconditions.JpqlCondition;
 import io.jmix.core.security.Security;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.ui.*;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.actions.Action;
@@ -62,7 +62,6 @@ import io.jmix.ui.components.*;
 import io.jmix.ui.components.Component.Alignment;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
 import io.jmix.ui.components.data.meta.EntityDataUnit;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.filter.*;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.BaseCollectionLoader;
@@ -137,6 +136,8 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected PersistenceManagerClient persistenceManager;
     @Inject
     protected CubaProperties properties;
+    @Inject
+    protected DynAttrMetadata dynAttrMetadata;
 
     @Inject
     protected BeanLocator beanLocator;
@@ -591,10 +592,9 @@ public class FilterDelegateImpl implements FilterDelegate {
         }
 
         if (condition instanceof DynamicAttributesCondition) {
-            return DynamicAttributesUtils.getMetaPropertyPath(
-                    adapter.getMetaClass(),
-                    ((DynamicAttributesCondition) condition).getCategoryAttributeId()
-            ) != null;
+            String attributeId = ((DynamicAttributesCondition) condition).getCategoryAttributeId();
+            return dynAttrMetadata.getAttributes(adapter.getMetaClass()).stream()
+                    .anyMatch(attr -> Objects.equals(attr.getId(), attributeId));
         }
 
         return true;
@@ -1201,7 +1201,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected void loadFilterEntities() {
         LoadContext<FilterEntity> ctx = LoadContext.create(FilterEntity.class);
         ctx.setView("app");
-        ctx.setQueryString("select f from sec$Filter f "+  /*"left join f.user u " +*/
+        ctx.setQueryString("select f from sec$Filter f " +  /*"left join f.user u " +*/
                 "where f.componentId = :component" /*+ "and (u.id = :userId or u is null) order by f.name"*/)
                 .setParameter("component", CubaComponentsHelper.getFilterComponentPath(filter))/*
                 .setParameter("userId", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getId())*/;

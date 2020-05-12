@@ -24,6 +24,7 @@ import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.xml.DeclarativeFieldGenerator;
 import io.jmix.core.MessageTools;
@@ -32,10 +33,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
+import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.DynAttrUtils;
+import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.Component;
-import io.jmix.ui.dynamicattributes.DynamicAttributesGuiTools;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
+import io.jmix.ui.components.Frame;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.loaders.LayoutLoader;
 import org.apache.commons.lang3.BooleanUtils;
@@ -43,11 +49,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -164,7 +166,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
         for (FieldGroup.FieldConfig field : resultComponent.getFields()) {
             if (!field.isCustom()) {
-                if (!DynamicAttributesUtils.isDynamicAttribute(field.getProperty())) {
+                if (!DynAttrUtils.isDynamicAttributeProperty(field.getProperty())) {
                     // the following does not make sense for dynamic attributes
                     loadValidators(resultComponent, field);
                     loadRequired(resultComponent, field);
@@ -197,39 +199,47 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
         return beanLocator.get(DynamicAttributesGuiTools.NAME);
     }
 
+    protected MsgBundleTools getMessageBundleTools() {
+        return beanLocator.get(MsgBundleTools.class);
+    }
+
+    protected DynAttrMetadata getDynAttrMetadata() {
+        return beanLocator.get(DynAttrMetadata.class);
+    }
+
     protected MetadataTools getMetadataTools() {
         return beanLocator.get(MetadataTools.NAME);
     }
 
     protected List<FieldGroup.FieldConfig> loadDynamicAttributeFields(Datasource ds) {
-        /*
-        TODO: dynamic attributes
         if (ds != null && getMetadataTools().isPersistent(ds.getMetaClass())) {
             String windowId = getWindowId(context);
 
-            List<CategoryAttribute> attributesToShow =
-                    getDynamicAttributesGuiTools().getSortedAttributesToShowOnTheScreen(ds.getMetaClass(),
+            Set<AttributeDefinition> attributes =
+                    getDynamicAttributesGuiTools().getAttributesToShowOnTheScreen(ds.getMetaClass(),
                             windowId, resultComponent.getId());
 
-            if (!attributesToShow.isEmpty()) {
+            if (!attributes.isEmpty()) {
                 List<FieldGroup.FieldConfig> fields = new ArrayList<>();
 
                 ds.setLoadDynamicAttributes(true);
 
-                for (CategoryAttribute attribute : attributesToShow) {
+                for (AttributeDefinition attribute : attributes) {
                     FieldGroup.FieldConfig field = resultComponent.createField(
-                            DynamicAttributesUtils.encodeAttributeCode(attribute.getCode()));
-                    field.setProperty(DynamicAttributesUtils.encodeAttributeCode(attribute.getCode()));
-                    field.setCaption(attribute.getLocaleName());
-                    field.setDescription(attribute.getLocaleDescription());
+                            DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()));
+                    field.setProperty(DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()));
+                    field.setCaption(
+                            getMessageBundleTools().getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName()));
+                    field.setDescription(
+                            getMessageBundleTools().getLocalizedValue(attribute.getDescriptionsMsgBundle(), attribute.getDescription()));
                     field.setDatasource(ds);
-                    field.setRequired(attribute.getRequired());
-                    field.setRequiredMessage(getMessages().formatMainMessage(
+                    field.setRequired(attribute.isRequired());
+                    field.setRequiredMessage(getMessages().formatMessage(
                             "validation.required.defaultMsg",
-                            attribute.getLocaleName()));
-                    loadWidth(field, attribute.getWidth());
+                            getMessageBundleTools().getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
+                    loadWidth(field, attribute.getConfiguration().getFormWidth());
 
-                    if (!Boolean.TRUE.equals(attribute.getIsCollection())) {
+                    if (!Boolean.TRUE.equals(attribute.isCollection())) {
                         Collection<Consumer<?>> validators = getDynamicAttributesGuiTools().createValidators(attribute);
                         if (validators != null && !validators.isEmpty()) {
                             for (Consumer<?> validator : validators) {
@@ -244,7 +254,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
                 getDynamicAttributesGuiTools().listenDynamicAttributesChanges(ds);
                 return fields;
             }
-        }*/
+        }
         return Collections.emptyList();
     }
 
@@ -422,12 +432,16 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
         }
         String propertyName = metaPropertyPath != null ? metaPropertyPath.getMetaProperty().getName() : null;
         if (metaPropertyPath != null
-                && DynamicAttributesUtils.isDynamicAttribute(metaPropertyPath.getMetaProperty())) {
-            /*
-            TODO: dynamic attributes
-            CategoryAttribute categoryAttribute = DynamicAttributesUtils.getCategoryAttribute(metaPropertyPath.getMetaProperty());
-            field.setCaption(categoryAttribute != null ? categoryAttribute.getLocaleName() : propertyName);
-            field.setDescription(categoryAttribute != null ? categoryAttribute.getLocaleDescription() : null);*/
+                && DynAttrUtils.isDynamicAttributeProperty(propertyName)) {
+            String attributeCode = DynAttrUtils.getAttributeCodeFromProperty(propertyName);
+
+            getDynAttrMetadata().getAttributes(metaPropertyPath.getMetaClass()).stream()
+                    .filter(attr -> Objects.equals(attributeCode, attr.getCode()))
+                    .findFirst()
+                    .ifPresent(attr -> {
+                        field.setCaption(getMessageBundleTools().getLocalizedValue(attr.getNameMsgBundle(), attr.getName()));
+                        field.setDescription(getMessageBundleTools().getLocalizedValue(attr.getDescriptionsMsgBundle(), attr.getDescription()));
+                    });
         } else {
             loadCaption(field, element);
 
@@ -705,5 +719,15 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
         if (StringUtils.isNotEmpty(captionAlignment)) {
             resultComponent.setCaptionAlignment(FieldCaptionAlignment.valueOf(captionAlignment));
         }
+    }
+
+    @Nullable
+    protected String getWindowId(Context context) {
+        if (context instanceof ComponentContext) {
+            Frame frame = getComponentContext().getFrame();
+            Screen screen = UiControllerUtils.getScreen(frame.getFrameOwner());
+            return screen.getId();
+        }
+        return null;
     }
 }

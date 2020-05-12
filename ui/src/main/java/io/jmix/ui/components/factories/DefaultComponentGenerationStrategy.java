@@ -21,7 +21,6 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentGenerationContext;
 import io.jmix.ui.components.actions.GuiActionSupport;
-import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
@@ -32,9 +31,9 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
     public static final String NAME = "jmix_DefaultMetaComponentStrategy";
 
     @Inject
-    public DefaultComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,
+    public DefaultComponentGenerationStrategy(Messages messages,
                                               GuiActionSupport guiActionSupport) {
-        super(messages, dynamicAttributesTools, guiActionSupport);
+        super(messages, guiActionSupport);
     }
 
     @Inject

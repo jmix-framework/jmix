@@ -16,10 +16,10 @@
 
 package io.jmix.ui.components.factories;
 
-import io.jmix.core.Messages;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.Messages;
+import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.entity.annotation.LookupType;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -29,8 +29,6 @@ import io.jmix.ui.components.*;
 import io.jmix.ui.components.actions.GuiActionSupport;
 import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.options.ContainerOptions;
-import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
@@ -57,9 +55,8 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     }
 
     @Inject
-    public DataGridEditorComponentGenerationStrategy(Messages messages, DynamicAttributesTools dynamicAttributesTools,
-                                                     GuiActionSupport guiActionSupport) {
-        super(messages, dynamicAttributesTools, guiActionSupport);
+    public DataGridEditorComponentGenerationStrategy(Messages messages, GuiActionSupport guiActionSupport) {
+        super(messages, guiActionSupport);
     }
 
     @Inject
@@ -103,32 +100,11 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
             options = new ContainerOptions(container);
         }
 
-        if (DynamicAttributesUtils.isDynamicAttribute(mpp.getMetaProperty())) {
-            // todo dynamic attributes
-//            DynamicAttributesMetaProperty metaProperty = (DynamicAttributesMetaProperty) mpp.getMetaProperty();
-//            CategoryAttribute attribute = metaProperty.getAttribute();
-//            if (Boolean.TRUE.equals(attribute.getLookup())) {
-//                DynamicAttributesGuiTools dynamicAttributesGuiTools = AppBeans.get(DynamicAttributesGuiTools.class);
-//                CollectionDatasource optionsDatasource = dynamicAttributesGuiTools
-//                        .createOptionsDatasourceForLookup(metaProperty.getRange().asClass(),
-//                                attribute.getJoinClause(), attribute.getWhereClause());
-//                options = new DatasourceOptions(optionsDatasource);
-//            }
-        }
-
         PickerField pickerField;
         if (options == null) {
             pickerField = uiComponents.create(PickerField.class);
             setValueSource(pickerField, context);
             pickerField.addLookupAction();
-            if (DynamicAttributesUtils.isDynamicAttribute(mpp.getMetaProperty())) {
-                // todo dynamic attributes
-//                DynamicAttributesGuiTools dynamicAttributesGuiTools = AppBeans.get(DynamicAttributesGuiTools.class);
-//                DynamicAttributesMetaProperty dynamicAttributesMetaProperty =
-//                        (DynamicAttributesMetaProperty) mpp.getMetaProperty();
-//                dynamicAttributesGuiTools.initEntityPickerField(pickerField,
-//                        dynamicAttributesMetaProperty.getAttribute());
-            }
             PickerField.LookupAction lookupAction =
                     (PickerField.LookupAction) pickerField.getActionNN(PickerField.LookupAction.NAME);
             // Opening lookup screen in another mode will close editor

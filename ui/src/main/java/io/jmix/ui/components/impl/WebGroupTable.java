@@ -30,7 +30,6 @@ import io.jmix.ui.components.data.meta.EntityTableItems;
 import io.jmix.ui.components.table.GroupTableDataContainer;
 import io.jmix.ui.components.table.TableDataContainer;
 import io.jmix.ui.components.table.TableItemsEventsDelegate;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.gui.data.GroupInfo;
 import io.jmix.ui.widgets.CubaEnhancedTable.AggregationInputValueChangeContext;
 import io.jmix.ui.widgets.CubaGroupTable;
@@ -279,9 +278,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
             List<MetaPropertyPath> properties = new ArrayList<>(elements.size());
             for (Object o : elements) {
                 String id = ((Element) o).attributeValue("id");
-                MetaPropertyPath property = DynamicAttributesUtils.isDynamicAttribute(id)
-                        ? dynamicAttributesTools.getMetaPropertyPath(metaClass, id)
-                        : metaClass.getPropertyPath(id);
+                MetaPropertyPath property = metadataTools.resolveMetaPropertyPath(metaClass, id);
 
                 if (property != null) {
                     properties.add(property);
@@ -452,7 +449,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
     }
 
     protected void expandGroupsFor(Collection<GroupInfo> groupSlice, Object itemId) {
-        for (GroupInfo g: groupSlice) {
+        for (GroupInfo g : groupSlice) {
             if (component.getGroupItemIds(g).contains(itemId)) {
                 component.expand(g);
 
@@ -701,7 +698,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
         protected LinkedHashSet<Object> getItemIdsInRange(Object startItemId, int length) {
             Set<Object> rootIds = super.getItemIdsInRange(startItemId, length);
             LinkedHashSet<Object> ids = new LinkedHashSet<>();
-            for (Object itemId: rootIds) {
+            for (Object itemId : rootIds) {
                 if (itemId instanceof GroupInfo) {
                     if (!isExpanded(itemId)) {
                         Collection<?> itemIds = getGroupItemIds(itemId);

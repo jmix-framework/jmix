@@ -522,11 +522,6 @@ public class WebScreens implements Screens {
             }
         }*/
 
-        // todo attributeAccessSupport
-        /*DisableAttributeAccessControl annotation = screen.getClass().getAnnotation(DisableAttributeAccessControl.class);
-        if (annotation == null || !annotation.value()) {
-            attributeAccessSupport.applyAttributeAccess(screen, false);
-        }*/
     }
 
     // todo settings

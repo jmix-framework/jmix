@@ -59,9 +59,6 @@ import io.jmix.ui.components.data.meta.EmptyDataUnit;
 import io.jmix.ui.components.data.meta.EntityTableItems;
 import io.jmix.ui.components.presentations.TablePresentations;
 import io.jmix.ui.components.table.*;
-import io.jmix.ui.dynamicattributes.CategoryAttribute;
-import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.model.*;
 import io.jmix.ui.presentations.Presentations;
@@ -134,12 +131,12 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     protected UiProperties uiProperties;
     protected IconResolver iconResolver;
     protected MetadataTools metadataTools;
+    protected Metadata metadata;
     protected Security security;
     protected Messages messages;
     protected MessageTools messageTools;
     protected PersistenceManagerClient persistenceManagerClient;
     protected DatatypeRegistry datatypeRegistry;
-    protected DynamicAttributesTools dynamicAttributesTools;
     protected DataComponents dataComponents;
     protected FetchPlanRepository viewRepository;
 
@@ -228,6 +225,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     @Inject
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Inject
     public void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
     }
@@ -250,11 +252,6 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     @Inject
     public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         this.datatypeRegistry = datatypeRegistry;
-    }
-
-    @Inject
-    public void setDynamicAttributesTools(DynamicAttributesTools dynamicAttributesTools) {
-        this.dynamicAttributesTools = dynamicAttributesTools;
     }
 
     @Inject
@@ -743,7 +740,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
                             setClickListener(propertyId.toString(), new LinkCellClickListener(this, beanLocator));
                         } else {
                             if (column.getMaxTextLength() != null) {
-                                addGeneratedColumnInternal(propertyId, new AbbreviatedColumnGenerator(column, dynamicAttributesTools));
+                                addGeneratedColumnInternal(propertyId, new AbbreviatedColumnGenerator(column, metadataTools));
                             }
                         }
                     }
@@ -1362,8 +1359,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
                         setClickListener(propertyPath.toString(), new LinkCellClickListener(this, beanLocator));
                     } else {
                         if (column.getMaxTextLength() != null) {
-                            addGeneratedColumnInternal(propertyPath, new AbbreviatedColumnGenerator(column, dynamicAttributesTools));
-                            setClickListener(propertyPath.toString(), new AbbreviatedCellClickListener(this, dynamicAttributesTools));
+                            addGeneratedColumnInternal(propertyPath, new AbbreviatedColumnGenerator(column, metadataTools));
+                            setClickListener(propertyPath.toString(), new AbbreviatedCellClickListener(this, metadata, metadataTools));
                         }
                     }
                 }
@@ -1818,26 +1815,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
             return caption;
         }
 
-        if (!(columnId instanceof MetaPropertyPath)) {
-            return StringUtils.capitalize(getColumnCaption(columnId));
-        }
-
-        MetaPropertyPath mpp = (MetaPropertyPath) columnId;
-        MetaProperty metaProperty = mpp.getMetaProperty();
-
-        if (DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-            CategoryAttribute categoryAttribute = DynamicAttributesUtils.getCategoryAttribute(metaProperty);
-            // todo dynamic attributes
-//            if (LocaleHelper.isLocalizedValueDefined(categoryAttribute.getLocaleNames())) {
-//                return categoryAttribute.getLocaleName();
-//            }
-
-//            caption = StringUtils.capitalize(categoryAttribute.getName());
-        } else {
-            caption = StringUtils.capitalize(getColumnCaption(columnId));
-        }
-
-        return caption;
+        return StringUtils.capitalize(getColumnCaption(columnId));
     }
 
     protected void createStubsForGeneratedColumns() {
@@ -3251,22 +3229,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
         E item = entityTableSource.getItemNN(itemId);
 
         Object value = EntityValues.getValueEx(item, propertyPath);
-        String stringValue;
-        if (value instanceof String) {
-            stringValue = EntityValues.getValueEx(item, propertyPath);
-        } else {
-            MetaProperty metaProperty = propertyPath.getMetaProperty();
-
-            if (DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-                stringValue = dynamicAttributesTools.getDynamicAttributeValueAsString(metaProperty, value);
-            } else {
-                stringValue = value == null ? null : value.toString();
-            }
-        }
+        String stringValue = metadataTools.format(value, propertyPath.getMetaProperty());
 
         if (column.getMaxTextLength() != null) {
             boolean isMultiLineCell = StringUtils.contains(stringValue, "\n");
-            if ((stringValue != null && stringValue.length() > column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP)
+            if ((stringValue.length() > column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP)
                     || isMultiLineCell) {
                 return "c-table-cell-textcut";
             } else {

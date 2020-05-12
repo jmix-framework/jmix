@@ -176,8 +176,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         setupDataContainer(holder);
 
         if (resultComponent.getItems() == null) {
-            //todo dynamic attributes
-//            addDynamicAttributes(resultComponent, metaClass, null, null, availableColumns);
             //noinspection unchecked
             resultComponent.setItems(createEmptyTableItems(holder.getMetaClass()));
         }
@@ -226,13 +224,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
     @SuppressWarnings("unchecked")
     protected void setupDataContainer(TableDataHolder holder) {
-        /* //todo dynamic attributes
-            if (dataLoader instanceof CollectionLoader) {
-                addDynamicAttributes(resultComponent, metaClass, null, (CollectionLoader) dataLoader, availableColumns);
-            } else if (collectionContainer instanceof CollectionPropertyContainer) {
-                addDynamicAttributes(resultComponent, metaClass, null, null, availableColumns);
-            }*/
-
         if (holder.getContainer() != null) {
             resultComponent.setItems(createContainerTableSource(holder.getContainer()));
         }
@@ -259,100 +250,12 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         return beanLocator.get(MetadataTools.NAME);
     }
 
-//    protected DynamicAttributesGuiTools getDynamicAttributesGuiTools() {
-//        return beanLocator.get(DynamicAttributesGuiTools.NAME);
-//    }
-
     protected void loadTextSelectionEnabled(Table table, Element element) {
         String textSelectionEnabled = element.attributeValue("textSelectionEnabled");
         if (StringUtils.isNotEmpty(textSelectionEnabled)) {
             table.setTextSelectionEnabled(Boolean.parseBoolean(textSelectionEnabled));
         }
     }
-
-    //todo dynamic attributes
-//    protected void addDynamicAttributes(Table component, MetaClass metaClass, Datasource ds, CollectionLoader collectionLoader,
-//                                        List<Table.Column> availableColumns) {
-//        if (getMetadataTools().isPersistent(metaClass)) {
-//            String windowId = getWindowId(context);
-//            // May be no windowId, if a loader is used from a CompositeComponent
-//            if (windowId == null) {
-//                return;
-//            }
-//
-//            List<CategoryAttribute> attributesToShow =
-//                    getDynamicAttributesGuiTools().getSortedAttributesToShowOnTheScreen(metaClass,
-//                            windowId, component.getId());
-//            if (CollectionUtils.isNotEmpty(attributesToShow)) {
-//                if (collectionLoader != null) {
-//                    collectionLoader.setLoadDynamicAttributes(true);
-//                } else if (ds != null) {
-//                    ds.setLoadDynamicAttributes(true);
-//                }
-//                for (CategoryAttribute attribute : attributesToShow) {
-//                    MetaPropertyPath metaPropertyPath = DynamicAttributesUtils.getMetaPropertyPath(metaClass, attribute);
-//
-//                    Object columnWithSameId = IterableUtils.find(availableColumns,
-//                            o -> o.getId().equals(metaPropertyPath));
-//
-//                    if (columnWithSameId != null) {
-//                        continue;
-//                    }
-//
-//                    addDynamicAttributeColumn(component, attribute, metaPropertyPath);
-//                }
-//            }
-//
-//            if (ds != null) {
-//                getDynamicAttributesGuiTools().listenDynamicAttributesChanges(ds);
-//            }
-//        }
-//    }
-//
-//    protected void addDynamicAttributeColumn(Table component, CategoryAttribute attribute, MetaPropertyPath metaPropertyPath) {
-//
-//        Table.Column column = new Table.Column(metaPropertyPath);
-//
-//        column.setCaption(getDynamicAttributesGuiTools().getColumnCapture(attribute));
-//
-//        column.setDescription(attribute.getLocaleDescription());
-//
-//        if (attribute.getDataType().equals(PropertyType.STRING)) {
-//            ClientConfig clientConfig = getConfiguration().getConfig(ClientConfig.class);
-//            column.setMaxTextLength(clientConfig.getDynamicAttributesTableColumnMaxTextLength());
-//        }
-//
-//        if (attribute.getDataType().equals(PropertyType.ENUMERATION)
-//                && BooleanUtils.isNotTrue(attribute.getIsCollection())) {
-//            column.setFormatter(value ->
-//                    LocaleHelper.getEnumLocalizedValue((String) value, attribute.getEnumerationLocales())
-//            );
-//        }
-//
-//        if (!Strings.isNullOrEmpty(attribute.getConfiguration().getColumnAlignment())) {
-//            column.setAlignment(Table.ColumnAlignment.valueOf(attribute.getConfiguration().getColumnAlignment()));
-//        }
-//
-//        DecimalFormat formatter = getDynamicAttributesGuiTools().getDecimalFormat(attribute);
-//        if (formatter != null) {
-//            column.setFormatter(obj -> {
-//                if (obj == null) {
-//                    return null;
-//                }
-//                if (obj instanceof Number) {
-//                    return formatter.format(obj);
-//                }
-//                return obj.toString();
-//            });
-//        }
-//
-//        //noinspection unchecked
-//        component.addColumn(column);
-//
-//        if (attribute.getConfiguration().getColumnWidth() != null) {
-//            column.setWidth(attribute.getConfiguration().getColumnWidth());
-//        }
-//    }
 
     protected void loadMultiLineCells(Table table, Element element) {
         String multiLineCells = element.attributeValue("multiLineCells");
@@ -417,13 +320,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             // check property and add
             String propertyId = column.attributeValue("id");
             if (StringUtils.isNotEmpty(propertyId)) {
-                //todo dynamic attributes
-//                MetaPropertyPath dynamicAttributePath = DynamicAttributesUtils.getMetaPropertyPath(metaClass, propertyId);
-
-                MetaPropertyPath mpp = metaClass.getPropertyPath(propertyId);
-                boolean isFetchPlanContainsProperty = mpp != null && getMetadataTools().fetchPlanContainsProperty(fetchPlan, mpp);
-
-                if (isFetchPlanContainsProperty /*|| dynamicAttributePath != null*/) {
+                MetaPropertyPath propertyPath = metaClass.getPropertyPath(propertyId);
+                if (propertyPath == null || getMetadataTools().fetchPlanContainsProperty(fetchPlan, propertyPath)) {
                     String visible = column.attributeValue("visible");
                     if (StringUtils.isEmpty(visible) || Boolean.parseBoolean(visible)) {
                         columns.add(loadColumn(column, metaClass));
@@ -578,18 +476,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                 MetaProperty metaProperty = mpp.getMetaProperty();
                 String propertyName = metaProperty.getName();
 
-                //todo dynamic attributes
-//                if (DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-//                    CategoryAttribute categoryAttribute = DynamicAttributesUtils.getCategoryAttribute(metaProperty);
-//
-//                    columnCaption = LocaleHelper.isLocalizedValueDefined(categoryAttribute.getLocaleNames()) ?
-//                            categoryAttribute.getLocaleName() :
-//                            StringUtils.capitalize(categoryAttribute.getName());
-//                    column.setDescription(categoryAttribute.getLocaleDescription());
-//                } else {
-                    MetaClass propertyMetaClass = getMetadataTools().getPropertyEnclosingMetaClass(mpp);
-                    columnCaption = getMessageTools().getPropertyCaption(propertyMetaClass, propertyName);
-//                }
+                MetaClass propertyMetaClass = getMetadataTools().getPropertyEnclosingMetaClass(mpp);
+                columnCaption = getMessageTools().getPropertyCaption(propertyMetaClass, propertyName);
             } else {
                 Class<?> declaringClass = metaClass.getJavaClass();
                 String className = declaringClass.getName();

@@ -17,12 +17,12 @@
 package io.jmix.ui.components.table;
 
 import com.google.common.base.Strings;
-import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import com.vaadin.ui.VerticalLayout;
 import io.jmix.core.Entity;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.App;
 import io.jmix.ui.components.Table;
@@ -38,30 +38,29 @@ import static io.jmix.ui.components.impl.WebAbstractTable.MAX_TEXT_LENGTH_GAP;
 public class AbbreviatedCellClickListener implements Table.CellClickListener {
 
     protected Table table;
-    protected DynamicAttributesTools dynamicAttributesTools;
+    protected MetadataTools metadataTools;
+    protected Metadata metadata;
 
-    public AbbreviatedCellClickListener(Table table, DynamicAttributesTools dynamicAttributesTools) {
+    public AbbreviatedCellClickListener(Table table, Metadata metadata, MetadataTools metadataTools) {
         this.table = table;
-        this.dynamicAttributesTools = dynamicAttributesTools;
+        this.metadataTools = metadataTools;
+        this.metadata = metadata;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void onClick(Entity item, String columnId) {
         Table.Column column = table.getColumn(columnId);
-        MetaProperty metaProperty;
-        String value;
-        if (DynamicAttributesUtils.isDynamicAttribute(columnId)) {
-            // todo dynamic attributes
-            MetaClass metaClass = null/* = item.getMetaClass()*/;
-            metaProperty = dynamicAttributesTools.getMetaPropertyPath(metaClass, columnId).getMetaProperty();
-            value = dynamicAttributesTools.getDynamicAttributeValueAsString(metaProperty, EntityValues.getValueEx(item, columnId));
-        } else {
-            value = EntityValues.getValueEx(item, columnId);
-        }
+
+        MetaClass metaClass = metadata.getClass(item.getClass());
+        MetaProperty metaProperty = metadataTools.resolveMetaPropertyPathNN(metaClass, columnId).getMetaProperty();
+
+        Object value = EntityValues.getValueEx(item, columnId);
+        String stringValue = metadataTools.format(value, metaProperty);
+
         if (column.getMaxTextLength() != null) {
-            boolean isMultiLineCell = StringUtils.contains(value, "\n");
-            if (value == null || (value.length() <= column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP
+            boolean isMultiLineCell = StringUtils.contains(stringValue, "\n");
+            if (stringValue == null || (stringValue.length() <= column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP
                     && !isMultiLineCell)) {
                 // todo artamonov if we click with CTRL and Table is multiselect then we lose previous selected items
                 if (!table.getSelected().contains(item)) {
@@ -79,7 +78,7 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
         layout.setStyleName("c-table-view-textcut");
 
         CubaTextArea textArea = new CubaTextArea();
-        textArea.setValue(Strings.nullToEmpty(value));
+        textArea.setValue(Strings.nullToEmpty(stringValue));
         textArea.setReadOnly(true);
 
         CubaResizableTextAreaWrapper content = new CubaResizableTextAreaWrapper(textArea);

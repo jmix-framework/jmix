@@ -16,9 +16,8 @@
 
 package io.jmix.ui.components.table;
 
-import io.jmix.ui.dynamicattributes.DynamicAttributesTools;
-import io.jmix.ui.dynamicattributes.DynamicAttributesUtils;
 import com.vaadin.v7.data.Property;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.Table;
@@ -31,11 +30,11 @@ public class AbbreviatedColumnGenerator implements SystemTableColumnGenerator,
         CubaEnhancedTable.PlainTextGeneratedColumn {
 
     protected Table.Column column;
-    protected DynamicAttributesTools dynamicAttributesTools;
+    protected MetadataTools metadataTools;
 
-    public AbbreviatedColumnGenerator(Table.Column column, DynamicAttributesTools dynamicAttributesTools) {
+    public AbbreviatedColumnGenerator(Table.Column column, MetadataTools metadataTools) {
         this.column = column;
-        this.dynamicAttributesTools = dynamicAttributesTools;
+        this.metadataTools = metadataTools;
     }
 
     @Override
@@ -47,13 +46,9 @@ public class AbbreviatedColumnGenerator implements SystemTableColumnGenerator,
             return null;
         }
 
-        String stringValue = value.toString();
-        if (columnId instanceof MetaPropertyPath) {
-            MetaProperty metaProperty = ((MetaPropertyPath) columnId).getMetaProperty();
-            if (DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-                stringValue = dynamicAttributesTools.getDynamicAttributeValueAsString(metaProperty, value);
-            }
-        }
+        MetaProperty metaProperty = ((MetaPropertyPath) columnId).getMetaProperty();
+        String stringValue = metadataTools.format(value, metaProperty);
+
         String cellValue = stringValue;
         boolean isMultiLineCell = StringUtils.contains(stringValue, "\n");
         if (isMultiLineCell) {

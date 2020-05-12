@@ -18,18 +18,13 @@ package io.jmix.ui.xml.layout.loaders;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ComponentGenerationContext;
-import io.jmix.ui.components.Field;
-import io.jmix.ui.components.Form;
-import io.jmix.ui.components.UiComponentsGenerator;
+import io.jmix.ui.components.*;
 import io.jmix.ui.components.data.HasValueSource;
 import io.jmix.ui.components.data.ValueSourceProvider;
 import io.jmix.ui.components.data.meta.EntityValueSource;
@@ -37,12 +32,7 @@ import io.jmix.ui.components.data.options.ContainerOptions;
 import io.jmix.ui.components.data.value.ContainerValueSource;
 import io.jmix.ui.components.data.value.ContainerValueSourceProvider;
 import io.jmix.ui.components.form.ComponentPosition;
-import io.jmix.ui.dynamicattributes.CategoryAttribute;
-import io.jmix.ui.dynamicattributes.DynamicAttributesGuiTools;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.InstanceLoader;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -56,8 +46,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static io.jmix.ui.dynamicattributes.DynamicAttributesUtils.isDynamicAttribute;
 
 public class FormLoader extends AbstractComponentLoader<Form> {
 
@@ -114,9 +102,7 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         ValueSourceProvider valueSourceProvider = resultComponent.getValueSourceProvider();
         if (element.elements("column").isEmpty()) {
             Iterable<ComponentPosition> rootComponents = loadComponents(element, null, null);
-            Iterable<ComponentPosition> dynamicAttributeComponents =
-                    loadDynamicAttributeComponents(valueSourceProvider, null);
-            for (ComponentPosition component : Iterables.concat(rootComponents, dynamicAttributeComponents)) {
+            for (ComponentPosition component : rootComponents) {
                 resultComponent.add(component.getComponent(), 0,
                         component.getColSpan(), component.getRowSpan());
             }
@@ -145,10 +131,6 @@ public class FormLoader extends AbstractComponentLoader<Form> {
                 }
 
                 Iterable<ComponentPosition> columnComponents = loadComponents(columnElement, columnWidth, flex);
-                if (colIndex == 0) {
-                    columnComponents = Iterables.concat(columnComponents,
-                            loadDynamicAttributeComponents(valueSourceProvider, columnWidth));
-                }
                 for (ComponentPosition component : columnComponents) {
                     resultComponent.add(component.getComponent(), colIndex,
                             component.getColSpan(), component.getRowSpan());
@@ -210,20 +192,9 @@ public class FormLoader extends AbstractComponentLoader<Form> {
 
             String propertyName = metaPropertyPath != null ? metaPropertyPath.getMetaProperty().getName() : null;
             if (metaPropertyPath != null) {
-                if (isDynamicAttribute(metaPropertyPath.getMetaProperty())) {
-                    // todo dynamic attributes
-//                    CategoryAttribute categoryAttribute = getCategoryAttribute(metaPropertyPath.getMetaProperty());
-//                    ((Component.HasCaption) component).setCaption(categoryAttribute != null
-//                            ? categoryAttribute.getLocaleName()
-//                            : propertyName);
-//                    ((Component.HasCaption) component).setDescription(categoryAttribute != null
-//                            ? categoryAttribute.getLocaleDescription()
-//                            : null);
-                } else {
-                    MetaClass propertyMetaClass = getMetadataTools().getPropertyEnclosingMetaClass(metaPropertyPath);
-                    String propertyCaption = getMessageTools().getPropertyCaption(propertyMetaClass, propertyName);
-                    ((Component.HasCaption) component).setCaption(propertyCaption);
-                }
+                MetaClass propertyMetaClass = getMetadataTools().getPropertyEnclosingMetaClass(metaPropertyPath);
+                String propertyCaption = getMessageTools().getPropertyCaption(propertyMetaClass, propertyName);
+                ((Component.HasCaption) component).setCaption(propertyCaption);
             }
         }
 
@@ -307,80 +278,6 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         return (Field) component;
     }
 
-    protected List<ComponentPosition> loadDynamicAttributeComponents(ValueSourceProvider provider,
-                                                                     @Nullable String columnWidth) {
-        if (provider instanceof ContainerValueSourceProvider
-                && getMetadataTools().isPersistent(
-                ((ContainerValueSourceProvider) provider).getContainer().getEntityMetaClass())) {
-            String windowId = getWindowId(context);
-
-            InstanceContainer instanceContainer = ((ContainerValueSourceProvider) provider).getContainer();
-            MetaClass metaClass = instanceContainer.getEntityMetaClass();
-
-            List<CategoryAttribute> attributesToShow =
-                    getDynamicAttributesGuiTools().getSortedAttributesToShowOnTheScreen(
-                            metaClass, windowId, resultComponent.getId());
-
-            if (!attributesToShow.isEmpty()) {
-                List<ComponentPosition> components = new ArrayList<>();
-
-                if (instanceContainer instanceof HasLoader) {
-                    DataLoader dataLoader = ((HasLoader) instanceContainer).getLoader();
-                    if (dataLoader instanceof InstanceLoader) {
-                        ((InstanceLoader) dataLoader).setLoadDynamicAttributes(true);
-                    }
-                }
-
-                for (CategoryAttribute attribute : attributesToShow) {
-                    // todo dynamic attributes
-//                    String code = DynamicAttributesUtils.encodeAttributeCode(attribute.getCode());
-//
-//                    ValueSource<?> valueSource = provider.getValueSource(code);
-//
-//                    Component dynamicAttrComponent;
-//                    if (Boolean.TRUE.equals(attribute.getIsCollection())) {
-//                        dynamicAttrComponent = getDynamicAttributesComponentsGenerator()
-//                                .generateComponent(provider.getValueSource(code), attribute);
-//                    } else {
-//                        ComponentGenerationContext context = new ComponentGenerationContext(metaClass, code);
-//                        context.setValueSource(valueSource);
-//                        dynamicAttrComponent = getUiComponentsGenerator().generate(context);
-//                    }
-//
-//                    if (dynamicAttrComponent instanceof Component.HasCaption) {
-//                        ((Component.HasCaption) dynamicAttrComponent).setCaption(attribute.getLocaleName());
-//                        ((Component.HasCaption) dynamicAttrComponent).setDescription(attribute.getLocaleDescription());
-//                    }
-//
-//                    if (dynamicAttrComponent instanceof HasValueSource) {
-//                        //noinspection unchecked
-//                        ((HasValueSource) dynamicAttrComponent).setValueSource(valueSource);
-//                    }
-//
-//                    if (dynamicAttrComponent instanceof Component.Editable
-//                            && Boolean.TRUE.equals(attribute.getConfiguration().isReadOnly())) {
-//                        ((Component.Editable) dynamicAttrComponent).setEditable(false);
-//                    }
-//
-//                    if (dynamicAttrComponent instanceof Field) {
-//                        ((Field) dynamicAttrComponent).setRequired(attribute.getRequired());
-//                        ((Field) dynamicAttrComponent).setRequiredMessage(getMessages()
-//                                .formatMainMessage("validation.required.defaultMsg", attribute.getLocaleName()));
-//                    }
-//
-//                    String defaultWidth =
-//                            Strings.isNullOrEmpty(attribute.getWidth())
-//                                    ? columnWidth : attribute.getWidth();
-//                    loadWidth(dynamicAttrComponent, defaultWidth);
-//
-//                    components.add(new ComponentPosition(dynamicAttrComponent, 1, 1));
-                }
-                return components;
-            }
-        }
-
-        return Collections.emptyList();
-    }
 
     protected void loadWidth(Component component, String width) {
         if ("auto".equalsIgnoreCase(width)) {
@@ -394,17 +291,9 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         return beanLocator.get(MetadataTools.NAME);
     }
 
-    protected DynamicAttributesGuiTools getDynamicAttributesGuiTools() {
-        return beanLocator.get(DynamicAttributesGuiTools.NAME);
-    }
-
     protected UiComponentsGenerator getUiComponentsGenerator() {
         return beanLocator.get(UiComponentsGenerator.NAME);
     }
-
-//    protected DynamicAttributeComponentsGenerator getDynamicAttributesComponentsGenerator() {
-//        return beanLocator.get(DynamicAttributeComponentsGenerator.NAME);
-//    }
 
     protected void loadCaptionPosition(Form resultComponent, Element element) {
         String captionAlignment = element.attributeValue("captionPosition");

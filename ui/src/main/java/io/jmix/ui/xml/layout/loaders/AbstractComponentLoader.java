@@ -937,17 +937,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         }
     }
 
-    @Nullable
-    protected String getWindowId(Context context) {
-        if (context instanceof ComponentContext) {
-            Frame frame = getComponentContext().getFrame();
-            Screen screen = UiControllerUtils.getScreen(frame.getFrameOwner());
-            return screen.getId();
-        }
-
-        return null;
-    }
-
     protected void loadData(T component, Element element) {
         loadContainer(component, element);
     }

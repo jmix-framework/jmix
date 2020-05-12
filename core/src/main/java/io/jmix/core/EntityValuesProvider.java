@@ -16,11 +16,14 @@
 
 package io.jmix.core;
 
+import javax.annotation.Nullable;
+
 public interface EntityValuesProvider {
 
     boolean supportAttribute(String name);
 
+    @Nullable
     <T> T getAttributeValue(String name);
 
-    void setAttributeValue(String name, Object value, boolean checkEquals);
+    void setAttributeValue(String name, @Nullable Object value, boolean checkEquals);
 }

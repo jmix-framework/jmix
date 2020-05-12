@@ -37,10 +37,11 @@
             <xs:element name="loader" type="instanceLoaderType" minOccurs="0"/>
             <xs:element name="instance" type="nestedContainerType" minOccurs="0"/>
             <xs:element name="collection" type="nestedContainerType" minOccurs="0"/>
+            <xs:element name="fetchPlan" type="fetchPlanType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="class" type="xs:string"/>
-        <xs:attribute name="view" type="xs:string"/>
+        <xs:attribute name="fetchPlan" type="xs:string"/>
         <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
@@ -49,10 +50,11 @@
             <xs:element name="loader" type="collectionLoaderType" minOccurs="0"/>
             <xs:element name="instance" type="nestedContainerType" minOccurs="0"/>
             <xs:element name="collection" type="nestedContainerType" minOccurs="0"/>
+            <xs:element name="fetchPlan" type="fetchPlanType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="class" type="xs:string"/>
-        <xs:attribute name="view" type="xs:string"/>
+        <xs:attribute name="fetchPlan" type="xs:string"/>
         <xs:attribute name="provided" type="xs:boolean"/>
     </xs:complexType>
 
@@ -164,4 +166,30 @@
             <xs:any namespace="##other" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:complexType name="fetchPlanType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="propertyType"/>
+        </xs:sequence>
+        <xs:attribute name="extends"/>
+        <xs:attribute name="systemProperties" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="propertyType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property" type="propertyType"/>
+        </xs:sequence>
+        <xs:attribute name="name"/>
+        <xs:attribute name="fetchPlan"/>
+        <xs:attribute name="fetch" type="fetchModeType"/>
+    </xs:complexType>
+
+    <xs:simpleType name="fetchModeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="UNDEFINED"/>
+            <xs:enumeration value="JOIN"/>
+            <xs:enumeration value="BATCH"/>
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

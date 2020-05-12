@@ -53,10 +53,10 @@ class ScreenDataTest extends DataContextSpec {
         def xml = '''
             <data>
                 <instance id="userCont"
-                          class="test_support.entity.sec.User" view="user.edit"/>
+                          class="test_support.entity.sec.User" fetchPlan="user.edit"/>
                 
                 <collection id="usersCont"
-                            class="test_support.entity.sec.User" view="user.browse"/>
+                            class="test_support.entity.sec.User" fetchPlan="user.browse"/>
             </data>
             '''
         Document document = Dom4j.readDocument(xml)
@@ -82,7 +82,7 @@ class ScreenDataTest extends DataContextSpec {
         def xml = '''
             <data>
                 <instance id="userCont"
-                          class="test_support.entity.sec.User" view="user.edit">
+                          class="test_support.entity.sec.User" fetchPlan="user.edit">
                           
                     <loader id="userLoader">
                         <query>
@@ -92,7 +92,7 @@ class ScreenDataTest extends DataContextSpec {
                 </instance>
 
                 <collection id="usersCont"
-                            class="test_support.entity.sec.User" view="user.browse">
+                            class="test_support.entity.sec.User" fetchPlan="user.browse">
             
                     <loader id="usersLoader">
                         <query>
@@ -102,7 +102,7 @@ class ScreenDataTest extends DataContextSpec {
                 </collection>
                 
                 <collection id="usersCont1"
-                            class="test_support.entity.sec.User" view="user.browse">
+                            class="test_support.entity.sec.User" fetchPlan="user.browse">
             
                     <loader>
                         <query>
@@ -201,14 +201,14 @@ class ScreenDataTest extends DataContextSpec {
         def xml = '''
             <data>
                 <instance id="userCont"
-                          class="test_support.entity.sec.User" view="user.edit">
+                          class="test_support.entity.sec.User" fetchPlan="user.edit">
                           
                     <loader id="userLoader" entityId="60885987-1b61-4247-94c7-dff348347f93" softDeletion="false"
                             dynamicAttributes="true"/>
                 </instance>
 
                 <collection id="usersCont"
-                            class="test_support.entity.sec.User" view="user.browse">
+                            class="test_support.entity.sec.User" fetchPlan="user.browse">
             
                     <loader id="usersLoader" softDeletion="false" firstResult="100" maxResults="1000" cacheable="true"
                             dynamicAttributes="true">
@@ -392,7 +392,7 @@ class ScreenDataTest extends DataContextSpec {
         def xml = '''
             <data readOnly="true">
                 <instance id="userCont"
-                          class="test_support.entity.sec.User" view="user.edit">
+                          class="test_support.entity.sec.User" fetchPlan="user.edit">
                     <loader/>
                 </instance>
             </data>
@@ -424,7 +424,7 @@ class ScreenDataTest extends DataContextSpec {
                     </collection>
                 </instance>
                 
-                <collection id="ordersCont" class="test_support.entity.sales.Order" view="_local">
+                <collection id="ordersCont" class="test_support.entity.sales.Order" fetchPlan="_local">
                     <loader id="ordersLd"/>
                 </collection>
             </data>
@@ -440,7 +440,7 @@ class ScreenDataTest extends DataContextSpec {
                     </collection>
                 </instance>
                 
-                <collection id="tagsCont" class="test_support.entity.sales.ProductTag" view="_local"/>
+                <collection id="tagsCont" class="test_support.entity.sales.ProductTag" fetchPlan="_local"/>
                 
                 <instance id="orderContA" class="test_support.entity.sales.Order">
                     <collection id="linesContA" class="" property="orderLines">
@@ -450,7 +450,7 @@ class ScreenDataTest extends DataContextSpec {
                     </collection>
                 </instance>
 
-                <collection id="ordersCont" class="test_support.entity.sales.Order" view="_local"
+                <collection id="ordersCont" class="test_support.entity.sales.Order" fetchPlan="_local"
                             provided="true">
                     <loader id="ordersLd" provided="true"/>
                 </collection>

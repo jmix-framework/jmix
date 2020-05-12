@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -40,7 +41,13 @@ public class ScreenDataXmlLoader {
     public static final String NAME = "jmix_ScreenDataXmlLoader";
 
     @Inject
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
+
+    @Inject
+    protected FetchPlanLoader fetchPlanLoader;
+
+    @Inject
+    protected Metadata metadata;
 
     @Inject
     protected MetadataTools metadataTools;
@@ -101,7 +108,7 @@ public class ScreenDataXmlLoader {
             container = hostScreenData.getContainer(containerId);
         } else {
             container = factory.createInstanceContainer(getEntityClass(element));
-            loadView(element, getEntityClass(element), container);
+            loadFetchPlan(element, getEntityClass(element), container);
         }
 
         screenData.registerContainer(containerId, container);
@@ -126,7 +133,7 @@ public class ScreenDataXmlLoader {
             container = hostScreenData.getContainer(containerId);
         } else {
             container = factory.createCollectionContainer(getEntityClass(element));
-            loadView(element, getEntityClass(element), container);
+            loadFetchPlan(element, getEntityClass(element), container);
         }
 
         screenData.registerContainer(containerId, container);
@@ -374,12 +381,34 @@ public class ScreenDataXmlLoader {
         return ReflectionHelper.getClass(entityClassName);
     }
 
-    protected void loadView(Element element, Class<Entity> entityClass, InstanceContainer<Entity> container) {
-        String viewName = element.attributeValue("view");
-        if (viewName != null) {
-            container.setFetchPlan(viewRepository.getFetchPlan(entityClass, viewName));
+    protected void loadFetchPlan(Element element, Class<Entity> entityClass, InstanceContainer<Entity> container) {
+
+        Element fetchPlanElement = element.element("fetchPlan");
+        if (fetchPlanElement == null) {
+            fetchPlanElement = element.element("view");
+        }
+        if (fetchPlanElement != null) {
+            container.setFetchPlan(loadInlineFetchPlan(fetchPlanElement, entityClass));
+            return;
+        }
+
+        String fetchPlanName = element.attributeValue("fetchPlan");
+        if (fetchPlanName == null) {
+            fetchPlanName = element.attributeValue("view");
+        }
+        if (fetchPlanName != null) {
+            container.setFetchPlan(fetchPlanRepository.getFetchPlan(entityClass, fetchPlanName));
         }
     }
+
+    protected FetchPlan loadInlineFetchPlan(Element viewElem, Class<Entity> entityClass) {
+        FetchPlanLoader.FetchPlanInfo viewInfo = fetchPlanLoader.getFetchPlanInfo(viewElem, metadata.getClass(entityClass));
+        FetchPlan.FetchPlanParams viewParams = fetchPlanLoader.getFetchPlanParams(viewInfo, a -> fetchPlanRepository.getFetchPlan(viewInfo.getMetaClass(), a));
+        FetchPlan view = new FetchPlan(viewParams);
+        fetchPlanLoader.loadFetchPlanProperties(viewElem, view, viewInfo.isSystemProperties(), (metaClass, viewName) -> fetchPlanRepository.getFetchPlan(metaClass, viewName));
+        return view;
+    }
+
 
     protected void loadQuery(Element element, DataLoader loader) {
         Element queryEl = element.element("query");

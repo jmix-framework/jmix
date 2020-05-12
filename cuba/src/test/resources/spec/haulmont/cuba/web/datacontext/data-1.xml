@@ -1,6 +1,6 @@
 <data>
     <collection id="usersCont"
-                class="com.haulmont.cuba.security.entity.User" view="user.browse">
+                class="com.haulmont.cuba.security.entity.User" fetchPlan="user.browse">
 
         <loader id="usersLoader"
                 firstResult="0" maxResults="100"
@@ -14,7 +14,7 @@
     </collection>
 
     <collection id="rolesCont"
-                class="com.haulmont.cuba.security.entity.Role" view="_base">
+                class="com.haulmont.cuba.security.entity.Role" fetchPlan="_base">
 
         <loader id="rolesLoader">
             <query>
@@ -25,7 +25,7 @@
     </collection>
 
     <instance id="userCont"
-              class="com.haulmont.cuba.security.entity.User" view="user.edit">
+              class="com.haulmont.cuba.security.entity.User" fetchPlan="user.edit">
 
         <loader>
             <query>

@@ -19,13 +19,13 @@
     <data>
         <instance id="userDc"
                   class="com.haulmont.cuba.core.model.common.User">
-            <view extends="_local" systemProperties="true">
+            <fetchPlan extends="_local" systemProperties="true">
                 <property name="group">
                     <property name="name"/>
                 </property>
-                <property name="userRoles" view="user.edit"/>
-                <property name="substitutions" view="user.edit"/>
-            </view>
+                <property name="userRoles" fetchPlan="user.edit"/>
+                <property name="substitutions" fetchPlan="user.edit"/>
+            </fetchPlan>
             <loader/>
         </instance>
     </data>

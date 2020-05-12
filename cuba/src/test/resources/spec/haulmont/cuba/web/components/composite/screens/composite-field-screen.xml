@@ -19,7 +19,7 @@
     <data>
         <instance id="lineDc"
                   class="com.haulmont.cuba.web.testmodel.sales.OrderLine"
-                  view="_local">
+                  fetchPlan="_local">
             <loader/>
         </instance>
     </data>

@@ -20,7 +20,7 @@
     <data>
         <instance id="userDc"
                   class="com.haulmont.cuba.core.model.common.User"
-                  view="_local">
+                  fetchPlan="_local">
             <loader/>
         </instance>
     </data>

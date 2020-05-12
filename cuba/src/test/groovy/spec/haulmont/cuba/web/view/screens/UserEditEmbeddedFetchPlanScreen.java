@@ -27,10 +27,10 @@ import io.jmix.ui.screen.UiDescriptor;
 import javax.inject.Inject;
 
 @UiController
-@UiDescriptor("user-edit-embedded-view.xml")
+@UiDescriptor("user-edit-embedded-fetch-plan.xml")
 @EditedEntityContainer("userDc")
 @LoadDataBeforeShow
-public class UserEditEmbeddedViewScreen extends StandardEditor<User> {
+public class UserEditEmbeddedFetchPlanScreen extends StandardEditor<User> {
 
     @Inject
     public InstanceContainer<User> userDc;

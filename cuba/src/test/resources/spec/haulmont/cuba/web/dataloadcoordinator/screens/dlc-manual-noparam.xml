@@ -21,7 +21,7 @@
     <data readOnly="true">
         <collection id="ownersDc"
                     class="com.haulmont.cuba.web.testmodel.petclinic.Owner"
-                    view="owner-with-category-view">
+                    fetchPlan="owner-with-category-view">
             <loader id="ownersDl">
                 <query>
                     <![CDATA[select e from pc_Owner e]]>

@@ -19,7 +19,7 @@
         xmlns:app="http://schemas.haulmont.com/composite-test/0.1/test-ui-component.xsd">
     <data>
         <collection id="commentsDc" class="com.haulmont.cuba.web.testmodel.compositecomponent.Comment"
-                    view="comment-with-creator">
+                    fetchPlan="comment-with-creator">
             <loader>
                 <query><![CDATA[select e from test_Comment e order by e.createTs asc]]></query>
             </loader>

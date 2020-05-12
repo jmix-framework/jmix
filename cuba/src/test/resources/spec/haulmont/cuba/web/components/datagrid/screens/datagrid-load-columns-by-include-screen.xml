@@ -18,7 +18,7 @@
     <data>
         <collection id="customersSystemDc"
                     class="com.haulmont.cuba.core.model.sales.Customer"
-                    view="customer-with-systems">
+                    fetchPlan="customer-with-systems">
             <loader id="customersLd">
                 <query><![CDATA[select e from sales$Customer e]]></query>
             </loader>
@@ -26,7 +26,7 @@
 
         <collection id="customersWithoutSystemDc"
                     class="com.haulmont.cuba.core.model.sales.Customer"
-                    view="customer-without-systems">
+                    fetchPlan="customer-without-systems">
             <loader id="customersLd">
                 <query><![CDATA[select e from sales$Customer e]]></query>
             </loader>

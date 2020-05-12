@@ -18,11 +18,9 @@ package spec.haulmont.cuba.web.view
 
 import com.haulmont.cuba.core.model.common.User
 import spec.haulmont.cuba.web.UiScreenSpec
-import spec.haulmont.cuba.web.view.screens.UserEditEmbeddedViewScreen
-import spock.lang.Ignore
+import spec.haulmont.cuba.web.view.screens.UserEditEmbeddedFetchPlanScreen
 
-@Ignore
-class ScreenViewTest extends UiScreenSpec {
+class ScreenFetchPlanTest extends UiScreenSpec {
 
 
     def setup() {
@@ -36,43 +34,43 @@ class ScreenViewTest extends UiScreenSpec {
 
         when: "show screen"
 
-        def userEditScreen = screens.create(UserEditEmbeddedViewScreen)
+        def userEditScreen = screens.create(UserEditEmbeddedFetchPlanScreen)
         userEditScreen.setEntityToEdit(new User(login: 'admin'))
         userEditScreen.show()
-        def view = userEditScreen.userDc.getView()
+        def fetchPlan = userEditScreen.userDc.getFetchPlan()
 
-        then: "instance container contains embedded view"
+        then: "instance container contains embedded fetchPlan"
 
-        view != null
-        view.name == ""
-        view.getEntityClass() == User
+        fetchPlan != null
+        fetchPlan.name == ""
+        fetchPlan.getEntityClass() == User
 
-        and: "view extends specified view"
+        and: "fetchPlan extends specified fetchPlan"
 
-        view.properties.find {it.name == "login"} != null
+        fetchPlan.properties.find {it.name == "login"} != null
 
-        and: "view has system properties"
+        and: "fetchPlan has system properties"
 
-        view.properties.find { it.name == "updateTs" } != null
+        fetchPlan.properties.find { it.name == "updateTs" } != null
 
         when:
 
-        def groupViewProperty = view.properties.find { it.name == "group" }
+        def groupViewProperty = fetchPlan.properties.find { it.name == "group" }
 
-        then: "view has inlined views"
+        then: "fetchPlan has inlined fetch plans"
 
         groupViewProperty != null
-        groupViewProperty.view.properties.find { it.name == "name" } != null
+        groupViewProperty.fetchPlan.properties.find { it.name == "name" } != null
 
         when:
 
-        def userRolesViewProperty = view.properties.find { it.name == "userRoles" }
+        def userRolesViewProperty = fetchPlan.properties.find { it.name == "userRoles" }
 
-        then: "view has properties with deployed views"
+        then: "fetchPlan has properties with deployed views"
 
         userRolesViewProperty != null
-        userRolesViewProperty.view.name == "user.edit"
-        userRolesViewProperty.view.properties.find { it.name == "role" } != null
+        userRolesViewProperty.fetchPlan.name == "user.edit"
+        userRolesViewProperty.fetchPlan.properties.find { it.name == "role" } != null
 
     }
 

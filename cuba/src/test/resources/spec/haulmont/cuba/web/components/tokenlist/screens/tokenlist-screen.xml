@@ -18,7 +18,7 @@
     <data>
         <instance id="groupDc"
                   class="com.haulmont.cuba.core.model.common.Group"
-                  view="group.browse">
+                  fetchPlan="group.browse">
             <loader/>
             <collection id="constraintsDc"
                         property="constraints"/>

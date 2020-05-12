@@ -20,7 +20,7 @@
     <data>
         <collection id="usersDc"
                     class="com.haulmont.cuba.security.entity.User"
-                    view="_local">
+                    fetchPlan="_local">
             <loader id="usersLd">
                 <query>
                     <![CDATA[select e from sec$User e]]>
@@ -29,7 +29,7 @@
         </collection>
         <instance id="userDc"
                   class="com.haulmont.cuba.security.entity.User"
-                  view="_local">
+                  fetchPlan="_local">
             <loader/>
         </instance>
     </data>

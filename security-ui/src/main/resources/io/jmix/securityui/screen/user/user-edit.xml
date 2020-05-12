@@ -6,7 +6,7 @@
     <data>
         <instance id="userDc"
                   class="io.jmix.security.entity.User"
-                  view="_local">
+                  fetchPlan="_local">
             <loader/>
         </instance>
     </data>

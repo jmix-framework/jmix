@@ -7,7 +7,7 @@
     <data readOnly="true">
         <collection id="usersDc"
                     class="io.jmix.security.entity.User"
-                    view="_local">
+                    fetchPlan="_local">
             <loader id="usersDl">
                 <query>
                     <![CDATA[select e from sec_User e]]>

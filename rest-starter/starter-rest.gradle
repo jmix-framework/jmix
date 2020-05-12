@@ -1,0 +1,31 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+group = 'io.jmix.starter.rest'
+
+dependencies {
+    api project(':modules:rest')
+
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+}
+
+jar {
+    archivesBaseName = 'jmix-starter-rest'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        javaMaven(MavenPublication) {
+            artifactId = 'jmix-starter-rest'
+            from components.java
+        }
+    }
+}

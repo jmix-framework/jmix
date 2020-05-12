@@ -98,7 +98,7 @@ public class AuthenticatorImpl extends AuthenticatorSupport implements Authentic
             });
         } else {
             log.trace("Authenticating as system");
-            Authentication authToken = new SystemAuthenticationToken(null);
+            Authentication authToken = new SystemAuthenticationToken("");
             authentication = authenticationManager.authenticate(authToken);
         }
 

@@ -119,7 +119,7 @@ public abstract class AuthenticatorSupport {
         private static final long serialVersionUID = 5437664860036209641L;
 
         public NullAuthentication() {
-            super(null);
+            super("");
         }
     }
 

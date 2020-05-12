@@ -41,8 +41,8 @@ public class CoreUserRepository implements UserRepository {
     );
 
     public CoreUserRepository() {
-        systemUser = new CoreUser("system", null, "system");
-        anonymousUser = new CoreUser("anonymous", null, "anonymous");
+        systemUser = new CoreUser("system", "", "system");
+        anonymousUser = new CoreUser("anonymous", "", "anonymous");
     }
 
     @Override

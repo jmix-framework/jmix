@@ -282,7 +282,7 @@ public class FetchPlanLoader {
             return ancestors;
         }
 
-        public void setAncestors(List<String> ancestors) {
+        public void setAncestors(@Nullable List<String> ancestors) {
             this.ancestors = ancestors;
         }
 

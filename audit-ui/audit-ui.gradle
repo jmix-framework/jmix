@@ -19,7 +19,7 @@ apply plugin: 'groovy'
 apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
-group = 'io.jmix.auditui'
+group = 'io.jmix.audit'
 
 dependencies {
     api platform(project(':jmix-platform'))

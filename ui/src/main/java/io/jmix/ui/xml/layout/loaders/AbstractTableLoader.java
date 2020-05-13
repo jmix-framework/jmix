@@ -18,6 +18,7 @@ package io.jmix.ui.xml.layout.loaders;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
+import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.metamodel.datatypes.Datatype;
 import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -62,6 +63,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     protected Element panelElement;
 
     protected String sortedColumnId;
+    protected Table.SortDirection sortDirection;
+    protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
 
     @Override
     public void loadComponent() {
@@ -211,6 +214,10 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
         }
 
+        if (container instanceof CollectionPropertyContainer) {
+            initMasterDataLoaderListener((CollectionPropertyContainer) container);
+        }
+
         if (collectionContainer instanceof HasLoader) {
             holder.setDataLoader(((HasLoader) collectionContainer).getLoader());
         }
@@ -220,6 +227,30 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         holder.setFetchPlan(collectionContainer.getFetchPlan());
 
         return holder;
+    }
+
+    protected void initMasterDataLoaderListener(CollectionPropertyContainer collectionContainer) {
+        DataLoader masterDataLoader = DataLoadersHelper.getMasterDataLoader(collectionContainer);
+
+        masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader
+                ? ((InstanceLoader) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                : masterDataLoader instanceof CollectionLoader
+                ? ((CollectionLoader) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                : null;
+    }
+
+    protected void onMasterDataLoaderPostLoad(Object o) {
+        setColumnSort();
+
+        if (masterDataLoaderPostLoadListener != null) {
+            masterDataLoaderPostLoadListener.remove();
+        }
+    }
+
+    protected void setColumnSort() {
+        if (sortedColumnId != null && sortDirection != null) {
+            resultComponent.sort(sortedColumnId, sortDirection);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -699,11 +730,9 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                     getContext());
         }
 
-        Table.SortDirection sortDirection = Table.SortDirection.valueOf(sort);
-        getComponentContext().addPostInitTask((context, window) ->
-                resultComponent.sort(column.getStringId(), sortDirection));
-
+        sortDirection = Table.SortDirection.valueOf(sort);
         sortedColumnId = column.getStringId();
+        getComponentContext().addPostInitTask((context, window) -> setColumnSort());
     }
 
     protected void loadEmptyStateMessage(Table table, Element element) {

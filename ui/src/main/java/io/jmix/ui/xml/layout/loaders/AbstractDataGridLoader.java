@@ -19,6 +19,7 @@ package io.jmix.ui.xml.layout.loaders;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
+import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -56,6 +57,8 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     protected Element panelElement;
 
     protected String sortedColumnId;
+    protected DataGrid.SortDirection sortDirection;
+    protected Subscription masterDataLoaderPostLoadListener; // used for CollectionPropertyContainer
 
     @Override
     public void createComponent() {
@@ -189,6 +192,10 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             throw new GuiDevelopmentException("Not a CollectionContainer: " + containerId, context);
         }
 
+        if (collectionContainer instanceof CollectionPropertyContainer) {
+            initMasterDataLoaderListener((CollectionPropertyContainer) collectionContainer);
+        }
+
         if (collectionContainer instanceof HasLoader) {
             holder.setDataLoader(((HasLoader) collectionContainer).getLoader());
         }
@@ -198,6 +205,30 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         holder.setFetchPlan(collectionContainer.getFetchPlan());
 
         return holder;
+    }
+
+    protected void initMasterDataLoaderListener(CollectionPropertyContainer collectionContainer) {
+        DataLoader masterDataLoader = DataLoadersHelper.getMasterDataLoader(collectionContainer);
+
+        masterDataLoaderPostLoadListener = masterDataLoader instanceof InstanceLoader
+                ? ((InstanceLoader) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                : masterDataLoader instanceof CollectionLoader
+                ? ((CollectionLoader) masterDataLoader).addPostLoadListener(this::onMasterDataLoaderPostLoad)
+                : null;
+    }
+
+    protected void onMasterDataLoaderPostLoad(Object o) {
+        setColumnSort();
+
+        if (masterDataLoaderPostLoadListener != null) {
+            masterDataLoaderPostLoadListener.remove();
+        }
+    }
+
+    protected void setColumnSort() {
+        if (sortedColumnId != null && sortDirection != null) {
+            resultComponent.sort(sortedColumnId, sortDirection);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -655,11 +686,9 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
                     getContext());
         }
 
-        DataGrid.SortDirection sortDirection = DataGrid.SortDirection.valueOf(sort);
-        getComponentContext().addPostInitTask((context, window) ->
-                component.sort(column.getId(), sortDirection));
-
+        sortDirection = DataGrid.SortDirection.valueOf(sort);
         sortedColumnId = column.getId();
+        getComponentContext().addPostInitTask((context, window) -> setColumnSort());
     }
 
     protected void loadEmptyStateMessage(DataGrid dataGrid, Element element) {

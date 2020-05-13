@@ -16,15 +16,21 @@
 
 package io.jmix.ui.components.renderers;
 
+import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.renderers.HtmlRenderer;
 import io.jmix.core.Entity;
 import io.jmix.ui.components.DataGrid;
 import io.jmix.ui.components.impl.WebAbstractDataGrid;
+import io.jmix.ui.sanitizer.HtmlSanitizer;
+
+import javax.inject.Inject;
 
 /**
  * A renderer for presenting HTML content.
  */
 public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, String> implements DataGrid.HtmlRenderer {
+
+    protected HtmlSanitizer htmlSanitizer;
 
     public WebHtmlRenderer() {
         this("");
@@ -32,6 +38,11 @@ public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
 
     public WebHtmlRenderer(String nullRepresentation) {
         super(nullRepresentation);
+    }
+
+    @Inject
+    public void setHtmlSanitizer(HtmlSanitizer htmlSanitizer) {
+        this.htmlSanitizer = htmlSanitizer;
     }
 
     @Override
@@ -52,5 +63,13 @@ public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
     @Override
     public void setNullRepresentation(String nullRepresentation) {
         super.setNullRepresentation(nullRepresentation);
+    }
+
+    @Override
+    public ValueProvider<String, String> getPresentationValueProvider() {
+        return (ValueProvider<String, String>) html ->
+                getDataGrid().isHtmlSanitizerEnabled()
+                        ? htmlSanitizer.sanitize(html)
+                        : html;
     }
 }

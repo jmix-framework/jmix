@@ -36,6 +36,7 @@ import org.springframework.security.web.context.request.async.WebAsyncManagerInt
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Configuration
 @EnableResourceServer
@@ -79,11 +80,17 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
                 .flatMap(s -> Arrays.stream(s.split(",")))
                 .toArray(String[]::new);
 
-
         JmixRestLastSecurityFilter jmixRestLastSecurityFilter = new JmixRestLastSecurityFilter(events, restTokenMasker);
         JmixRestExceptionLoggingFilter jmixRestExceptionLoggingFilter = new JmixRestExceptionLoggingFilter();
 
+        String[] requestMatcherAntPatterns = Stream.of(anonymousUrlPatterns, authenticatedUrlPatterns)
+                .flatMap(Stream::of)
+                .toArray(String[]::new);
+
         http
+                .requestMatchers()
+                .antMatchers(requestMatcherAntPatterns)
+                .and()
                 .csrf().disable()
                 .anonymous(anonymousConfigurer -> {
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());

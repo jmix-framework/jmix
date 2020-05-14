@@ -1303,12 +1303,12 @@
 
     <xs:simpleType name="rendererList">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$CheckBoxRenderer"/>
-            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$ComponentRenderer"/>
-            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$IconRenderer"/>
-            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$HtmlRenderer"/>
-            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$TextRenderer"/>
-            <xs:enumeration value="com.haulmont.cuba.gui.components.DataGrid$ProgressBarRenderer"/>
+            <xs:enumeration value="io.jmix.ui.components.DataGrid$CheckBoxRenderer"/>
+            <xs:enumeration value="io.jmix.ui.components.DataGrid$ComponentRenderer"/>
+            <xs:enumeration value="io.jmix.ui.components.DataGrid$IconRenderer"/>
+            <xs:enumeration value="io.jmix.ui.components.DataGrid$HtmlRenderer"/>
+            <xs:enumeration value="io.jmix.ui.components.DataGrid$TextRenderer"/>
+            <xs:enumeration value="io.jmix.ui.components.DataGrid$ProgressBarRenderer"/>
         </xs:restriction>
     </xs:simpleType>
 

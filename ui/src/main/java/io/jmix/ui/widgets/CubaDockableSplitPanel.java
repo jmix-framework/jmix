@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,28 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widgets.client.split;
+package io.jmix.ui.widgets;
 
-public enum SplitPanelDockMode {
-    LEFT,
-    RIGHT,
-    TOP,
-    BOTTOM;
 
-    SplitPanelDockMode() {
-    }
+import io.jmix.ui.widgets.client.split.SplitPanelDockMode;
+
+public interface CubaDockableSplitPanel {
+
+    boolean isDockable();
+
+    void setDockable(boolean usePinButton);
+
+    void setDockMode(SplitPanelDockMode dockMode);
+
+    SplitPanelDockMode getDockMode();
+
+    String getDefaultPosition();
+
+    /**
+     * Set default position for dock mode
+     *
+     * @param defaultPosition default position
+     */
+    void setDefaultPosition(String defaultPosition);
+
 }

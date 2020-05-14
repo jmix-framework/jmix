@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,20 @@
 
 package io.jmix.ui.widgets.client.split;
 
-public enum SplitPanelDockMode {
-    LEFT,
-    RIGHT,
-    TOP,
-    BOTTOM;
+import com.vaadin.shared.annotations.NoLayout;
+import com.vaadin.shared.ui.splitpanel.VerticalSplitPanelState;
 
-    SplitPanelDockMode() {
-    }
+public class CubaVerticalSplitPanelState extends VerticalSplitPanelState {
+
+    @NoLayout
+    public boolean dockable = false;
+
+    @NoLayout
+    public SplitPanelDockMode dockMode = SplitPanelDockMode.TOP;
+
+    @NoLayout
+    public String defaultPosition = null;
+
+    @NoLayout
+    public String beforeDockPosition = null;
 }

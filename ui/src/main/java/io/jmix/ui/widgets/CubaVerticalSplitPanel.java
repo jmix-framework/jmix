@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package io.jmix.ui.widgets;
 
+import com.vaadin.ui.VerticalSplitPanel;
 import io.jmix.ui.widgets.client.split.CubaDockableSplitPanelServerRpc;
-import io.jmix.ui.widgets.client.split.CubaHorizontalSplitPanelState;
+import io.jmix.ui.widgets.client.split.CubaVerticalSplitPanelState;
 import io.jmix.ui.widgets.client.split.SplitPanelDockMode;
-import com.vaadin.ui.HorizontalSplitPanel;
 
-public class CubaHorizontalSplitPanel extends HorizontalSplitPanel implements CubaDockableSplitPanel {
+public class CubaVerticalSplitPanel extends VerticalSplitPanel implements CubaDockableSplitPanel {
 
-    public CubaHorizontalSplitPanel() {
+    public CubaVerticalSplitPanel() {
         super();
 
         CubaDockableSplitPanelServerRpc serverRpc =
@@ -33,13 +33,13 @@ public class CubaHorizontalSplitPanel extends HorizontalSplitPanel implements Cu
     }
 
     @Override
-    protected CubaHorizontalSplitPanelState getState() {
-        return (CubaHorizontalSplitPanelState) super.getState();
+    protected CubaVerticalSplitPanelState getState() {
+        return (CubaVerticalSplitPanelState) super.getState();
     }
 
     @Override
-    protected CubaHorizontalSplitPanelState getState(boolean markAsDirty) {
-        return (CubaHorizontalSplitPanelState) super.getState(markAsDirty);
+    protected CubaVerticalSplitPanelState getState(boolean markAsDirty) {
+        return (CubaVerticalSplitPanelState) super.getState(markAsDirty);
     }
 
     @Override
@@ -56,8 +56,8 @@ public class CubaHorizontalSplitPanel extends HorizontalSplitPanel implements Cu
 
     @Override
     public void setDockMode(SplitPanelDockMode dockMode) {
-        if (dockMode == SplitPanelDockMode.TOP || dockMode == SplitPanelDockMode.BOTTOM) {
-            throw new IllegalStateException("Dock mode " + dockMode.name() + " is not available for the horizontally oriented SplitPanel.");
+        if (dockMode == SplitPanelDockMode.LEFT || dockMode == SplitPanelDockMode.RIGHT) {
+            throw new IllegalStateException("Dock mode " + dockMode.name() + " is not available for the vertically oriented SplitPanel.");
         }
         getState().dockMode = dockMode;
     }

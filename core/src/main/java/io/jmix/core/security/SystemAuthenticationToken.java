@@ -19,6 +19,7 @@ package io.jmix.core.security;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class SystemAuthenticationToken extends AbstractAuthenticationToken {
@@ -29,7 +30,11 @@ public class SystemAuthenticationToken extends AbstractAuthenticationToken {
 
     private String credentials = "";
 
-    public SystemAuthenticationToken(Object principal) {
+    public SystemAuthenticationToken() {
+        this(null);
+    }
+
+    public SystemAuthenticationToken(@Nullable Object principal) {
         super(null);
         this.principal = principal;
         setAuthenticated(false);

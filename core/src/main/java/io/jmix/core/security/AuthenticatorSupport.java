@@ -23,7 +23,6 @@ import org.springframework.security.core.Authentication;
 import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.function.Supplier;
 
 public abstract class AuthenticatorSupport {
 
@@ -34,29 +33,6 @@ public abstract class AuthenticatorSupport {
     protected ThreadLocal<Deque<Authentication>> threadLocalStack = new ThreadLocal<>();
 
     public AuthenticatorSupport() {
-    }
-
-    protected Authentication getFromCacheOrCreate(String login, Supplier<Authentication> supplier) {
-//        UserSession session = sessions.get(login);
-//        if (session == null) {
-//            // saved session doesn't exist
-//            synchronized (this) {
-//                // double check to prevent the same log in by subsequent threads
-//                session = sessions.get(login);
-//                if (session == null) {
-//                    try {
-//                        session = supplier.get();
-//                    } catch (LoginException e) {
-//                        throw new RuntimeException("Unable to perform system login", e);
-//                    }
-//                    sessions.put(login, session);
-//                }
-//            }
-//        }
-//        return session;
-        //todo MG
-        return supplier.get();
-
     }
 
     protected void pushAuthentication(@Nullable Authentication authentication) {
@@ -119,7 +95,7 @@ public abstract class AuthenticatorSupport {
         private static final long serialVersionUID = 5437664860036209641L;
 
         public NullAuthentication() {
-            super("");
+            super();
         }
     }
 

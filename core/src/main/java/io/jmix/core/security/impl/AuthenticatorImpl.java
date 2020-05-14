@@ -44,11 +44,6 @@ public class AuthenticatorImpl extends AuthenticatorSupport implements Authentic
     @Inject
     protected AuthenticationManager authenticationManager;
 
-
-    @Inject
-    public AuthenticatorImpl() {
-    }
-
     @EventListener
     @Order(Events.HIGHEST_CORE_PRECEDENCE + 5)
     protected void beginServerSessionOnStartup(ContextRefreshedEvent event) {
@@ -63,42 +58,15 @@ public class AuthenticatorImpl extends AuthenticatorSupport implements Authentic
 
     @Override
     public Authentication begin(@Nullable String login) {
-//        UserSession userSession;
-//
-//        if (!Strings.isNullOrEmpty(login)) {
-//            log.trace("Authenticating as {}", login);
-//
-//            userSession = getFromCacheOrCreate(login, () -> {
-//                Authentication authToken = new SystemAuthenticationToken(login);
-//                Authentication authentication = authenticationManager.authenticate(authToken);
-//                UserSession session = userSessionFactory.create(authentication);
-//                session.setClientDetails(ClientDetails.builder().info("System authentication").build());
-//                userSessions.add(session);
-//                return session;
-//            });
-//        } else {
-//            log.trace("Authenticating as system");
-//            userSession = userSessionFactory.getSystemSession();
-//        }
-//
-//        pushAuthentication(SecurityContextHolder.getContext().getAuthentication());
-//
-//        CurrentUserSession.set(userSession);
-//
-//        return userSession;
-
         Authentication authentication;
 
         if (!Strings.isNullOrEmpty(login)) {
             log.trace("Authenticating as {}", login);
-
-            authentication = getFromCacheOrCreate(login, () -> {
-                Authentication authToken = new SystemAuthenticationToken(login);
-                return authenticationManager.authenticate(authToken);
-            });
+            Authentication authToken = new SystemAuthenticationToken(login);
+            authentication = authenticationManager.authenticate(authToken);
         } else {
             log.trace("Authenticating as system");
-            Authentication authToken = new SystemAuthenticationToken("");
+            Authentication authToken = new SystemAuthenticationToken(null);
             authentication = authenticationManager.authenticate(authToken);
         }
 

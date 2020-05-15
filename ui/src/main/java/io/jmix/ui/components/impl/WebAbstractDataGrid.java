@@ -4107,7 +4107,10 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
         public void setGridColumn(Grid.Column<E, ?> gridColumn) {
             AppUI current = AppUI.getCurrent();
-            if (gridColumn == null && current != null && current.isTestMode()) {
+            if (gridColumn == null
+                    && this.gridColumn != null
+                    && current != null
+                    && current.isTestMode()) {
                 owner.removeColumnId(this.gridColumn);
             }
 

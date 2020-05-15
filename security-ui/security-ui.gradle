@@ -43,8 +43,8 @@ artifacts {
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            groupId = 'io.jmix.securityui'
             artifactId = 'jmix-security-ui'
+            from components.java
         }
     }
 }

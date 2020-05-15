@@ -43,12 +43,12 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
 
         loadStyleName(resultComponent, element);
 
+        loadHtmlSanitizerEnabled(resultComponent, element);
+
         loadCaption(resultComponent, element);
         loadIcon(resultComponent, element);
         loadDescription(resultComponent, element);
         loadContextHelp(resultComponent, element);
-
-        loadHtmlSanitizerEnabled(resultComponent, element);
 
         loadValidators(resultComponent, element);
         loadValidation(resultComponent, element);

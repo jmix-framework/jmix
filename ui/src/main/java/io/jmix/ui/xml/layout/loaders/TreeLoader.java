@@ -72,12 +72,12 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
 
         loadTreeChildren();
 
+        loadHtmlSanitizerEnabled(resultComponent, element);
+
         loadIcon(resultComponent, element);
         loadCaption(resultComponent, element);
         loadDescription(resultComponent, element);
         loadContextHelp(resultComponent, element);
-
-        loadHtmlSanitizerEnabled(resultComponent, element);
 
         loadSelectionMode(resultComponent, element);
 

@@ -30,7 +30,7 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="mainMsg://"/>
+                    <xs:enumeration value="msg://"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

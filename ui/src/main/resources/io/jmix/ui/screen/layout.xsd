@@ -242,7 +242,6 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:enumeration value="msg://"/>
-                    <xs:enumeration value="mainMsg://"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>

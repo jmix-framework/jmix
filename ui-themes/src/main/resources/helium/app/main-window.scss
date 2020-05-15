@@ -1,0 +1,267 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$he-maintabsheet-light: true !default;
+$he-sidemenu-collapsible-action-buttons-default-width: 30px !default;
+$he-sidemenu-collapsible-logo-default-size: 20px !default;
+
+@mixin he-main-window {
+  @include he-sidemenu-layout-collapsible-style();
+
+  .c-app-workarea {
+    @include he-box-shadow(--app-workarea-shadow);
+  }
+
+  $tabsheet-stylename: v-tabsheet;
+
+  .#{$tabsheet-stylename}.c-main-tabsheet.framed.padded-tabbar > .#{$tabsheet-stylename}-tabcontainer {
+    @if ($he-maintabsheet-light) {
+      @include he-maintabsheet-light-style($tabsheet-stylename: v-tabsheet);
+    }
+
+    background-color: var(--maintabsheet-tabcontainer-background-color);
+  }
+
+  .c-app-work-area-single {
+    background: var(--panel-background-color);
+  }
+
+  .c-main-singlewindow {
+    background-color: var(--panel-background-color);
+  }
+
+  .c-welcome-text,
+  .v-label.c-welcome-text {
+    color: var(--text-secondary-color);
+  }
+
+  @include he-maintabsheet-size-style($tabsheet-stylename: $tabsheet-stylename);
+
+  &.small {
+    @include he-maintabsheet-size-style(
+            $tabsheet-stylename : $tabsheet-stylename,
+            $unit-size          : $v-unit-size--small,
+            $font-size          : $v-font-size--small
+    );
+
+    @include he-sidemenu-layout-collapsible-size-style(
+            $unit-size      : $v-unit-size--small,
+            $scaling-factor : $v-scaling-factor--small);
+  }
+
+  &.large {
+    @include he-maintabsheet-size-style(
+            $tabsheet-stylename : $tabsheet-stylename,
+            $unit-size          : $v-unit-size--large,
+            $font-size          : $v-font-size--large
+    );
+
+    @include he-sidemenu-layout-collapsible-size-style(
+            $unit-size      : $v-unit-size--large,
+            $scaling-factor : $v-scaling-factor--large);
+  }
+}
+
+@mixin he-maintabsheet-size-style($tabsheet-stylename  : v-tabsheet,
+                                  $unit-size           : $v-unit-size,
+                                  $font-size           : $v-font-size) {
+  .#{$tabsheet-stylename}.c-main-tabsheet > .#{$tabsheet-stylename}-tabcontainer .#{$tabsheet-stylename}-caption-close {
+    top: round($unit-size/2 - $font-size/2);
+  }
+}
+
+@mixin he-maintabsheet-light-style($tabsheet-stylename: v-tabsheet) {
+  .v-caption {
+    background: transparent;
+    border-bottom: 2px solid transparent;
+
+    @include transition(background-color 0ms);
+    @include transition(border-bottom-color 0ms);
+
+    &:hover {
+      color: var(--primary-color);
+    }
+
+    &.v-disabled {
+      color: var(--text-dim-color) !important;
+    }
+  }
+
+  .#{$tabsheet-stylename}-tabitem-selected .v-caption.v-caption {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+}
+
+@mixin he-sidemenu-layout-collapsible-style() {
+  @include he-sidemenu-layout-collapsible-size-style();
+
+  .c-sidemenu-layout.v-csslayout {
+    .c-sidemenu-panel {
+      .c-sidemenu .c-sidemenu-submenu.c-sidemenu-submenu-open {
+        background: var(--sidemenu-collapsible-submenu-background-color);
+      }
+    }
+
+    // TODO: gg, remove after cuba-platform/cuba#2741 is fixed
+    .c-sidemenu-panel.collapsed:hover {
+      .c-sidemenu .c-sidemenu-submenu.c-sidemenu-submenu-open {
+        background: var(--sidemenu-collapsible-submenu-background-color);
+      }
+    }
+
+    .c-sidemenu-controls {
+      background-color: var(--sidemenu-collapsible-controls-panel-background-color);
+    }
+
+    .c-sidemenu-collapse-button {
+      color: var(--sidemenu-collapsible-collapse-button-color);
+      background: var(--sidemenu-collapsible-collapse-button-background-color);
+
+      &:hover {
+        color: var(--sidemenu-collapsible-collapse-button-color);
+        background: var(--sidemenu-collapsible-collapse-button-hover-background-color);
+      }
+
+      &:active {
+        color: var(--sidemenu-collapsible-collapse-button-color);
+        background: var(--sidemenu-collapsible-collapse-button-active-background-color);
+      }
+    }
+
+    .c-settings-button,
+    .c-logout-button,
+    .c-login-button {
+      @include he-sidemenu-action-button-color-style(
+              $color                    : --sidemenu-collapsible-action-button-color,
+              $hover-background-color   : --sidemenu-collapsible-action-button-hover-background-color,
+              $active-background-color  : --sidemenu-collapsible-action-button-active-background-color
+      );
+    }
+  }
+}
+
+@mixin he-sidemenu-layout-collapsible-size-style($unit-size       : $v-unit-size,
+                                                 $scaling-factor  : 1) {
+
+  $layout-expanded-width: round($cuba-sidemenu-layout-expanded-width * $scaling-factor);
+  .c-sidemenu-layout.v-csslayout {
+    .c-sidemenu-container {
+      width: $layout-expanded-width;
+    }
+
+    $layout-collapsed-width: round($cuba-sidemenu-layout-collapsed-width * $scaling-factor);
+    .c-sidemenu-container.collapsed {
+      width: $layout-collapsed-width;
+    }
+
+    .c-sidemenu-panel {
+      width: $layout-expanded-width;
+
+      @include he-sidemenu-collapsed(
+              $collapsed              : false,
+              $unit-size              : $unit-size,
+              $layout-collapsed-width : $layout-collapsed-width);
+    }
+
+    .c-sidemenu-panel.collapsed {
+      @if $cuba-sidemenu-layout-collapse-enabled {
+        width: $layout-collapsed-width !important;
+        @include he-sidemenu-collapsed(
+                $collapsed              : true,
+                $unit-size              : $unit-size,
+                $layout-collapsed-width : $layout-collapsed-width);
+      }
+    }
+
+    .c-sidemenu-panel.collapsed:hover {
+      @if $cuba-sidemenu-layout-collapse-enabled {
+        width: $layout-expanded-width !important;
+        @include he-sidemenu-collapsed(
+                $collapsed              : false,
+                $unit-size              : $unit-size,
+                $layout-collapsed-width : $layout-collapsed-width
+        );
+      }
+    }
+
+    .c-sidemenu-title {
+      $logo-size: round($he-sidemenu-collapsible-logo-default-size * $scaling-factor);
+
+      height: 40px;
+      // consider 1px right border
+      padding: 0 floor(($layout-collapsed-width - $logo-size) / 2);
+
+      .c-app-icon {
+        height: $logo-size;
+        width: $logo-size;
+      }
+
+      .c-app-title {
+        width: $layout-expanded-width - 3 * $v-layout-spacing-horizontal - $logo-size;
+      }
+    }
+
+    .c-sidemenu-controls {
+      height: $layout-collapsed-width;
+    }
+
+    .c-sidemenu-collapse-button {
+      width: $layout-collapsed-width;
+      height: $layout-collapsed-width;
+    }
+
+    $buttons-width: round($he-sidemenu-collapsible-action-buttons-default-width * $scaling-factor);
+
+    .c-userindicator {
+      width: $layout-expanded-width - $layout-collapsed-width - 2 * $buttons-width;
+
+      @if $cuba-sidemenu-layout-collapse-enabled == false {
+        width: $layout-expanded-width - 2 * $buttons-width;
+      }
+    }
+
+    .c-settings-button,
+    .c-logout-button,
+    .c-login-button {
+      width: $buttons-width;
+      height: $layout-collapsed-width;
+    }
+  }
+}
+
+// Collapsible SideMenu layout style
+@mixin he-sidemenu-collapsed($collapsed               : false,
+                             $unit-size               : $v-unit-size,
+                             $layout-collapsed-width  : $cuba-sidemenu-layout-collapsed-width) {
+  @if $collapsed {
+    .c-sidemenu > .c-sidemenu-item {
+      padding: 0;
+
+      .c-sidemenu-item-wrap {
+        width: $layout-collapsed-width;
+      }
+    }
+  } @else {
+    .c-sidemenu > .c-sidemenu-item {
+      padding: 0 $unit-size 0 round($unit-size / 2);
+
+      .c-sidemenu-item-wrap {
+        width: 100%;
+      }
+    }
+  }
+}

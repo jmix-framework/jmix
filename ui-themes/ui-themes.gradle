@@ -34,7 +34,7 @@ dependencies {
 
 task compileThemes(type: ThemeCompile) {
     scssDir = 'src/main/resources'
-    themes = ['halo', 'hover']
+    themes = ['halo', 'hover', 'helium']
 }
 
 jar {

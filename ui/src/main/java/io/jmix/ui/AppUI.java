@@ -57,7 +57,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Widgetset("${jmix.ui.widgetSet:io.jmix.ui.widgets.WidgetSet}")
-@Theme("${jmix.ui.theme:halo}")
+@Theme("${jmix.ui.theme:helium}")
 @Push(transport = Transport.WEBSOCKET_XHR)
 @SpringUI
 public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiContext {

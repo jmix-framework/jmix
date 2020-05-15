@@ -104,7 +104,7 @@ public class UiProperties {
             @DefaultValue("true") boolean showBreadCrumbs,
             @DefaultValue("25") int mainTabCaptionLength,
             @DefaultValue("URL_ROUTES") UrlHandlingMode urlHandlingMode,
-            @DefaultValue("halo") String theme,
+            @DefaultValue("helium") String theme,
             String embeddedResourcesRoot,
             @DefaultValue("open,o") List<String> linkHandlerActions,
             @DefaultValue("15") int tablePageLength,

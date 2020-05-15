@@ -1,0 +1,90 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-checkboxgroup($primary-stylename: v-select-optiongroup) {
+  .#{$primary-stylename} {
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size - $he-checkbox-size-reduction);
+  }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size--small - $he-checkbox-size-reduction, $font-size: $v-font-size--small);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size--large - $he-checkbox-size-reduction, $font-size: $v-font-size--large);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size--small - $he-checkbox-size-reduction, $font-size: $v-font-size--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size - $he-checkbox-size-reduction, $font-size: $v-font-size);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size--large - $he-checkbox-size-reduction, $font-size: $v-font-size--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    .v-checkbox {
+      // Override vaadin checkbox style
+      @include he-checkbox-style($checkbox-size: $v-unit-size--small - $he-checkbox-size-reduction);
+    }
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size--small - $he-checkbox-size-reduction, $font-size: $v-font-size--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size - $he-checkbox-size-reduction, $font-size: $v-font-size);
+  }
+
+  .#{$primary-stylename}.large {
+    .v-checkbox {
+      // Override vaadin checkbox style
+      @include he-checkbox-style($checkbox-size: $v-unit-size--large - $he-checkbox-size-reduction);
+    }
+    @include he-checkboxgroup-size-style($unit-size: $v-unit-size--large - $he-checkbox-size-reduction, $font-size: $v-font-size--large);
+  }
+}
+
+@mixin he-checkboxgroup-size-style($unit-size: $v-unit-size, $font-size: $v-font-size) {
+  font-size: $font-size;
+
+  .v-checkbox {
+    @include he-checkbox-size-style($checkbox-size: $unit-size, $font-size: $font-size);
+
+    height: $unit-size;
+    margin: round($unit-size/4) $font-size 0 0;
+
+    &:last-child {
+      margin-bottom: round($unit-size/6);
+    }
+  }
+
+  &[class*="horizontal"] .v-checkbox {
+    margin: 0 $font-size 0 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}

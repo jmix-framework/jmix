@@ -1,0 +1,166 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$cuba-login-btn-font-weight: 700;
+$cuba-login-btn-font-weight--small: $cuba-login-btn-font-weight;
+$cuba-login-btn-font-weight--large: $cuba-login-btn-font-weight;
+
+$cuba-login-btn-height: $v-unit-size + $v-unit-size / 3;
+$cuba-login-btn-height--small: $v-unit-size--small + $v-unit-size--small / 3;
+$cuba-login-btn-height--large: $v-unit-size--large + $v-unit-size--large / 3;
+
+$cuba-login-btn-margin-top: 0;
+
+$cuba-login-btn-width: 100%;
+$cuba-login-btn-width--small: $cuba-login-btn-width;
+$cuba-login-btn-width--large: $cuba-login-btn-width;
+
+$cuba-login-caption-font-size: round($v-font-size * 1.45);
+$cuba-login-caption-font-size--small: round($v-font-size);
+$cuba-login-caption-font-size--large: round($v-font-size * 2);
+
+$cuba-login-caption-font-weight: 700;
+$cuba-login-caption-font-weight--small: $cuba-login-caption-font-weight;
+$cuba-login-caption-font-weight--large: $cuba-login-caption-font-weight;
+
+$cuba-login-locale-border-width: 0;
+
+$cuba-login-locale-text-align: right;
+
+$cuba-login-logo-height: $v-unit-size + $v-unit-size / 3;
+$cuba-login-logo-height--small: $v-unit-size--small + $v-unit-size--small / 3;
+$cuba-login-logo-height--large: $v-unit-size--large + $v-unit-size--large / 3;
+
+$cuba-login-panel-padding: $v-unit-size + $v-unit-size / 3;
+$cuba-login-panel-padding--small: $v-unit-size--small + $v-unit-size--small / 3;
+$cuba-login-panel-padding--large: $v-unit-size--large + $v-unit-size--large / 3;
+
+$cuba-login-password-border-radius: 0 0 $v-border-radius $v-border-radius;
+
+$cuba-login-password-height: $v-unit-size + $v-unit-size / 3;
+$cuba-login-password-height--small: $v-unit-size--small + $v-unit-size--small / 3;
+$cuba-login-password-height--large: $v-unit-size--large + $v-unit-size--large / 3;
+
+$cuba-login-username-border-radius: $v-border-radius $v-border-radius 0 0;
+
+$cuba-login-username-height: $v-unit-size + $v-unit-size / 3;
+$cuba-login-username-height--small: $v-unit-size--small + $v-unit-size--small / 3;
+$cuba-login-username-height--large: $v-unit-size--large + $v-unit-size--large / 3;
+
+$cuba-login-form-width: 385px;
+$cuba-login-form-width--small: $cuba-login-form-width * $v-scaling-factor--small;
+$cuba-login-form-width--large: $cuba-login-form-width * $v-scaling-factor--large;
+
+@mixin he-login-window {
+  @include he-login-window-size-style();
+
+  .c-login-main-layout {
+    background: var(--app-background-color);
+  }
+
+  .c-login-panel {
+    border: he-border();
+    background: var(--panel-background-color);
+  }
+
+  .c-login-username {
+    border-bottom-width: 0;
+  }
+
+  .c-login-username.v-textfield:focus + .c-login-password,
+  .c-login-username.v-textfield-focus + .c-login-password {
+    border-top-color: var(--primary-color);
+  }
+
+  .c-login-submit-button {
+    @include he-button-primary-style();
+  }
+
+  &.small {
+    @include he-login-window-size-style($login-form-width          : $cuba-login-form-width--small,
+                                        $login-panel-padding       : $cuba-login-panel-padding--small,
+                                        $login-logo-height         : $cuba-login-logo-height--small,
+                                        $login-caption-font-size   : $cuba-login-caption-font-size--small,
+                                        $login-caption-font-weight : $cuba-login-caption-font-weight--small,
+                                        $login-username-height     : $cuba-login-username-height--small,
+                                        $login-password-height     : $cuba-login-password-height--small,
+                                        $login-btn-font-weight     : $cuba-login-btn-font-weight--small,
+                                        $login-btn-height          : $cuba-login-btn-height--small,
+                                        $login-btn-width           : $cuba-login-btn-width--small);
+  }
+
+  &.large {
+    @include he-login-window-size-style($login-form-width          : $cuba-login-form-width--large,
+                                        $login-panel-padding       : $cuba-login-panel-padding--large,
+                                        $login-logo-height         : $cuba-login-logo-height--large,
+                                        $login-caption-font-size   : $cuba-login-caption-font-size--large,
+                                        $login-caption-font-weight : $cuba-login-caption-font-weight--large,
+                                        $login-username-height     : $cuba-login-username-height--large,
+                                        $login-password-height     : $cuba-login-password-height--large,
+                                        $login-btn-font-weight     : $cuba-login-btn-font-weight--large,
+                                        $login-btn-height          : $cuba-login-btn-height--large,
+                                        $login-btn-width           : $cuba-login-btn-width--large);
+  }
+}
+
+@mixin he-login-window-size-style($login-form-width           : $cuba-login-form-width,
+                                  $login-panel-padding        : $cuba-login-panel-padding,
+
+                                  $login-logo-height          : $cuba-login-logo-height,
+
+                                  $login-caption-font-size    : $cuba-login-caption-font-size,
+                                  $login-caption-font-weight  : $cuba-login-caption-font-weight,
+
+                                  $login-username-height      : $cuba-login-username-height,
+                                  $login-password-height      : $cuba-login-password-height,
+
+                                  $login-btn-font-weight      : $cuba-login-btn-font-weight,
+                                  $login-btn-height           : $cuba-login-btn-height,
+                                  $login-btn-width            : $cuba-login-btn-width) {
+  .c-login-form {
+    width: $login-form-width;
+  }
+
+  .c-login-panel {
+    padding: $login-panel-padding;
+  }
+
+  .c-login-icon > img {
+    height: $login-logo-height;
+  }
+
+  .c-login-caption.v-label {
+    font-size: $login-caption-font-size;
+    font-weight: $login-caption-font-weight;
+  }
+
+  .c-login-username {
+    border-radius: $cuba-login-username-border-radius;
+    border-bottom-width: 0;
+    height: $login-username-height;
+  }
+
+  .c-login-password {
+    border-radius: $cuba-login-password-border-radius;
+    height: $login-password-height;
+  }
+
+  .c-login-submit-button {
+    font-weight: $login-btn-font-weight;
+    height: $login-btn-height;
+    width: $login-btn-width;
+  }
+}

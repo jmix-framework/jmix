@@ -65,12 +65,12 @@ public class WebCheckBox extends WebV8AbstractField<com.vaadin.ui.CheckBox, Bool
     public void setParent(Component parent) {
         super.setParent(parent);
 
-        /*
-        TODO: legacy-ui
-        if (parent instanceof FieldGroup
-                || parent instanceof Form) {
+        if (parent instanceof Form
+                // TODO: gg, legacu-ui
+//                parent instanceof FieldGroup
+        ) {
             ((CubaCheckBox) component).setCaptionManagedByLayout(true);
-        }*/
+        }
     }
 
     @Override

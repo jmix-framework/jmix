@@ -28,9 +28,8 @@ import com.vaadin.client.VTooltip;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.checkbox.CheckBoxConnector;
 import com.vaadin.shared.ui.Connect;
-import io.jmix.ui.widgets.JmixCheckBox;
 
-@Connect(value = JmixCheckBox.class, loadStyle = Connect.LoadStyle.EAGER)
+@Connect(value = CubaCheckBox.class, loadStyle = Connect.LoadStyle.EAGER)
 public class CubaCheckBoxConnector extends CheckBoxConnector {
 
     public static final String CONTEXT_HELP_CLASSNAME = "c-context-help-button";

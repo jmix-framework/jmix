@@ -1,3 +1,4 @@
+
 <!--
   ~ Copyright (c) 2008-2019 Haulmont.
   ~
@@ -39,9 +40,8 @@
                     </cssLayout>
                     <sideMenu id="sideMenu"
                               width="100%"/>
-                    <!-- todo fts -->
-                    <!--<ftsField id="ftFsField"
-                              width="100%"/>-->
+                    <ftsField id="ftsField"
+                              width="100%"/>
                     <timeZoneIndicator id="timeZoneIndicator"
                                        align="MIDDLE_CENTER"/>
                     <cssLayout id="controlBox"

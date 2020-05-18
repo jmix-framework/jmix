@@ -33,10 +33,12 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 
     protected static final String USER_INDICATOR_STYLENAME = "c-userindicator";
 
+//    protected final Function<? super BaseUser, String> DEFAULT_USER_NAME_FORMATTER = this::getDefaultUserCaption;
+
     protected Label userNameLabel;
     protected CubaComboBox<BaseUser> userComboBox;
 
-    protected Function<? super BaseUser, String> userNameFormatter;
+//    protected Function<? super BaseUser, String> userNameFormatter = DEFAULT_USER_NAME_FORMATTER;
 
     protected MetadataTools metadataTools;
 
@@ -158,11 +160,13 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 //    }
 //
 //    protected String getSubstitutedUserCaption(User user) {
-//        if (userNameFormatter != null) {
-//            return userNameFormatter.apply(user);
-//        } else {
-//            return metadataTools.getInstanceName(user);
-//        }
+//        return userNameFormatter.apply(user);
+//    }
+//
+//    protected String getDefaultUserCaption(User user) {
+//        return isNotEmpty(user.getName())
+//                ? user.getName()
+//                : metadataTools.getInstanceName(user);
 //    }
 //
 //    protected List<UserSubstitution> getUserSubstitutions() {
@@ -227,13 +231,14 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 
     @Override
     public void setUserNameFormatter(Function<? super BaseUser, String> userNameFormatter) {
-        this.userNameFormatter = userNameFormatter;
+//        this.userNameFormatter = userNameFormatter;
 //        refreshUserSubstitutions();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Function<BaseUser, String> getUserNameFormatter() {
-        return (Function<BaseUser, String>) userNameFormatter;
+//        return (Function<BaseUser, String>) userNameFormatter;
+        return null;
     }
 }

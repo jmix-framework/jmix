@@ -97,7 +97,7 @@ $cuba-sidemenu-layout-expanded-width: 250px !default;
  * The time of SideMenu panel animation in seconds.
  * @group sidemenu
  */
-$cuba-sidemenu-layout-collapse-animation-time: .3s !default;
+$cuba-sidemenu-layout-collapse-animation-time: .4s !default;
 
 // Application Window styles
 @mixin cuba-application-window {
@@ -299,6 +299,7 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
     .c-workarea {
       flex-grow: 1;
       flex-shrink: 1;
+      z-index: 0;
       min-width: 100px;
     }
 
@@ -307,8 +308,10 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
 
       width: $cuba-sidemenu-layout-expanded-width;
       @if $v-animations-enabled {
-        transition: width $cuba-sidemenu-layout-collapse-animation-time cubic-bezier(.25, .1, .24, 1);
+        @include transition(width $cuba-sidemenu-layout-collapse-animation-time ease-in-out);
       }
+
+      z-index: 1;
     }
 
     .c-sidemenu-container.collapsed {
@@ -323,14 +326,15 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
 
       display: flex;
       flex-direction: column;
-      align-items: center;
 
       overflow: hidden;
 
       width: $cuba-sidemenu-layout-expanded-width;
       @if $v-animations-enabled {
-        transition: width $cuba-sidemenu-layout-collapse-animation-time cubic-bezier(.25, .1, .24, 1);
+        @include transition(width $cuba-sidemenu-layout-collapse-animation-time ease-in-out);
       }
+
+      border-right: 0;
 
       @include cuba-sidemenu-collapsed(false);
     }
@@ -359,30 +363,40 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
     }
 
     .c-sidemenu-title {
+      $logo-size: 20px;
+
       display: flex;
       flex-wrap: nowrap;
       align-items: center;
 
-      height: $cuba-sidemenu-layout-collapsed-width;
-      padding: 0 round($v-unit-size / 3);
+      height: 40px;
+      // consider 1px right border
+      padding: 0 floor(($cuba-sidemenu-layout-collapsed-width - $logo-size) / 2);
 
-      text-align: left;
+      .c-app-icon {
+        height: $logo-size;
+        width: $logo-size;
+        flex-shrink: 0;
+
+        margin-right: $v-layout-spacing-horizontal;
+      }
+
+      .c-app-title {
+        width: $cuba-sidemenu-layout-expanded-width -
+        3 * $v-layout-spacing-horizontal - $logo-size;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
-    .c-app-title {
-      width: $cuba-sidemenu-layout-expanded-width -
-        3 * $v-layout-spacing-horizontal -
-        round($cuba-sidemenu-layout-collapsed-width / 2);
-
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .c-sidemenu > .c-sidemenu-item-header {
+      width: 100%;
     }
 
-    .c-app-icon {
-      height: round($cuba-sidemenu-layout-collapsed-width / 2);
-      width: round($cuba-sidemenu-layout-collapsed-width / 2);
-
-      margin-right: $v-layout-spacing-horizontal;
+    .c-user-timezone-label {
+      padding: round($v-layout-spacing-vertical / 2) $v-layout-spacing-vertical;
+      text-align: center;
     }
 
     .c-sidemenu-controls {
@@ -394,10 +408,6 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
       height: $cuba-sidemenu-layout-collapsed-width;
       background-color: #3b3b3b;
 
-      @if $cuba-sidemenu-layout-collapse-enabled == false {
-        display: none;
-      }
-
       & > * {
         flex-shrink: 0;
 
@@ -405,7 +415,7 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
       }
     }
 
-    .c-sidemenu-collapse {
+    .c-sidemenu-collapse-button {
       $bg-color: #2b2b2b;
 
       width: $cuba-sidemenu-layout-collapsed-width;
@@ -435,11 +445,19 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
         bottom: 0;
         left: 0;
       }
+
+      @if $cuba-sidemenu-layout-collapse-enabled == false {
+        display: none;
+      }
     }
 
-    .c-sidemenu-controls .c-userindicator {
-      width: $cuba-sidemenu-layout-expanded-width - 3 * $cuba-sidemenu-layout-collapsed-width;
-      padding: 0 $v-layout-spacing-horizontal;
+    $buttons-width: 30px;
+
+    .c-userindicator {
+      width: $cuba-sidemenu-layout-expanded-width
+        - $cuba-sidemenu-layout-collapsed-width
+        - 2 * $buttons-width;
+      padding: 0 round($v-layout-spacing-horizontal / 2);
 
       font-size: 1.1em;
       text-align: center;
@@ -447,13 +465,31 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
       & > .v-label {
         width: 100%;
         overflow: hidden;
+        text-align: center;
+      }
+
+      @if $cuba-sidemenu-layout-collapse-enabled == false {
+        width: $cuba-sidemenu-layout-expanded-width - 2 * $buttons-width;
       }
     }
 
-    .c-sidemenu-controls .c-settings-button,
-    .c-sidemenu-controls .c-logout-button {
-      width: $cuba-sidemenu-layout-collapsed-width;
+    .c-sidemenu-controls .c-userindicator .c-user-select-combobox {
+      width: 100%;
+    }
+
+    .c-settings-button,
+    .c-logout-button,
+    .c-login-button {
+      width: $buttons-width;
       height: $cuba-sidemenu-layout-collapsed-width;
+
+      padding: 0;
+
+      color: $cuba-menubar-text-color;
+
+      background: none;
+      border: none;
+      box-shadow: none;
 
       &::after {
         top: 0;
@@ -461,18 +497,30 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
         bottom: 0;
         left: 0;
       }
-    }
-
-    .c-sidemenu-controls .c-settings-button {
-      color: $cuba-menubar-text-color;
-
-      background: none;
-      border: none;
-      box-shadow: none;
 
       &:hover {
         color: $cuba-menubar-menuitem-text-selected-color;
       }
+    }
+
+    .c-settings-button,
+    .c-logout-button {
+      display: none;
+    }
+
+    .c-logout-button,
+    .c-login-button {
+      margin-left: auto;
+    }
+
+    // show settings and logout button only when user indicator is visible i.e. when user is authenticated
+    .c-userindicator ~ .c-settings-button,
+    .c-userindicator ~ .c-logout-button {
+      display: block;
+    }
+
+    .c-userindicator ~ .c-login-button {
+      display: none;
     }
   }
 }
@@ -488,6 +536,7 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
       padding: 0;
 
       .c-sidemenu-item-wrap {
+        width: $cuba-sidemenu-layout-collapsed-width;
         text-align: center;
       }
 
@@ -508,16 +557,16 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
       opacity: 0;
 
       @if $v-animations-enabled {
-        @include transition (max-height $cuba-sidemenu-layout-collapse-animation-time ease-in-out);
+        @include transition(max-height $cuba-sidemenu-layout-collapse-animation-time ease-in-out);
       }
     }
 
-    .c-sidemenu-title .v-label {
-      display: none;
+    .c-ftsfield {
+      visibility: hidden;
     }
 
-    .c-app-icon {
-      margin-right: 0;
+    .c-user-timezone-label {
+      visibility: hidden;
     }
   } @else {
     .c-sidemenu {
@@ -528,6 +577,7 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
       padding: 0 $v-unit-size 0 round($v-unit-size / 2);
 
       .c-sidemenu-item-wrap {
+        width: 100%;
         text-align: left;
       }
 
@@ -551,12 +601,12 @@ $cuba-sidemenu-layout-collapse-animation-time: .3s !default;
       }
     }
 
-    .c-sidemenu-title .v-label {
-      display: inline-block;
+    .c-ftsfield {
+      visibility: visible;
     }
 
-    .c-app-icon {
-      margin-right: $v-layout-spacing-horizontal;
+    .c-user-timezone-label {
+      visibility: visible;
     }
   }
 }

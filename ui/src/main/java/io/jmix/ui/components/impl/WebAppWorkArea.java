@@ -504,13 +504,13 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         Screen rootScreen = ComponentsHelper.getWindowNN(this).getFrameOwner();
 
         RootWindow topLevelWindow = (RootWindow) rootScreen.getWindow();
-        JmixOrderedActionsLayout actionsLayout = topLevelWindow.unwrap(JmixOrderedActionsLayout.class);
-
-        if (getMode() == Mode.TABBED) {
-            actionsLayout.addShortcutListener(createNextWindowTabShortcut(topLevelWindow));
-            actionsLayout.addShortcutListener(createPreviousWindowTabShortcut(topLevelWindow));
-        }
-        actionsLayout.addShortcutListener(createCloseShortcut(topLevelWindow));
+        topLevelWindow.withUnwrapped(JmixOrderedActionsLayout.class, actionsLayout -> {
+            if (getMode() == Mode.TABBED) {
+                actionsLayout.addShortcutListener(createNextWindowTabShortcut(topLevelWindow));
+                actionsLayout.addShortcutListener(createPreviousWindowTabShortcut(topLevelWindow));
+            }
+            actionsLayout.addShortcutListener(createCloseShortcut(topLevelWindow));
+        });
     }
 
     protected ShortcutListener createCloseShortcut(RootWindow topLevelWindow) {

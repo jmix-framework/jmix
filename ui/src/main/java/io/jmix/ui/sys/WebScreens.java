@@ -45,6 +45,7 @@ import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.logging.UserActionsLogger;
 import io.jmix.ui.model.impl.ScreenDataImpl;
 import io.jmix.ui.navigation.NavigationState;
+import io.jmix.ui.navigation.UrlTools;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
@@ -101,6 +102,8 @@ public class WebScreens implements Screens {
     protected Messages messages;
     @Inject
     protected Icons icons;
+    @Inject
+    protected UrlTools urlTools;
     @Inject
     protected WindowCreationHelper windowCreationHelper;
     @Inject
@@ -574,15 +577,14 @@ public class WebScreens implements Screens {
             return;
         }
 
-        // todo navigation
-        /*Screen currentScreen = getAnyCurrentScreen();
+        Screen currentScreen = getAnyCurrentScreen();
         if (currentScreen != null) {
             NavigationState resolvedState = ((WebWindow) currentScreen.getWindow()).getResolvedState();
             if (resolvedState != null) {
                 String currentScreenRoute = resolvedState.asRoute();
-                UrlTools.replaceState(currentScreenRoute);
+                urlTools.replaceState(currentScreenRoute, ui);
             }
-        }*/
+        }
     }
 
     protected Screen getAnyCurrentScreen() {

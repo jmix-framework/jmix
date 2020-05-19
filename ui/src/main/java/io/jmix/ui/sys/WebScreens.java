@@ -44,6 +44,7 @@ import io.jmix.ui.icons.Icons;
 import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.logging.UserActionsLogger;
 import io.jmix.ui.model.impl.ScreenDataImpl;
+import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
@@ -411,7 +412,7 @@ public class WebScreens implements Screens {
         LaunchMode launchMode = screen.getWindow().getContext().getLaunchMode();
 
         if (launchMode == OpenMode.NEW_TAB
-            || launchMode == OpenMode.NEW_WINDOW) {
+                || launchMode == OpenMode.NEW_WINDOW) {
             WebAppWorkArea workArea = getConfiguredWorkArea();
 
             if (workArea.getMode() == Mode.SINGLE) {
@@ -723,7 +724,7 @@ public class WebScreens implements Screens {
 
         Predicate<Screen> hasUnsavedChanges = screen ->
                 screen instanceof ChangeTracker
-                && ((ChangeTracker) screen).hasUnsavedChanges();
+                        && ((ChangeTracker) screen).hasUnsavedChanges();
 
         return getDialogScreensStream().anyMatch(hasUnsavedChanges)
                 || getOpenedWorkAreaScreensStream().anyMatch(hasUnsavedChanges);
@@ -1141,8 +1142,10 @@ public class WebScreens implements Screens {
         breadCrumbs.setWindowNavigateHandler(this::handleWindowBreadCrumbsNavigate);
         breadCrumbs.addWindow(screen.getWindow());
 
-        // todo navigation
-        // ((WebWindow) screen.getWindow()).setUrlStateMark(getConfiguredWorkArea().generateUrlStateMark());
+        WebWindow webWindow = (WebWindow) screen.getWindow();
+        webWindow.setResolvedState(createOrUpdateState(
+                webWindow.getResolvedState(),
+                getConfiguredWorkArea().generateUrlStateMark()));
 
         TabWindowContainer windowContainer = new TabWindowContainerImpl();
         windowContainer.setPrimaryStyleName("c-app-window-wrap");
@@ -1246,8 +1249,11 @@ public class WebScreens implements Screens {
         windowContainer.addComponent(newWindowComposition);
 
         breadCrumbs.addWindow(newWindow);
-        // todo navigation
-        // ((WebWindow) newWindow).setUrlStateMark(workArea.generateUrlStateMark());
+
+        WebWindow webWindow = (WebWindow) screen.getWindow();
+        webWindow.setResolvedState(createOrUpdateState(
+                webWindow.getResolvedState(),
+                getConfiguredWorkArea().generateUrlStateMark()));
 
         if (workArea.getMode() == Mode.TABBED) {
             TabSheetBehaviour tabSheet = workArea.getTabbedWindowContainer().getTabSheetBehaviour();
@@ -1280,8 +1286,10 @@ public class WebScreens implements Screens {
 
         WebAppWorkArea workArea = getConfiguredWorkAreaOrNull();
         if (workArea != null) {
-            // todo navigation
-            // ((WebWindow) window).setUrlStateMark(workArea.generateUrlStateMark());
+            WebWindow webWindow = (WebWindow) screen.getWindow();
+            webWindow.setResolvedState(createOrUpdateState(
+                    webWindow.getResolvedState(),
+                    getConfiguredWorkArea().generateUrlStateMark()));
         }
 
         JmixWindow vWindow = window.unwrapComposition(JmixWindow.class);
@@ -1301,6 +1309,17 @@ public class WebScreens implements Screens {
         }
 
         ui.addWindow(vWindow);
+    }
+
+    protected NavigationState createOrUpdateState(@Nullable NavigationState state, int stateMark) {
+        if (state == null) {
+            return new NavigationState("", String.valueOf(stateMark), "", Collections.emptyMap());
+        }
+        return new NavigationState(
+                state.getRoot(),
+                String.valueOf(stateMark),
+                state.getNestedRoute(),
+                state.getParams());
     }
 
     protected void handleWindowBreadCrumbsNavigate(WindowBreadCrumbs breadCrumbs, Window window) {

@@ -29,8 +29,11 @@ import io.jmix.ui.*;
 import io.jmix.ui.Screens.OpenedScreens;
 import io.jmix.ui.Screens.WindowStack;
 import io.jmix.ui.components.*;
+import io.jmix.ui.navigation.NavigationState;
+import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.widgets.*;
 import org.apache.commons.lang3.StringUtils;
@@ -252,8 +255,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         Window selectedWindow = ((TabWindowContainer) selectedTab).getBreadCrumbs().getCurrentWindow();
         WebWindow webWindow = (WebWindow) selectedWindow;
 
-        // todo navigation
-        /*NavigationState resolvedState = webWindow.getResolvedState();
+        NavigationState resolvedState = webWindow.getResolvedState();
         if (resolvedState != null) {
             int stateMark = generateUrlStateMark();
 
@@ -262,8 +264,6 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
                     String.valueOf(stateMark),
                     resolvedState.getNestedRoute(),
                     resolvedState.getParams());
-
-            webWindow.setUrlStateMark(stateMark);
             webWindow.setResolvedState(newState);
 
             Screen screen = selectedWindow.getFrameOwner();
@@ -272,7 +272,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
                     .getUrlRouting();
 
             urlRouting.pushState(screen, newState.getParams());
-        }*/
+        }
     }
 
     protected Action.Handler createTabSheetActionHandler(HasTabSheetBehaviour tabSheet) {

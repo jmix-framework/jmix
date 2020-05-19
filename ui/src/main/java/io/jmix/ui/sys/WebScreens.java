@@ -482,13 +482,12 @@ public class WebScreens implements Screens {
     }
 
     protected void changeUrl(Screen screen) {
-        // todo navigation
-        /*WebWindow webWindow = (WebWindow) screen.getWindow();
+        WebWindow webWindow = (WebWindow) screen.getWindow();
         Map<String, String> params = webWindow.getResolvedState() != null
                 ? webWindow.getResolvedState().getParams()
                 : Collections.emptyMap();
 
-        ui.getUrlRouting().pushState(screen, params);*/
+        ui.getUrlRouting().pushState(screen, params);
     }
 
     protected void checkNotYetOpened(Screen screen) {

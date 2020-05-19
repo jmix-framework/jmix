@@ -26,6 +26,7 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.components.impl.WindowImplementation;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.navigation.UrlParamsChangedEvent;
 import io.jmix.ui.settings.Settings;
 import io.jmix.ui.util.OperationResult;
 import org.springframework.context.ApplicationListener;
@@ -279,7 +280,7 @@ public abstract class Screen implements FrameOwner {
         return eventHub.subscribe(AfterDetachEvent.class, listener);
     }
 
-    /* todo navigation
+    /**
      * Adds {@link UrlParamsChangedEvent} listener.
      * <p>
      * You can also add an event listener declaratively using a controller method annotated with {@link Subscribe}:
@@ -293,9 +294,9 @@ public abstract class Screen implements FrameOwner {
      * @param listener listener
      * @return subscription
      */
-    /*protected Subscription addUrlParamsChangeListener(Consumer<UrlParamsChangedEvent> listener) {
+    protected Subscription addUrlParamsChangeListener(Consumer<UrlParamsChangedEvent> listener) {
         return eventHub.subscribe(UrlParamsChangedEvent.class, listener);
-    }*/
+    }
 
     /**
      * Shows this screen.

@@ -42,6 +42,7 @@ import io.jmix.ui.widgets.AppUIUtils;
 import io.jmix.ui.widgets.CubaTimer;
 import io.jmix.ui.widgets.JmixFileDownloader;
 import io.jmix.ui.widgets.client.ui.AppUIClientRpc;
+import io.jmix.ui.widgets.client.ui.AppUIConstants;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -700,9 +701,8 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
 
-        // todo navigation
-        /*String lastHistoryOp = ((WebUrlRouting) getUrlRouting()).getLastHistoryOperation();
-        target.addAttribute(CubaUIConstants.LAST_HISTORY_OP, lastHistoryOp);*/
+        String lastHistoryOp = ((WebUrlRouting) getUrlRouting()).getLastHistoryOperation();
+        target.addAttribute(AppUIConstants.LAST_HISTORY_OP, lastHistoryOp);
     }
 
     /**

@@ -24,6 +24,7 @@ import io.jmix.core.commons.util.Dom4j;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.Window;
+import io.jmix.ui.navigation.RouteDefinition;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.*;
 import org.apache.commons.lang3.StringUtils;
@@ -297,16 +298,14 @@ public class WindowConfig {
                 continue;
             }
 
-            // todo navigation
-            // RouteDefinition routeDef = loadRouteDefinition(element);
+            RouteDefinition routeDef = loadRouteDefinition(element);
 
-            WindowInfo windowInfo = new WindowInfo(id, windowAttributesProvider, element/*, routeDef*/);
+            WindowInfo windowInfo = new WindowInfo(id, windowAttributesProvider, element, routeDef);
             registerScreen(id, windowInfo);
         }
     }
 
-    // todo navigation
-    /*protected RouteDefinition loadRouteDefinition(Element screenElement) {
+    protected RouteDefinition loadRouteDefinition(Element screenElement) {
         String screenId = screenElement.attributeValue("id");
         String route = screenElement.attributeValue("route");
         String parentPrefix = screenElement.attributeValue("routeParentPrefix");
@@ -341,7 +340,7 @@ public class WindowConfig {
         }
 
         return routeDefinition;
-    }*/
+    }
 
     protected void registerScreen(String id, WindowInfo windowInfo) {
         // todo
@@ -356,12 +355,10 @@ public class WindowConfig {
 
         screens.put(id, windowInfo);
 
-        // todo navigation
-        // registerScreenRoute(id, windowInfo);
+        registerScreenRoute(id, windowInfo);
     }
 
-    // todo navigation
-    /*protected void registerScreenRoute(String screenId, WindowInfo windowInfo) {
+    protected void registerScreenRoute(String screenId, WindowInfo windowInfo) {
         RouteDefinition routeDef = windowInfo.getRouteDefinition();
         if (routeDef != null) {
             String route = routeDef.getPath();
@@ -389,7 +386,7 @@ public class WindowConfig {
 
             routes.put(route, screenId);
         }
-    }*/
+    }
 
     /**
      * Have to do this check due to Login/Main Screen are registered

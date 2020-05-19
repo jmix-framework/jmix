@@ -383,7 +383,7 @@ public class EntitiesControllerManager {
                 .path("/{id}")
                 .buildAndExpand(EntityValues.getId(entity).toString());
 
-        if (restProperties.getRestResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithView(entity, responseView)) {
+        if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithView(entity, responseView)) {
             entity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
         }
         restControllerUtils.applyAttributesSecurity(entity);
@@ -405,7 +405,7 @@ public class EntitiesControllerManager {
         Collection<Entity> mainCollectionEntity = new ArrayList<>();
         JsonArray entitiesJsonArray = new JsonParser().parse(entitiesJson).getAsJsonArray();
 
-        if (restProperties.getRestResponseViewEnabled() && responseView != null) {
+        if (restProperties.isResponseViewEnabled() && responseView != null) {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 Entity mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
                 if (!entityStates.isLoadedWithView(mainEntity, responseView)) {
@@ -460,7 +460,7 @@ public class EntitiesControllerManager {
         //there may be multiple entities in importedEntities (because of @Composition references), so we must find
         // the main entity that will be returned
         Entity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, entityJson, entityId);
-        if (restProperties.getRestResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithView(entity, responseView)) {
+        if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithView(entity, responseView)) {
             entity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
         }
         restControllerUtils.applyAttributesSecurity(entity);
@@ -478,7 +478,7 @@ public class EntitiesControllerManager {
 
         JsonArray entitiesJsonArray = new JsonParser().parse(entitiesJson).getAsJsonArray();
         Collection<Entity> entities = new ArrayList<>();
-        if (restProperties.getRestResponseViewEnabled() && responseView != null) {
+        if (restProperties.isResponseViewEnabled() && responseView != null) {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 String entityId = jsonElement.getAsJsonObject().get("id").getAsString();
                 Entity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
@@ -529,7 +529,7 @@ public class EntitiesControllerManager {
         Collection<Entity> importedEntities;
         try {
             importedEntities = entityImportExport.importEntities(Collections.singletonList(entity),
-                    entityImportView, true, restProperties.getOptimisticLockingEnabled());
+                    entityImportView, true, restProperties.isOptimisticLockingEnabled());
         } catch (EntityImportException e) {
             throw new RestAPIException("Entity update failed", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
@@ -685,7 +685,7 @@ public class EntitiesControllerManager {
         Preconditions.checkNotNullArgument(entity);
 
         String json;
-        if (restProperties.getRestResponseViewEnabled()) {
+        if (restProperties.isResponseViewEnabled()) {
             FetchPlan view = findOrCreateResponseView(metaClass, responseView);
             json = entitySerialization.toJson(entity, view, EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
         } else {
@@ -696,7 +696,7 @@ public class EntitiesControllerManager {
 
     protected String createEntitiesJson(Collection<Entity> entities, MetaClass metaClass, String responseView, String version) {
         String json;
-        if (restProperties.getRestResponseViewEnabled()) {
+        if (restProperties.isResponseViewEnabled()) {
             FetchPlan view = findOrCreateResponseView(metaClass, responseView);
             json = entitySerialization.toJson(entities, view, EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
         } else {

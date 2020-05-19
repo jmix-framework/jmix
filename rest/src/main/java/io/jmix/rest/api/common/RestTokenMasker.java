@@ -36,7 +36,7 @@ public class RestTokenMasker {
      * @return masked token value
      */
     public String maskToken(String token) {
-        if (!restProperties.getTokenMaskingEnabled()) return token;
+        if (!restProperties.isTokenMaskingEnabled()) return token;
         return token.length() > 23 ? MASK_PREFIX + token.substring(23) : MASK_PREFIX;
     }
 }

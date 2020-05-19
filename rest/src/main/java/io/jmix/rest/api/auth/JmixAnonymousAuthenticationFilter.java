@@ -26,7 +26,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -46,7 +45,7 @@ import java.util.regex.Pattern;
 
 /**
  * This filter is used for anonymous access to CUBA REST API. If no Authorization header presents in the request and if
- * {@link RestProperties#getRestAnonymousEnabled()} is true, then the anonymous user session will be set to the {@link
+ * {@link RestProperties#isAnonymousEnabled()} is true, then the anonymous user session will be set to the {@link
  * SecurityContext} and the request will be authenticated. This filter must be invoked after the {@link
  * org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter}
  */
@@ -83,7 +82,7 @@ public class JmixAnonymousAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         ServletRequest nextRequest = request;
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            if (restProperties.getRestAnonymousEnabled()) {
+            if (restProperties.isAnonymousEnabled()) {
                 populateSecurityContextWithAnonymousSession();
             } else {
                 //anonymous service method or query may be invoked

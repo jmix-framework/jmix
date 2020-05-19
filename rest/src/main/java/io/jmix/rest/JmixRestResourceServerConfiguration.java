@@ -23,6 +23,7 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.rest.api.auth.JmixRestLastSecurityFilter;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.sys.JmixRestExceptionLoggingFilter;
+import io.jmix.rest.property.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +61,9 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
 
     @Autowired
     protected JmixModules jmixModules;
+
+    @Autowired
+    protected RestProperties restProperties;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {

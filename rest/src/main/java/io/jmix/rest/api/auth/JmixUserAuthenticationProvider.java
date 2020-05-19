@@ -16,27 +16,19 @@
 
 package io.jmix.rest.api.auth;
 
-import com.google.common.base.Strings;
-import com.google.common.net.HttpHeaders;
-import io.jmix.core.ClientType;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
-import io.jmix.core.security.LoginException;
-import io.jmix.core.security.SystemAuthenticationToken;
 import io.jmix.rest.api.common.RestAuthUtils;
-import io.jmix.rest.exception.RestApiAccessDeniedException;
 import io.jmix.rest.property.RestProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,7 +38,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class JmixUserAuthenticationProvider implements AuthenticationProvider {
 
@@ -87,7 +82,7 @@ public class JmixUserAuthenticationProvider implements AuthenticationProvider {
         String ipAddress = request.getRemoteAddr();
 
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
-            if (!restProperties.getStandardAuthenticationEnabled()) {
+            if (!restProperties.isStandardAuthenticationEnabled()) {
                 log.debug("Standard authentication is disabled. Property cuba.rest.standardAuthenticationEnabled is false");
 
                 throw new InvalidGrantException("Authentication disabled");

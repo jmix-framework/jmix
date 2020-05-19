@@ -28,6 +28,14 @@ import java.util.List;
 public class RestProperties {
 
     String clientId;
+    private String clientSecret;
+    private final int clientTokenExpirationTimeSec;
+    private final int clientRefreshTokenExpirationTimeSec;
+    private final String[] clientAuthorizedGrantTypes;
+    private final boolean supportRefreshToken;
+    private final boolean reuseRefreshToken;
+    private final String[] allowedOrigins;
+    private final int maxUploadSize;
     boolean standardAuthenticationEnabled;
     List<String> standardAuthenticationUsers;
     boolean anonymousEnabled;
@@ -40,19 +48,37 @@ public class RestProperties {
     boolean storeTokensInDb;
     boolean syncTokenReplication;
 
-    public RestProperties(String clientId,
-                          @DefaultValue("true") boolean standardAuthenticationEnabled,
-                          List<String> standardAuthenticationUsers,
-                          @DefaultValue("false") boolean anonymousEnabled,
-                          @DefaultValue("true") boolean tokenMaskingEnabled,
-                          @DefaultValue("false") boolean optimisticLockingEnabled,
-                          @DefaultValue("false") boolean checkPasswordOnClient,
-                          List<String> externalRestBypassPatterns,
-                          @DefaultValue("true") boolean responseViewEnabled,
-                          @DefaultValue("REST") String securityScope,
-                          @DefaultValue("false") boolean storeTokensInDb,
-                          @DefaultValue("false") boolean syncTokenReplication) {
+    public RestProperties(
+            @DefaultValue("client") String clientId,
+            @DefaultValue("{noop}secret") String clientSecret,
+            @DefaultValue("43200") int clientTokenExpirationTimeSec, //12 hours
+            @DefaultValue("31536000") int clientRefreshTokenExpirationTimeSec, //365 days
+            @DefaultValue({"password", "external", "refresh_token"}) String[] clientAuthorizedGrantTypes,
+            @DefaultValue("true") boolean supportRefreshToken,
+            @DefaultValue("true") boolean reuseRefreshToken,
+            @DefaultValue("*") String[] allowedOrigins,
+            //todo DataSize type
+            @DefaultValue("20971520") int maxUploadSize,
+            @DefaultValue("true") boolean standardAuthenticationEnabled,
+            List<String> standardAuthenticationUsers,
+            @DefaultValue("false") boolean anonymousEnabled,
+            @DefaultValue("true") boolean tokenMaskingEnabled,
+            @DefaultValue("false") boolean optimisticLockingEnabled,
+            @DefaultValue("false") boolean checkPasswordOnClient,
+            List<String> externalRestBypassPatterns,
+            @DefaultValue("true") boolean responseViewEnabled,
+            @DefaultValue("REST") String securityScope,
+            @DefaultValue("false") boolean storeTokensInDb,
+            @DefaultValue("false") boolean syncTokenReplication) {
         this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.clientTokenExpirationTimeSec = clientTokenExpirationTimeSec;
+        this.clientRefreshTokenExpirationTimeSec = clientRefreshTokenExpirationTimeSec;
+        this.clientAuthorizedGrantTypes = clientAuthorizedGrantTypes;
+        this.supportRefreshToken = supportRefreshToken;
+        this.reuseRefreshToken = reuseRefreshToken;
+        this.allowedOrigins = allowedOrigins;
+        this.maxUploadSize = maxUploadSize;
         this.standardAuthenticationEnabled = standardAuthenticationEnabled;
         this.standardAuthenticationUsers = standardAuthenticationUsers;
         this.anonymousEnabled = anonymousEnabled;
@@ -69,17 +95,21 @@ public class RestProperties {
     /**
      * @return authorized rest client id
      */
-    public String getRestClientId() {
+    public String getClientId() {
         return clientId;
     }
 
-    public boolean getStandardAuthenticationEnabled() {
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public boolean isStandardAuthenticationEnabled() {
         return standardAuthenticationEnabled;
     }
 
     /**
-     * @return list of users that are not allowed to use external authentication. They can use only standard authentication.
-     * Empty list means that everyone is allowed to login using external authentication.
+     * @return list of users that are not allowed to use external authentication. They can use only standard
+     * authentication. Empty list means that everyone is allowed to login using external authentication.
      */
     public List<String> getStandardAuthenticationUsers() {
         return standardAuthenticationUsers;
@@ -88,30 +118,30 @@ public class RestProperties {
     /**
      * @return anonymous access to REST API is allowed
      */
-    public boolean getRestAnonymousEnabled() {
+    public boolean isAnonymousEnabled() {
         return anonymousEnabled;
     }
 
     /**
      * @return token masking in application logs is enabled
      */
-    public boolean getTokenMaskingEnabled() {
+    public boolean isTokenMaskingEnabled() {
         return tokenMaskingEnabled;
     }
 
     /**
      * @return whether the passed entities versions should be validated before entities are persisted
      */
-    public boolean getOptimisticLockingEnabled() {
+    public boolean isOptimisticLockingEnabled() {
         return optimisticLockingEnabled;
     }
 
 
     /**
-     * @return Whether to use an login/password authentication on client
-     * instead of login/password authentication on middleware.
+     * @return Whether to use an login/password authentication on client instead of login/password authentication on
+     * middleware.
      */
-    public boolean getCheckPasswordOnClient() {
+    public boolean isCheckPasswordOnClient() {
         return checkPasswordOnClient;
     }
 
@@ -134,29 +164,70 @@ public class RestProperties {
     /**
      * @return whether "responseView" param is required
      */
-    public boolean getRestResponseViewEnabled() {
+    public boolean isResponseViewEnabled() {
         return responseViewEnabled;
     }
 
     /**
-     * Active security scope for a REST client.
-     * Security scope specifies which roles will be loaded for user session
+     * Active security scope for a REST client. Security scope specifies which roles will be loaded for user session
      */
     public String getSecurityScope() {
         return securityScope;
     }
 
     /**
-     * @return whether to store REST API OAuth tokens in the database
+     * @return access token expiration time in seconds for the default client
      */
-    boolean isRestStoreTokensInDb() {
-        return storeTokensInDb;
+    public int getClientTokenExpirationTimeSec() {
+        return clientTokenExpirationTimeSec;
     }
 
     /**
-     * @return whether newly created tokens should be sent to the cluster synchronously
+     * @return refresh token expiration time in seconds for the default client
      */
-    boolean isSyncTokenReplication() {
-        return syncTokenReplication;
+    public int getClientRefreshTokenExpirationTimeSec() {
+        return clientRefreshTokenExpirationTimeSec;
+    }
+
+    /**
+     * @return authorized grant types for the default client
+     */
+    public String[] getClientAuthorizedGrantTypes() {
+        return clientAuthorizedGrantTypes;
+    }
+
+    /**
+     * @return whether to support the refresh token
+     */
+    public boolean isSupportRefreshToken() {
+        return supportRefreshToken;
+    }
+
+    /**
+     * @return whether to reuse refresh tokens (until expired)
+     */
+    public boolean isReuseRefreshToken() {
+        return reuseRefreshToken;
+    }
+
+    /**
+     * @return allowed origins for cross-domain requests
+     */
+    public String[] getAllowedOrigins() {
+        return allowedOrigins;
+    }
+
+    /**
+     * @return maximum size of the file that may be uploaded with REST API in bytes
+     */
+    public int getMaxUploadSize() {
+        return maxUploadSize;
+    }
+
+    /**
+     * @return hether to store REST API OAuth tokens in the database
+     */
+    public boolean isStoreTokensInDb() {
+        return storeTokensInDb;
     }
 }

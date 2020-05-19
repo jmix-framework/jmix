@@ -17,20 +17,21 @@
 package io.jmix.rest;
 
 import io.jmix.rest.api.sys.RestCleanupInterceptor;
-import org.springframework.beans.factory.annotation.Value;
+import io.jmix.rest.property.RestProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-@EnableWebMvc
 @Configuration
-@PropertySource("classpath:/io/jmix/rest/module.properties")
-public class JmixRestMvcConfiguration implements WebMvcConfigurer {
+public class JmixRestMvcConfiguration extends WebMvcConfigurationSupport {
 
-    @Value("${jmix.rest.allowedOrigins}")
-    protected String[] allowedOrigins;
+    @Autowired
+    protected RestProperties restProperties;
 
     @Bean
     protected RestCleanupInterceptor restCleanupInterceptor() {
@@ -49,8 +50,8 @@ public class JmixRestMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins(allowedOrigins)
+        registry.addMapping("/rest/**")
+                .allowedOrigins(restProperties.getAllowedOrigins())
                 .allowedHeaders("*")
                 .allowedMethods("*")
                 .allowCredentials(true)

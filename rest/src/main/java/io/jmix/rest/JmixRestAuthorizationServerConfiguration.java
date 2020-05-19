@@ -17,16 +17,17 @@
 package io.jmix.rest;
 
 import io.jmix.rest.api.auth.UniqueAuthenticationKeyGenerator;
+import io.jmix.rest.property.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.oauth2.config.annotation.builders.InMemoryClientDetailsServiceBuilder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -34,31 +35,12 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 
 @Configuration
 @EnableAuthorizationServer
-@PropertySource("classpath:/io/jmix/rest/module.properties")
 public class JmixRestAuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     private static final String REST_API = "rest-api";
 
-    @Value("${jmix.rest.client.id}")
-    protected String client;
-
-    @Value("${jmix.rest.client.secret}")
-    protected String secret;
-
-    @Value("${jmix.rest.supportRefreshToken}")
-    protected boolean supportRefreshToken;
-
-    @Value("${jmix.rest.reuseRefreshToken}")
-    protected boolean reuseRefreshToken;
-
-    @Value("${jmix.rest.client.authorizedGrantTypes}")
-    protected String[] authorizedGrantTypes;
-
-    @Value("${jmix.rest.client.tokenExpirationTimeSec}")
-    protected int tokenExpirationTimeSec;
-
-    @Value("${jmix.rest.client.refreshTokenExpirationTimeSec}")
-    protected int refreshTokenExpirationTimeSec;
+    @Autowired
+    protected RestProperties restProperties;
 
     @Autowired
     protected AuthenticationManager authenticationManager;
@@ -80,22 +62,32 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
     public AuthorizationServerTokenServices tokenServices() {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setSupportRefreshToken(supportRefreshToken);
-        defaultTokenServices.setReuseRefreshToken(reuseRefreshToken);
+        defaultTokenServices.setSupportRefreshToken(restProperties.isSupportRefreshToken());
+        defaultTokenServices.setReuseRefreshToken(restProperties.isReuseRefreshToken());
 //        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
         return defaultTokenServices;
     }
 
+    @Bean("jmix_clientDetailsService")
+    public ClientDetailsService clientDetailsService() {
+        InMemoryClientDetailsServiceBuilder builder = new InMemoryClientDetailsServiceBuilder();
+        builder
+                .withClient(restProperties.getClientId())
+                .secret(restProperties.getClientSecret())
+                .authorizedGrantTypes(restProperties.getClientAuthorizedGrantTypes())
+                .accessTokenValiditySeconds(restProperties.getClientRefreshTokenExpirationTimeSec())
+                .refreshTokenValiditySeconds(restProperties.getClientRefreshTokenExpirationTimeSec())
+                .scopes(REST_API);
+        try {
+            return builder.build();
+        } catch (Exception e) {
+            throw new RuntimeException("Error on building ClientDetailsService", e);
+        }
+    }
+
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients
-                .inMemory()
-                .withClient(client)
-                .secret(secret)
-                .authorizedGrantTypes(authorizedGrantTypes)
-                .accessTokenValiditySeconds(tokenExpirationTimeSec)
-                .refreshTokenValiditySeconds(refreshTokenExpirationTimeSec)
-                .scopes(REST_API);
+        clients.withClientDetails(clientDetailsService());
     }
 
     @Override

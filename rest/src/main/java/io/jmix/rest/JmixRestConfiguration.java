@@ -20,7 +20,8 @@ import io.jmix.core.JmixCoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.security.JmixCoreSecurityConfiguration;
 import io.jmix.data.JmixDataConfiguration;
-import org.springframework.beans.factory.annotation.Value;
+import io.jmix.rest.property.RestProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,13 +36,13 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @PropertySource("classpath:/io/jmix/rest/module.properties")
 public class JmixRestConfiguration {
 
-    @Value("${jmix.rest.maxUploadSize}")
-    protected Long maxUploadSize;
+    @Autowired
+    protected RestProperties restProperties;
 
     @Bean
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setMaxUploadSize(maxUploadSize);
+        resolver.setMaxUploadSize(restProperties.getMaxUploadSize());
         return resolver;
     }
 }

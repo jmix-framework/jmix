@@ -303,7 +303,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
         }
         handled.add(entityId);
         if (!entity.__getEntityEntry().isEmbeddable()) {
-            EntityEntry<?> entityEntry = entity.__getEntityEntry();
+            EntityEntry entityEntry = entity.__getEntityEntry();
             Multimap<String, Object> filteredData = entityEntry.getSecurityState().getFilteredData();
             for (MetaProperty property : metaClass.getProperties()) {
                 if (metadataTools.isPersistent(property) && entityStates.isLoaded(entity, property.getName())) {

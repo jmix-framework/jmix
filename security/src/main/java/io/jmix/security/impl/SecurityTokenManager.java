@@ -213,7 +213,7 @@ public class SecurityTokenManager {
     /**
      * INTERNAL.
      */
-    public void addFiltered(Entity<?> entity, String property, Object id) {
+    public void addFiltered(Entity entity, String property, Object id) {
         EntityEntry entityEntry = entity.__getEntityEntry();
         Multimap<String, Object> filteredData = entityEntry.getSecurityState().getFilteredData();
         if (filteredData == null) {
@@ -226,7 +226,7 @@ public class SecurityTokenManager {
     /**
      * INTERNAL.
      */
-    public void addFiltered(Entity<?> entity, String property, Collection ids) {
+    public void addFiltered(Entity entity, String property, Collection ids) {
         EntityEntry entityEntry = entity.__getEntityEntry();
         Multimap<String, Object> filteredData = entityEntry.getSecurityState().getFilteredData();
         if (filteredData == null) {

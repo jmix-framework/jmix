@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.timer
 
 import io.jmix.ui.app.main.MainScreen
 import io.jmix.ui.screen.OpenMode
-import io.jmix.ui.widgets.CubaTimer
+import io.jmix.ui.widgets.JmixTimer
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.timer.screens.FragmentWithTimer
 import spec.haulmont.cuba.web.timer.screens.ScreenWithNestedFragment
@@ -54,7 +54,7 @@ class TimerFacetTest extends UiScreenSpec {
 
         when:
 
-        def impl = screen.timer.timerImpl as CubaTimer
+        def impl = screen.timer.timerImpl as JmixTimer
         impl.actionListeners.get(0).accept(impl)
         impl.stopListeners.get(0).accept(impl)
 
@@ -84,7 +84,7 @@ class TimerFacetTest extends UiScreenSpec {
         when:
 
         def timer = fragmentWithTimer.timer
-        def impl = timer.timerImpl as CubaTimer
+        def impl = timer.timerImpl as JmixTimer
         impl.actionListeners.get(0).accept(impl)
         impl.stopListeners.get(0).accept(impl)
 

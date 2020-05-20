@@ -21,7 +21,7 @@ import com.vaadin.server.FontIcon
 import com.vaadin.ui.TabSheet
 import io.jmix.ui.components.Window
 import io.jmix.ui.components.impl.WebTabWindow
-import io.jmix.ui.icons.CubaIcon
+import io.jmix.ui.icons.JmixIcon
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.workarea.screens.TabbedScreen
 
@@ -140,7 +140,7 @@ class TabWindowPropertiesTest extends UiScreenSpec {
         tab.getIcon() == null
 
         when:
-        window.setIconFromSet(CubaIcon.HOME)
+        window.setIconFromSet(JmixIcon.HOME)
 
         then:
         tab.getIcon() instanceof FontIcon

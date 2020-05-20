@@ -34,8 +34,8 @@ import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.CubaFieldGroup;
-import io.jmix.ui.widgets.CubaFieldGroupLayout;
+import io.jmix.ui.widgets.JmixFieldGroup;
+import io.jmix.ui.widgets.JmixFormLayout;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -53,9 +53,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-public class WebFieldGroup extends WebAbstractComponent<CubaFieldGroupLayout> implements FieldGroup, UiPermissionAware {
+public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implements FieldGroup, UiPermissionAware {
 
-    protected CubaFieldGroup wrapper;
+    protected JmixFieldGroup wrapper;
     protected boolean wrapperAttached = false;
 
     protected Map<String, FieldConfig> fields = new HashMap<>();
@@ -72,8 +72,8 @@ public class WebFieldGroup extends WebAbstractComponent<CubaFieldGroupLayout> im
     protected FieldGroupFieldFactory fieldFactory;
 
     public WebFieldGroup() {
-        wrapper = new CubaFieldGroup();
-        component = new CubaFieldGroupLayout();
+        wrapper = new JmixFieldGroup();
+        component = new JmixFormLayout();
 
         fieldFactory = AppBeans.get(FieldGroupFieldFactory.NAME);
     }

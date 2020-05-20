@@ -39,7 +39,7 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import org.springframework.context.annotation.Scope;
 
@@ -170,7 +170,7 @@ public class AddAction extends ListAction
         Messages messages = AppBeans.get(Messages.NAME);
         this.caption = messages.getMessage("actions.Add");
 
-        this.icon = AppBeans.get(Icons.class).get(CubaIcon.ADD_ACTION);
+        this.icon = AppBeans.get(Icons.class).get(JmixIcon.ADD_ACTION);
 
         setShortcut(AppBeans.get(UiProperties.class).getTableAddShortcut());
     }

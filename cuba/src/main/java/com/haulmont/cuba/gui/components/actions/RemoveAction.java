@@ -33,7 +33,7 @@ import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentsHelper;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import org.springframework.context.annotation.Scope;
 
@@ -136,7 +136,7 @@ public class RemoveAction extends ItemTrackingAction
         Messages messages = AppBeans.get(Messages.NAME);
         this.caption = messages.getMessage("actions.Remove");
 
-        this.icon = AppBeans.get(Icons.class).get(CubaIcon.REMOVE_ACTION);
+        this.icon = AppBeans.get(Icons.class).get(JmixIcon.REMOVE_ACTION);
 
         setShortcut(AppBeans.get(UiProperties.class).getTableRemoveShortcut());
     }

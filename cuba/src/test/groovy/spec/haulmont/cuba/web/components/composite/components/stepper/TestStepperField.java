@@ -32,7 +32,7 @@ import io.jmix.ui.components.impl.CompositeWithContextHelp;
 import io.jmix.ui.components.impl.CompositeWithHtmlCaption;
 import io.jmix.ui.components.impl.CompositeWithHtmlDescription;
 import io.jmix.ui.components.impl.CompositeWithIcon;
-import io.jmix.ui.widgets.CubaTextField;
+import io.jmix.ui.widgets.JmixTextField;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -54,9 +54,9 @@ public class TestStepperField extends CompositeComponent<CssLayout> implements F
         super.setComposition(composition);
 
         valueField = getInnerComponent("stepper_valueField");
-        CubaTextField cubaTextField = valueField.unwrap(CubaTextField.class);
-        cubaTextField.addShortcutListener(createAdjustmentShortcut(ShortcutAction.KeyCode.ARROW_UP, 1));
-        cubaTextField.addShortcutListener(createAdjustmentShortcut(ShortcutAction.KeyCode.ARROW_DOWN, -1));
+        JmixTextField jmixTextField = valueField.unwrap(JmixTextField.class);
+        jmixTextField.addShortcutListener(createAdjustmentShortcut(ShortcutAction.KeyCode.ARROW_UP, 1));
+        jmixTextField.addShortcutListener(createAdjustmentShortcut(ShortcutAction.KeyCode.ARROW_DOWN, -1));
 
         upBtn = getInnerComponent("stepper_upBtn");
         downBtn = getInnerComponent("stepper_downBtn");

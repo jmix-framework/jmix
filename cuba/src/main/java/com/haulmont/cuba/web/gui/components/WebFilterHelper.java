@@ -34,8 +34,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.*;
-import io.jmix.ui.widgets.CubaTextField;
-import io.jmix.ui.widgets.CubaTree;
+import io.jmix.ui.widgets.JmixTextField;
+import io.jmix.ui.widgets.JmixTree;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
 
 import javax.inject.Inject;
@@ -121,7 +121,7 @@ public class WebFilterHelper implements FilterHelper {
     @SuppressWarnings("unchecked")
     @Override
     public void initConditionsDragAndDrop(final Tree tree, final ConditionsTree conditions) {
-        CubaTree vTree = tree.unwrapOrNull(CubaTree.class);
+        JmixTree vTree = tree.unwrapOrNull(JmixTree.class);
         if (vTree == null) {
             return;
         }
@@ -318,7 +318,7 @@ public class WebFilterHelper implements FilterHelper {
 
     @Override
     public void setFieldReadOnlyFocusable(TextField textField, boolean readOnlyFocusable) {
-        textField.withUnwrapped(CubaTextField.class, vTextField ->
+        textField.withUnwrapped(JmixTextField.class, vTextField ->
                 vTextField.setReadOnlyFocusable(readOnlyFocusable));
     }
 
@@ -342,7 +342,7 @@ public class WebFilterHelper implements FilterHelper {
 
     @Override
     public void addShortcutListener(TextField textField, final ShortcutListener listener) {
-        textField.withUnwrapped(CubaTextField.class, vTextField -> {
+        textField.withUnwrapped(JmixTextField.class, vTextField -> {
             int[] modifiers = null;
             KeyCombination.Modifier[] listenerModifiers = listener.getKeyCombination().getModifiers();
             if (listenerModifiers != null) {

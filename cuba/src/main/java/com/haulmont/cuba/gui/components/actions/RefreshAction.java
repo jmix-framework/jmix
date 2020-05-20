@@ -22,7 +22,7 @@ import io.jmix.core.Messages;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.data.meta.EmptyDataUnit;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import org.springframework.context.annotation.Scope;
 
@@ -94,7 +94,7 @@ public class RefreshAction extends BaseAction {
         Messages messages = AppBeans.get(Messages.NAME);
         this.caption = messages.getMessage("actions.Refresh");
 
-        this.icon = AppBeans.get(Icons.class).get(CubaIcon.REFRESH_ACTION);
+        this.icon = AppBeans.get(Icons.class).get(JmixIcon.REFRESH_ACTION);
     }
 
     /**

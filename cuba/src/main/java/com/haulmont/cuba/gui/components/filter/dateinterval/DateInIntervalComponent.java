@@ -28,7 +28,7 @@ import io.jmix.ui.components.HBoxLayout;
 import io.jmix.ui.components.TextField;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -73,7 +73,7 @@ public class DateInIntervalComponent {
         layout.add(textField);
 
         Button openEditorBtn = componentsFactory.createComponent(Button.class);
-        openEditorBtn.setIconFromSet(CubaIcon.PICKERFIELD_LOOKUP);
+        openEditorBtn.setIconFromSet(JmixIcon.PICKERFIELD_LOOKUP);
         openEditorBtn.setStyleName("c-dateintervaleditor-button");
         openEditorBtn.setCaption("");
         openEditorBtn.setAction(new AbstractAction("openEditor") {
@@ -102,7 +102,7 @@ public class DateInIntervalComponent {
         layout.add(openEditorBtn);
 
         Button clearBtn = componentsFactory.createComponent(Button.class);
-        clearBtn.setIconFromSet(CubaIcon.PICKERFIELD_CLEAR);
+        clearBtn.setIconFromSet(JmixIcon.PICKERFIELD_CLEAR);
         clearBtn.setStyleName("c-dateintervaleditor-button");
         clearBtn.setCaption("");
         clearBtn.setAction(new AbstractAction("clear") {

@@ -33,7 +33,7 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Field;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.theme.ThemeConstants;
@@ -82,7 +82,7 @@ public class BulkEditAction extends ItemTrackingAction
     public BulkEditAction(ListComponent target) {
         super(target, "bulkEdit");
 
-        this.icon = AppBeans.get(Icons.class).get(CubaIcon.BULK_EDIT_ACTION);
+        this.icon = AppBeans.get(Icons.class).get(JmixIcon.BULK_EDIT_ACTION);
 
         Messages messages = AppBeans.get(Messages.NAME);
         this.caption = messages.getMessage("actions.BulkEdit");

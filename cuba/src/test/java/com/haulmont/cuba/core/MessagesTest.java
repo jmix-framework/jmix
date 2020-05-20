@@ -245,11 +245,11 @@ public class MessagesTest {
         msg = messages.getMainMessage("trueString", Locale.forLanguageTag("en"));
         assertEquals("True", msg);
 
-        msg = messages.getMessage("io.jmix.ui.something", "trueString", Locale.forLanguageTag("en"));
+        msg = messages.getMessage("io.jmix.core.something", "trueString", Locale.forLanguageTag("en"));
         assertEquals("True", msg);
 
         appender.getMessages().clear();
-        msg = messages.getMessage("io.jmix.ui.something", "trueString", Locale.forLanguageTag("en"));
+        msg = messages.getMessage("io.jmix.core.something", "trueString", Locale.forLanguageTag("en"));
         assertEquals("True", msg);
         assertEquals(0, getSearchMessagesCount());
     }

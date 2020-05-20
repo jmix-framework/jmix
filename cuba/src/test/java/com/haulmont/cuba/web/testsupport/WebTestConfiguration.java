@@ -63,7 +63,7 @@ public class WebTestConfiguration {
         formatStringsRegistry.setFormatStrings(Locale.ENGLISH, new FormatStrings(
                 '.', ',',
                 "#,##0", "#,##0.###", "#,##0.##",
-                "dd/MM/yyyy", "dd/MM/yyyy HH:mm", "HH:mm",
+                "dd/MM/yyyy", "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH:mm Z", "HH:mm", "HH:mm Z",
                 "True", "False"));
     }
 

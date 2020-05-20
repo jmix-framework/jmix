@@ -115,7 +115,7 @@ public class CategoryAttrsFragment extends ScreenFragment {
                         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
                         lc.setQueryString(String.format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
                                 .setParameter("entityId", attribute.getObjectDefaultEntityId());
-                        Entity<?> entity = dataManager.load(lc);
+                        Entity entity = dataManager.load(lc);
                         if (entity != null) {
                             defaultValue = metadataTools.getInstanceName(entity);
                         }

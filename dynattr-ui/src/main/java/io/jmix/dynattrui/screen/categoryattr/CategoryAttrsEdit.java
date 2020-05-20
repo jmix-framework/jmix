@@ -196,7 +196,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Inject
     protected LookupField<OptionsLoaderType> optionsLoaderTypeField;
     @Inject
-    protected PickerField<Entity<?>> defaultEntityIdField; // TODO ListEditor
+    protected PickerField<Entity> defaultEntityIdField; // TODO ListEditor
     @Inject
     protected SourceCodeEditor optionsLoaderScriptField;
     @Inject
@@ -259,8 +259,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     @Subscribe("defaultEntityIdField")
-    protected void onDefaultEntityIdFieldValueChange(HasValue.ValueChangeEvent<Entity<?>> event) {
-        Entity<?> entity = event.getValue();
+    protected void onDefaultEntityIdFieldValueChange(HasValue.ValueChangeEvent<Entity> event) {
+        Entity entity = event.getValue();
         Object objectDefaultEntityId = null;
         if (entity != null) {
             objectDefaultEntityId = referenceToEntitySupport.getReferenceId(entity);
@@ -676,7 +676,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
                         .setParameter("entityId", attribute.getObjectDefaultEntityId());
-                Entity<?> entity = dataManager.load(lc);
+                Entity entity = dataManager.load(lc);
                 if (entity != null) {
                     defaultEntityIdField.setValue(entity);
                 } else {

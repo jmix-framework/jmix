@@ -55,6 +55,7 @@ public class AfterCompleteTransactionListenerTest {
     @AfterEach
     public void tearDown() throws Exception {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+        jdbcTemplate.update("delete from TEST_USER_ROLE");
         jdbcTemplate.update("delete from TEST_USER");
         TestSupport.deleteRecord(companyGroup);
     }

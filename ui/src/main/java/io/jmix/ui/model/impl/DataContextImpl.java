@@ -122,7 +122,7 @@ public class DataContextImpl implements DataContext {
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
-    public <T extends Entity<K>, K> T find(Class<T> entityClass, K entityId) {
+    public <T extends Entity> T find(Class<T> entityClass, Object entityId) {
         Map<Object, Entity> entityMap = content.get(entityClass);
         if (entityMap != null) {
             return (T) entityMap.get(entityId);

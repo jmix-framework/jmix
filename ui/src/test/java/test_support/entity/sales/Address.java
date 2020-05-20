@@ -24,7 +24,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @ModelObject(name = "test$Address")
-public class Address implements Entity<Object> {
+public class Address implements Entity {
 
     private static final long serialVersionUID = 2116285103670251834L;
 

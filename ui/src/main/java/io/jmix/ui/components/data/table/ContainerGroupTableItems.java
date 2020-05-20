@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ContainerGroupTableItems<E extends Entity<K>, K>
+public class ContainerGroupTableItems<E extends Entity>
         extends ContainerTableItems<E>
         implements GroupTableItems<E> {
 
@@ -44,9 +44,9 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
 
     protected List<GroupInfo> roots;
 
-    protected Map<GroupInfo, List<K>> groupItems;
+    protected Map<GroupInfo, List<?>> groupItems;
     // reversed relations from groupItems
-    protected Map<K, GroupInfo> itemGroups;
+    protected Map<Object, GroupInfo> itemGroups;
 
     protected boolean isGrouping;
 
@@ -106,7 +106,7 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
                 throw new IllegalStateException("Item group cannot be NULL");
             }
 
-            List<K> itemsIds = groupItems.computeIfAbsent(groupInfo, k -> new ArrayList<>());
+            List itemsIds = groupItems.computeIfAbsent(groupInfo, k -> new ArrayList<>());
             itemsIds.add(EntityValues.getId(item));
         }
     }
@@ -173,7 +173,7 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
             return Collections.emptyList();
         }
 
-        List<K> idsList = groupItems.get(groupId);
+        List<?> idsList = groupItems.get(groupId);
         if (containsGroup(groupId) && CollectionUtils.isNotEmpty(idsList)) {
             return idsList.stream()
                     .map(id -> container.getItem(id))
@@ -199,7 +199,7 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
                 }
             }
 
-            for (K id : groupItems.getOrDefault(groupId, Collections.emptyList())) {
+            for (Object id : groupItems.getOrDefault(groupId, Collections.emptyList())) {
                 E item = container.getItem(id);
                 entities.add(item);
             }
@@ -220,7 +220,7 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
     @Nullable
     @Override
     public GroupInfo getParentGroup(E item) {
-        K id = EntityValues.getId(item);
+        Object id = EntityValues.getId(item);
         if (container.getItemOrNull(id) == null) {
             throw new IllegalArgumentException("Datasource doesn't contain passed entity");
         }
@@ -228,12 +228,12 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
         if (itemGroups == null) {
             return null;
         }
-        return itemGroups.get(EntityValues.<K>getId(item));
+        return itemGroups.get(EntityValues.getId(item));
     }
 
     @Override
     public List<GroupInfo> getGroupPath(E item) {
-        K id = EntityValues.getId(item);
+        Object id = EntityValues.getId(item);
         if (container.getItemOrNull(id) == null) {
             throw new IllegalArgumentException("Datasource doesn't contain passed entity");
         }
@@ -242,7 +242,7 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
             return Collections.emptyList();
         }
 
-        GroupInfo groupInfo = itemGroups.get(EntityValues.<K>getId(item));
+        GroupInfo groupInfo = itemGroups.get(EntityValues.getId(item));
         if (groupInfo == null) {
             return Collections.emptyList();
         }
@@ -275,9 +275,9 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
     }
 
     @Override
-    public Collection<K> getGroupItemIds(GroupInfo groupId) {
+    public Collection getGroupItemIds(GroupInfo groupId) {
         if (containsGroup(groupId)) {
-            List<K> itemIds;
+            List itemIds;
             if ((itemIds = groupItems.get(groupId)) == null) {
                 itemIds = new ArrayList<>();
                 List<GroupInfo> children = getChildrenInternal(groupId);
@@ -293,7 +293,7 @@ public class ContainerGroupTableItems<E extends Entity<K>, K>
     @Override
     public int getGroupItemsCount(GroupInfo groupId) {
         if (containsGroup(groupId)) {
-            List<K> itemIds;
+            List itemIds;
             if ((itemIds = groupItems.get(groupId)) == null) {
                 int count = 0;
                 List<GroupInfo> children = getChildrenInternal(groupId);

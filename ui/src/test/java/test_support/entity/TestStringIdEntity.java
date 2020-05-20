@@ -23,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test$StringIdEntity")
 @Table(name = "TEST_STRING_ID_ENTITY")
-public class TestStringIdEntity implements io.jmix.core.Entity<String> {
+public class TestStringIdEntity implements io.jmix.core.Entity {
 
     private static final long serialVersionUID = 8115973479078477156L;
 

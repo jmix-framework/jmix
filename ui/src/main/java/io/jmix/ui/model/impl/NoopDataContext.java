@@ -41,7 +41,7 @@ public class NoopDataContext implements DataContext {
 
     @Nullable
     @Override
-    public <T extends Entity<K>, K> T find(Class<T> entityClass, K entityId) {
+    public <T extends Entity> T find(Class<T> entityClass, Object entityId) {
         return null;
     }
 

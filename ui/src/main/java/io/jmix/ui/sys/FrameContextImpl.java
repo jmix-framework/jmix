@@ -117,7 +117,7 @@ public class FrameContextImpl implements FrameContext {
 
             if (value instanceof Entity) {
                 //noinspection RedundantTypeArguments
-                return EntityValues.getValueEx(((Entity<?>) value), properties);
+                return EntityValues.getValueEx(((Entity) value), properties);
             } else if (value instanceof EnumClass) {
                 if (properties.length == 1 && "id".equals(properties[0])) {
                     //noinspection unchecked

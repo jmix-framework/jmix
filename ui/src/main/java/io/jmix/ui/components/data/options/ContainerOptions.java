@@ -36,9 +36,8 @@ import java.util.stream.Stream;
  * Options based on a data container.
  *
  * @param <E> entity type
- * @param <K> entity key type
  */
-public class ContainerOptions<E extends Entity<K>, K> implements Options<E>, EntityOptions<E>, ContainerDataUnit<E> {
+public class ContainerOptions<E extends Entity> implements Options<E>, EntityOptions<E>, ContainerDataUnit<E> {
 
     protected CollectionContainer<E> container;
     protected DataLoader loader;
@@ -96,7 +95,7 @@ public class ContainerOptions<E extends Entity<K>, K> implements Options<E>, Ent
 
     @Override
     public boolean containsItem(E item) {
-        return item != null && container.containsItem(EntityValues.<K>getId(item));
+        return item != null && container.containsItem(EntityValues.getId(item));
     }
 
     @Override

@@ -46,7 +46,7 @@ public interface DataContext {
      * @return entity instance or null if there is no such entity in the context
      */
     @Nullable
-    <T extends Entity<K>, K> T find(Class<T> entityClass, K entityId);
+    <T extends Entity> T find(Class<T> entityClass, Object entityId);
 
     /**
      * Returns the instance of entity with the same id if it exists in this context.

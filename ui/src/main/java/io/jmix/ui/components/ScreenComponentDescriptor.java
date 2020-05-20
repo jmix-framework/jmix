@@ -30,7 +30,7 @@ import java.util.UUID;
 
 @ModelObject(name = "sec$ScreenComponentDescriptor")
 @SystemLevel
-public class ScreenComponentDescriptor implements Entity<UUID>, HasUuid {
+public class ScreenComponentDescriptor implements Entity, HasUuid {
 
     @Id
     protected UUID id;

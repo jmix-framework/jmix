@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Entity(name = "test_NullableIdItemEntity")
 @Table(name = "TEST_NULLABLE_ID_ITEM_ENTITY")
-public class TestNullableIdItemEntity implements io.jmix.core.Entity<Long> {
+public class TestNullableIdItemEntity implements io.jmix.core.Entity {
 
     private static final long serialVersionUID = 8115973479078477156L;
 

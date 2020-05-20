@@ -45,7 +45,7 @@ import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-import io.jmix.ui.widgets.CubaGrid;
+import io.jmix.ui.widgets.JmixGrid;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -283,10 +283,10 @@ public class AttributeLocationFragment extends ScreenFragment {
         if (isSourceDataGrid) {
             attributesSourceDataContainer = dataContainer;
             attributesSourceDataProvider = dataProvider;
-            attributesSourceGrid = dataGrid.unwrap(CubaGrid.class);
+            attributesSourceGrid = dataGrid.unwrap(JmixGrid.class);
         }
 
-        dataGrid.withUnwrapped(CubaGrid.class, grid -> {
+        dataGrid.withUnwrapped(JmixGrid.class, grid -> {
             grid.setDataProvider(dataProvider);
 
             GridDragSource<CategoryAttribute> gridDragSource = new GridDragSource<>(grid);

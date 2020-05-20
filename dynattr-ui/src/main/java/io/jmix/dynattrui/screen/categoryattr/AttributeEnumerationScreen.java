@@ -36,7 +36,7 @@ import io.jmix.ui.components.Fragment;
 import io.jmix.ui.components.LinkButton;
 import io.jmix.ui.components.TextField;
 import io.jmix.ui.components.VBoxLayout;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.InstanceContainer;
@@ -135,7 +135,7 @@ public class AttributeEnumerationScreen extends Screen {
     @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
     protected LinkButton localizedEnumValuesDataGridRemoveItemColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedEnumValue> event) {
         LinkButton linkButton = uiComponents.create(LinkButton.class);
-        linkButton.setIcon(CubaIcon.REMOVE.source());
+        linkButton.setIcon(JmixIcon.REMOVE.source());
         linkButton.setAction(new AbstractAction("") {
             @Override
             public void actionPerform(Component component) {

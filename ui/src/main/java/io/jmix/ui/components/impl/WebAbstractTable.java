@@ -72,11 +72,11 @@ import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShowInfoAction;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
-import io.jmix.ui.widgets.CubaButton;
-import io.jmix.ui.widgets.CubaEnhancedTable;
-import io.jmix.ui.widgets.CubaEnhancedTable.AggregationInputValueChangeContext;
+import io.jmix.ui.widgets.JmixButton;
+import io.jmix.ui.widgets.JmixEnhancedTable;
+import io.jmix.ui.widgets.JmixEnhancedTable.AggregationInputValueChangeContext;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
-import io.jmix.ui.widgets.compatibility.CubaValueChangeEvent;
+import io.jmix.ui.widgets.compatibility.JmixValueChangeEvent;
 import io.jmix.ui.widgets.data.AggregationContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -102,7 +102,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("deprecation")
-public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEnhancedTable, E extends Entity>
+public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhancedTable, E extends Entity>
         extends WebAbstractActionsHolderComponent<T>
         implements Table<E>, TableItemsEventsDelegate<E>, LookupSelectionChangeNotifier<E>,
         HasInnerComponents, InstallTargetHandler, InitializingBean, ColumnManager {
@@ -915,7 +915,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
 
     @Override
     public void setAggregationStyle(AggregationStyle aggregationStyle) {
-        component.setAggregationStyle(CubaEnhancedTable.AggregationStyle.valueOf(aggregationStyle.name()));
+        component.setAggregationStyle(JmixEnhancedTable.AggregationStyle.valueOf(aggregationStyle.name()));
     }
 
     @Override
@@ -1112,8 +1112,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     protected void fireSelectionEvent(Property.ValueChangeEvent e) {
-        boolean userOriginated = e instanceof CubaValueChangeEvent
-                && ((CubaValueChangeEvent) e).isUserOriginated();
+        boolean userOriginated = e instanceof JmixValueChangeEvent
+                && ((JmixValueChangeEvent) e).isUserOriginated();
 
         SelectionEvent<E> event =
                 new SelectionEvent<>(this, getSelected(), userOriginated);
@@ -1255,8 +1255,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
     }
 
     @Override
-    protected CubaButton createContextMenuButton() {
-        return new CubaButton();
+    protected JmixButton createContextMenuButton() {
+        return new JmixButton();
     }
 
     @Override
@@ -3024,7 +3024,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
         component.addTableCellClickListener(column.getId(), this::onCellClick);
     }
 
-    protected void onCellClick(CubaEnhancedTable.TableCellClickEvent event) {
+    protected void onCellClick(JmixEnhancedTable.TableCellClickEvent event) {
         TableItems<E> tableItems = getItems();
         if (tableItems == null) {
             return;
@@ -3073,7 +3073,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & CubaEn
         customContextMenu.setStyleName("c-cm-container");
 
         for (Action action : actions) {
-            CubaButton contextMenuButton = createContextMenuButton();
+            JmixButton contextMenuButton = createContextMenuButton();
             initContextMenuButton(contextMenuButton, action);
 
             customContextMenu.addComponent(contextMenuButton);

@@ -19,14 +19,13 @@ package io.jmix.ui.components.impl;
 import io.jmix.core.Messages;
 import io.jmix.ui.components.ColorPicker;
 import io.jmix.ui.components.data.ConversionException;
-import io.jmix.ui.widgets.CubaColorPickerWrapper;
+import io.jmix.ui.widgets.JmixColorPickerWrapper;
 import com.vaadin.shared.ui.colorpicker.Color;
-import io.jmix.ui.widgets.CubaColorPickerWrapper;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.inject.Inject;
 
-public class WebColorPicker extends WebV8AbstractField<CubaColorPickerWrapper, Color, String>
+public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, Color, String>
         implements ColorPicker, InitializingBean {
 
     /* Beans */
@@ -37,8 +36,8 @@ public class WebColorPicker extends WebV8AbstractField<CubaColorPickerWrapper, C
         attachValueChangeListener(component);
     }
 
-    protected CubaColorPickerWrapper createComponent() {
-        return new CubaColorPickerWrapper();
+    protected JmixColorPickerWrapper createComponent() {
+        return new JmixColorPickerWrapper();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class WebColorPicker extends WebV8AbstractField<CubaColorPickerWrapper, C
         initComponent(component);
     }
 
-    protected void initComponent(CubaColorPickerWrapper component) {
+    protected void initComponent(JmixColorPickerWrapper component) {
         setHSVVisible(false);
         setSwatchesVisible(false);
         setHistoryVisible(false);

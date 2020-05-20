@@ -27,7 +27,7 @@ import io.jmix.ui.executors.TaskLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.widgets.CubaSuggestionField;
+import io.jmix.ui.widgets.JmixSuggestionField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,7 +38,7 @@ import java.util.function.Function;
 
 import static io.jmix.ui.components.impl.WebLookupField.NULL_STYLE_GENERATOR;
 
-public class WebSuggestionField<V> extends WebV8AbstractField<CubaSuggestionField<V>, V, V>
+public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionField<V>, V, V>
         implements SuggestionField<V>, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(WebSuggestionField.class);
@@ -78,8 +78,8 @@ public class WebSuggestionField<V> extends WebV8AbstractField<CubaSuggestionFiel
         this.metadataTools = metadataTools;
     }
 
-    protected CubaSuggestionField<V> createComponent() {
-        return new CubaSuggestionField<>();
+    protected JmixSuggestionField<V> createComponent() {
+        return new JmixSuggestionField<>();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<CubaSuggestionFiel
         initComponent(component);
     }
 
-    protected void initComponent(CubaSuggestionField<V> component) {
+    protected void initComponent(JmixSuggestionField<V> component) {
         component.setTextViewConverter(this::convertToTextView);
 
         component.setSearchExecutor(query -> {

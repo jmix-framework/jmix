@@ -34,7 +34,7 @@ import io.jmix.ui.components.data.Options;
 import io.jmix.ui.components.data.meta.EntityOptions;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
@@ -305,7 +305,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
             super(NAME, pickerField);
             caption = "";
             icon = AppBeans.get(Icons.class)
-                    .get(CubaIcon.PICKERFIELD_LOOKUP);
+                    .get(JmixIcon.PICKERFIELD_LOOKUP);
             setShortcut(properties.getPickerLookupShortcut());
         }
 
@@ -544,7 +544,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
             super(NAME, pickerField);
             caption = "";
             icon = AppBeans.get(Icons.class)
-                    .get(CubaIcon.PICKERFIELD_CLEAR);
+                    .get(JmixIcon.PICKERFIELD_CLEAR);
             setShortcut(properties.getPickerClearShortcut());
         }
 
@@ -625,7 +625,7 @@ public interface PickerField<V extends Entity> extends Field<V>, ActionsHolder, 
             super(NAME, pickerField);
             caption = "";
             icon = AppBeans.get(Icons.class)
-                    .get(CubaIcon.PICKERFIELD_OPEN);
+                    .get(JmixIcon.PICKERFIELD_OPEN);
             setShortcut(properties.getPickerOpenShortcut());
         }
 

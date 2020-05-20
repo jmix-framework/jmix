@@ -24,9 +24,9 @@ import com.vaadin.ui.*;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.ComponentContainer;
 import io.jmix.ui.components.*;
-import io.jmix.ui.widgets.CubaGroupBox;
-import io.jmix.ui.widgets.CubaHorizontalActionsLayout;
-import io.jmix.ui.widgets.CubaScrollBoxLayout;
+import io.jmix.ui.widgets.JmixGroupBox;
+import io.jmix.ui.widgets.JmixHorizontalActionsLayout;
+import io.jmix.ui.widgets.JmixScrollBoxLayout;
 import io.jmix.ui.widgets.JmixVerticalActionsLayout;
 import org.apache.commons.lang3.StringUtils;
 
@@ -114,7 +114,7 @@ public class WebComponentsHelper {
 
     public static boolean isHorizontalLayout(AbstractOrderedLayout layout) {
         return (layout instanceof HorizontalLayout)
-                || (layout instanceof CubaHorizontalActionsLayout);
+                || (layout instanceof JmixHorizontalActionsLayout);
     }
 
     /**
@@ -201,7 +201,7 @@ public class WebComponentsHelper {
         }
 
 
-        if (child.getParent() instanceof CubaGroupBox) {
+        if (child.getParent() instanceof JmixGroupBox) {
             // ignore groupbox content container visibility
             return isComponentVisible(child.getParent());
         }
@@ -272,8 +272,8 @@ public class WebComponentsHelper {
         }
 
 
-        if (component instanceof CubaScrollBoxLayout) {
-            return ((CubaScrollBoxLayout) component).getComponent(0);
+        if (component instanceof JmixScrollBoxLayout) {
+            return ((JmixScrollBoxLayout) component).getComponent(0);
         }
 
         return component;
@@ -292,7 +292,7 @@ public class WebComponentsHelper {
     /*@Nullable
     protected static io.jmix.ui.components.Component findChildComponent(FieldGroup fieldGroup,
                                                                                    Component target) {
-        Component vaadinSource = fieldGroup.unwrap(CubaFieldGroupLayout.class);
+        Component vaadinSource = fieldGroup.unwrap(JmixFormLayout.class);
         Collection<io.jmix.ui.components.Component> components = fieldGroup.getFields().stream()
                 .map(FieldGroup.FieldConfig::getComponentNN)
                 .collect(Collectors.toList());

@@ -26,9 +26,9 @@ import io.jmix.ui.components.*;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
-import io.jmix.ui.widgets.CubaButton;
-import io.jmix.ui.widgets.CubaPopupButton;
-import io.jmix.ui.widgets.CubaPopupButtonLayout;
+import io.jmix.ui.widgets.JmixButton;
+import io.jmix.ui.widgets.JmixPopupButton;
+import io.jmix.ui.widgets.JmixPopupButtonLayout;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -40,13 +40,13 @@ import java.util.function.Consumer;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.components.ComponentsHelper.findActionById;
 
-public class WebPopupButton extends WebAbstractComponent<CubaPopupButton> implements PopupButton, SecuredActionsHolder {
+public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implements PopupButton, SecuredActionsHolder {
 
     protected final static String CONTEXT_MENU_BUTTON_STYLENAME = "c-cm-button";
 
     protected Component popupComponent;
     protected com.vaadin.ui.Component vPopupComponent;
-    protected CubaPopupButtonLayout vActionsContainer;
+    protected JmixPopupButtonLayout vActionsContainer;
 
     protected boolean showActionIcons;
 
@@ -74,12 +74,12 @@ public class WebPopupButton extends WebAbstractComponent<CubaPopupButton> implem
         this.showActionIcons = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
     }
 
-    protected CubaPopupButton createComponent() {
+    protected JmixPopupButton createComponent() {
         return new PopupMenuButton();
     }
 
-    protected CubaPopupButtonLayout createActionsContainer() {
-        return new CubaPopupButtonLayout();
+    protected JmixPopupButtonLayout createActionsContainer() {
+        return new JmixPopupButtonLayout();
     }
 
     protected boolean hasVisibleActions() {
@@ -269,8 +269,8 @@ public class WebPopupButton extends WebAbstractComponent<CubaPopupButton> implem
         }
     }
 
-    protected CubaButton createActionButton(Action action) {
-        CubaButton button = new CubaButton();
+    protected JmixButton createActionButton(Action action) {
+        JmixButton button = new JmixButton();
 
         button.setWidth(100, Sizeable.Unit.PERCENTAGE);
         button.setPrimaryStyleName(CONTEXT_MENU_BUTTON_STYLENAME);
@@ -295,7 +295,7 @@ public class WebPopupButton extends WebAbstractComponent<CubaPopupButton> implem
         return button;
     }
 
-    protected void setPopupButtonAction(CubaButton button, Action action) {
+    protected void setPopupButtonAction(JmixButton button, Action action) {
         button.setCaption(action.getCaption());
 
         String description = action.getDescription();
@@ -422,7 +422,7 @@ public class WebPopupButton extends WebAbstractComponent<CubaPopupButton> implem
         return actionsPermissions;
     }
 
-    protected class PopupMenuButton extends CubaPopupButton {
+    protected class PopupMenuButton extends JmixPopupButton {
         @Override
         public void setPopupVisible(boolean popupVisible) {
             if (vPopupComponent == vActionsContainer

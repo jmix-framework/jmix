@@ -29,7 +29,7 @@ import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.RootWindow;
 import io.jmix.ui.exception.ExceptionHandlers;
 import io.jmix.ui.executors.IllegalConcurrentAccessException;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.logging.AppLog;
 import io.jmix.ui.screen.OpenMode;
@@ -476,7 +476,7 @@ public abstract class App {
                     }
                 }
 
-                // also remove all native Vaadin windows, that is not under CUBA control
+                // also remove all native Vaadin windows, that is not under Jmix control
                 Window[] windows = ui.getWindows().toArray(new Window[0]);
 
                 for (Window win : windows) {
@@ -547,7 +547,7 @@ public abstract class App {
                         .withActions(
                                 new BaseAction("closeApplication")
                                         .withCaption(messages.getMessage("closeApplication"))
-                                        .withIcon(icons.get(CubaIcon.DIALOG_OK))
+                                        .withIcon(icons.get(JmixIcon.DIALOG_OK))
                                         .withHandler(event -> {
                                             performStandardLogout(ui);
 

@@ -19,7 +19,7 @@ package io.jmix.ui.components.renderers;
 import com.vaadin.ui.renderers.Renderer;
 import io.jmix.core.Entity;
 import io.jmix.ui.components.DataGrid;
-import io.jmix.ui.widgets.renderers.CubaImageRenderer;
+import io.jmix.ui.widgets.renderers.JmixImageRenderer;
 
 import java.util.function.Consumer;
 
@@ -41,9 +41,9 @@ public class WebImageRenderer<T extends Entity>
     @Override
     protected Renderer<String> createImplementation() {
         if (listener != null) {
-            return new CubaImageRenderer<>(createClickListenerWrapper(listener));
+            return new JmixImageRenderer<>(createClickListenerWrapper(listener));
         } else {
-            return new CubaImageRenderer<>();
+            return new JmixImageRenderer<>();
         }
     }
 }

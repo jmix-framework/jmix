@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.data.DataGridItems;
 import io.jmix.ui.components.data.ValueSourceProvider;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.model.InstanceContainer;
 
 import javax.annotation.Nullable;
@@ -1557,7 +1557,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, HasButtons
     }
 
     /**
-     * A renderer that represents {@link CubaIcon}.
+     * A renderer that represents {@link JmixIcon}.
      */
     interface IconRenderer<T extends Entity> extends Renderer {
     }

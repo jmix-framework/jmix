@@ -19,7 +19,7 @@ package io.jmix.ui.components.renderers;
 import com.vaadin.ui.renderers.Renderer;
 import io.jmix.core.Entity;
 import io.jmix.ui.components.DataGrid;
-import io.jmix.ui.widgets.renderers.CubaClickableTextRenderer;
+import io.jmix.ui.widgets.renderers.JmixClickableTextRenderer;
 
 import java.util.function.Consumer;
 
@@ -50,9 +50,9 @@ public class WebClickableTextRenderer<T extends Entity>
     @Override
     protected Renderer<String> createImplementation() {
         if (listener != null) {
-            return new CubaClickableTextRenderer<>(createClickListenerWrapper(listener), getNullRepresentation());
+            return new JmixClickableTextRenderer<>(createClickListenerWrapper(listener), getNullRepresentation());
         } else {
-            return new CubaClickableTextRenderer<>(getNullRepresentation());
+            return new JmixClickableTextRenderer<>(getNullRepresentation());
         }
     }
 

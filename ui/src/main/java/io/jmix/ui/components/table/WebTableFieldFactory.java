@@ -73,12 +73,12 @@ public class WebTableFieldFactory<E extends Entity> extends AbstractFieldFactory
                         fieldPropertyId, columnConf.getXmlDescriptor());
 
         if (columnComponent instanceof Field) {
-            Field cubaField = (Field) columnComponent;
+            Field jmixField = (Field) columnComponent;
 
             Map<Table.Column, String> requiredColumns = webTable.getRequiredColumnsInternal();
             if (requiredColumns != null && requiredColumns.containsKey(columnConf)) {
-                cubaField.setRequired(true);
-                cubaField.setRequiredMessage(requiredColumns.get(columnConf));
+                jmixField.setRequired(true);
+                jmixField.setRequiredMessage(requiredColumns.get(columnConf));
             }
         }
 

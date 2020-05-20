@@ -30,7 +30,7 @@ import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
 import io.jmix.ui.settings.Settings;
 import io.jmix.ui.sys.TestIdManager;
-import io.jmix.ui.widgets.CubaAccordion;
+import io.jmix.ui.widgets.JmixAccordion;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.components.ComponentsHelper.walkComponents;
 
-public class WebAccordion extends WebAbstractComponent<CubaAccordion>
+public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         implements Accordion, UiPermissionAware, SupportsChildrenSelection {
 
     protected boolean postInitTaskAdded;
@@ -62,8 +62,8 @@ public class WebAccordion extends WebAbstractComponent<CubaAccordion>
         component = createComponent();
     }
 
-    protected CubaAccordion createComponent() {
-        return new CubaAccordion();
+    protected JmixAccordion createComponent() {
+        return new JmixAccordion();
     }
 
     protected Set<com.vaadin.ui.Component> getLazyTabs() {

@@ -17,19 +17,19 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.ui.components.BrowserFrame;
-import io.jmix.ui.widgets.CubaBrowserFrame;
+import io.jmix.ui.widgets.JmixBrowserFrame;
 
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
-public class WebBrowserFrame extends WebAbstractResourceView<CubaBrowserFrame> implements BrowserFrame {
+public class WebBrowserFrame extends WebAbstractResourceView<JmixBrowserFrame> implements BrowserFrame {
 
     public WebBrowserFrame() {
         component = createComponent();
     }
 
-    protected CubaBrowserFrame createComponent() {
-        return new CubaBrowserFrame();
+    protected JmixBrowserFrame createComponent() {
+        return new JmixBrowserFrame();
     }
 
     public String getSandbox() {

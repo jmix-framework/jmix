@@ -20,13 +20,12 @@ import io.jmix.core.commons.events.Subscription;
 import io.jmix.ui.components.Button;
 import io.jmix.ui.components.ClipboardTrigger;
 import io.jmix.ui.components.TextInputField;
-import io.jmix.ui.widgets.CubaCopyButtonExtension;
-import io.jmix.ui.widgets.CubaCopyButtonExtension;
+import io.jmix.ui.widgets.JmixCopyButtonExtension;
 
 import java.util.function.Consumer;
 
-import static io.jmix.ui.widgets.CubaCopyButtonExtension.browserSupportCopy;
-import static io.jmix.ui.widgets.CubaCopyButtonExtension.copyWith;
+import static io.jmix.ui.widgets.JmixCopyButtonExtension.browserSupportCopy;
+import static io.jmix.ui.widgets.JmixCopyButtonExtension.copyWith;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
 public class WebClipboardTrigger extends WebAbstractFacet implements ClipboardTrigger {
@@ -75,7 +74,7 @@ public class WebClipboardTrigger extends WebAbstractFacet implements ClipboardTr
     protected void disableExtension(Button button) {
         button.withUnwrapped(com.vaadin.ui.Button.class, vButton ->
                 vButton.getExtensions().stream()
-                        .filter(e -> e instanceof CubaCopyButtonExtension)
+                        .filter(e -> e instanceof JmixCopyButtonExtension)
                         .findFirst()
                         .ifPresent(vButton::removeExtension));
     }
@@ -91,7 +90,7 @@ public class WebClipboardTrigger extends WebAbstractFacet implements ClipboardTr
             button.withUnwrapped(com.vaadin.ui.Button.class, vButton -> {
                 disableExtension(this.button);
 
-                CubaCopyButtonExtension extension = copyWith(vButton, "." + generatedClassName);
+                JmixCopyButtonExtension extension = copyWith(vButton, "." + generatedClassName);
                 extension.addCopyListener(event ->
                         publish(CopyEvent.class, new CopyEvent(this, event.isSuccess()))
                 );

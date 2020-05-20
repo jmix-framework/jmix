@@ -29,7 +29,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.impl.FocusImpl;
-import io.jmix.ui.widgets.client.suggestionfield.CubaSuggestionFieldWidget;
+import io.jmix.ui.widgets.client.suggestionfield.JmixSuggestionFieldWidget;
 import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.ComputedStyle;
 
@@ -45,11 +45,11 @@ public class SuggestionsContainer extends Widget {
 
     protected final Element container;
 
-    protected final CubaSuggestionFieldWidget suggestionFieldWidget;
+    protected final JmixSuggestionFieldWidget suggestionFieldWidget;
 
     protected int itemsPerPage = 0;
 
-    public SuggestionsContainer(CubaSuggestionFieldWidget suggestionFieldWidget) {
+    public SuggestionsContainer(JmixSuggestionFieldWidget suggestionFieldWidget) {
         this.suggestionFieldWidget = suggestionFieldWidget;
         container = DOM.createDiv();
 

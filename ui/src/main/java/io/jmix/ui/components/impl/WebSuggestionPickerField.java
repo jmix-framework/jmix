@@ -28,8 +28,8 @@ import io.jmix.ui.executors.TaskLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.widgets.CubaPickerField;
-import io.jmix.ui.widgets.CubaSuggestionPickerField;
+import io.jmix.ui.widgets.JmixPickerField;
+import io.jmix.ui.widgets.JmixSuggestionPickerField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,13 +62,13 @@ public class WebSuggestionPickerField<V extends Entity> extends WebPickerField<V
     }
 
     @Override
-    protected CubaPickerField<V> createComponent() {
-        return new CubaSuggestionPickerField<>();
+    protected JmixPickerField<V> createComponent() {
+        return new JmixSuggestionPickerField<>();
     }
 
     @Override
-    public CubaSuggestionPickerField<V> getComponent() {
-        return (CubaSuggestionPickerField<V>) super.getComponent();
+    public JmixSuggestionPickerField<V> getComponent() {
+        return (JmixSuggestionPickerField<V>) super.getComponent();
     }
 
     @Inject
@@ -77,7 +77,7 @@ public class WebSuggestionPickerField<V extends Entity> extends WebPickerField<V
     }
 
     @Override
-    protected void initComponent(CubaPickerField<V> component) {
+    protected void initComponent(JmixPickerField<V> component) {
         getComponent().setTextViewConverter(this::convertToTextView);
 
         getComponent().setSearchExecutor(query -> {

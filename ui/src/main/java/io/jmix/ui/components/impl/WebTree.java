@@ -53,12 +53,12 @@ import io.jmix.ui.sys.ShortcutsDelegate;
 import io.jmix.ui.sys.ShowInfoAction;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
-import io.jmix.ui.widgets.CubaCssActionsLayout;
-import io.jmix.ui.widgets.CubaTree;
+import io.jmix.ui.widgets.JmixCssActionsLayout;
+import io.jmix.ui.widgets.JmixTree;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
 import io.jmix.ui.widgets.addons.contextmenu.TreeContextMenu;
-import io.jmix.ui.widgets.grid.CubaMultiSelectionModel;
-import io.jmix.ui.widgets.grid.CubaSingleSelectionModel;
+import io.jmix.ui.widgets.grid.JmixMultiSelectionModel;
+import io.jmix.ui.widgets.grid.JmixSingleSelectionModel;
 import io.jmix.ui.widgets.tree.EnhancedTreeDataProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +76,7 @@ import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.components.ComponentsHelper.findActionById;
 
 public class WebTree<E extends Entity>
-        extends WebAbstractComponent<CubaTree<E>>
+        extends WebAbstractComponent<JmixTree<E>>
         implements Tree<E>, LookupSelectionChangeNotifier<E>, SecuredActionsHolder,
         HasInnerComponents, InitializingBean, TreeSourceEventsDelegate<E> {
 
@@ -129,8 +129,8 @@ public class WebTree<E extends Entity>
         shortcutsDelegate = createShortcutsDelegate();
     }
 
-    protected CubaTree<E> createComponent() {
-        return new CubaTree<>();
+    protected JmixTree<E> createComponent() {
+        return new JmixTree<>();
     }
 
     protected ShortcutsDelegate<ShortcutListener> createShortcutsDelegate() {
@@ -181,7 +181,7 @@ public class WebTree<E extends Entity>
         composition.addShortcutListener(createEnterShortcutListener());
     }
 
-    protected void initComponent(CubaTree<E> component) {
+    protected void initComponent(JmixTree<E> component) {
         component.setItemCaptionGenerator(this::generateItemCaption);
 
         component.setSizeUndefined();
@@ -929,10 +929,10 @@ public class WebTree<E extends Entity>
         this.selectionMode = selectionMode;
         switch (selectionMode) {
             case SINGLE:
-                component.setGridSelectionModel(new CubaSingleSelectionModel<>());
+                component.setGridSelectionModel(new JmixSingleSelectionModel<>());
                 break;
             case MULTI:
-                component.setGridSelectionModel(new CubaMultiSelectionModel<>());
+                component.setGridSelectionModel(new JmixMultiSelectionModel<>());
                 break;
             case NONE:
                 component.setSelectionMode(Grid.SelectionMode.NONE);
@@ -1207,15 +1207,15 @@ public class WebTree<E extends Entity>
         }
     }
 
-    protected class TreeComposition extends CubaCssActionsLayout {
-        protected CubaTree<?> tree;
+    protected class TreeComposition extends JmixCssActionsLayout {
+        protected JmixTree<?> tree;
         protected com.vaadin.ui.CssLayout treeWrapper;
 
-        public CubaTree<?> getTree() {
+        public JmixTree<?> getTree() {
             return tree;
         }
 
-        public void setTree(CubaTree<?> tree) {
+        public void setTree(JmixTree<?> tree) {
             checkNotNullArgument(tree, "Tree can't be null");
 
             if (treeWrapper == null) {

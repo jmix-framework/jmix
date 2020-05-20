@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
  * <p>
  * Examples:
  * <pre>
- * excelButton.setIcon(icons.get(CubaIcon.EXCEL_ACTION));
- * helpButton.setIcon(icons.get(CubaIcon.INFO));
+ * excelButton.setIcon(icons.get(JmixIcon.EXCEL_ACTION));
+ * helpButton.setIcon(icons.get(JmixIcon.INFO));
  * </pre>
  *
  * @see Icon
@@ -41,7 +41,7 @@ public interface Icons {
      * <p>
      * Example:
      * <pre>
-     * createButton.setIcon(icons.get(CubaIcon.CREATE));
+     * createButton.setIcon(icons.get(JmixIcon.CREATE));
      * </pre>
      *
      * @param icon {@link Icons.Icon} instance

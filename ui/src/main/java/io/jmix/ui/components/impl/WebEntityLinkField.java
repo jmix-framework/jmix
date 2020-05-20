@@ -40,7 +40,7 @@ import io.jmix.ui.components.data.value.ContainerValueSource;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.widgets.CubaButtonField;
+import io.jmix.ui.widgets.JmixButtonField;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -50,7 +50,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class WebEntityLinkField<V> extends WebV8AbstractField<CubaButtonField<V>, V, V>
+public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>, V, V>
         implements EntityLinkField<V>, InitializingBean {
 
     protected static final String EMPTY_VALUE_STYLENAME = "empty-value";
@@ -93,8 +93,8 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<CubaButtonField<V>
         this.screenBuilders = screenBuilders;
     }
 
-    protected CubaButtonField<V> createComponent() {
-        return new CubaButtonField<>();
+    protected JmixButtonField<V> createComponent() {
+        return new JmixButtonField<>();
     }
 
     @Override

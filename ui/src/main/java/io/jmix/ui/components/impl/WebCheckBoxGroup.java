@@ -28,7 +28,7 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
 import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.widgets.CubaCheckBoxGroup;
+import io.jmix.ui.widgets.JmixCheckBoxGroup;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -42,7 +42,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.ui.components.impl.WebLookupField.NULL_ITEM_ICON_GENERATOR;
 
-public class WebCheckBoxGroup<V> extends WebV8AbstractField<CubaCheckBoxGroup<V>, Set<V>, Collection<V>>
+public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>, Set<V>, Collection<V>>
         implements CheckBoxGroup<V>, InitializingBean {
 
     public static final DescriptionGenerator NULL_ITEM_DESCRIPTION_GENERATOR = item -> null;
@@ -63,8 +63,8 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<CubaCheckBoxGroup<V>
         attachValueChangeListener(component);
     }
 
-    private CubaCheckBoxGroup<V> createComponent() {
-        return new CubaCheckBoxGroup<>();
+    private JmixCheckBoxGroup<V> createComponent() {
+        return new JmixCheckBoxGroup<>();
     }
 
     @Override
@@ -72,7 +72,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<CubaCheckBoxGroup<V>
         initComponent(component);
     }
 
-    protected void initComponent(CubaCheckBoxGroup<V> component) {
+    protected void initComponent(JmixCheckBoxGroup<V> component) {
         component.setItemCaptionGenerator(this::generateItemCaption);
     }
 

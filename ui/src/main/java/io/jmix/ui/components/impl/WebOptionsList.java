@@ -25,7 +25,7 @@ import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
-import io.jmix.ui.widgets.CubaListSelect;
+import io.jmix.ui.widgets.JmixListSelect;
 import com.vaadin.v7.data.util.IndexedContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -40,7 +40,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class WebOptionsList<V, I> extends WebAbstractField<CubaListSelect, V>
+public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
         implements OptionsList<V, I>, InitializingBean {
 
     protected MetadataTools metadataTools;
@@ -53,8 +53,8 @@ public class WebOptionsList<V, I> extends WebAbstractField<CubaListSelect, V>
         component = createComponent();
     }
 
-    protected CubaListSelect createComponent() {
-        return new CubaListSelect();
+    protected JmixListSelect createComponent() {
+        return new JmixListSelect();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class WebOptionsList<V, I> extends WebAbstractField<CubaListSelect, V>
         initComponent(component);
     }
 
-    protected void initComponent(CubaListSelect component) {
+    protected void initComponent(JmixListSelect component) {
         component.setContainerDataSource(new IndexedContainer());
         component.setItemCaptionGenerator(this::generateItemCaption);
         component.setRequiredError(null);

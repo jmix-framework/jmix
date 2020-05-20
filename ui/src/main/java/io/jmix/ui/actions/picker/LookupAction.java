@@ -27,7 +27,7 @@ import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.builders.LookupBuilder;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.PickerField;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioDelegate;
@@ -227,9 +227,9 @@ public class LookupAction<E extends Entity> extends BaseAction implements Picker
     public void editableChanged(PickerField pickerField, boolean editable) {
         setEditable(editable);
         if (editable) {
-            setIcon(icons.get(CubaIcon.PICKERFIELD_LOOKUP));
+            setIcon(icons.get(JmixIcon.PICKERFIELD_LOOKUP));
         } else {
-            setIcon(icons.get(CubaIcon.PICKERFIELD_LOOKUP_READONLY));
+            setIcon(icons.get(JmixIcon.PICKERFIELD_LOOKUP_READONLY));
         }
     }
 
@@ -250,7 +250,7 @@ public class LookupAction<E extends Entity> extends BaseAction implements Picker
     protected void setIcons(Icons icons) {
         this.icons = icons;
 
-        setIcon(icons.get(CubaIcon.PICKERFIELD_LOOKUP));
+        setIcon(icons.get(JmixIcon.PICKERFIELD_LOOKUP));
     }
 
     @Inject

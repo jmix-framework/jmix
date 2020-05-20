@@ -18,6 +18,8 @@ package io.jmix.ui;
 
 import io.jmix.ui.navigation.UrlHandlingMode;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
+import io.jmix.ui.widgets.JmixMainTabSheet;
+import io.jmix.ui.widgets.JmixManagedTabSheet;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -118,7 +120,7 @@ public class UiProperties {
             @DefaultValue("false") boolean forceRefreshAuthenticatedTabs,
             @DefaultValue("false") boolean allowAnonymousAccess,
             @DefaultValue("true") boolean htmlSanitizerEnabled,
-            @DefaultValue("io.jmix.ui.icons.CubaIcon") String iconsConfig,
+            @DefaultValue("io.jmix.ui.icons.JmixIcon") String iconsConfig,
             @DefaultValue("true") boolean compositeMenu
 
     ) {
@@ -341,8 +343,8 @@ public class UiProperties {
     }
 
     /**
-     * Sets whether default {@link io.jmix.ui.widgets.CubaMainTabSheet} or
-     * {@link io.jmix.ui.widgets.CubaManagedTabSheet} will be used in AppWorkArea.
+     * Sets whether default {@link JmixMainTabSheet} or
+     * {@link JmixManagedTabSheet} will be used in AppWorkArea.
      */
     public MainTabSheetMode getMainTabSheetMode() {
         return mainTabSheetMode;

@@ -41,14 +41,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.jmix.ui.widgets.client.jqueryfileupload.CubaFileUploadWidget.CUBA_FILEUPLOAD_DROPZONE_CLASS;
+import static io.jmix.ui.widgets.client.jqueryfileupload.JmixFileUploadWidget.JMIX_FILEUPLOAD_DROPZONE_CLASSNAME;
 
 public class JQueryFileUploadOverlay {
 
     protected static boolean globalDragDropHandlersAttached = false;
     protected static Timer dragStopTimer;
 
-    protected CubaFileUploadWidget fileUploadWidget;
+    protected JmixFileUploadWidget fileUploadWidget;
     protected String uploadUrl;
 
     protected List<JavaScriptObject> currentXHRs = new ArrayList<>();
@@ -57,11 +57,11 @@ public class JQueryFileUploadOverlay {
     * Keys   - Drop zones
     * Values - FileUpload elements, which use these dropzones
     */
-    protected static Map<Element, CubaFileUploadWidget> dropZoneFileUploadMap = new HashMap<>();
+    protected static Map<Element, JmixFileUploadWidget> dropZoneFileUploadMap = new HashMap<>();
 
     private Element dropZoneElement;
 
-    public JQueryFileUploadOverlay(CubaFileUploadWidget fileUploadWidget) {
+    public JQueryFileUploadOverlay(JmixFileUploadWidget fileUploadWidget) {
         this.fileUploadWidget = fileUploadWidget;
 
         init(fileUploadWidget.getFileInputElement());
@@ -393,14 +393,14 @@ public class JQueryFileUploadOverlay {
             dragStopTimer = null;
 
             // find all drop zones and add classname
-            for (Map.Entry<Element, CubaFileUploadWidget> entry : dropZoneFileUploadMap.entrySet()) {
+            for (Map.Entry<Element, JmixFileUploadWidget> entry : dropZoneFileUploadMap.entrySet()) {
                 Element dropZone = entry.getKey();
                 if (isUnderOverlay(dropZone)) {
                     continue;
                 }
 
                 if (entry.getValue().isEnabled()) {
-                    dropZone.addClassName(CUBA_FILEUPLOAD_DROPZONE_CLASS);
+                    dropZone.addClassName(JMIX_FILEUPLOAD_DROPZONE_CLASSNAME);
                 }
             }
         }
@@ -422,7 +422,7 @@ public class JQueryFileUploadOverlay {
 
     protected static void forceHideDropZones() {
         for (Element dropZone : dropZoneFileUploadMap.keySet()) {
-            dropZone.removeClassName(CUBA_FILEUPLOAD_DROPZONE_CLASS);
+            dropZone.removeClassName(JMIX_FILEUPLOAD_DROPZONE_CLASSNAME);
         }
         if (dragStopTimer != null) {
             dragStopTimer.cancel();

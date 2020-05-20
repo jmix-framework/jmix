@@ -17,11 +17,11 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.ui.components.CssLayout;
-import io.jmix.ui.widgets.CubaCssActionsLayout;
+import io.jmix.ui.widgets.JmixCssActionsLayout;
 
 public class WebCssLayout extends WebAbstractOrderedLayout<com.vaadin.ui.CssLayout> implements CssLayout {
     public WebCssLayout() {
-        component = new CubaCssActionsLayout();
+        component = new JmixCssActionsLayout();
     }
 
     @Override

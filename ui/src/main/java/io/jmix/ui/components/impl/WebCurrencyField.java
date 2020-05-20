@@ -41,7 +41,7 @@ import java.util.Map;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class WebCurrencyField<V extends Number> extends WebV8AbstractField<CubaCurrencyField, String, V>
+public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixCurrencyField, String, V>
         implements CurrencyField<V> {
 
     protected Locale locale;
@@ -52,7 +52,7 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<CubaC
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
     public WebCurrencyField() {
-        component = new CubaCurrencyField();
+        component = new JmixCurrencyField();
         component.setCurrencyLabelPosition(toWidgetLabelPosition(CurrencyLabelPosition.RIGHT));
 
         attachValueChangeListener(component);
@@ -70,7 +70,7 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<CubaC
     }
 
     @Override
-    protected void attachValueChangeListener(CubaCurrencyField component) {
+    protected void attachValueChangeListener(JmixCurrencyField component) {
         component.getInternalComponent()
                 .addValueChangeListener(event ->
                         componentValueChanged(event.getOldValue(), event.getValue(), event.isUserOriginated()));

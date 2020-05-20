@@ -16,8 +16,6 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.ui.widgets.CubaHistoryControl;
-
 /**
  * Defines how URL changes should be handled.
  */
@@ -27,10 +25,6 @@ public enum UrlHandlingMode {
      * URL changes are not handled at all.
      */
     NONE,
-    /**
-     * {@link CubaHistoryControl} is used to handle changes.
-     */
-    BACK_ONLY,
     /**
      * Changes are handled by {@link UrlRouting}, {@link History} and {@link UrlChangeHandler}.
      *

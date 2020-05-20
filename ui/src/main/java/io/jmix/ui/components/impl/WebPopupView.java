@@ -20,21 +20,21 @@ import io.jmix.core.commons.events.Subscription;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.PopupView;
-import io.jmix.ui.widgets.CubaPopupView;
+import io.jmix.ui.widgets.JmixPopupView;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Label;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Consumer;
 
-public class WebPopupView extends WebAbstractComponent<CubaPopupView> implements PopupView {
+public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements PopupView {
     protected Component popupContent;
     protected String minimizedValue;
 
     protected Registration popupVisibilityListenerRegistration;
 
     public WebPopupView() {
-        component = new CubaPopupView(new EmptyContent());
+        component = new JmixPopupView(new EmptyContent());
     }
 
     @Override

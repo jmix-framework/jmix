@@ -19,15 +19,15 @@ package io.jmix.ui.components.mainwindow.impl;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.components.impl.WebAbstractComponent;
 import io.jmix.ui.components.mainwindow.LogoutButton;
-import io.jmix.ui.widgets.CubaButton;
+import io.jmix.ui.widgets.JmixButton;
 import org.apache.commons.lang3.StringUtils;
 
-public class WebLogoutButton extends WebAbstractComponent<CubaButton> implements LogoutButton {
+public class WebLogoutButton extends WebAbstractComponent<JmixButton> implements LogoutButton {
 
     public static final String LOGOUT_BUTTON_STYLENAME = "c-logout-button";
 
     public WebLogoutButton() {
-        component = new CubaButton();
+        component = new JmixButton();
         component.addStyleName(LOGOUT_BUTTON_STYLENAME);
         component.addClickListener(event -> logout());
     }

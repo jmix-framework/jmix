@@ -18,9 +18,9 @@ package io.jmix.ui.components.impl;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.components.*;
-import io.jmix.ui.widgets.CubaDockableSplitPanel;
-import io.jmix.ui.widgets.CubaHorizontalSplitPanel;
-import io.jmix.ui.widgets.CubaVerticalSplitPanel;
+import io.jmix.ui.widgets.JmixDockableSplitPanel;
+import io.jmix.ui.widgets.JmixHorizontalSplitPanel;
+import io.jmix.ui.widgets.JmixVerticalSplitPanel;
 import io.jmix.ui.widgets.client.split.SplitPanelDockMode;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.AbstractSplitPanel;
@@ -76,7 +76,7 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
 
     protected void createComponentImpl() {
         if (orientation == SplitPanel.ORIENTATION_HORIZONTAL) {
-            component = new CubaHorizontalSplitPanel() {
+            component = new JmixHorizontalSplitPanel() {
                 @Override
                 public void setSplitPosition(float pos, Unit unit, boolean reverse) {
                     currentPosition = this.getSplitPosition();
@@ -86,7 +86,7 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
                 }
             };
         } else {
-            component = new CubaVerticalSplitPanel() {
+            component = new JmixVerticalSplitPanel() {
                 @Override
                 public void setSplitPosition(float pos, Unit unit, boolean reverse) {
                     currentPosition = this.getSplitPosition();
@@ -101,9 +101,9 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
     }
 
     protected void fireSplitPositionChangeListener(AbstractSplitPanel.SplitPositionChangeEvent event) {
-        SplitPositionChangeEvent cubaEvent = new SplitPositionChangeEvent(this, currentPosition,
+        SplitPositionChangeEvent jmixEvent = new SplitPositionChangeEvent(this, currentPosition,
                 event.getSplitPosition(), event.isUserOriginated());
-        publish(SplitPositionChangeEvent.class, cubaEvent);
+        publish(SplitPositionChangeEvent.class, jmixEvent);
 
         if (event.isUserOriginated()) {
             settingsChanged = true;
@@ -351,23 +351,23 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
 
     @Override
     public void setDockable(boolean dockable) {
-        ((CubaDockableSplitPanel) component).setDockable(dockable);
+        ((JmixDockableSplitPanel) component).setDockable(dockable);
     }
 
     @Override
     public boolean isDockable() {
-        return ((CubaDockableSplitPanel) component).isDockable();
+        return ((JmixDockableSplitPanel) component).isDockable();
     }
 
     @Override
     public void setDockMode(DockMode dockMode) {
         SplitPanelDockMode mode = SplitPanelDockMode.valueOf(dockMode.name());
-        ((CubaDockableSplitPanel) component).setDockMode(mode);
+        ((JmixDockableSplitPanel) component).setDockMode(mode);
     }
 
     @Override
     public DockMode getDockMode() {
-        SplitPanelDockMode mode = ((CubaDockableSplitPanel) component).getDockMode();
+        SplitPanelDockMode mode = ((JmixDockableSplitPanel) component).getDockMode();
         return DockMode.valueOf(mode.name());
     }
 

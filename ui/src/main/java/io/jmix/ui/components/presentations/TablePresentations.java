@@ -46,12 +46,12 @@ public class TablePresentations extends VerticalLayout {
 
     protected static final String CONTEXT_MENU_BUTTON_STYLENAME = "c-cm-button";
 
-    protected CubaMenuBar menuBar;
-    protected CubaPopupButton button;
+    protected JmixMenuBar menuBar;
+    protected JmixPopupButton button;
     protected CheckBox textSelectionCheckBox;
 
     protected Table table;
-    protected CubaEnhancedTable tableImpl;
+    protected JmixEnhancedTable tableImpl;
 
     protected Map<Object, MenuBar.MenuItem> presentationsMenuMap;
 
@@ -63,7 +63,7 @@ public class TablePresentations extends VerticalLayout {
         this.table = component;
         this.messages = AppBeans.get(Messages.NAME);
 
-        this.tableImpl = table.unwrapOrNull(CubaEnhancedTable.class);
+        this.tableImpl = table.unwrapOrNull(JmixEnhancedTable.class);
 
         setMargin(false);
 
@@ -191,14 +191,14 @@ public class TablePresentations extends VerticalLayout {
         addComponent(titleLabel);
         setComponentAlignment(titleLabel, Alignment.MIDDLE_CENTER);
 
-        menuBar = new CubaMenuBar();
+        menuBar = new JmixMenuBar();
         menuBar.setStyleName("c-table-prefs-list");
         menuBar.setWidth(100, Unit.PERCENTAGE);
         menuBar.setHeightUndefined();
         menuBar.setVertical(true);
         addComponent(menuBar);
 
-        button = new CubaPopupButton();
+        button = new JmixPopupButton();
         button.setCaption(messages.getMessage("PresentationsPopup.actions"));
         addComponent(button);
         setComponentAlignment(button, Alignment.MIDDLE_CENTER);
@@ -245,7 +245,7 @@ public class TablePresentations extends VerticalLayout {
     }
 
     protected void buildActions() {
-        CubaPopupButtonLayout actionsContainer = new CubaPopupButtonLayout();
+        JmixPopupButtonLayout actionsContainer = new JmixPopupButtonLayout();
 
         PresentationActionsBuilder presentationActionsBuilder = getPresentationActionsBuilder();
         if (presentationActionsBuilder != null) {
@@ -257,8 +257,8 @@ public class TablePresentations extends VerticalLayout {
         button.setContent(actionsContainer);
     }
 
-    protected CubaButton createActionButton(Action action) {
-        CubaButton actionBtn = new CubaButton();
+    protected JmixButton createActionButton(Action action) {
+        JmixButton actionBtn = new JmixButton();
 
         actionBtn.setWidth("100%");
         actionBtn.setPrimaryStyleName(CONTEXT_MENU_BUTTON_STYLENAME);
@@ -283,7 +283,7 @@ public class TablePresentations extends VerticalLayout {
         return actionBtn;
     }
 
-    protected void setPopupButtonAction(CubaButton actionBtn, Action action) {
+    protected void setPopupButtonAction(JmixButton actionBtn, Action action) {
         actionBtn.setCaption(action.getCaption());
 
         String description = action.getDescription();

@@ -33,7 +33,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.components.Calendar;
 import io.jmix.ui.components.calendar.*;
 import io.jmix.ui.components.data.calendar.EntityCalendarEventProvider;
-import io.jmix.ui.widgets.CubaCalendar;
+import io.jmix.ui.widgets.JmixCalendar;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -46,7 +46,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
-public class WebCalendar<V> extends WebAbstractComponent<CubaCalendar>
+public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         implements Calendar<V>, InitializingBean {
 
     protected final String TIME_FORMAT_12H = "12H";
@@ -64,8 +64,8 @@ public class WebCalendar<V> extends WebAbstractComponent<CubaCalendar>
         component = createComponent();
     }
 
-    protected CubaCalendar createComponent() {
-        return new CubaCalendar();
+    protected JmixCalendar createComponent() {
+        return new JmixCalendar();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class WebCalendar<V> extends WebAbstractComponent<CubaCalendar>
         initDefaultEventProvider(component);
     }
 
-    protected void initComponent(CubaCalendar component) {
+    protected void initComponent(JmixCalendar component) {
         Messages messages = beanLocator.get(Messages.NAME);
         String[] monthNamesShort = new String[12];
         monthNamesShort[0] = messages.getMessage("calendar.januaryCaption");
@@ -117,7 +117,7 @@ public class WebCalendar<V> extends WebAbstractComponent<CubaCalendar>
         setNavigationButtonsStyle(navigationButtonsVisible);
     }
 
-    protected void initDefaultEventProvider(CubaCalendar component) {
+    protected void initDefaultEventProvider(JmixCalendar component) {
         calendarEventProvider = new ListCalendarEventProvider();
 
         component.setEventProvider(new CalendarEventProviderWrapper<>(calendarEventProvider, this::convertToPresentation));
@@ -564,7 +564,7 @@ public class WebCalendar<V> extends WebAbstractComponent<CubaCalendar>
         return getEventHub().subscribe(CalendarDayClickEvent.class, (Consumer) listener);
     }
 
-    protected void onDayClick(CubaCalendar.CubaCalendarDayClickEvent event) {
+    protected void onDayClick(JmixCalendar.JmixCalendarDayClickEvent event) {
         CalendarDayClickEvent<V> dayClickEvent =
                 new CalendarDayClickEvent<>(this, convertToModel(event.getDate()));
 

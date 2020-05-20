@@ -27,7 +27,7 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
 import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.widgets.CubaRadioButtonGroup;
+import io.jmix.ui.widgets.JmixRadioButtonGroup;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.ui.components.impl.WebLookupField.NULL_ITEM_ICON_GENERATOR;
 
-public class WebRadioButtonGroup<V> extends WebV8AbstractField<CubaRadioButtonGroup<V>, V, V>
+public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGroup<V>, V, V>
         implements RadioButtonGroup<V>, InitializingBean {
 
     public static final DescriptionGenerator NULL_ITEM_DESCRIPTION_GENERATOR = item -> null;
@@ -62,8 +62,8 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<CubaRadioButtonGr
         attachValueChangeListener(component);
     }
 
-    protected CubaRadioButtonGroup<V> createComponent() {
-        return new CubaRadioButtonGroup<>();
+    protected JmixRadioButtonGroup<V> createComponent() {
+        return new JmixRadioButtonGroup<>();
     }
 
     @Inject
@@ -81,7 +81,7 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<CubaRadioButtonGr
         initComponent(component);
     }
 
-    protected void initComponent(CubaRadioButtonGroup<V> component) {
+    protected void initComponent(JmixRadioButtonGroup<V> component) {
         component.setItemCaptionGenerator(this::generateItemCaption);
     }
 

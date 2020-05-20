@@ -30,7 +30,7 @@ import io.jmix.ui.builders.EditorBuilder;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.ComponentsHelper;
 import io.jmix.ui.components.PickerField;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioDelegate;
@@ -239,9 +239,9 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     public void editableChanged(PickerField pickerField, boolean editable) {
         // open action is available in read-only picker
         if (editable) {
-            setIcon(icons.get(CubaIcon.PICKERFIELD_OPEN));
+            setIcon(icons.get(JmixIcon.PICKERFIELD_OPEN));
         } else {
-            setIcon(icons.get(CubaIcon.PICKERFIELD_OPEN_READONLY));
+            setIcon(icons.get(JmixIcon.PICKERFIELD_OPEN_READONLY));
         }
     }
 
@@ -262,7 +262,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     protected void setIcons(Icons icons) {
         this.icons = icons;
 
-        setIcon(icons.get(CubaIcon.PICKERFIELD_OPEN));
+        setIcon(icons.get(JmixIcon.PICKERFIELD_OPEN));
     }
 
     @Inject

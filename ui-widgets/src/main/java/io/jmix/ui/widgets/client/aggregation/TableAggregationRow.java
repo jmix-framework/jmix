@@ -25,13 +25,14 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import io.jmix.ui.widgets.client.Tools;
+import io.jmix.ui.widgets.client.table.JmixScrollTableWidget;
 import io.jmix.ui.widgets.client.tableshared.TableWidget;
 import io.jmix.ui.widgets.client.tableshared.TotalAggregationInputListener;
 import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.ComputedStyle;
 import com.vaadin.client.UIDL;
-import com.vaadin.client.WidgetUtil;
 import com.vaadin.v7.client.ui.VScrollTable;
+import io.jmix.ui.widgets.client.treetable.JmixTreeTableWidget;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,8 +40,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Special aggregation row for {@link io.jmix.ui.widgets.client.table.CubaScrollTableWidget} and
- * {@link io.jmix.ui.widgets.client.treetable.CubaTreeTableWidget}
+ * Special aggregation row for {@link JmixScrollTableWidget} and
+ * {@link JmixTreeTableWidget}
  */
 public class TableAggregationRow extends Panel {
 

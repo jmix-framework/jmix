@@ -36,8 +36,8 @@ import io.jmix.ui.components.valueproviders.EntityNameValueProvider;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.HaloTheme;
-import io.jmix.ui.widgets.CubaButton;
-import io.jmix.ui.widgets.CubaPickerField;
+import io.jmix.ui.widgets.JmixButton;
+import io.jmix.ui.widgets.JmixPickerField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -52,7 +52,7 @@ import java.util.function.Function;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.components.ComponentsHelper.findActionById;
 
-public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPickerField<V>, V, V>
+public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPickerField<V>, V, V>
         implements PickerField<V>, SecuredActionsHolder, InitializingBean {
 
     /* Beans */
@@ -62,7 +62,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
     protected MetaClass metaClass;
 
     protected List<Action> actions = new ArrayList<>(4);
-    protected Map<Action, CubaButton> actionButtons = new HashMap<>(4);
+    protected Map<Action, JmixButton> actionButtons = new HashMap<>(4);
     protected Registration fieldListenerRegistration;
 
     protected ActionsPermissions actionsPermissions = new ActionsPermissions(this);
@@ -78,8 +78,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         attachValueChangeListener(this.component);
     }
 
-    protected CubaPickerField<V> createComponent() {
-        return new CubaPickerField<>();
+    protected JmixPickerField<V> createComponent() {
+        return new JmixPickerField<>();
     }
 
     @Inject
@@ -148,7 +148,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         initComponent(component);
     }
 
-    protected void initComponent(CubaPickerField<V> component) {
+    protected void initComponent(JmixPickerField<V> component) {
         component.setTextFieldValueProvider(createTextFieldValueProvider());
     }
 
@@ -278,7 +278,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         actions.add(index, action);
         actionHandler.addAction(action, index);
 
-        CubaButton vButton = new CubaButton();
+        JmixButton vButton = new JmixButton();
         setPickerButtonAction(vButton, action);
 
         component.addButton(vButton, index);
@@ -307,7 +307,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         getActions().forEach(Action::refreshState);
     }
 
-    protected void setPickerButtonAction(CubaButton button, Action action) {
+    protected void setPickerButtonAction(JmixButton button, Action action) {
         String description = action.getDescription();
         if (description == null && action.getShortcutCombination() != null) {
             description = action.getShortcutCombination().format();
@@ -335,7 +335,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         });
     }
 
-    protected void setPickerButtonIcon(CubaButton button, String icon) {
+    protected void setPickerButtonIcon(JmixButton button, String icon) {
         if (!StringUtils.isEmpty(icon)) {
             Resource iconResource = getIconResource(icon);
             button.setIcon(iconResource);
@@ -346,7 +346,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
 
     protected void actionPropertyChanged(PropertyChangeEvent evt) {
         Action action = (Action) evt.getSource();
-        CubaButton button = actionButtons.get(action);
+        JmixButton button = actionButtons.get(action);
 
         if (Action.PROP_ICON.equals(evt.getPropertyName())) {
             setPickerButtonIcon(button, action.getIcon());
@@ -373,7 +373,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
             TestIdManager testIdManager = AppUI.getCurrent().getTestIdManager();
 
             for (Action action : actions) {
-                CubaButton button = actionButtons.get(action);
+                JmixButton button = actionButtons.get(action);
                 if (button != null && Strings.isNullOrEmpty(button.getId())) {
                     button.setId(testIdManager.getTestId(debugId + "_" + action.getId()));
                 }
@@ -387,7 +387,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
             actionHandler.removeAction(action);
 
             if (action != null) {
-                CubaButton button = actionButtons.remove(action);
+                JmixButton button = actionButtons.remove(action);
                 component.removeButton(button);
 
                 action.removePropertyChangeListener(actionPropertyChangeListener);
@@ -424,7 +424,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<CubaPic
         return getEventHub().subscribe(FieldValueChangeEvent.class, (Consumer) listener);
     }
 
-    protected void onFieldValueChange(CubaPickerField.FieldValueChangeEvent<V> e) {
+    protected void onFieldValueChange(JmixPickerField.FieldValueChangeEvent<V> e) {
         FieldValueChangeEvent<V> event = new FieldValueChangeEvent<>(this, e.getText(), e.getPrevValue());
         publish(FieldValueChangeEvent.class, event);
 

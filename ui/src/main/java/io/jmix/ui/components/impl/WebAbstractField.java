@@ -23,7 +23,7 @@ import io.jmix.ui.components.*;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.ValueBinding;
 import io.jmix.ui.components.data.value.ValueBinder;
-import io.jmix.ui.widgets.compatibility.CubaValueChangeEvent;
+import io.jmix.ui.widgets.compatibility.JmixValueChangeEvent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -195,8 +195,8 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
     protected void attachListener(T component) {
         component.addValueChangeListener(event -> {
             Object value = event.getProperty().getValue();
-            componentValueChanged(value, event instanceof CubaValueChangeEvent
-                    && ((CubaValueChangeEvent) event).isUserOriginated());
+            componentValueChanged(value, event instanceof JmixValueChangeEvent
+                    && ((JmixValueChangeEvent) event).isUserOriginated());
         });
     }
 

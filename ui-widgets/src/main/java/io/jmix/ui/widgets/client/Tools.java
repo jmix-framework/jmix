@@ -27,7 +27,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Widget;
-import io.jmix.ui.widgets.client.jqueryfileupload.CubaFileUploadWidget;
+import io.jmix.ui.widgets.client.jqueryfileupload.JmixFileUploadWidget;
 import io.jmix.ui.widgets.client.sys.ToolsImpl;
 import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.WidgetUtil;
@@ -41,7 +41,7 @@ import com.vaadin.client.ui.orderedlayout.VAbstractOrderedLayout;
 public class Tools {
 
     public static final String SELECTED_ITEM_STYLE = "c-cm-button-selected";
-    public static final String CUBA_CONTEXT_MENU_CONTAINER = "c-cm-container";
+    public static final String CONTEXT_MENU_CONTAINER_CLASSNAME = "c-cm-container";
 
     private static ToolsImpl impl;
 
@@ -69,7 +69,7 @@ public class Tools {
         element.setClassName(newClassName.trim());
     }
 
-    public static VOverlay createCubaTablePopup(boolean autoClose) {
+    public static VOverlay createJmixTablePopup(boolean autoClose) {
         VOverlay tableCustomPopup = autoClose ? createTableContextMenu() : new VOverlay();
 
         tableCustomPopup.setStyleName("c-table-popup");
@@ -77,7 +77,7 @@ public class Tools {
         return tableCustomPopup;
     }
 
-    public static VOverlay createCubaTableContextMenu() {
+    public static VOverlay createJmixTableContextMenu() {
         VOverlay tableContextMenu = createTableContextMenu();
 
         tableContextMenu.setStyleName("c-context-menu");
@@ -108,7 +108,7 @@ public class Tools {
     public static void resetItemSelection(Widget popup) {
         if (popup instanceof VAbstractOrderedLayout) {
             VAbstractOrderedLayout content = (VAbstractOrderedLayout) popup;
-            if (content.getStyleName().contains(CUBA_CONTEXT_MENU_CONTAINER)) {
+            if (content.getStyleName().contains(CONTEXT_MENU_CONTAINER_CLASSNAME)) {
                 for (Widget slot : content) {
                     VButton button = (VButton) ((Slot) slot).getWidget();
                     if (button != null && button.getStyleName().contains(SELECTED_ITEM_STYLE)) {
@@ -129,7 +129,7 @@ public class Tools {
             resetItemSelection(widget);
 
             VVerticalLayout verticalLayout = (VVerticalLayout) widget;
-            if (verticalLayout.getStyleName().contains(CUBA_CONTEXT_MENU_CONTAINER)) {
+            if (verticalLayout.getStyleName().contains(CONTEXT_MENU_CONTAINER_CLASSNAME)) {
                 int widgetCount = verticalLayout.getWidgetCount();
                 if (widgetCount > 1) {
                     Widget verticalSlot = verticalLayout.getWidget(0);
@@ -240,7 +240,7 @@ public class Tools {
             if (button.isEnabled()) {
                 return true;
             }
-        } else if (slotWidget instanceof CubaFileUploadWidget) {
+        } else if (slotWidget instanceof JmixFileUploadWidget) {
             return true;
         } else if (slotWidget instanceof VUpload) {
             return true;

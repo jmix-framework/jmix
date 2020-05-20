@@ -21,7 +21,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
-import io.jmix.ui.widgets.client.suggestionfield.CubaSuggestionFieldWidget;
+import io.jmix.ui.widgets.client.suggestionfield.JmixSuggestionFieldWidget;
 
 public class SuggestionItem extends Widget implements HasText {
 
@@ -31,9 +31,9 @@ public class SuggestionItem extends Widget implements HasText {
     protected Scheduler.ScheduledCommand cmd;
     protected SuggestionsContainer suggestionsContainer;
 
-    protected CubaSuggestionFieldWidget.Suggestion suggestion;
+    protected JmixSuggestionFieldWidget.Suggestion suggestion;
 
-    public SuggestionItem(CubaSuggestionFieldWidget.Suggestion suggestion) {
+    public SuggestionItem(JmixSuggestionFieldWidget.Suggestion suggestion) {
         this.suggestion = suggestion;
 
         setElement(Document.get().createDivElement());
@@ -45,7 +45,7 @@ public class SuggestionItem extends Widget implements HasText {
         getElement().setAttribute("id", DOM.createUniqueId());
     }
 
-    public CubaSuggestionFieldWidget.Suggestion getSuggestion() {
+    public JmixSuggestionFieldWidget.Suggestion getSuggestion() {
         return suggestion;
     }
 

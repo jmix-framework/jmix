@@ -26,7 +26,7 @@ import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.widgets.CubaTimeFieldWrapper;
+import io.jmix.ui.widgets.JmixTimeFieldWrapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -37,7 +37,7 @@ import java.util.Date;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.components.impl.WebWrapperUtils.*;
 
-public class WebTimeField<V> extends WebV8AbstractField<CubaTimeFieldWrapper, LocalTime, V>
+public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, LocalTime, V>
         implements TimeField<V>, InitializingBean {
 
     @Inject
@@ -169,8 +169,8 @@ public class WebTimeField<V> extends WebV8AbstractField<CubaTimeFieldWrapper, Lo
         return dateTimeTransformations.transformToLocalTime(modelValue);
     }
 
-    protected CubaTimeFieldWrapper createComponent() {
-        return new CubaTimeFieldWrapper();
+    protected JmixTimeFieldWrapper createComponent() {
+        return new JmixTimeFieldWrapper();
     }
 
     protected void componentValueChanged(HasValue.ValueChangeEvent<LocalTime> e) {

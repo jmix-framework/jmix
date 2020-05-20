@@ -29,7 +29,7 @@ import io.jmix.ui.actions.ListAction;
 import io.jmix.ui.builders.EditorBuilder;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.data.meta.EntityDataUnit;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioDelegate;
@@ -258,7 +258,7 @@ public class CreateAction<E extends Entity> extends ListAction implements Action
 
     @Inject
     protected void setIcons(Icons icons) {
-        this.icon = icons.get(CubaIcon.CREATE_ACTION);
+        this.icon = icons.get(JmixIcon.CREATE_ACTION);
     }
 
     @Inject

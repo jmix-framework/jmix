@@ -19,7 +19,7 @@ package io.jmix.ui.components.renderers;
 import io.jmix.core.Entity;
 import io.jmix.ui.components.DataGrid;
 import io.jmix.ui.components.impl.WebAbstractDataGrid;
-import io.jmix.ui.widgets.renderers.CubaProgressBarRenderer;
+import io.jmix.ui.widgets.renderers.JmixProgressBarRenderer;
 
 /**
  * A renderer that represents a double values as a graphical progress bar.
@@ -29,7 +29,7 @@ public class WebProgressBarRenderer
         implements DataGrid.ProgressBarRenderer {
 
     @Override
-    protected CubaProgressBarRenderer createImplementation() {
-        return new CubaProgressBarRenderer();
+    protected JmixProgressBarRenderer createImplementation() {
+        return new JmixProgressBarRenderer();
     }
 }

@@ -23,7 +23,7 @@ import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
-import io.jmix.ui.widgets.CubaOptionGroup;
+import io.jmix.ui.widgets.JmixOptionGroup;
 import io.jmix.ui.widgets.client.optiongroup.OptionGroupOrientation;
 import com.vaadin.v7.data.util.IndexedContainer;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class WebOptionsGroup<V, I> extends WebAbstractField<CubaOptionGroup, V> implements OptionsGroup<V, I> {
+public class WebOptionsGroup<V, I> extends WebAbstractField<JmixOptionGroup, V> implements OptionsGroup<V, I> {
 
     protected MetadataTools metadataTools;
 
@@ -55,8 +55,8 @@ public class WebOptionsGroup<V, I> extends WebAbstractField<CubaOptionGroup, V> 
         attachListener(component);
     }
 
-    protected CubaOptionGroup createComponent() {
-        return new CubaOptionGroup();
+    protected JmixOptionGroup createComponent() {
+        return new JmixOptionGroup();
     }
 
     @Override

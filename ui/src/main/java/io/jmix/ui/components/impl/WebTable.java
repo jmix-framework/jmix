@@ -16,14 +16,14 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.core.Entity;
-import io.jmix.ui.widgets.CubaTable;
+import io.jmix.ui.widgets.JmixTable;
 
-public class WebTable<E extends Entity> extends WebAbstractTable<CubaTable, E>  {
+public class WebTable<E extends Entity> extends WebAbstractTable<JmixTable, E>  {
     public WebTable() {
         component = createComponent();
     }
 
-    protected CubaTable createComponent() {
-        return new CubaTable();
+    protected JmixTable createComponent() {
+        return new JmixTable();
     }
 }

@@ -38,9 +38,9 @@ import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.CubaCssActionsLayout;
-import io.jmix.ui.widgets.CubaDateField;
-import io.jmix.ui.widgets.CubaTimeFieldWrapper;
+import io.jmix.ui.widgets.JmixCssActionsLayout;
+import io.jmix.ui.widgets.JmixDateField;
+import io.jmix.ui.widgets.JmixTimeFieldWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -55,7 +55,7 @@ import static io.jmix.ui.components.impl.WebWrapperUtils.fromVaadinTimeMode;
 import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinTimeMode;
 
 public class WebDateField<V extends Comparable<V>>
-        extends WebAbstractViewComponent<CubaCssActionsLayout, LocalDateTime, V>
+        extends WebAbstractViewComponent<JmixCssActionsLayout, LocalDateTime, V>
         implements DateField<V>, InitializingBean {
 
     public static final String DATEFIELD_WITH_TIME_STYLENAME = "c-datefield-withtime";
@@ -74,8 +74,8 @@ public class WebDateField<V extends Comparable<V>>
 
     protected boolean updatingInstance;
 
-    protected CubaDateField dateField;
-    protected CubaTimeFieldWrapper timeField;
+    protected JmixDateField dateField;
+    protected JmixTimeFieldWrapper timeField;
 
     protected String dateTimeFormat;
 
@@ -108,23 +108,23 @@ public class WebDateField<V extends Comparable<V>>
         updateLayout();
     }
 
-    protected CubaCssActionsLayout createComponent() {
-        return new CubaCssActionsLayout();
+    protected JmixCssActionsLayout createComponent() {
+        return new JmixCssActionsLayout();
     }
 
-    protected CubaDateField createDateField() {
-        return new CubaDateField();
+    protected JmixDateField createDateField() {
+        return new JmixDateField();
     }
 
-    protected void initDateField(CubaDateField dateField) {
+    protected void initDateField(JmixDateField dateField) {
         dateField.setCaptionManagedByLayout(false);
     }
 
-    protected CubaTimeFieldWrapper createTimeField() {
-        return new CubaTimeFieldWrapper();
+    protected JmixTimeFieldWrapper createTimeField() {
+        return new JmixTimeFieldWrapper();
     }
 
-    protected void initTimeField(CubaTimeFieldWrapper timeField) {
+    protected void initTimeField(JmixTimeFieldWrapper timeField) {
         timeField.setCaptionManagedByLayout(false);
     }
 

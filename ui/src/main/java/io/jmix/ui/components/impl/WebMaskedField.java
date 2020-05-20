@@ -29,7 +29,7 @@ import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.ValueConversionException;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.widgets.CubaMaskedTextField;
+import io.jmix.ui.widgets.JmixMaskedTextField;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,7 +43,7 @@ import java.util.function.Consumer;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class WebMaskedField<V> extends WebV8AbstractField<CubaMaskedTextField, String, V>
+public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, String, V>
         implements MaskedField<V>, InitializingBean {
 
     protected static final char PLACE_HOLDER = '_';
@@ -203,8 +203,8 @@ public class WebMaskedField<V> extends WebV8AbstractField<CubaMaskedTextField, S
         return messages.getMessage("databinding.conversion.error");
     }
 
-    protected CubaMaskedTextField createComponent() {
-        return new CubaMaskedTextField();
+    protected JmixMaskedTextField createComponent() {
+        return new JmixMaskedTextField();
     }
 
     @Override
@@ -212,7 +212,7 @@ public class WebMaskedField<V> extends WebV8AbstractField<CubaMaskedTextField, S
         initComponent(component);
     }
 
-    protected void initComponent(CubaMaskedTextField component) {
+    protected void initComponent(JmixMaskedTextField component) {
         component.setValueChangeMode(ValueChangeMode.BLUR);
     }
 

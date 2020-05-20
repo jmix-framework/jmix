@@ -27,7 +27,7 @@ import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.builders.EditorBuilder;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.data.meta.EntityDataUnit;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioDelegate;
@@ -216,7 +216,7 @@ public class EditAction<E extends Entity> extends SecuredListAction implements A
 
     @Inject
     protected void setIcons(Icons icons) {
-        this.icon = icons.get(CubaIcon.EDIT_ACTION);
+        this.icon = icons.get(JmixIcon.EDIT_ACTION);
     }
 
     @Inject

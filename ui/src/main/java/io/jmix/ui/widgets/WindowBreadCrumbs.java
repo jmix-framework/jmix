@@ -31,7 +31,7 @@ import io.jmix.ui.components.AppWorkArea.Mode;
 import io.jmix.ui.components.CloseOriginType;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.components.impl.WebWindow;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.screen.FrameOwner;
@@ -88,7 +88,7 @@ public class WindowBreadCrumbs extends CssLayout {
             JmixButton closeBtn = new JmixButton("");
             closeBtn.setDescription(messages.getMessage("windowBreadCrumbs.closeButton.description"));
             closeBtn.setClickHandler(this::onCloseWindowButtonClick);
-            closeBtn.setIcon(resolveIcon(beanLocator, CubaIcon.CLOSE));
+            closeBtn.setIcon(resolveIcon(beanLocator, JmixIcon.CLOSE));
             closeBtn.setStyleName("c-closetab-button");
 
             this.closeBtn = closeBtn;
@@ -109,7 +109,7 @@ public class WindowBreadCrumbs extends CssLayout {
         }
     }
 
-    protected Resource resolveIcon(BeanLocator beanLocator, CubaIcon icon) {
+    protected Resource resolveIcon(BeanLocator beanLocator, JmixIcon icon) {
         String iconName = beanLocator.get(Icons.class).get(icon);
         return beanLocator.get(IconResolver.class).getIconResource(iconName);
     }

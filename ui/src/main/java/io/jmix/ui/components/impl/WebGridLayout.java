@@ -21,7 +21,7 @@ import com.vaadin.shared.ui.MarginInfo;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.components.*;
-import io.jmix.ui.widgets.CubaGridLayout;
+import io.jmix.ui.widgets.JmixGridLayout;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -30,14 +30,14 @@ import java.util.stream.Stream;
 
 import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinAlignment;
 
-public class WebGridLayout extends WebAbstractComponent<CubaGridLayout> implements GridLayout {
+public class WebGridLayout extends WebAbstractComponent<JmixGridLayout> implements GridLayout {
 
     protected List<Component> ownComponents = new ArrayList<>();
     protected LayoutEvents.LayoutClickListener layoutClickListener;
     protected Map<ShortcutAction, ShortcutListener> shortcuts;
 
     public WebGridLayout() {
-        component = new CubaGridLayout();
+        component = new JmixGridLayout();
     }
 
     @Override

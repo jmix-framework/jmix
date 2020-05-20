@@ -19,8 +19,8 @@ import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.ui.components.RichTextArea;
 import io.jmix.ui.components.data.ConversionException;
-import io.jmix.ui.widgets.CubaRichTextArea;
-import io.jmix.ui.widgets.client.richtextarea.CubaRichTextAreaState;
+import io.jmix.ui.widgets.JmixRichTextArea;
+import io.jmix.ui.widgets.client.richtextarea.JmixRichTextAreaState;
 import com.vaadin.shared.ui.ValueChangeMode;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -34,7 +34,7 @@ import java.util.Map;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class WebRichTextArea extends WebV8AbstractField<CubaRichTextArea, String, String>
+public class WebRichTextArea extends WebV8AbstractField<JmixRichTextArea, String, String>
         implements RichTextArea, InitializingBean {
 
     protected static final String LINE_BREAK_TAG = "<br>";
@@ -46,8 +46,8 @@ public class WebRichTextArea extends WebV8AbstractField<CubaRichTextArea, String
         attachValueChangeListener(this.component);
     }
 
-    protected CubaRichTextArea createComponent() {
-        return new CubaRichTextArea();
+    protected JmixRichTextArea createComponent() {
+        return new JmixRichTextArea();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class WebRichTextArea extends WebV8AbstractField<CubaRichTextArea, String
         initComponent(component);
     }
 
-    protected void initComponent(CubaRichTextArea component) {
+    protected void initComponent(JmixRichTextArea component) {
         component.setValueChangeMode(ValueChangeMode.BLUR);
     }
 
@@ -68,35 +68,35 @@ public class WebRichTextArea extends WebV8AbstractField<CubaRichTextArea, String
         Map<String, String> labels = new HashMap<>();
 
         Collection<String> locales = Arrays.asList(
-                CubaRichTextAreaState.RICH_TEXT_AREA_FOREGROUND_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_BACKGROUND_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_BLACK_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_WHITE_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_RED_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_GREEN_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_YELLOW_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_BLUE_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_FONT_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_NORMAL_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_SIZE_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_BOLD_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_ITALIC_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_UNDERLINE_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_SUBSCRIPT_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_SUPERSCRIPT_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_JUSTIFYCENTER_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_JUSTIFYRIGHT_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_JUSTIFYLEFT_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_STRIKETHROUGH_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_INDENT_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_OUTDENT_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_HR_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_OL_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_UL_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_INSERTIMAGE_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_CREATELINK_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_REMOVELINK_LABEL,
-                CubaRichTextAreaState.RICH_TEXT_AREA_REMOVEFORMAT_LABEL
+                JmixRichTextAreaState.RICH_TEXT_AREA_FOREGROUND_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_BACKGROUND_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_BLACK_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_WHITE_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_RED_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_GREEN_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_YELLOW_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_BLUE_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_FONT_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_NORMAL_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_SIZE_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_BOLD_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_ITALIC_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_UNDERLINE_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_SUBSCRIPT_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_SUPERSCRIPT_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_JUSTIFYCENTER_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_JUSTIFYRIGHT_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_JUSTIFYLEFT_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_STRIKETHROUGH_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_INDENT_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_OUTDENT_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_HR_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_OL_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_UL_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_INSERTIMAGE_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_CREATELINK_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_REMOVELINK_LABEL,
+                JmixRichTextAreaState.RICH_TEXT_AREA_REMOVEFORMAT_LABEL
         );
 
         for (String locale : locales) {

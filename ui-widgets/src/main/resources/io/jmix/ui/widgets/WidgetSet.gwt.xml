@@ -17,11 +17,11 @@
 <module>
     <inherits name="com.vaadin.v7.Vaadin7WidgetSet"/>
 
-    <replace-with class="io.jmix.ui.widgets.client.tooltip.CubaTooltip">
+    <replace-with class="io.jmix.ui.widgets.client.tooltip.JmixTooltip">
         <when-type-is class="com.vaadin.client.VTooltip"/>
     </replace-with>
 
-    <replace-with class="io.jmix.ui.widgets.client.datefield.CubaDateCalendarPanel">
+    <replace-with class="io.jmix.ui.widgets.client.datefield.JmixDateCalendarPanel">
         <when-type-is class="com.vaadin.client.ui.VDateCalendarPanel"/>
     </replace-with>
 
@@ -29,7 +29,7 @@
         <when-type-is class="com.vaadin.client.ui.ui.UIConnector"/>
     </replace-with>
 
-    <replace-with class="io.jmix.ui.widgets.client.notification.CubaNotification">
+    <replace-with class="io.jmix.ui.widgets.client.notification.JmixNotification">
         <when-type-is class="com.vaadin.client.ui.VNotification"/>
     </replace-with>
 

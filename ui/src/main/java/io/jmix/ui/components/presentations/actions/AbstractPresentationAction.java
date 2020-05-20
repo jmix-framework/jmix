@@ -19,17 +19,17 @@ package io.jmix.ui.components.presentations.actions;
 import io.jmix.ui.actions.AbstractAction;
 import io.jmix.ui.components.Table;
 import io.jmix.ui.components.impl.WebComponentsHelper;
-import io.jmix.ui.widgets.CubaEnhancedTable;
+import io.jmix.ui.widgets.JmixEnhancedTable;
 
 public abstract class AbstractPresentationAction extends AbstractAction {
 
     protected Table table;
-    protected CubaEnhancedTable tableImpl;
+    protected JmixEnhancedTable tableImpl;
 
     public AbstractPresentationAction(Table table, String id) {
         super(id);
 
         this.table = table;
-        this.tableImpl = (CubaEnhancedTable) WebComponentsHelper.unwrap(table);
+        this.tableImpl = (JmixEnhancedTable) WebComponentsHelper.unwrap(table);
     }
 }

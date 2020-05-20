@@ -21,13 +21,13 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.Table;
-import io.jmix.ui.widgets.CubaEnhancedTable;
+import io.jmix.ui.widgets.JmixEnhancedTable;
 import org.apache.commons.lang3.StringUtils;
 
 import static io.jmix.ui.components.impl.WebAbstractTable.MAX_TEXT_LENGTH_GAP;
 
 public class AbbreviatedColumnGenerator implements SystemTableColumnGenerator,
-        CubaEnhancedTable.PlainTextGeneratedColumn {
+        JmixEnhancedTable.PlainTextGeneratedColumn {
 
     protected Table.Column column;
     protected MetadataTools metadataTools;

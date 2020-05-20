@@ -20,7 +20,7 @@ import com.vaadin.ui.renderers.Renderer;
 import io.jmix.core.Entity;
 import io.jmix.ui.components.DataGrid;
 import io.jmix.ui.components.impl.WebAbstractDataGrid;
-import io.jmix.ui.widgets.renderers.CubaCheckBoxRenderer;
+import io.jmix.ui.widgets.renderers.JmixCheckBoxRenderer;
 
 /**
  * A renderer that represents a boolean values as a graphical check box icons.
@@ -29,6 +29,6 @@ public class WebCheckBoxRenderer extends WebAbstractDataGrid.AbstractRenderer<En
 
     @Override
     protected Renderer<Boolean> createImplementation() {
-        return new CubaCheckBoxRenderer();
+        return new JmixCheckBoxRenderer();
     }
 }

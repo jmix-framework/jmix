@@ -21,18 +21,18 @@ import io.jmix.ui.components.AttachNotifier;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.HtmlBoxLayout;
-import io.jmix.ui.widgets.CubaCustomLayout;
+import io.jmix.ui.widgets.JmixCustomLayout;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class WebHtmlBoxLayout extends WebAbstractComponent<CubaCustomLayout> implements HtmlBoxLayout {
+public class WebHtmlBoxLayout extends WebAbstractComponent<JmixCustomLayout> implements HtmlBoxLayout {
 
     protected List<Component> ownComponents = new ArrayList<>();
 
     public WebHtmlBoxLayout() {
-        component = new CubaCustomLayout();
+        component = new JmixCustomLayout();
     }
 
     @Override

@@ -16,8 +16,8 @@
 
 package io.jmix.ui.widgets.client.window;
 
+import io.jmix.ui.widgets.client.tabsheet.ClientAction;
 import com.vaadin.shared.communication.ClientRpc;
-import io.jmix.ui.widgets.client.action.ClientAction;
 
 public interface JmixWindowClientRpc extends ClientRpc {
 

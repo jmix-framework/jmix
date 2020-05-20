@@ -16,10 +16,10 @@
 
 package io.jmix.ui.widgets.client.tabsheet;
 
+import io.jmix.ui.widgets.client.addons.dragdroplayouts.ui.tabsheet.DDTabSheetState;
 import com.vaadin.shared.annotations.NoLayout;
-import com.vaadin.shared.ui.tabsheet.TabsheetState;
 
-public class JmixMainTabSheetState extends TabsheetState {
+public class JmixMainTabSheetState extends DDTabSheetState {
 
     private static final long serialVersionUID = 4132538424243246049L;
 

@@ -17,17 +17,18 @@ package io.jmix.ui.widgets;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.widgets.addons.dragdroplayouts.DDTabSheet;
+import io.jmix.ui.widgets.client.tabsheet.ClientAction;
+import io.jmix.ui.widgets.client.tabsheet.JmixMainTabSheetClientRpc;
+import io.jmix.ui.widgets.client.tabsheet.JmixMainTabSheetServerRpc;
+import io.jmix.ui.widgets.client.tabsheet.JmixMainTabSheetState;
 import com.vaadin.event.Action;
 import com.vaadin.server.KeyMapper;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.TabSheet;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.widgets.client.action.ClientAction;
-import io.jmix.ui.widgets.client.tabsheet.JmixMainTabSheetClientRpc;
-import io.jmix.ui.widgets.client.tabsheet.JmixMainTabSheetServerRpc;
-import io.jmix.ui.widgets.client.tabsheet.JmixMainTabSheetState;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -35,7 +36,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class JmixMainTabSheet extends TabSheet implements Action.Container, HasTabSheetBehaviour {
+public class JmixMainTabSheet extends DDTabSheet implements Action.Container, HasTabSheetBehaviour {
 
     private static final long serialVersionUID = -2956008661221108673L;
 
@@ -111,8 +112,7 @@ public class JmixMainTabSheet extends TabSheet implements Action.Container, HasT
     public JmixMainTabSheet() {
         registerRpc(rpc);
 
-        // todo dragdrop
-        // setShim(false);
+        setShim(false);
 
         setCloseHandler((tabsheet, tabContent) -> {
             AppUI ui = (AppUI) tabsheet.getUI();
@@ -343,7 +343,7 @@ public class JmixMainTabSheet extends TabSheet implements Action.Container, HasT
 
     public void closeOtherTabs(Component currentTab) {
         if (closeOthersHandler == null) {
-            throw new IllegalStateException("CubaTabSheet closeOthersHandler is not set");
+            throw new IllegalStateException("JmixTabSheet closeOthersHandler is not set");
         }
 
         closeOthersHandler.accept((ComponentContainer) currentTab);
@@ -351,7 +351,7 @@ public class JmixMainTabSheet extends TabSheet implements Action.Container, HasT
 
     public void closeAllTabs() {
         if (closeAllTabsHandler == null) {
-            throw new IllegalStateException("CubaTabSheet closeAllTabs is not set");
+            throw new IllegalStateException("JmixTabSheet closeAllTabs is not set");
         }
 
         closeAllTabsHandler.accept(null);

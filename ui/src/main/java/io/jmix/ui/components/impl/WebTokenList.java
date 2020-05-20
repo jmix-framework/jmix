@@ -34,7 +34,7 @@ import io.jmix.ui.components.data.meta.EntityOptions;
 import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.value.ContainerValueSource;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
@@ -53,7 +53,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WebTokenList<V extends Entity>
-        extends WebV8AbstractField<CubaTokenList<V>, Collection<V>, Collection<V>>
+        extends WebV8AbstractField<JmixTokenList<V>, Collection<V>, Collection<V>>
         implements TokenList<V>, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(WebTokenList.class);
@@ -103,7 +103,7 @@ public class WebTokenList<V extends Entity>
     protected Function<? super V, String> optionCaptionProvider;
 
     public WebTokenList() {
-        component = new CubaTokenList<>(this);
+        component = new JmixTokenList<>(this);
     }
 
     @Inject
@@ -336,7 +336,7 @@ public class WebTokenList<V extends Entity>
 
     protected Action createLookupAction() {
         return new BaseAction("")
-                .withIcon(icons.get(CubaIcon.PICKERFIELD_LOOKUP))
+                .withIcon(icons.get(JmixIcon.PICKERFIELD_LOOKUP))
                 .withHandler(e -> openLookup(null));
     }
 

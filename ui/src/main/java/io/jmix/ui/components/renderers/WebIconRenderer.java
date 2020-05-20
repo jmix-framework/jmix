@@ -24,7 +24,7 @@ import io.jmix.ui.components.DataGrid;
 import io.jmix.ui.components.impl.WebAbstractDataGrid;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
-import io.jmix.ui.widgets.renderers.CubaIconRenderer;
+import io.jmix.ui.widgets.renderers.JmixIconRenderer;
 
 import javax.inject.Inject;
 
@@ -49,7 +49,7 @@ public class WebIconRenderer<T extends Entity>
 
     @Override
     protected Renderer<Resource> createImplementation() {
-        return new CubaIconRenderer();
+        return new JmixIconRenderer();
     }
 
     @Override

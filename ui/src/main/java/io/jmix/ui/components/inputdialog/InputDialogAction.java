@@ -106,7 +106,7 @@ public class InputDialogAction extends AbstractAction {
     }
 
     /**
-     * Sets icon from icons set to the action (e.g. CubaIcon.DIALOG_OK).
+     * Sets icon from icons set to the action (e.g. JmixIcon.DIALOG_OK).
      *
      * @param iconKey icon
      * @return current instance of action

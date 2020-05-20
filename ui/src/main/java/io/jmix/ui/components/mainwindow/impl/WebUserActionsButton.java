@@ -25,18 +25,18 @@ import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.impl.WebAbstractComponent;
 import io.jmix.ui.components.mainwindow.UserActionsButton;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
-import io.jmix.ui.widgets.CubaMenuBar;
+import io.jmix.ui.widgets.JmixMenuBar;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import java.util.function.Consumer;
 
-public class WebUserActionsButton extends WebAbstractComponent<CubaMenuBar>
+public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
         implements UserActionsButton {
 
     public static final String USERACTIONS_BUTTON_STYLENAME = "c-useractions-button";
@@ -50,7 +50,7 @@ public class WebUserActionsButton extends WebAbstractComponent<CubaMenuBar>
     protected Consumer<LogoutHandlerContext> logoutHandler;
 
     public WebUserActionsButton() {
-        component = new CubaMenuBar();
+        component = new JmixMenuBar();
         component.addStyleName(USERACTIONS_BUTTON_STYLENAME);
 
         component.addAttachListener(event -> {
@@ -102,23 +102,23 @@ public class WebUserActionsButton extends WebAbstractComponent<CubaMenuBar>
     protected void initLoginButton(boolean authenticated) {
         MenuBar.MenuItem loginButton = component.addItem("", item -> login());
         loginButton.setDescription(messages.getMessage("loginBtnDescription"));
-        loginButton.setIcon(getIconResource(CubaIcon.SIGN_IN));
+        loginButton.setIcon(getIconResource(JmixIcon.SIGN_IN));
         loginButton.setVisible(!authenticated);
     }
 
     protected void initUserMenuButton(boolean authenticated) {
         MenuBar.MenuItem userMenuButton = component.addItem("");
         userMenuButton.setDescription(messages.getMessage("userActionsBtnDescription"));
-        userMenuButton.setIcon(getIconResource(CubaIcon.USER));
+        userMenuButton.setIcon(getIconResource(JmixIcon.USER));
         userMenuButton.setVisible(authenticated);
 
         if (security.isScreenPermitted("settings")) {
             userMenuButton.addItem(messages.getMessage("settings"),
-                    getIconResource(CubaIcon.GEAR), item -> openSettings());
+                    getIconResource(JmixIcon.GEAR), item -> openSettings());
         }
 
         userMenuButton.addItem(messages.getMessage("logoutBtnDescription"),
-                getIconResource(CubaIcon.SIGN_OUT), item -> logout());
+                getIconResource(JmixIcon.SIGN_OUT), item -> logout());
     }
 
     protected Resource getIconResource(Icons.Icon icon) {

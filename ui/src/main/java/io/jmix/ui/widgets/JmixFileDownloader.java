@@ -16,8 +16,8 @@
 
 package io.jmix.ui.widgets;
 
+import io.jmix.ui.widgets.client.downloader.JmixFileDownloaderClientRPC;
 import com.vaadin.server.*;
-import io.jmix.ui.widgets.client.downloader.JmixFileDownloaderClientRpc;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -40,14 +40,14 @@ public class JmixFileDownloader extends AbstractExtension {
         String resourceId = DOWNLOAD_RESOURCE_PREFIX + UUID.randomUUID().toString();
         setResource(resourceId, resource);
 
-        getRpcProxy(JmixFileDownloaderClientRpc.class).downloadFile(resourceId);
+        getRpcProxy(JmixFileDownloaderClientRPC.class).downloadFile(resourceId);
     }
 
     public void viewDocument(Resource resource) {
         String resourceId = VIEW_RESOURCE_PREFIX + UUID.randomUUID().toString();
         setResource(resourceId, resource);
 
-        getRpcProxy(JmixFileDownloaderClientRpc.class).viewDocument(resourceId);
+        getRpcProxy(JmixFileDownloaderClientRPC.class).viewDocument(resourceId);
     }
 
     /**
@@ -57,8 +57,8 @@ public class JmixFileDownloader extends AbstractExtension {
      * is by default set to <code>true</code>.
      * <p>
      * Please note that this only affects Connector resources (e.g.
-     * {@link FileResource} and {@link ClassResource}) but not other resource
-     * types (e.g. {@link ExternalResource} or {@link ThemeResource}).
+     * {@link com.vaadin.server.FileResource} and {@link com.vaadin.server.ClassResource}) but not other resource
+     * types (e.g. {@link com.vaadin.server.ExternalResource} or {@link com.vaadin.server.ThemeResource}).
      * </p>
      *
      * @param overrideContentType <code>true</code> to override the content type if possible;

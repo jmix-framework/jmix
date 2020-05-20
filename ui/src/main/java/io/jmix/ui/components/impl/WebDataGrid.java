@@ -17,12 +17,12 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.core.Entity;
-import io.jmix.ui.widgets.CubaGrid;
+import io.jmix.ui.widgets.JmixGrid;
 
-public class WebDataGrid<E extends Entity> extends WebAbstractDataGrid<CubaGrid<E>, E> {
+public class WebDataGrid<E extends Entity> extends WebAbstractDataGrid<JmixGrid<E>, E> {
 
     @Override
-    protected CubaGrid<E> createComponent() {
-        return new CubaGrid<>();
+    protected JmixGrid<E> createComponent() {
+        return new JmixGrid<>();
     }
 }

@@ -27,7 +27,7 @@ import com.vaadin.shared.ui.ui.UIConstants;
 import elemental.client.Browser;
 import elemental.html.History;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.widgets.client.tooltip.CubaTooltip;
+import io.jmix.ui.widgets.client.tooltip.JmixTooltip;
 import io.jmix.ui.widgets.client.ui.AppUIClientRpc;
 import io.jmix.ui.widgets.client.ui.AppUIConstants;
 
@@ -66,7 +66,7 @@ public class AppUIConnector extends UIConnector {
         if (stateChangeEvent.isInitialStateChange()) {
             // check mode of required indicator icon/hidden
             // performed on page open or full refresh
-            CubaTooltip.checkRequiredIndicatorMode();
+            JmixTooltip.checkRequiredIndicatorMode();
         }
     }
 

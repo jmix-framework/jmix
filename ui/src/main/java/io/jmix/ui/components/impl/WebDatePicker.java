@@ -28,7 +28,7 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.ValueSource;
 import com.vaadin.shared.ui.datefield.DateResolution;
 import com.vaadin.ui.InlineDateField;
-import io.jmix.ui.widgets.CubaInlineDateField;
+import io.jmix.ui.widgets.JmixInlineDateField;
 
 import javax.inject.Inject;
 import java.time.*;
@@ -52,7 +52,7 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
     }
 
     protected InlineDateField createComponent() {
-        return new CubaInlineDateField();
+        return new JmixInlineDateField();
     }
 
     @Inject

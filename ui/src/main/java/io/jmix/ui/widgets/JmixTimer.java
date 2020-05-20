@@ -16,11 +16,11 @@
 
 package io.jmix.ui.widgets;
 
-import com.vaadin.server.AbstractExtension;
-import com.vaadin.ui.AbstractComponent;
 import io.jmix.ui.widgets.client.timer.JmixTimerClientRpc;
 import io.jmix.ui.widgets.client.timer.JmixTimerServerRpc;
 import io.jmix.ui.widgets.client.timer.JmixTimerState;
+import com.vaadin.server.AbstractExtension;
+import com.vaadin.ui.AbstractComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,5 +18,5 @@ package io.jmix.ui.widgets.client.caption;
 
 public interface CaptionHolder {
 
-    void captionUpdated(CubaCaptionWidget captionWidget);
+    void captionUpdated(JmixCaptionWidget captionWidget);
 }

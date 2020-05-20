@@ -27,7 +27,7 @@ import io.jmix.ui.components.mainwindow.SideMenu;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.menu.SideMenuBuilder;
 import io.jmix.ui.theme.HaloTheme;
-import io.jmix.ui.widgets.CubaSideMenu;
+import io.jmix.ui.widgets.JmixSideMenu;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements SideMenu {
+public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements SideMenu {
 
     protected Map<String, MenuItem> allItemsIds = new HashMap<>();
 
@@ -47,7 +47,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
     protected Component sidePanel;
 
     public WebSideMenu() {
-        component = new CubaSideMenu();
+        component = new JmixSideMenu();
         component.setBeforeMenuItemTriggeredHandler(menuItem -> {
             if (sidePanel != null) {
                 sidePanel.removeStyleName(HaloTheme.SIDEMENU_PANEL_OPEN);
@@ -63,7 +63,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
             return;
         }
 
-        for (CubaSideMenu.MenuItem vMenuItem : component.getMenuItems()) {
+        for (JmixSideMenu.MenuItem vMenuItem : component.getMenuItems()) {
             assignCubaId(((MenuItemWrapper) vMenuItem).getMenuItem());
         }
     }
@@ -138,7 +138,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
     @Nullable
     @Override
     public MenuItem getSelectedItem() {
-        CubaSideMenu.MenuItem selectedItem = component.getSelectedItem();
+        JmixSideMenu.MenuItem selectedItem = component.getSelectedItem();
         return selectedItem != null
                 ? ((MenuItemWrapper) selectedItem).getMenuItem()
                 : null;
@@ -263,7 +263,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
 
     @Override
     public void removeAllMenuItems() {
-        for (CubaSideMenu.MenuItem menuItem : new ArrayList<>(component.getMenuItems())) {
+        for (JmixSideMenu.MenuItem menuItem : new ArrayList<>(component.getMenuItems())) {
             component.removeMenuItem(menuItem);
             unregisterItem(((MenuItemWrapper) menuItem).getMenuItem());
         }
@@ -271,7 +271,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
 
     @Override
     public void removeMenuItem(int index) {
-        CubaSideMenu.MenuItem delegateItem = component.getMenuItems().get(index);
+        JmixSideMenu.MenuItem delegateItem = component.getMenuItems().get(index);
         component.removeMenuItem(index);
         unregisterItem(((MenuItemWrapper) delegateItem).getMenuItem());
     }
@@ -317,7 +317,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
         component.setTabIndex(tabIndex);
     }
 
-    protected static class MenuItemWrapper extends CubaSideMenu.MenuItem {
+    protected static class MenuItemWrapper extends JmixSideMenu.MenuItem {
         protected MenuItem menuItem;
 
         public MenuItemWrapper() {
@@ -345,12 +345,12 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
     protected static class MenuItemImpl implements MenuItem {
         protected WebSideMenu menu;
         protected String id;
-        protected CubaSideMenu.MenuItem delegateItem;
+        protected JmixSideMenu.MenuItem delegateItem;
         protected Consumer<MenuItem> command;
 
         protected String icon;
 
-        public MenuItemImpl(WebSideMenu menu, String id, CubaSideMenu.MenuItem delegateItem) {
+        public MenuItemImpl(WebSideMenu menu, String id, JmixSideMenu.MenuItem delegateItem) {
             this.menu = menu;
             this.id = id;
             this.delegateItem = delegateItem;
@@ -366,7 +366,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
             return menu;
         }
 
-        public CubaSideMenu.MenuItem getDelegateItem() {
+        public JmixSideMenu.MenuItem getDelegateItem() {
             return delegateItem;
         }
 
@@ -526,7 +526,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
 
         @Override
         public void removeAllChildItems() {
-            for (CubaSideMenu.MenuItem menuItem : new ArrayList<>(delegateItem.getChildren())) {
+            for (JmixSideMenu.MenuItem menuItem : new ArrayList<>(delegateItem.getChildren())) {
                 delegateItem.removeChildItem(menuItem);
 
                 menu.unregisterItem(((MenuItemWrapper) menuItem).getMenuItem());
@@ -535,7 +535,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
 
         @Override
         public void removeChildItem(int index) {
-            CubaSideMenu.MenuItem menuItem = delegateItem.getChildren().get(index);
+            JmixSideMenu.MenuItem menuItem = delegateItem.getChildren().get(index);
             delegateItem.removeChildItem(index);
 
             menu.unregisterItem(((MenuItemWrapper) menuItem).getMenuItem());
@@ -556,7 +556,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
         @Nullable
         @Override
         public MenuItem getParent() {
-            CubaSideMenu.MenuItem parent = delegateItem.getParent();
+            JmixSideMenu.MenuItem parent = delegateItem.getParent();
             return parent != null ? ((MenuItemWrapper) parent).getMenuItem() : null;
         }
 
@@ -569,7 +569,7 @@ public class WebSideMenu extends WebAbstractComponent<CubaSideMenu> implements S
         }
 
         @SuppressWarnings("unused")
-        protected void menuSelected(CubaSideMenu.MenuItemTriggeredEvent event) {
+        protected void menuSelected(JmixSideMenu.MenuItemTriggeredEvent event) {
             this.command.accept(this);
         }
     }

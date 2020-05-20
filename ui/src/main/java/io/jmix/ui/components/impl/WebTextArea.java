@@ -17,11 +17,11 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.ui.components.TextArea;
-import io.jmix.ui.widgets.CubaTextArea;
+import io.jmix.ui.widgets.JmixTextArea;
 import com.vaadin.shared.ui.ValueChangeMode;
 import org.springframework.beans.factory.InitializingBean;
 
-public class WebTextArea<V> extends WebAbstractTextArea<CubaTextArea, V>
+public class WebTextArea<V> extends WebAbstractTextArea<JmixTextArea, V>
         implements TextArea<V>, InitializingBean {
 
     public WebTextArea() {
@@ -30,8 +30,8 @@ public class WebTextArea<V> extends WebAbstractTextArea<CubaTextArea, V>
         attachValueChangeListener(component);
     }
 
-    protected CubaTextArea createComponent() {
-        return new CubaTextArea();
+    protected JmixTextArea createComponent() {
+        return new JmixTextArea();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class WebTextArea<V> extends WebAbstractTextArea<CubaTextArea, V>
         initComponent(component);
     }
 
-    protected void initComponent(CubaTextArea component) {
+    protected void initComponent(JmixTextArea component) {
         component.setValueChangeMode(ValueChangeMode.BLUR);
     }
 

@@ -24,21 +24,21 @@ import io.jmix.ui.components.data.TreeTableItems;
 import io.jmix.ui.components.table.TableDataContainer;
 import io.jmix.ui.components.table.TableItemsEventsDelegate;
 import io.jmix.ui.components.table.TreeTableDataContainer;
-import io.jmix.ui.widgets.CubaTreeTable;
+import io.jmix.ui.widgets.JmixTreeTable;
 import io.jmix.ui.widgets.data.AggregationContainer;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class WebTreeTable<E extends Entity> extends WebAbstractTable<CubaTreeTable, E> implements TreeTable<E> {
+public class WebTreeTable<E extends Entity> extends WebAbstractTable<JmixTreeTable, E> implements TreeTable<E> {
 
     public WebTreeTable() {
         component = createComponent();
     }
 
-    protected CubaTreeTable createComponent() {
-        return new CubaTreeTable();
+    protected JmixTreeTable createComponent() {
+        return new JmixTreeTable();
     }
 
     @Override

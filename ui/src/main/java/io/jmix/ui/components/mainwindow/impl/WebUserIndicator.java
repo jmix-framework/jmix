@@ -22,7 +22,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.ui.components.impl.WebAbstractComponent;
 import io.jmix.ui.components.mainwindow.UserIndicator;
-import io.jmix.ui.widgets.CubaComboBox;
+import io.jmix.ui.widgets.JmixComboBox;
 
 import javax.inject.Inject;
 import java.util.function.Function;
@@ -36,7 +36,7 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 //    protected final Function<? super BaseUser, String> DEFAULT_USER_NAME_FORMATTER = this::getDefaultUserCaption;
 
     protected Label userNameLabel;
-    protected CubaComboBox<BaseUser> userComboBox;
+    protected JmixComboBox<BaseUser> userComboBox;
 
 //    protected Function<? super BaseUser, String> userNameFormatter = DEFAULT_USER_NAME_FORMATTER;
 
@@ -82,7 +82,7 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 //        } else {
 //            userNameLabel = null;
 //
-//            userComboBox = new CubaComboBox<>();
+//            userComboBox = new JmixComboBox<>();
 //            userComboBox.setEmptySelectionAllowed(false);
 //            userComboBox.setItemCaptionGenerator(this::getSubstitutedUserCaption);
 //            userComboBox.setStyleName("c-user-select-combobox");

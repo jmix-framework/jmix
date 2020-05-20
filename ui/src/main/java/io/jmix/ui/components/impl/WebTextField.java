@@ -32,7 +32,7 @@ import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.ValueConversionException;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.widgets.CubaTextField;
+import io.jmix.ui.widgets.JmixTextField;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class WebTextField<V> extends WebV8AbstractField<CubaTextField, String, V>
+public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V>
         implements TextField<V>, InitializingBean {
 
     protected Datatype<V> datatype;
@@ -78,8 +78,8 @@ public class WebTextField<V> extends WebV8AbstractField<CubaTextField, String, V
         this.locale = currentAuthentication.getLocale();
     }
 
-    protected CubaTextField createComponent() {
-        return new CubaTextField();
+    protected JmixTextField createComponent() {
+        return new JmixTextField();
     }
 
     @Override
@@ -87,7 +87,7 @@ public class WebTextField<V> extends WebV8AbstractField<CubaTextField, String, V
         initComponent(component);
     }
 
-    protected void initComponent(CubaTextField component) {
+    protected void initComponent(JmixTextField component) {
         component.setValueChangeMode(ValueChangeMode.BLUR);
     }
 

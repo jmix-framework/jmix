@@ -27,9 +27,9 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.App;
 import io.jmix.ui.components.Table;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.CubaEnhancedTable;
-import io.jmix.ui.widgets.CubaResizableTextAreaWrapper;
-import io.jmix.ui.widgets.CubaTextArea;
+import io.jmix.ui.widgets.JmixEnhancedTable;
+import io.jmix.ui.widgets.JmixResizableTextAreaWrapper;
+import io.jmix.ui.widgets.JmixTextArea;
 import io.jmix.ui.widgets.client.resizabletextarea.ResizeDirection;
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,11 +77,11 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
         layout.setWidthUndefined();
         layout.setStyleName("c-table-view-textcut");
 
-        CubaTextArea textArea = new CubaTextArea();
+        JmixTextArea textArea = new JmixTextArea();
         textArea.setValue(Strings.nullToEmpty(stringValue));
         textArea.setReadOnly(true);
 
-        CubaResizableTextAreaWrapper content = new CubaResizableTextAreaWrapper(textArea);
+        JmixResizableTextAreaWrapper content = new JmixResizableTextAreaWrapper(textArea);
         content.setResizableDirection(ResizeDirection.BOTH);
 
         // todo implement injection for ThemeConstains in components
@@ -96,7 +96,7 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
 
         layout.addComponent(content);
 
-        table.withUnwrapped(CubaEnhancedTable.class, enhancedTable -> {
+        table.withUnwrapped(JmixEnhancedTable.class, enhancedTable -> {
             enhancedTable.showCustomPopup(layout);
             enhancedTable.setCustomPopupAutoClose(false);
         });

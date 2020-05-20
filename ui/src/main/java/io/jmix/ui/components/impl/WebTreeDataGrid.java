@@ -31,7 +31,7 @@ import io.jmix.ui.components.data.DataGridItems;
 import io.jmix.ui.components.data.TreeDataGridItems;
 import io.jmix.ui.components.datagrid.DataGridDataProvider;
 import io.jmix.ui.components.datagrid.HierarchicalDataGridDataProvider;
-import io.jmix.ui.widgets.CubaTreeGrid;
+import io.jmix.ui.widgets.JmixTreeGrid;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<CubaTreeGrid<E>, E>
+public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<JmixTreeGrid<E>, E>
         implements TreeDataGrid<E> {
 
     protected Predicate<E> itemCollapseAllowedProvider = t -> true;
@@ -54,8 +54,8 @@ public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<CubaT
     protected Column<E> hierarchyColumn;
 
     @Override
-    protected CubaTreeGrid<E> createComponent() {
-        return new CubaTreeGrid<>();
+    protected JmixTreeGrid<E> createComponent() {
+        return new JmixTreeGrid<>();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<CubaT
     protected void initComponent(Grid<E> component) {
         super.initComponent(component);
 
-        CubaTreeGrid<E> treeGrid = (CubaTreeGrid<E>) component;
+        JmixTreeGrid<E> treeGrid = (JmixTreeGrid<E>) component;
         treeGrid.setItemCollapseAllowedProvider(itemCollapseAllowedProvider::test);
     }
 

@@ -19,15 +19,13 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.Entity;
-import io.jmix.ui.App;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.SearchField;
 import io.jmix.ui.components.data.Options;
-import io.jmix.ui.widgets.CubaComboBox;
-import io.jmix.ui.widgets.CubaSearchSelect;
+import io.jmix.ui.widgets.JmixComboBox;
+import io.jmix.ui.widgets.JmixSearchSelect;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -44,8 +42,8 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
     protected SearchNotifications searchNotifications = createSearchNotifications();
 
     @Override
-    protected CubaComboBox<V> createComponent() {
-        return new CubaSearchSelect<>();
+    protected JmixComboBox<V> createComponent() {
+        return new JmixSearchSelect<>();
     }
 
     @Override
@@ -55,7 +53,7 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
         initComponent(getSearchComponent());
     }
 
-    protected void initComponent(CubaSearchSelect<V> component) {
+    protected void initComponent(JmixSearchSelect<V> component) {
         component.setFilterHandler(this::executeSearch);
     }
 
@@ -130,8 +128,8 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
         }*/
     }
 
-    protected CubaSearchSelect<V> getSearchComponent() {
-        return (CubaSearchSelect<V>) component;
+    protected JmixSearchSelect<V> getSearchComponent() {
+        return (JmixSearchSelect<V>) component;
     }
 
     @Override

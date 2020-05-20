@@ -29,7 +29,7 @@ import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.BaseAction;
 import io.jmix.ui.actions.DialogAction;
 import io.jmix.ui.components.*;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -239,7 +239,7 @@ public class ScreenValidation {
                                     result.commit();
                                 }),
                         new BaseAction("discard")
-                                .withIcon(icons.get(CubaIcon.DIALOG_CANCEL))
+                                .withIcon(icons.get(JmixIcon.DIALOG_CANCEL))
                                 .withCaption(messages.getMessage("closeUnsaved.discard"))
                                 .withHandler(e -> {
 

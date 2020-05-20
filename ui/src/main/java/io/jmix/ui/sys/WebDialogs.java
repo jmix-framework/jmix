@@ -41,11 +41,7 @@ import io.jmix.ui.sanitizer.HtmlSanitizer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.ExceptionDialog;
-import io.jmix.ui.widgets.JmixButton;
-import io.jmix.ui.widgets.JmixLabel;
-import io.jmix.ui.widgets.JmixWindow;
-import io.jmix.ui.widgets.ShortcutListenerDelegate;
+import io.jmix.ui.widgets.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

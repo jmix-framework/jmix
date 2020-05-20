@@ -21,9 +21,9 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.components.*;
-import io.jmix.ui.widgets.CubaGroupBox;
-import io.jmix.ui.widgets.CubaHorizontalActionsLayout;
-import io.jmix.ui.widgets.CubaOrderedActionsLayout;
+import io.jmix.ui.widgets.JmixGroupBox;
+import io.jmix.ui.widgets.JmixHorizontalActionsLayout;
+import io.jmix.ui.widgets.JmixOrderedActionsLayout;
 import io.jmix.ui.widgets.JmixVerticalActionsLayout;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +34,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class WebGroupBox extends WebAbstractComponent<CubaGroupBox> implements GroupBoxLayout {
+public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements GroupBoxLayout {
 
     private static final String GROUPBOX_PANEL_STYLENAME = "c-panel-groupbox";
 
@@ -48,7 +48,7 @@ public class WebGroupBox extends WebAbstractComponent<CubaGroupBox> implements G
     protected Map<ShortcutAction, ShortcutListener> shortcuts;
 
     public WebGroupBox() {
-        component = new CubaGroupBox();
+        component = new JmixGroupBox();
         component.addStyleName(GROUPBOX_PANEL_STYLENAME);
         component.setExpandChangeHandler(this::fireExpandStateChange);
 
@@ -71,15 +71,15 @@ public class WebGroupBox extends WebAbstractComponent<CubaGroupBox> implements G
         AbstractOrderedLayout newContent = null;
         if (orientation == Orientation.VERTICAL && !(component.getContent() instanceof JmixVerticalActionsLayout)) {
             newContent = new JmixVerticalActionsLayout();
-        } else if (orientation == Orientation.HORIZONTAL && !(component.getContent() instanceof CubaHorizontalActionsLayout)) {
-            newContent = new CubaHorizontalActionsLayout();
+        } else if (orientation == Orientation.HORIZONTAL && !(component.getContent() instanceof JmixHorizontalActionsLayout)) {
+            newContent = new JmixHorizontalActionsLayout();
         }
 
         if (newContent != null) {
             newContent.setStyleName("c-groupbox-inner");
             component.setContent(newContent);
 
-            CubaOrderedActionsLayout currentContent = (CubaOrderedActionsLayout) component.getContent();
+            JmixOrderedActionsLayout currentContent = (JmixOrderedActionsLayout) component.getContent();
 
             newContent.setMargin(currentContent.getMargin());
             newContent.setSpacing(currentContent.isSpacing());

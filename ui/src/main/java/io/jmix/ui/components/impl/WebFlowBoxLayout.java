@@ -17,15 +17,15 @@ package io.jmix.ui.components.impl;
 
 import com.vaadin.shared.ui.MarginInfo;
 import io.jmix.ui.components.FlowBoxLayout;
-import io.jmix.ui.widgets.CubaFlowLayout;
+import io.jmix.ui.widgets.JmixFlowLayout;
 import org.apache.commons.lang3.StringUtils;
 
-public class WebFlowBoxLayout extends WebAbstractOrderedLayout<CubaFlowLayout> implements FlowBoxLayout {
+public class WebFlowBoxLayout extends WebAbstractOrderedLayout<JmixFlowLayout> implements FlowBoxLayout {
 
     protected static final String FLOWLAYOUT_STYLENAME = "c-flowlayout";
 
     public WebFlowBoxLayout() {
-        component = new CubaFlowLayout();
+        component = new JmixFlowLayout();
     }
 
     @Override

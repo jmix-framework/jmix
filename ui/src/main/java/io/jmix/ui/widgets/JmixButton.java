@@ -20,12 +20,13 @@ import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.widgets.client.button.JmixButtonClientRpc;
 import io.jmix.ui.widgets.client.button.JmixButtonState;
 import org.slf4j.LoggerFactory;
 
 import java.util.function.Consumer;
 
-public class JmixButton extends Button {
+public class JmixButton extends com.vaadin.ui.Button {
 
     protected Consumer<MouseEventDetails> clickHandler;
 
@@ -71,10 +72,16 @@ public class JmixButton extends Button {
         // check if it cannot be clicked at all due to modal dialogs
         AppUI ui = (AppUI) getUI();
         if (ui.isAccessibleForUser(this)) {
-            if (clickHandler != null) {
-                clickHandler.accept(details);
-            } else {
-                super.fireClick(details);
+            try {
+                if (clickHandler != null) {
+                    clickHandler.accept(details);
+                } else {
+                    super.fireClick(details);
+                }
+            } finally {
+                if (getState(false).useResponsePending) {
+                    getRpcProxy(JmixButtonClientRpc.class).onClickHandled();
+                }
             }
         } else {
             LoggerFactory.getLogger(JmixButton.class)
@@ -90,18 +97,28 @@ public class JmixButton extends Button {
         this.clickHandler = clickHandler;
     }
 
+    public boolean isUseResponsePending() {
+        return getState(false).useResponsePending;
+    }
+
+    public void setUseResponsePending(boolean useResponsePending) {
+        if (isUseResponsePending() != useResponsePending) {
+            getState().useResponsePending = useResponsePending;
+        }
+    }
+
     @Override
     public void setClickShortcut(int keyCode, int... modifiers) {
         if (clickShortcut != null) {
             removeShortcutListener(clickShortcut);
         }
-        clickShortcut = new CubaClickShortcut(this, keyCode, modifiers);
+        clickShortcut = new JmixClickShortcut(this, keyCode, modifiers);
         addShortcutListener(clickShortcut);
         getState().clickShortcutKeyCode = clickShortcut.getKeyCode();
     }
 
-    protected static class CubaClickShortcut extends ClickShortcut {
-        public CubaClickShortcut(Button button, int keyCode, int... modifiers) {
+    protected static class JmixClickShortcut extends ClickShortcut {
+        public JmixClickShortcut(Button button, int keyCode, int... modifiers) {
             super(button, keyCode, modifiers);
         }
 

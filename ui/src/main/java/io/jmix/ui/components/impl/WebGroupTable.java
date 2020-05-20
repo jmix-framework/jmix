@@ -31,10 +31,10 @@ import io.jmix.ui.components.table.GroupTableDataContainer;
 import io.jmix.ui.components.table.TableDataContainer;
 import io.jmix.ui.components.table.TableItemsEventsDelegate;
 import io.jmix.ui.gui.data.GroupInfo;
-import io.jmix.ui.widgets.CubaEnhancedTable.AggregationInputValueChangeContext;
-import io.jmix.ui.widgets.CubaGroupTable;
-import io.jmix.ui.widgets.CubaGroupTable.GroupAggregationContext;
-import io.jmix.ui.widgets.CubaGroupTable.GroupAggregationInputValueChangeContext;
+import io.jmix.ui.widgets.JmixEnhancedTable.AggregationInputValueChangeContext;
+import io.jmix.ui.widgets.JmixGroupTable;
+import io.jmix.ui.widgets.JmixGroupTable.GroupAggregationContext;
+import io.jmix.ui.widgets.JmixGroupTable.GroupAggregationInputValueChangeContext;
 import io.jmix.ui.widgets.data.AggregationContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +51,7 @@ import static com.google.common.base.Strings.emptyToNull;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("deprecation")
-public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupTable, E>
+public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupTable, E>
         implements GroupTable<E>, GroupColumnManager {
 
     protected Map<Table.Column, GroupAggregationCells> groupAggregationCells = null;
@@ -177,7 +177,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
     }
 
     @Override
-    protected void initComponent(CubaGroupTable component) {
+    protected void initComponent(JmixGroupTable component) {
         super.initComponent(component);
 
         component.setGroupPropertyValueFormatter((groupId, value) ->
@@ -185,8 +185,8 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
         );
     }
 
-    protected CubaGroupTable createComponent() {
-        return new CubaGroupTableExt();
+    protected JmixGroupTable createComponent() {
+        return new JmixGroupTableExt();
     }
 
     @Override
@@ -683,7 +683,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<CubaGroupT
         setColumnGroupAllowed(column, column.isGroupAllowed());
     }
 
-    protected class CubaGroupTableExt extends CubaGroupTable {
+    protected class JmixGroupTableExt extends JmixGroupTable {
         @Override
         protected boolean isNonGeneratedProperty(Object id) {
             return (id instanceof MetaPropertyPath);

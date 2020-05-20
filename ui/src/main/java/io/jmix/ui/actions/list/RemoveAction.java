@@ -27,7 +27,7 @@ import io.jmix.ui.actions.Action;
 import io.jmix.ui.actions.ActionType;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.data.meta.ContainerDataUnit;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioDelegate;
@@ -156,7 +156,7 @@ public class RemoveAction<E extends Entity> extends SecuredListAction implements
 
     @Inject
     protected void setIcons(Icons icons) {
-        this.icon = icons.get(CubaIcon.REMOVE_ACTION);
+        this.icon = icons.get(JmixIcon.REMOVE_ACTION);
     }
 
     @Inject

@@ -30,8 +30,8 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
 import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.widgets.CubaComboBoxPickerField;
-import io.jmix.ui.widgets.CubaPickerField;
+import io.jmix.ui.widgets.JmixComboBoxPickerField;
+import io.jmix.ui.widgets.JmixPickerField;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -73,13 +73,13 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    protected CubaPickerField<V> createComponent() {
-        return new CubaComboBoxPickerField<>();
+    protected JmixPickerField<V> createComponent() {
+        return new JmixComboBoxPickerField<>();
     }
 
     @Override
-    public CubaComboBoxPickerField<V> getComponent() {
-        return (CubaComboBoxPickerField<V>) super.getComponent();
+    public JmixComboBoxPickerField<V> getComponent() {
+        return (JmixComboBoxPickerField<V>) super.getComponent();
     }
 
     @Inject
@@ -100,8 +100,8 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    protected void initComponent(CubaPickerField<V> component) {
-        CubaComboBoxPickerField<V> impl = (CubaComboBoxPickerField<V>) component;
+    protected void initComponent(JmixPickerField<V> component) {
+        JmixComboBoxPickerField<V> impl = (JmixComboBoxPickerField<V>) component;
         impl.setItemCaptionGenerator(this::generateItemCaption);
         impl.getFieldInternal().setCustomValueEquals(this::fieldValueEquals);
 

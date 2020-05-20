@@ -33,7 +33,7 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
 import io.jmix.ui.components.ValidationErrors;
 import io.jmix.ui.components.Window;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.model.*;
 import io.jmix.ui.util.OperationResult;
@@ -82,7 +82,7 @@ public abstract class StandardEditor<T extends Entity> extends Screen
 
         Action commitAndCloseAction = new BaseAction(WINDOW_COMMIT_AND_CLOSE)
                 .withCaption(messages.getMessage("actions.Ok"))
-                .withIcon(icons.get(CubaIcon.EDITOR_OK))
+                .withIcon(icons.get(JmixIcon.EDITOR_OK))
                 .withPrimary(true)
                 .withShortcut(commitShortcut)
                 .withHandler(this::commitAndClose);
@@ -96,7 +96,7 @@ public abstract class StandardEditor<T extends Entity> extends Screen
         window.addAction(commitAction);
 
         Action closeAction = new BaseAction(WINDOW_CLOSE)
-                .withIcon(icons.get(CubaIcon.EDITOR_CANCEL))
+                .withIcon(icons.get(JmixIcon.EDITOR_CANCEL))
                 .withCaption(messages.getMessage("actions.Cancel"))
                 .withHandler(this::cancel);
 
@@ -104,7 +104,7 @@ public abstract class StandardEditor<T extends Entity> extends Screen
 
         Action enableEditingAction = new BaseAction(ENABLE_EDITING)
                 .withCaption(messages.getMessage("actions.EnableEditing"))
-                .withIcon(icons.get(CubaIcon.ENABLE_EDITING))
+                .withIcon(icons.get(JmixIcon.ENABLE_EDITING))
                 .withHandler(this::enableEditing);
         enableEditingAction.setVisible(false);
         window.addAction(enableEditingAction);

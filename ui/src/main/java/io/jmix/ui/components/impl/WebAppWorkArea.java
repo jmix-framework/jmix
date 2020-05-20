@@ -25,9 +25,12 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.BeanLocator;
-import io.jmix.ui.*;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.Screens;
 import io.jmix.ui.Screens.OpenedScreens;
 import io.jmix.ui.Screens.WindowStack;
+import io.jmix.ui.UiComponents;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.components.*;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlRouting;
@@ -201,26 +204,26 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
     protected HasTabSheetBehaviour createTabbedModeContainer() {
         //if (webConfig.getMainTabSheetMode() == MainTabSheetMode.DEFAULT) {
-            JmixMainTabSheet cubaTabSheet = new JmixMainTabSheet();
+            JmixMainTabSheet jmixTabSheet = new JmixMainTabSheet();
 
-            tabbedContainer = cubaTabSheet;
+            tabbedContainer = jmixTabSheet;
 
             // todo dragdroplayouts
-//            cubaTabSheet.setDragMode(LayoutDragMode.CLONE);
-//            cubaTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
-            Action.Handler actionHandler = createTabSheetActionHandler(cubaTabSheet);
-            cubaTabSheet.addActionHandler(actionHandler);
+//            jmixTabSheet.setDragMode(LayoutDragMode.CLONE);
+//            jmixTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
+            Action.Handler actionHandler = createTabSheetActionHandler(jmixTabSheet);
+            jmixTabSheet.addActionHandler(actionHandler);
 
-            cubaTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
-            cubaTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
-            cubaTabSheet.addSelectedTabChangeListener(event -> reflectTabChangeToUrl(event.isUserOriginated()));
+            jmixTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
+            jmixTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
+            jmixTabSheet.addSelectedTabChangeListener(event -> reflectTabChangeToUrl(event.isUserOriginated()));
         // } else {
             // todo managed tabsheet
-            /*CubaManagedTabSheet cubaManagedTabSheet = new CubaManagedTabSheet();
+            /*JmixManagedTabSheet cubaManagedTabSheet = new JmixManagedTabSheet();
 
             ManagedMainTabSheetMode tabSheetMode = configuration.getConfig(WebConfig.class)
                     .getManagedMainTabSheetMode();
-            cubaManagedTabSheet.setMode(CubaManagedTabSheet.Mode.valueOf(tabSheetMode.name()));
+            cubaManagedTabSheet.setMode(JmixManagedTabSheet.Mode.valueOf(tabSheetMode.name()));
 
             tabbedContainer = cubaManagedTabSheet;
 

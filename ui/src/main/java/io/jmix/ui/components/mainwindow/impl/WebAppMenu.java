@@ -25,8 +25,7 @@ import io.jmix.ui.components.impl.WebAbstractComponent;
 import io.jmix.ui.components.mainwindow.AppMenu;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.menu.MenuBuilder;
-import io.jmix.ui.widgets.CubaMenuBar;
-import io.jmix.ui.AppUI;
+import io.jmix.ui.widgets.JmixMenuBar;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-public class WebAppMenu extends WebAbstractComponent<CubaMenuBar> implements AppMenu {
+public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements AppMenu {
 
     protected Map<String, MenuItem> allItemsIds = new HashMap<>();
     protected Map<MenuBar.MenuItem, MenuItem> viewModelMap = new HashMap<>();
@@ -47,7 +46,7 @@ public class WebAppMenu extends WebAbstractComponent<CubaMenuBar> implements App
     public static final String MENU_STYLENAME = "c-main-menu";
 
     public WebAppMenu() {
-        component = new CubaMenuBar();
+        component = new JmixMenuBar();
         component.addStyleName(MENU_STYLENAME);
 
         component.addAttachListener(this::handleAttach);

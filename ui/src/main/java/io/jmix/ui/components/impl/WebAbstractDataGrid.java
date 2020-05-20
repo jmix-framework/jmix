@@ -77,9 +77,9 @@ import io.jmix.ui.sys.ShortcutsDelegate;
 import io.jmix.ui.sys.ShowInfoAction;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
-import io.jmix.ui.widgets.CubaCssActionsLayout;
-import io.jmix.ui.widgets.CubaEnhancedGrid;
-import io.jmix.ui.widgets.CubaGridEditorFieldFactory;
+import io.jmix.ui.widgets.JmixCssActionsLayout;
+import io.jmix.ui.widgets.JmixEnhancedGrid;
+import io.jmix.ui.widgets.JmixGridEditorFieldFactory;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
 import io.jmix.ui.widgets.data.SortableDataProvider;
 import io.jmix.ui.widgets.grid.*;
@@ -110,7 +110,7 @@ import static io.jmix.ui.components.ComponentsHelper.findActionById;
 import static io.jmix.ui.components.Window.Lookup.LOOKUP_ENTER_PRESSED_ACTION_ID;
 import static io.jmix.ui.components.Window.Lookup.LOOKUP_ITEM_CLICK_ACTION_ID;
 
-public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E>, E extends Entity>
+public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, E extends Entity>
         extends WebAbstractComponent<C>
         implements DataGrid<E>, SecuredActionsHolder, LookupComponent.LookupSelectionChangeNotifier<E>,
         DataGridItemsEventsDelegate<E>, HasInnerComponents, InitializingBean {
@@ -140,7 +140,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
     protected final ShortcutsDelegate<ShortcutListener> shortcutsDelegate;
     protected final ActionsPermissions actionsPermissions = new ActionsPermissions(this);
 
-    protected CubaGridContextMenu<E> contextMenu;
+    protected JmixGridContextMenu<E> contextMenu;
     protected final List<ActionMenuItemWrapper> contextMenuItems = new ArrayList<>();
 
     protected boolean settingsEnabled = true;
@@ -328,8 +328,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
         component.setStyleGenerator(this::getGeneratedRowStyle);
 
-        ((CubaEnhancedGrid<E>) component).setCubaEditorFieldFactory(createEditorFieldFactory());
-        ((CubaEnhancedGrid<E>) component).setBeforeRefreshHandler(this::onBeforeRefreshGridData);
+        ((JmixEnhancedGrid<E>) component).setJmixEditorFieldFactory(createEditorFieldFactory());
+        ((JmixEnhancedGrid<E>) component).setBeforeRefreshHandler(this::onBeforeRefreshGridData);
 
         initEmptyState();
     }
@@ -338,7 +338,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         clearFieldDatasources(item);
     }
 
-    protected CubaGridEditorFieldFactory<E> createEditorFieldFactory() {
+    protected JmixGridEditorFieldFactory<E> createEditorFieldFactory() {
         DataGridEditorFieldFactory fieldFactory = beanLocator.get(DataGridEditorFieldFactory.NAME);
         return new WebDataGridEditorFieldFactory<>(this, fieldFactory);
     }
@@ -549,7 +549,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
     }
 
     protected void initContextMenu() {
-        contextMenu = new CubaGridContextMenu<>(component);
+        contextMenu = new JmixGridContextMenu<>(component);
 
         contextMenu.addGridBodyContextMenuListener(event -> {
             if (!component.getSelectedItems().contains(event.getItem())) {
@@ -1232,8 +1232,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
     @Override
     public E getEditedItem() {
-        return component.getEditor() instanceof CubaEditorImpl
-                ? ((CubaEditorImpl<E>) component.getEditor()).getBean()
+        return component.getEditor() instanceof JmixEditorImpl
+                ? ((JmixEditorImpl<E>) component.getEditor()).getBean()
                 : component.getEditor().getBinder().getBean();
     }
 
@@ -1279,7 +1279,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
     }
 
     @SuppressWarnings("ConstantConditions")
-    protected Map<String, Field> convertToCubaFields(Map<Grid.Column<E, ?>, Component> columnFieldMap) {
+    protected Map<String, Field> convertToJmixFields(Map<Grid.Column<E, ?>, Component> columnFieldMap) {
         return columnFieldMap.entrySet().stream()
                 .filter(entry ->
                         getColumnByGridColumn(entry.getKey()) != null)
@@ -1300,8 +1300,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
     protected void onEditorOpen(com.vaadin.ui.components.grid.EditorOpenEvent<E> editorOpenEvent) {
         //noinspection unchecked
-        CubaEditorOpenEvent<E> event = ((CubaEditorOpenEvent) editorOpenEvent);
-        Map<String, Field> fields = convertToCubaFields(event.getColumnFieldMap());
+        JmixEditorOpenEvent<E> event = ((JmixEditorOpenEvent) editorOpenEvent);
+        Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
 
         EditorOpenEvent<E> e = new EditorOpenEvent<>(this, event.getBean(), fields);
         publish(EditorOpenEvent.class, e);
@@ -1328,8 +1328,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
     protected void onEditorCancel(EditorCancelEvent<E> cancelEvent) {
         //noinspection unchecked
-        CubaEditorCancelEvent<E> event = ((CubaEditorCancelEvent) cancelEvent);
-        Map<String, Field> fields = convertToCubaFields(event.getColumnFieldMap());
+        JmixEditorCancelEvent<E> event = ((JmixEditorCancelEvent) cancelEvent);
+        Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
 
         EditorCloseEvent<E> e = new EditorCloseEvent<>(this, event.getBean(), fields);
         publish(EditorCloseEvent.class, e);
@@ -1349,15 +1349,15 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
     public Subscription addEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener) {
         if (editorBeforeSaveListener == null) {
             //noinspection unchecked
-            CubaEditorImpl<E> editor = (CubaEditorImpl) component.getEditor();
+            JmixEditorImpl<E> editor = (JmixEditorImpl) component.getEditor();
             editorBeforeSaveListener = editor.addBeforeSaveListener(this::onEditorBeforeSave);
         }
 
         return getEventHub().subscribe(EditorPreCommitEvent.class, listener);
     }
 
-    protected void onEditorBeforeSave(CubaEditorBeforeSaveEvent<E> event) {
-        Map<String, Field> fields = convertToCubaFields(event.getColumnFieldMap());
+    protected void onEditorBeforeSave(JmixEditorBeforeSaveEvent<E> event) {
+        Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
 
         EditorPreCommitEvent<E> e = new EditorPreCommitEvent<>(this, event.getBean(), fields);
         publish(EditorPreCommitEvent.class, e);
@@ -1396,8 +1396,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
     protected void onEditorSave(EditorSaveEvent<E> saveEvent) {
         //noinspection unchecked
-        CubaEditorSaveEvent<E> event = ((CubaEditorSaveEvent) saveEvent);
-        Map<String, Field> fields = convertToCubaFields(event.getColumnFieldMap());
+        JmixEditorSaveEvent<E> event = ((JmixEditorSaveEvent) saveEvent);
+        Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
 
         EditorPostCommitEvent<E> e = new EditorPostCommitEvent<>(this, event.getBean(), fields);
         publish(EditorPostCommitEvent.class, e);
@@ -1516,7 +1516,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         return new ContainerValueSourceProvider<>(instanceContainer);
     }
 
-    protected static class WebDataGridEditorFieldFactory<E extends Entity> implements CubaGridEditorFieldFactory<E> {
+    protected static class WebDataGridEditorFieldFactory<E extends Entity> implements JmixGridEditorFieldFactory<E> {
 
         protected WebAbstractDataGrid<?, E> dataGrid;
         protected DataGridEditorFieldFactory fieldFactory;
@@ -1528,7 +1528,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         }
 
         @Override
-        public CubaEditorField<?> createField(E bean, Grid.Column<E, ?> gridColumn) {
+        public JmixEditorField<?> createField(E bean, Grid.Column<E, ?> gridColumn) {
             ColumnImpl<E> column = dataGrid.getColumnByGridColumn(gridColumn);
             if (column == null || !column.isShouldBeEditable()) {
                 return null;
@@ -1560,7 +1560,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
             return createCustomField(columnComponent);
         }
 
-        protected CubaEditorField createCustomField(final Field columnComponent) {
+        protected JmixEditorField createCustomField(final Field columnComponent) {
             if (!(columnComponent instanceof Buffered)) {
                 throw new IllegalArgumentException("Editor field must implement " +
                         "io.jmix.ui.components.Buffered");
@@ -1569,7 +1569,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
             Component content = WebComponentsHelper.getComposition(columnComponent);
 
             //noinspection unchecked
-            CubaEditorField wrapper = new DataGridEditorCustomField(columnComponent) {
+            JmixEditorField wrapper = new DataGridEditorCustomField(columnComponent) {
                 @Override
                 protected Component initContent() {
                     return content;
@@ -1590,7 +1590,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         }
     }
 
-    protected static abstract class DataGridEditorCustomField<T> extends CubaEditorField<T> {
+    protected static abstract class DataGridEditorCustomField<T> extends JmixEditorField<T> {
 
         protected Field<T> columnComponent;
 
@@ -1760,13 +1760,13 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         this.selectionMode = selectionMode;
         switch (selectionMode) {
             case SINGLE:
-                component.setGridSelectionModel(new CubaSingleSelectionModel<>());
+                component.setGridSelectionModel(new JmixSingleSelectionModel<>());
                 break;
             case MULTI:
-                component.setGridSelectionModel(new CubaMultiSelectionModel<>());
+                component.setGridSelectionModel(new JmixMultiSelectionModel<>());
                 break;
             case MULTI_CHECK:
-                component.setGridSelectionModel(new CubaMultiCheckSelectionModel<>());
+                component.setGridSelectionModel(new JmixMultiCheckSelectionModel<>());
                 break;
             case NONE:
                 component.setSelectionMode(Grid.SelectionMode.NONE);
@@ -3138,7 +3138,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
     @Override
     public void setAggregationPosition(AggregationPosition position) {
-        component.setAggregationPosition(CubaEnhancedGrid.AggregationPosition.valueOf(position.name()));
+        component.setAggregationPosition(JmixEnhancedGrid.AggregationPosition.valueOf(position.name()));
     }
 
     @Override
@@ -3365,7 +3365,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
 
     protected void enableCrossFieldValidationHandling(boolean enable) {
         if (isEditorEnabled()) {
-            ((CubaEditorImpl<E>) component.getEditor()).setCrossFieldValidationHandler(
+            ((JmixEditorImpl<E>) component.getEditor()).setCrossFieldValidationHandler(
                     enable ? this::validateCrossFieldRules : null);
         }
     }
@@ -4497,7 +4497,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
         }
     }
 
-    protected static class GridComposition extends CubaCssActionsLayout {
+    protected static class GridComposition extends JmixCssActionsLayout {
         protected Grid<?> grid;
 
         public static final String BORDERLESS_STYLE = "borderless";
@@ -4566,7 +4566,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & CubaEnhancedGrid<E
                     && isPredefinedStyle
                     && grid.getFooterRowCount() > 0
                     && grid.isFooterVisible()) {
-                ((CubaEnhancedGrid) grid).updateFooterVisibility();
+                ((JmixEnhancedGrid) grid).updateFooterVisibility();
             }
         }
     }

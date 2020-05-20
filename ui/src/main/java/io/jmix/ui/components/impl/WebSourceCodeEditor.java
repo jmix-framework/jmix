@@ -23,7 +23,7 @@ import io.jmix.ui.components.SourceCodeEditor;
 import io.jmix.ui.components.autocomplete.AutoCompleteSupport;
 import io.jmix.ui.components.autocomplete.Suggester;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.widgets.CubaSourceCodeEditor;
+import io.jmix.ui.widgets.JmixSourceCodeEditor;
 import io.jmix.ui.widgets.addons.aceeditor.AceEditor;
 import io.jmix.ui.widgets.addons.aceeditor.AceMode;
 import io.jmix.ui.widgets.addons.aceeditor.Suggestion;
@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class WebSourceCodeEditor extends WebV8AbstractField<CubaSourceCodeEditor, String, String>
+public class WebSourceCodeEditor extends WebV8AbstractField<JmixSourceCodeEditor, String, String>
         implements SourceCodeEditor {
 
     protected boolean suggestOnDot = true;
@@ -47,7 +47,7 @@ public class WebSourceCodeEditor extends WebV8AbstractField<CubaSourceCodeEditor
     protected AutoCompleteSupport autoCompleteSupport;
 
     public WebSourceCodeEditor() {
-        component = createCubaSourceCodeEditor();
+        component = createJmixSourceCodeEditor();
         initComponent(component);
 
         autoCompleteSupport = new AutoCompleteSupport() {
@@ -65,11 +65,11 @@ public class WebSourceCodeEditor extends WebV8AbstractField<CubaSourceCodeEditor
         attachValueChangeListener(component);
     }
 
-    protected CubaSourceCodeEditor createCubaSourceCodeEditor() {
-        return new CubaSourceCodeEditor();
+    protected JmixSourceCodeEditor createJmixSourceCodeEditor() {
+        return new JmixSourceCodeEditor();
     }
 
-    protected void initComponent(CubaSourceCodeEditor component) {
+    protected void initComponent(JmixSourceCodeEditor component) {
         component.setMode(AceMode.text);
         component.addAttachListener(this::handleAttach);
     }

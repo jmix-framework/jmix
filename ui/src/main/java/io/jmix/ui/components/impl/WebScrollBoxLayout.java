@@ -24,8 +24,8 @@ import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.components.*;
 import io.jmix.ui.components.HtmlAttributes.CSS;
-import io.jmix.ui.widgets.CubaHorizontalActionsLayout;
-import io.jmix.ui.widgets.CubaScrollBoxLayout;
+import io.jmix.ui.widgets.JmixHorizontalActionsLayout;
+import io.jmix.ui.widgets.JmixScrollBoxLayout;
 import io.jmix.ui.widgets.HtmlAttributesExtension;
 import io.jmix.ui.widgets.JmixVerticalActionsLayout;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +35,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class WebScrollBoxLayout extends WebAbstractComponent<CubaScrollBoxLayout> implements ScrollBoxLayout {
+public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout> implements ScrollBoxLayout {
 
     protected static final String SCROLLBOX_CONTENT_STYLENAME = "c-scrollbox-content";
     protected static final String SCROLLBOX_STYLENAME = "c-scrollbox";
@@ -49,7 +49,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<CubaScrollBoxLayout
     protected Map<ShortcutAction, ShortcutListener> shortcuts;
 
     public WebScrollBoxLayout() {
-        component = new CubaScrollBoxLayout();
+        component = new JmixScrollBoxLayout();
         component.setWidth(100, Sizeable.Unit.PERCENTAGE);
         component.setPrimaryStyleName(SCROLLBOX_STYLENAME);
 
@@ -80,8 +80,8 @@ public class WebScrollBoxLayout extends WebAbstractComponent<CubaScrollBoxLayout
         if (orientation == Orientation.VERTICAL && !(getContent() instanceof JmixVerticalActionsLayout)) {
             newContent = new JmixVerticalActionsLayout();
             newContent.setWidth(100, Sizeable.Unit.PERCENTAGE);
-        } else if (orientation == Orientation.HORIZONTAL && !(getContent() instanceof CubaHorizontalActionsLayout)) {
-            newContent = new CubaHorizontalActionsLayout();
+        } else if (orientation == Orientation.HORIZONTAL && !(getContent() instanceof JmixHorizontalActionsLayout)) {
+            newContent = new JmixHorizontalActionsLayout();
         }
 
         if (newContent != null) {

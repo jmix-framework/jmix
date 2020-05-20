@@ -21,19 +21,19 @@ import com.vaadin.server.ExternalResource;
 import io.jmix.ui.components.impl.WebAbstractComponent;
 import io.jmix.ui.components.mainwindow.NewWindowButton;
 import io.jmix.ui.sys.ControllerUtils;
-import io.jmix.ui.widgets.CubaButton;
+import io.jmix.ui.widgets.JmixButton;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class WebNewWindowButton extends WebAbstractComponent<CubaButton> implements NewWindowButton {
+public class WebNewWindowButton extends WebAbstractComponent<JmixButton> implements NewWindowButton {
 
     public static final String NEW_WINDOW_BUTTON_STYLENAME = "c-newwindow-button";
 
     public WebNewWindowButton() {
-        component = new CubaButton();
+        component = new JmixButton();
         component.addStyleName(NEW_WINDOW_BUTTON_STYLENAME);
         component.setDescription(null);
 

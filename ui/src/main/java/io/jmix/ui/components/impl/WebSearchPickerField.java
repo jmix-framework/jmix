@@ -32,8 +32,8 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
 import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.widgets.CubaPickerField;
-import io.jmix.ui.widgets.CubaSearchSelectPickerField;
+import io.jmix.ui.widgets.JmixPickerField;
+import io.jmix.ui.widgets.JmixSearchSelectPickerField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -80,8 +80,8 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    protected CubaPickerField<V> createComponent() {
-        return new CubaSearchSelectPickerField<>();
+    protected JmixPickerField<V> createComponent() {
+        return new JmixSearchSelectPickerField<>();
     }
 
     @Inject
@@ -102,7 +102,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    protected void initComponent(CubaPickerField<V> component) {
+    protected void initComponent(JmixPickerField<V> component) {
         Messages messages = beanLocator.get(Messages.NAME);
         setInputPrompt(messages.getMessage("searchPickerField.inputPrompt"));
 
@@ -192,8 +192,8 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    public CubaSearchSelectPickerField<V> getComponent() {
-        return (CubaSearchSelectPickerField<V>) super.getComponent();
+    public JmixSearchSelectPickerField<V> getComponent() {
+        return (JmixSearchSelectPickerField<V>) super.getComponent();
     }
 
     @Override

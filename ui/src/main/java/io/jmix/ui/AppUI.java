@@ -39,8 +39,8 @@ import io.jmix.ui.sys.*;
 import io.jmix.ui.sys.events.UiEventsMulticaster;
 import io.jmix.ui.theme.ThemeConstantsRepository;
 import io.jmix.ui.widgets.AppUIUtils;
-import io.jmix.ui.widgets.CubaTimer;
 import io.jmix.ui.widgets.JmixFileDownloader;
+import io.jmix.ui.widgets.JmixTimer;
 import io.jmix.ui.widgets.client.ui.AppUIClientRpc;
 import io.jmix.ui.widgets.client.ui.AppUIConstants;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -519,7 +519,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     /**
-     * @return true if UI test mode is enabled and cuba-id attribute should be added to DOM tree
+     * @return true if UI test mode is enabled and jmix-id attribute should be added to DOM tree
      */
     public boolean isTestMode() {
         return properties.isTestMode();
@@ -625,16 +625,16 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         return topLevelWindow.unwrapComposition(AbstractComponent.class);
     }
 
-    public List<CubaTimer> getTimers() {
+    public List<JmixTimer> getTimers() {
         AbstractComponent timersHolder = getTopLevelWindowComposition();
 
         return timersHolder.getExtensions().stream()
-                .filter(extension -> extension instanceof CubaTimer)
-                .map(extension -> (CubaTimer) extension)
+                .filter(extension -> extension instanceof JmixTimer)
+                .map(extension -> (JmixTimer) extension)
                 .collect(Collectors.toList());
     }
 
-    public void addTimer(CubaTimer timer) {
+    public void addTimer(JmixTimer timer) {
         AbstractComponent timersHolder = getTopLevelWindowComposition();
 
         if (!timersHolder.getExtensions().contains(timer)) {
@@ -642,7 +642,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         }
     }
 
-    public void removeTimer(CubaTimer timer) {
+    public void removeTimer(JmixTimer timer) {
         AbstractComponent timersHolder = getTopLevelWindowComposition();
 
         timersHolder.removeExtension(timer);

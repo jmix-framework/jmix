@@ -19,8 +19,8 @@ package io.jmix.ui.components.impl;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
 import io.jmix.ui.components.ResizableTextArea;
-import io.jmix.ui.widgets.CubaResizableTextAreaWrapper;
-import io.jmix.ui.widgets.CubaTextArea;
+import io.jmix.ui.widgets.JmixResizableTextAreaWrapper;
+import io.jmix.ui.widgets.JmixTextArea;
 import com.vaadin.server.ErrorMessage;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -31,10 +31,10 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.util.function.Consumer;
 
-public class WebResizableTextArea<V> extends WebAbstractTextArea<CubaTextArea, V>
+public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V>
         implements ResizableTextArea<V>, InitializingBean {
 
-    protected CubaResizableTextAreaWrapper wrapper;
+    protected JmixResizableTextAreaWrapper wrapper;
     protected boolean settingsEnabled = true;
     protected boolean settingsChanged = false;
 
@@ -42,7 +42,7 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<CubaTextArea, V
         component = createComponent();
         attachValueChangeListener(component);
 
-        wrapper = new CubaResizableTextAreaWrapper(component);
+        wrapper = new JmixResizableTextAreaWrapper(component);
         wrapper.setResizeListener(this::onResize);
     }
 
@@ -53,8 +53,8 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<CubaTextArea, V
         super.componentValueChanged(prevComponentValue, newComponentValue, isUserOriginated);
     }
 
-    protected CubaTextArea createComponent() {
-        return new CubaTextArea() {
+    protected JmixTextArea createComponent() {
+        return new JmixTextArea() {
             @Override
             public void setComponentError(ErrorMessage componentError) {
                 if (componentError instanceof UserError) {
@@ -71,7 +71,7 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<CubaTextArea, V
         initComponent(component);
     }
 
-    protected void initComponent(CubaTextArea component) {
+    protected void initComponent(JmixTextArea component) {
         component.setValueChangeMode(ValueChangeMode.BLUR);
     }
 

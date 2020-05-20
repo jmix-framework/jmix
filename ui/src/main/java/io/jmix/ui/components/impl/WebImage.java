@@ -22,7 +22,6 @@ import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.impl.BeanLocatorAware;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.components.FileDescriptorResource;
 import io.jmix.ui.components.Image;
@@ -30,13 +29,13 @@ import io.jmix.ui.components.Resource;
 import io.jmix.ui.components.StreamResource;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.widgets.CubaImage;
+import io.jmix.ui.widgets.JmixImage;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.ByteArrayInputStream;
 import java.util.function.Consumer;
 
-public class WebImage extends WebAbstractResourceView<CubaImage> implements Image, InitializingBean {
+public class WebImage extends WebAbstractResourceView<JmixImage> implements Image, InitializingBean {
     protected static final String IMAGE_STYLENAME = "c-image";
 
     protected ValueSource<FileDescriptor> valueSource;
@@ -52,8 +51,8 @@ public class WebImage extends WebAbstractResourceView<CubaImage> implements Imag
         component = createComponent();
     }
 
-    protected CubaImage createComponent() {
-        return new CubaImage();
+    protected JmixImage createComponent() {
+        return new JmixImage();
     }
 
     @Override
@@ -61,7 +60,7 @@ public class WebImage extends WebAbstractResourceView<CubaImage> implements Imag
         initComponent(component);
     }
 
-    protected void initComponent(CubaImage component) {
+    protected void initComponent(JmixImage component) {
         component.setPrimaryStyleName(IMAGE_STYLENAME);
     }
 

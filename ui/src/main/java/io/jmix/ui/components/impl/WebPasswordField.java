@@ -23,14 +23,14 @@ import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.widgets.CubaPasswordField;
+import io.jmix.ui.widgets.JmixPasswordField;
 import com.vaadin.shared.ui.ValueChangeMode;
 import org.springframework.beans.factory.InitializingBean;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class WebPasswordField extends WebV8AbstractField<CubaPasswordField, String, String>
+public class WebPasswordField extends WebV8AbstractField<JmixPasswordField, String, String>
         implements PasswordField, InitializingBean {
 
     protected CapsLockIndicator capsLockIndicator;
@@ -53,8 +53,8 @@ public class WebPasswordField extends WebV8AbstractField<CubaPasswordField, Stri
         }
     }
 
-    protected CubaPasswordField createComponent() {
-        return new CubaPasswordField();
+    protected JmixPasswordField createComponent() {
+        return new JmixPasswordField();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class WebPasswordField extends WebV8AbstractField<CubaPasswordField, Stri
         initComponent(component);
     }
 
-    protected void initComponent(CubaPasswordField component) {
+    protected void initComponent(JmixPasswordField component) {
         component.setValueChangeMode(ValueChangeMode.BLUR);
     }
 

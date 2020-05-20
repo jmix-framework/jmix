@@ -320,7 +320,7 @@ public interface Dialogs {
          *         .withActions(
          *                 action("okAction")
          *                         .withCaption("OK")
-         *                         .withIcon(CubaIcon.DIALOG_OK)
+         *                         .withIcon(JmixIcon.DIALOG_OK)
          *                         .withHandler(event -> {
          *                             InputDialog inputDialog = event.getInputDialog();
          *                             String name = inputDialog.getValue("nameField");
@@ -329,7 +329,7 @@ public interface Dialogs {
          *                         }),
          *                 action("cancelAction")
          *                         .withCaption("Cancel")
-         *                         .withIcon(CubaIcon.DIALOG_CANCEL)
+         *                         .withIcon(JmixIcon.DIALOG_CANCEL)
          *                         .withValidationRequired(false)
          *                         .withHandler(event -> {
          *                             InputDialog inputDialog = event.getInputDialog();

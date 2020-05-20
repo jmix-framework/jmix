@@ -34,7 +34,7 @@ import io.jmix.ui.components.form.ComponentPosition;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
 import io.jmix.ui.sys.TestIdManager;
-import io.jmix.ui.widgets.CubaFieldGroupLayout;
+import io.jmix.ui.widgets.JmixFormLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ import java.util.stream.Stream;
 import static com.google.common.base.Preconditions.checkArgument;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-public class WebForm extends WebAbstractComponent<CubaFieldGroupLayout> implements Form, UiPermissionAware {
+public class WebForm extends WebAbstractComponent<JmixFormLayout> implements Form, UiPermissionAware {
 
     private static final Logger log = LoggerFactory.getLogger(WebForm.class);
 
@@ -67,8 +67,8 @@ public class WebForm extends WebAbstractComponent<CubaFieldGroupLayout> implemen
         component = createComponent();
     }
 
-    protected CubaFieldGroupLayout createComponent() {
-        return new CubaFieldGroupLayout();
+    protected JmixFormLayout createComponent() {
+        return new JmixFormLayout();
     }
 
     protected boolean editable = true;

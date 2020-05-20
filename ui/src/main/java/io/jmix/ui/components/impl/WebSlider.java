@@ -25,12 +25,12 @@ import io.jmix.ui.components.Slider;
 import io.jmix.ui.components.data.ConversionException;
 import io.jmix.ui.components.data.DataAwareComponentsTools;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.widgets.CubaSlider;
+import io.jmix.ui.widgets.JmixSlider;
 import org.springframework.util.NumberUtils;
 
 import javax.inject.Inject;
 
-public class WebSlider<V extends Number> extends WebV8AbstractField<CubaSlider<V>, V, V> implements Slider<V> {
+public class WebSlider<V extends Number> extends WebV8AbstractField<JmixSlider<V>, V, V> implements Slider<V> {
 
     protected Datatype<V> datatype;
 
@@ -42,8 +42,8 @@ public class WebSlider<V extends Number> extends WebV8AbstractField<CubaSlider<V
         attachValueChangeListener(component);
     }
 
-    protected CubaSlider<V> createComponent() {
-        return new CubaSlider<>();
+    protected JmixSlider<V> createComponent() {
+        return new JmixSlider<>();
     }
 
     @Inject
@@ -137,7 +137,7 @@ public class WebSlider<V extends Number> extends WebV8AbstractField<CubaSlider<V
     }
 
     @Override
-    protected void attachValueChangeListener(CubaSlider<V> component) {
+    protected void attachValueChangeListener(JmixSlider<V> component) {
         component.getInternalComponent()
                 .addValueChangeListener(event ->
                         componentValueChanged(event.getOldValue(), event.getValue(), event.isUserOriginated()));

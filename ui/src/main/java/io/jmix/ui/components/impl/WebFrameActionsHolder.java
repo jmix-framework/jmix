@@ -152,9 +152,9 @@ public class WebFrameActionsHolder implements com.vaadin.event.Action.Handler {
 
     @Override
     public void handleAction(com.vaadin.event.Action actionImpl, Object sender, Object target) {
-        Action cubaAction = getAction(actionImpl);
-        if (cubaAction != null && cubaAction.isEnabled() && cubaAction.isVisible()) {
-            cubaAction.actionPerform(actionSource);
+        Action jmixAction = getAction(actionImpl);
+        if (jmixAction != null && jmixAction.isEnabled() && jmixAction.isVisible()) {
+            jmixAction.actionPerform(actionSource);
         }
     }
 }

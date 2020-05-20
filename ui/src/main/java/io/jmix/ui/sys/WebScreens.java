@@ -38,7 +38,7 @@ import io.jmix.ui.components.impl.WebWindow;
 import io.jmix.ui.components.impl.WindowImplementation;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.gui.data.compatibility.DsSupport;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.monitoring.ScreenLifeCycle;
@@ -1032,7 +1032,7 @@ public class WebScreens implements Screens {
                     .withActions(
                             new BaseAction("closeApplication")
                                     .withCaption(messages.getMessage("closeApplication"))
-                                    .withIcon(icons.get(CubaIcon.DIALOG_OK))
+                                    .withIcon(icons.get(JmixIcon.DIALOG_OK))
                                     .withHandler(event -> {
                                         closeWindowsInternal();
 

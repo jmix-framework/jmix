@@ -16,7 +16,7 @@
 package io.jmix.ui.actions;
 
 import io.jmix.ui.Dialogs;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 
 /**
@@ -47,11 +47,11 @@ import io.jmix.ui.icons.Icons;
 public class DialogAction extends BaseAction {
 
     public enum Type {
-        OK("ok", "actions.Ok", CubaIcon.DIALOG_OK),
-        CANCEL("cancel", "actions.Cancel", CubaIcon.DIALOG_CANCEL),
-        YES("yes", "actions.Yes", CubaIcon.DIALOG_YES),
-        NO("no", "actions.No", CubaIcon.DIALOG_NO),
-        CLOSE("close", "actions.Close", CubaIcon.DIALOG_CLOSE);
+        OK("ok", "actions.Ok", JmixIcon.DIALOG_OK),
+        CANCEL("cancel", "actions.Cancel", JmixIcon.DIALOG_CANCEL),
+        YES("yes", "actions.Yes", JmixIcon.DIALOG_YES),
+        NO("no", "actions.No", JmixIcon.DIALOG_NO),
+        CLOSE("close", "actions.Close", JmixIcon.DIALOG_CLOSE);
 
         private String id;
         private String msgKey;

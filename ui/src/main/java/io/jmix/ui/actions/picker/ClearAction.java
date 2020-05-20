@@ -26,7 +26,7 @@ import io.jmix.ui.components.Component;
 import io.jmix.ui.components.PickerField;
 import io.jmix.ui.components.data.ValueSource;
 import io.jmix.ui.components.data.meta.EntityValueSource;
-import io.jmix.ui.icons.CubaIcon;
+import io.jmix.ui.icons.JmixIcon;
 import io.jmix.ui.icons.Icons;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.model.DataContext;
@@ -90,9 +90,9 @@ public class ClearAction extends BaseAction implements PickerField.PickerFieldAc
         setEditable(editable);
 
         if (editable) {
-            setIcon(icons.get(CubaIcon.PICKERFIELD_CLEAR));
+            setIcon(icons.get(JmixIcon.PICKERFIELD_CLEAR));
         } else {
-            setIcon(icons.get(CubaIcon.PICKERFIELD_CLEAR_READONLY));
+            setIcon(icons.get(JmixIcon.PICKERFIELD_CLEAR_READONLY));
         }
     }
 
@@ -113,7 +113,7 @@ public class ClearAction extends BaseAction implements PickerField.PickerFieldAc
     protected void setIcons(Icons icons) {
         this.icons = icons;
 
-        setIcon(icons.get(CubaIcon.PICKERFIELD_CLEAR));
+        setIcon(icons.get(JmixIcon.PICKERFIELD_CLEAR));
     }
 
     @Override

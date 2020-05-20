@@ -162,14 +162,14 @@ public class ExceptionDialog extends JmixWindow {
         buttonsLayout.addComponent(spacer);
         buttonsLayout.setExpandRatio(spacer, 1);
 
-        String cubaLogContentClass = "c-exception-dialog-log-content";
-        String cubaCopyLogContentClass = cubaLogContentClass + "-" + UUID.randomUUID();
+        String logContentClassName = "c-exception-dialog-log-content";
+        String copyLogContentClassName = logContentClassName + "-" + UUID.randomUUID();
 
-//        todo CubaCopyButtonExtension
-        /*if (CubaCopyButtonExtension.browserSupportCopy()) {
-            copyButton = new CubaButton(messages.getMainMessage("exceptionDialog.copyStackTrace"));
+//        todo JmixCopyButtonExtension
+        /*if (JmixCopyButtonExtension.browserSupportCopy()) {
+            copyButton = new JmixButton(messages.getMainMessage("exceptionDialog.copyStackTrace"));
             copyButton.setVisible(false);
-            CubaCopyButtonExtension copyExtension = CubaCopyButtonExtension.copyWith(copyButton, cubaCopyLogContentClass);
+            JmixCopyButtonExtension copyExtension = JmixCopyButtonExtension.copyWith(copyButton, copyLogContentClassName);
             copyExtension.addCopyListener(event ->
                     Notification.show(messages.getMessage(
                             event.isSuccess() ? "exceptionDialog.copingSuccessful" : "exceptionDialog.copingFailed"),
@@ -202,8 +202,8 @@ public class ExceptionDialog extends JmixWindow {
         stackTraceTextArea.setSizeFull();
         stackTraceTextArea.setWordWrap(false);
         stackTraceTextArea.setValue(stackTrace);
-        stackTraceTextArea.setStyleName(cubaLogContentClass);
-        stackTraceTextArea.addStyleName(cubaCopyLogContentClass);
+        stackTraceTextArea.setStyleName(logContentClassName);
+        stackTraceTextArea.addStyleName(copyLogContentClassName);
         stackTraceTextArea.setReadOnly(true);
 
         setContent(mainLayout);

@@ -20,4 +20,5 @@ import com.vaadin.shared.ui.button.ButtonState;
 
 public class JmixButtonState extends ButtonState {
 
+    public boolean useResponsePending = false;
 }

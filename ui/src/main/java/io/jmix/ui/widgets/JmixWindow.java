@@ -16,17 +16,17 @@
 
 package io.jmix.ui.widgets;
 
+import io.jmix.ui.AppUI;
+import io.jmix.ui.widgets.client.tabsheet.ClientAction;
+import io.jmix.ui.widgets.client.window.JmixWindowClientRpc;
+import io.jmix.ui.widgets.client.window.JmixWindowServerRpc;
+import io.jmix.ui.widgets.client.window.JmixWindowState;
 import com.vaadin.event.Action;
 import com.vaadin.event.ConnectorEvent;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.KeyMapper;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.widgets.client.action.ClientAction;
-import io.jmix.ui.widgets.client.window.JmixWindowClientRpc;
-import io.jmix.ui.widgets.client.window.JmixWindowServerRpc;
-import io.jmix.ui.widgets.client.window.JmixWindowState;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;

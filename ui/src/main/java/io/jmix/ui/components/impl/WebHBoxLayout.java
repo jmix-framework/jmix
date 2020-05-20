@@ -16,12 +16,12 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.ui.components.HBoxLayout;
-import io.jmix.ui.widgets.CubaHorizontalActionsLayout;
+import io.jmix.ui.widgets.JmixHorizontalActionsLayout;
 
-public class WebHBoxLayout extends WebAbstractBox<CubaHorizontalActionsLayout> implements HBoxLayout{
+public class WebHBoxLayout extends WebAbstractBox<JmixHorizontalActionsLayout> implements HBoxLayout{
 
     public WebHBoxLayout() {
-        component = new CubaHorizontalActionsLayout();
+        component = new JmixHorizontalActionsLayout();
     }
 
     @Override

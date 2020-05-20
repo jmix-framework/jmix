@@ -18,7 +18,7 @@ package io.jmix.ui.components.impl;
 import io.jmix.ui.components.CheckBox;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Form;
-import io.jmix.ui.widgets.CubaCheckBox;
+import io.jmix.ui.widgets.JmixCheckBox;
 
 public class WebCheckBox extends WebV8AbstractField<com.vaadin.ui.CheckBox, Boolean, Boolean> implements CheckBox {
     public WebCheckBox() {
@@ -28,8 +28,8 @@ public class WebCheckBox extends WebV8AbstractField<com.vaadin.ui.CheckBox, Bool
         attachValueChangeListener(component);
     }
 
-    protected CubaCheckBox createComponent() {
-        return new CubaCheckBox();
+    protected JmixCheckBox createComponent() {
+        return new JmixCheckBox();
     }
 
     @Override
@@ -69,7 +69,7 @@ public class WebCheckBox extends WebV8AbstractField<com.vaadin.ui.CheckBox, Bool
                 // TODO: gg, legacu-ui
 //                parent instanceof FieldGroup
         ) {
-            ((CubaCheckBox) component).setCaptionManagedByLayout(true);
+            ((JmixCheckBox) component).setCaptionManagedByLayout(true);
         }
     }
 

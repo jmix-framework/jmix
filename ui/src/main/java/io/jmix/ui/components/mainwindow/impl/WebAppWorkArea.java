@@ -79,7 +79,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
     protected HasTabSheetBehaviour tabbedContainer;
 
-    protected CubaSingleModeContainer singleContainer;
+    protected JmixSingleModeContainer singleContainer;
 
     protected boolean shortcutsInitialized = false;
 
@@ -209,37 +209,37 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
     protected HasTabSheetBehaviour createTabbedModeContainer() {
         if (beanLocator.get(UiProperties.class).getMainTabSheetMode() == MainTabSheetMode.DEFAULT) {
-            CubaMainTabSheet cubaTabSheet = new CubaMainTabSheet();
+            JmixMainTabSheet jmixTabSheet = new JmixMainTabSheet();
 
-            tabbedContainer = cubaTabSheet;
+            tabbedContainer = jmixTabSheet;
 
-            cubaTabSheet.setDragMode(LayoutDragMode.CLONE);
-            cubaTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
-            Action.Handler actionHandler = createTabSheetActionHandler(cubaTabSheet);
-            cubaTabSheet.addActionHandler(actionHandler);
+            jmixTabSheet.setDragMode(LayoutDragMode.CLONE);
+            jmixTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
+            Action.Handler actionHandler = createTabSheetActionHandler(jmixTabSheet);
+            jmixTabSheet.addActionHandler(actionHandler);
 
-            cubaTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
-            cubaTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
-            cubaTabSheet.addSelectedTabChangeListener(event -> {
+            jmixTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
+            jmixTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
+            jmixTabSheet.addSelectedTabChangeListener(event -> {
                 fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
                 reflectTabChangeToUrl(event.isUserOriginated());
             });
         } else {
-            CubaManagedTabSheet cubaManagedTabSheet = new CubaManagedTabSheet();
+            JmixManagedTabSheet jmixManagedTabSheet = new JmixManagedTabSheet();
 
             ManagedMainTabSheetMode tabSheetMode = beanLocator.get(UiProperties.class).getManagedMainTabSheetMode();
-            cubaManagedTabSheet.setMode(CubaManagedTabSheet.Mode.valueOf(tabSheetMode.name()));
+            jmixManagedTabSheet.setMode(JmixManagedTabSheet.Mode.valueOf(tabSheetMode.name()));
 
-            tabbedContainer = cubaManagedTabSheet;
+            tabbedContainer = jmixManagedTabSheet;
 
-            cubaManagedTabSheet.setDragMode(LayoutDragMode.CLONE);
-            cubaManagedTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
-            Action.Handler actionHandler = createTabSheetActionHandler(cubaManagedTabSheet);
-            cubaManagedTabSheet.addActionHandler(actionHandler);
+            jmixManagedTabSheet.setDragMode(LayoutDragMode.CLONE);
+            jmixManagedTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
+            Action.Handler actionHandler = createTabSheetActionHandler(jmixManagedTabSheet);
+            jmixManagedTabSheet.addActionHandler(actionHandler);
 
-            cubaManagedTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
-            cubaManagedTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
-            cubaManagedTabSheet.addSelectedTabChangeListener(event -> {
+            jmixManagedTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
+            jmixManagedTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
+            jmixManagedTabSheet.addSelectedTabChangeListener(event -> {
                 fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
                 reflectTabChangeToUrl(event.isUserOriginated());
             });
@@ -290,8 +290,8 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         return new MainTabSheetActionHandler(tabSheet);
     }
 
-    protected CubaSingleModeContainer createSingleModeContainer() {
-        CubaSingleModeContainer boxLayout = new CubaSingleModeContainer();
+    protected JmixSingleModeContainer createSingleModeContainer() {
+        JmixSingleModeContainer boxLayout = new JmixSingleModeContainer();
         boxLayout.setHeight("100%");
         boxLayout.setStyleName(SINGLE_CONTAINER_STYLENAME);
         return boxLayout;
@@ -301,7 +301,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         return tabbedContainer;
     }
 
-    public CubaSingleModeContainer getSingleWindowContainer() {
+    public JmixSingleModeContainer getSingleWindowContainer() {
         return singleContainer;
     }
 
@@ -365,7 +365,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
             return tabSheetBehaviour.getComponentCount();
         } else {
-            CubaSingleModeContainer singleWindowContainer = getSingleWindowContainer();
+            JmixSingleModeContainer singleWindowContainer = getSingleWindowContainer();
             TabWindowContainer windowContainer = (TabWindowContainer) singleWindowContainer.getWindowContainer();
             return windowContainer != null ? 1 : 0;
         }
@@ -385,7 +385,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
                                 .map(Window::getFrameOwner);
                     });
         } else {
-            CubaSingleModeContainer singleWindowContainer = getSingleWindowContainer();
+            JmixSingleModeContainer singleWindowContainer = getSingleWindowContainer();
             TabWindowContainer windowContainer = (TabWindowContainer) singleWindowContainer.getWindowContainer();
 
             if (windowContainer != null) {
@@ -412,7 +412,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
                         return currentWindow.getFrameOwner();
                     });
         } else {
-            CubaSingleModeContainer singleWindowContainer = getSingleWindowContainer();
+            JmixSingleModeContainer singleWindowContainer = getSingleWindowContainer();
             TabWindowContainer windowContainer = (TabWindowContainer) singleWindowContainer.getWindowContainer();
 
             if (windowContainer != null) {
@@ -509,7 +509,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         Screen rootScreen = ComponentsHelper.getWindowNN(this).getFrameOwner();
 
         RootWindow topLevelWindow = (RootWindow) rootScreen.getWindow();
-        topLevelWindow.withUnwrapped(CubaOrderedActionsLayout.class, actionsLayout -> {
+        topLevelWindow.withUnwrapped(JmixOrderedActionsLayout.class, actionsLayout -> {
             if (getMode() == Mode.TABBED) {
                 actionsLayout.addShortcutListener(createNextWindowTabShortcut(topLevelWindow));
                 actionsLayout.addShortcutListener(createPreviousWindowTabShortcut(topLevelWindow));
@@ -725,7 +725,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
             layout = (TabWindowContainer) tabSheetBehaviour.getSelectedTab();
         } else {
-            CubaSingleModeContainer singleWindowContainer = getSingleWindowContainer();
+            JmixSingleModeContainer singleWindowContainer = getSingleWindowContainer();
 
             layout = (TabWindowContainer) singleWindowContainer.getWindowContainer();
         }

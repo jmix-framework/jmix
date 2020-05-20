@@ -24,7 +24,7 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
 import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.widgets.CubaTwinColSelect;
+import io.jmix.ui.widgets.JmixTwinColSelect;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -34,7 +34,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class WebTwinColumn<V> extends WebV8AbstractField<CubaTwinColSelect<V>, Set<V>, Collection<V>>
+public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, Set<V>, Collection<V>>
         implements TwinColumn<V>, InitializingBean {
 
     protected OptionsBinding<V> optionsBinding;
@@ -53,8 +53,8 @@ public class WebTwinColumn<V> extends WebV8AbstractField<CubaTwinColSelect<V>, S
         attachValueChangeListener(component);
     }
 
-    protected CubaTwinColSelect<V> createComponent() {
-        return new CubaTwinColSelect<>();
+    protected JmixTwinColSelect<V> createComponent() {
+        return new JmixTwinColSelect<>();
     }
 
     @Override
@@ -62,7 +62,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<CubaTwinColSelect<V>, S
         initComponent(component);
     }
 
-    protected void initComponent(CubaTwinColSelect<V> component) {
+    protected void initComponent(JmixTwinColSelect<V> component) {
         component.setItemCaptionGenerator(this::generateItemCaption);
     }
 

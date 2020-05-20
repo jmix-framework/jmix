@@ -29,7 +29,7 @@ import io.jmix.ui.components.data.meta.EntityValueSource;
 import io.jmix.ui.components.data.meta.OptionsBinding;
 import io.jmix.ui.components.data.options.OptionsBinder;
 import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.widgets.CubaComboBox;
+import io.jmix.ui.widgets.JmixComboBox;
 import io.jmix.ui.widgets.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ import java.util.stream.Stream;
 import static com.vaadin.event.ShortcutAction.KeyCode;
 import static com.vaadin.event.ShortcutAction.ModifierKey;
 
-public class WebLookupField<V> extends WebV8AbstractField<CubaComboBox<V>, V, V>
+public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         implements LookupField<V>, InitializingBean {
 
     public static final StyleGenerator NULL_STYLE_GENERATOR = item -> null;
@@ -80,8 +80,8 @@ public class WebLookupField<V> extends WebV8AbstractField<CubaComboBox<V>, V, V>
         attachValueChangeListener(component);
     }
 
-    protected CubaComboBox<V> createComponent() {
-        return new CubaComboBox<>();
+    protected JmixComboBox<V> createComponent() {
+        return new JmixComboBox<>();
     }
 
     @Inject
@@ -113,7 +113,7 @@ public class WebLookupField<V> extends WebV8AbstractField<CubaComboBox<V>, V, V>
         this.locale = currentAuthentication.getLocale();
     }
 
-    protected void initComponent(CubaComboBox<V> component) {
+    protected void initComponent(JmixComboBox<V> component) {
         component.setItemCaptionGenerator(this::generateItemCaption);
 
         component.addShortcutListener(new ShortcutListenerDelegate("clearShortcut",

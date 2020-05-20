@@ -30,7 +30,7 @@ import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
 import io.jmix.ui.settings.Settings;
 import io.jmix.ui.sys.TestIdManager;
-import io.jmix.ui.widgets.CubaTabSheet;
+import io.jmix.ui.widgets.JmixTabSheet;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.components.ComponentsHelper.walkComponents;
 
-public class WebTabSheet extends WebAbstractComponent<CubaTabSheet>
+public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         implements TabSheet, UiPermissionAware, SupportsChildrenSelection {
 
     protected boolean postInitTaskAdded;
@@ -63,8 +63,8 @@ public class WebTabSheet extends WebAbstractComponent<CubaTabSheet>
         component.setCloseHandler(new DefaultCloseHandler());
     }
 
-    protected CubaTabSheet createComponent() {
-        return new CubaTabSheet();
+    protected JmixTabSheet createComponent() {
+        return new JmixTabSheet();
     }
 
     protected Set<com.vaadin.ui.Component> getLazyTabs() {

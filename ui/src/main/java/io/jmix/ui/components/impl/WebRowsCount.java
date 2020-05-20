@@ -32,7 +32,7 @@ import io.jmix.ui.icons.IconResolver;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.widgets.CubaRowsCount;
+import io.jmix.ui.widgets.JmixRowsCount;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ import java.util.function.Function;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-public class WebRowsCount extends WebAbstractComponent<CubaRowsCount> implements RowsCount, VisibilityChangeNotifier,
+public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements RowsCount, VisibilityChangeNotifier,
         Component.HasXmlDescriptor {
 
     protected static final String TABLE_ROWS_COUNT_STYLENAME = "c-table-rows-count";
@@ -82,7 +82,7 @@ public class WebRowsCount extends WebAbstractComponent<CubaRowsCount> implements
     protected Function<DataLoadContext, Long> totalCountDelegate;
 
     public WebRowsCount() {
-        component = new CubaRowsCount();
+        component = new JmixRowsCount();
         component.setStyleName(TABLE_ROWS_COUNT_STYLENAME);
 
         //hide all buttons. They will become visible after data is loaded

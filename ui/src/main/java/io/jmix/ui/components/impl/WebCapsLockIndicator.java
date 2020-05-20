@@ -17,13 +17,12 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.ui.components.CapsLockIndicator;
-import io.jmix.ui.widgets.CubaCapsLockIndicator;
-import io.jmix.ui.widgets.CubaCapsLockIndicator;
+import io.jmix.ui.widgets.JmixCapsLockIndicator;
 
-public class WebCapsLockIndicator extends WebAbstractComponent<CubaCapsLockIndicator> implements CapsLockIndicator {
+public class WebCapsLockIndicator extends WebAbstractComponent<JmixCapsLockIndicator> implements CapsLockIndicator {
 
     public WebCapsLockIndicator() {
-        component = new CubaCapsLockIndicator();
+        component = new JmixCapsLockIndicator();
     }
 
     @Override

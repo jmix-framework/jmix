@@ -138,8 +138,8 @@ public class IconsImpl implements Icons {
                 iconSource = ((Icon) obj).source();
             } catch (IllegalAccessException | NoSuchFieldException ignored) {
                 // must be ignored, because some icon sets in the sequence may not contain the icon, e.g.:
-                // assuming icon sets CubaIcon > MyCompIcon > MyAppIcon,
-                // CubaIcon.OK - defined, MyCompIcon.OK - overrides, MyAppIcon.OK - not defined
+                // assuming icon sets JmixIcon > MyCompIcon > MyAppIcon,
+                // JmixIcon.OK - defined, MyCompIcon.OK - overrides, MyAppIcon.OK - not defined
                 // then using MyCompIcon.OK
             }
         }

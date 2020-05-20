@@ -16,14 +16,14 @@
 package io.jmix.ui.components.impl;
 
 import io.jmix.ui.components.Link;
-import io.jmix.ui.widgets.CubaLink;
+import io.jmix.ui.widgets.JmixLink;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Resource;
 
-public class WebLink extends WebAbstractComponent<CubaLink> implements Link {
+public class WebLink extends WebAbstractComponent<JmixLink> implements Link {
 
     public WebLink() {
-        component = new CubaLink();
+        component = new JmixLink();
         component.setDescription(null);
     }
 

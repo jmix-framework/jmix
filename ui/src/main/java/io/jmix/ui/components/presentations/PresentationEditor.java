@@ -31,8 +31,8 @@ import io.jmix.ui.components.HasPresentations;
 import io.jmix.ui.presentations.Presentations;
 import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.CubaButton;
-import io.jmix.ui.widgets.CubaWindow;
+import io.jmix.ui.widgets.JmixButton;
+import io.jmix.ui.widgets.JmixWindow;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-public class PresentationEditor extends CubaWindow {
+public class PresentationEditor extends JmixWindow {
 
     private static final Logger log = LoggerFactory.getLogger(PresentationEditor.class);
 
@@ -124,7 +124,7 @@ public class PresentationEditor extends CubaWindow {
         root.addComponent(buttons);
         root.setComponentAlignment(buttons, Alignment.MIDDLE_LEFT);
 
-        Button commitButton = new CubaButton(messages.getMessage("PresentationsEditor.save"));
+        Button commitButton = new JmixButton(messages.getMessage("PresentationsEditor.save"));
         commitButton.addClickListener(event -> {
             if (validate()) {
                 commit();
@@ -133,7 +133,7 @@ public class PresentationEditor extends CubaWindow {
         });
         buttons.addComponent(commitButton);
 
-        Button closeButton = new CubaButton(messages.getMessage("PresentationsEditor.close"));
+        Button closeButton = new JmixButton(messages.getMessage("PresentationsEditor.close"));
         closeButton.addClickListener(event ->
                 forceClose()
         );

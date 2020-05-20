@@ -27,7 +27,7 @@ import io.jmix.ui.components.Window;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.widgets.CubaTimer;
+import io.jmix.ui.widgets.JmixTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +37,10 @@ public class WebTimer extends WebAbstractFacet implements Timer {
 
     private static final Logger log = LoggerFactory.getLogger(WebTimer.class);
 
-    protected CubaTimer timerImpl;
+    protected JmixTimer timerImpl;
 
     public WebTimer() {
-        timerImpl = new CubaTimer();
+        timerImpl = new JmixTimer();
     }
 
     @Override
@@ -75,7 +75,7 @@ public class WebTimer extends WebAbstractFacet implements Timer {
 
     @Override
     public Subscription addTimerActionListener(Consumer<TimerActionEvent> listener) {
-        Consumer<CubaTimer> wrapper = new CubaTimerActionListenerWrapper(listener);
+        Consumer<JmixTimer> wrapper = new JmixTimerActionListenerWrapper(listener);
         timerImpl.addActionListener(wrapper);
         return () -> timerImpl.removeActionListener(wrapper);
     }
@@ -83,12 +83,12 @@ public class WebTimer extends WebAbstractFacet implements Timer {
     @Override
     @Deprecated
     public void removeTimerActionListener(Consumer<TimerActionEvent> listener) {
-        timerImpl.removeActionListener(new CubaTimerActionListenerWrapper(listener));
+        timerImpl.removeActionListener(new JmixTimerActionListenerWrapper(listener));
     }
 
     @Override
     public Subscription addTimerStopListener(Consumer<TimerStopEvent> listener) {
-        Consumer<CubaTimer> wrapper = new CubaTimerStopListenerWrapper(listener);
+        Consumer<JmixTimer> wrapper = new JmixTimerStopListenerWrapper(listener);
         timerImpl.addStopListener(wrapper);
         return () -> timerImpl.removeStopListeners(wrapper);
     }
@@ -96,7 +96,7 @@ public class WebTimer extends WebAbstractFacet implements Timer {
     @Override
     @Deprecated
     public void removeTimerStopListener(Consumer<TimerStopEvent> listener) {
-        timerImpl.removeStopListeners(new CubaTimerStopListenerWrapper(listener));
+        timerImpl.removeStopListeners(new JmixTimerStopListenerWrapper(listener));
     }
 
     @Override
@@ -167,16 +167,16 @@ public class WebTimer extends WebAbstractFacet implements Timer {
         log.trace("Timer '{}' registered in UI ", getId());
     }
 
-    protected class CubaTimerActionListenerWrapper implements Consumer<CubaTimer> {
+    protected class JmixTimerActionListenerWrapper implements Consumer<JmixTimer> {
 
         private final Consumer<TimerActionEvent> listener;
 
-        public CubaTimerActionListenerWrapper(Consumer<TimerActionEvent> listener) {
+        public JmixTimerActionListenerWrapper(Consumer<TimerActionEvent> listener) {
             this.listener = listener;
         }
 
         @Override
-        public void accept(CubaTimer sender) {
+        public void accept(JmixTimer sender) {
             try {
                 listener.accept(new TimerActionEvent(WebTimer.this));
             } catch (RuntimeException e) {
@@ -212,7 +212,7 @@ public class WebTimer extends WebAbstractFacet implements Timer {
                 return false;
             }
 
-            CubaTimerActionListenerWrapper that = (CubaTimerActionListenerWrapper) obj;
+            JmixTimerActionListenerWrapper that = (JmixTimerActionListenerWrapper) obj;
 
             return this.listener.equals(that.listener);
         }
@@ -223,16 +223,16 @@ public class WebTimer extends WebAbstractFacet implements Timer {
         }
     }
 
-    protected class CubaTimerStopListenerWrapper implements Consumer<CubaTimer> {
+    protected class JmixTimerStopListenerWrapper implements Consumer<JmixTimer> {
 
         private final Consumer<TimerStopEvent> listener;
 
-        public CubaTimerStopListenerWrapper(Consumer<TimerStopEvent> listener) {
+        public JmixTimerStopListenerWrapper(Consumer<TimerStopEvent> listener) {
             this.listener = listener;
         }
 
         @Override
-        public void accept(CubaTimer sender) {
+        public void accept(JmixTimer sender) {
             listener.accept(new TimerStopEvent(WebTimer.this));
         }
 
@@ -246,7 +246,7 @@ public class WebTimer extends WebAbstractFacet implements Timer {
                 return false;
             }
 
-            CubaTimerStopListenerWrapper that = (CubaTimerStopListenerWrapper) obj;
+            JmixTimerStopListenerWrapper that = (JmixTimerStopListenerWrapper) obj;
 
             return this.listener.equals(that.listener);
         }

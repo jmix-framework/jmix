@@ -17,7 +17,6 @@
 package io.jmix.data.event;
 
 import io.jmix.core.*;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.context.ApplicationEvent;
@@ -45,10 +44,10 @@ import org.springframework.core.ResolvableTypeProvider;
  * }
  * </pre>
  *
- * @param <E>   entity type
- * @param <K>   entity identifier type
+ * @param <E> entity type
+ * @param <K> entity identifier type
  */
-public class EntityChangedEvent<E extends Entity<K>, K> extends ApplicationEvent implements ResolvableTypeProvider {
+public class EntityChangedEvent<E extends Entity> extends ApplicationEvent implements ResolvableTypeProvider {
 
     /**
      * Type of the event: {@link #CREATED}, {@link #UPDATED} or {@link #DELETED}.
@@ -59,14 +58,14 @@ public class EntityChangedEvent<E extends Entity<K>, K> extends ApplicationEvent
         DELETED
     }
 
-    private Id<E, K> entityId;
+    private Id<E> entityId;
     private Type type;
     private AttributeChanges changes;
 
     /**
      * INTERNAL.
      */
-    public EntityChangedEvent(Object source, Id<E, K> entityId, Type type, AttributeChanges changes) {
+    public EntityChangedEvent(Object source, Id<E> entityId, Type type, AttributeChanges changes) {
         super(source);
         this.entityId = entityId;
         this.type = type;
@@ -76,7 +75,7 @@ public class EntityChangedEvent<E extends Entity<K>, K> extends ApplicationEvent
     /**
      * Returns the entity id.
      */
-    public Id<E, K> getEntityId() {
+    public Id<E> getEntityId() {
         return entityId;
     }
 
@@ -115,8 +114,7 @@ public class EntityChangedEvent<E extends Entity<K>, K> extends ApplicationEvent
             throw new IllegalStateException("Unable to send EntityChangedEvent for " + metaClass + " because it has no primary key");
         }
         return ResolvableType.forClassWithGenerics(getClass(),
-                ResolvableType.forClass(metaClass.getJavaClass()),
-                ResolvableType.forClass(pkProperty.getJavaType()));
+                ResolvableType.forClass(metaClass.getJavaClass()));
     }
 
     @Override

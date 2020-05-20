@@ -167,7 +167,7 @@ public class JmixEntityManager implements EntityManager {
         Class<T> effectiveClass = extendedEntities.getEffectiveClass(entityClass);
 
         T reference = delegate.getReference(effectiveClass, getRealId(primaryKey));
-        ((Entity<?>) reference).__getEntityEntry().setNew(false);
+        ((Entity) reference).__getEntityEntry().setNew(false);
         return reference;
     }
 

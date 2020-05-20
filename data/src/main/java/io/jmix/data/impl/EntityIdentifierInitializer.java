@@ -45,7 +45,7 @@ public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
     protected CoreProperties coreProperties;
 
     @Override
-    public <T> void initEntity(Entity<T> entity) {
+    public void initEntity(Entity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
 
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
@@ -53,7 +53,7 @@ public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
             // create an instance of embedded ID
             Entity key = metadata.create(primaryKeyProperty.getRange().asClass());
             //noinspection unchecked
-            EntityValues.setId(entity, (T) key);
+            EntityValues.setId(entity, key);
         } else if (entity instanceof BaseLongIdEntity || entity instanceof BaseIntegerIdEntity) {
             if (!coreProperties.isIdGenerationForEntitiesInAdditionalDataStoresEnabled()
                     && !Stores.MAIN.equals(metadataTools.getStoreName(metaClass))) {

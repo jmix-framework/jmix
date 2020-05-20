@@ -36,7 +36,7 @@ public class TestOrderChangedEventListener {
     private DataManager tdm;
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void onOrderChanged(EntityChangedEvent<Order, UUID> event) {
+    public void onOrderChanged(EntityChangedEvent<Order> event) {
         if (!enabled)
             return;
 

@@ -34,7 +34,7 @@ import java.util.UUID;
 @MappedSuperclass
 @ModelObject(name = "sys_BaseUuidEntity")
 @UnavailableInSecurityConstraints
-public abstract class BaseUuidEntity implements Entity<UUID>, HasUuid {
+public abstract class BaseUuidEntity implements Entity, HasUuid {
 
     private static final long serialVersionUID = -2217624132287086972L;
 

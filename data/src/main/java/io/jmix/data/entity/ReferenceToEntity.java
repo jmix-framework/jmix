@@ -27,7 +27,7 @@ import java.util.UUID;
 @Embeddable
 @ModelObject(name = "test$ReferenceToEntity")
 @SystemLevel
-public class ReferenceToEntity implements Entity<Object> {
+public class ReferenceToEntity implements Entity {
     private static final long serialVersionUID = -3667689055952380345L;
 
     @Column(name = "ENTITY_ID")

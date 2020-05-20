@@ -24,7 +24,7 @@ import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class TestEntityKey implements Entity<Object> {
+public class TestEntityKey implements Entity {
     private static final long serialVersionUID = -7240469493134421919L;
 
     @Column(name = "TENANT")

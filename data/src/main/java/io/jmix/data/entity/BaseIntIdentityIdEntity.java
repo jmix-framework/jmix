@@ -27,7 +27,7 @@ import javax.persistence.*;
 @MappedSuperclass
 @ModelObject(name = "sys$BaseIntIdentityIdEntity")
 @UnavailableInSecurityConstraints
-public abstract class BaseIntIdentityIdEntity implements Entity<Integer> {
+public abstract class BaseIntIdentityIdEntity implements Entity {
 
     private static final long serialVersionUID = 3083677558630811496L;
 

@@ -54,7 +54,7 @@ public class OrmCacheSupport {
      * @param entity  which is being updated and can potentially be an element of a collection
      * @param changes changes in the entity. Null when creating and removing the entity.
      */
-    public void evictMasterEntity(Entity<?> entity, @Nullable EntityAttributeChanges changes) {
+    public void evictMasterEntity(Entity entity, @Nullable EntityAttributeChanges changes) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass() || property.getRange().getCardinality().isMany())

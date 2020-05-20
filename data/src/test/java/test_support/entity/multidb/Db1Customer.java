@@ -14,7 +14,7 @@ import java.util.List;
 @Entity(name = "test_Db1Customer")
 @Table(name = "CUSTOMER")
 @Store(name = "db1")
-public class Db1Customer implements io.jmix.core.Entity<Long> {
+public class Db1Customer implements io.jmix.core.Entity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO/*, generator = "ref$Db1Customer"*/)

@@ -41,7 +41,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
     @Inject
     protected EntityStates entityStates;
 
-    public void copySystemState(Entity<?> src, Entity<?> dst) {
+    public void copySystemState(Entity src, Entity dst) {
         super.copySystemState(src, dst);
 
         if (src instanceof FetchGroupTracker && dst instanceof FetchGroupTracker) {
@@ -51,7 +51,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
 
     }
 
-    public void mergeSystemState(Entity<?> src, Entity<?> dst) {
+    public void mergeSystemState(Entity src, Entity dst) {
         super.copySystemState(src, dst);
 
         if (src instanceof FetchGroupTracker && dst instanceof FetchGroupTracker) {
@@ -70,7 +70,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
         }
     }
 
-    protected FetchGroup suggestFetchGroup(Entity<?> entity) {
+    protected FetchGroup suggestFetchGroup(Entity entity) {
         Set<String> attributes = metadata.getClass(entity.getClass()).getProperties().stream()
                 .filter(metaProperty ->
                         !metaProperty.getRange().isClass() || entityStates.isLoaded(entity, metaProperty.getName()))

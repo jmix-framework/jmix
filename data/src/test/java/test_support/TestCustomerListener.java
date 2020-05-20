@@ -29,15 +29,15 @@ import java.util.function.Consumer;
 @Component("test_TestCustomerListener")
 public class TestCustomerListener implements BeforeDetachEntityListener<Customer> {
 
-    public Consumer<EntityChangedEvent<Customer, UUID>> changedEventConsumer;
+    public Consumer<EntityChangedEvent<Customer>> changedEventConsumer;
 
     public Consumer<Customer> beforeDetachConsumer;
 
-    public Consumer<EntityChangedEvent<Customer, UUID>> getChangedEventConsumer() {
+    public Consumer<EntityChangedEvent<Customer>> getChangedEventConsumer() {
         return changedEventConsumer;
     }
 
-    public void setChangedEventConsumer(Consumer<EntityChangedEvent<Customer, UUID>> changedEventConsumer) {
+    public void setChangedEventConsumer(Consumer<EntityChangedEvent<Customer>> changedEventConsumer) {
         this.changedEventConsumer = changedEventConsumer;
     }
 
@@ -50,7 +50,7 @@ public class TestCustomerListener implements BeforeDetachEntityListener<Customer
     }
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    public void onCustomerChanged(EntityChangedEvent<Customer, UUID> event) {
+    public void onCustomerChanged(EntityChangedEvent<Customer> event) {
         if (changedEventConsumer != null) {
             changedEventConsumer.accept(event);
         }

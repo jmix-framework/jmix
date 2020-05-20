@@ -56,7 +56,7 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
     @Override
     protected boolean isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty) {
         if (metadataTools.isEmbeddable(metaClass)
-                || (entity instanceof Entity && ((Entity<?>) entity).__getEntityEntry().isNew())) {
+                || (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isNew())) {
             // this is a workaround for unexpected EclipseLink behaviour when PersistenceUnitUtil.isLoaded
             // throws exception if embedded entity refers to persistent entity
             return checkIsLoadedWithGetter(entity, property);

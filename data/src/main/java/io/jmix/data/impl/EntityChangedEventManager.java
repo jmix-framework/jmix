@@ -249,7 +249,7 @@ public class EntityChangedEventManager {
             Object value = EntityValues.getValue(entity, property.getName());
             if (deleted) {
                 if (value instanceof Entity) {
-                    boolean isEmbeddable = ((Entity<?>) value).__getEntityEntry().isEmbeddable();
+                    boolean isEmbeddable = ((Entity) value).__getEntityEntry().isEmbeddable();
                     if (isEmbeddable) {
                         embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges((Entity) value, true));
                     } else {

@@ -55,7 +55,7 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     @Nullable
     public String onUnfetchedAttribute(FetchGroupTracker entity, String attributeName) {
         if (entity instanceof Entity) {
-            EntityEntry entityEntry = ((Entity<?>) entity).__getEntityEntry();
+            EntityEntry entityEntry = ((Entity) entity).__getEntityEntry();
             if (entityEntry.getSecurityState().getInaccessibleAttributes() != null) {
                 for (String attribute : entityEntry.getSecurityState().getInaccessibleAttributes()) {
                     if (attributeName.equals(attribute))

@@ -71,7 +71,7 @@ public class EntityManagerTest {
     @Autowired
     TestCustomerListener customerListener;
 
-    List<EntityChangedEvent<Customer, UUID>> customerEvents = new ArrayList<>();
+    List<EntityChangedEvent<Customer>> customerEvents = new ArrayList<>();
 
     @BeforeEach
     public void setup() {

@@ -23,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test_TestCompositeKeyEntity")
 @Table(name = "TEST_COMPOSITE_KEY_ENTITY")
-public class TestCompositeKeyEntity implements io.jmix.core.Entity<TestEntityKey> {
+public class TestCompositeKeyEntity implements io.jmix.core.Entity {
 
     private static final long serialVersionUID = -2538345720324624741L;
 

@@ -206,7 +206,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         traverseEntities(getInstanceContainerResourceHolder(storeName), new OnSaveEntityVisitor(storeName), warnAboutImplicitFlush);
     }
 
-    protected void fireBeforeDetachEntityListener(Entity<?> entity, String storeName) {
+    protected void fireBeforeDetachEntityListener(Entity entity, String storeName) {
         if (!(entity.__getEntityEntry().isDetached())) {
             JmixEntityFetchGroup.setAccessLocalUnfetched(false);
             try {
@@ -217,7 +217,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    protected static boolean isDeleted(Entity<?> entity, AttributeChangeListener changeListener) {
+    protected static boolean isDeleted(Entity entity, AttributeChangeListener changeListener) {
         if ((entity instanceof SoftDelete)) {
             ObjectChangeSet changeSet = changeListener.getObjectChangeSet();
             return changeSet != null
@@ -300,9 +300,9 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     protected void makeDetached(Object instance) {
         if (instance instanceof Entity) {
-            ((Entity<?>) instance).__getEntityEntry().setNew(false);
-            ((Entity<?>) instance).__getEntityEntry().setManaged(false);
-            ((Entity<?>) instance).__getEntityEntry().setDetached(true);
+            ((Entity) instance).__getEntityEntry().setNew(false);
+            ((Entity) instance).__getEntityEntry().setManaged(false);
+            ((Entity) instance).__getEntityEntry().setDetached(true);
         }
         if (instance instanceof FetchGroupTracker) {
             ((FetchGroupTracker) instance)._persistence_setSession(null);
@@ -331,7 +331,7 @@ public class PersistenceSupport implements ApplicationContextAware {
     }
 
     public interface EntityVisitor {
-        boolean visit(Entity<?> entity);
+        boolean visit(Entity entity);
     }
 
     public static class ContainerResourceHolder extends ResourceHolderSupport {
@@ -482,15 +482,15 @@ public class PersistenceSupport implements ApplicationContextAware {
                 for (Object instance : instances) {
                     if (instance instanceof Entity) {
                         if (status == TransactionSynchronization.STATUS_COMMITTED) {
-                            if (((Entity<?>) instance).__getEntityEntry().isNew()) {
+                            if (((Entity) instance).__getEntityEntry().isNew()) {
                                 // new instances become not new and detached only if the transaction was committed
-                                ((Entity<?>) instance).__getEntityEntry().setNew(false);
+                                ((Entity) instance).__getEntityEntry().setNew(false);
                             }
                         } else { // commit failed or the transaction was rolled back
                             makeDetached(instance);
                             for (Entity entity : container.getNewDetachedInstances()) {
-                                ((Entity<?>) entity).__getEntityEntry().setNew(true);
-                                ((Entity<?>) entity).__getEntityEntry().setDetached(false);
+                                entity.__getEntityEntry().setNew(true);
+                                entity.__getEntityEntry().setDetached(false);
                             }
                         }
                     }

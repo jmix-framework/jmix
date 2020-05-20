@@ -30,9 +30,8 @@ import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
  * Helper class which represent a collection of {@link Id}
  *
  * @param <T> type of entity
- * @param <K> type entity key
  */
-public final class Ids<T extends Entity<K>, K> extends ArrayList<Id<T, K>> {
+public final class Ids<T extends Entity> extends ArrayList<Id<T>> {
 
     /**
      * @param entities entity instances
@@ -40,12 +39,12 @@ public final class Ids<T extends Entity<K>, K> extends ArrayList<Id<T, K>> {
      * @param <T>      entity type
      * @return list of ids of the passed entities
      */
-    public static <T extends Entity<K>, K> Ids<T, K> of(Collection<T> entities) {
-        Ids<T, K> ids = new Ids<>();
+    public static <T extends Entity> Ids<T> of(Collection<T> entities) {
+        Ids<T> ids = new Ids<>();
 
         for (T entity : entities) {
             checkNotNullArgument(entity);
-            checkNotNullArgument(EntityValues.<K>getId(entity));
+            checkNotNullArgument(EntityValues.getId(entity));
 
             @SuppressWarnings("unchecked")
             Class<T> entityClass = (Class<T>) entity.getClass();
@@ -58,14 +57,13 @@ public final class Ids<T extends Entity<K>, K> extends ArrayList<Id<T, K>> {
     /**
      * @param entityClass entity class
      * @param values      id values
-     * @param <K>         type of entity key
      * @param <T>         entity type
      * @return list of ids of the passed entities
      */
-    public static <T extends Entity<K>, K> Ids<T, K> of(Class<T> entityClass, Collection<K> values) {
-        Ids<T, K> ids = new Ids<>();
+    public static <T extends Entity> Ids<T> of(Class<T> entityClass, Collection values) {
+        Ids<T> ids = new Ids<>();
 
-        for (K value : values) {
+        for (Object value : values) {
             ids.add(Id.of(value, entityClass));
         }
 
@@ -77,7 +75,7 @@ public final class Ids<T extends Entity<K>, K> extends ArrayList<Id<T, K>> {
      *
      * @return list of id values
      */
-    public List<K> getValues() {
+    public List getValues() {
         return stream()
                 .map(Id::getValue)
                 .collect(Collectors.toList());
@@ -88,10 +86,9 @@ public final class Ids<T extends Entity<K>, K> extends ArrayList<Id<T, K>> {
      *
      * @param ids list of ids
      * @param <T> type of entity
-     * @param <K> type of entity key
      * @return list of entity keys
      */
-    public static <T extends Entity<K>, K> List<K> getValues(List<Id<T, K>> ids) {
+    public static <T extends Entity> List getValues(List<Id<T>> ids) {
         return ids.stream()
                 .map(Id::getValue)
                 .collect(Collectors.toList());

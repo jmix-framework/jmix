@@ -19,39 +19,39 @@ package io.jmix.core.entity;
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 
-public abstract class BaseDbGeneratedIdEntityEntry<K extends Number> extends BaseEntityEntry<IdProxy<K>> {
-    protected IdProxy<K> idProxy;
+public abstract class BaseDbGeneratedIdEntityEntry extends BaseEntityEntry {
+    protected IdProxy idProxy;
 
-    public BaseDbGeneratedIdEntityEntry(Entity<IdProxy<K>> source) {
+    public BaseDbGeneratedIdEntityEntry(Entity source) {
         super(source);
     }
 
     @Override
-    public IdProxy<K> getEntityId() {
+    public Object getEntityId() {
         if (idProxy == null) {
-            idProxy = new IdProxy<K>(getSource());
+            idProxy = new IdProxy(getSource());
         }
         // return a copy cleaned from the reference to the entity
         return idProxy.copy();
     }
 
     @Override
-    public void setEntityId(IdProxy<K> idProxy) {
-        this.idProxy = idProxy.copy(false);
+    public void setEntityId(Object idProxy) {
+        this.idProxy = ((IdProxy) idProxy).copy(false);
         setDbGeneratedId(this.idProxy.get());
         this.idProxy.setEntity(getSource());
     }
 
-    public abstract void setDbGeneratedId(K dbId);
+    public abstract void setDbGeneratedId(Object dbId);
 
-    public abstract K getDbGeneratedId();
+    public abstract Object getDbGeneratedId();
 
     @Override
-    public void copy(EntityEntry<?> entry) {
+    public void copy(EntityEntry entry) {
         super.copy(entry);
         if (entry instanceof BaseDbGeneratedIdEntityEntry) {
             //noinspection unchecked
-            setDbGeneratedId((K) ((BaseDbGeneratedIdEntityEntry) entry).getDbGeneratedId());
+            setDbGeneratedId(((BaseDbGeneratedIdEntityEntry) entry).getDbGeneratedId());
         }
     }
 }

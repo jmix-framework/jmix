@@ -35,7 +35,7 @@ import java.util.UUID;
  */
 @ModelObject(name = "sys_LockInfo")
 @SystemLevel
-public class LockInfo implements Entity<UUID>, HasUuid {
+public class LockInfo implements Entity, HasUuid {
 
     private static final long serialVersionUID = -1991047219638006414L;
 

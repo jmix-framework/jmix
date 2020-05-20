@@ -28,7 +28,7 @@ import javax.persistence.Id;
  */
 @ModelObject(name = "sys_LockDescriptor")
 @SystemLevel
-public class LockDescriptor implements Entity<String> {
+public class LockDescriptor implements Entity {
 
     @Id
     @ModelProperty(mandatory = true)

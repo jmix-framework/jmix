@@ -23,14 +23,14 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 
-public interface EntityEntry<K> extends Serializable {
+public interface EntityEntry extends Serializable {
 
-    Entity<K> getSource();
+    Entity getSource();
 
     @Nullable
-    K getEntityId();
+    Object getEntityId();
 
-    void setEntityId(@Nullable K id);
+    void setEntityId(@Nullable Object id);
 
     @Nullable
     <T> T getAttributeValue(String name);
@@ -88,12 +88,12 @@ public interface EntityEntry<K> extends Serializable {
     /**
      * Copies the state.
      */
-    void copy(@Nullable EntityEntry<?> entry);
+    void copy(@Nullable EntityEntry entry);
 
-    void addExtraState(EntityEntryExtraState<?> extraState);
+    void addExtraState(EntityEntryExtraState extraState);
 
     @Nullable
-    EntityEntryExtraState<?> getExtraState(Class<?> extraStateType);
+    EntityEntryExtraState getExtraState(Class<?> extraStateType);
 
-    Collection<EntityEntryExtraState<?>> getAllExtraState();
+    Collection<EntityEntryExtraState> getAllExtraState();
 }

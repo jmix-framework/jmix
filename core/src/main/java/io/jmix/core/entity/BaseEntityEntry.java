@@ -30,12 +30,12 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
+public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     protected byte state = NEW;
     protected SecurityState securityState = new SecurityState();
     protected transient Collection<WeakReference<EntityPropertyChangeListener>> propertyChangeListeners;
-    protected Entity<K> source;
-    protected Map<Class<?>, EntityEntryExtraState<?>> extraStateMap;
+    protected Entity source;
+    protected Map<Class<?>, EntityEntryExtraState> extraStateMap;
     protected List<EntityValuesProvider> entityValuesProviders;
 
     public static final int NEW = 1;
@@ -45,13 +45,13 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
 
     protected static final int PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY = 4;
 
-    public BaseEntityEntry(Entity<K> source) {
+    public BaseEntityEntry(Entity source) {
         this.source = source;
     }
 
     @Override
     @NonNull
-    public Entity<K> getSource() {
+    public Entity getSource() {
         return source;
     }
 
@@ -192,7 +192,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
-    public void copy(@Nullable EntityEntry<?> entry) {
+    public void copy(@Nullable EntityEntry entry) {
         if (entry != null) {
             setNew(entry.isNew());
             setDetached(entry.isDetached());
@@ -201,10 +201,9 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
 
             setSecurityState(entry.getSecurityState());
 
-            for (EntityEntryExtraState<?> extraState : entry.getAllExtraState()) {
+            for (EntityEntryExtraState extraState : entry.getAllExtraState()) {
                 try {
-                    @SuppressWarnings("unchecked")
-                    EntityEntryExtraState<K> newExtraState = ReflectionHelper.newInstance(extraState.getClass(), this);
+                    EntityEntryExtraState newExtraState = ReflectionHelper.newInstance(extraState.getClass(), this);
                     newExtraState.copy(extraState);
                     addExtraState(newExtraState);
                 } catch (NoSuchMethodException e) {
@@ -216,7 +215,7 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
-    public void addExtraState(@NonNull EntityEntryExtraState<?> extraState) {
+    public void addExtraState(@NonNull EntityEntryExtraState extraState) {
         if (extraStateMap == null) {
             extraStateMap = new HashMap<>();
         }
@@ -230,13 +229,13 @@ public abstract class BaseEntityEntry<K> implements EntityEntry<K>, Cloneable {
     }
 
     @Override
-    public EntityEntryExtraState<?> getExtraState(@NonNull Class<?> extraStateType) {
+    public EntityEntryExtraState getExtraState(@NonNull Class<?> extraStateType) {
         return extraStateMap == null ? null : extraStateMap.get(extraStateType);
     }
 
     @NonNull
     @Override
-    public Collection<EntityEntryExtraState<?>> getAllExtraState() {
+    public Collection<EntityEntryExtraState> getAllExtraState() {
         return extraStateMap == null ? Collections.emptyList() : Collections.unmodifiableCollection(extraStateMap.values());
     }
 }

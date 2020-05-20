@@ -55,7 +55,7 @@ public class EntityPostConstructInitializer implements EntityInitializer {
                     });
 
     @Override
-    public <T> void initEntity(Entity<T> entity) {
+    public void initEntity(Entity entity) {
         try {
             List<Method> postConstructMethods = postConstructMethodsCache.getUnchecked(entity.getClass());
             // methods are store in the correct execution order

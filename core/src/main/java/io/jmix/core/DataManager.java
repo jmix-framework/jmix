@@ -90,7 +90,7 @@ public interface DataManager {
      * Removes the entity instance from the data store by its id.
      * @param entityId    entity id
      */
-    default <T extends Entity<K>, K> void remove(Id<T, K> entityId) {
+    default <T extends Entity> void remove(Id<T> entityId) {
         remove(getReference(entityId));
     }
 
@@ -116,7 +116,7 @@ public interface DataManager {
      * </pre>
      * @param entityClass   class of entity that needs to be loaded
      */
-    default <E extends Entity<K>, K> FluentLoader<E, K> load(Class<E> entityClass) {
+    default <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
         return new FluentLoader<>(entityClass, this);
     }
 
@@ -129,7 +129,7 @@ public interface DataManager {
      * </pre>
      * @param entityId   {@link Id} of entity that needs to be loaded
      */
-    default <E extends Entity<K>, K> FluentLoader.ById<E, K> load(Id<E, K> entityId) {
+    default <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId) {
         return new FluentLoader<>(entityId.getEntityClass(), this).id(entityId.getValue());
     }
 
@@ -198,7 +198,7 @@ public interface DataManager {
      * @param entityClass   entity class
      * @param id            id of an existing object
      */
-    <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id);
+    <T extends Entity> T getReference(Class<T> entityClass, Object id);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -207,7 +207,7 @@ public interface DataManager {
      *
      * @see #getReference(Class, Object)
      */
-    default <T extends Entity<K>, K> T getReference(Id<T, K> entityId) {
+    default <T extends Entity> T getReference(Id<T> entityId) {
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return getReference(entityId.getEntityClass(), entityId.getValue());
     }

@@ -21,7 +21,7 @@ import io.jmix.core.Entity;
 import java.util.UUID;
 
 // todo implementations
-public interface Presentation extends Entity<UUID> {
+public interface Presentation extends Entity {
 
     String getName();
 

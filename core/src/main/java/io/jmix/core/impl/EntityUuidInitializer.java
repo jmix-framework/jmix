@@ -28,7 +28,7 @@ public class EntityUuidInitializer implements EntityInitializer, Ordered {
     public static final String NAME = "jmix_EntityUuidInitializer";
 
     @Override
-    public <T> void initEntity(Entity<T> entity) {
+    public void initEntity(Entity entity) {
         if (entity instanceof HasUuid) {
             ((HasUuid) entity).setUuid(UuidProvider.createUuid());
         }

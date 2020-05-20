@@ -16,12 +16,12 @@
 
 package io.jmix.core;
 
-public interface EntityEntryExtraState<K> {
+public interface EntityEntryExtraState {
     /**
      * Copies the extra state.
      */
-    default void copy(EntityEntryExtraState<?> extraState) {
+    default void copy(EntityEntryExtraState extraState) {
     }
 
-    EntityEntry<K> getEntityEntry();
+    EntityEntry getEntityEntry();
 }

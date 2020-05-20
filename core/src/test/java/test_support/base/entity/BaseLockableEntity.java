@@ -26,9 +26,9 @@ import java.util.UUID;
 @MappedSuperclass
 @ModelObject(name = "base_BaseLockableEntity")
 public class BaseLockableEntity extends BaseUuidEntity {
-    protected EntityEntry<UUID> entityEntry;
+    protected EntityEntry entityEntry;
 
-    protected static class LockableEntityEntry extends BaseEntityEntry<UUID> {
+    protected static class LockableEntityEntry extends BaseEntityEntry {
         public LockableEntityEntry(BaseLockableEntity source) {
             super(source);
         }
@@ -39,13 +39,13 @@ public class BaseLockableEntity extends BaseUuidEntity {
         }
 
         @Override
-        public void setEntityId(UUID id) {
-            ((BaseLockableEntity) source).setId(id);
+        public void setEntityId(Object id) {
+            ((BaseLockableEntity) source).setId((UUID) id);
         }
     }
 
     @Override
-    public EntityEntry<UUID> __getEntityEntry() {
+    public EntityEntry __getEntityEntry() {
         return entityEntry == null ? entityEntry = new BaseLockableEntity.LockableEntityEntry(this) : entityEntry;
     }
 

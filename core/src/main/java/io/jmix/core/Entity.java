@@ -20,11 +20,10 @@ import java.io.Serializable;
 /**
  * Interface to be implemented by domain model objects with identifiers.
  *
- * @param <T> identifier type
  */
 @SuppressWarnings("unused")
-public interface Entity<T> extends Serializable {
-    default EntityEntry<T> __getEntityEntry() {
+public interface Entity extends Serializable {
+    default EntityEntry __getEntityEntry() {
         throw new UnsupportedOperationException();
     }
 

@@ -66,7 +66,7 @@ public final class InstanceUtils {
      * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String)}
      */
     @Deprecated
-    public static <T> T getValueEx(Entity<?> entity, String propertyPath) {
+    public static <T> T getValueEx(Entity entity, String propertyPath) {
         return EntityValues.getValueEx(entity, propertyPath);
     }
 
@@ -79,7 +79,7 @@ public final class InstanceUtils {
      * @deprecated replaced by {@link EntityValues#getValueEx(Entity, PropertyPath)}
      */
     @Deprecated
-    public static <T> T getValueEx(Entity<?> entity, PropertyPath propertyPath) {
+    public static <T> T getValueEx(Entity entity, PropertyPath propertyPath) {
         return EntityValues.getValueEx(entity, propertyPath);
     }
 
@@ -92,7 +92,7 @@ public final class InstanceUtils {
      * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String[])}
      */
     @Deprecated
-    public static <T> T getValueEx(Entity<?> entity, String[] properties) {
+    public static <T> T getValueEx(Entity entity, String[] properties) {
         return EntityValues.getValueEx(entity, properties);
     }
 
@@ -105,7 +105,7 @@ public final class InstanceUtils {
      * @deprecated replaced by {@link EntityValues#setValueEx(Entity, String, Object)}
      */
     @Deprecated
-    public static void setValueEx(Entity<?> entity, String propertyPath, Object value) {
+    public static void setValueEx(Entity entity, String propertyPath, Object value) {
         EntityValues.setValueEx(entity, propertyPath, value);
     }
 
@@ -131,7 +131,7 @@ public final class InstanceUtils {
      * @deprecated replaces by {@link EntityValues#setValueEx(Entity, String[], Object)}
      */
     @Deprecated
-    public static void setValueEx(Entity<?> entity, String[] properties, Object value) {
+    public static void setValueEx(Entity entity, String[] properties, Object value) {
         EntityValues.setValueEx(entity, properties, value);
     }
 

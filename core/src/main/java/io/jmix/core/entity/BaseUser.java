@@ -25,7 +25,7 @@ import java.util.UUID;
  * Base class for users. In most cases projects will use {@code User} implementation from the {@code security} module.
  * If the project needs custom user class, it must implement this interface;
  */
-public interface BaseUser extends UserDetails, Entity<UUID> {
+public interface BaseUser extends UserDetails, Entity {
 
     /**
      * Returns unique representation of the user. It may be a string with user identifier, a combination of tenant id

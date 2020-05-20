@@ -69,7 +69,7 @@ public class EntityStates {
     public boolean isNew(Object entity) {
         checkNotNullArgument(entity, "entity is null");
         if (entity instanceof Entity) {
-            return ((Entity<?>) entity).__getEntityEntry().isNew();
+            return ((Entity) entity).__getEntityEntry().isNew();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isNew is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -90,7 +90,7 @@ public class EntityStates {
     public boolean isManaged(Object entity) {
         checkNotNullArgument(entity, "entity is null");
         if (entity instanceof Entity) {
-            return ((Entity<?>) entity).__getEntityEntry().isManaged();
+            return ((Entity) entity).__getEntityEntry().isManaged();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isManaged is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -111,7 +111,7 @@ public class EntityStates {
      */
     public boolean isDetached(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof Entity && ((Entity<?>) entity).__getEntityEntry().isDetached()) {
+        if (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isDetached()) {
             return true;
         } else {
             if (log.isTraceEnabled()) {
@@ -446,7 +446,7 @@ public class EntityStates {
         if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted())
             return true;
 
-        if (entity instanceof Entity && ((Entity<?>) entity).__getEntityEntry().isRemoved()) {
+        if (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isRemoved()) {
             return true;
         }
         return false;
@@ -467,7 +467,7 @@ public class EntityStates {
     public void makeDetached(Entity entity) {
         checkNotNullArgument(entity, "entity is null");
 
-        if (((Entity<?>) entity).__getEntityEntry().isManaged())
+        if (entity.__getEntityEntry().isManaged())
             throw new IllegalStateException("entity is managed");
 
         entity.__getEntityEntry().setNew(false);

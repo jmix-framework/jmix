@@ -22,7 +22,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @ModelObject(name = "base$BaseGenericIdEntity")
-public abstract class BaseGenericIdEntity<T> implements Entity<T> {
+public abstract class BaseGenericIdEntity<T> implements Entity {
 
     private static final long serialVersionUID = -8400641366148656528L;
 

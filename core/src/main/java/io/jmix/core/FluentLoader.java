@@ -25,7 +25,7 @@ import javax.persistence.TemporalType;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class FluentLoader<E extends Entity<K>, K> {
+public class FluentLoader<E extends Entity> {
 
     private Class<E> entityClass;
 
@@ -118,7 +118,7 @@ public class FluentLoader<E extends Entity<K>, K> {
             throw new IllegalStateException("No results");
     }
 
-    public FluentLoader<E, K> joinTransaction(boolean join) {
+    public FluentLoader<E> joinTransaction(boolean join) {
         this.joinTransaction = join;
         return this;
     }
@@ -128,14 +128,14 @@ public class FluentLoader<E extends Entity<K>, K> {
      * @deprecated replaced by {@link FluentLoader#fetchPlan(FetchPlan)}
      */
     @Deprecated
-    public FluentLoader<E, K> view(FetchPlan view) {
+    public FluentLoader<E> view(FetchPlan view) {
         return fetchPlan(view);
     }
 
     /**
      * Sets a fetch plan.
      */
-    public FluentLoader<E, K> fetchPlan(FetchPlan fetchPlan) {
+    public FluentLoader<E> fetchPlan(FetchPlan fetchPlan) {
         this.fetchPlan = fetchPlan;
         return this;
     }
@@ -145,14 +145,14 @@ public class FluentLoader<E extends Entity<K>, K> {
      * @deprecated replaced by {@link FluentLoader#fetchPlan(String)}
      */
     @Deprecated
-    public FluentLoader<E, K> view(String viewName) {
+    public FluentLoader<E> view(String viewName) {
         return fetchPlan(viewName);
     }
 
     /**
      * Sets a fetch plan by name.
      */
-    public FluentLoader<E, K> fetchPlan(String fetchPlanName) {
+    public FluentLoader<E> fetchPlan(String fetchPlanName) {
         this.fetchPlanName = fetchPlanName;
         return this;
     }
@@ -162,11 +162,11 @@ public class FluentLoader<E extends Entity<K>, K> {
      * @deprecated replaced by {@link FluentLoader#fetchPlan(Consumer)}
      */
     @Deprecated
-    public FluentLoader<E, K> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+    public FluentLoader<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
         return fetchPlan(fetchPlanBuilderConfigurer);
     }
 
-    public FluentLoader<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+    public FluentLoader<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
         createFetchPlanBuilder();
         fetchPlanBuilderConfigurer.accept(fetchPlanBuilder);
         return this;
@@ -177,11 +177,11 @@ public class FluentLoader<E extends Entity<K>, K> {
      * @deprecated replaced by {@link FluentLoader#fetchPlanProperties(String...)}
      */
     @Deprecated
-    public FluentLoader<E, K> viewProperties(String... properties) {
+    public FluentLoader<E> viewProperties(String... properties) {
         return fetchPlanProperties(properties);
     }
 
-    public FluentLoader<E, K> fetchPlanProperties(String... properties) {
+    public FluentLoader<E> fetchPlanProperties(String... properties) {
         createFetchPlanBuilder();
         fetchPlanBuilder.addAll(properties);
         return this;
@@ -190,7 +190,7 @@ public class FluentLoader<E extends Entity<K>, K> {
     /**
      * Sets soft deletion. The soft deletion is true by default.
      */
-    public FluentLoader<E, K> softDeletion(boolean softDeletion) {
+    public FluentLoader<E> softDeletion(boolean softDeletion) {
         this.softDeletion = softDeletion;
         return this;
     }
@@ -198,7 +198,7 @@ public class FluentLoader<E extends Entity<K>, K> {
     /**
      * Sets loading of dynamic attributes. It is false by default.
      */
-    public FluentLoader<E, K> dynamicAttributes(boolean dynamicAttributes) {
+    public FluentLoader<E> dynamicAttributes(boolean dynamicAttributes) {
         this.dynamicAttributes = dynamicAttributes;
         return this;
     }
@@ -206,7 +206,7 @@ public class FluentLoader<E extends Entity<K>, K> {
     /**
      * Sets the entity identifier.
      */
-    public ById<E, K> id(K id) {
+    public ById<E> id(Object id) {
         return new ById<>(this, id);
     }
 
@@ -214,37 +214,37 @@ public class FluentLoader<E extends Entity<K>, K> {
      * Sets array of entity identifiers.
      */
     @SafeVarargs
-    public final ByIds<E, K> ids(K... ids) {
+    public final ByIds<E> ids(Object... ids) {
         return new ByIds<>(this, Arrays.asList(ids));
     }
 
     /**
      * Sets collection of entity identifiers.
      */
-    public ByIds<E, K> ids(Collection<K> ids) {
+    public ByIds<E> ids(Collection ids) {
         return new ByIds<>(this, ids);
     }
 
     /**
      * Sets the query text.
      */
-    public ByQuery<E, K> query(String queryString) {
+    public ByQuery<E> query(String queryString) {
         return new ByQuery<>(this, queryString);
     }
 
     /**
      * Sets the query with positional parameters (e.g. {@code "e.name = ?1 and e.status = ?2"}).
      */
-    public ByQuery<E, K> query(String queryString, Object... parameters) {
+    public ByQuery<E> query(String queryString, Object... parameters) {
         return new ByQuery<>(this, queryString, parameters);
     }
 
-    public static class ById<E extends Entity<K>, K> {
+    public static class ById<E extends Entity> {
 
-        private FluentLoader<E, K> loader;
-        private K id;
+        private FluentLoader<E> loader;
+        private Object id;
 
-        ById(FluentLoader<E, K> loader, K id) {
+        ById(FluentLoader<E> loader, Object id) {
             this.loader = loader;
             this.id = id;
         }
@@ -288,14 +288,14 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ById#fetchPlan(FetchPlan)}
          */
         @Deprecated
-        public ById<E, K> view(FetchPlan view) {
+        public ById<E> view(FetchPlan view) {
             return fetchPlan(view);
         }
 
         /**
          * Sets a fetch plan.
          */
-        public ById<E, K> fetchPlan(FetchPlan fetchPlan) {
+        public ById<E> fetchPlan(FetchPlan fetchPlan) {
             loader.fetchPlan = fetchPlan;
             return this;
         }
@@ -305,14 +305,14 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
         @Deprecated
-        public ById<E, K> view(String viewName) {
+        public ById<E> view(String viewName) {
             return fetchPlan(viewName);
         }
 
         /**
          * Sets a fetch plan by name.
          */
-        public ById<E, K> fetchPlan(String viewName) {
+        public ById<E> fetchPlan(String viewName) {
             loader.fetchPlanName = viewName;
             return this;
         }
@@ -321,11 +321,11 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ById#fetchPlan(Consumer)} )}
          */
         @Deprecated
-        public ById<E, K> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
+        public ById<E> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
             return fetchPlan(viewBuilderConfigurer);
         }
 
-        public ById<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+        public ById<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
             loader.createFetchPlanBuilder();
             fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
@@ -335,11 +335,11 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ById#fetchPlanProperties(String...)}
          */
         @Deprecated
-        public ById<E, K> viewProperties(String... properties) {
+        public ById<E> viewProperties(String... properties) {
             return fetchPlanProperties(properties);
         }
 
-        public ById<E, K> fetchPlanProperties(String... properties) {
+        public ById<E> fetchPlanProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
             return this;
@@ -348,7 +348,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets soft deletion. The soft deletion is true by default.
          */
-        public ById<E, K> softDeletion(boolean softDeletion) {
+        public ById<E> softDeletion(boolean softDeletion) {
             loader.softDeletion = softDeletion;
             return this;
         }
@@ -356,18 +356,18 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets loading of dynamic attributes. It is false by default.
          */
-        public ById<E, K> dynamicAttributes(boolean dynamicAttributes) {
+        public ById<E> dynamicAttributes(boolean dynamicAttributes) {
             loader.dynamicAttributes = dynamicAttributes;
             return this;
         }
     }
 
-    public static class ByIds<E extends Entity<K>, K> {
+    public static class ByIds<E extends Entity> {
 
-        private FluentLoader<E, K> loader;
-        private Collection<K> ids;
+        private FluentLoader<E> loader;
+        private Collection ids;
 
-        ByIds(FluentLoader<E, K> loader, Collection<K> ids) {
+        ByIds(FluentLoader<E> loader, Collection ids) {
             this.loader = loader;
             this.ids = ids;
         }
@@ -394,14 +394,14 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ByIds#fetchPlan(FetchPlan)}
          */
         @Deprecated
-        public ByIds<E, K> view(FetchPlan view) {
+        public ByIds<E> view(FetchPlan view) {
             return fetchPlan(view);
         }
 
         /**
          * Sets a fetch plan.
          */
-        public ByIds<E, K> fetchPlan(FetchPlan fetchPlan) {
+        public ByIds<E> fetchPlan(FetchPlan fetchPlan) {
             loader.fetchPlan = fetchPlan;
             return this;
         }
@@ -411,14 +411,14 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ByIds#fetchPlan(String)}
          */
         @Deprecated
-        public ByIds<E, K> view(String viewName) {
+        public ByIds<E> view(String viewName) {
             return fetchPlan(viewName);
         }
 
         /**
          * Sets a fetch plan by name.
          */
-        public ByIds<E, K> fetchPlan(String fetchPlanName) {
+        public ByIds<E> fetchPlan(String fetchPlanName) {
             loader.fetchPlanName = fetchPlanName;
             return this;
         }
@@ -436,7 +436,7 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ByIds#fetchPlan(Consumer)} )}
          */
         @Deprecated
-        public ByIds<E, K> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
+        public ByIds<E> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
             return fetchPlan(viewBuilderConfigurer);
         }
 
@@ -451,7 +451,7 @@ public class FluentLoader<E extends Entity<K>, K> {
          *         .list();
          * </pre>
          */
-        public ByIds<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+        public ByIds<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
             loader.createFetchPlanBuilder();
             fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
@@ -472,7 +472,7 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ByIds#fetchPlanProperties(String...)}
          */
         @Deprecated
-        public ByIds<E, K> viewProperties(String... properties) {
+        public ByIds<E> viewProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
             return this;
@@ -491,7 +491,7 @@ public class FluentLoader<E extends Entity<K>, K> {
          *         .list();
          * </pre>
          */
-        public ByIds<E, K> fetchPlanProperties(String... properties) {
+        public ByIds<E> fetchPlanProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
             return this;
@@ -500,7 +500,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets soft deletion. The soft deletion is true by default.
          */
-        public ByIds<E, K> softDeletion(boolean softDeletion) {
+        public ByIds<E> softDeletion(boolean softDeletion) {
             loader.softDeletion = softDeletion;
             return this;
         }
@@ -508,15 +508,15 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets loading of dynamic attributes. It is false by default.
          */
-        public ByIds<E, K> dynamicAttributes(boolean dynamicAttributes) {
+        public ByIds<E> dynamicAttributes(boolean dynamicAttributes) {
             loader.dynamicAttributes = dynamicAttributes;
             return this;
         }
     }
 
-    public static class ByQuery<E extends Entity<K>, K> {
+    public static class ByQuery<E extends Entity> {
 
-        private FluentLoader<E, K> loader;
+        private FluentLoader<E> loader;
 
         private String queryString;
         private Map<String, Object> parameters = new HashMap<>();
@@ -525,13 +525,13 @@ public class FluentLoader<E extends Entity<K>, K> {
         private boolean cacheable;
         private Condition condition;
 
-        ByQuery(FluentLoader<E, K> loader, String queryString) {
+        ByQuery(FluentLoader<E> loader, String queryString) {
             Preconditions.checkNotEmptyString(queryString, "queryString is empty");
             this.loader = loader;
             this.queryString = queryString;
         }
 
-        ByQuery(FluentLoader<E, K> loader, String queryString, Object[] positionalParams) {
+        ByQuery(FluentLoader<E> loader, String queryString, Object[] positionalParams) {
             this(loader, queryString);
             processPositionalParams(positionalParams);
         }
@@ -603,14 +603,14 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ByQuery#fetchPlan(FetchPlan)}
          */
         @Deprecated
-        public ByQuery<E, K> view(FetchPlan view) {
+        public ByQuery<E> view(FetchPlan view) {
             return fetchPlan(view);
         }
 
         /**
          * Sets a fetch plan.
          */
-        public ByQuery<E, K> fetchPlan(FetchPlan fetchPlan) {
+        public ByQuery<E> fetchPlan(FetchPlan fetchPlan) {
             loader.fetchPlan = fetchPlan;
             return this;
         }
@@ -620,14 +620,14 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
         @Deprecated
-        public ByQuery<E, K> view(String viewName) {
+        public ByQuery<E> view(String viewName) {
             return fetchPlan(viewName);
         }
 
         /**
          * Sets a view by name.
          */
-        public ByQuery<E, K> fetchPlan(String viewName) {
+        public ByQuery<E> fetchPlan(String viewName) {
             loader.fetchPlanName = viewName;
             return this;
         }
@@ -636,11 +636,11 @@ public class FluentLoader<E extends Entity<K>, K> {
          *
          * @deprecated replaced by {@link ByQuery#fetchPlan(Consumer)} )}
          */
-        public ByQuery<E, K> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
+        public ByQuery<E> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
             return fetchPlan(viewBuilderConfigurer);
         }
 
-        public ByQuery<E, K> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+        public ByQuery<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
             loader.createFetchPlanBuilder();
             fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
@@ -650,11 +650,11 @@ public class FluentLoader<E extends Entity<K>, K> {
          *
          * @deprecated replaced by {@link ByQuery#fetchPlanProperties(String...)}
          */
-        public ByQuery<E, K> viewProperties(String... properties) {
+        public ByQuery<E> viewProperties(String... properties) {
             return fetchPlanProperties(properties);
         }
 
-        public ByQuery<E, K> fetchPlanProperties(String... properties) {
+        public ByQuery<E> fetchPlanProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
             return this;
@@ -663,7 +663,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets soft deletion. The soft deletion is true by default.
          */
-        public ByQuery<E, K> softDeletion(boolean softDeletion) {
+        public ByQuery<E> softDeletion(boolean softDeletion) {
             loader.softDeletion = softDeletion;
             return this;
         }
@@ -671,7 +671,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets loading of dynamic attributes. It is false by default.
          */
-        public ByQuery<E, K> dynamicAttributes(boolean dynamicAttributes) {
+        public ByQuery<E> dynamicAttributes(boolean dynamicAttributes) {
             loader.dynamicAttributes = dynamicAttributes;
             return this;
         }
@@ -690,7 +690,7 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @param name  parameter name
          * @param value parameter value
          */
-        public ByQuery<E, K> parameter(String name, Object value) {
+        public ByQuery<E> parameter(String name, Object value) {
             parameters.put(name, value);
             return this;
         }
@@ -702,7 +702,7 @@ public class FluentLoader<E extends Entity<K>, K> {
          * @param value        parameter value
          * @param temporalType how to interpret the value
          */
-        public ByQuery<E, K> parameter(String name, Date value, TemporalType temporalType) {
+        public ByQuery<E> parameter(String name, Date value, TemporalType temporalType) {
             parameters.put(name, new TemporalValue(value, temporalType));
             return this;
         }
@@ -710,7 +710,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets the map of query parameters.
          */
-        public ByQuery<E, K> setParameters(Map<String, Object> parameters) {
+        public ByQuery<E> setParameters(Map<String, Object> parameters) {
             this.parameters.putAll(parameters);
             return this;
         }
@@ -718,7 +718,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets results offset.
          */
-        public ByQuery<E, K> firstResult(int firstResult) {
+        public ByQuery<E> firstResult(int firstResult) {
             this.firstResult = firstResult;
             return this;
         }
@@ -726,7 +726,7 @@ public class FluentLoader<E extends Entity<K>, K> {
         /**
          * Sets results limit.
          */
-        public ByQuery<E, K> maxResults(int maxResults) {
+        public ByQuery<E> maxResults(int maxResults) {
             this.maxResults = maxResults;
             return this;
         }
@@ -735,7 +735,7 @@ public class FluentLoader<E extends Entity<K>, K> {
          * Indicates that the query results should be cached.
          * By default, queries are not cached.
          */
-        public ByQuery<E, K> cacheable(boolean cacheable) {
+        public ByQuery<E> cacheable(boolean cacheable) {
             this.cacheable = cacheable;
             return this;
         }

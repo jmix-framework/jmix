@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-public class CoreUser implements Entity<UUID>, HasUuid, BaseUser {
+public class CoreUser implements Entity, HasUuid, BaseUser {
 
     private static final long serialVersionUID = 2032149054729862959L;
 

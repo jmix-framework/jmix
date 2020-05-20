@@ -22,7 +22,7 @@ import io.jmix.core.Entity;
  * Used by enhancing process
  */
 @SuppressWarnings("unsed")
-public class EmbeddableEntityEntry<K> extends BaseEntityEntry<K> {
+public class EmbeddableEntityEntry extends BaseEntityEntry {
 
     @Override
     public boolean isNew() {
@@ -65,13 +65,12 @@ public class EmbeddableEntityEntry<K> extends BaseEntityEntry<K> {
     }
 
     @Override
-    public K getEntityId() {
-        return (K) source;
+    public Object getEntityId() {
+        return source;
     }
 
     @Override
-    public void setEntityId(K id) {
-
+    public void setEntityId(Object id) {
     }
 
     @Override

@@ -29,11 +29,11 @@ import static io.jmix.core.metamodel.model.utils.ObjectPathUtils.parseValuePath;
 public class EntityValues {
 
     @SuppressWarnings("unchecked")
-    public static <K> K getId(Entity<?> entity) {
-        return (K) entity.__getEntityEntry().getEntityId();
+    public static Object getId(Entity entity) {
+        return entity.__getEntityEntry().getEntityId();
     }
 
-    public static <K> void setId(Entity<K> entity, K key) {
+    public static void setId(Entity entity, Object key) {
         entity.__getEntityEntry().setEntityId(key);
     }
 
@@ -47,7 +47,7 @@ public class EntityValues {
      * @param name  attribute name according to JavaBeans notation
      * @param value attribute value
      */
-    public static void setValue(Entity<?> entity, String name, Object value) {
+    public static void setValue(Entity entity, String name, Object value) {
         entity.__getEntityEntry().setAttributeValue(name, value, true);
     }
 
@@ -63,7 +63,7 @@ public class EntityValues {
      * @param checkEquals check equals for previous and new value.
      *                    If flag is true and objects equals, then setter will not be invoked
      */
-    public static void setValue(Entity<?> entity, String name, Object value, boolean checkEquals) {
+    public static void setValue(Entity entity, String name, Object value, boolean checkEquals) {
         entity.__getEntityEntry().setAttributeValue(name, value, checkEquals);
     }
 
@@ -74,7 +74,7 @@ public class EntityValues {
      * @return attribute value
      */
     @Nullable
-    public static <T> T getValue(Entity<?> entity, String name) {
+    public static <T> T getValue(Entity entity, String name) {
         return entity.__getEntityEntry().getAttributeValue(name);
     }
 
@@ -89,7 +89,7 @@ public class EntityValues {
      * stops here and returns this value.
      */
     @Nullable
-    public static <T> T getValueEx(Entity<?> entity, String propertyPath) {
+    public static <T> T getValueEx(Entity entity, String propertyPath) {
         return getValueEx(entity, parseValuePath(propertyPath));
     }
 
@@ -104,7 +104,7 @@ public class EntityValues {
      * stops here and returns this value.
      */
     @Nullable
-    public static <T> T getValueEx(Entity<?> entity, PropertyPath propertyPath) {
+    public static <T> T getValueEx(Entity entity, PropertyPath propertyPath) {
         if (propertyPath.isDirectProperty()) {
             return getValue(entity, propertyPath.getFirstPropertyName());
         } else {
@@ -125,7 +125,7 @@ public class EntityValues {
      * @param propertyPath path to an attribute
      * @param value        attribute value
      */
-    public static void setValueEx(Entity<?> entity, String propertyPath, Object value) {
+    public static void setValueEx(Entity entity, String propertyPath, Object value) {
         setValueEx(entity, parseValuePath(propertyPath), value);
     }
 
@@ -142,7 +142,7 @@ public class EntityValues {
      * @param propertyPath path to an attribute
      * @param value        attribute value
      */
-    public static void setValueEx(Entity<?> entity, PropertyPath propertyPath, Object value) {
+    public static void setValueEx(Entity entity, PropertyPath propertyPath, Object value) {
         if (propertyPath.isDirectProperty()) {
             setValue(entity, propertyPath.getFirstPropertyName(), value);
         } else {
@@ -158,7 +158,7 @@ public class EntityValues {
      * @param properties path to the attribute
      * @param value      attribute value
      */
-    public static void setValueEx(Entity<?> entity, String[] properties, Object value) {
+    public static void setValueEx(Entity entity, String[] properties, Object value) {
         if (properties.length > 1) {
 
             if (properties.length == 2) {
@@ -185,13 +185,13 @@ public class EntityValues {
      * @return attribute value
      */
     @SuppressWarnings("unchecked")
-    public static <T> T getValueEx(Entity<?> entity, String[] properties) {
+    public static <T> T getValueEx(Entity entity, String[] properties) {
         if (properties == null) {
             return null;
         }
 
         Object currentValue = null;
-        Entity<?> currentEntity = entity;
+        Entity currentEntity = entity;
         for (String property : properties) {
             if (currentEntity == null) {
                 break;
@@ -204,7 +204,7 @@ public class EntityValues {
             }
 
 
-            currentEntity = currentValue instanceof Entity ? (Entity<?>) currentValue : null;
+            currentEntity = currentValue instanceof Entity ? (Entity) currentValue : null;
         }
 
         return (T) currentValue;

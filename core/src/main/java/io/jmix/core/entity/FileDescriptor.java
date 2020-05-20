@@ -22,7 +22,7 @@ import java.util.UUID;
 
 
 // todo implementations
-public interface FileDescriptor extends Entity<UUID> {
+public interface FileDescriptor extends Entity {
 
 
     /**

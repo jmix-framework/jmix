@@ -28,7 +28,7 @@ import java.util.Locale;
 
 @Embeddable
 @ModelObject(name = "app_Address")
-public class Address implements Entity<Object> {
+public class Address implements Entity {
 
     private static final long serialVersionUID = 3973674066005826186L;
 

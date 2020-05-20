@@ -27,14 +27,13 @@ import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 /**
  * Convenient class for methods that receive Id of an entity as a parameter.
  *
- * @param <K> type of entity key
  * @param <T> entity type
  */
-public final class Id<T extends Entity<K>, K> implements Serializable {
-    private final K id;
+public final class Id<T extends Entity> implements Serializable {
+    private final Object id;
     private final Class<T> entityClass;
 
-    private Id(K id, Class<T> entityClass) {
+    private Id(Object id, Class<T> entityClass) {
         this.id = id;
         this.entityClass = entityClass;
     }
@@ -42,7 +41,7 @@ public final class Id<T extends Entity<K>, K> implements Serializable {
     /**
      * @return value of entity id
      */
-    public K getValue() {
+    public Object getValue() {
         return id;
     }
 
@@ -59,9 +58,9 @@ public final class Id<T extends Entity<K>, K> implements Serializable {
      * @param <T>    entity type
      * @return Id of the passed entity
      */
-    public static <T extends Entity<K>, K> Id<T, K> of(T entity) {
+    public static <T extends Entity> Id<T> of(T entity) {
         checkNotNullArgument(entity);
-        checkNotNullArgument(EntityValues.<K>getId(entity));
+        checkNotNullArgument(EntityValues.getId(entity));
 
         @SuppressWarnings("unchecked")
         Class<T> entityClass = (Class<T>) entity.getClass();
@@ -75,7 +74,7 @@ public final class Id<T extends Entity<K>, K> implements Serializable {
      * @return Id of the passed entity or null
      */
     @Nullable
-    public static <T extends Entity<K>,K> Id<T,K> ofNullable(@Nullable T entity) {
+    public static <T extends Entity> Id<T> ofNullable(@Nullable T entity) {
         return entity == null ? null : Id.of(entity);
     }
 
@@ -86,7 +85,7 @@ public final class Id<T extends Entity<K>, K> implements Serializable {
      * @param <T>    entity type
      * @return Id of the passed entity
      */
-    public static <T extends Entity<K>, K> Id<T, K> of(K id, Class<T> entityClass) {
+    public static <T extends Entity> Id<T> of(Object id, Class<T> entityClass) {
         checkNotNullArgument(id);
         checkNotNullArgument(entityClass);
 
@@ -98,7 +97,7 @@ public final class Id<T extends Entity<K>, K> implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Id<?, ?> that = (Id<?, ?>) o;
+        Id<?> that = (Id<?>) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         return entityClass != null ? entityClass.equals(that.entityClass) : that.entityClass == null;

@@ -39,7 +39,7 @@ public class EntityEmbeddedInitializer implements EntityInitializer, Ordered {
     protected MetadataTools metadataTools;
 
     @Override
-    public <T> void initEntity(Entity<T> entity) {
+    public void initEntity(Entity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty property : metaClass.getProperties()) {
             if (property.getRange().isClass() && metadataTools.isEmbedded(property)) {

@@ -29,5 +29,5 @@ public interface EntityInitializer {
      */
     int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
-    <T> void initEntity(Entity<T> entity);
+    void initEntity(Entity entity);
 }

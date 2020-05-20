@@ -34,7 +34,9 @@ dependencies {
         force = true
     }
     api 'com.vaadin:vaadin-client'
-    api 'com.vaadin:vaadin-client-compiler'
+    api('com.vaadin:vaadin-client-compiler') {
+        exclude(group: 'org.mortbay.jasper', module: 'apache-jsp')
+    }
     api 'com.vaadin:vaadin-compatibility-client'
 }
 

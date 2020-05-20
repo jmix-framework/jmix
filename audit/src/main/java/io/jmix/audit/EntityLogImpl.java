@@ -818,7 +818,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     @Nullable
     protected Object getValueId(@Nullable Object value) {
         if (value instanceof Entity) {
-            if (((Entity<?>) value).__getEntityEntry().isEmbeddable()) {
+            if (((Entity) value).__getEntityEntry().isEmbeddable()) {
                 return null;
             } else {
                 return referenceToEntitySupport.getReferenceId((Entity) value);
@@ -832,7 +832,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         if (value == null)
             return "";
         else if (value instanceof Entity) {
-            return metadataTools.getInstanceName((Entity<?>) value);
+            return metadataTools.getInstanceName((Entity) value);
         } else if (value instanceof Date) {
             Datatype datatype = metaProperty.getRange().asDatatype();
             return datatype.format(value);

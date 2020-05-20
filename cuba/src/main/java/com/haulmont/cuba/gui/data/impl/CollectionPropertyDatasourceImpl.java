@@ -16,19 +16,22 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.google.common.collect.Iterables;
+import io.jmix.core.Entity;
+import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
-import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.commons.util.ParamsMap;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.model.*;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.*;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.filter.QueryFilter;
-import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.impl.EntityValuesComparator;
 import io.jmix.ui.sys.PersistenceHelper;
@@ -40,15 +43,15 @@ import java.util.*;
 
 import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
 
-public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
+public class CollectionPropertyDatasourceImpl<T extends Entity, K>
         extends
-            PropertyDatasourceImpl<T>
+        PropertyDatasourceImpl<T>
         implements
-            CollectionDatasource<T, K>,
-            CollectionDatasource.Indexed<T, K>,
-            CollectionDatasource.Sortable<T, K>,
-            CollectionDatasource.Aggregatable<T, K>,
-            CollectionDatasource.SupportsSortDelegate<T, K> {
+        CollectionDatasource<T, K>,
+        CollectionDatasource.Indexed<T, K>,
+        CollectionDatasource.Sortable<T, K>,
+        CollectionDatasource.Aggregatable<T, K>,
+        CollectionDatasource.SupportsSortDelegate<T, K> {
 
     private static final Logger log = LoggerFactory.getLogger(CollectionPropertyDatasourceImpl.class);
 
@@ -57,7 +60,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
 
     protected CollectionDatasource.Sortable.SortInfo<MetaPropertyPath>[] sortInfos;
     protected boolean listenersSuspended;
-    protected final LinkedList<CollectionChangeEvent<T,K>> suspendedEvents = new LinkedList<>();
+    protected final LinkedList<CollectionChangeEvent<T, K>> suspendedEvents = new LinkedList<>();
 
     protected boolean doNotModify;
 
@@ -182,7 +185,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
             else {
                 List<K> ids = new ArrayList<>(items.size());
                 for (T item : items) {
-                    ids.add(EntityValues.getId(item));
+                    ids.add((K) EntityValues.getId(item));
                 }
                 return ids;
             }
@@ -226,7 +229,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
                     final MetaClass aClass = metadata.getClass(item);
                     MetaClass metaClass = getMetaClass();
                     if (!aClass.equals(metaClass) && !metaClass.getDescendants().contains(aClass)) {
-                        throw new DevelopmentException(String.format("Invalid item metaClass '%s'",  aClass),
+                        throw new DevelopmentException(String.format("Invalid item metaClass '%s'", aClass),
                                 ParamsMap.of("datasource", getId(), "metaClass", aClass));
                     }
                 }
@@ -380,6 +383,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
 
     /**
      * Search the collection using object identity.
+     *
      * @return true if the collection already contains the instance
      */
     protected boolean containsObjectInstance(T instance) {
@@ -814,8 +818,8 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     public void resumeListeners() {
         listenersSuspended = false;
 
-        while(!suspendedEvents.isEmpty()) {
-            CollectionChangeEvent<T,K> suspendedEvent = suspendedEvents.removeLast();
+        while (!suspendedEvents.isEmpty()) {
+            CollectionChangeEvent<T, K> suspendedEvent = suspendedEvents.removeLast();
             fireCollectionChanged(suspendedEvent.getOperation(), Collections.unmodifiableList(suspendedEvent.getItems()));
         }
     }
@@ -829,7 +833,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     public void unmute(UnmuteEventsMode mode) {
         listenersSuspended = false;
 
-        if (mode ==  UnmuteEventsMode.FIRE_REFRESH_EVENT) {
+        if (mode == UnmuteEventsMode.FIRE_REFRESH_EVENT) {
             fireCollectionChanged(Operation.REFRESH, Collections.emptyList());
         }
     }
@@ -909,7 +913,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     public K getIdByIndex(int index) {
         Collection<T> collection = getCollection();
         if (CollectionUtils.isNotEmpty(collection)) {
-            return EntityValues.getId(Iterables.get(collection, index));
+            return (K) EntityValues.getId(Iterables.get(collection, index));
         }
         return null;
     }
@@ -925,7 +929,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         Collection<T> collection = getCollection();
         if (collection != null && !collection.isEmpty()) {
             T first = Iterables.getFirst(collection, null);
-            return first == null ? null : EntityValues.getId(first);
+            return first == null ? null : (K) EntityValues.getId(first);
         }
         return null;
     }
@@ -934,7 +938,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
     public K lastItemId() {
         Collection<T> collection = getCollection();
         if (collection != null && !collection.isEmpty()) {
-            return EntityValues.getId(Iterables.getLast(collection));
+            return (K) EntityValues.getId(Iterables.getLast(collection));
         }
         return null;
     }
@@ -946,7 +950,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         if ((collection != null) && !collection.isEmpty() && !itemId.equals(lastItemId())) {
             List<T> list = new ArrayList<>(collection);
             T currentItem = getItem(itemId);
-            return EntityValues.getId(list.get(list.indexOf(currentItem) + 1));
+            return (K) EntityValues.getId(list.get(list.indexOf(currentItem) + 1));
         }
         return null;
     }
@@ -958,7 +962,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity<K>, K>
         if ((collection != null) && !collection.isEmpty() && !itemId.equals(firstItemId())) {
             List<T> list = new ArrayList<>(collection);
             T currentItem = getItem(itemId);
-            return EntityValues.getId(list.get(list.indexOf(currentItem) - 1));
+            return (K) EntityValues.getId(list.get(list.indexOf(currentItem) - 1));
         }
         return null;
     }

@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.data.TableItems;
 
 @SuppressWarnings("unchecked")
-public class SortableDatasourceTableItems<E extends Entity<K>, K>
+public class SortableDatasourceTableItems<E extends Entity, K>
         extends DatasourceTableItems<E, K>
         implements TableItems.Sortable<E> {
 

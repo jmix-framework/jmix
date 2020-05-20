@@ -20,15 +20,15 @@ package com.haulmont.cuba.gui.components.filter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.haulmont.cuba.CubaProperties;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.filter.dateinterval.DateInIntervalComponent;
 import com.haulmont.cuba.gui.components.listeditor.ListEditorHelper;
+import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.*;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
@@ -42,8 +42,6 @@ import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
 import io.jmix.core.metamodel.datatypes.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import com.haulmont.cuba.security.global.UserSession;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.components.*;
@@ -469,11 +467,11 @@ public class Param {
     protected List<Entity> loadEntityList(String[] ids) {
         MetaClass metaClass = metadata.getClassNN(javaClass);
         //noinspection unchecked
-        LoadContext<Entity> ctx = new LoadContext<>(javaClass)
-                .setFetchPlan(FetchPlan.BASE);
-        ctx.setQueryString(String.format("select e from %s e where e.id in :ids", metaClass.getName()))
-                .setParameter("ids", Arrays.asList(ids));
-        return dataManager.loadList(ctx);
+        return dataManager.load(javaClass)
+                .fetchPlan(FetchPlan.BASE)
+                .query(String.format("select e from %s e where e.id in :ids", metaClass.getName()))
+                .parameter("ids", Arrays.asList(ids))
+                .list();
     }
 
     protected Object loadEntity(String id) {
@@ -487,10 +485,10 @@ public class Param {
             }
         }
         //noinspection unchecked
-        LoadContext<Entity> ctx = new LoadContext<>(javaClass)
-                .setFetchPlan(FetchPlan.BASE)
-                .setId(objectId);
-        return dataManager.load(ctx);
+        return dataManager.load(javaClass)
+                .fetchPlan(FetchPlan.BASE)
+                .id(objectId)
+                .optional().orElse(null);
     }
 
     public String formatValue(Object value) {

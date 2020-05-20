@@ -31,7 +31,7 @@ import java.util.Map;
  * </ul>
  */
 @Deprecated
-public abstract class CustomGroupDatasource<T extends Entity<K>, K>
+public abstract class CustomGroupDatasource<T extends Entity, K>
         extends GroupDatasourceImpl<T, K> {
 
     /**
@@ -50,7 +50,7 @@ public abstract class CustomGroupDatasource<T extends Entity<K>, K>
 
         if (entities != null) {
             for (T entity : entities) {
-                data.put(EntityValues.<K>getId(entity), entity);
+                data.put(EntityValues.getId(entity), entity);
                 attachListener(entity);
             }
         }

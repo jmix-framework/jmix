@@ -18,10 +18,7 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Entity;
+import io.jmix.core.*;
 import io.jmix.ui.Actions;
 import org.springframework.stereotype.Component;
 
@@ -36,11 +33,13 @@ public class GuiActionSupport {
     public static final String NAME = "cuba_GuiActionSupport";
 
     @Inject
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
     @Inject
     protected EntityStates entityStates;
     @Inject
     protected DynamicAttributesGuiTools dynamicAttributesGuiTools;
+    @Inject
+    protected DataManager dataManager;
 
     @Inject
     protected Actions actions;
@@ -54,13 +53,16 @@ public class GuiActionSupport {
         boolean needDynamicAttributes = targetDatasource.getLoadDynamicAttributes();
         boolean dynamicAttributesAreLoaded = dynamicAttributesGuiTools.hasDynamicAttributes(entity);
 
-        FetchPlan view = targetDatasource.getView();
-        if (view == null) {
-            view = viewRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
+        FetchPlan fetchPlan = targetDatasource.getView();
+        if (fetchPlan == null) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
         }
 
-        if (!entityStates.isLoadedWithFetchPlan(entity, view)) {
-            entity = targetDatasource.getDsContext().getDataSupplier().reload(entity, view, null, needDynamicAttributes);
+        if (!entityStates.isLoadedWithFetchPlan(entity, fetchPlan)) {
+            entity = dataManager.load(Id.of(entity))
+                    .fetchPlan(fetchPlan)
+                    .dynamicAttributes(needDynamicAttributes)
+                    .optional().orElse(null);
         } else if (needDynamicAttributes && !dynamicAttributesAreLoaded) {
             dynamicAttributesGuiTools.reloadDynamicAttributes(entity);
         }

@@ -23,11 +23,7 @@ import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.entity.EntityPropertyChangeListener;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.DisableEnhancing;
-import io.jmix.dynattr.impl.model.CategoryAttribute;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -41,10 +37,10 @@ public class DynamicAttributesEntity implements Entity {
     protected Entity mainItem;
     protected UUID id;
 
-    protected EntityEntry<Object> entityEntry;
+    protected EntityEntry entityEntry;
 
-    protected static class DynamicAttributesEntityEntry extends BaseEntityEntry<Object> {
-        public DynamicAttributesEntityEntry(Entity<Object> source) {
+    protected static class DynamicAttributesEntityEntry extends BaseEntityEntry {
+        public DynamicAttributesEntityEntry(Entity source) {
             super(source);
         }
 
@@ -89,7 +85,7 @@ public class DynamicAttributesEntity implements Entity {
     }
 
     @Override
-    public EntityEntry<Object> __getEntityEntry() {
+    public EntityEntry __getEntityEntry() {
         return entityEntry == null ? entityEntry = new DynamicAttributesEntityEntry(this) : entityEntry;
     }
 

@@ -396,7 +396,7 @@ public class AddAction extends ListAction
 
                 for (Object item : items) {
                     if (item instanceof Entity) {
-                        Entity<?> entity = (Entity<?>) item;
+                        Entity entity = (Entity) item;
                         if (!ds.containsItem(EntityValues.getId(entity))) {
                             // Initialize reference to master entity
                             if (initializeMasterReference) {

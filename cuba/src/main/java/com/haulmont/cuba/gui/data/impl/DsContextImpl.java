@@ -269,8 +269,8 @@ public class DsContextImpl implements DsContextImplementation {
 
 
     protected void repairReferences(CommitContext context) {
-        for (Entity entity : context.getCommitInstances()) {
-            for (Entity otherEntity : context.getCommitInstances()) {
+        for (io.jmix.core.Entity entity : context.getCommitInstances()) {
+            for (io.jmix.core.Entity otherEntity : context.getCommitInstances()) {
                 if (!entity.equals(otherEntity)) {
                     repairReferences(otherEntity, entity);
                 }
@@ -279,7 +279,7 @@ public class DsContextImpl implements DsContextImplementation {
     }
 
     @SuppressWarnings("unchecked")
-    protected void repairReferences(Entity entity, Entity contextEntity) {
+    protected void repairReferences(io.jmix.core.Entity entity, io.jmix.core.Entity contextEntity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaClass contextEntityMetaClass = metadata.getClass(contextEntity.getClass());
 
@@ -314,7 +314,7 @@ public class DsContextImpl implements DsContextImplementation {
     }
 
     protected void addToContext(Entity entity, Datasource<Entity> datasource,
-                                Collection<Entity> entities, Map<Object, FetchPlan> views) {
+                                Collection<io.jmix.core.Entity> entities, Map<Object, FetchPlan> views) {
         if (datasource instanceof NestedDatasource) {
             replaceMasterCopies(entity, ((NestedDatasource) datasource));
         }

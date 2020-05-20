@@ -18,7 +18,6 @@ package com.haulmont.cuba.gui.data;
 import io.jmix.core.Entity;
 import io.jmix.ui.filter.QueryFilter;
 import com.haulmont.cuba.core.global.LoadContext;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.AggregationInfo;
 import io.jmix.ui.model.CollectionChangeType;
@@ -39,7 +38,7 @@ import java.util.Map;
  * @deprecated Use {@link CollectionContainer} APIs instead.
  */
 @Deprecated
-public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource<T> {
+public interface CollectionDatasource<T extends Entity, K> extends Datasource<T> {
 
     /**
      * @return item by ID, can be null
@@ -277,7 +276,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Ordered<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+    interface Ordered<T extends Entity, K> extends CollectionDatasource<T, K> {
         @Nullable
         K firstItemId();
 
@@ -305,7 +304,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
         void includeItemFirst(T item);
     }
 
-    interface Indexed<T extends Entity<K>, K> extends Ordered<T, K> {
+    interface Indexed<T extends Entity, K> extends Ordered<T, K> {
         int indexOfId(K itemId);
 
         @Nullable
@@ -320,7 +319,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Sortable<T extends Entity<K>, K> extends Ordered<T, K> {
+    interface Sortable<T extends Entity, K> extends Ordered<T, K> {
 
         /**
          * Sort order
@@ -387,14 +386,14 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
     /**
      * Sorts items in-memory after DB sorting
      */
-    interface SortDelegate<T extends Entity<K>, K> {
+    interface SortDelegate<T extends Entity, K> {
         void sort(List<T> entities, Sortable.SortInfo<MetaPropertyPath>[] sortInfo);
     }
 
     /**
      * Set ability to override in-memory sorting in CollectionDatasource
      */
-    interface SupportsSortDelegate<T extends Entity<K>, K> {
+    interface SupportsSortDelegate<T extends Entity, K> {
         void setSortDelegate(SortDelegate<T, K> sortDelegate);
     }
 
@@ -404,7 +403,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Aggregatable<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+    interface Aggregatable<T extends Entity, K> extends CollectionDatasource<T, K> {
 
         /**
          * Perform aggregation and return map with formatted string values.
@@ -432,7 +431,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Lazy<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+    interface Lazy<T extends Entity, K> extends CollectionDatasource<T, K> {
 
         boolean isCompletelyLoaded();
     }
@@ -443,7 +442,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface SupportsPaging<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+    interface SupportsPaging<T extends Entity, K> extends CollectionDatasource<T, K> {
 
         /**
          * Returns count of records in database for the current query and filter
@@ -463,7 +462,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
      * When it is in suspended state, it doesn't actually refresh on refreshIfNotSuspended() calls, but refreshes
      * once after switch to not suspended.
      */
-    interface Suspendable<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+    interface Suspendable<T extends Entity, K> extends CollectionDatasource<T, K> {
 
         boolean isSuspended();
 
@@ -477,7 +476,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
     /**
      * CollectionDatasource that supports applying filter to previously selected data.
      */
-    interface SupportsApplyToSelected<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+    interface SupportsApplyToSelected<T extends Entity, K> extends CollectionDatasource<T, K> {
 
         void pinQuery();
 
@@ -500,7 +499,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
         NEVER
     }
 
-    interface SupportsRefreshMode<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+    interface SupportsRefreshMode<T extends Entity, K> extends CollectionDatasource<T, K> {
         RefreshMode getRefreshMode();
 
         void setRefreshMode(RefreshMode refreshMode);
@@ -517,7 +516,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
         UPDATE
     }
 
-    class CollectionChangeEvent<T extends Entity<K>, K> {
+    class CollectionChangeEvent<T extends Entity, K> {
         private final CollectionDatasource<T, K> ds;
         private final Operation operation;
         private final List<T> items;
@@ -552,7 +551,7 @@ public interface CollectionDatasource<T extends Entity<K>, K> extends Datasource
     }
 
     @FunctionalInterface
-    interface CollectionChangeListener<T extends Entity<K>, K> {
+    interface CollectionChangeListener<T extends Entity, K> {
         /**
          * Enclosed collection changed.
          */

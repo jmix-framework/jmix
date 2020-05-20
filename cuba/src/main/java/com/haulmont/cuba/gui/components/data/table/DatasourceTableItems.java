@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 
 
 @SuppressWarnings("unchecked")
-public class DatasourceTableItems<E extends Entity<K>, K>
+public class DatasourceTableItems<E extends Entity, K>
         implements EntityTableItems<E>, DatasourceDataUnit, AggregatableTableItems<E> {
 
     protected CollectionDatasource datasource;

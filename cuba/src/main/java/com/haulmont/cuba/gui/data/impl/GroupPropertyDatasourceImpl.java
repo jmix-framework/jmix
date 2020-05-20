@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-public class GroupPropertyDatasourceImpl<T extends Entity<K>, K>
+public class GroupPropertyDatasourceImpl<T extends Entity, K>
         extends CollectionPropertyDatasourceImpl<T, K>
         implements GroupDatasource<T, K>, GroupDatasource.SupportsGroupSortDelegate {
 

@@ -47,7 +47,7 @@ public class DataManagerTransactionalUsageTest {
         private TransactionalDataManager txDataManager;
 
         @Transactional
-        public Id<OrderLine, UUID> sell(String productName, Integer quantity) {
+        public Id<OrderLine> sell(String productName, Integer quantity) {
             Product product = txDataManager.load(Product.class)
                     .query("select p from test$Product p where p.name = :name")
                     .parameter("name", productName)
@@ -67,7 +67,7 @@ public class DataManagerTransactionalUsageTest {
             return Id.of(orderLine);
         }
 
-        public Id<OrderLine, UUID> sellSecureWithProgrammaticTx(String productName, Integer quantity) {
+        public Id<OrderLine> sellSecureWithProgrammaticTx(String productName, Integer quantity) {
             TransactionalDataManager secureDm = txDataManager.secure();
             try (Transaction tx = secureDm.transactions().create()) {
                 Product product = secureDm.load(Product.class)
@@ -100,11 +100,11 @@ public class DataManagerTransactionalUsageTest {
         private TransactionalDataManager txDataManager;
 
         @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT) // same as simple @EventListener
-        protected void orderLineChanged(EntityChangedEvent<OrderLine, UUID> event) {
+        protected void orderLineChanged(EntityChangedEvent<OrderLine> event) {
             AttributeChanges changes = event.getChanges();
 
             if (event.getType() == EntityChangedEvent.Type.DELETED) {
-                Id<Product, UUID> productId = changes.getOldReferenceId("product");
+                Id<Product> productId = changes.getOldReferenceId("product");
                 if (productId != null) {
                     Integer oldQuantity = changes.getOldValue("quantity");
 
@@ -118,7 +118,7 @@ public class DataManagerTransactionalUsageTest {
                 if (product != null) {
                     if (event.getType() == EntityChangedEvent.Type.UPDATED) {
                         if (changes.isChanged("product")) {
-                            Id<Product, UUID> oldProductId = changes.getOldReferenceId("product");
+                            Id<Product> oldProductId = changes.getOldReferenceId("product");
                             if (oldProductId != null) {
                                 Product oldProduct = txDataManager.load(oldProductId).one();
                                 oldProduct.setQuantity(oldProduct.getQuantity() + orderLine.getQuantity());
@@ -142,7 +142,7 @@ public class DataManagerTransactionalUsageTest {
         }
 
         @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-        protected void notifyAboutChanges(EntityChangedEvent<OrderLine, UUID> event) {
+        protected void notifyAboutChanges(EntityChangedEvent<OrderLine> event) {
             System.out.println("Changed OrderLine: " + event);
         }
     }
@@ -162,7 +162,7 @@ public class DataManagerTransactionalUsageTest {
     @Test
     public void test() {
         SaleProcessor processor = AppBeans.get("test_SaleProcessor");
-        Id<OrderLine, UUID> orderLineId = processor.sell("abc", 10);
+        Id<OrderLine> orderLineId = processor.sell("abc", 10);
 
         Product product1 = dataManager.load(Product.class)
                 .query("select p from test$Product p where p.name = :name")
@@ -199,7 +199,7 @@ public class DataManagerTransactionalUsageTest {
     @Test
     public void testSecureWithProgrammaticTx() {
         SaleProcessor processor = AppBeans.get("test_SaleProcessor");
-        Id<OrderLine, UUID> orderLineId = processor.sellSecureWithProgrammaticTx("abc", 10);
+        Id<OrderLine> orderLineId = processor.sellSecureWithProgrammaticTx("abc", 10);
 
         Product product1 = dataManager.load(Product.class)
                 .query("select p from test$Product p where p.name = :name")

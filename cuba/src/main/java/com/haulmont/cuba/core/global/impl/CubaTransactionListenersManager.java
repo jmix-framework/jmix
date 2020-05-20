@@ -16,10 +16,10 @@
 
 package com.haulmont.cuba.core.global.impl;
 
+import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import io.jmix.core.Entity;
-import com.haulmont.cuba.core.Persistence;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -34,9 +34,9 @@ import java.util.Map;
 
 @Component("jmix_CubaTransactionListenersManager")
 public class CubaTransactionListenersManager implements
-            ApplicationContextAware,
-            io.jmix.data.listener.BeforeCommitTransactionListener,
-            io.jmix.data.listener.AfterCompleteTransactionListener {
+        ApplicationContextAware,
+        io.jmix.data.listener.BeforeCommitTransactionListener,
+        io.jmix.data.listener.AfterCompleteTransactionListener {
 
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 

@@ -125,7 +125,7 @@ public class AppliedFilter {
         }
 
         if (value instanceof Entity)
-            return AppBeans.get(MetadataTools.class).getInstanceName((Entity<?>) value);
+            return AppBeans.get(MetadataTools.class).getInstanceName((Entity) value);
 
         if (value instanceof Enum)
             return messages.getMessage((Enum) value);
@@ -135,7 +135,7 @@ public class AppliedFilter {
             ArrayList list = ((ArrayList) value);
             for (Object obj : list) {
                 if (obj instanceof Entity)
-                    names.add(AppBeans.get(MetadataTools.class).getInstanceName(((Entity<?>) obj)));
+                    names.add(AppBeans.get(MetadataTools.class).getInstanceName(((Entity) obj)));
                 else {
                     names.add(FilterConditionUtils.formatParamValue(param, obj));
                 }

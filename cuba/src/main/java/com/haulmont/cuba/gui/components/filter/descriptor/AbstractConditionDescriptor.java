@@ -18,12 +18,14 @@
 package com.haulmont.cuba.gui.components.filter.descriptor;
 
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotations.ModelObject;
 import io.jmix.core.metamodel.annotations.ModelProperty;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.entity.BaseUuidEntity;
 import org.dom4j.Element;
+
+import java.util.UUID;
 
 /**
  * Class that encapsulates common filter condition descriptor behaviour. Condition descriptors are used for

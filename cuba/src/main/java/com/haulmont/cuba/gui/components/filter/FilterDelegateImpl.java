@@ -20,11 +20,10 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.haulmont.cuba.CubaProperties;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
@@ -40,6 +39,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.security.entity.FilterEntity;
+import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.*;
 import io.jmix.core.commons.datastruct.Node;
 import io.jmix.core.commons.datastruct.Pair;
@@ -49,8 +49,6 @@ import io.jmix.core.commons.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.queryconditions.JpqlCondition;
 import io.jmix.core.security.Security;
-import com.haulmont.cuba.security.global.UserSession;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.ui.*;
 import io.jmix.ui.actions.AbstractAction;
@@ -1199,14 +1197,12 @@ public class FilterDelegateImpl implements FilterDelegate {
      * Load filter entities from database and saves them in {@code filterEntities} collection.
      */
     protected void loadFilterEntities() {
-        LoadContext<FilterEntity> ctx = LoadContext.create(FilterEntity.class);
-        ctx.setView("app");
-        ctx.setQueryString("select f from sec$Filter f " +  /*"left join f.user u " +*/
-                "where f.componentId = :component" /*+ "and (u.id = :userId or u is null) order by f.name"*/)
-                .setParameter("component", CubaComponentsHelper.getFilterComponentPath(filter))/*
-                .setParameter("userId", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getId())*/;
-
-        filterEntities = new ArrayList<>(dataService.loadList(ctx));
+        filterEntities = new ArrayList<>(dataService.load(FilterEntity.class)
+                .fetchPlan("app")
+                .query("select f from sec$Filter f " +  /*"left join f.user u " +*/
+                        "where f.componentId = :component" /*+ "and (u.id = :userId or u is null) order by f.name"*/)
+                //.parameter("userId", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getId())
+                .list());
     }
 
     protected FilterEntity getDefaultFilter(List<FilterEntity> filters) {
@@ -2901,8 +2897,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     }
 
     protected void removeFilterEntity() {
-        CommitContext ctx = new CommitContext(Collections.emptyList(), Collections.singletonList(filterEntity));
-        dataService.commit(ctx);
+        dataService.save(filterEntity);
         filterEntities.remove(filterEntity);
         setFilterEntity(adHocFilter);
         initFilterSelectComponents();

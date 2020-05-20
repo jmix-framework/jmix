@@ -15,8 +15,8 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.Entity;
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

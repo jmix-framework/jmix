@@ -23,7 +23,7 @@ import io.jmix.ui.components.data.TreeTableItems;
 
 import java.util.Collection;
 
-public class DatasourceTreeTableItems<E extends Entity<K>, K>
+public class DatasourceTreeTableItems<E extends Entity, K>
         extends SortableDatasourceTableItems<E, K>
         implements TreeTableItems<E> {
 

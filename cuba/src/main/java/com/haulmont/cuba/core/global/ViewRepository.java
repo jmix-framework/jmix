@@ -16,10 +16,8 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.FetchPlanNotFoundException;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
@@ -36,33 +34,34 @@ public interface ViewRepository {
     /**
      * Get View for an entity.
      *
-     * @param entityClass   entity class
-     * @param name          view name
-     * @return              view instance. Throws {@link ViewNotFoundException} if not found.
+     * @param entityClass entity class
+     * @param name        view name
+     * @return view instance. Throws {@link ViewNotFoundException} if not found.
      */
     FetchPlan getView(Class<? extends Entity> entityClass, String name);
 
     /**
      * Get View for an entity.
      *
-     * @param metaClass     entity class
-     * @param name          view name
-     * @return              view instance. Throws {@link ViewNotFoundException} if not found.
+     * @param metaClass entity class
+     * @param name      view name
+     * @return view instance. Throws {@link ViewNotFoundException} if not found.
      */
     FetchPlan getView(MetaClass metaClass, String name);
 
     /**
      * Searches for a View for an entity.
      *
-     * @param metaClass     entity class
-     * @param name          view name
-     * @return              view instance or null if no view found
+     * @param metaClass entity class
+     * @param name      view name
+     * @return view instance or null if no view found
      */
     @Nullable
     FetchPlan findView(MetaClass metaClass, String name);
 
     /**
      * Returns names of views defined for the metaClass
+     *
      * @param metaClass entity class
      * @return names of views
      */
@@ -70,6 +69,7 @@ public interface ViewRepository {
 
     /**
      * Returns names of views defined for the entityClass
+     *
      * @param entityClass entity class
      * @return names of views
      */

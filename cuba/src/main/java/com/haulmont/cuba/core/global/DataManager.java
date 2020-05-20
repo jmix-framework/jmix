@@ -16,10 +16,10 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.*;
-import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.*;
+import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
@@ -34,7 +34,6 @@ import java.util.List;
  * When used on the client tier - always applies security restrictions. When used on the middleware - does not apply
  * security restrictions by default. If you want to apply security, get {@link #secure()} instance or set the
  * {@code cuba.dataManagerChecksSecurityOnMiddleware} application property to use it by default.
- *
  */
 @SuppressWarnings("rawtypes")
 public interface DataManager {
@@ -45,8 +44,9 @@ public interface DataManager {
      * Loads a single entity instance.
      * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}
      * object passed in {@link LoadContext}.</p>
-     * @param context   {@link LoadContext} object, defining what and how to load
-     * @return          the loaded detached object, or null if not found
+     *
+     * @param context {@link LoadContext} object, defining what and how to load
+     * @return the loaded detached object, or null if not found
      */
     @Nullable
     <E extends Entity> E load(LoadContext<E> context);
@@ -55,32 +55,36 @@ public interface DataManager {
      * Loads collection of entity instances.
      * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}
      * object passed in {@link LoadContext}.</p>
-     * @param context   {@link LoadContext} object, defining what and how to load
-     * @return          a list of detached instances, or empty list if nothing found
+     *
+     * @param context {@link LoadContext} object, defining what and how to load
+     * @return a list of detached instances, or empty list if nothing found
      */
     <E extends Entity> List<E> loadList(LoadContext<E> context);
 
     /**
      * Returns the number of entity instances for the given query passed in the {@link LoadContext}.
-     * @param context   defines the query
-     * @return          number of instances in the data store
+     *
+     * @param context defines the query
+     * @return number of instances in the data store
      */
     long getCount(LoadContext<? extends Entity> context);
 
     /**
      * Reloads the entity instance from data store with the fetch plan specified.
+     *
      * @param entity        reloading instance
-     * @param fetchPlanName      fetch plan name
-     * @return              reloaded instance
+     * @param fetchPlanName fetch plan name
+     * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
     <E extends Entity> E reload(E entity, String fetchPlanName);
 
     /**
      * Reloads the entity instance from data store with the fetch plan specified.
-     * @param entity        reloading instance
-     * @param fetchPlan          fetch plan object
-     * @return              reloaded instance
+     *
+     * @param entity    reloading instance
+     * @param fetchPlan fetch plan object
+     * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
     <E extends Entity> E reload(E entity, FetchPlan fetchPlan);
@@ -88,10 +92,11 @@ public interface DataManager {
     /**
      * Reloads the entity instance from data store with the fetch plan specified. Loading instance class may differ from original
      * instance if we want to load an ancestor or a descendant.
-     * @param entity        reloading instance
-     * @param fetchPlan          fetch plan object
-     * @param metaClass     desired MetaClass, if null - original entity's metaclass is used
-     * @return              reloaded instance
+     *
+     * @param entity    reloading instance
+     * @param fetchPlan fetch plan object
+     * @param metaClass desired MetaClass, if null - original entity's metaclass is used
+     * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
     <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass);
@@ -99,69 +104,78 @@ public interface DataManager {
     /**
      * Reloads the entity instance from data store with the fetch plan specified. Loading instance class may differ from original
      * instance if we want to load an ancestor or a descendant.
-     * @param entity                    reloading instance
-     * @param fetchPlan                      fetch plan object
-     * @param metaClass                 desired MetaClass, if null - original entity's metaclass is used
-     * @param loadDynamicAttributes     whether to load dynamic attributes for the entity
-     * @return                          reloaded instance
+     *
+     * @param entity                reloading instance
+     * @param fetchPlan             fetch plan object
+     * @param metaClass             desired MetaClass, if null - original entity's metaclass is used
+     * @param loadDynamicAttributes whether to load dynamic attributes for the entity
+     * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
     <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes);
 
     /**
      * Commits a collection of new or detached entity instances to the data store.
-     * @param context   {@link CommitContext} object, containing committing entities and other information
-     * @return          set of committed instances
+     *
+     * @param context {@link CommitContext} object, containing committing entities and other information
+     * @return set of committed instances
      */
     EntitySet commit(CommitContext context);
 
     /**
      * Commits new or detached entity instances to the data store.
-     * @param entities  entities to commit
-     * @return          set of committed instances
+     *
+     * @param entities entities to commit
+     * @return set of committed instances
      */
     EntitySet commit(Entity... entities);
 
     /**
      * Commits the entity to the data store.
+     *
      * @param entity    entity instance
-     * @param fetchPlan      fetch plan object, affects the returned committed instance
-     * @return          committed instance
+     * @param fetchPlan fetch plan object, affects the returned committed instance
+     * @return committed instance
      */
     <E extends Entity> E commit(E entity, @Nullable FetchPlan fetchPlan);
 
     /**
      * Commits the entity to the data store.
-     * @param entity    entity instance
-     * @param fetchPlanName  fetch plan name, affects the returned committed instance
-     * @return          committed instance
+     *
+     * @param entity        entity instance
+     * @param fetchPlanName fetch plan name, affects the returned committed instance
+     * @return committed instance
      */
     <E extends Entity> E commit(E entity, @Nullable String fetchPlanName);
 
     /**
      * Commits the entity to the data store.
-     * @param entity    entity instance
-     * @return          committed instance
+     *
+     * @param entity entity instance
+     * @return committed instance
      */
     <E extends Entity> E commit(E entity);
 
     /**
      * Removes the entity instance from the data store.
-     * @param entity    entity instance
+     *
+     * @param entity entity instance
      */
     void remove(Entity entity);
 
     /**
      * Removes the entity instance from the data store by its id.
-     * @param entityId    entity id
+     *
+     * @param entityId entity id
      */
-    default <T extends Entity<K>, K> void remove(Id<T, K> entityId) {
+    default <T extends Entity> void remove(Id<T> entityId) {
         remove(getReference(entityId));
     }
 
     /**
      * Loads list of key-value pairs.
-     * @param context   defines a query for scalar values and a list of keys for returned KeyValueEntity
+     *
+     * @param context defines a query for scalar values and a list of keys for returned KeyValueEntity
      * @return list of KeyValueEntity instances
      */
     List<KeyValueEntity> loadValues(ValueLoadContext context);
@@ -196,10 +210,11 @@ public interface DataManager {
      *      .fetchPlan("customer-fetch-plan")
      *      .list();
      * </pre>
-     * @param entityClass   class of entity that needs to be loaded
+     *
+     * @param entityClass class of entity that needs to be loaded
      */
-    default <E extends Entity<K>, K> FluentLoader<E, K> load(Class<E> entityClass) {
-        FluentLoader<E, K> loader = new FluentLoader<>(entityClass, getDelegate());
+    default <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
+        FluentLoader<E> loader = new FluentLoader<>(entityClass, getDelegate());
         loader.joinTransaction(false);
         return loader;
     }
@@ -211,10 +226,11 @@ public interface DataManager {
      * <pre>
      * Customer customer = dataManager.load(customerId).fetchPlan("with-grade").one();
      * </pre>
-     * @param entityId   {@link Id} of entity that needs to be loaded
+     *
+     * @param entityId {@link Id} of entity that needs to be loaded
      */
-    default <E extends Entity<K>, K> FluentLoader.ById<E, K> load(Id<E, K> entityId) {
-        FluentLoader<E, K> loader = new FluentLoader<>(entityId.getEntityClass(), getDelegate());
+    default <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId) {
+        FluentLoader<E> loader = new FluentLoader<>(entityId.getEntityClass(), getDelegate());
         loader.joinTransaction(false);
         return loader.id(entityId.getValue());
     }
@@ -235,7 +251,8 @@ public interface DataManager {
      *      .properties("custName", "custCount")
      *      .one();
      * </pre>
-     * @param queryString   query string
+     *
+     * @param queryString query string
      */
     default FluentValuesLoader loadValues(String queryString) {
         FluentValuesLoader loader = new FluentValuesLoader(queryString, getDelegate());
@@ -256,8 +273,9 @@ public interface DataManager {
      * Long customerCount = dataManager.loadValue(
      *          "select count(c) from sample$Customer c", Long.class).one();
      * </pre>
-     * @param queryString   query string
-     * @param valueClass    type of the returning value
+     *
+     * @param queryString query string
+     * @param valueClass  type of the returning value
      */
     default <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
         FluentValueLoader<T> loader = new FluentValueLoader<>(queryString, valueClass, getDelegate());
@@ -267,7 +285,8 @@ public interface DataManager {
 
     /**
      * Creates a new entity instance in memory. This is a shortcut to {@code Metadata.create()}.
-     * @param entityClass   entity class
+     *
+     * @param entityClass entity class
      */
     <T extends Entity> T create(Class<T> entityClass);
 
@@ -285,19 +304,18 @@ public interface DataManager {
      * dataManager.remove(dataManager.getReference(Customer.class, customerId));
      * </pre>
      *
-     * @param entityClass   entity class
-     * @param id            id of an existing object
+     * @param entityClass entity class
+     * @param id          id of an existing object
      */
-    <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id);
+    <T extends Entity, K> T getReference(Class<T> entityClass, K id);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
      *
      * @param entityId id of an existing object
-     *
      * @see #getReference(Class, Object)
      */
-    default <T extends Entity<K>, K> T getReference(Id<T, K> entityId) {
+    default <T extends Entity> T getReference(Id<T> entityId) {
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return getReference(entityId.getEntityClass(), entityId.getValue());
     }

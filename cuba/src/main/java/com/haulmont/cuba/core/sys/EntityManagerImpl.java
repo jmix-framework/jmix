@@ -110,19 +110,19 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public <T extends Entity<K>, K> T find(Class<T> entityClass, K id) {
+    public <T extends Entity, K> T find(Class<T> entityClass, K id) {
         return delegate.find(entityClass, id);
     }
 
     @Nullable
     @Override
-    public <T extends Entity<K>, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans) {
+    public <T extends Entity, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans) {
         return delegate.find(entityClass, id, PersistenceHints.builder().withFetchPlans(fetchPlans).build());
     }
 
     @Nullable
     @Override
-    public <T extends Entity<K>, K> T find(Class<T> entityClass, K id, String... fetchPlanNames) {
+    public <T extends Entity, K> T find(Class<T> entityClass, K id, String... fetchPlanNames) {
         FetchPlan[] fetchPlanArray = new FetchPlan[fetchPlanNames.length];
         for (int i = 0; i < fetchPlanNames.length; i++) {
             fetchPlanArray[i] = fetchPlanRepository.getFetchPlan(entityClass, fetchPlanNames[i]);
@@ -131,7 +131,7 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public <T extends Entity<K>, K> T getReference(Class<T> clazz, K id) {
+    public <T extends Entity, K> T getReference(Class<T> clazz, K id) {
         return delegate.getReference(clazz, id);
     }
 
@@ -188,7 +188,7 @@ public class EntityManagerImpl implements EntityManager {
 
     @Nullable
     @Override
-    public <T extends Entity<K>, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames) {
+    public <T extends Entity, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(id, "id is null");
 

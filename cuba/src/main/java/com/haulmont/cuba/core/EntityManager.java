@@ -51,7 +51,7 @@ public interface EntityManager {
      * @return the instance that the state was merged to
      * @throws IllegalArgumentException if instance is not an entity or is a removed entity
      * @see EntityStates#isNew(Object)
-     * @see EntityStates#makePatch(Entity)
+     * @see EntityStates#makePatch(io.jmix.core.Entity)
      */
     <T extends Entity> T merge(T entity);
 
@@ -86,7 +86,7 @@ public interface EntityManager {
      *                                  is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends Entity<K>, K> T find(Class<T> entityClass, K id);
+    <T extends Entity, K> T find(Class<T> entityClass, K id);
 
     /**
      * Find by primary key.
@@ -102,7 +102,7 @@ public interface EntityManager {
      *                                  is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends Entity<K>, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans);
+    <T extends Entity, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans);
 
     /**
      * Find by primary key.
@@ -118,7 +118,7 @@ public interface EntityManager {
      *                                  is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends Entity<K>, K> T find(Class<T> entityClass, K id, String... fetchPlanNames);
+    <T extends Entity, K> T find(Class<T> entityClass, K id, String... fetchPlanNames);
 
     /**
      * Get an instance, whose state may be lazily fetched.<br>
@@ -136,7 +136,7 @@ public interface EntityManager {
      *                                                   is not a valid type for that entity's primary key
      * @throws javax.persistence.EntityNotFoundException if the entity state cannot be accessed
      */
-    <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id);
+    <T extends Entity, K> T getReference(Class<T> entityClass, K id);
 
     /**
      * Create an instance of Query for executing a Java Persistence query language statement.
@@ -255,5 +255,5 @@ public interface EntityManager {
      */
     @Deprecated
     @Nullable
-    <T extends Entity<K>, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames);
+    <T extends Entity, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames);
 }

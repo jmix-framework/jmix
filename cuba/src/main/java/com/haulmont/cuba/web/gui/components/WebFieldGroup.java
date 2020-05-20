@@ -67,7 +67,7 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
         columnFieldMapping.add(new ArrayList<>());
     }
 
-    protected Datasource<Entity> datasource;
+    protected Datasource<?> datasource;
 
     protected FieldGroupFieldFactory fieldFactory;
 

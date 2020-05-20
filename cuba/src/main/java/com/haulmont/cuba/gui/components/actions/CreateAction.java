@@ -322,7 +322,7 @@ public class CreateAction extends ListAction
                     Entity editedItem = window.getItem();
                     if (editedItem != null) {
                         if (parentDs == null) {
-                            editedItem = AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
+                            editedItem = (Entity) AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
                             if (addFirst && datasource instanceof CollectionDatasource.Ordered)
                                 ((CollectionDatasource.Ordered) datasource).includeItemFirst(editedItem);
                             else

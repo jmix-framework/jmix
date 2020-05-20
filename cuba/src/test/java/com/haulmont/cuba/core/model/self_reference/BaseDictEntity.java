@@ -25,7 +25,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @ModelObject(name = "test$BaseDictEntity")
-public class BaseDictEntity implements Entity<String> {
+public class BaseDictEntity implements Entity {
 
     @Id
     @Column(name = "CODE", nullable = false, length = 32)

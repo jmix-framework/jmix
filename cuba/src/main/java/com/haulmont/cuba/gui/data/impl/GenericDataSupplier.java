@@ -82,7 +82,7 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <T extends Entity<K>, K> void remove(Id<T, K> entityId) {
+    public <T extends Entity> void remove(Id<T> entityId) {
         getDataManager().remove(entityId);
     }
 
@@ -102,12 +102,12 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <E extends Entity<K>, K> FluentLoader<E, K> load(Class<E> entityClass) {
+    public <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
         return getDataManager().load(entityClass);
     }
 
     @Override
-    public <E extends Entity<K>, K> FluentLoader.ById<E, K> load(Id<E, K> entityId) {
+    public <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId) {
         return getDataManager().load(entityId);
     }
 
@@ -127,12 +127,12 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id) {
+    public <T extends Entity, K> T getReference(Class<T> entityClass, K id) {
         return getDataManager().getReference(entityClass, id);
     }
 
     @Override
-    public <T extends Entity<K>, K> T getReference(Id<T, K> entityId) {
+    public <T extends Entity> T getReference(Id<T> entityId) {
         return null;
     }
 

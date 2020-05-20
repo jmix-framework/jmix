@@ -31,7 +31,7 @@ import java.util.Map;
  * </ul>
  */
 @Deprecated
-public abstract class CustomCollectionDatasource<T extends Entity<K>, K>
+public abstract class CustomCollectionDatasource<T extends Entity, K>
         extends CollectionDatasourceImpl<T, K> {
 
     /**

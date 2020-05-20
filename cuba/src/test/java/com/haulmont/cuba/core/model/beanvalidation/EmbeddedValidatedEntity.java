@@ -25,7 +25,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @ModelObject(name = "test$EmbeddedValidatedEntity")
-public class EmbeddedValidatedEntity implements Entity<Object> {
+public class EmbeddedValidatedEntity implements Entity {
     @Length(min = 5, max = 2147483647)
     @Column(name = "NAME")
     protected String name;

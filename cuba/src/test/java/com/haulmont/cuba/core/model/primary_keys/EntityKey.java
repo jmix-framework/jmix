@@ -23,7 +23,7 @@ import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class EntityKey implements Entity<Object> {
+public class EntityKey implements Entity {
 
     @Column(name = "TENANT")
     private Integer tenant;

@@ -60,7 +60,7 @@ public class ScreenEditorWrapper extends AbstractEditor {
 
     @Override
     public Entity getItem() {
-        return ((EditorScreen) screen).getEditedEntity();
+        return (Entity) ((EditorScreen) screen).getEditedEntity();
     }
 
     @Nullable

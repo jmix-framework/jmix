@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotations.ModelProperty;
 import javax.persistence.Id;
 
 @ModelObject(name = "test$NotPersistentStringIdEntity")
-public class NotPersistentStringIdEntity implements Entity<String> {
+public class NotPersistentStringIdEntity implements Entity {
 
     @Id
     @ModelProperty(mandatory = true)

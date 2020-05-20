@@ -25,7 +25,6 @@ import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
 import com.haulmont.cuba.gui.data.impl.EntityCopyUtils;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.*;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -156,7 +155,6 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
      * @param item entity instance
      */
     @SuppressWarnings("unchecked")
-    @Override
     public void setItem(Entity item) {
         if (PersistenceHelper.isNew(item)) {
             DatasourceImplementation parentDs = (DatasourceImplementation) getParentDs();

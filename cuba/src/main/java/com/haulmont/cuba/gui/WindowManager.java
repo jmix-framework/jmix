@@ -16,21 +16,13 @@
 package com.haulmont.cuba.gui;
 
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.Entity;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.Screens;
-import io.jmix.ui.WebBrowserTools;
-import io.jmix.ui.WindowInfo;
+import io.jmix.ui.*;
 import io.jmix.ui.actions.Action;
 import io.jmix.ui.components.Component;
 import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.SizeUnit;
-import io.jmix.ui.components.SizeWithUnit;
 import io.jmix.ui.components.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nullable;

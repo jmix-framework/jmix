@@ -26,7 +26,7 @@ import javax.persistence.Embeddable;
 @NamePattern("%s|index")
 @ModelObject(name = "test$AddressEmbedded")
 @Embeddable
-public class AddressEmbedded implements Entity<Object> {
+public class AddressEmbedded implements Entity {
     private static final long serialVersionUID = 728993860314123316L;
 
     @Column(name = "STREET")

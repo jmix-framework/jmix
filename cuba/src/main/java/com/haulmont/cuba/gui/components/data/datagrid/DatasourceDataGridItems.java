@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components.data.datagrid;
 
+import io.jmix.core.Entity;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -23,7 +24,6 @@ import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
 import io.jmix.core.commons.events.EventHub;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.components.AggregationInfo;
@@ -40,7 +40,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DatasourceDataGridItems<E extends Entity<K>, K>
+public class DatasourceDataGridItems<E extends Entity, K>
         implements EntityDataGridItems<E>, AggregatableDataGridItems<E>, DatasourceDataUnit {
 
     protected CollectionDatasource.Indexed<E, K> datasource;
@@ -130,7 +130,7 @@ public class DatasourceDataGridItems<E extends Entity<K>, K>
     @Override
     public int indexOfItem(E item) {
         Preconditions.checkNotNullArgument(item);
-        return datasource.indexOfId(EntityValues.getId(item));
+        return datasource.indexOfId((K) EntityValues.getId(item));
     }
 
     @Nullable
@@ -154,7 +154,7 @@ public class DatasourceDataGridItems<E extends Entity<K>, K>
 
     @Override
     public boolean containsItem(E item) {
-        return datasource.containsItem(EntityValues.getId(item));
+        return datasource.containsItem((K) EntityValues.getId(item));
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import io.jmix.core.Entity;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.ListComponent;
@@ -25,7 +26,6 @@ import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
@@ -86,8 +86,8 @@ public class EditAction extends ItemTrackingAction
 
     public interface AfterCommitHandler {
         /**
-        * @param entity    new committed entity instance
-        */
+         * @param entity new committed entity instance
+         */
         void handle(Entity entity);
     }
 
@@ -101,7 +101,8 @@ public class EditAction extends ItemTrackingAction
 
     /**
      * Creates an action with default id, opening the edit screen in THIS tab.
-     * @param target    component containing this action
+     *
+     * @param target component containing this action
      */
     public static EditAction create(ListComponent target) {
         return AppBeans.getPrototype("cuba_EditAction", target);
@@ -109,8 +110,9 @@ public class EditAction extends ItemTrackingAction
 
     /**
      * Creates an action with default id.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
      */
     public static EditAction create(ListComponent target, OpenType openType) {
         return AppBeans.getPrototype("cuba_EditAction", target, openType);
@@ -118,9 +120,10 @@ public class EditAction extends ItemTrackingAction
 
     /**
      * Creates an action with the given id.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
-     * @param id        action name
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
+     * @param id       action name
      */
     public static EditAction create(ListComponent target, OpenType openType, String id) {
         return AppBeans.getPrototype("cuba_EditAction", target, openType, id);
@@ -128,7 +131,8 @@ public class EditAction extends ItemTrackingAction
 
     /**
      * The simplest constructor. The action has default name and opens the editor screen in THIS tab.
-     * @param target    component containing this action
+     *
+     * @param target component containing this action
      */
     public EditAction(ListComponent target) {
         this(target, OpenType.THIS_TAB, ACTION_ID);
@@ -136,8 +140,9 @@ public class EditAction extends ItemTrackingAction
 
     /**
      * Constructor that allows to specify how the editor screen opens. The action has default name.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
      */
     public EditAction(ListComponent target, OpenType openType) {
         this(target, openType, ACTION_ID);
@@ -145,9 +150,10 @@ public class EditAction extends ItemTrackingAction
 
     /**
      * Constructor that allows to specify the action name and how the editor screen opens.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
-     * @param id        action name
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
+     * @param id       action name
      */
     public EditAction(ListComponent target, OpenType openType, String id) {
         super(id);
@@ -252,7 +258,7 @@ public class EditAction extends ItemTrackingAction
                     if (Window.COMMIT_ACTION_ID.equals(actionId)) {
                         target.getDatasource().refresh();
                     }
-                    if (target instanceof Component.Focusable){
+                    if (target instanceof Component.Focusable) {
                         ((Component.Focusable) target).focus();
                     }
 
@@ -290,7 +296,7 @@ public class EditAction extends ItemTrackingAction
         if (editorCloseListener == null) {
             window.addCloseListener(actionId -> {
                 // move focus to owner
-                if (target instanceof Component.Focusable){
+                if (target instanceof Component.Focusable) {
                     ((Component.Focusable) target).focus();
                 }
 
@@ -298,7 +304,7 @@ public class EditAction extends ItemTrackingAction
                     Entity editedItem = window.getItem();
                     if (editedItem != null) {
                         if (parentDs == null) {
-                            editedItem = AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
+                            editedItem = (Entity) AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
                             //noinspection unchecked
                             datasource.updateItem(editedItem);
                         }
@@ -320,7 +326,7 @@ public class EditAction extends ItemTrackingAction
     }
 
     /**
-     * @return  editor screen open type
+     * @return editor screen open type
      */
     @Override
     public OpenType getOpenType() {
@@ -328,7 +334,7 @@ public class EditAction extends ItemTrackingAction
     }
 
     /**
-     * @param openType  editor screen open type
+     * @param openType editor screen open type
      */
     @Override
     public void setOpenType(OpenType openType) {
@@ -336,7 +342,7 @@ public class EditAction extends ItemTrackingAction
     }
 
     /**
-     * @return  editor screen identifier
+     * @return editor screen identifier
      */
     public String getWindowId() {
         if (windowId != null) {
@@ -349,21 +355,21 @@ public class EditAction extends ItemTrackingAction
     }
 
     /**
-     * @param windowId  editor screen identifier
+     * @param windowId editor screen identifier
      */
     public void setWindowId(String windowId) {
         this.windowId = windowId;
     }
 
     /**
-     * @return  editor screen parameters
+     * @return editor screen parameters
      */
     public Map<String, Object> getWindowParams() {
         return windowParams;
     }
 
     /**
-     * @param windowParams  editor screen parameters
+     * @param windowParams editor screen parameters
      */
     public void setWindowParams(Map<String, Object> windowParams) {
         this.windowParams = windowParams;
@@ -385,14 +391,16 @@ public class EditAction extends ItemTrackingAction
 
     /**
      * Hook invoked after the editor was committed and closed
-     * @param entity    new committed entity instance
+     *
+     * @param entity new committed entity instance
      */
     protected void afterCommit(Entity entity) {
     }
 
     /**
      * Hook invoked always after the editor was closed
-     * @param window    the editor window
+     *
+     * @param window the editor window
      */
     protected void afterWindowClosed(Window window) {
     }

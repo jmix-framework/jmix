@@ -17,8 +17,6 @@
 
 package com.haulmont.cuba.gui.dynamicattributes;
 
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
@@ -60,6 +58,8 @@ public class DynamicAttributesGuiTools {
     protected ReferenceToEntitySupport referenceToEntitySupport;
     @Inject
     protected DataManager dataManager;
+    @Inject
+    protected FetchPlanRepository fetchPlanRepository;
     @Inject
     protected AttributeValidators attributeValidators;
     @Inject
@@ -117,7 +117,7 @@ public class DynamicAttributesGuiTools {
         FetchPlan fetchPlan = new FetchPlan(metaClass.getJavaClass(), false)
                 .addProperty(metadataTools.getPrimaryKeyName(metaClass));
         LoadContext loadContext = new LoadContext(metaClass)
-                .setView(fetchPlan)
+                .setFetchPlan(fetchPlan)
                 .setLoadDynamicAttributes(true)
                 .setId(EntityValues.getId(entity));
         Entity reloadedEntity = dataManager.load(loadContext);
@@ -233,7 +233,8 @@ public class DynamicAttributesGuiTools {
         if (attribute.getDefaultValue() != null) {
             if (attribute.getDataType() == AttributeType.ENTITY) {
                 MetaClass entityMetaClass = metadata.getClassNN(attribute.getJavaType());
-                LoadContext<Entity> lc = new LoadContext<>(entityMetaClass).setFetchPlan(FetchPlan.MINIMAL);
+                LoadContext<Entity> lc = new LoadContext<>(entityMetaClass).setFetchPlan(
+                        fetchPlanRepository.getFetchPlan(entityMetaClass, FetchPlan.MINIMAL));
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(entityMetaClass);
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", entityMetaClass.getName(), pkName))
                         .setParameter("entityId", attribute.getDefaultValue());

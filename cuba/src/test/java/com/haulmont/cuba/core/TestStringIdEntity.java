@@ -21,7 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity(name = "test$StringIdEntity")
-public class TestStringIdEntity implements io.jmix.core.Entity<String> {
+public class TestStringIdEntity implements io.jmix.core.Entity {
 
     @Id
     @Column(name = "CODE")

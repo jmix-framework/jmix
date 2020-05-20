@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public class DatasourceGroupTableItems<E extends Entity<K>, K>
+public class DatasourceGroupTableItems<E extends Entity, K>
         extends SortableDatasourceTableItems<E, K>
         implements GroupTableItems<E> {
 

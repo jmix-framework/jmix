@@ -98,13 +98,13 @@ public class TestEntityChangedEventListener implements
     }
 
     @EventListener
-    void beforeCommit(EntityChangedEvent<Order, UUID> event) {
+    void beforeCommit(EntityChangedEvent<Order> event) {
         allEvents.add(new EventInfo("EntityChangedEvent: beforeCommit, " + event.getType(), event));
         entityChangedEvents.add(new Info(event, isCommitted(event.getEntityId())));
     }
 
     @TransactionalEventListener
-    void afterCommit(EntityChangedEvent<Order, UUID> event) {
+    void afterCommit(EntityChangedEvent<Order> event) {
         allEvents.add(new EventInfo("EntityChangedEvent: afterCommit, " + event.getType(), event));
         entityChangedEvents.add(new Info(event, isCommitted(event.getEntityId())));
     }
@@ -159,7 +159,7 @@ public class TestEntityChangedEventListener implements
         allEvents.add(new EventInfo("BeforeUpdateEntityListener", entity));
     }
 
-    private boolean isCommitted(Id<Order, UUID> entityId) {
+    private boolean isCommitted(Id<Order> entityId) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Boolean> future = executor.submit(() -> {
             JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());

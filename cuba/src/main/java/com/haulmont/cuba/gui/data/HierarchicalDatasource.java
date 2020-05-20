@@ -28,7 +28,7 @@ import java.util.Collection;
  * @deprecated Use {@link io.jmix.ui.model.CollectionContainer} APIs instead.
  */
 @Deprecated
-public interface HierarchicalDatasource<T extends Entity<K>, K> extends CollectionDatasource<T, K> {
+public interface HierarchicalDatasource<T extends Entity, K> extends CollectionDatasource<T, K> {
 
     /** Property of entity which forms the hierarchy */
     String getHierarchyPropertyName();

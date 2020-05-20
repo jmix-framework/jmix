@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.core;
 
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
-import io.jmix.core.*;
-import io.jmix.core.Entity;
-import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.*;
+import io.jmix.core.commons.util.Preconditions;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -70,7 +70,7 @@ public interface TransactionalDataManager {
      *
      * @param entityClass class of entity that needs to be loaded
      */
-    <E extends Entity<K>, K> FluentLoader<E, K> load(Class<E> entityClass);
+    <E extends Entity> FluentLoader<E> load(Class<E> entityClass);
 
     /**
      * Entry point to the fluent API for loading entities.
@@ -82,7 +82,7 @@ public interface TransactionalDataManager {
      *
      * @param entityId {@link Id} of entity that needs to be loaded
      */
-    <E extends Entity<K>, K> FluentLoader.ById<E, K> load(Id<E, K> entityId);
+    <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId);
 
     /**
      * Entry point to the fluent API for loading scalar values.
@@ -198,7 +198,7 @@ public interface TransactionalDataManager {
      *
      * @param entityId entity id
      */
-    default <T extends Entity<K>, K> void remove(Id<T, K> entityId) {
+    default <T extends Entity> void remove(Id<T> entityId) {
         remove(getReference(entityId));
     }
 
@@ -227,7 +227,7 @@ public interface TransactionalDataManager {
      * @param entityClass entity class
      * @param id          id of an existing object
      */
-    <T extends Entity<K>, K> T getReference(Class<T> entityClass, K id);
+    <T extends Entity, K> T getReference(Class<T> entityClass, K id);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -235,8 +235,9 @@ public interface TransactionalDataManager {
      * @param entityId id of an existing object
      * @see #getReference(Class, Object)
      */
-    default <T extends Entity<K>, K> T getReference(Id<T, K> entityId) {
+    default <T extends Entity> T getReference(Id<T> entityId) {
         Preconditions.checkNotNullArgument(entityId, "id is null");
+        //noinspection unchecked
         return getReference(entityId.getEntityClass(), entityId.getValue());
     }
 

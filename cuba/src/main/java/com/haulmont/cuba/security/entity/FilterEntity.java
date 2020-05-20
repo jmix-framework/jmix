@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.UUID;
 
 /**
  * A filter component settings.

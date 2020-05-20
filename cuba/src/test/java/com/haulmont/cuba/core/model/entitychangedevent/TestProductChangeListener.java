@@ -39,7 +39,7 @@ public class TestProductChangeListener {
     private DataManager dm;
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    void beforeCommit(EntityChangedEvent<EceTestProduct, UUID> event) {
+    void beforeCommit(EntityChangedEvent<EceTestProduct> event) {
         if (event.getType() == EntityChangedEvent.Type.DELETED)
             return;
 

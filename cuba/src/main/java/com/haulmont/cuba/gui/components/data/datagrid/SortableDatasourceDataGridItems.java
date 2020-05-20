@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.components.data.DataGridItems;
 
 
-public class SortableDatasourceDataGridItems<E extends Entity<K>, K>
+public class SortableDatasourceDataGridItems<E extends Entity, K>
         extends DatasourceDataGridItems<E, K>
         implements DataGridItems.Sortable<E> {
 

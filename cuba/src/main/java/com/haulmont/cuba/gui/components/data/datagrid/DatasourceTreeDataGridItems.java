@@ -18,8 +18,8 @@ package com.haulmont.cuba.gui.components.data.datagrid;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
-import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.Entity;
+import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.components.data.TreeDataGridItems;
 
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-public class DatasourceTreeDataGridItems<E extends Entity<K>, K>
+public class DatasourceTreeDataGridItems<E extends Entity, K>
         extends SortableDatasourceDataGridItems<E, K>
         implements TreeDataGridItems<E> {
 
@@ -50,7 +50,7 @@ public class DatasourceTreeDataGridItems<E extends Entity<K>, K>
     public Stream<E> getChildren(E item) {
         Collection<K> itemIds = item == null
                 ? getHierarchicalDatasource().getRootItemIds()
-                : getHierarchicalDatasource().getChildren(EntityValues.getId(item));
+                : getHierarchicalDatasource().getChildren((K) EntityValues.getId(item));
 
         return itemIds.stream()
                 .map(id -> datasource.getItem(id));
@@ -58,14 +58,14 @@ public class DatasourceTreeDataGridItems<E extends Entity<K>, K>
 
     @Override
     public boolean hasChildren(E item) {
-        return getHierarchicalDatasource().hasChildren(EntityValues.getId(item));
+        return getHierarchicalDatasource().hasChildren((K) EntityValues.getId(item));
     }
 
     @Nullable
     @Override
     public E getParent(E item) {
         Preconditions.checkNotNullArgument(item);
-        K parentId = getHierarchicalDatasource().getParent(EntityValues.getId(item));
+        K parentId = getHierarchicalDatasource().getParent((K) EntityValues.getId(item));
         return getHierarchicalDatasource().getItem(parentId);
     }
 }

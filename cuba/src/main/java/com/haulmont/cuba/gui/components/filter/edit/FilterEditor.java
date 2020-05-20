@@ -19,7 +19,6 @@ package com.haulmont.cuba.gui.components.filter.edit;
 
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.CommitContext;
-import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
@@ -33,6 +32,8 @@ import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescriptor;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.AppBeans;
+import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.commons.datastruct.Node;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -355,12 +356,14 @@ public class FilterEditor extends AbstractWindow {
     }
 
     protected void checkGlobalDefaultAndCloseEditor() {
-        List<FilterEntity> otherDefaultFilters = dataManager.loadList(LoadContext.create(FilterEntity.class)
-                .setQuery(LoadContext.createQuery("select f from sec$Filter f where f.globalDefault = true and " +
+        List<FilterEntity> otherDefaultFilters = dataManager.load(FilterEntity.class)
+                .fetchPlan(FetchPlan.BASE)
+                .query("select f from sec$Filter f where f.globalDefault = true and " +
                         "f.componentId = :componentId and " +
                         "f.id <> :currentId ")
-                        .setParameter("componentId", filterEntity.getComponentId())
-                        .setParameter("currentId", filterEntity.getId())));
+                .parameter("componentId", filterEntity.getComponentId())
+                .parameter("currentId", filterEntity.getId())
+                .list();
 
         if (!otherDefaultFilters.isEmpty()) {
             String otherFilterNamesStr = otherDefaultFilters.stream()
@@ -373,7 +376,7 @@ public class FilterEditor extends AbstractWindow {
                     new Action[]{
                             new DialogAction(DialogAction.Type.YES, Action.Status.PRIMARY).withHandler(e -> {
                                 otherDefaultFilters.forEach(otherDefaultFilter -> otherDefaultFilter.setGlobalDefault(false));
-                                modifiedGlobalDefaultFilters = dataManager.commit(new CommitContext(otherDefaultFilters));
+                                modifiedGlobalDefaultFilters = dataManager.save(new CommitContext(otherDefaultFilters));
                                 close(COMMIT_ACTION_ID);
                             }),
                             new DialogAction(DialogAction.Type.NO, Action.Status.NORMAL).withHandler(e -> {

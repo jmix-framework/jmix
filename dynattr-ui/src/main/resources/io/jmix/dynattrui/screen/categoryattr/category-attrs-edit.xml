@@ -19,14 +19,17 @@
         caption="msg://editorCaption">
     <data>
         <instance id="categoryAttributeDc"
-                  class="io.jmix.dynattr.impl.model.CategoryAttribute"
-                  view="categoryAttribute.edit">
+                  class="io.jmix.dynattr.impl.model.CategoryAttribute">
+            <fetchPlan extends="_local">
+                <property name="category" fetchPlan="_local"/>
+                <property name="defaultEntity" fetchPlan="_local"/>
+            </fetchPlan>
             <loader id="categoryAttributeDl"/>
             <instance id="configurationDc" property="configuration"/>
         </instance>
         <collection id="targetScreensDc"
                     class="io.jmix.dynattrui.impl.model.ScreenAndComponent"
-                    view="_local">
+                    fetchPlan="_local">
             <loader id="targetScreensDl"/>
         </collection>
     </data>
@@ -49,7 +52,7 @@
                                               height="220px"/>
                         </column>
                     </form>
-                    <form id="optionalAttributeForm" dataContainer="categoryAttributeDc" height="100%" width="400px"
+                    <form id="optionalAttributeForm" dataContainer="categoryAttributeDc" height="100%" width="100%"
                           visible="false">
                         <column width="100%">
                             <checkBox id="lookupField" property="lookup"
@@ -78,7 +81,8 @@
                             </pickerField>
                             <hbox id="enumerationBox" spacing="true" expand="enumerationField"
                                   caption="msg://io.jmix.dynattr.impl.model/CategoryAttribute.enumeration">
-                                <textField id="enumerationField" dataContainer="categoryAttributeDc" property="enumeration" required="true"
+                                <textField id="enumerationField" dataContainer="categoryAttributeDc"
+                                           property="enumeration" required="true"
                                            requiredMessage="msg://enumerationField.required" editable="false"/>
                                 <button id="editEnumerationBtn" caption="msg:///actions.Edit"
                                         align="MIDDLE_RIGHT"/>
@@ -107,13 +111,10 @@
                  margin="true">
                 <form id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
                     <column width="100%">
-                        <!--TODO
-                        <pickerField id="dependsOnAttributesField" property="configuration.dependsOnAttributes">
-                            <actions>
-                                <action id="lookup" type="picker_lookup"/>
-                                <action id="clear" type="picker_clear"/>
-                            </actions>
-                        </pickerField>-->
+                        <tokenList id="dependsOnAttributesField" property="configuration.dependsOnAttributes"
+                                   inline="true">
+                            <lookup lookup="false"/>
+                        </tokenList>
                         <lookupField id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                         <sourceCodeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
                                           showGutter="false"/>
@@ -142,7 +143,7 @@
             </tab>
             <tab id="visibilityTab" caption="msg://visibilityTab.caption" spacing="true" margin="true">
                 <groupTable id="targetScreensTable" dataContainer="targetScreensDc" width="100%" height="250px"
-                       editable="true">
+                            editable="true">
                     <actions>
                         <action id="create" type="create" caption="msg://targetScreensTable.create"/>
                         <action id="remove" type="remove" caption="msg://targetScreensTable.remove"/>

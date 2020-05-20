@@ -21,10 +21,15 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.jmix.core.*;
 import io.jmix.core.entity.HasUuid;
+import io.jmix.core.metamodel.datatypes.Datatype;
+import io.jmix.core.metamodel.datatypes.Datatypes;
+import io.jmix.core.metamodel.datatypes.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeType;
+import io.jmix.dynattr.ConfigurationExclusionStrategy;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.impl.model.Category;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
@@ -45,7 +50,9 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
+import io.jmix.ui.sys.ScreensHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
@@ -137,6 +144,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(DATE_WITHOUT_TIME, "isCollectionField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationBox");
+        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "enumerationField");
+        FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "editEnumerationBtn");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "defaultStringField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "widthField");
         FIELDS_VISIBLE_FOR_TYPES.put(ENUMERATION, "isCollectionField");
@@ -174,6 +183,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected Dialogs dialogs;
     @Inject
     protected Notifications notifications;
+    @Inject
+    protected ScreensHelper screensHelper;
 
     @Inject
     protected CheckBox lookupField;
@@ -196,7 +207,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Inject
     protected LookupField<OptionsLoaderType> optionsLoaderTypeField;
     @Inject
-    protected PickerField<Entity> defaultEntityIdField; // TODO ListEditor
+    protected PickerField<Entity> defaultEntityIdField;
     @Inject
     protected SourceCodeEditor optionsLoaderScriptField;
     @Inject
@@ -213,6 +224,14 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected TabSheet tabSheet;
     @Inject
     protected TextField<String> codeField;
+    @Inject
+    protected TextField<BigDecimal> defaultDecimalField;
+    @Inject
+    protected TextField<BigDecimal> minDecimalField;
+    @Inject
+    protected TextField<BigDecimal> maxDecimalField;
+    @Inject
+    protected TokenList<CategoryAttribute> dependsOnAttributesField;
 
     @Inject
     protected CollectionContainer<ScreenAndComponent> targetScreensDc;
@@ -236,9 +255,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         initTargetScreensTable();
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
-
-        // TODO ListEditor
-        // dependsOnAttributesListEditor.setOptionsList(getAttributesOptions());
+        initDependsOnAttributesField();
 
         setupNumberFormat();
         refreshAttributesUI();
@@ -292,7 +309,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         if (SCREEN_PROPERTY.equals(property)
                 || JOIN_CLAUSE_PROPERTY.equals(property)
                 || WHERE_CLAUSE_PROPERTY.equals(property)) {
-            // todo: dynamic attributes (init picker field)
+            // todo: filter support FilteringLookupAction
             //dynamicAttributesGuiTools.initEntityPickerField(defaultEntityIdField, e.getItem());
         }
     }
@@ -310,7 +327,6 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         }
     }
 
-    // TODO ListEditor
     @Subscribe("editEnumerationBtn")
     protected void onEditEnumerationBtnClick(Button.ClickEvent event) {
         AttributeEnumerationScreen enumerationScreen = screenBuilders.screen(this)
@@ -353,7 +369,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
         MetaClass metaClass = metadata.getClass(entityClass);
 
-        /* TODO filter support
+        /* todo: filter support
         FakeFilterSupport filterSupport = new FakeFilterSupport(this, metaClass);
         Filter fakeFilter = filterSupport.createFakeFilter();
         FilterEntity filterEntity = filterSupport.createFakeFilterEntity(attribute.getFilterXml());
@@ -389,6 +405,14 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         });*/
     }
 
+    @Install(to = "dependsOnAttributesField", subject = "validator")
+    protected void dependsOnAttributesFieldValidator(Collection<CategoryAttribute> categoryAttributes) {
+        if (recalculationScriptField.getValue() != null
+                && CollectionUtils.isEmpty(categoryAttributes)) {
+            throw new ValidationException(messages.getMessage(CategoryAttrsEdit.class, "dependsOnAttributes.validationMsg"));
+        }
+    }
+
     protected void initAttributeForm() {
         defaultBooleanField.setOptionsMap(getBooleanOptions());
         dataTypeField.setOptionsMap(getDataTypeOptions());
@@ -405,21 +429,6 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 messages.getMessage(CategoryAttrsEdit.class, "recalculationScriptHelp")
         ));
 
-        /* TODO ListEditor
-        dependsOnAttributesListEditor = uiComponents.create(ListEditor.NAME);
-        dependsOnAttributesListEditor.setValueSource(new DatasourceValueSource(configurationDs, "dependsOnAttributes"));
-        dependsOnAttributesListEditor.setWidth(fieldWidth);
-        dependsOnAttributesListEditor.setFrame(frame);
-        dependsOnAttributesListEditor.setItemType(ListEditor.ItemType.ENTITY);
-        dependsOnAttributesListEditor.setEntityName("sys$CategoryAttribute");
-        dependsOnAttributesListEditor.addValidator(categoryAttributes -> {
-            if (recalculationScript.getValue() != null && CollectionUtils.isEmpty(categoryAttributes)) {
-                throw new ValidationException(getMessage("dependsOnAttributesValidationMsg"));
-            }
-        });
-
-        calculatedAttrsAndOptionsFieldGroup.getFieldNN("dependsOnAttributes").setComponent(dependsOnAttributesListEditor);*/
-
         whereClauseField.setSuggester((source, text, cursorPosition) -> requestHint(whereClauseField, cursorPosition));
         joinClauseField.setSuggester((source, text, cursorPosition) -> requestHint(joinClauseField, cursorPosition));
     }
@@ -429,12 +438,10 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
         Category category = getEditedEntity().getCategory();
         if (category != null) {
-            MetaClass categorizedEntityMetaClass = metadata.getClass(getEditedEntity().getCategory().getEntityType());
-            Map<String, String> optionsMap = new HashMap<>();
-        /* TODO screensHelper
-        Map<String, String> optionsMap = categorizedEntityMetaClass != null ?
-                new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(), true)) :
-                new HashMap<>();*/
+            MetaClass categorizedEntityMetaClass = metadata.findClass(getEditedEntity().getCategory().getEntityType());
+            Map<String, String> optionsMap = categorizedEntityMetaClass != null ?
+                    new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(), true)) :
+                    new HashMap<>();
 
             targetScreensTable.addGeneratedColumn(
                     "screen",
@@ -507,33 +514,43 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         }
     }
 
-    protected void setupNumberFormat() {
-        /* TODO dynamicAttributesGuiTools
-        Datatype datatype = dynamicAttributesGuiTools.getCustomNumberDatatype(getItem());
-        if (datatype != null) {
-            defaultDecimal.setDatatype(datatype);
-            minDecimal.setDatatype(datatype);
-            maxDecimal.setDatatype(datatype);
+    protected void initDependsOnAttributesField() {
+        dependsOnAttributesField.setOptionsList(getAttributesOptions());
+    }
 
-            defaultDecimal.setValue(defaultDecimal.getValue());
-            minDecimal.setValue(minDecimal.getValue());
-            maxDecimal.setValue(maxDecimal.getValue());
-        }*/
+    protected void setupNumberFormat() {
+        String formatPattern = getEditedEntity().getConfiguration().getNumberFormatPattern();
+        Datatype datatype;
+        if (!Strings.isNullOrEmpty(formatPattern)) {
+            datatype = new AdaptiveNumberDatatype(BigDecimal.class, formatPattern, "", "");
+        } else {
+            datatype = Datatypes.get(BigDecimal.class);
+        }
+
+        defaultDecimalField.setDatatype(datatype);
+        minDecimalField.setDatatype(datatype);
+        maxDecimalField.setDatatype(datatype);
+
+        defaultDecimalField.setValue(defaultDecimalField.getValue());
+        minDecimalField.setValue(minDecimalField.getValue());
+        maxDecimalField.setValue(maxDecimalField.getValue());
     }
 
     protected void refreshAttributesUI() {
         CategoryAttribute categoryAttribute = getEditedEntity();
         CategoryAttributeConfiguration configuration = categoryAttribute.getConfiguration();
 
-        for (Component component : optionalAttributeForm.getOwnComponents()) {
-            component.setVisible(false);
-        }
-
         AttributeType attributeType = dataTypeField.getValue();
         Collection<String> visibleFields = FIELDS_VISIBLE_FOR_TYPES.get(attributeType);
-        for (String componentId : visibleFields) {
-            optionalAttributeForm.getComponentNN(componentId).setVisible(true);
+        for (Component component : optionalAttributeForm.getComponents()) {
+            boolean visible = visibleFields.contains(component.getId());
+            component.setVisible(visible);
+
+            if (!visible && component instanceof HasValue) {
+                ((HasValue) component).clear();
+            }
         }
+
         if (MAIN_TAB_NAME.equals(tabSheet.getSelectedTab().getName()) && !visibleFields.isEmpty()) {
             setDialogWindowWidth(TWO_COLUMNS_WIDTH);
             optionalAttributeForm.setVisible(true);
@@ -546,9 +563,9 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 if (javaClass != null) {
                     defaultEntityIdField.setEditable(true);
                     defaultEntityIdField.setMetaClass(metadata.getClass(javaClass));
-                    // todo: dynamic attributes (init picker field) and screensHelper
+                    // todo: filter support FilteringLookupAction
                     //dynamicAttributesGuiTools.initEntityPickerField(defaultEntityId, attribute);
-                    //screenField.setOptionsMap(screensHelper.getAvailableBrowserScreens(entityClass));
+                    screenField.setOptionsMap(screensHelper.getAvailableBrowserScreens(javaClass));
                     refreshDefaultEntityIdFieldValue();
                 }
             } else {
@@ -817,7 +834,6 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         dialogWindow.setDialogWidth(width);
     }
 
-    /* TODO validationEvent
     @Subscribe
     protected void onValidation(ValidationEvent event) {
         ValidationErrors validationErrors = new ValidationErrors();
@@ -851,42 +867,39 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             validationErrors.addAll(errors);
         }
 
-        CollectionDatasource<CategoryAttribute, UUID> parent
-                = (CollectionDatasource<CategoryAttribute, UUID>) ((DatasourceImplementation) attributeDs).getParent();
-        if (parent != null) {
-            CategoryAttribute categoryAttribute = getItem();
-            for (UUID id : parent.getItemIds()) {
-                CategoryAttribute ca = parent.getItemNN(id);
-                if (ca.getName().equals(categoryAttribute.getName())
-                        && (!ca.equals(categoryAttribute))) {
-                    errors.add(getMessage("uniqueName"));
-                    return;
-                } else if (ca.getCode() != null && ca.getCode().equals(categoryAttribute.getCode())
-                        && (!ca.equals(categoryAttribute))) {
-                    errors.add(getMessage("uniqueCode"));
-                    return;
+        Category category = getEditedEntity().getCategory();
+        if (category != null && category.getCategoryAttrs() != null) {
+            for (CategoryAttribute categoryAttribute : category.getCategoryAttrs()) {
+                if (!categoryAttribute.equals(attribute)) {
+                    if (categoryAttribute.getName().equals(attribute.getName())) {
+                        validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "uniqueName"));
+                        return;
+                    } else if (categoryAttribute.getCode().equals(attribute.getCode())) {
+                        validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "uniqueCode"));
+                        return;
+                    }
                 }
             }
         }
 
         event.addErrors(validationErrors);
-    }*/
+    }
 
     protected ValidationErrors validateNumbers(AttributeType type, Number minNumber, Number maxNumber, Number defaultNumber) {
         ValidationErrors validationErrors = new ValidationErrors();
         if (minNumber != null
                 && maxNumber != null
                 && compareNumbers(type, minNumber, maxNumber) > 0) {
-            validationErrors.add(messages.getMessage("minGreaterThanMax"));
+            validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "minGreaterThanMax"));
         } else if (defaultNumber != null) {
             if (minNumber != null
                     && compareNumbers(type, minNumber, defaultNumber) > 0) {
-                validationErrors.add("defaultLessThanMin");
+                validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultLessThanMin"));
             }
 
             if (maxNumber != null
                     && compareNumbers(type, maxNumber, defaultNumber) < 0) {
-                validationErrors.add("defaultGreaterThanMax");
+                validationErrors.add(messages.getMessage(CategoryAttrsEdit.class, "defaultGreaterThanMax"));
             }
         }
 
@@ -941,7 +954,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
     protected void preCommitConfiguration() {
         if (getScreenData().getDataContext().isModified(getEditedEntity().getCategory())) {
-            getEditedEntity().setAttributeConfigurationJson(new Gson().toJson(configurationDc.getItemOrNull()));
+            Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
+            getEditedEntity().setAttributeConfigurationJson(gson.toJson(configurationDc.getItemOrNull()));
         }
     }
 }

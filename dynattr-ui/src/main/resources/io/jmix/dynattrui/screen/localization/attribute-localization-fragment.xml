@@ -19,7 +19,7 @@
     <data>
         <collection id="localizedValuesDc"
                     class="io.jmix.dynattrui.impl.model.AttributeLocalizedValue"
-                    view="_local">
+                    fetchPlan="_local">
             <loader id="localizedValuesDl"/>
         </collection>
     </data>

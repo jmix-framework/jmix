@@ -17,6 +17,7 @@
 package io.jmix.dynattrui.screen.location;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.SerializablePredicate;
@@ -32,6 +33,7 @@ import com.vaadin.ui.dnd.DragSourceExtension;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.dynattr.ConfigurationExclusionStrategy;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.dynattr.impl.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrui.DynAttrUiProperties;
@@ -124,7 +126,8 @@ public class AttributeLocationFragment extends ScreenFragment {
                     if (configuration != null) {
                         configuration.setColumnNumber(dataContainers.indexOf(currentList));
                         configuration.setRowNumber(currentList.indexOf(attribute));
-                        attribute.setAttributeConfigurationJson(new Gson().toJson(configuration));
+                        Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
+                        attribute.setAttributeConfigurationJson(gson.toJson(configuration));
                     }
                 }
             }
@@ -136,7 +139,8 @@ public class AttributeLocationFragment extends ScreenFragment {
                 if (configuration != null) {
                     configuration.setColumnNumber(null);
                     configuration.setRowNumber(null);
-                    attribute.setAttributeConfigurationJson(new Gson().toJson(attribute.getConfiguration()));
+                    Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
+                    attribute.setAttributeConfigurationJson(gson.toJson(attribute.getConfiguration()));
                 }
             }
         }

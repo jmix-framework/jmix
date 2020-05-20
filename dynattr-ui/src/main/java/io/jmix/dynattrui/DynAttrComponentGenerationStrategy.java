@@ -28,6 +28,7 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
+import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.dynattrui.impl.AttributeOptionsLoader;
 import io.jmix.dynattrui.impl.AttributeValidators;
 import io.jmix.ui.UiComponents;
@@ -44,6 +45,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static io.jmix.dynattr.AttributeType.*;
 
@@ -281,7 +283,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             pickerField.addClearAction();
             pickerField.addLookupAction();
 
-            //todo: dynamic attributes (init picker field)
+            // todo: filter support FilteringLookupAction
             //getDynamicAttributesGuiTools().initEntityPickerField(pickerField, attributeDefinition);
 
             setValueSource(pickerField, context);
@@ -394,27 +396,25 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             //noinspection unchecked
             lookupField.setOptions(new ListOptions(options));
         });
-//todo: dependent attributes
 
-//        List<CategoryAttribute> dependsOnAttributes = categoryAttribute.getConfiguration().getDependsOnAttributes();
-//        if (dependsOnAttributes != null && !dependsOnAttributes.isEmpty()) {
-//            List<String> dependsOnAttributesCodes = dependsOnAttributes.stream()
-//                    .map(a -> DynamicAttributesUtils.encodeAttributeCode(a.getCode()))
-//                    .collect(Collectors.toList());
-//
-//            container.addItemPropertyChangeListener(e -> {
-//                if (dependsOnAttributesCodes.contains(e.getProperty())) {
-//                    List options = dynamicAttributesTools.loadOptions((BaseGenericIdEntity) e.getItem(), categoryAttribute);
-//                    //noinspection unchecked
-//                    lookupField.setOptions(new ListOptions(options));
-//
-//                    if (!options.contains(lookupField.getValue())) {
-//                        //noinspection unchecked
-//                        lookupField.setValue(null);
-//                    }
-//                }
-//            });
-//        }
+        List<CategoryAttribute> dependsOnAttributes = attribute.getConfiguration().getDependsOnAttributes();
+        if (dependsOnAttributes != null && !dependsOnAttributes.isEmpty()) {
+            List<String> dependsOnAttributesCodes = dependsOnAttributes.stream()
+                    .map(a -> DynAttrUtils.getPropertyFromAttributeCode(a.getCode()))
+                    .collect(Collectors.toList());
+
+            container.addItemPropertyChangeListener(e -> {
+                if (dependsOnAttributesCodes.contains(e.getProperty())) {
+                    List options = optionsLoader.loadOptions(e.getItem(), attribute);
+                    //noinspection unchecked
+                    lookupField.setOptions(new ListOptions(options));
+                    if (!options.contains(lookupField.getValue())) {
+                        //noinspection unchecked
+                        lookupField.setValue(null);
+                    }
+                }
+            });
+        }
     }
 
     @Override

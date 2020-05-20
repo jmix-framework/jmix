@@ -32,7 +32,6 @@ import org.springframework.scripting.support.StandardScriptEvaluator;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDynAttrConfiguration.class, JmixUiConfiguration.class})
-@PropertySource(name = "io.jmix.dynattrui", value = "classpath:/io/jmix/dynattrui/module.properties")
 public class JmixDynAttrUiConfiguration {
 
     @Bean

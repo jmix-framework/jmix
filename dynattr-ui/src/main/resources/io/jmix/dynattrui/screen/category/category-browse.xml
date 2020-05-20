@@ -16,26 +16,26 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:c="http://jmix.io/schema/ui/jpql-condition"
         caption="msg://browseCaption">
     <data readOnly="true">
         <collection id="categoriesDc"
                     class="io.jmix.dynattr.impl.model.Category"
-                    view="_local">
+                    fetchPlan="_local">
             <loader id="categoriesDl">
                 <query>
                     <![CDATA[select c from sys$Category c where c.special is null order by c.createTs]]>
                 </query>
             </loader>
         </collection>
-        <collection id="attributesDc"
-                    class="io.jmix.dynattr.impl.model.CategoryAttribute"
-                    view="_local">
-            <loader id="attributesDl">
-                <query>
-                    <![CDATA[select c from sys$CategoryAttribute c where c.category = :container_categoriesDc]]>
-                </query>
-            </loader>
-        </collection>
+        <instance id="categoryDc"
+                  class="io.jmix.dynattr.impl.model.Category">
+            <fetchPlan extends="_local">
+                <property name="categoryAttrs" fetchPlan="_local"/>
+            </fetchPlan>
+            <loader id="categoryDl"/>
+            <collection id="attributesDc" property="categoryAttrs"/>
+        </instance>
     </data>
 
     <dialogMode height="600"

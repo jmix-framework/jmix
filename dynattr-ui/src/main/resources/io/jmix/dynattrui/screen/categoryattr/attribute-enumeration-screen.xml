@@ -20,7 +20,7 @@
     <data>
         <collection id="localizedEnumValuesDc"
                     class="io.jmix.dynattrui.impl.model.AttributeLocalizedEnumValue"
-                    view="_local">
+                    fetchPlan="_local">
             <loader id="localizedEnumValuesDl"/>
         </collection>
     </data>
@@ -36,7 +36,7 @@
                     </actions>
                     <columns>
                         <column id="value" property="value" editable="true"/>
-                        <column id="removeItem" editable="false" width="40px">
+                        <column id="removeItem" editable="false" maximumWidth="48px">
                             <renderer type="io.jmix.ui.components.DataGrid$ComponentRenderer"/>
                         </column>
                     </columns>

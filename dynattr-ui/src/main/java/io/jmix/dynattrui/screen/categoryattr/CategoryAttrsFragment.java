@@ -23,19 +23,28 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.actions.Action;
+import io.jmix.ui.components.Button;
+import io.jmix.ui.components.GroupTable;
 import io.jmix.ui.components.Label;
+import io.jmix.ui.components.Table;
+import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.BooleanUtils;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Set;
 
 @UiController("sys$CategoryAttribute.fragment")
 @UiDescriptor("category-attrs-fragment.xml")
@@ -57,6 +66,17 @@ public class CategoryAttrsFragment extends ScreenFragment {
     protected FetchPlanRepository fetchPlanRepository;
     @Inject
     protected UiComponents uiComponents;
+    @Inject
+    protected MessageTools messageTools;
+
+    @Inject
+    protected CollectionPropertyContainer<CategoryAttribute> categoryAttributesDc;
+    @Inject
+    protected GroupTable<CategoryAttribute> categoryAttrsTable;
+    @Inject
+    protected Button moveUpBtn;
+    @Inject
+    protected Button moveDownBtn;
 
     @Install(to = "categoryAttrsTable.defaultValue", subject = "columnGenerator")
     protected Label<String> categoryAttrsTableDefaultValueColumnGenerator(CategoryAttribute attribute) {
@@ -141,5 +161,112 @@ public class CategoryAttrsFragment extends ScreenFragment {
         Label<String> defaultValueLabel = uiComponents.create(Label.TYPE_STRING);
         defaultValueLabel.setValue(defaultValue);
         return defaultValueLabel;
+    }
+
+    @Install(to = "categoryAttrsTable.dataType", subject = "valueProvider")
+    protected String categoryAttrsTableDataTypeValueProvider(CategoryAttribute categoryAttribute) {
+        String dataType;
+        if (BooleanUtils.isTrue(categoryAttribute.getIsEntity())) {
+            Class javaType = categoryAttribute.getJavaType();
+            if (javaType != null) {
+                MetaClass metaClass = metadata.getClass(javaType);
+                dataType = messageTools.getEntityCaption(metaClass);
+            } else {
+                dataType = messages.getMessage("classNotFound");
+            }
+        } else {
+            String key = AttributeType.class.getSimpleName() + "." + categoryAttribute.getDataType().toString();
+            dataType = messages.getMessage(AttributeType.class, key);
+        }
+
+        return dataType;
+    }
+
+    @Install(to = "categoryAttrsTable.create", subject = "afterCommitHandler")
+    protected void categoryAttrsTableCreateAfterCommitHandler(CategoryAttribute categoryAttribute) {
+        int orderNo = getMaxOrderNo(categoryAttribute) + 1;
+        categoryAttributesDc.getItem(categoryAttribute.getId()).setOrderNo(orderNo);
+    }
+
+    @Subscribe("categoryAttrsTable")
+    protected void onCategoryAttrsTableSelection(Table.SelectionEvent<CategoryAttribute> event) {
+        Set<CategoryAttribute> selected = categoryAttrsTable.getSelected();
+        if (selected.isEmpty()) {
+            refreshMoveButtonsEnabled(null);
+        } else {
+            refreshMoveButtonsEnabled(selected.iterator().next());
+        }
+    }
+
+    @Subscribe("categoryAttrsTable.moveUp")
+    protected void onCategoryAttrsTableMoveUp(Action.ActionPerformedEvent event) {
+        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelected();
+        if (selectedItem.isEmpty()) {
+            return;
+        }
+
+        CategoryAttribute selectedAttribute = selectedItem.iterator().next();
+        Integer selectedAttributeOrderNo = selectedAttribute.getOrderNo();
+
+        CategoryAttribute prevAttribute = getPrevAttribute(selectedAttributeOrderNo);
+        if (prevAttribute != null) {
+            selectedAttribute.setOrderNo(prevAttribute.getOrderNo());
+            prevAttribute.setOrderNo(selectedAttributeOrderNo);
+            sortCategoryAttrsTableByOrderNo();
+            refreshMoveButtonsEnabled(selectedAttribute);
+        }
+    }
+
+    @Subscribe("categoryAttrsTable.moveDown")
+    protected void onCategoryAttrsTableMoveDown(Action.ActionPerformedEvent event) {
+        Set<CategoryAttribute> selectedItem = categoryAttrsTable.getSelected();
+        if (selectedItem.isEmpty()) {
+            return;
+        }
+
+        CategoryAttribute selectedAttribute = selectedItem.iterator().next();
+        Integer selectedAttributeOrderNo = selectedAttribute.getOrderNo();
+
+        CategoryAttribute nextAttribute = getNextAttribute(selectedAttributeOrderNo);
+        if (nextAttribute != null) {
+            selectedAttribute.setOrderNo(nextAttribute.getOrderNo());
+            nextAttribute.setOrderNo(selectedAttributeOrderNo);
+            sortCategoryAttrsTableByOrderNo();
+            refreshMoveButtonsEnabled(selectedAttribute);
+        }
+    }
+
+    protected int getMaxOrderNo(CategoryAttribute categoryAttribute) {
+        return categoryAttributesDc.getItems()
+                .stream()
+                .filter(attribute -> !attribute.equals(categoryAttribute))
+                .mapToInt(CategoryAttribute::getOrderNo)
+                .max()
+                .orElse(0);
+    }
+
+    protected CategoryAttribute getPrevAttribute(Integer orderNo) {
+        return categoryAttributesDc.getMutableItems()
+                .stream()
+                .filter(categoryAttribute -> orderNo.compareTo(categoryAttribute.getOrderNo()) > 0)
+                .max(Comparator.comparing(CategoryAttribute::getOrderNo))
+                .orElse(null);
+    }
+
+    protected CategoryAttribute getNextAttribute(Integer orderNo) {
+        return categoryAttributesDc.getMutableItems()
+                .stream()
+                .filter(categoryAttribute -> orderNo.compareTo(categoryAttribute.getOrderNo()) < 0)
+                .min(Comparator.comparing(CategoryAttribute::getOrderNo))
+                .orElse(null);
+    }
+
+    protected void sortCategoryAttrsTableByOrderNo() {
+        categoryAttributesDc.getSorter().sort(Sort.by(Sort.Direction.ASC, "orderNo"));
+    }
+
+    protected void refreshMoveButtonsEnabled(@Nullable CategoryAttribute categoryAttribute) {
+        moveUpBtn.setEnabled(categoryAttribute != null && getPrevAttribute(categoryAttribute.getOrderNo()) != null);
+        moveDownBtn.setEnabled(categoryAttribute != null && getNextAttribute(categoryAttribute.getOrderNo()) != null);
     }
 }

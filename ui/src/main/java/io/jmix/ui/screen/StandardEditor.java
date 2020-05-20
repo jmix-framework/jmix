@@ -24,6 +24,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.commons.events.Subscription;
 import io.jmix.core.commons.events.TriggerOnce;
 import io.jmix.core.Entity;
+import io.jmix.core.commons.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.UiProperties;
@@ -515,6 +516,10 @@ public abstract class StandardEditor<T extends Entity> extends Screen
             ValidationErrors validationErrors = screenValidation.validateCrossFieldRules(this, getEditedEntity());
 
             errors.addAll(validationErrors);
+
+            ValidationEvent validateEvent = new ValidationEvent(this);
+            fireEvent(ValidationEvent.class, validateEvent);
+            errors.addAll(validateEvent.getErrors());
         }
     }
 
@@ -586,6 +591,16 @@ public abstract class StandardEditor<T extends Entity> extends Screen
      */
     protected Subscription addAfterCommitChangesListener(Consumer<AfterCommitChangesEvent> listener) {
         return getEventHub().subscribe(AfterCommitChangesEvent.class, listener);
+    }
+
+    /**
+     * Adds a listener to {@link ValidationEvent}.
+     *
+     * @param listener listener
+     * @return subscription
+     */
+    protected Subscription addValidationEventListener(Consumer<ValidationEvent> listener) {
+        return getEventHub().subscribe(ValidationEvent.class, listener);
     }
 
     /**
@@ -774,6 +789,42 @@ public abstract class StandardEditor<T extends Entity> extends Screen
          */
         public DataContext getDataContext() {
             return getSource().getScreenData().getDataContext();
+        }
+    }
+
+    /**
+     * Event sent when screen is validated from {@link #validateAdditionalRules(ValidationErrors)} call.
+     * <br>
+     * Use this event listener to perform additional screen validation, for example:
+     * <pre>
+     *     &#64;Subscribe
+     *     protected void onScreenValidation(ValidationEvent event) {
+     *         ValidationErrors errors = performCustomValidation();
+     *         event.addErrors(errors);
+     *     }
+     * </pre>
+     */
+    public static class ValidationEvent extends EventObject {
+
+        ValidationErrors errors = new ValidationErrors();
+
+        public ValidationEvent(Screen source) {
+            super(source);
+        }
+
+        @Override
+        public Screen getSource() {
+            return (Screen) super.getSource();
+        }
+
+        public void addErrors(ValidationErrors errors) {
+            Preconditions.checkNotNullArgument(errors, "Validation errors cannot be null");
+
+            this.errors.addAll(errors);
+        }
+
+        public ValidationErrors getErrors() {
+            return errors;
         }
     }
 }

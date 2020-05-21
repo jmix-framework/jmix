@@ -51,22 +51,22 @@ class DatatypeTest extends CoreTestSpecification {
 
         expect:
 
-        datatypes.get(String.class).class == StringDatatype
-        datatypes.get(Boolean.class).class == BooleanDatatype
-        datatypes.get(Integer.class).class == IntegerDatatype
-        datatypes.get(Long.class).class == LongDatatype
-        datatypes.get(Double.class).class == DoubleDatatype
-        datatypes.get(BigDecimal.class).class == BigDecimalDatatype
-        datatypes.get(java.util.Date.class).class == DateTimeDatatype
-        datatypes.get(java.sql.Date.class).class == DateDatatype
-        datatypes.get(java.sql.Time.class).class == TimeDatatype
-        datatypes.get(UUID.class).class == UuidDatatype
-        datatypes.get(byte[].class).class == ByteArrayDatatype
-        datatypes.get(LocalDate.class).class == LocalDateDatatype
-        datatypes.get(LocalTime.class).class == LocalTimeDatatype
-        datatypes.get(LocalDateTime.class).class == LocalDateTimeDatatype
-        datatypes.get(OffsetDateTime.class).class == OffsetDateTimeDatatype
-        datatypes.get(OffsetTime.class).class == OffsetTimeDatatype
+        datatypes.find(String.class).class == StringDatatype
+        datatypes.find(Boolean.class).class == BooleanDatatype
+        datatypes.find(Integer.class).class == IntegerDatatype
+        datatypes.find(Long.class).class == LongDatatype
+        datatypes.find(Double.class).class == DoubleDatatype
+        datatypes.find(BigDecimal.class).class == BigDecimalDatatype
+        datatypes.find(java.util.Date.class).class == DateTimeDatatype
+        datatypes.find(java.sql.Date.class).class == DateDatatype
+        datatypes.find(java.sql.Time.class).class == TimeDatatype
+        datatypes.find(UUID.class).class == UuidDatatype
+        datatypes.find(byte[].class).class == ByteArrayDatatype
+        datatypes.find(LocalDate.class).class == LocalDateDatatype
+        datatypes.find(LocalTime.class).class == LocalTimeDatatype
+        datatypes.find(LocalDateTime.class).class == LocalDateTimeDatatype
+        datatypes.find(OffsetDateTime.class).class == OffsetDateTimeDatatype
+        datatypes.find(OffsetTime.class).class == OffsetTimeDatatype
     }
 
     def "not supported types"() {
@@ -75,7 +75,7 @@ class DatatypeTest extends CoreTestSpecification {
 
         expect:
 
-        datatypes.get(Float.class) == null
+        datatypes.find(Float.class) == null
     }
 
     def "adaptive BigDecimal datatype"() {

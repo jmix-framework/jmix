@@ -84,14 +84,10 @@ public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSou
             MetaPropertyPath masterDsMpp = metadataTools.resolveMetaPropertyPath(masterDsEntityClass,
                     nestedDsProperty.getName());
 
-            if (masterDsMpp != null) {
-                if (masterDsMpp.getMetaProperty() != nestedDsProperty) {
-                    log.debug("Master Datasource property doesn't match with specified nested datasource property");
-                } else {
-                    metaPropertyPath = masterDsMpp;
-                }
+            if (masterDsMpp.getMetaProperty() != nestedDsProperty) {
+                log.debug("Master Datasource property doesn't match with specified nested datasource property");
             } else {
-                log.debug("Unable to resolve '{}' for '{}' entity", nestedDsProperty.getName(), masterDsEntityClass);
+                metaPropertyPath = masterDsMpp;
             }
         }
 

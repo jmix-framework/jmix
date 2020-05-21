@@ -187,7 +187,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
         textField.addValidator(positiveValidator)
-        textField.setDatatype(datatypeRegistry.get(Integer))
+        textField.setDatatype(datatypeRegistry.find(Integer))
 
         when: "invalid value"
         textField.setValue(invalidValue)
@@ -224,7 +224,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
         textField.addValidator(positiveOrZeroValidator)
-        textField.setDatatype(datatypeRegistry.get(BigDecimal))
+        textField.setDatatype(datatypeRegistry.find(BigDecimal))
 
         when: "invalid value"
         textField.setValue(invalidValue)
@@ -257,7 +257,7 @@ class ValidatorsTest extends UiScreenSpec {
         def pastValidator = (PastValidator) applicationContext.getBean(PastValidator.NAME)
 
         def dateField = (DateField) validatorsScreen.getWindow().getComponent("dateField")
-        dateField.setDatatype(datatypeRegistry.get(DateTimeDatatype))
+        dateField.setDatatype(datatypeRegistry.find(DateTimeDatatype))
         dateField.addValidator(pastValidator)
 
         when: "invalid value"
@@ -315,7 +315,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def timeField = (TimeField) validatorsScreen.getWindow().getComponent("timeField")
         timeField.addValidator(pastOrPresentValidator)
-        timeField.setDatatype(datatypeRegistry.get(LocalTimeDatatype))
+        timeField.setDatatype(datatypeRegistry.find(LocalTimeDatatype))
 
         when: "invalid value"
         def currentTime = (LocalTime) timeSource.now().toLocalTime()
@@ -490,7 +490,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def negativeValidator = (NegativeValidator) applicationContext.getBean(NegativeValidator.NAME)
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Long))
+        textField.setDatatype(datatypeRegistry.find(Long))
         textField.addValidator(negativeValidator)
 
         def invalidValue = 0
@@ -527,7 +527,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def negativeOrZeroValidator = (NegativeOrZeroValidator) applicationContext.getBean(NegativeOrZeroValidator.NAME)
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Long))
+        textField.setDatatype(datatypeRegistry.find(Long))
         textField.addValidator(negativeOrZeroValidator)
 
         def invalidValue = 1
@@ -564,7 +564,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def minValidator = (MinValidator) applicationContext.getBean(MinValidator.NAME, 100)
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Integer))
+        textField.setDatatype(datatypeRegistry.find(Integer))
         textField.addValidator(minValidator)
 
         def invalidValue = 99
@@ -601,7 +601,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def maxValidator = (MaxValidator) applicationContext.getBean(MaxValidator.NAME, 100)
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Integer))
+        textField.setDatatype(datatypeRegistry.find(Integer))
         textField.addValidator(maxValidator)
 
         def invalidValue = 101
@@ -640,7 +640,7 @@ class ValidatorsTest extends UiScreenSpec {
         futureValidator.setCheckSeconds(true)
 
         def dateField = (DateField) validatorsScreen.getWindow().getComponent("dateField")
-        dateField.setDatatype(datatypeRegistry.get(OffsetDateTime))
+        dateField.setDatatype(datatypeRegistry.find(OffsetDateTime))
         dateField.addValidator(futureValidator)
 
         when: "invalid value"
@@ -677,7 +677,7 @@ class ValidatorsTest extends UiScreenSpec {
         futureOrPresentValidator.setCheckSeconds(true)
 
         def timeField = (TimeField) validatorsScreen.getWindow().getComponent("timeField")
-        timeField.setDatatype(datatypeRegistry.get(OffsetTime))
+        timeField.setDatatype(datatypeRegistry.find(OffsetTime))
         timeField.addValidator(futureOrPresentValidator)
 
         when: "invalid value"
@@ -714,7 +714,7 @@ class ValidatorsTest extends UiScreenSpec {
         def digitsValidator = (DigitsValidator) applicationContext.getBean(DigitsValidator.NAME, 2, 2)
 
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(BigDecimal))
+        textField.setDatatype(datatypeRegistry.find(BigDecimal))
         textField.addValidator(digitsValidator)
 
         when: "invalid bigDecimal value"
@@ -738,7 +738,7 @@ class ValidatorsTest extends UiScreenSpec {
         then:
         noExceptionThrown()
 
-        textField.setDatatype(datatypeRegistry.get(String))
+        textField.setDatatype(datatypeRegistry.find(String))
         when: "invalid string value"
         textField.setValue("absd")
         textField.validate()
@@ -763,7 +763,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def decimalMinValidator = (DecimalMinValidator) applicationContext.getBean(DecimalMinValidator.NAME, new BigDecimal(10))
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Integer))
+        textField.setDatatype(datatypeRegistry.find(Integer))
         textField.addValidator(decimalMinValidator)
 
         def invalidInclusive = 9
@@ -818,7 +818,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def decimalMaxValidator = (DecimalMaxValidator) applicationContext.getBean(DecimalMaxValidator.NAME, new BigDecimal(10))
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Integer))
+        textField.setDatatype(datatypeRegistry.find(Integer))
         textField.addValidator(decimalMaxValidator)
 
         def invalidInclusive = 11
@@ -873,7 +873,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def doubleMinValidator = (DoubleMinValidator) applicationContext.getBean(DoubleMinValidator.NAME, Double.valueOf(10.2))
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Double))
+        textField.setDatatype(datatypeRegistry.find(Double))
         textField.addValidator(doubleMinValidator)
 
         def invalidInclusive = Double.valueOf(10.1)
@@ -928,7 +928,7 @@ class ValidatorsTest extends UiScreenSpec {
 
         def doubleMaxValidator = (DoubleMaxValidator) applicationContext.getBean(DoubleMaxValidator.NAME, Double.valueOf(10.2))
         def textField = (TextField) validatorsScreen.getWindow().getComponent("numberField")
-        textField.setDatatype(datatypeRegistry.get(Double))
+        textField.setDatatype(datatypeRegistry.find(Double))
         textField.addValidator(doubleMaxValidator)
 
         def invalidInclusive = Double.valueOf(10.3)
@@ -984,7 +984,7 @@ class ValidatorsTest extends UiScreenSpec {
         def groovyScript = "if (!value.startsWith(\"correct\")) return \"validation error message\""
         def groovyScriptValidator = (GroovyScriptValidator) applicationContext.getBean(GroovyScriptValidator.NAME, groovyScript)
         def textField = (TextField) validatorsScreen.getWindow().getComponent("stringField")
-        textField.setDatatype(datatypeRegistry.get(String))
+        textField.setDatatype(datatypeRegistry.find(String))
         textField.addValidator(groovyScriptValidator)
 
         def invalidStringValue = "incorrectValue"

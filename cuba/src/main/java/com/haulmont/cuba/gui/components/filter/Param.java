@@ -717,7 +717,7 @@ public class Param {
         }
 
         DateField<Object> dateField = uiComponents.create(DateField.NAME);
-        dateField.setDatatype(datatypeRegistry.getNN(javaClass));
+        dateField.setDatatype(datatypeRegistry.get(javaClass));
 
         DateField.Resolution resolution;
         String formatStr;
@@ -743,7 +743,7 @@ public class Param {
 
     protected Component createTimeField(Class javaClass, ValueProperty valueProperty) {
         TimeField<Object> timeField = uiComponents.create(TimeField.NAME);
-        timeField.setDatatype(datatypeRegistry.get(javaClass));
+        timeField.setDatatype(datatypeRegistry.find(javaClass));
         timeField.setFormat(messages.getMainMessage("timeFormat"));
         timeField.addValueChangeListener(e -> _setValue(e.getValue(), valueProperty));
         timeField.setValue(_getValue(valueProperty));

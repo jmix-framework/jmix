@@ -307,7 +307,7 @@ class InputDialogTest extends UiScreenSpec {
                                 .withField({
                                     TextField field = uiComponents.create(TextField)
                                     field.setValue("sda")
-                                    field.setDatatype(datatypeRegistry.getNN(Integer))
+                                    field.setDatatype(datatypeRegistry.get(Integer))
                                     return field
                                 }))
                 .show()

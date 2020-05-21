@@ -422,7 +422,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
         MetaPropertyPath metaPropertyPath = null;
         if (targetDs != null && property != null) {
             MetaClass metaClass = targetDs.getMetaClass();
-            metaPropertyPath = getMetadataTools().resolveMetaPropertyPath(targetDs.getMetaClass(), property);
+            metaPropertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(targetDs.getMetaClass(), property);
             if (metaPropertyPath == null) {
                 if (!customField) {
                     throw new GuiDevelopmentException(String.format("Property '%s' is not found in entity '%s'",
@@ -669,8 +669,6 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
             MetaClass metaClass = getMetaClass(resultComponent, field);
             MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, field.getProperty());
 
-            checkNotNullArgument(propertyPath, "Could not resolve property path '%s' in '%s'", field.getId(), metaClass);
-
             if (!getSecurity().isEntityAttrUpdatePermitted(metaClass, propertyPath.toString()) ||
                     (getMetadataTools().isEmbeddable(metaClass) &&
                             !getSecurity().isEntityOpPermitted(getParentEntityMetaClass(resultComponent), EntityOp.UPDATE))) {
@@ -691,8 +689,6 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
         if (!field.isCustom() && BooleanUtils.isNotFalse(field.isVisible())) {
             MetaClass metaClass = getMetaClass(resultComponent, field);
             MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, field.getProperty());
-
-            checkNotNullArgument(propertyPath, "Could not resolve property path '%s' in '%s'", field.getId(), metaClass);
 
             if (!getSecurity().isEntityAttrReadPermitted(metaClass, propertyPath.toString())) {
                 field.setVisible(false);

@@ -71,11 +71,7 @@ public class DatasourceValueSource<E extends Entity, V> implements EntityValueSo
         MetaClass metaClass = datasource.getMetaClass();
 
         MetadataTools metadataTools = beanLocator.get(MetadataTools.NAME);
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
-
-        checkNotNullArgument(metaPropertyPath, "Could not resolve property path '%s' in '%s'", property, metaClass);
-
-        this.metaPropertyPath = metaPropertyPath;
+        this.metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
 
         this.datasource.addStateChangeListener(this::datasourceStateChanged);
         this.datasource.addItemChangeListener(this::datasourceItemChanged);

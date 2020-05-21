@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -50,11 +50,11 @@ public class SecurityTokenManager {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityTokenManager.class);
 
-    @Inject
+    @Autowired
     protected SecurityProperties properties;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     protected static final String ENTITY_NAME_KEY = "__entityName";

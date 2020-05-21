@@ -34,22 +34,22 @@ import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 import test_support.JmixSecurityTestConfiguration
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixSecurityConfiguration, JmixSecurityTestConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = standard"])
 class AuthenticationTest extends Specification {
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
-    @Inject
+    @Autowired
     PersistenceTools persistenceTools
 
-    @Inject
+    @Autowired
     AuthenticationManager authenticationManager
 
-    @Inject
+    @Autowired
     UserRepository userRepository
 
     def "standard implementations are in use"() {

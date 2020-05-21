@@ -33,7 +33,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 @ComponentScan
@@ -42,10 +42,10 @@ import javax.inject.Inject;
 @EnableWebSecurity
 public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Inject
+    @Autowired
     private UserRepository userRepository;
 
-    @Inject
+    @Autowired
     private CoreProperties coreProperties;
 
     @Override

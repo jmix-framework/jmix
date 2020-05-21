@@ -24,7 +24,7 @@ import io.jmix.security.entity.Group;
 import io.jmix.security.entity.GroupHierarchy;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -39,13 +39,13 @@ public class GroupEntityListener implements
     @PersistenceContext
     protected EntityManager entityManager;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected PersistenceTools persistenceTools;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
     @Override

@@ -27,7 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
@@ -39,10 +39,10 @@ public class StandardUserRepository implements UserRepository {
     private User systemUser;
     private User anonymousUser;
 
-    @Inject
+    @Autowired
     private EntityManagerFactory entityManagerFactory;
 
-    @Inject
+    @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
     public StandardUserRepository() {

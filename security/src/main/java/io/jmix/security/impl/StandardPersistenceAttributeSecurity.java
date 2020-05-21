@@ -33,26 +33,26 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Field;
 import java.util.*;
 
 @Component(PersistenceAttributeSecurity.NAME)
 public class StandardPersistenceAttributeSecurity implements PersistenceAttributeSecurity {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Security security;
 
-    @Inject
+    @Autowired
     protected SecurityProperties properties;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
     /**

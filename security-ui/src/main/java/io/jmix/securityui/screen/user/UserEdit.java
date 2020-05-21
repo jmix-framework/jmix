@@ -8,7 +8,7 @@ import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.screen.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 @UiController("sec_User.edit")
@@ -17,22 +17,22 @@ import java.util.Objects;
 @LoadDataBeforeShow
 public class UserEdit extends StandardEditor<User> {
 
-    @Inject
+    @Autowired
     private EntityStates entityStates;
 
-    @Inject
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Inject
+    @Autowired
     private PasswordField passwordField;
 
-    @Inject
+    @Autowired
     private PasswordField confirmPasswordField;
 
-    @Inject
+    @Autowired
     private Notifications notifications;
 
-    @Inject
+    @Autowired
     private MessageBundle messageBundle;
 
     @Subscribe

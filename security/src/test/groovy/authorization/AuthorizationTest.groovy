@@ -32,16 +32,16 @@ import test_support.JmixSecurityTestConfiguration
 @Ignore
 class AuthorizationTest extends Specification {
 
-//    @Inject
+//    @Autowired
 //    DataManager dataManager
 //
-//    @Inject
+//    @Autowired
 //    PersistenceTools persistenceTools
 //
-//    @Inject
+//    @Autowired
 //    Metadata metadata
 //
-//    @Inject
+//    @Autowired
 //    Security security
 
 //    def "create session and check permissions"() {

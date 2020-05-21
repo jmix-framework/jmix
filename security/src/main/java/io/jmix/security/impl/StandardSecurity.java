@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -55,19 +55,19 @@ public class StandardSecurity implements Security {
 
     private static final Logger log = LoggerFactory.getLogger(StandardSecurity.class);
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
     protected ScriptEngineManager scriptEngineManager = new ScriptEngineManager();

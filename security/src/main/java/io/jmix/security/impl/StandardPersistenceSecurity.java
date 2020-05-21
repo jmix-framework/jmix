@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -49,31 +49,31 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
 
     private static final Logger log = LoggerFactory.getLogger(StandardPersistenceSecurity.class);
 
-    @Inject
+    @Autowired
     protected SecurityTokenManager securityTokenManager;
 
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
 
-    @Inject
+    @Autowired
     protected PersistenceAttributeSecurity persistenceAttributeSecurity;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
-    @Inject
+    @Autowired
     protected Security security;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     @Override

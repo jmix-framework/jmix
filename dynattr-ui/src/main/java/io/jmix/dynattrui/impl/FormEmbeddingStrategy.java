@@ -21,14 +21,10 @@ import io.jmix.core.BeanLocator;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.ui.components.*;
-import io.jmix.ui.components.data.ValueSource;
-import io.jmix.ui.components.data.ValueSourceProvider;
-import io.jmix.ui.components.data.value.ContainerValueSourceProvider;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.HasLoader;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.InstanceLoader;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.ValueSourceProvider;
+import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
 
 import javax.inject.Inject;
 import java.util.List;

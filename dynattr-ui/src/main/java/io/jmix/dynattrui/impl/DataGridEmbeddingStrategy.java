@@ -22,10 +22,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.DataGrid;
-import io.jmix.ui.components.data.datagrid.ContainerDataGridItems;
-import io.jmix.ui.components.data.meta.EntityDataUnit;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
 
 import javax.inject.Inject;
 import java.util.List;

@@ -22,7 +22,7 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.xml.layout.loaders.AbstractComponentLoader;
+import io.jmix.ui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
 public class DynamicAttributesPanelLoader extends AbstractComponentLoader<DynamicAttributesPanel> {

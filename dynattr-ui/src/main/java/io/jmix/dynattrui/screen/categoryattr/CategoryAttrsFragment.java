@@ -17,17 +17,17 @@
 package io.jmix.dynattrui.screen.categoryattr;
 
 import io.jmix.core.*;
-import io.jmix.core.metamodel.datatypes.Datatypes;
+import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Button;
-import io.jmix.ui.components.GroupTable;
-import io.jmix.ui.components.Label;
-import io.jmix.ui.components.Table;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.ScreenFragment;

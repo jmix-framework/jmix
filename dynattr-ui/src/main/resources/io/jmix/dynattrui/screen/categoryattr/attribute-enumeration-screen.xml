@@ -37,7 +37,7 @@
                     <columns>
                         <column id="value" property="value" editable="true"/>
                         <column id="removeItem" editable="false" maximumWidth="48px">
-                            <renderer type="io.jmix.ui.components.DataGrid$ComponentRenderer"/>
+                            <renderer type="io.jmix.ui.component.DataGrid$ComponentRenderer"/>
                         </column>
                     </columns>
                     <buttonsPanel width="100%">

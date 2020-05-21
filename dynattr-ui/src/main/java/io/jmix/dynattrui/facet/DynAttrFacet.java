@@ -16,7 +16,7 @@
 
 package io.jmix.dynattrui.facet;
 
-import io.jmix.ui.components.Facet;
+import io.jmix.ui.component.Facet;
 
 public interface DynAttrFacet extends Facet {
 }

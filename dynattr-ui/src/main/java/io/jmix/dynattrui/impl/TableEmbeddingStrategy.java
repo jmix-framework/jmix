@@ -24,11 +24,11 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Table;
-import io.jmix.ui.components.data.datagrid.ContainerDataGridItems;
-import io.jmix.ui.components.data.meta.EntityDataUnit;
-import io.jmix.ui.components.data.table.ContainerTableItems;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
+import io.jmix.ui.component.data.table.ContainerTableItems;
 
 import javax.inject.Inject;
 import java.util.List;

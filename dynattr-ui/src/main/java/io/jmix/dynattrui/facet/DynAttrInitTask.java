@@ -17,12 +17,11 @@
 package io.jmix.dynattrui.facet;
 
 import io.jmix.dynattrui.impl.EmbeddingStrategy;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ComponentsHelper;
-import io.jmix.ui.components.Frame;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 
 import java.util.List;
 

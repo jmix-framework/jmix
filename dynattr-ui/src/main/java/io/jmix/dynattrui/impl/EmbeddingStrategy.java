@@ -16,8 +16,8 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
 
 public interface EmbeddingStrategy {
 

@@ -23,7 +23,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.dynattrui.impl.model.AttributeLocalizedValue;
-import io.jmix.ui.components.DataGrid;
+import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.Install;

@@ -18,7 +18,7 @@ package io.jmix.dynattrui.impl;
 
 import io.jmix.core.BeanLocator;
 import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.ui.components.validation.*;
+import io.jmix.ui.component.validation.*;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;

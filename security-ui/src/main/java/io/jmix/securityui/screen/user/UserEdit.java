@@ -4,9 +4,7 @@ package io.jmix.securityui.screen.user;
 import io.jmix.core.EntityStates;
 import io.jmix.security.entity.User;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.components.PasswordField;
-import io.jmix.ui.components.TextField;
-import io.jmix.ui.model.DataContext;
+import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.screen.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 

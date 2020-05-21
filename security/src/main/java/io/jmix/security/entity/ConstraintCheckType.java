@@ -15,7 +15,7 @@
  */
 package io.jmix.security.entity;
 
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
 import java.util.Objects;
 

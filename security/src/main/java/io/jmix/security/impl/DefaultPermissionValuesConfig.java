@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Metadata;
 import io.jmix.core.Resources;
-import io.jmix.core.commons.util.Dom4j;
+import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.security.PermissionType;
 import io.jmix.security.entity.Permission;
 import org.dom4j.Document;

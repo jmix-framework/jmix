@@ -16,7 +16,7 @@
 
 package test_support.entity;
 
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.data.entity.StandardEntity;
 import test_support.entity.sec.User;
 

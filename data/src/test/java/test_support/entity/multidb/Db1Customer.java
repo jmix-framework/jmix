@@ -5,8 +5,8 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.metamodel.annotations.InstanceName;
-import io.jmix.core.metamodel.annotations.Store;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.*;
 import java.util.List;

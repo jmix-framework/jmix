@@ -19,7 +19,7 @@ package test_support.entity.sales;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
-import io.jmix.core.metamodel.annotations.Composition;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.data.entity.StandardEntity;
 import test_support.entity.sec.User;
 

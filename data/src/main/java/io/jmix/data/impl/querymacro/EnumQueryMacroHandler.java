@@ -17,8 +17,8 @@
 package io.jmix.data.impl.querymacro;
 
 
-import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

@@ -17,7 +17,7 @@
 
 package io.jmix.data.impl.dbms;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.data.SequenceSupport;
 import org.springframework.stereotype.Component;
 

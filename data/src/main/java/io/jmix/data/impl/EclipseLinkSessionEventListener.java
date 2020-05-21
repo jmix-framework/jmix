@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
-import io.jmix.core.commons.datastruct.Pair;
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.JmixSettersEnhanced;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.DisableEnhancing;

@@ -16,8 +16,8 @@
 
 package test_support.entity;
 
-import io.jmix.core.metamodel.annotations.DatatypeDef;
-import io.jmix.core.metamodel.datatypes.Datatype;
+import io.jmix.core.metamodel.annotation.DatatypeDef;
+import io.jmix.core.metamodel.datatype.Datatype;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;

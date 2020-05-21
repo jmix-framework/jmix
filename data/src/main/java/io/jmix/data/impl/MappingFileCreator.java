@@ -18,8 +18,8 @@ package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
 import io.jmix.data.persistence.OrmXmlPostProcessor;
-import io.jmix.core.commons.util.Dom4j;
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.Dom4j;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.Extends;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

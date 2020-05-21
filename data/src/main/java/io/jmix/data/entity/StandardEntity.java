@@ -16,7 +16,7 @@
 package io.jmix.data.entity;
 
 import io.jmix.core.entity.*;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 
 import javax.persistence.Column;

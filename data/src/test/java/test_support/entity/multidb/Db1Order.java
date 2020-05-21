@@ -6,8 +6,8 @@
 package test_support.entity.multidb;
 
 
-import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.Store;
+import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.*;
 import java.util.Date;

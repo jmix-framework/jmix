@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;

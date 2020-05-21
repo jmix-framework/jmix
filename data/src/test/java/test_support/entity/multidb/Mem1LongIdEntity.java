@@ -5,10 +5,10 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.metamodel.annotations.InstanceName;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.Store;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.Store;
 import io.jmix.data.entity.BaseLongIdEntity;
 
 @ModelObject(name = "test_Mem1LongIdEntity")

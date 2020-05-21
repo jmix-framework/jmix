@@ -19,7 +19,7 @@ package io.jmix.data.impl.liquibase;
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Stores;
-import io.jmix.core.commons.util.Dom4j;
+import io.jmix.core.common.util.Dom4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;

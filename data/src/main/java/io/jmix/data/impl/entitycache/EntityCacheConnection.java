@@ -21,7 +21,7 @@ import io.jmix.core.cluster.ClusterListenerAdapter;
 import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.eclipse.persistence.internal.helper.Helper;
 import org.eclipse.persistence.internal.sessions.UnitOfWorkChangeSet;

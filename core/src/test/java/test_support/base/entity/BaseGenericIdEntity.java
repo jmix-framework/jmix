@@ -16,7 +16,7 @@
 package test_support.base.entity;
 
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.MappedSuperclass;
 

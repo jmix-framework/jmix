@@ -16,8 +16,8 @@
 
 package test_support.addon1;
 
-import io.jmix.core.metamodel.annotations.DatatypeDef;
-import io.jmix.core.metamodel.datatypes.impl.StringDatatype;
+import io.jmix.core.metamodel.annotation.DatatypeDef;
+import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 
 @DatatypeDef(id = "string_mod", javaClass = String.class, defaultForClass = true)
 public class TestStringDatatype extends StringDatatype {

@@ -16,8 +16,8 @@
 
 package io.jmix.core;
 
-import io.jmix.core.commons.util.StringHelper;
-import io.jmix.core.queryconditions.Condition;
+import io.jmix.core.common.util.StringHelper;
+import io.jmix.core.querycondition.Condition;
 
 import javax.annotation.Nullable;
 import javax.persistence.TemporalType;

@@ -17,7 +17,7 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;

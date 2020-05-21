@@ -21,7 +21,7 @@ import io.jmix.core.EntityEntry;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.lang.NonNull;
 

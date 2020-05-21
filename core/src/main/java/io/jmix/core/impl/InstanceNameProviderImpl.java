@@ -24,8 +24,8 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.method.ArgumentResolverComposite;
 import io.jmix.core.impl.method.ContextArgumentResolverComposite;
 import io.jmix.core.impl.method.MethodArgumentsProvider;
-import io.jmix.core.metamodel.annotations.InstanceName;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component(InstanceNameProvider.NAME)
 public class InstanceNameProviderImpl implements InstanceNameProvider {

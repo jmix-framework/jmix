@@ -17,8 +17,7 @@
 package io.jmix.core;
 
 import com.google.common.collect.ForwardingSet;
-import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 
 import java.io.Serializable;

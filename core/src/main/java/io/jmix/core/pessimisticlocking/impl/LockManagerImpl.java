@@ -19,7 +19,7 @@ package io.jmix.core.pessimisticlocking.impl;
 import io.jmix.core.*;
 import io.jmix.core.cluster.ClusterListener;
 import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;

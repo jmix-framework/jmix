@@ -16,8 +16,8 @@
 
 package test_support.app.entity;
 
-import io.jmix.core.metamodel.annotations.InstanceName;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import test_support.base.entity.StandardEntity;
 
 import javax.persistence.*;

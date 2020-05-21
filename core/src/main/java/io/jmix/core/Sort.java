@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -18,7 +18,7 @@ package test_support.base.entity;
 
 import io.jmix.core.EntityEntry;
 import io.jmix.core.entity.BaseEntityEntry;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.MappedSuperclass;
 import java.util.UUID;

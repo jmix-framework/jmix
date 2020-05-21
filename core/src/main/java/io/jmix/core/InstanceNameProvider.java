@@ -16,7 +16,7 @@
 
 package io.jmix.core;
 
-import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 

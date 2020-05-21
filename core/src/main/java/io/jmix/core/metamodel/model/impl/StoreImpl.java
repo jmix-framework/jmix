@@ -16,7 +16,7 @@
 
 package io.jmix.core.metamodel.model.impl;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.StoreDescriptor;
 

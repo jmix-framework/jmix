@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl.jpql;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.jpql.model.JpqlEntityModel;
 import io.jmix.core.impl.jpql.model.VirtualJpqlEntityModel;
 import io.jmix.core.impl.jpql.tree.QueryNode;

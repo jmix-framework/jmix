@@ -17,7 +17,7 @@
 package io.jmix.core;
 
 import com.google.common.collect.Sets;
-import io.jmix.core.commons.util.StackTrace;
+import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Provides information about entities states.

@@ -17,7 +17,7 @@ package test_support.base.entity;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
 import javax.persistence.Id;

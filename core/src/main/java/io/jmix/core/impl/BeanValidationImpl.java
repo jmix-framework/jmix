@@ -41,7 +41,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component(BeanValidation.NAME)
 public class BeanValidationImpl implements BeanValidation {

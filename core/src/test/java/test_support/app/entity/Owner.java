@@ -17,7 +17,7 @@
 package test_support.app.entity;
 
 
-import io.jmix.core.metamodel.annotations.InstanceName;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import test_support.base.entity.StandardEntity;
 
 import javax.persistence.Column;

@@ -18,8 +18,8 @@ package datatypes
 
 import test_support.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry
-import io.jmix.core.metamodel.datatypes.impl.*
+import io.jmix.core.metamodel.datatype.DatatypeRegistry
+import io.jmix.core.metamodel.datatype.impl.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration

@@ -16,7 +16,6 @@
 
 package io.jmix.core;
 
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Helper class which represent a collection of {@link Id}

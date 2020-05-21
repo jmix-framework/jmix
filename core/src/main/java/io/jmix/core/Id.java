@@ -16,13 +16,12 @@
 
 package io.jmix.core;
 
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Convenient class for methods that receive Id of an entity as a parameter.

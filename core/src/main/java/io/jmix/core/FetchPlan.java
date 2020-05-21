@@ -15,7 +15,7 @@
  */
 package io.jmix.core;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -87,12 +87,12 @@ public class FetchPlan implements Serializable {
     public static final String LOCAL = "_local";
 
     /**
-     * Includes only properties contained in {@link io.jmix.core.metamodel.annotations.InstanceName}.
+     * Includes only properties contained in {@link io.jmix.core.metamodel.annotation.InstanceName}.
      */
     public static final String MINIMAL = "_minimal";
 
     /**
-     * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotations.InstanceName}
+     * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
      * (effectively {@link #MINIMAL} + {@link #LOCAL}).
      */
     public static final String BASE = "_base";

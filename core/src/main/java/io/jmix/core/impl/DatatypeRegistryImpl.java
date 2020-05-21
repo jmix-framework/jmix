@@ -16,10 +16,10 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.commons.util.Preconditions;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.metamodel.datatypes.impl.DatatypeDefUtils;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.impl.DatatypeDefUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

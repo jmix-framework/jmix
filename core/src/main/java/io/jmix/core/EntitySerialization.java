@@ -87,7 +87,7 @@ public interface EntitySerialization {
     /**
      * Serializes any custom POJO or collection of POJOs or JSON. If some field in POJO is an entity then this field
      * will be serialized according to entity serialization rules. Date fields are serialized according to the format of
-     * the {@link io.jmix.core.metamodel.datatypes.impl.DateTimeDatatype}.
+     * the {@link io.jmix.core.metamodel.datatype.impl.DateTimeDatatype}.
      *
      * @param object  any POJO or collection of POJOs
      * @param options options specifying how a JSON object graph for fields with type 'Entity' will be serialized
@@ -127,7 +127,7 @@ public interface EntitySerialization {
 
     /**
      * Deserializes an object of any class from JSON. Date fields are deserialized according to the {@link
-     * io.jmix.core.metamodel.datatypes.impl.DateTimeDatatype} format, entities object and fields of Entity type are
+     * io.jmix.core.metamodel.datatype.impl.DateTimeDatatype} format, entities object and fields of Entity type are
      * deserialized like in the {@link #entityFromJson(String, MetaClass, EntitySerializationOption...)} method
      *
      * @param json    a string that represents an object
@@ -141,7 +141,7 @@ public interface EntitySerialization {
 
     /**
      * Deserializes an object of any class from JSON. Date fields are deserialized according to the {@link
-     * io.jmix.core.metamodel.datatypes.impl.DateTimeDatatype} format, entities object and fields of Entity type are
+     * io.jmix.core.metamodel.datatype.impl.DateTimeDatatype} format, entities object and fields of Entity type are
      * deserialized like in the {@link #entityFromJson(String, MetaClass, EntitySerializationOption...)} method
      *
      * @param json    a string that represents an object

@@ -15,7 +15,7 @@
  */
 package io.jmix.core.security;
 
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
 import javax.annotation.Nullable;
 import java.util.Objects;

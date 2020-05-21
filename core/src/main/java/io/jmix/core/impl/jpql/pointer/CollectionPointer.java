@@ -17,7 +17,7 @@
 
 package io.jmix.core.impl.jpql.pointer;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.jpql.DomainModel;
 import io.jmix.core.impl.jpql.model.JpqlEntityModel;
 

@@ -16,7 +16,7 @@
 
 package datatypes
 
-import io.jmix.core.metamodel.datatypes.impl.BigDecimalDatatype
+import io.jmix.core.metamodel.datatype.impl.BigDecimalDatatype
 import format_strings.TestFormatStringsRegistry
 import spock.lang.Specification
 

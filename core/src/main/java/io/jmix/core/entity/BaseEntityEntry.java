@@ -20,7 +20,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
 import org.springframework.lang.NonNull;

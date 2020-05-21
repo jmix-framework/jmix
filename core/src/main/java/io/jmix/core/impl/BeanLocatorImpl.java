@@ -17,7 +17,7 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

@@ -19,7 +19,7 @@ import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.Updatable;
 import io.jmix.core.entity.Versioned;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

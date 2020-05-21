@@ -16,8 +16,8 @@
 
 package io.jmix.core.metamodel.model;
 
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.Enumeration;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.Enumeration;
 
 /**
  * Object encapsulating common properties of {@link MetaProperty}.

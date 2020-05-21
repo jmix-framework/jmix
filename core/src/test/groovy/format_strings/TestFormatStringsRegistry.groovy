@@ -16,8 +16,8 @@
 
 package format_strings
 
-import io.jmix.core.metamodel.datatypes.FormatStrings
-import io.jmix.core.metamodel.datatypes.impl.FormatStringsRegistryImpl
+import io.jmix.core.metamodel.datatype.FormatStrings
+import io.jmix.core.metamodel.datatype.impl.FormatStringsRegistryImpl
 
 import java.util.Locale
 

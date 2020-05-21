@@ -19,19 +19,19 @@ package io.jmix.core.impl;
 import com.google.common.base.Joiner;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.MetaAnnotation;
-import io.jmix.core.metamodel.annotations.Composition;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.annotations.NumberFormat;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.metamodel.datatypes.impl.AdaptiveNumberDatatype;
-import io.jmix.core.metamodel.datatypes.impl.EnumerationImpl;
+import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.NumberFormat;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
+import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.*;
-import io.jmix.core.validation.groups.UiComponentChecks;
+import io.jmix.core.validation.group.UiComponentChecks;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +49,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -151,7 +151,7 @@ public class MetaModelLoader {
     protected void assignStore(MetaClass metaClass) {
         Store store;
         Class<?> javaClass = metaClass.getJavaClass();
-        io.jmix.core.metamodel.annotations.Store storeAnn = javaClass.getAnnotation(io.jmix.core.metamodel.annotations.Store.class);
+        io.jmix.core.metamodel.annotation.Store storeAnn = javaClass.getAnnotation(io.jmix.core.metamodel.annotation.Store.class);
         if (storeAnn != null) {
             store = stores.get(storeAnn.name());
         } else {

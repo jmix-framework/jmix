@@ -16,28 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.Resources;
-import io.jmix.core.Stores;
-import io.jmix.core.commons.util.Dom4j;
-import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringTokenizer;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
-import javax.inject.Inject;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.text.ParseException;
-import java.util.*;
-import java.util.regex.Pattern;
 
 @Component("jmix_MetadataBuildSupport")
 public class MetadataBuildSupport {

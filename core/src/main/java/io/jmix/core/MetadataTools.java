@@ -20,11 +20,11 @@ import com.google.common.collect.ImmutableList;
 import io.jmix.core.entity.*;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.InstanceName;
-import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.metamodel.datatypes.TimeZoneAwareDatatype;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -45,7 +45,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Utility class to provide common metadata-related functionality.
@@ -190,7 +190,7 @@ public class MetadataTools {
 
     /**
      * @param instance instance
-     * @return Instance name as defined by {@link io.jmix.core.metamodel.annotations.InstanceName}
+     * @return Instance name as defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
      * or <code>toString()</code>.
      */
     public String getInstanceName(Entity instance) {

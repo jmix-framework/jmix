@@ -20,8 +20,8 @@ import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.TestStringDatatype
 import test_support.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry
-import io.jmix.core.metamodel.datatypes.impl.StringDatatype
+import io.jmix.core.metamodel.datatype.DatatypeRegistry
+import io.jmix.core.metamodel.datatype.impl.StringDatatype
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification

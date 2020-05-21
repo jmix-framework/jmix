@@ -18,8 +18,8 @@ package io.jmix.core.pessimisticlocking;
 
 import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.persistence.Id;
 

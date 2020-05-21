@@ -16,8 +16,8 @@
 
 package test_support.addon1.entity;
 
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import test_support.base.entity.StandardEntity;
 
 @ModelObject(name = "addon1_TestEntity")

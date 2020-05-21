@@ -22,8 +22,8 @@ import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.annotation.Nullable;
 import javax.persistence.Id;

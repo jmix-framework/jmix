@@ -38,7 +38,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.DayOfWeek;
 import java.time.Month;
 import java.util.*;
@@ -123,12 +123,12 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         component.setEventProvider(new CalendarEventProviderWrapper<>(calendarEventProvider, this::convertToPresentation));
     }
 
-    @Inject
+    @Autowired
     public void setDateTimeTransformations(DateTimeTransformations dateTimeTransformations) {
         this.dateTimeTransformations = dateTimeTransformations;
     }
 
-    @Inject
+    @Autowired
     public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         this.datatypeRegistry = datatypeRegistry;
     }

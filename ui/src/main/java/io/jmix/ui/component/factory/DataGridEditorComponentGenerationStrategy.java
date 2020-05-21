@@ -35,7 +35,7 @@ import io.jmix.ui.model.DataComponents;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DataGridEditorComponentGenerationStrategy.NAME)
 public class DataGridEditorComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
@@ -44,22 +44,22 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     protected DataComponents dataComponents;
     protected GuiActionSupport guiActionSupport;
 
-    @Inject
+    @Autowired
     public void setDataComponents(DataComponents dataComponents) {
         this.dataComponents = dataComponents;
     }
 
-    @Inject
+    @Autowired
     public void setGuiActionSupport(GuiActionSupport guiActionSupport) {
         this.guiActionSupport = guiActionSupport;
     }
 
-    @Inject
+    @Autowired
     public DataGridEditorComponentGenerationStrategy(Messages messages, GuiActionSupport guiActionSupport) {
         super(messages, guiActionSupport);
     }
 
-    @Inject
+    @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
     }

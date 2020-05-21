@@ -36,7 +36,7 @@ import io.jmix.ui.model.Nested;
 import io.jmix.ui.screen.Install;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 /**
@@ -53,7 +53,7 @@ public class ExcludeAction<E extends Entity> extends SecuredListAction implement
 
     public static final String ID = "exclude";
 
-    @Inject
+    @Autowired
     protected RemoveOperation removeOperation;
 
     protected Boolean confirmation;
@@ -153,17 +153,17 @@ public class ExcludeAction<E extends Entity> extends SecuredListAction implement
         this.actionCancelledHandler = actionCancelledHandler;
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icon = icons.get(JmixIcon.EXCLUDE_ACTION);
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.caption = messages.getMessage("actions.Exclude");
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableRemoveShortcut());
     }

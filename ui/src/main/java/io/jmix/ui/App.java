@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -83,22 +83,22 @@ public abstract class App {
 
     protected ExceptionHandlers exceptionHandlers;
 
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected ThemeConstantsRepository themeConstantsRepository;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    /*@Inject
+    /*@Autowired
     protected SettingsClient settingsClient;*/ // todo settings
 
-    @Inject
+    @Autowired
     protected Events events;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
     protected AppCookies cookies;

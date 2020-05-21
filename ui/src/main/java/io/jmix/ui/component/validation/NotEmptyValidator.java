@@ -23,7 +23,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
@@ -60,7 +60,7 @@ public class NotEmptyValidator<T> extends AbstractValidator<T> {
         this.message = message;
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }

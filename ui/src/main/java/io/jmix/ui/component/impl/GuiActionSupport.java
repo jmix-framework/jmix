@@ -32,7 +32,7 @@ import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Contains utility methods used by GUI actions.
@@ -43,13 +43,13 @@ public class GuiActionSupport {
 
     public static final String NAME = "jmix_GuiActionSupport";
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected Actions actions;
 
     /**

@@ -30,7 +30,7 @@ import io.jmix.ui.widget.JmixTimeFieldWrapper;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -40,7 +40,7 @@ import static io.jmix.ui.component.impl.WebWrapperUtils.*;
 public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, LocalTime, V>
         implements TimeField<V>, InitializingBean {
 
-    @Inject
+    @Autowired
     protected DateTimeTransformations dateTimeTransformations;
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
@@ -51,7 +51,7 @@ public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, Lo
         component.addValueChangeListener(this::componentValueChanged);
     }
 
-    @Inject
+    @Autowired
     public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }

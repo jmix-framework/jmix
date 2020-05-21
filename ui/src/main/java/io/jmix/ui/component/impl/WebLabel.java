@@ -22,7 +22,7 @@ import io.jmix.ui.component.Label;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.widget.JmixLabel;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Function;
 
 public class WebLabel<V> extends WebAbstractViewComponent<com.vaadin.ui.Label, String, V> implements Label<V> {
@@ -36,7 +36,7 @@ public class WebLabel<V> extends WebAbstractViewComponent<com.vaadin.ui.Label, S
         component.setSizeUndefined();
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

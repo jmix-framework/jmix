@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
@@ -53,9 +53,9 @@ import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructo
 @ParametersAreNonnullByDefault
 public class FragmentHelper {
 
-    @Inject
+    @Autowired
     protected ScreenXmlLoader screenXmlLoader;
-    @Inject
+    @Autowired
     protected HotDeployManager hotDeployManager;
 
     public static final String NAME = "jmix_FragmentHelper";

@@ -35,7 +35,7 @@ import io.micrometer.core.instrument.Timer;
 import org.dom4j.Element;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
@@ -45,18 +45,18 @@ import static java.util.Collections.emptyMap;
 @ParametersAreNonnullByDefault
 public class WebFragments implements Fragments {
 
-    @Inject
+    @Autowired
     protected ScreenXmlLoader screenXmlLoader;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected MeterRegistry meterRegistry;
 
-    @Inject
+    @Autowired
     protected FragmentHelper fragmentHelper;
 
     protected AppUI ui;

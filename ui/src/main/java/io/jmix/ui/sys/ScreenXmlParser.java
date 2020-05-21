@@ -25,7 +25,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -43,7 +43,7 @@ public class ScreenXmlParser {
     
     public static final String NAME = "jmix_ScreenXmlParser";
 
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
 
     public Document parseDescriptor(InputStream stream) {

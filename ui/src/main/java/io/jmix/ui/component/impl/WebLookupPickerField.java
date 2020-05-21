@@ -36,7 +36,7 @@ import io.jmix.ui.widget.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -82,12 +82,12 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
         return (JmixComboBoxPickerField<V>) super.getComponent();
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }
 
-    @Inject
+    @Autowired
     public void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }

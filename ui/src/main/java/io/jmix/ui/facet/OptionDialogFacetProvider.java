@@ -32,7 +32,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,13 +46,13 @@ public class OptionDialogFacetProvider
 
     public static final String NAME = "jmix_OptionDialogFacetProvider";
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected Icons icons;
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
     @Override

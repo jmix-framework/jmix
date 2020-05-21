@@ -37,7 +37,7 @@ import io.jmix.ui.widget.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Locale;
@@ -68,12 +68,12 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
         attachValueChangeListener(this.component);
     }
 
-    @Inject
+    @Autowired
     public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }

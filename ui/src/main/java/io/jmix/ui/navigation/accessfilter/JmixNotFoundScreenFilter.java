@@ -22,14 +22,14 @@ import io.jmix.ui.navigation.NavigationState;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 @Component
 @Order(NavigationFilter.LOWEST_PLATFORM_PRECEDENCE - 10)
 public class JmixNotFoundScreenFilter implements NavigationFilter {
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
 
     @Override

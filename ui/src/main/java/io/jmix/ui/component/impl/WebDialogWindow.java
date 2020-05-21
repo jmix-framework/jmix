@@ -34,7 +34,7 @@ import io.jmix.ui.widget.ShortcutListenerDelegate;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,7 +144,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
         }
     }
 
-    @Inject
+    @Autowired
     public void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }

@@ -27,7 +27,7 @@ import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.function.Predicate;
 
@@ -43,7 +43,7 @@ public class ReadOnlyScreensSupport {
 
     protected Security security;
 
-    @Inject
+    @Autowired
     public void setSecurity(Security security) {
         this.security = security;
     }

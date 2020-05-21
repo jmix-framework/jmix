@@ -35,7 +35,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,10 +44,10 @@ public class IconsImpl implements Icons {
 
     private static final Logger log = LoggerFactory.getLogger(IconsImpl.class);
 
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
 
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
     protected LoadingCache<String, String> iconsCache = CacheBuilder.newBuilder()

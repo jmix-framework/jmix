@@ -20,7 +20,7 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @Component(LoaderResolver.NAME)
@@ -28,7 +28,7 @@ public class LoaderResolver {
 
     public static final String NAME = "jmix_LoaderResolver";
 
-    @Inject
+    @Autowired
     protected List<LoaderConfig> loaderConfigs;
 
     @SuppressWarnings("rawtypes")

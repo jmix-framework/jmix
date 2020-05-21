@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,11 +55,11 @@ public class WebBackgroundWorker implements BackgroundWorker {
     private static final String THREAD_NAME_PREFIX = "BackgroundTask-";
     private static final Pattern THREAD_NAME_PATTERN = Pattern.compile("BackgroundTask-([0-9]+)");
 
-    @Inject
+    @Autowired
     protected WatchDog watchDog;
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Inject
+    @Autowired
     protected Events events;
 
     protected UiBackgroundTaskProperties properties;
@@ -69,7 +69,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
     public WebBackgroundWorker() {
     }
 
-    @Inject
+    @Autowired
     public void setProperties(UiBackgroundTaskProperties properties) {
         this.properties = properties;
 

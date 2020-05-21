@@ -25,7 +25,7 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -64,12 +64,12 @@ public class ValidatorLoadFactory {
             .put("size", this::loadSizeValidator)
             .build();
 
-    @Inject
+    @Autowired
     protected void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }
 
-    @Inject
+    @Autowired
     protected void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
     }

@@ -32,7 +32,7 @@ import io.jmix.ui.util.OperationResult;
 import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +71,7 @@ public abstract class Screen implements FrameOwner {
         return beanLocator;
     }
 
-    @Inject
+    @Autowired
     protected void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }

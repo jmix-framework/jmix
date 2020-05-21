@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -79,25 +79,25 @@ public class WindowConfig {
     @Autowired(required = false)
     protected List<UiControllersConfiguration> configurations = Collections.emptyList();
 
-    @Inject
+    @Autowired
     protected Resources resources;
-    @Inject
+    @Autowired
     protected HotDeployManager hotDeployManager;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
-    @Inject
+    @Autowired
     protected ScreenXmlLoader screenXmlLoader;
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
-    @Inject
+    @Autowired
     protected Environment environment;
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
-    @Inject
+    @Autowired
     protected AnnotationScanMetadataReaderFactory metadataReaderFactory;
-    @Inject
+    @Autowired
     protected JmixModules modules;
 
     protected volatile boolean initialized;

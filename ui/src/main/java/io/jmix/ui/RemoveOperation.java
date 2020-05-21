@@ -39,7 +39,7 @@ import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -56,17 +56,17 @@ public class RemoveOperation {
 
     public static final String NAME = "jmix_RemoveHelper";
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     /**

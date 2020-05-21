@@ -37,7 +37,7 @@ import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -63,7 +63,7 @@ public class LookupAction<E extends Entity> extends BaseAction implements Picker
 
     protected PickerField pickerField;
 
-    @Inject
+    @Autowired
     protected ScreenBuilders screenBuilders;
     protected Icons icons;
     protected Messages messages;
@@ -246,19 +246,19 @@ public class LookupAction<E extends Entity> extends BaseAction implements Picker
         }
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icons = icons;
 
         setIcon(icons.get(JmixIcon.PICKERFIELD_LOOKUP));
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         this.properties = properties;
     }

@@ -46,7 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.function.Consumer;
@@ -61,17 +61,17 @@ public class WebDialogs implements Dialogs {
 
     protected AppUI ui;
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected BackgroundWorker backgroundWorker;
-    @Inject
+    @Autowired
     protected IconResolver iconResolver;
-    @Inject
+    @Autowired
     protected Icons icons;
-    @Inject
+    @Autowired
     protected UiProperties properties;
-    @Inject
+    @Autowired
     protected HtmlSanitizer htmlSanitizer;
 
     protected ScreenBuilders screenBuilders;
@@ -80,7 +80,7 @@ public class WebDialogs implements Dialogs {
         this.ui = ui;
     }
 
-    @Inject
+    @Autowired
     public void setScreenBuilders(ScreenBuilders screenBuilders) {
         this.screenBuilders = screenBuilders;
     }

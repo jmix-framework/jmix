@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Function;
 
@@ -63,17 +63,17 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         attachValueChangeListener(component);
     }
 
-    @Inject
+    @Autowired
     protected void setBackgroundWorker(BackgroundWorker backgroundWorker) {
         this.backgroundWorker = backgroundWorker;
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }
 
-    @Inject
+    @Autowired
     protected void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

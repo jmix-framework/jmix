@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +41,7 @@ public class FacetLoader {
 
     protected Map<String, FacetProvider> registrations = new HashMap<>();
 
-    @Inject
+    @Autowired
     protected Facets facets;
 
     @Autowired(required = false)

@@ -23,7 +23,7 @@ import io.jmix.ui.widget.JmixColorPickerWrapper;
 import com.vaadin.shared.ui.colorpicker.Color;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, Color, String>
         implements ColorPicker, InitializingBean {
@@ -53,7 +53,7 @@ public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, C
         setCaptions(messages);
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
     }

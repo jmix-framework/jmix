@@ -28,7 +28,7 @@ import io.jmix.ui.widget.client.optiongroup.OptionGroupOrientation;
 import com.vaadin.v7.data.util.IndexedContainer;
 import org.apache.commons.collections4.CollectionUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -107,7 +107,7 @@ public class WebOptionsGroup<V, I> extends WebAbstractField<JmixOptionGroup, V> 
         return generateDefaultItemCaption(item);
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

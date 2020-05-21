@@ -96,7 +96,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -272,43 +272,43 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         initSidebarMenu();
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
-    @Inject
+    @Autowired
     public void setSecurity(Security security) {
         this.security = security;
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     public void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
     }
 
-    @Inject
+    @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
         this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
     }
 
-    @Inject
+    @Autowired
     public void setPersistenceManagerClient(PersistenceManagerClient persistenceManagerClient) {
         this.persistenceManagerClient = persistenceManagerClient;
     }
 
-    @Inject
+    @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
-    @Inject
+    @Autowired
     protected void setScreenValidation(ScreenValidation screenValidation) {
         this.screenValidation = screenValidation;
     }

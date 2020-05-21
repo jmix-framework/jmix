@@ -44,7 +44,7 @@ import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.theme.ThemeConstants;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -77,40 +77,40 @@ public class InputDialog extends Screen {
     public static final CloseAction INPUT_DIALOG_NO_ACTION = new StandardCloseAction("inputDialogNo");
 
 
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected Actions actions;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
-    @Inject
+    @Autowired
     protected Icons icons;
 
-    @Inject
+    @Autowired
     protected ScreenValidation screenValidation;
 
-    @Inject
+    @Autowired
     protected ThemeConstants theme;
 
-    @Inject
+    @Autowired
     protected PersistenceManagerClient persistenceManagerClient;
 
-    @Inject
+    @Autowired
     protected DataComponents dataComponents;
 
-    @Inject
+    @Autowired
     protected Form form;
 
-    @Inject
+    @Autowired
     protected HBoxLayout actionsLayout;
 
     protected List<InputParameter> parameters = new ArrayList<>(2);

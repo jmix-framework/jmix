@@ -29,7 +29,7 @@ import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.Locale;
 import java.util.function.Consumer;
@@ -50,7 +50,7 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
-    @Inject
+    @Autowired
     public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
@@ -157,7 +157,7 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
                 : TextArea.super.isEmpty();
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }

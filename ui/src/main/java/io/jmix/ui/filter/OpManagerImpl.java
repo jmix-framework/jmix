@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.*;
 import java.util.Date;
 import java.util.EnumSet;
@@ -36,9 +36,9 @@ import static io.jmix.ui.filter.Op.*;
 @Component(OpManager.NAME)
 public class OpManagerImpl implements OpManager {
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected MetadataTools metadata;
 
     protected static final List<Class> dateTimeClasses = ImmutableList.of(Date.class, LocalDate.class, LocalDateTime.class,

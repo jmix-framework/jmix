@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,15 +58,15 @@ public class WebUrlRouting implements UrlRouting {
 
     private static final Logger log = LoggerFactory.getLogger(WebUrlRouting.class);
 
-    @Inject
+    @Autowired
     protected Events events;
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected UrlTools urlTools;
 
     protected AppUI ui;

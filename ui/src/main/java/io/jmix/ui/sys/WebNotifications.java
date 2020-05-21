@@ -24,7 +24,7 @@ import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 public class WebNotifications implements Notifications {
@@ -36,16 +36,16 @@ public class WebNotifications implements Notifications {
 
     protected BackgroundWorker backgroundWorker;
 
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
-    @Inject
+    @Autowired
     protected HtmlSanitizer htmlSanitizer;
 
     public WebNotifications(AppUI ui) {
         this.ui = ui;
     }
 
-    @Inject
+    @Autowired
     protected void setBackgroundWorker(BackgroundWorker backgroundWorker) {
         this.backgroundWorker = backgroundWorker;
     }

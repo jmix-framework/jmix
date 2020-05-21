@@ -23,7 +23,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component(MessageBundle.NAME)
@@ -32,7 +32,7 @@ public class MessageBundleImpl implements MessageBundle {
     protected Messages messages;
     protected String messagePack;
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }

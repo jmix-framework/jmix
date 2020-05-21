@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -50,7 +50,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
         setCaption(" ");
     }
 
-    @Inject
+    @Autowired
     public void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }

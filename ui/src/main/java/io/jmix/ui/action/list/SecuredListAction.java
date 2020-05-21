@@ -23,7 +23,7 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ListComponent;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Action that changes its {@code enabled} property depending on a selected item in a bound {@link ListComponent}.
@@ -39,7 +39,7 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
         super(id);
     }
 
-    @Inject
+    @Autowired
     protected void setSecurity(Security security) {
         this.security = security;
     }

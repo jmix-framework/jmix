@@ -28,7 +28,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
@@ -49,7 +49,7 @@ public class FontAwesomeIconProvider implements IconProvider {
                 }
             });
 
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
 
     protected static Resource getIconNonCached(String iconName) {

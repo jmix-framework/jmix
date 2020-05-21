@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
@@ -51,13 +51,13 @@ public class ScreenValidation {
 
     public static final String NAME = "jmix_ScreenValidation";
 
-    @Inject
+    @Autowired
     protected UiProperties properties;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected Icons icons;
-    @Inject
+    @Autowired
     protected BeanValidation beanValidation;
 
     /**

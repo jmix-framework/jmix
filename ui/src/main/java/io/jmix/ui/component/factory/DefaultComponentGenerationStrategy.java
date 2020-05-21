@@ -24,19 +24,19 @@ import io.jmix.ui.component.impl.GuiActionSupport;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DefaultComponentGenerationStrategy.NAME)
 public class DefaultComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
     public static final String NAME = "jmix_DefaultMetaComponentStrategy";
 
-    @Inject
+    @Autowired
     public DefaultComponentGenerationStrategy(Messages messages,
                                               GuiActionSupport guiActionSupport) {
         super(messages, guiActionSupport);
     }
 
-    @Inject
+    @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
     }

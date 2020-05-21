@@ -28,7 +28,7 @@ import io.jmix.ui.widget.JmixTwinColSelect;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -66,7 +66,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
         component.setItemCaptionGenerator(this::generateItemCaption);
     }
 
-    @Inject
+    @Autowired
     protected void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

@@ -40,7 +40,7 @@ import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -67,7 +67,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     protected Messages messages;
     protected UiProperties properties;
 
-    @Inject
+    @Autowired
     protected ScreenBuilders screenBuilders;
 
     protected boolean editable = true;
@@ -217,7 +217,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
         this.transformation = transformation;
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         this.properties = properties;
     }
@@ -258,14 +258,14 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
         }
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icons = icons;
 
         setIcon(icons.get(JmixIcon.PICKERFIELD_OPEN));
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }

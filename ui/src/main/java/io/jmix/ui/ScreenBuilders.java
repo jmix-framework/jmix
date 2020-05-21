@@ -25,17 +25,17 @@ import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.screen.FrameOwner;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component("jmix_ScreenBuilders")
 public class ScreenBuilders {
-    @Inject
+    @Autowired
     protected EditorBuilderProcessor editorBuilderProcessor;
-    @Inject
+    @Autowired
     protected LookupBuilderProcessor lookupBuilderProcessor;
-    @Inject
+    @Autowired
     protected ScreenBuilderProcessor screenBuilderProcessor;
 
     /**

@@ -33,7 +33,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widget.addon.contextmenu.ContextMenu;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static io.jmix.ui.app.core.dev.LayoutAnalyzerScreen.TIPS_LIST_PARAM;
@@ -43,9 +43,9 @@ public class LayoutAnalyzerContextMenuProvider {
 
     public static final String NAME = "jmix_LayoutAnalyzerContextMenuProvider";
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected UiProperties properties;
 
     public void initContextMenu(Screen screen, io.jmix.ui.component.Component contextMenuTarget) {

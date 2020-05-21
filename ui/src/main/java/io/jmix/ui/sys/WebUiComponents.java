@@ -33,7 +33,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -44,13 +44,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @org.springframework.stereotype.Component(UiComponents.NAME)
 public class WebUiComponents implements UiComponents {
 
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
-    /*@Inject
+    /*@Autowired
     protected CompositeDescriptorLoader compositeDescriptorLoader;*/ // todo composite
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     protected Map<String, Class<? extends Component>> classes = new ConcurrentHashMap<>();

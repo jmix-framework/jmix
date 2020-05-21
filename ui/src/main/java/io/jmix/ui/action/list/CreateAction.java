@@ -38,7 +38,7 @@ import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -61,9 +61,9 @@ public class CreateAction<E extends Entity> extends ListAction implements Action
 
     public static final String ID = "create";
 
-    @Inject
+    @Autowired
     protected ScreenBuilders screenBuilders;
-    @Inject
+    @Autowired
     protected Security security;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
@@ -251,17 +251,17 @@ public class CreateAction<E extends Entity> extends ListAction implements Action
         this.transformation = transformation;
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.caption = messages.getMessage("actions.Create");
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icon = icons.get(JmixIcon.CREATE_ACTION);
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableInsertShortcut());
     }

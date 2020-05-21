@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ import static java.util.stream.Collectors.toMap;
 @Component(Facets.NAME)
 @ParametersAreNonnullByDefault
 public class WebFacets implements Facets {
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
 
     protected Map<Class<? extends Facet>, FacetProvider> registrations = new HashMap<>();

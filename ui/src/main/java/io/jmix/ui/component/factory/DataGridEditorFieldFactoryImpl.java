@@ -20,12 +20,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DataGridEditorFieldFactory.NAME)
 public class DataGridEditorFieldFactoryImpl implements DataGridEditorFieldFactory {
 
-    @Inject
+    @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
 
     /*

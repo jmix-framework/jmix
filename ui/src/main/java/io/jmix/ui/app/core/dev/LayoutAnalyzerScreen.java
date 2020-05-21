@@ -29,7 +29,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @DialogMode(
@@ -44,7 +44,7 @@ public class LayoutAnalyzerScreen extends Screen {
 
     private static final Logger log = LoggerFactory.getLogger(LayoutAnalyzerScreen.class);
 
-    @Inject
+    @Autowired
     protected TextArea<String> analyzeResultBox;
 
     @Subscribe

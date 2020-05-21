@@ -32,7 +32,7 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 
 @Component(ScreenDataXmlLoader.NAME)
@@ -40,25 +40,25 @@ public class ScreenDataXmlLoader {
 
     public static final String NAME = "jmix_ScreenDataXmlLoader";
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    @Inject
+    @Autowired
     protected FetchPlanLoader fetchPlanLoader;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected DataComponents factory;
 
-    @Inject
+    @Autowired
     protected ConditionXmlLoader conditionXmlLoader;
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     public void load(ScreenData screenData, Element element, @Nullable ScreenData hostScreenData) {

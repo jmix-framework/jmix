@@ -38,7 +38,7 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -59,15 +59,15 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
 
     protected static final Pattern PARAM_TYPE_REGEX = Pattern.compile("^(\\w+)Parameter$");
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
-    @Inject
+    @Autowired
     protected Icons icons;
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
 
     @Override

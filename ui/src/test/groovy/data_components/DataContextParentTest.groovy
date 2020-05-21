@@ -29,13 +29,13 @@ import test_support.entity.sec.User
 import test_support.entity.sec.UserRole
 import spock.lang.Unroll
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings("GroovyAssignabilityCheck")
 class DataContextParentTest extends DataContextSpec {
 
-    @Inject DataComponents factory
-    @Inject EntityStates entityStates
+    @Autowired DataComponents factory
+    @Autowired EntityStates entityStates
 
     def "child context creation and merging instance from parent"() throws Exception {
 

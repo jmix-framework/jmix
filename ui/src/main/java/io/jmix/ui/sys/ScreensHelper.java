@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,25 +66,25 @@ public class ScreensHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ScreensHelper.class);
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected Resources resources;
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected LayoutLoaderConfig layoutLoaderConfig;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected Dom4jTools dom4JTools;
-    @Inject
+    @Autowired
     protected Security security;
 
     protected Map<String, String> captionCache = new ConcurrentHashMap<>();

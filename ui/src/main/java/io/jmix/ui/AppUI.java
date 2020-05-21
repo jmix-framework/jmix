@@ -53,7 +53,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,32 +70,32 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     public static final String LAST_REQUEST_ACTION_ATTR = "lastRequestAction";
     public static final String LAST_REQUEST_PARAMS_ATTR = "lastRequestParams";
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected Events events;
-    @Inject
+    @Autowired
     protected UiProperties properties;
 
-//    @Inject
+//    @Autowired
 //    protected UserSettingsTools userSettingsTools; todo settings
-    @Inject
+    @Autowired
     protected ThemeConstantsRepository themeConstantsRepository;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
-//    @Inject
+//    @Autowired
 //    protected UserSessionService userSessionService; todo ping session ?
 
-    @Inject
+    @Autowired
     protected UiEventsMulticaster uiEventsMulticaster;
 
-    @Inject
+    @Autowired
     protected IconResolver iconResolver;
-    @Inject
+    @Autowired
     protected WebJarResourceResolver webJarResourceResolver;
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     protected TestIdManager testIdManager = new TestIdManager();
@@ -283,7 +283,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         processExternalLink(request, requestedState);
     }
 
-    @Inject
+    @Autowired
     protected void setApplicationContext(ApplicationContext applicationContext) {
         Dialogs dialogs = new WebDialogs(this);
         autowireContext(dialogs, applicationContext);

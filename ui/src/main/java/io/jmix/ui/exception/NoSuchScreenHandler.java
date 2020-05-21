@@ -22,7 +22,7 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Handles {@link NoSuchScreenException}.
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 @Component("jmix_NoSuchScreenHandler")
 public class NoSuchScreenHandler extends AbstractGenericExceptionHandler implements Ordered {
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
     public NoSuchScreenHandler() {

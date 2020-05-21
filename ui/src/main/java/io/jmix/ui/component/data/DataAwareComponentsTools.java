@@ -37,7 +37,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.*;
 import java.time.*;
@@ -52,15 +52,15 @@ public class DataAwareComponentsTools {
 
     public static final String NAME = "jmix_DataAwareComponentsTools";
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
-    @Inject
+    @Autowired
     protected DateTimeTransformations dateTimeTransformations;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     /**

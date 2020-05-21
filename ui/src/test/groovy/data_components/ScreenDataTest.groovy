@@ -42,12 +42,12 @@ import test_support.entity.sales.Product
 import test_support.entity.sales.ProductTag
 import org.dom4j.Document
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class ScreenDataTest extends DataContextSpec {
 
-    @Inject FetchPlanRepository fetchPlanRepository
-    @Inject ScreenDataXmlLoader screenDataLoader
+    @Autowired FetchPlanRepository fetchPlanRepository
+    @Autowired ScreenDataXmlLoader screenDataLoader
 
     def "containers without loaders"() {
         def xml = '''

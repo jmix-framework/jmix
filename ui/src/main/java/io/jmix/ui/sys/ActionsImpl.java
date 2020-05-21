@@ -32,7 +32,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -48,9 +48,9 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
     @Autowired(required = false)
     protected List<ActionsConfiguration> configurations = Collections.emptyList();
 
-    @Inject
+    @Autowired
     protected HotDeployManager hotDeployManager;
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
 
     protected Map<String, Class<? extends Action>> classes = new HashMap<>();

@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
@@ -82,7 +82,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
         return new JmixPickerField<>();
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         actionHandler = new WebPickerFieldActionHandler(properties);
         component.addActionHandler(actionHandler);
@@ -133,12 +133,12 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
         }
     }
 
-    @Inject
+    @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

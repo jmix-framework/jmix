@@ -22,7 +22,7 @@ import io.jmix.ui.component.LookupScreenFacet;
 import io.jmix.ui.component.impl.WebLookupScreenFacet;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(LookupScreenFacetProvider.NAME)
 public class LookupScreenFacetProvider
@@ -30,9 +30,9 @@ public class LookupScreenFacetProvider
 
     public static final String NAME = "jmix_LookupScreenFacetProvider";
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     @Override

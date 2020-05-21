@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -85,39 +85,39 @@ public class WebScreens implements Screens {
 
     private static final org.slf4j.Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected Security security;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected ScreenXmlLoader screenXmlLoader;
-    @Inject
+    @Autowired
     protected IconResolver iconResolver;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected Icons icons;
-    @Inject
+    @Autowired
     protected UrlTools urlTools;
-    @Inject
+    @Autowired
     protected WindowCreationHelper windowCreationHelper;
-    @Inject
+    @Autowired
     protected ScreenViewsLoader screenViewsLoader;
-    @Inject
+    @Autowired
     protected MeterRegistry meterRegistry;
 
     // todo implement
-    /*@Inject
+    /*@Autowired
     protected AttributeAccessSupport attributeAccessSupport;
-    @Inject
+    @Autowired
     protected ScreenHistorySupport screenHistorySupport;*/
 
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
     protected AppUI ui;

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
@@ -34,7 +34,7 @@ public class ScreenNavigator {
 
     public static final String NAME = "jmix_ScreenNavigator";
 
-    @Inject
+    @Autowired
     protected List<NavigationHandler> navigationHandlers;
 
     protected AppUI ui;

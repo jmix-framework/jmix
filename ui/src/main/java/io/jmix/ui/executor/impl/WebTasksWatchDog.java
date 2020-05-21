@@ -19,13 +19,13 @@ package io.jmix.ui.executor.impl;
 import io.jmix.ui.executor.UiBackgroundTaskProperties;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.TimeUnit;
 
 @Component(TasksWatchDog.NAME)
 public class WebTasksWatchDog extends TasksWatchDog {
 
-    @Inject
+    @Autowired
     protected UiBackgroundTaskProperties properties;
 
     @Override

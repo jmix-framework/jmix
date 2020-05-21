@@ -21,7 +21,7 @@ import io.jmix.core.Messages;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Handles {@link EntityAccessException}.
@@ -30,7 +30,7 @@ import javax.inject.Inject;
 @Component("jmix_EntityAccessExceptionHandler")
 public class EntityAccessExceptionHandler extends AbstractGenericExceptionHandler {
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
     public EntityAccessExceptionHandler() {

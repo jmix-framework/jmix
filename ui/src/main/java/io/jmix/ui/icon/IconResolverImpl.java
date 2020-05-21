@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @Component(IconResolver.NAME)
@@ -34,9 +34,9 @@ public class IconResolverImpl implements IconResolver {
 
     private static final Logger log = LoggerFactory.getLogger(IconResolverImpl.class);
 
-    @Inject
+    @Autowired
     protected Icons icons;
-    @Inject
+    @Autowired
     protected List<IconProvider> iconProviders;
 
     @Override

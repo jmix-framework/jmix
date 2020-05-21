@@ -27,7 +27,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -43,15 +43,15 @@ public class ScreenXmlLoader {
 
     public static final String NAME = "jmix_ScreenXmlLoader";
 
-    @Inject
+    @Autowired
     protected Resources resources;
-    @Inject
+    @Autowired
     protected ScreenXmlDocumentCache screenXmlCache;
-    @Inject
+    @Autowired
     protected ScreenXmlParser screenXmlParser;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected MeterRegistry meterRegistry;
 
     /**

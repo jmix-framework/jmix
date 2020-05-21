@@ -25,7 +25,7 @@ import io.jmix.ui.sys.linkhandling.ExternalLinkContext;
 import io.jmix.ui.sys.linkhandling.LinkHandlerProcessor;
 import org.springframework.context.annotation.Scope;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public class LinkHandler {
 
     public static final String NAME = "jmix_LinkHandler";
 
-    @Inject
+    @Autowired
     protected List<LinkHandlerProcessor> processors;
 
     // todo should be bound to AppUI

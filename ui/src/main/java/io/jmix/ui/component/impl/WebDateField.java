@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.*;
 import java.util.*;
 import java.util.function.Consumer;
@@ -128,12 +128,12 @@ public class WebDateField<V extends Comparable<V>>
         timeField.setCaptionManagedByLayout(false);
     }
 
-    @Inject
+    @Autowired
     public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 
-    @Inject
+    @Autowired
     public void setDateTimeTransformations(DateTimeTransformations dateTimeTransformations) {
         this.dateTimeTransformations = dateTimeTransformations;
     }

@@ -44,7 +44,7 @@ import io.jmix.ui.screen.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
@@ -52,13 +52,13 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 @Component("jmix_EditorBuilderProcessor")
 public class EditorBuilderProcessor {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected UiProperties properties;
 
     @SuppressWarnings("unchecked")

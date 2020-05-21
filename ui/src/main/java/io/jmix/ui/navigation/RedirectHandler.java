@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -45,13 +45,13 @@ public class RedirectHandler {
 
     protected static final String REDIRECT_PARAM = "redirectTo";
 
-    @Inject
+    @Autowired
     protected Events events;
 
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
 
     protected AppUI ui;

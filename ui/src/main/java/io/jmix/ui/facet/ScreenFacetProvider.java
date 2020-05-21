@@ -21,14 +21,14 @@ import io.jmix.ui.component.ScreenFacet;
 import io.jmix.ui.component.impl.WebScreenFacet;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(ScreenFacetProvider.NAME)
 public class ScreenFacetProvider extends AbstractScreenFacetProvider<ScreenFacet> {
 
     public static final String NAME = "jmix_ScreenFacetProvider";
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     @Override

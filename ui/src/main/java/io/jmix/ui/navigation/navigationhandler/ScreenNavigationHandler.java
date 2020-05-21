@@ -44,7 +44,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,15 +59,15 @@ public class ScreenNavigationHandler implements NavigationHandler {
 
     protected static final int MAX_SUB_ROUTES = 2;
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected Security security;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
     @Override

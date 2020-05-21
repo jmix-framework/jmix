@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -52,27 +52,27 @@ public class LayoutLoader {
         this.context = context;
     }
 
-    @Inject
+    @Autowired
     protected void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }
 
-    @Inject
+    @Autowired
     public void setEnvironment(Environment environment) {
         this.environment = environment;
     }
 
-    @Inject
+    @Autowired
     protected void setFactory(UiComponents factory) {
         this.factory = factory;
     }
 
-    @Inject
+    @Autowired
     protected void setConfig(LayoutLoaderConfig config) {
         this.config = config;
     }
 
-    @Inject
+    @Autowired
     public void setLoaderResolver(LoaderResolver loaderResolver) {
         this.loaderResolver = loaderResolver;
     }

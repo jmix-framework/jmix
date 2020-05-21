@@ -26,7 +26,7 @@ import io.jmix.ui.component.impl.GuiActionSupport;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This generation strategy is intended for generating a default field corresponding to a datatype for which other
@@ -38,12 +38,12 @@ public class CustomDatatypesComponentGenerationStrategy extends AbstractComponen
 
     public static final String NAME = "jmix_CustomDatatypesComponentGenerationStrategy";
 
-    @Inject
+    @Autowired
     public CustomDatatypesComponentGenerationStrategy(Messages messages, GuiActionSupport guiActionSupport) {
         super(messages, guiActionSupport);
     }
 
-    @Inject
+    @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
     }

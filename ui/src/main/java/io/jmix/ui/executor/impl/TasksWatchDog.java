@@ -20,7 +20,7 @@ import io.jmix.core.TimeSource;
 import io.jmix.ui.executor.WatchDog;
 
 import javax.annotation.concurrent.ThreadSafe;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,7 +38,7 @@ public abstract class TasksWatchDog implements WatchDog {
         SHOULD_BE_KILLED
     }
 
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
 
     private final Set<TaskHandlerImpl> watches = new LinkedHashSet<>();

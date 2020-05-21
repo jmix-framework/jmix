@@ -23,7 +23,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Base class for a controller of application Main screen.
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 @UiDescriptor("main-screen.xml")
 @UiController("main")
 public class MainScreen extends Screen {
-    @Inject
+    @Autowired
     protected Notifications notifications;
 
     @Subscribe

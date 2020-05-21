@@ -46,7 +46,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -106,52 +106,52 @@ public class WebTokenList<V extends Entity>
         component = new JmixTokenList<>(this);
     }
 
-    @Inject
+    @Autowired
     public void setScreenBuilders(ScreenBuilders screenBuilders) {
         this.screenBuilders = screenBuilders;
     }
 
-    @Inject
+    @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
-    @Inject
+    @Autowired
     public void setWindowConfig(WindowConfig windowConfig) {
         this.windowConfig = windowConfig;
     }
 
-    @Inject
+    @Autowired
     public void setUiProperties(UiProperties properties) {
         this.properties = properties;
     }
 
-    @Inject
+    @Autowired
     public void setIcons(Icons icons) {
         this.icons = icons;
     }
 
-    @Inject
+    @Autowired
     public void setEntityStates(EntityStates entityStates) {
         this.entityStates = entityStates;
     }
 
-    @Inject
+    @Autowired
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
     }

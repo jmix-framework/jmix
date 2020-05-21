@@ -29,7 +29,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Locale;
@@ -88,17 +88,17 @@ public class DigitsValidator<T> extends AbstractValidator<T> {
         this.message = message;
     }
 
-    @Inject
+    @Autowired
     protected void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         this.datatypeRegistry = datatypeRegistry;
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }

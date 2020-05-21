@@ -22,11 +22,11 @@ import test_support.entity.TestNullableIdEntity
 import test_support.entity.TestNullableIdItemEntity
 import test_support.entity.TestStringIdEntity
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class DataContextNullIdTest extends DataContextSpec {
 
-    @Inject DataComponents factory
+    @Autowired DataComponents factory
 
     def "can contain any number of instances with null id"() {
         TestNullableIdEntity entity1 = new TestNullableIdEntity(name: "111")

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -113,7 +113,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         return false;
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icons = icons;
     }

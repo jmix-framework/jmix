@@ -23,16 +23,16 @@ import io.jmix.ui.navigation.NavigationState;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 @Component
 @Order(NavigationFilter.LOWEST_PLATFORM_PRECEDENCE)
 public class JmixLoginScreenFilter implements NavigationFilter {
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
     @Override

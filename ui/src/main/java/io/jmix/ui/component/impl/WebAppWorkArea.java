@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -87,7 +87,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         component.addStyleName(STATE_INITIAL_STYLENAME);
     }
 
-    @Inject
+    @Autowired
     public void setBeanLocator(BeanLocator beanLocator) {
         super.setBeanLocator(beanLocator);
 

@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -54,21 +54,21 @@ public class UrlChangeHandler implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(UrlChangeHandler.class);
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected Security security;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected UrlTools urlTools;
 
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
 
-    @Inject
+    @Autowired
     protected List<NavigationFilter> navigationFilters;
 
     protected AppUI ui;

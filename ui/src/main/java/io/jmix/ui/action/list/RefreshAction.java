@@ -33,7 +33,7 @@ import io.jmix.ui.model.HasLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Standard action for reloading a list of entities from the database.
@@ -58,12 +58,12 @@ public class RefreshAction extends ListAction {
         super(id);
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icon = icons.get(JmixIcon.REFRESH_ACTION);
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
         this.caption = messages.getMessage("actions.Refresh");

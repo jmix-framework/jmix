@@ -32,7 +32,7 @@ import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Locale;
@@ -58,12 +58,12 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
         attachValueChangeListener(component);
     }
 
-    @Inject
+    @Autowired
     public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 
-    @Inject
+    @Autowired
     public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         //noinspection unchecked
         this.defaultDatatype = (Datatype<V>) datatypeRegistry.get(BigDecimal.class);
@@ -76,7 +76,7 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
                         componentValueChanged(event.getOldValue(), event.getValue(), event.isUserOriginated()));
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }

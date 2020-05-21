@@ -36,7 +36,7 @@ import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -59,7 +59,7 @@ public class EditAction<E extends Entity> extends SecuredListAction implements A
 
     public static final String ID = "edit";
 
-    @Inject
+    @Autowired
     protected ScreenBuilders screenBuilders;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
@@ -214,18 +214,18 @@ public class EditAction<E extends Entity> extends SecuredListAction implements A
         this.transformation = transformation;
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icon = icons.get(JmixIcon.EDIT_ACTION);
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
         this.caption = messages.getMessage("actions.Edit");
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableEditShortcut());
     }

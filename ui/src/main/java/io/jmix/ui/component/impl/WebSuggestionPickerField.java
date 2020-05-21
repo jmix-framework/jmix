@@ -33,7 +33,7 @@ import io.jmix.ui.widget.JmixSuggestionPickerField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -71,7 +71,7 @@ public class WebSuggestionPickerField<V extends Entity> extends WebPickerField<V
         return (JmixSuggestionPickerField<V>) super.getComponent();
     }
 
-    @Inject
+    @Autowired
     public void setBackgroundWorker(BackgroundWorker backgroundWorker) {
         this.backgroundWorker = backgroundWorker;
     }
@@ -88,7 +88,7 @@ public class WebSuggestionPickerField<V extends Entity> extends WebPickerField<V
         getComponent().setCancelSearchHandler(this::cancelSearch);
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }

@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * NotBlank validator checks that value contains at least one non-whitespace character.
@@ -54,7 +54,7 @@ public class NotBlankValidator extends AbstractValidator<String> {
         this.message = message;
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }

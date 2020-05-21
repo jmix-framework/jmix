@@ -30,7 +30,7 @@ import com.vaadin.v7.data.util.IndexedContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -96,7 +96,7 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
         return generateDefaultItemCaption(item);
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

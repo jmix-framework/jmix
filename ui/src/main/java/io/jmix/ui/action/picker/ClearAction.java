@@ -35,7 +35,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Standard picker field action for clearing the field value.
@@ -63,12 +63,12 @@ public class ClearAction extends BaseAction implements PickerField.PickerFieldAc
         super(id);
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         this.properties = properties;
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }
@@ -109,7 +109,7 @@ public class ClearAction extends BaseAction implements PickerField.PickerFieldAc
         }
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icons = icons;
 

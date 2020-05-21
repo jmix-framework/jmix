@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -78,17 +78,17 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         attachValueChangeListener(component);
     }
 
-    @Inject
+    @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
-    @Inject
+    @Autowired
     public void setSceenBuilders(ScreenBuilders screenBuilders) {
         this.screenBuilders = screenBuilders;
     }

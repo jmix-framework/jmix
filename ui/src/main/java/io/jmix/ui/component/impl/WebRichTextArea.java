@@ -25,7 +25,7 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,7 +59,7 @@ public class WebRichTextArea extends WebV8AbstractField<JmixRichTextArea, String
         component.setValueChangeMode(ValueChangeMode.BLUR);
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         component.setLocaleMap(loadLabels(messages));
     }

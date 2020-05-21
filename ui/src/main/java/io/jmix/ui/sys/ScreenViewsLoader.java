@@ -20,7 +20,7 @@ import io.jmix.core.Resources;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.InputStream;
 
 /**
@@ -33,7 +33,7 @@ public class ScreenViewsLoader {
     public static final String NAME = "jmix_ScreenViewsLoader";
 
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
     /**

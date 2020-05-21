@@ -31,7 +31,7 @@ import io.jmix.ui.widget.JmixRadioButtonGroup;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -66,12 +66,12 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
         return new JmixRadioButtonGroup<>();
     }
 
-    @Inject
+    @Autowired
     protected void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }
 
-    @Inject
+    @Autowired
     protected void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

@@ -28,7 +28,7 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.widget.JmixSlider;
 import org.springframework.util.NumberUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebSlider<V extends Number> extends WebV8AbstractField<JmixSlider<V>, V, V> implements Slider<V> {
 
@@ -46,7 +46,7 @@ public class WebSlider<V extends Number> extends WebV8AbstractField<JmixSlider<V
         return new JmixSlider<>();
     }
 
-    @Inject
+    @Autowired
     public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }

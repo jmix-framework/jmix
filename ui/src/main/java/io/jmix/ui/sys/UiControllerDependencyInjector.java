@@ -52,7 +52,7 @@ import org.springframework.context.event.EventListener;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Named;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
@@ -94,12 +94,12 @@ public class UiControllerDependencyInjector {
         this.options = options;
     }
 
-    @Inject
+    @Autowired
     public void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }
 
-    @Inject
+    @Autowired
     public void setReflectionInspector(UiControllerReflectionInspector reflectionInspector) {
         this.reflectionInspector = reflectionInspector;
     }

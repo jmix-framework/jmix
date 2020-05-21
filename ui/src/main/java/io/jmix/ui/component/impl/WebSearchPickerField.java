@@ -37,7 +37,7 @@ import io.jmix.ui.widget.JmixSearchSelectPickerField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -84,12 +84,12 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
         return new JmixSearchSelectPickerField<>();
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }
 
-    @Inject
+    @Autowired
     public void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }

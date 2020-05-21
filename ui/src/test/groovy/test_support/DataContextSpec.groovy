@@ -33,7 +33,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static io.jmix.core.impl.StandardSerialization.deserialize
 import static io.jmix.core.impl.StandardSerialization.serialize
@@ -41,11 +41,11 @@ import static io.jmix.core.impl.StandardSerialization.serialize
 @ContextConfiguration(classes = [JmixCoreConfiguration, JmixUiConfiguration, JmixDataConfiguration, DataContextTestConfiguration])
 class DataContextSpec extends Specification {
 
-    @Inject
+    @Autowired
     EntityStates entityStates
-    @Inject
+    @Autowired
     TransactionTemplate transaction
-    @Inject
+    @Autowired
     JdbcTemplate jdbc
 
     void setup() {

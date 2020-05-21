@@ -21,11 +21,11 @@ import test_support.DataContextSpec
 import test_support.entity.TestNullableIdEntity
 import test_support.entity.TestNullableIdItemEntity
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class CollectionContainerNullIdTest extends DataContextSpec {
 
-    @Inject DataComponents factory
+    @Autowired DataComponents factory
 
     def "items with null id"() {
         def container = factory.createCollectionContainer(TestNullableIdEntity)

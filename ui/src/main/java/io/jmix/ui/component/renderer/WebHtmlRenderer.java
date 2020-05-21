@@ -23,7 +23,7 @@ import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A renderer for presenting HTML content.
@@ -40,7 +40,7 @@ public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
         super(nullRepresentation);
     }
 
-    @Inject
+    @Autowired
     public void setHtmlSanitizer(HtmlSanitizer htmlSanitizer) {
         this.htmlSanitizer = htmlSanitizer;
     }

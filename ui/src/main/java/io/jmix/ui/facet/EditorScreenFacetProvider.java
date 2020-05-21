@@ -25,7 +25,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
@@ -35,9 +35,9 @@ public class EditorScreenFacetProvider
 
     public static final String NAME = "jmix_EditorScreenFacetProvider";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     @Override

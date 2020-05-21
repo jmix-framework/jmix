@@ -33,7 +33,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -76,12 +76,12 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         component.setItemCaptionGenerator(this::generateItemCaption);
     }
 
-    @Inject
+    @Autowired
     protected void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
-    @Inject
+    @Autowired
     protected void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }

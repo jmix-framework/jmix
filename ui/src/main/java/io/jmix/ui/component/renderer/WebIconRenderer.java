@@ -26,7 +26,7 @@ import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.widget.renderer.JmixIconRenderer;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebIconRenderer<T extends Entity>
         extends WebAbstractDataGrid.AbstractRenderer<T, Resource> implements DataGrid.IconRenderer<T> {
@@ -37,12 +37,12 @@ public class WebIconRenderer<T extends Entity>
     public WebIconRenderer() {
     }
 
-    @Inject
+    @Autowired
     public void setIcons(Icons icons) {
         this.icons = icons;
     }
 
-    @Inject
+    @Autowired
     public void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }

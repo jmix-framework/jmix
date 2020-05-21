@@ -28,7 +28,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.theme.HaloTheme;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("not-found")
 @UiController(NotFoundScreen.ID)
@@ -39,10 +39,10 @@ public class NotFoundScreen extends Screen {
     @WindowParam(name = "requestedRoute", required = true)
     protected String requestedRoute;
 
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
     @Subscribe

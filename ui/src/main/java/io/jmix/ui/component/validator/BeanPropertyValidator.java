@@ -25,7 +25,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Validator that applies JSR 303 rules for {@link HasValue} instance using {@link BeanValidation}. <br>
@@ -45,22 +45,22 @@ public class BeanPropertyValidator extends AbstractBeanValidator {
         super(beanClass, beanProperty, validationGroups);
     }
 
-    @Inject
+    @Autowired
     protected void setMetadata(Metadata metadata) {
         this.metadata = metadata;
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     protected void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
     }
 
-    @Inject
+    @Autowired
     protected void setBeanValidation(BeanValidation beanValidation) {
         this.beanValidation = beanValidation;
     }

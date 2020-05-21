@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -51,10 +51,10 @@ public class RootNavigationHandler implements NavigationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RootNavigationHandler.class);
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
     @Override

@@ -34,7 +34,7 @@ import io.jmix.ui.widget.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
@@ -161,7 +161,7 @@ public abstract class WebAbstractActionsHolderComponent<T extends com.vaadin.ui.
     protected void beforeContextMenuButtonHandlerPerformed() {
     }
 
-    @Inject
+    @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
         this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);

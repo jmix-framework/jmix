@@ -22,7 +22,7 @@ import io.jmix.ui.UiProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class WebHistory implements History {
 
     private static final Logger log = LoggerFactory.getLogger(WebHistory.class);
 
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
     protected AppUI ui;

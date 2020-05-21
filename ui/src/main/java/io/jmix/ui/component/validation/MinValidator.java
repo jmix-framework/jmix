@@ -27,7 +27,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstraint;
 
@@ -70,17 +70,17 @@ public class MinValidator<T extends Number> extends AbstractValidator<T> {
         this.message = message;
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     protected void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         this.datatypeRegistry = datatypeRegistry;
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
     }

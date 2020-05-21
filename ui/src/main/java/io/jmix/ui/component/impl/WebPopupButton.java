@@ -32,7 +32,7 @@ import io.jmix.ui.widget.JmixPopupButtonLayout;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
@@ -68,7 +68,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
         component.setContent(vPopupComponent);
     }
 
-    @Inject
+    @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
         this.showActionIcons = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);

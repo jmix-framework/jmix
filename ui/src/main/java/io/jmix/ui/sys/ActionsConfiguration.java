@@ -27,7 +27,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class ActionsConfiguration extends AbstractScanConfiguration {
     protected List<String> basePackages = Collections.emptyList();
     protected List<ActionDefinition> explicitDefinitions = Collections.emptyList();
 
-    @Inject
+    @Autowired
     public ActionsConfiguration(ApplicationContext applicationContext, AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         this.applicationContext = applicationContext;
         this.metadataReaderFactory = metadataReaderFactory;

@@ -89,7 +89,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -204,62 +204,62 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         initComponent(component);
     }
 
-    @Inject
+    @Autowired
     public void setUiProperties(UiProperties uiProperties) {
         this.uiProperties = uiProperties;
     }
 
-    @Inject
+    @Autowired
     public void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }
 
-    @Inject
+    @Autowired
     public void setSecurity(Security security) {
         this.security = security;
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
-    @Inject
+    @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
     }
 
-    @Inject
+    @Autowired
     public void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     public void setPersistenceManagerClient(PersistenceManagerClient persistenceManagerClient) {
         this.persistenceManagerClient = persistenceManagerClient;
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.locale = currentAuthentication.getLocale();
     }
 
-    @Inject
+    @Autowired
     public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         this.datatypeRegistry = datatypeRegistry;
     }
 
-    @Inject
+    @Autowired
     public void setDataComponents(DataComponents dataComponents) {
         this.dataComponents = dataComponents;
     }
 
-    @Inject
+    @Autowired
     public void setViewRepository(FetchPlanRepository viewRepository) {
         this.viewRepository = viewRepository;
     }

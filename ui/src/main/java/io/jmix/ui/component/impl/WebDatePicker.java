@@ -30,7 +30,7 @@ import com.vaadin.shared.ui.datefield.DateResolution;
 import com.vaadin.ui.InlineDateField;
 import io.jmix.ui.widget.JmixInlineDateField;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.*;
 import java.util.Date;
 
@@ -55,17 +55,17 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
         return new JmixInlineDateField();
     }
 
-    @Inject
+    @Autowired
     public void setDataAwareComponentsTools(DataAwareComponentsTools dataAwareComponentsTools) {
         this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 
-    @Inject
+    @Autowired
     public void setDateTimeTransformations(DateTimeTransformations dateTimeTransformations) {
         this.dateTimeTransformations = dateTimeTransformations;
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         component.setDateOutOfRangeMessage(messages.getMessage("datePicker.dateOutOfRangeMessage"));
     }

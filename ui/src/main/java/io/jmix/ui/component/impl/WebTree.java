@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -238,27 +238,27 @@ public class WebTree<E extends Entity>
         });
     }
 
-    @Inject
+    @Autowired
     public void setSecurity(Security security) {
         this.security = security;
     }
 
-    @Inject
+    @Autowired
     public void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }
 
-    @Inject
+    @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }
 
-    @Inject
+    @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
         this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);

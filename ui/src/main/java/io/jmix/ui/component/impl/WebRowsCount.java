@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -59,7 +59,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
 
     protected Adapter adapter;
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
     protected boolean refreshing;
@@ -93,12 +93,12 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         component.getLastButton().setVisible(false);
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     public void setIconResolver(IconResolver iconResolver) {
         // todo extract icon constants
         component.getFirstButton().setIcon(iconResolver.getIconResource("icons/rows-count-first.png"));
@@ -107,7 +107,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         component.getLastButton().setIcon(iconResolver.getIconResource("icons/rows-count-last.png"));
     }
 
-    @Inject
+    @Autowired
     public void setBackgroundWorker(BackgroundWorker backgroundWorker) {
         this.backgroundWorker = backgroundWorker;
     }

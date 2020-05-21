@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -61,25 +61,25 @@ public class MenuItemCommands {
     private static final Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
     private static final Logger log = LoggerFactory.getLogger(MenuItemCommands.class);
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected MenuConfig menuConfig;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected HotDeployManager hotDeployManager;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
-    @Inject
+    @Autowired
     protected ScreenBuilders screenBuilders;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected MeterRegistry meterRegistry;
 
     /**

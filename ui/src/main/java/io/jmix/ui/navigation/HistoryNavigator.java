@@ -32,7 +32,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 /**
@@ -46,7 +46,7 @@ public class HistoryNavigator {
 
     private static final Logger log = LoggerFactory.getLogger(HistoryNavigator.class);
 
-    @Inject
+    @Autowired
     protected UrlTools urlTools;
 
     protected final AppUI ui;

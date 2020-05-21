@@ -33,7 +33,7 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.widget.JmixMenuBar;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
@@ -62,22 +62,22 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
         });
     }
 
-    @Inject
+    @Autowired
     public void setIconResolver(IconResolver iconResolver) {
         this.iconResolver = iconResolver;
     }
 
-    @Inject
+    @Autowired
     public void setIcons(Icons icons) {
         this.icons = icons;
     }
 
-    @Inject
+    @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     public void setSecurity(Security security) {
         this.security = security;
     }

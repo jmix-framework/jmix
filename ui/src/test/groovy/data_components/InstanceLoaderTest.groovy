@@ -24,14 +24,14 @@ import io.jmix.ui.model.InstanceLoader
 import test_support.DataContextSpec
 import test_support.entity.Foo
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.function.Consumer
 
 class InstanceLoaderTest extends DataContextSpec {
 
-    @Inject DataManager dataManager
-    @Inject DataComponents factory
-    @Inject PersistenceTools persistenceTools
+    @Autowired DataManager dataManager
+    @Autowired DataComponents factory
+    @Autowired PersistenceTools persistenceTools
 
     def "successful load"() {
         InstanceLoader<Foo> loader = factory.createInstanceLoader()

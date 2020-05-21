@@ -35,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -68,7 +68,7 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     // private, lazily initialized
     private EventHub eventHub = null;
 
-    @Inject
+    @Autowired
     public void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }

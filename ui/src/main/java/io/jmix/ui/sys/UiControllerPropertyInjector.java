@@ -31,7 +31,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -84,7 +84,7 @@ public class UiControllerPropertyInjector {
         this.properties = properties;
     }
 
-    @Inject
+    @Autowired
     public void setReflectionInspector(UiControllerReflectionInspector reflectionInspector) {
         this.reflectionInspector = reflectionInspector;
     }

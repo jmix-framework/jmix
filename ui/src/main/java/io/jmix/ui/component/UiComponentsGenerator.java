@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
@@ -28,7 +28,7 @@ import java.util.List;
 public class UiComponentsGenerator {
     public static final String NAME = "jmix_UiComponentsGenerator";
 
-    @Inject
+    @Autowired
     protected List<ComponentGenerationStrategy> componentGenerationStrategies;
 
     /**

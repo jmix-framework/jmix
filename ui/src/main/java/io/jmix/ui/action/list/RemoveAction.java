@@ -37,7 +37,7 @@ import io.jmix.ui.model.Nested;
 import io.jmix.ui.screen.Install;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 /**
@@ -54,7 +54,7 @@ public class RemoveAction<E extends Entity> extends SecuredListAction implements
 
     public static final String ID = "remove";
 
-    @Inject
+    @Autowired
     protected RemoveOperation removeOperation;
 
     protected Boolean confirmation;
@@ -154,17 +154,17 @@ public class RemoveAction<E extends Entity> extends SecuredListAction implements
         this.actionCancelledHandler = actionCancelledHandler;
     }
 
-    @Inject
+    @Autowired
     protected void setIcons(Icons icons) {
         this.icon = icons.get(JmixIcon.REMOVE_ACTION);
     }
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.caption = messages.getMessage("actions.Remove");
     }
 
-    @Inject
+    @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableRemoveShortcut());
     }

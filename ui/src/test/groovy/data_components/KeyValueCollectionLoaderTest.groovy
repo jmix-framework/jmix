@@ -26,15 +26,15 @@ import io.jmix.ui.model.KeyValueCollectionLoader
 import test_support.DataContextSpec
 import test_support.entity.Foo
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.function.Consumer
 import java.util.function.Function
 
 class KeyValueCollectionLoaderTest extends DataContextSpec {
 
-    @Inject DataManager dataManager
-    @Inject DataComponents factory
-    @Inject PersistenceTools persistenceTools
+    @Autowired DataManager dataManager
+    @Autowired DataComponents factory
+    @Autowired PersistenceTools persistenceTools
 
     def "successful load"() {
         KeyValueCollectionLoader loader = factory.createKeyValueCollectionLoader()

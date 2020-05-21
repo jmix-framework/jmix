@@ -24,7 +24,7 @@ import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.widget.JmixComboBox;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Function;
 
 import static com.vaadin.server.Sizeable.Unit;
@@ -47,7 +47,7 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
         component.setPrimaryStyleName(USER_INDICATOR_STYLENAME);
     }
 
-    @Inject
+    @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
     }

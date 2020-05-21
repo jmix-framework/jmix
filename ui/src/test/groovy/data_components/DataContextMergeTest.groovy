@@ -32,15 +32,15 @@ import test_support.entity.TestReadOnlyPropertyEntity
 import test_support.entity.sales.*
 import test_support.entity.sec.User
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class DataContextMergeTest extends DataContextSpec {
 
-    @Inject
+    @Autowired
     DataComponents factory
-    @Inject
+    @Autowired
     EntityStates entityStates
-    @Inject
+    @Autowired
     DataManager dataManager
 
     def "merge equal instances"() throws Exception {

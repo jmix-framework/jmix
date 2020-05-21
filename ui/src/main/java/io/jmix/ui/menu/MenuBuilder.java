@@ -31,7 +31,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -44,15 +44,15 @@ import java.util.function.Consumer;
 public class MenuBuilder {
     public static final String NAME = "jmix_AppMenuBuilder";
 
-    @Inject
+    @Autowired
     protected Security security;
 
-    @Inject
+    @Autowired
     protected MenuConfig menuConfig;
-    @Inject
+    @Autowired
     protected MenuItemCommands menuItemCommands;
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
     protected AppMenu appMenu;

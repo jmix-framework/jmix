@@ -23,7 +23,7 @@ import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.component.mainwindow.TimeZoneIndicator;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.TimeZone;
 
 public class WebTimeZoneIndicator extends WebAbstractComponent<Label> implements TimeZoneIndicator {
@@ -36,7 +36,7 @@ public class WebTimeZoneIndicator extends WebAbstractComponent<Label> implements
         component.setStyleName(USER_TIMEZONE_LABEL_STYLENAME);
     }
 
-    @Inject
+    @Autowired
     public void setBeanLocator(BeanLocator beanLocator) {
         super.setBeanLocator(beanLocator);
 

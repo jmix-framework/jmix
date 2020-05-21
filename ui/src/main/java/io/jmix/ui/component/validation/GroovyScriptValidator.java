@@ -26,7 +26,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -54,17 +54,17 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
 
     protected String validatorGroovyScript;
 
-    @Inject
+    @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
     }
 
-    @Inject
+    @Autowired
     protected void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
         this.datatypeRegistry = datatypeRegistry;
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
     }

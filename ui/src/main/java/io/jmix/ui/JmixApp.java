@@ -29,7 +29,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 
 @Component(App.NAME)
@@ -38,10 +38,10 @@ public class JmixApp extends App {
 
     private Logger log = LoggerFactory.getLogger(JmixApp.class);
 
-    @Inject
+    @Autowired
     protected UserRepository userRepository;
 
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
 
     @Override

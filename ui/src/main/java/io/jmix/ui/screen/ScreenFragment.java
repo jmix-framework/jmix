@@ -27,7 +27,7 @@ import io.jmix.ui.model.ScreenData;
 import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +60,7 @@ public abstract class ScreenFragment implements FrameOwner {
     // Extensions state
     private Map<Class<?>, Object> extensions;
 
-    @Inject
+    @Autowired
     protected void setBeanLocator(BeanLocator beanLocator) {
         this.beanLocator = beanLocator;
     }

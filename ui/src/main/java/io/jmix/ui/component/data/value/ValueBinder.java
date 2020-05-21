@@ -42,7 +42,7 @@ import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.validator.BeanPropertyValidator;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.NotNull;
 import javax.validation.metadata.BeanDescriptor;
 import java.util.Arrays;
@@ -56,15 +56,15 @@ public class ValueBinder {
 
     public static final String NAME = "jmix_ValueBinder";
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected BeanValidation beanValidation;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected Security security;
 
     public <V> ValueBinding<V> bind(HasValue<V> component, ValueSource<V> valueSource) {

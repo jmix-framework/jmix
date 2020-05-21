@@ -29,12 +29,12 @@ import test_support.entity.sec.User
 import test_support.entity.sec.UserRole
 import org.eclipse.persistence.queries.FetchGroupTracker
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataContextTest extends DataContextSpec {
 
-    @Inject DataComponents factory
+    @Autowired DataComponents factory
 
     def "merge equal instances"() throws Exception {
         DataContext context = factory.createDataContext()

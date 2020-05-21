@@ -28,7 +28,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -38,9 +38,9 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
 
     public static final String NAME = "jmix_NotificationFacetProvider";
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected UiProperties uiProperties;
 
     @Override

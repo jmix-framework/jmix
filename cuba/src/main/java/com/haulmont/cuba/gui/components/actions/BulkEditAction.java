@@ -21,20 +21,20 @@ import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.core.commons.util.ParamsMap;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Field;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.JmixIcon;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -44,7 +44,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static io.jmix.ui.components.ComponentsHelper.getScreenContext;
+import static io.jmix.ui.component.ComponentsHelper.getScreenContext;
 
 /**
  * Action used in {@link BulkEditor} visual component.

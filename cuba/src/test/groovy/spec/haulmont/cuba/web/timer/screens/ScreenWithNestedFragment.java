@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.timer.screens;
 
-import io.jmix.ui.components.Fragment;
+import io.jmix.ui.component.Fragment;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;

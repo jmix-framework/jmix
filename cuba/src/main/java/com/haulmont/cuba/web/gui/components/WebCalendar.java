@@ -21,14 +21,14 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.components.calendar.CalendarEventProvider;
+import io.jmix.ui.component.calendar.CalendarEventProvider;
 import com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider;
-import io.jmix.ui.components.calendar.ContainerCalendarEventProvider;
+import io.jmix.ui.component.calendar.ContainerCalendarEventProvider;
 
 import javax.annotation.Nullable;
 
 @Deprecated
-public class WebCalendar<V> extends io.jmix.ui.components.impl.WebCalendar<V> implements Calendar<V> {
+public class WebCalendar<V> extends io.jmix.ui.component.impl.WebCalendar<V> implements Calendar<V> {
 
     /**
      * Set collection datasource for the calendar component with a collection of events.
@@ -60,8 +60,8 @@ public class WebCalendar<V> extends io.jmix.ui.components.impl.WebCalendar<V> im
     @Nullable
     @Override
     protected MetaProperty getMetaProperty() {
-        if (getEventProvider() instanceof io.jmix.ui.components.data.calendar.EntityCalendarEventProvider) {
-            io.jmix.ui.components.data.calendar.EntityCalendarEventProvider eventProvider = (io.jmix.ui.components.data.calendar.EntityCalendarEventProvider) getEventProvider();
+        if (getEventProvider() instanceof io.jmix.ui.component.data.calendar.EntityCalendarEventProvider) {
+            io.jmix.ui.component.data.calendar.EntityCalendarEventProvider eventProvider = (io.jmix.ui.component.data.calendar.EntityCalendarEventProvider) getEventProvider();
             String property = eventProvider.getStartDateProperty().isEmpty()
                     ? eventProvider.getEndDateProperty()
                     : eventProvider.getStartDateProperty();

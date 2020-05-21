@@ -22,8 +22,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of value
- * @deprecated Use {@link io.jmix.ui.components.TimeField} instead
+ * @deprecated Use {@link io.jmix.ui.component.TimeField} instead
  */
 @Deprecated
-public interface TimeField<V> extends Field<V>, io.jmix.ui.components.TimeField<V> {
+public interface TimeField<V> extends Field<V>, io.jmix.ui.component.TimeField<V> {
 }

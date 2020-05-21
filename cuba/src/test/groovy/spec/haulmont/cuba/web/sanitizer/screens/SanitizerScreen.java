@@ -16,11 +16,11 @@
 
 package spec.haulmont.cuba.web.sanitizer.screens;
 
-import io.jmix.ui.components.MessageDialogFacet;
-import io.jmix.ui.components.NotificationFacet;
-import io.jmix.ui.components.OptionDialogFacet;
-import io.jmix.ui.components.RichTextArea;
-import io.jmix.ui.components.TextField;
+import io.jmix.ui.component.MessageDialogFacet;
+import io.jmix.ui.component.NotificationFacet;
+import io.jmix.ui.component.OptionDialogFacet;
+import io.jmix.ui.component.RichTextArea;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;

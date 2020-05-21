@@ -34,13 +34,13 @@ import io.jmix.core.security.Security;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ComponentsHelper;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.JmixIcon;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.icon.Icons;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
@@ -86,7 +86,7 @@ public class AddAction extends ListAction
      * Creates an action with default id, opening the lookup screen in THIS tab.
      * @param target    component containing this action
      */
-    public static AddAction create(io.jmix.ui.components.ListComponent target) {
+    public static AddAction create(io.jmix.ui.component.ListComponent target) {
         return AppBeans.getPrototype("cuba_AddAction", target);
     }
 
@@ -95,7 +95,7 @@ public class AddAction extends ListAction
      * @param target    component containing this action
      * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
      */
-    public static AddAction create(io.jmix.ui.components.ListComponent target, @Nullable Window.Lookup.Handler handler) {
+    public static AddAction create(io.jmix.ui.component.ListComponent target, @Nullable Window.Lookup.Handler handler) {
         return AppBeans.getPrototype("cuba_AddAction", target, handler);
     }
 
@@ -105,7 +105,7 @@ public class AddAction extends ListAction
      * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
      * @param openType  how to open the editor screen
      */
-    public static AddAction create(io.jmix.ui.components.ListComponent target, @Nullable Window.Lookup.Handler handler,
+    public static AddAction create(io.jmix.ui.component.ListComponent target, @Nullable Window.Lookup.Handler handler,
                                    OpenType openType) {
         return AppBeans.getPrototype("cuba_AddAction", target, handler, openType);
     }
@@ -117,14 +117,14 @@ public class AddAction extends ListAction
      * @param openType  how to open the editor screen
      * @param id        action's name
      */
-    public static AddAction create(io.jmix.ui.components.ListComponent target, @Nullable Window.Lookup.Handler handler,
+    public static AddAction create(io.jmix.ui.component.ListComponent target, @Nullable Window.Lookup.Handler handler,
                                    OpenType openType, String id) {
         return AppBeans.getPrototype("cuba_AddAction", target, handler, openType, id);
     }
 
     /**
      * The simplest constructor. The action has default name and opens the lookup screen in THIS tab.
-     * Lookup handler can be set by subsequent call to {@link #setHandler(io.jmix.ui.components.Window.Lookup.Handler)}.
+     * Lookup handler can be set by subsequent call to {@link #setHandler(io.jmix.ui.component.Window.Lookup.Handler)}.
      * If it is not set, an instance of {@link DefaultHandler} will be used.
      *
      * @param target    component containing this action

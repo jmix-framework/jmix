@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
 
 import javax.persistence.*;

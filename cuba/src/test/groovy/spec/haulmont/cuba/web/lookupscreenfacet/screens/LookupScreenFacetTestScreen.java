@@ -18,11 +18,11 @@ package spec.haulmont.cuba.web.lookupscreenfacet.screens;
 
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.Metadata;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Button;
-import io.jmix.ui.components.LookupScreenFacet;
-import io.jmix.ui.components.PickerField;
-import io.jmix.ui.components.Table;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.LookupScreenFacet;
+import io.jmix.ui.component.PickerField;
+import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import spec.haulmont.cuba.web.user.screens.UserBrowseTest;

@@ -25,8 +25,8 @@ import java.util.Collection;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> entity
- * @deprecated Use {@link io.jmix.ui.components.TokenList} instead
+ * @deprecated Use {@link io.jmix.ui.component.TokenList} instead
  */
 @Deprecated
-public interface TokenList<V extends Entity> extends Field<Collection<V>>, io.jmix.ui.components.TokenList<V> {
+public interface TokenList<V extends Entity> extends Field<Collection<V>>, io.jmix.ui.component.TokenList<V> {
 }

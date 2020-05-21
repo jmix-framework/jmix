@@ -19,13 +19,13 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.components.data.Options;
-import io.jmix.ui.components.data.ValueSource;
+import io.jmix.ui.component.data.Options;
+import io.jmix.ui.component.data.ValueSource;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
-public class ComponentGenerationContext extends io.jmix.ui.components.ComponentGenerationContext {
+public class ComponentGenerationContext extends io.jmix.ui.component.ComponentGenerationContext {
 
     @Deprecated
     protected Datasource datasource;

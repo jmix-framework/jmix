@@ -19,10 +19,10 @@ package com.haulmont.cuba.web.components.ds.api.consistency;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.components.LookupPickerField;
-import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.common.event.Subscription;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.ui.components.HasValue;
+import io.jmix.ui.component.HasValue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

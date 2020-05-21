@@ -21,8 +21,8 @@ import com.haulmont.cuba.gui.data.Datasource;
 /**
  * Component compatible with {@link Datasource}.
  *
- * @deprecated Use {@link io.jmix.ui.components.CheckBox} instead
+ * @deprecated Use {@link io.jmix.ui.component.CheckBox} instead
  */
 @Deprecated
-public interface CheckBox extends Field<Boolean>, io.jmix.ui.components.CheckBox {
+public interface CheckBox extends Field<Boolean>, io.jmix.ui.component.CheckBox {
 }

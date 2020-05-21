@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.Label;
 
 @Deprecated
-public class WebLabel<V> extends io.jmix.ui.components.impl.WebLabel<V> implements Label<V> {
+public class WebLabel<V> extends io.jmix.ui.component.impl.WebLabel<V> implements Label<V> {
 }

@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.form
 
-import io.jmix.ui.components.TextField
+import io.jmix.ui.component.TextField
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.form.screens.FormFlexiblePositioningScreen
 

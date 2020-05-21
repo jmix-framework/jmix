@@ -23,10 +23,10 @@ import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
 import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEditor;
 import io.jmix.ui.WindowParam;
-import io.jmix.ui.components.BoxLayout;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.HasValue;
-import io.jmix.ui.components.TextField;
+import io.jmix.ui.component.BoxLayout;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.TextField;
 
 import javax.inject.Inject;
 import java.util.Collections;

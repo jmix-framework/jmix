@@ -29,12 +29,12 @@ import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.DialogAction;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ComponentsHelper;
-import io.jmix.ui.icons.JmixIcon;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.icon.Icons;
 import org.springframework.context.annotation.Scope;
 
 import java.util.HashSet;
@@ -81,7 +81,7 @@ public class RemoveAction extends ItemTrackingAction
      * Creates an action with default id. Autocommit is set to true.
      * @param target    component containing this action
      */
-    public static RemoveAction create(io.jmix.ui.components.ListComponent target) {
+    public static RemoveAction create(io.jmix.ui.component.ListComponent target) {
         return AppBeans.getPrototype("cuba_RemoveAction", target);
     }
 
@@ -90,7 +90,7 @@ public class RemoveAction extends ItemTrackingAction
      * @param target    component containing this action
      * @param autocommit    whether to commit datasource immediately
      */
-    public static RemoveAction create(io.jmix.ui.components.ListComponent target, boolean autocommit) {
+    public static RemoveAction create(io.jmix.ui.component.ListComponent target, boolean autocommit) {
         return AppBeans.getPrototype("cuba_RemoveAction", target, autocommit);
     }
 
@@ -100,7 +100,7 @@ public class RemoveAction extends ItemTrackingAction
      * @param autocommit    whether to commit datasource immediately
      * @param id            action's identifier
      */
-    public static RemoveAction create(io.jmix.ui.components.ListComponent target, boolean autocommit, String id) {
+    public static RemoveAction create(io.jmix.ui.component.ListComponent target, boolean autocommit, String id) {
         return AppBeans.getPrototype("cuba_RemoveAction", target, autocommit, id);
     }
 

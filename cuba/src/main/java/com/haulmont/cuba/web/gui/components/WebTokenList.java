@@ -20,5 +20,5 @@ import com.haulmont.cuba.gui.components.TokenList;
 import io.jmix.core.Entity;
 
 @Deprecated
-public class WebTokenList<V extends Entity> extends io.jmix.ui.components.impl.WebTokenList<V> implements TokenList<V> {
+public class WebTokenList<V extends Entity> extends io.jmix.ui.component.impl.WebTokenList<V> implements TokenList<V> {
 }

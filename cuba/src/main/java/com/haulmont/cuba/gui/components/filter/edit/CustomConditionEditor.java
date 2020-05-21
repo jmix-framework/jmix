@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components.filter.edit;
 
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.AbstractWindow;
-import io.jmix.ui.components.Component;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.theme.ThemeConstants;
 
 import javax.inject.Inject;

@@ -22,7 +22,7 @@ import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.entity.annotation.TrackEditScreenHistory;
-import io.jmix.core.metamodel.annotations.Composition;
+import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;

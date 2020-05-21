@@ -2,8 +2,8 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.components.Calendar;
-import io.jmix.ui.xml.layout.loaders.CalendarLoader;
+import io.jmix.ui.component.Calendar;
+import io.jmix.ui.xml.layout.loader.CalendarLoader;
 import org.dom4j.Element;
 
 public class CubaCalendarLoader extends CalendarLoader {

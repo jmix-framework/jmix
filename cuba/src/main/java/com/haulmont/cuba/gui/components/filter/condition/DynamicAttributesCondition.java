@@ -29,7 +29,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrui.MsgBundleTools;
@@ -42,7 +42,6 @@ import org.dom4j.Element;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

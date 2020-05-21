@@ -24,9 +24,9 @@ import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondit
 import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
 import com.haulmont.cuba.gui.components.filter.condition.GroupCondition;
 import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
-import io.jmix.core.commons.datastruct.Node;
-import io.jmix.core.commons.xmlparsing.Dom4jTools;
-import io.jmix.ui.components.FilterImplementation;
+import io.jmix.core.common.datastruct.Node;
+import io.jmix.core.common.xmlparsing.Dom4jTools;
+import io.jmix.ui.component.FilterImplementation;
 import io.jmix.ui.filter.ConditionType;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;

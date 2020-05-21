@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.SearchPickerField;
 import io.jmix.core.Entity;
 
 @Deprecated
-public class WebSearchPickerField<V extends Entity> extends io.jmix.ui.components.impl.WebSearchPickerField<V>
+public class WebSearchPickerField<V extends Entity> extends io.jmix.ui.component.impl.WebSearchPickerField<V>
         implements SearchPickerField<V> {
 }

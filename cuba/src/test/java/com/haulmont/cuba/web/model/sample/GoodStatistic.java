@@ -17,8 +17,8 @@
 package com.haulmont.cuba.web.model.sample;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import java.math.BigDecimal;
 import java.util.Date;

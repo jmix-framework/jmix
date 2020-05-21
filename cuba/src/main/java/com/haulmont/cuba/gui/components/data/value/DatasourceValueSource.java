@@ -21,19 +21,19 @@ import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.components.data.BindingState;
-import io.jmix.ui.components.data.meta.EntityValueSource;
+import io.jmix.ui.component.data.BindingState;
+import io.jmix.ui.component.data.meta.EntityValueSource;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class DatasourceValueSource<E extends Entity, V> implements EntityValueSource<E, V>, BeanLocatorAware {
     protected final Datasource<E> datasource;

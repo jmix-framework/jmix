@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.menu
 
 
 import com.haulmont.cuba.core.global.Messages
-import io.jmix.core.commons.util.Dom4j
+import io.jmix.core.common.util.Dom4j
 import io.jmix.ui.menu.MenuConfig
 import io.jmix.ui.menu.MenuItem
 

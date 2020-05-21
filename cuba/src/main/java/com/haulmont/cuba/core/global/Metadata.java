@@ -19,8 +19,7 @@ package com.haulmont.cuba.core.global;
 import com.haulmont.chile.core.model.Session;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 
 /**
  * Legacy interface to provide metadata-related functionality.

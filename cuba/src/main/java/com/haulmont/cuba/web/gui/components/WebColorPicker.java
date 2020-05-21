@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.ColorPicker;
 
 @Deprecated
-public class WebColorPicker extends io.jmix.ui.components.impl.WebColorPicker implements ColorPicker {
+public class WebColorPicker extends io.jmix.ui.component.impl.WebColorPicker implements ColorPicker {
 }

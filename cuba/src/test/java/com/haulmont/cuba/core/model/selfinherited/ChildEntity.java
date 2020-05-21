@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.selfinherited;
 
-import io.jmix.core.metamodel.annotations.Composition;
+import io.jmix.core.metamodel.annotation.Composition;
 
 import javax.persistence.*;
 import java.util.List;

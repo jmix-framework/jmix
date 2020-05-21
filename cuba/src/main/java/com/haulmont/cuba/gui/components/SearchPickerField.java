@@ -23,11 +23,11 @@ import io.jmix.core.Entity;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> entity
- * @deprecated Use {@link io.jmix.ui.components.SuggestionPickerField} instead
+ * @deprecated Use {@link io.jmix.ui.component.SuggestionPickerField} instead
  */
 @Deprecated
 public interface SearchPickerField<V extends Entity> extends SearchField<V>, PickerField<V>,
-        io.jmix.ui.components.SearchPickerField<V> {
+        io.jmix.ui.component.SearchPickerField<V> {
 
-    String NAME = io.jmix.ui.components.SearchPickerField.NAME;
+    String NAME = io.jmix.ui.component.SearchPickerField.NAME;
 }

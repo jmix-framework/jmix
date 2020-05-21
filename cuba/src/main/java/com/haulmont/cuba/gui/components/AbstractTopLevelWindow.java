@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
-import io.jmix.ui.components.Window;
+import io.jmix.ui.component.Window;
 
 public class AbstractTopLevelWindow extends AbstractWindow implements Window.TopLevelWindow {
 }

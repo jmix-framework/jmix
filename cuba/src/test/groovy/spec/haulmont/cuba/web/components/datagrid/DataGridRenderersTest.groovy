@@ -17,8 +17,8 @@
 package spec.haulmont.cuba.web.components.datagrid
 
 import com.haulmont.cuba.web.model.sample.RendererEntity
-import io.jmix.ui.components.DataGrid
-import io.jmix.ui.components.renderers.*
+import io.jmix.ui.component.DataGrid
+import io.jmix.ui.component.renderer.*
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datagrid.screens.DataGridRenderersScreen
 

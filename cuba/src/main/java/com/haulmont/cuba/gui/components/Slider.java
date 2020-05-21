@@ -22,8 +22,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of number value
- * @deprecated Use {@link io.jmix.ui.components.Slider} instead
+ * @deprecated Use {@link io.jmix.ui.component.Slider} instead
  */
 @Deprecated
-public interface Slider<V extends Number> extends Field<V>, io.jmix.ui.components.Slider<V> {
+public interface Slider<V extends Number> extends Field<V>, io.jmix.ui.component.Slider<V> {
 }

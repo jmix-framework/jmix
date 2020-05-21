@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.Entity;
 
 public class WebPickerField<V extends Entity>
-        extends io.jmix.ui.components.impl.WebPickerField<V>
+        extends io.jmix.ui.component.impl.WebPickerField<V>
         implements PickerField<V> {
 }

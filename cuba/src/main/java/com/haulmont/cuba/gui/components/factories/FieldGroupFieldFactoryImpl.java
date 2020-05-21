@@ -22,7 +22,7 @@ import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.RuntimePropsDatasource;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.components.UiComponentsGenerator;
+import io.jmix.ui.component.UiComponentsGenerator;
 
 import javax.inject.Inject;
 

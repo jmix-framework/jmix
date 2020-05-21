@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.SourceCodeEditorLoader;
+import io.jmix.ui.xml.layout.loader.SourceCodeEditorLoader;
 import org.dom4j.Element;
 
 public class CubaSourceCodeEditorLoader extends SourceCodeEditorLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.SourceCodeEditor component, Element element) {
+    protected void loadData(io.jmix.ui.component.SourceCodeEditor component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

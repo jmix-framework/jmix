@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.common;
 
 import io.jmix.core.entity.annotation.EnableRestore;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.persistence.*;
 

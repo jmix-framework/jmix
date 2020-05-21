@@ -20,7 +20,7 @@ package com.haulmont.cuba.gui.components.filter.addcondition;
 import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescriptor;
 import com.haulmont.cuba.gui.data.impl.AbstractTreeDatasource;
-import io.jmix.core.commons.datastruct.Tree;
+import io.jmix.core.common.datastruct.Tree;
 
 import java.util.ArrayList;
 import java.util.Collection;

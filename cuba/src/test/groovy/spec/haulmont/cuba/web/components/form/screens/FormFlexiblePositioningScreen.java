@@ -17,10 +17,10 @@
 package spec.haulmont.cuba.web.components.form.screens;
 
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Form;
-import io.jmix.ui.components.TextArea;
-import io.jmix.ui.components.TextField;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Form;
+import io.jmix.ui.component.TextArea;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;

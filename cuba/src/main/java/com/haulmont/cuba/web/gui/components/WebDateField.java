@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.DateField;
 
 @Deprecated
 public class WebDateField<V extends Comparable<V>>
-        extends io.jmix.ui.components.impl.WebDateField<V>
+        extends io.jmix.ui.component.impl.WebDateField<V>
         implements DateField<V> {
 }

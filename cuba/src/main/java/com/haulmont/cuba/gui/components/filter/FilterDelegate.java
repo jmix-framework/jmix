@@ -21,10 +21,10 @@ import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ComponentContainer;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.HasUserOriginated;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.HasUserOriginated;
 import io.jmix.ui.model.BaseCollectionLoader;
 import org.dom4j.Element;
 

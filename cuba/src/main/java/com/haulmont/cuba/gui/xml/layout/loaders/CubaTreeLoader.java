@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.Tree;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.xml.layout.loaders.TreeLoader;
+import io.jmix.ui.xml.layout.loader.TreeLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 

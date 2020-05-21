@@ -20,7 +20,7 @@ import com.google.common.base.Preconditions;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.components.data.TableItems;
+import io.jmix.ui.component.data.TableItems;
 
 @SuppressWarnings("unchecked")
 public class SortableDatasourceTableItems<E extends Entity, K>

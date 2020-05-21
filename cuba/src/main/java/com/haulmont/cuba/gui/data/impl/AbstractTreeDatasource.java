@@ -18,8 +18,8 @@ package com.haulmont.cuba.gui.data.impl;
 
 import io.jmix.core.Entity;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
-import io.jmix.core.commons.datastruct.Node;
-import io.jmix.core.commons.datastruct.Tree;
+import io.jmix.core.common.datastruct.Node;
+import io.jmix.core.common.datastruct.Tree;
 import io.jmix.core.entity.EntityValues;
 
 import java.util.*;

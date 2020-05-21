@@ -19,8 +19,8 @@ package spec.haulmont.cuba.web.datacontext
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import io.jmix.core.entity.KeyValueEntity
-import io.jmix.ui.components.TextField
-import io.jmix.ui.components.data.value.ContainerValueSource
+import io.jmix.ui.component.TextField
+import io.jmix.ui.component.data.value.ContainerValueSource
 import io.jmix.ui.model.KeyValueCollectionContainer
 import io.jmix.ui.model.KeyValueCollectionLoader
 import io.jmix.ui.model.KeyValueContainer

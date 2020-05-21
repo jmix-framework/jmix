@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.CheckBox;
 
 @Deprecated
-public class WebCheckBox extends io.jmix.ui.components.impl.WebCheckBox implements CheckBox {
+public class WebCheckBox extends io.jmix.ui.component.impl.WebCheckBox implements CheckBox {
 }

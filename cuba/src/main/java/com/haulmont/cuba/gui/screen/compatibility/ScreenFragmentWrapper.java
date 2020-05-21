@@ -17,8 +17,8 @@
 package com.haulmont.cuba.gui.screen.compatibility;
 
 import com.haulmont.cuba.gui.components.AbstractFrame;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.screen.ScreenFragment;
 
 import javax.annotation.Nullable;

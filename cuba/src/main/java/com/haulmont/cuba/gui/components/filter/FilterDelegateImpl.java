@@ -41,25 +41,25 @@ import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.*;
-import io.jmix.core.commons.datastruct.Node;
-import io.jmix.core.commons.datastruct.Pair;
-import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.commons.xmlparsing.Dom4jTools;
+import io.jmix.core.common.datastruct.Node;
+import io.jmix.core.common.datastruct.Pair;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.queryconditions.JpqlCondition;
+import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.security.Security;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.ui.*;
-import io.jmix.ui.actions.AbstractAction;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.BaseAction;
-import io.jmix.ui.actions.DialogAction;
-import io.jmix.ui.actions.DialogAction.Type;
-import io.jmix.ui.components.*;
-import io.jmix.ui.components.Component.Alignment;
-import io.jmix.ui.components.data.meta.ContainerDataUnit;
-import io.jmix.ui.components.data.meta.EntityDataUnit;
+import io.jmix.ui.action.AbstractAction;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.action.DialogAction.Type;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component.Alignment;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.filter.*;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.BaseCollectionLoader;
@@ -2121,9 +2121,9 @@ public class FilterDelegateImpl implements FilterDelegate {
         if (buttons == null) {
             return; // in lookup windows, there is no button panel
         }
-        io.jmix.ui.components.Button addToSetBtn = (Button) buttons.getComponent("addToSetBtn");
-        io.jmix.ui.components.Button addToCurSetBtn = (Button) buttons.getComponent("addToCurSetBtn");
-        io.jmix.ui.components.Button removeFromCurSetBtn = (Button) buttons.getComponent("removeFromCurSetBtn");
+        io.jmix.ui.component.Button addToSetBtn = (Button) buttons.getComponent("addToSetBtn");
+        io.jmix.ui.component.Button addToCurSetBtn = (Button) buttons.getComponent("addToCurSetBtn");
+        io.jmix.ui.component.Button removeFromCurSetBtn = (Button) buttons.getComponent("removeFromCurSetBtn");
 
         Action addToSet = table.getAction("filter.addToSet");
 
@@ -3264,7 +3264,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         void setQueryFilter(QueryFilter filter);
 
-        void setDataLoaderCondition(io.jmix.core.queryconditions.Condition dataLoaderCondition);
+        void setDataLoaderCondition(io.jmix.core.querycondition.Condition dataLoaderCondition);
 
         Map<String, Object> getLastRefreshParameters();
 
@@ -3307,7 +3307,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         /**
          * Condition which was set on DataLoader before applying the filter
          */
-        protected io.jmix.core.queryconditions.Condition dataLoaderCondition;
+        protected io.jmix.core.querycondition.Condition dataLoaderCondition;
 
         protected static final Pattern COMPONENT_PARAM_PATTERN = Pattern.compile("(:)component\\$([\\w.]+)");
         protected static final Pattern CUSTOM_PARAM_PATTERN = Pattern.compile("(:)custom\\$([\\w.]+)");
@@ -3354,7 +3354,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         }
 
         @Override
-        public void setDataLoaderCondition(io.jmix.core.queryconditions.Condition dataLoaderCondition) {
+        public void setDataLoaderCondition(io.jmix.core.querycondition.Condition dataLoaderCondition) {
             this.dataLoaderCondition = dataLoaderCondition;
         }
 
@@ -3439,12 +3439,12 @@ public class FilterDelegateImpl implements FilterDelegate {
                 ftsCustomParameters.clear();
 
 
-                io.jmix.core.queryconditions.Condition condition = queryFilter.toQueryCondition(loaderParameters.keySet());
+                io.jmix.core.querycondition.Condition condition = queryFilter.toQueryCondition(loaderParameters.keySet());
 
                 if (dataLoaderCondition != null) {
-                    io.jmix.core.queryconditions.LogicalCondition combined
-                            = new io.jmix.core.queryconditions.LogicalCondition(
-                            io.jmix.core.queryconditions.LogicalCondition.Type.AND);
+                    io.jmix.core.querycondition.LogicalCondition combined
+                            = new io.jmix.core.querycondition.LogicalCondition(
+                            io.jmix.core.querycondition.LogicalCondition.Type.AND);
                     combined.add(dataLoaderCondition);
                     if (condition != null) {
                         combined.add(condition);
@@ -3625,7 +3625,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         }
 
         @Override
-        public void setDataLoaderCondition(io.jmix.core.queryconditions.Condition dataLoaderCondition) {
+        public void setDataLoaderCondition(io.jmix.core.querycondition.Condition dataLoaderCondition) {
         }
 
         @Override

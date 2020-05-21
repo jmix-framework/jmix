@@ -22,10 +22,10 @@ import com.haulmont.cuba.gui.data.Datasource;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of value
- * @deprecated Use {@link io.jmix.ui.components.SuggestionField} instead
+ * @deprecated Use {@link io.jmix.ui.component.SuggestionField} instead
  */
 @Deprecated
-public interface SearchField<V> extends LookupField<V>, io.jmix.ui.components.SearchField<V> {
+public interface SearchField<V> extends LookupField<V>, io.jmix.ui.component.SearchField<V> {
 
-    String NAME = io.jmix.ui.components.SearchField.NAME;
+    String NAME = io.jmix.ui.component.SearchField.NAME;
 }

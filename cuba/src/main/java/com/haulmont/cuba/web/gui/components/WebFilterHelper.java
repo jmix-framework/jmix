@@ -29,14 +29,14 @@ import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
 import io.jmix.core.BeanLocator;
 import com.haulmont.cuba.core.global.Configuration;
-import io.jmix.core.commons.datastruct.Node;
+import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.components.*;
-import io.jmix.ui.widgets.JmixTextField;
-import io.jmix.ui.widgets.JmixTree;
-import io.jmix.ui.widgets.ShortcutListenerDelegate;
+import io.jmix.ui.component.*;
+import io.jmix.ui.widget.JmixTextField;
+import io.jmix.ui.widget.JmixTree;
+import io.jmix.ui.widget.ShortcutListenerDelegate;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -323,7 +323,7 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     @Override
-    public void setComponentFocusable(io.jmix.ui.components.Component component, boolean focusable) {
+    public void setComponentFocusable(io.jmix.ui.component.Component component, boolean focusable) {
         Component vComponent = component.unwrap(Component.class);
         if (vComponent instanceof Component.Focusable) {
             ((Component.Focusable) vComponent).setTabIndex(focusable ? 0 : -1);
@@ -367,7 +367,7 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     @Override
-    public void setInternalDebugId(io.jmix.ui.components.Component component, String id) {
+    public void setInternalDebugId(io.jmix.ui.component.Component component, String id) {
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {
             component.unwrap(Component.class).setCubaId(id);

@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.SuggestionField;
 
 @Deprecated
-public class WebSuggestionField<V> extends io.jmix.ui.components.impl.WebSuggestionField<V> implements SuggestionField<V> {
+public class WebSuggestionField<V> extends io.jmix.ui.component.impl.WebSuggestionField<V> implements SuggestionField<V> {
 }

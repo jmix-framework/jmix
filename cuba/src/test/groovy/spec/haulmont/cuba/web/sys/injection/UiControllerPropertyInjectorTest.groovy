@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.sys.injection
 
-import io.jmix.ui.components.Label
+import io.jmix.ui.component.Label
 import io.jmix.ui.model.InstanceContainer
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec

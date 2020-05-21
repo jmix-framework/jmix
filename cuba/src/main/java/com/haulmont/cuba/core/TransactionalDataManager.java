@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.*;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;

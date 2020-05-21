@@ -23,8 +23,8 @@ import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.WindowParam;
-import io.jmix.ui.components.TextField;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.theme.ThemeConstants;
 
 import javax.inject.Inject;

@@ -21,8 +21,8 @@ import com.haulmont.cuba.gui.data.Datasource;
 /**
  * Component compatible with {@link Datasource}.
  *
- * @deprecated Use {@link io.jmix.ui.components.PasswordField} instead
+ * @deprecated Use {@link io.jmix.ui.component.PasswordField} instead
  */
 @Deprecated
-public interface PasswordField extends TextInputField<String>, io.jmix.ui.components.PasswordField {
+public interface PasswordField extends TextInputField<String>, io.jmix.ui.component.PasswordField {
 }

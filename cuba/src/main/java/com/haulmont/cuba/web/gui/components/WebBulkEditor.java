@@ -20,8 +20,8 @@ import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.actions.BulkEditAction;
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.ui.components.Field;
-import io.jmix.ui.components.impl.WebButton;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.impl.WebButton;
 import io.jmix.ui.gui.OpenType;
 
 import java.util.Collections;

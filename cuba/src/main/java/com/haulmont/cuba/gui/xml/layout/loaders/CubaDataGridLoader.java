@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.dynattrui.facet.DynAttrInitTask;
-import io.jmix.ui.xml.layout.loaders.DataGridLoader;
+import io.jmix.ui.xml.layout.loader.DataGridLoader;
 
 @SuppressWarnings("rawtypes")
 public class CubaDataGridLoader extends DataGridLoader {

@@ -18,17 +18,17 @@ package com.haulmont.cuba.gui.components.data.table;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.components.AggregationInfo;
-import io.jmix.ui.components.data.AggregatableTableItems;
-import io.jmix.ui.components.data.BindingState;
+import io.jmix.ui.component.AggregationInfo;
+import io.jmix.ui.component.data.AggregatableTableItems;
+import io.jmix.ui.component.data.BindingState;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
-import io.jmix.ui.components.data.meta.EntityTableItems;
+import io.jmix.ui.component.data.meta.EntityTableItems;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
 
 import javax.annotation.Nullable;

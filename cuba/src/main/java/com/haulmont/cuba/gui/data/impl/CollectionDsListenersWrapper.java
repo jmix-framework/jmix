@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.commons.events.EventRouter;
+import io.jmix.core.common.event.EventRouter;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 

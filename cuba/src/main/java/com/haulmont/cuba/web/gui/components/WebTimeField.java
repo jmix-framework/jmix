@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.TimeField;
 
 @Deprecated
-public class WebTimeField<V> extends io.jmix.ui.components.impl.WebTimeField<V> implements TimeField<V> {
+public class WebTimeField<V> extends io.jmix.ui.component.impl.WebTimeField<V> implements TimeField<V> {
 }

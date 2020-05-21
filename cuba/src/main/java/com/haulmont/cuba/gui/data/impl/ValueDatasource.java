@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.metamodel.datatypes.Datatype;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
 
 /**

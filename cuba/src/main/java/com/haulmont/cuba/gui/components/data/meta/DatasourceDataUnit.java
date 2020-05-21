@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.components.data.meta;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import io.jmix.ui.components.data.DataUnit;
+import io.jmix.ui.component.data.DataUnit;
 
 public interface DatasourceDataUnit extends DataUnit {
 

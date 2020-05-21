@@ -24,10 +24,10 @@ import io.jmix.core.Entity;
  * Component compatible with {@link Datasource}.
  *
  * @param <E> entity
- * @deprecated Use {@link io.jmix.ui.components.ListComponent} instead
+ * @deprecated Use {@link io.jmix.ui.component.ListComponent} instead
  */
 @Deprecated
-public interface ListComponent<E extends Entity> extends io.jmix.ui.components.ListComponent<E> {
+public interface ListComponent<E extends Entity> extends io.jmix.ui.component.ListComponent<E> {
 
     /**
      * @return collection datasource

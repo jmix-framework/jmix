@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.filter.Param;
 import io.jmix.core.AppBeans;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.core.global.UserSessionSource;
-import io.jmix.ui.components.Frame;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.filter.ParameterInfo;
 import io.jmix.ui.filter.ParametersHelper;
 import io.jmix.ui.model.CollectionContainer;

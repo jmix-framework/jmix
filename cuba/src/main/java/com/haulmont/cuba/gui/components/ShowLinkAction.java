@@ -22,7 +22,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.Entity;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Dialogs;
-import io.jmix.ui.actions.BaseAction;
+import io.jmix.ui.action.BaseAction;
 
 @Deprecated
 @SuppressWarnings("rawtypes")
@@ -48,7 +48,7 @@ public class ShowLinkAction extends BaseAction {
     }
 
     @Override
-    public void actionPerform(io.jmix.ui.components.Component component) {
+    public void actionPerform(io.jmix.ui.component.Component component) {
         if (ds == null) {
             return;
         }

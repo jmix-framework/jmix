@@ -24,8 +24,8 @@ import java.util.Collection;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> value and options type for the component
- * @deprecated Use {@link io.jmix.ui.components.TwinColumn} instead
+ * @deprecated Use {@link io.jmix.ui.component.TwinColumn} instead
  */
 @Deprecated
-public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, io.jmix.ui.components.TwinColumn<V> {
+public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, io.jmix.ui.component.TwinColumn<V> {
 }

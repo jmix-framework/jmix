@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.TextField;
 
 @Deprecated
 public class WebTextField<V>
-        extends io.jmix.ui.components.impl.WebTextField<V>
+        extends io.jmix.ui.component.impl.WebTextField<V>
         implements TextField<V> {
 }

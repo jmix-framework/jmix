@@ -27,10 +27,10 @@ import java.util.function.Consumer;
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Deprecated
 public abstract class AbstractFieldLoader<T extends Field>
-        extends io.jmix.ui.xml.layout.loaders.AbstractFieldLoader<T> {
+        extends io.jmix.ui.xml.layout.loader.AbstractFieldLoader<T> {
 
     @Override
-    protected void loadValidators(io.jmix.ui.components.Field component, Element element) {
+    protected void loadValidators(io.jmix.ui.component.Field component, Element element) {
         loadValidators((Field) component, element);
     }
 

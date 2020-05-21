@@ -17,9 +17,9 @@
 package com.haulmont.cuba.gui.screen.compatibility;
 
 import com.haulmont.cuba.gui.components.AbstractLookup;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.compatibility.AfterCloseListenerAdapter;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.compatibility.AfterCloseListenerAdapter;
 import io.jmix.ui.screen.LookupScreen;
 import io.jmix.ui.screen.Screen;
 

@@ -19,13 +19,13 @@ package com.haulmont.cuba.gui.components.filter;
 
 import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.ComponentContainer;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.components.LookupField;
-import io.jmix.ui.components.TextField;
-import io.jmix.ui.components.Tree;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.KeyCombination;
+import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.Tree;
 
 import java.util.Map;
 

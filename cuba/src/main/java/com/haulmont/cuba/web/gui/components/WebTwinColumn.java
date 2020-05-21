@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.TwinColumn;
 
 @Deprecated
-public class WebTwinColumn<V> extends io.jmix.ui.components.impl.WebTwinColumn<V> implements TwinColumn<V> {
+public class WebTwinColumn<V> extends io.jmix.ui.component.impl.WebTwinColumn<V> implements TwinColumn<V> {
 }

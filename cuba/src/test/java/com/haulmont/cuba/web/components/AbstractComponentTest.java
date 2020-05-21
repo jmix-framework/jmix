@@ -21,7 +21,7 @@ import com.haulmont.cuba.web.testsupport.WebTestConfiguration;
 import io.jmix.core.Metadata;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.components.Component;
+import io.jmix.ui.component.Component;
 
 import javax.inject.Inject;
 

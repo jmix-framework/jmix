@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.GroupTable;
 import io.jmix.core.Entity;
 
 @Deprecated
-public class WebGroupTable<E extends Entity> extends io.jmix.ui.components.impl.WebGroupTable<E>
+public class WebGroupTable<E extends Entity> extends io.jmix.ui.component.impl.WebGroupTable<E>
         implements GroupTable<E> {
 }

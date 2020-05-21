@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.dialogs
 
-import io.jmix.ui.components.DialogWindow
+import io.jmix.ui.component.DialogWindow
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.dialogs.screens.DialogAutoSizeTestScreen
 import spec.haulmont.cuba.web.dialogs.screens.DialogSpecifiedSizeTestScreen

@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.AppBeans;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
-import io.jmix.ui.actions.Action;
+import io.jmix.ui.action.Action;
 
 import javax.annotation.Nullable;
 

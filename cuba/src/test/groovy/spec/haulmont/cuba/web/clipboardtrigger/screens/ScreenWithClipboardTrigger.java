@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.clipboardtrigger.screens;
 
-import io.jmix.ui.components.ClipboardTrigger;
+import io.jmix.ui.component.ClipboardTrigger;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;

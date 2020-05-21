@@ -19,11 +19,11 @@ import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.ui.actions.BaseAction;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.data.meta.EmptyDataUnit;
-import io.jmix.ui.icons.JmixIcon;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.data.meta.EmptyDataUnit;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.icon.Icons;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Collections;

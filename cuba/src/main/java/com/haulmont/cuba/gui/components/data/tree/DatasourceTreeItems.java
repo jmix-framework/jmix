@@ -21,13 +21,13 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
 import io.jmix.core.Entity;
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.components.data.BindingState;
-import io.jmix.ui.components.data.meta.EntityTreeItems;
+import io.jmix.ui.component.data.BindingState;
+import io.jmix.ui.component.data.meta.EntityTreeItems;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.model.sales;
 
 import io.jmix.data.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
-import io.jmix.core.metamodel.datatypes.impl.EnumUtils;
+import io.jmix.core.metamodel.datatype.impl.EnumUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

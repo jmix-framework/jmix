@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.GroupDatasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
 import io.jmix.core.Entity;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.gui.data.GroupInfo;

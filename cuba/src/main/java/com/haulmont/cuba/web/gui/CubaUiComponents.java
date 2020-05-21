@@ -19,7 +19,7 @@ package com.haulmont.cuba.web.gui;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.web.gui.components.*;
-import io.jmix.ui.components.*;
+import io.jmix.ui.component.*;
 import io.jmix.ui.sys.WebUiComponents;
 
 public class CubaUiComponents extends WebUiComponents {

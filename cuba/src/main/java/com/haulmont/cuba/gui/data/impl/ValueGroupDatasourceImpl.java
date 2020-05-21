@@ -22,7 +22,7 @@ import com.haulmont.cuba.gui.data.GroupDatasource;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
-import io.jmix.core.metamodel.datatypes.Datatype;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;

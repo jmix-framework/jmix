@@ -27,8 +27,8 @@ import io.jmix.core.MessageTools;
 import com.haulmont.cuba.core.global.Scripting;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.ui.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +38,6 @@ import org.dom4j.Element;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

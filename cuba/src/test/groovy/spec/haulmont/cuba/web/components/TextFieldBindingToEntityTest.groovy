@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
-import io.jmix.ui.components.TextField
-import io.jmix.ui.components.data.value.ContainerValueSource
+import io.jmix.ui.component.TextField
+import io.jmix.ui.component.data.value.ContainerValueSource
 import io.jmix.ui.model.InstanceContainer
 import spec.haulmont.cuba.web.WebSpec
 import spock.lang.Ignore

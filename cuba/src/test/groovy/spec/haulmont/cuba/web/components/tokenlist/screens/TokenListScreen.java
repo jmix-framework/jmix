@@ -17,7 +17,7 @@
 package spec.haulmont.cuba.web.components.tokenlist.screens;
 
 import com.haulmont.cuba.core.model.common.Constraint;
-import io.jmix.ui.components.TokenList;
+import io.jmix.ui.component.TokenList;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;

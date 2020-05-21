@@ -19,8 +19,8 @@ package com.haulmont.cuba.core.model.common;
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.AppBeans;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;

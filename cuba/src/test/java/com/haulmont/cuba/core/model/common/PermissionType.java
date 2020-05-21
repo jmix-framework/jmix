@@ -16,7 +16,7 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
 import java.util.Objects;
 

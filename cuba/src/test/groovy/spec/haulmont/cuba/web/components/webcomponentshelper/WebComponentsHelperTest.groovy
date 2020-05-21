@@ -17,7 +17,7 @@
 package spec.haulmont.cuba.web.components.webcomponentshelper
 
 
-import io.jmix.ui.components.impl.WebComponentsHelper
+import io.jmix.ui.component.impl.WebComponentsHelper
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.webcomponentshelper.screen.WchTestScreen

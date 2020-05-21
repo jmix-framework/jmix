@@ -19,7 +19,7 @@ package spec.haulmont.cuba.web.menu
 import com.haulmont.cuba.core.global.Messages
 import com.haulmont.cuba.web.testsupport.TestUserSessionSource
 import io.jmix.core.MessageTools
-import io.jmix.ui.components.impl.WindowImplementation
+import io.jmix.ui.component.impl.WindowImplementation
 import spock.lang.Specification
 
 abstract class AbstractMenuBuilderSpecification extends Specification {

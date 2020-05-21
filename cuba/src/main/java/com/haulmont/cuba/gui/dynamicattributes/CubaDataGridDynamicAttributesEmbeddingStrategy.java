@@ -20,10 +20,9 @@ import com.haulmont.cuba.gui.components.data.datagrid.DatasourceDataGridItems;
 import com.haulmont.cuba.gui.components.data.table.DatasourceTableItems;
 import io.jmix.core.BeanLocator;
 import io.jmix.dynattrui.impl.DataGridEmbeddingStrategy;
-import io.jmix.dynattrui.impl.TableEmbeddingStrategy;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.DataGrid;
-import io.jmix.ui.components.Table;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.component.Table;
 
 @org.springframework.stereotype.Component(CubaDataGridDynamicAttributesEmbeddingStrategy.NAME)
 public class CubaDataGridDynamicAttributesEmbeddingStrategy extends DataGridEmbeddingStrategy {

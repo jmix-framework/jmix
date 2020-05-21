@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.ImageLoader;
+import io.jmix.ui.xml.layout.loader.ImageLoader;
 import org.dom4j.Element;
 
 public class CubaImageLoader extends ImageLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.Image component, Element element) {
+    protected void loadData(io.jmix.ui.component.Image component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

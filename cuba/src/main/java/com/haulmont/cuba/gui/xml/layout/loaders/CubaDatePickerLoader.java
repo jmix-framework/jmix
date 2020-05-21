@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.DatePickerLoader;
+import io.jmix.ui.xml.layout.loader.DatePickerLoader;
 import org.dom4j.Element;
 
 public class CubaDatePickerLoader extends DatePickerLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.DatePicker component, Element element) {
+    protected void loadData(io.jmix.ui.component.DatePicker component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

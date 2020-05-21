@@ -20,8 +20,8 @@ import io.jmix.core.ValueLoadContext;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.impl.keyvalue.KeyValueMetaProperty;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.Enumeration;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.Enumeration;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class ValueDatasourceDelegate {
 

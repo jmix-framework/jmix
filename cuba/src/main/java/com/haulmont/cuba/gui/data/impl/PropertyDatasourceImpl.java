@@ -19,7 +19,7 @@ import com.haulmont.cuba.gui.data.*;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.commons.util.ParamsMap;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;

@@ -22,20 +22,19 @@ import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.AppBeans;
-import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.components.*;
-import io.jmix.ui.components.impl.WebAbstractComponent;
-import io.jmix.ui.components.impl.WebComponentsHelper;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.impl.WebAbstractComponent;
+import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.JmixFieldGroup;
-import io.jmix.ui.widgets.JmixFormLayout;
+import io.jmix.ui.widget.JmixFieldGroup;
+import io.jmix.ui.widget.JmixFormLayout;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -51,7 +50,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implements FieldGroup, UiPermissionAware {
 

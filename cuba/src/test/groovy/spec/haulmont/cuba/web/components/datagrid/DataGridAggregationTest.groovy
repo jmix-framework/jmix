@@ -17,10 +17,10 @@
 package spec.haulmont.cuba.web.components.datagrid
 
 import com.haulmont.cuba.web.model.sample.GoodStatistic
-import io.jmix.ui.components.AggregationInfo
-import io.jmix.ui.components.DataGrid
-import io.jmix.ui.components.data.datagrid.ContainerDataGridItems
-import io.jmix.ui.components.impl.WebDataGrid
+import io.jmix.ui.component.AggregationInfo
+import io.jmix.ui.component.DataGrid
+import io.jmix.ui.component.data.datagrid.ContainerDataGridItems
+import io.jmix.ui.component.impl.WebDataGrid
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec

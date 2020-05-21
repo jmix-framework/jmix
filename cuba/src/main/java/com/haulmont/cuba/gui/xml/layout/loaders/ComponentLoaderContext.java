@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.data.DsContext;
 import io.jmix.ui.screen.ScreenOptions;
 
-public class ComponentLoaderContext extends io.jmix.ui.xml.layout.loaders.ComponentLoaderContext {
+public class ComponentLoaderContext extends io.jmix.ui.xml.layout.loader.ComponentLoaderContext {
 
     protected DsContext dsContext;
 

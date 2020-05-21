@@ -19,7 +19,7 @@
 
 package com.haulmont.cuba.core.config.type;
 
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import com.haulmont.cuba.core.config.ConfigUtil;
 import com.haulmont.cuba.core.config.EnumStore;
 import com.haulmont.cuba.core.config.EnumStoreMode;

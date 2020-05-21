@@ -16,11 +16,11 @@
 
 package spec.haulmont.cuba.web.inputdialog.screens;
 
-import io.jmix.ui.actions.Action;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.app.inputdialog.InputDialog;
-import io.jmix.ui.components.Button;
-import io.jmix.ui.components.InputDialogFacet;
-import io.jmix.ui.components.ValidationErrors;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.InputDialogFacet;
+import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;

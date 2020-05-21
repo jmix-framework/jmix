@@ -19,7 +19,7 @@ import io.jmix.core.Entity;
 import io.jmix.ui.filter.QueryFilter;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.components.AggregationInfo;
+import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
 

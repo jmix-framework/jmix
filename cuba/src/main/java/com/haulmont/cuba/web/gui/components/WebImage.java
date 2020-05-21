@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.Image;
 
 @Deprecated
-public class WebImage extends io.jmix.ui.components.impl.WebImage implements Image {
+public class WebImage extends io.jmix.ui.component.impl.WebImage implements Image {
 }

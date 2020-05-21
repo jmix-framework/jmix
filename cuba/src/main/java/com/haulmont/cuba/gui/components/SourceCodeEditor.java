@@ -21,8 +21,8 @@ import com.haulmont.cuba.gui.data.Datasource;
 /**
  * Component compatible with {@link Datasource}.
  *
- * @deprecated Use {@link io.jmix.ui.components.SourceCodeEditor} instead
+ * @deprecated Use {@link io.jmix.ui.component.SourceCodeEditor} instead
  */
 @Deprecated
-public interface SourceCodeEditor extends Field<String>, io.jmix.ui.components.SourceCodeEditor {
+public interface SourceCodeEditor extends Field<String>, io.jmix.ui.component.SourceCodeEditor {
 }

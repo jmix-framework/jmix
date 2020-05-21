@@ -22,9 +22,8 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.ViewRepository;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.impl.MetadataLoader;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.inject.Inject;

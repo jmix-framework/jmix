@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.Address
 import com.haulmont.cuba.core.model.Owner
 import com.haulmont.cuba.core.model.OwnerCategory
 import io.jmix.ui.app.main.MainScreen
-import io.jmix.ui.components.DataLoadCoordinator
+import io.jmix.ui.component.DataLoadCoordinator
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcAutoScreen

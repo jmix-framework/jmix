@@ -19,9 +19,9 @@ package spec.haulmont.cuba.web.optiondialog
 import com.haulmont.cuba.web.app.main.MainScreen
 import io.jmix.ui.Dialogs
 import io.jmix.ui.GuiDevelopmentException
-import io.jmix.ui.components.ContentMode
-import io.jmix.ui.components.impl.WebButton
-import io.jmix.ui.components.impl.WebOptionDialogFacet
+import io.jmix.ui.component.ContentMode
+import io.jmix.ui.component.impl.WebButton
+import io.jmix.ui.component.impl.WebOptionDialogFacet
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.optiondialog.screens.OptionDialogScreen

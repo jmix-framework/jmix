@@ -25,20 +25,20 @@ import com.haulmont.cuba.gui.data.PropertyDatasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.core.commons.util.ParamsMap;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Field;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.JmixIcon;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.icon.Icons;
 import org.springframework.context.annotation.Scope;
 
 import java.util.*;
@@ -449,7 +449,7 @@ public class EditAction extends ItemTrackingAction
      * BulkEditor integration options.
      * <br>
      * If integration {@link BulkEditorIntegration#isEnabled()} and user selects
-     * multiple rows in {@link io.jmix.ui.components.ListComponent} then action will show {@link BulkEditor} window.
+     * multiple rows in {@link io.jmix.ui.component.ListComponent} then action will show {@link BulkEditor} window.
      */
     public static class BulkEditorIntegration {
         protected boolean enabled = false;

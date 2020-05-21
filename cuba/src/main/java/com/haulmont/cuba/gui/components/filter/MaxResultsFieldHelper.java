@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components.filter;
 import com.google.common.base.Splitter;
 import com.haulmont.cuba.CubaProperties;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.components.LookupField;
+import io.jmix.ui.component.LookupField;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 

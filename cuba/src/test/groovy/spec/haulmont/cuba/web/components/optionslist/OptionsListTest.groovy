@@ -24,11 +24,11 @@ import com.haulmont.cuba.gui.data.DsBuilder
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl
 import com.haulmont.cuba.gui.components.OptionsList
 import io.jmix.core.FetchPlan
-import io.jmix.core.commons.events.Subscription
+import io.jmix.core.common.event.Subscription
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
-import io.jmix.ui.components.Component
-import io.jmix.ui.components.HasValue
+import io.jmix.ui.component.Component
+import io.jmix.ui.component.HasValue
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.optionslist.screens.OptionsListTestScreen

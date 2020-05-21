@@ -22,15 +22,15 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.commons.util.ParamsMap;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.*;
-import io.jmix.ui.components.AggregationInfo;
+import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.filter.QueryFilter;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.impl.EntityValuesComparator;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class CollectionPropertyDatasourceImpl<T extends Entity, K>
         extends

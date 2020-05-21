@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider;
-import io.jmix.ui.components.calendar.CalendarEventProvider;
+import io.jmix.ui.component.calendar.CalendarEventProvider;
 
 import javax.annotation.Nullable;
 
@@ -27,10 +27,10 @@ import javax.annotation.Nullable;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of value
- * @deprecated Use {@link io.jmix.ui.components.Calendar} instead
+ * @deprecated Use {@link io.jmix.ui.component.Calendar} instead
  */
 @Deprecated
-public interface Calendar<V> extends io.jmix.ui.components.Calendar<V> {
+public interface Calendar<V> extends io.jmix.ui.component.Calendar<V> {
 
     /**
      * Set collection datasource for the calendar component with a collection of events.

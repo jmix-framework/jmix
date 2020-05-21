@@ -26,16 +26,16 @@ import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.FrameContext;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.FrameContext;
 import io.jmix.ui.filter.ParameterInfo;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.sys.PersistenceHelper;
 
 import java.util.*;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class DsContextImpl implements DsContextImplementation {
 

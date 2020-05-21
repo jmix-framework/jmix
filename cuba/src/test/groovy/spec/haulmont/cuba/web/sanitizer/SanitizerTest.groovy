@@ -20,10 +20,10 @@ import com.google.common.base.Joiner
 import com.haulmont.cuba.web.app.main.MainScreen
 import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
-import io.jmix.ui.actions.DialogAction
-import io.jmix.ui.components.ContentMode
+import io.jmix.ui.action.DialogAction
+import io.jmix.ui.component.ContentMode
 import io.jmix.ui.screen.OpenMode
-import io.jmix.ui.widgets.JmixLabel
+import io.jmix.ui.widget.JmixLabel
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.sanitizer.screens.SanitizerScreen
 

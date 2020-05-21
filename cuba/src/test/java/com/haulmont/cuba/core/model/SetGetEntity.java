@@ -18,7 +18,7 @@
  package com.haulmont.cuba.core.model;
 
  import io.jmix.data.entity.StandardEntity;
- import io.jmix.core.metamodel.annotations.ModelObject;
+ import io.jmix.core.metamodel.annotation.ModelObject;
 
  import javax.persistence.Transient;
  import java.util.Map;

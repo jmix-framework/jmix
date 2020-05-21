@@ -19,7 +19,7 @@ package spec.haulmont.cuba.web.screens
 import com.vaadin.shared.Position
 import com.vaadin.ui.Notification
 import io.jmix.ui.Notifications
-import io.jmix.ui.components.ContentMode
+import io.jmix.ui.component.ContentMode
 import spec.haulmont.cuba.web.UiScreenSpec
 
 @SuppressWarnings(["GroovyPointlessBoolean", "GroovyAccessibility"])

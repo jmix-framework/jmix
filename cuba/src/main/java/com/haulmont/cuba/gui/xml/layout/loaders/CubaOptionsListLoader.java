@@ -19,14 +19,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.OptionsListLoader;
+import io.jmix.ui.xml.layout.loader.OptionsListLoader;
 import org.dom4j.Element;
 
 public class CubaOptionsListLoader extends OptionsListLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.OptionsList component, Element element) {
+    protected void loadData(io.jmix.ui.component.OptionsList component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

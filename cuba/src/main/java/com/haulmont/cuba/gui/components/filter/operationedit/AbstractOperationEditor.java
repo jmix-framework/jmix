@@ -18,7 +18,7 @@
 package com.haulmont.cuba.gui.components.filter.operationedit;
 
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import io.jmix.ui.components.Component;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.filter.Op;
 
 import java.util.List;

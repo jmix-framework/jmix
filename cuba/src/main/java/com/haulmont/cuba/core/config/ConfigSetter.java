@@ -19,7 +19,7 @@
 
 package com.haulmont.cuba.core.config;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import com.haulmont.cuba.core.config.type.TypeStringify;
 
 import java.lang.reflect.Method;

@@ -19,8 +19,8 @@ package com.haulmont.cuba.gui.xml;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
 import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 

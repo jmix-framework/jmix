@@ -17,11 +17,11 @@ package com.haulmont.cuba.gui.components;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.Fragments;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.BaseAction;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.LookupComponent;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.LookupComponent;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.StringUtils;

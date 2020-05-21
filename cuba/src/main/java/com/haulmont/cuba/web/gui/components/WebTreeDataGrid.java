@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.TreeDataGrid;
 import io.jmix.core.Entity;
 
 @Deprecated
-public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.components.impl.WebTreeDataGrid<E>
+public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl.WebTreeDataGrid<E>
         implements TreeDataGrid<E> {
 }

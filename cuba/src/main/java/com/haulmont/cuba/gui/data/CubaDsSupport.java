@@ -21,8 +21,8 @@ import com.haulmont.cuba.gui.data.impl.GenericDataSupplier;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.xml.data.DsContextLoader;
 import com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext;
-import io.jmix.core.commons.util.ReflectionHelper;
-import io.jmix.ui.components.Window;
+import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.data.compatibility.DsSupport;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -38,12 +38,12 @@ public class CubaDsSupport implements DsSupport {
     protected DataSupplier defaultDataSupplier = new GenericDataSupplier();
 
     @Override
-    public io.jmix.ui.xml.layout.loaders.ComponentLoaderContext createComponentLoaderContext(ScreenOptions screenOptions) {
+    public io.jmix.ui.xml.layout.loader.ComponentLoaderContext createComponentLoaderContext(ScreenOptions screenOptions) {
         return new ComponentLoaderContext(screenOptions);
     }
 
     @Override
-    public void initDsContext(Screen screen, Element screenDescriptor, io.jmix.ui.xml.layout.loaders.ComponentLoaderContext context) {
+    public void initDsContext(Screen screen, Element screenDescriptor, io.jmix.ui.xml.layout.loader.ComponentLoaderContext context) {
         DsContext dsContext = loadDsContext(screenDescriptor);
         initDatasources(screen.getWindow(), dsContext, context.getParams());
 

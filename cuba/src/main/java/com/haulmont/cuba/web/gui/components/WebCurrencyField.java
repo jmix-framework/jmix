@@ -19,6 +19,6 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.CurrencyField;
 
 @Deprecated
-public class WebCurrencyField<V extends Number> extends io.jmix.ui.components.impl.WebCurrencyField<V>
+public class WebCurrencyField<V extends Number> extends io.jmix.ui.component.impl.WebCurrencyField<V>
         implements CurrencyField<V> {
 }

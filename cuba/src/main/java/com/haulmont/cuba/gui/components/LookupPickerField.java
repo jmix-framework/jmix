@@ -23,11 +23,11 @@ import io.jmix.core.Entity;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> entity
- * @deprecated Use {@link io.jmix.ui.components.LookupPickerField} instead
+ * @deprecated Use {@link io.jmix.ui.component.LookupPickerField} instead
  */
 @Deprecated
-public interface LookupPickerField<V extends Entity> extends io.jmix.ui.components.LookupPickerField<V>, LookupField<V>,
+public interface LookupPickerField<V extends Entity> extends io.jmix.ui.component.LookupPickerField<V>, LookupField<V>,
         PickerField<V> {
 
-    String NAME = io.jmix.ui.components.LookupPickerField.NAME;
+    String NAME = io.jmix.ui.component.LookupPickerField.NAME;
 }

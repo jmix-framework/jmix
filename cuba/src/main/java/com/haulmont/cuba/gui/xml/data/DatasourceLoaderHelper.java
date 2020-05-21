@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.options.DatasourceOptions;
 import com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.components.data.ValueSource;
+import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;

@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.ResizableTextAreaLoader;
+import io.jmix.ui.xml.layout.loader.ResizableTextAreaLoader;
 import org.dom4j.Element;
 
 public class CubaResizableTextAreaLoader extends ResizableTextAreaLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.TextArea component, Element element) {
+    protected void loadData(io.jmix.ui.component.TextArea component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

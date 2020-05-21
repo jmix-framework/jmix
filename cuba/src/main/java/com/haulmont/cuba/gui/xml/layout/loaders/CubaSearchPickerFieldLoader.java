@@ -19,8 +19,8 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.components.LookupField;
-import io.jmix.ui.xml.layout.loaders.SearchPickerFieldLoader;
+import io.jmix.ui.component.LookupField;
+import io.jmix.ui.xml.layout.loader.SearchPickerFieldLoader;
 import org.dom4j.Element;
 
 public class CubaSearchPickerFieldLoader extends SearchPickerFieldLoader {

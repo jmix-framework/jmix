@@ -1,7 +1,7 @@
 package spec.haulmont.cuba.core.query_conditions;
 
-import io.jmix.core.queryconditions.Condition;
-import io.jmix.core.queryconditions.PropertyCondition;
+import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.PropertyCondition;
 
 import java.util.Collections;
 import java.util.regex.Matcher;

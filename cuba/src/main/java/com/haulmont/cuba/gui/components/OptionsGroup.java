@@ -23,8 +23,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  *
  * @param <V> value type: single type or {@code Collection<I>}
  * @param <I> item type
- * @deprecated Use {@link io.jmix.ui.components.OptionsGroup}
+ * @deprecated Use {@link io.jmix.ui.component.OptionsGroup}
  */
 @Deprecated
-public interface OptionsGroup<V, I> extends OptionsField<V, I>, io.jmix.ui.components.OptionsGroup<V, I> {
+public interface OptionsGroup<V, I> extends OptionsField<V, I>, io.jmix.ui.component.OptionsGroup<V, I> {
 }

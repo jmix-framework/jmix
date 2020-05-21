@@ -18,10 +18,10 @@ package com.haulmont.cuba.gui;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
 import io.jmix.ui.*;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.Screen;
 

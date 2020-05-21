@@ -21,17 +21,17 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.Entity;
-import io.jmix.ui.components.data.DataGridItems;
+import io.jmix.ui.component.data.DataGridItems;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <E> entity
- * @deprecated Use {@link io.jmix.ui.components.TreeDataGrid} instead
+ * @deprecated Use {@link io.jmix.ui.component.TreeDataGrid} instead
  */
 @SuppressWarnings("rawtypes")
 @Deprecated
-public interface TreeDataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.components.TreeDataGrid<E> {
+public interface TreeDataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeDataGrid<E> {
 
     /**
      * @return the hierarchical data source

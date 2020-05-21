@@ -18,9 +18,9 @@ package com.haulmont.cuba.gui.components.filter.operationedit;
 
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.core.AppBeans;
-import io.jmix.ui.components.BoxLayout;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.VBoxLayout;
+import io.jmix.ui.component.BoxLayout;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.filter.Op;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 

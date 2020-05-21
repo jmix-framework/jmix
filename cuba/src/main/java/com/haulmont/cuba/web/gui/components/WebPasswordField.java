@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.PasswordField;
 
 @Deprecated
-public class WebPasswordField extends io.jmix.ui.components.impl.WebPasswordField implements PasswordField {
+public class WebPasswordField extends io.jmix.ui.component.impl.WebPasswordField implements PasswordField {
 }

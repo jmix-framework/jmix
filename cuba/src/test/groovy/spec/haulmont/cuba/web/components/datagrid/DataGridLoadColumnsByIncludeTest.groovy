@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.datagrid
 
-import io.jmix.ui.components.DataGrid
+import io.jmix.ui.component.DataGrid
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datagrid.screens.DataGridLoadColumnsByIncludeScreen

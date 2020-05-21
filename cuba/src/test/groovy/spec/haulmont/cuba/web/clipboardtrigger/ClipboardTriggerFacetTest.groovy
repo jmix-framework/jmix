@@ -6,7 +6,7 @@
 package spec.haulmont.cuba.web.clipboardtrigger
 
 import com.haulmont.cuba.web.app.main.MainScreen
-import io.jmix.ui.components.ClipboardTrigger
+import io.jmix.ui.component.ClipboardTrigger
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.clipboardtrigger.screens.ScreenWithClipboardTrigger

@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
-import io.jmix.ui.components.Component;
+import io.jmix.ui.component.Component;
 
 /**
  * Factory that generates components for {@link FieldGroup} fields defined declaratively.

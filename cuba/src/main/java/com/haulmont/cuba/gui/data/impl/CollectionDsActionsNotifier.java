@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.ActionsHolder;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ActionsHolder;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 

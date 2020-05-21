@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.browserframe
 
-import io.jmix.ui.components.BrowserFrame
+import io.jmix.ui.component.BrowserFrame
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.browserframe.screens.*
 

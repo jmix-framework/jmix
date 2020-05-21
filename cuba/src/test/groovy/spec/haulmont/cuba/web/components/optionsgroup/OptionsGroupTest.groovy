@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.components.optionsgroup
 
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
-import io.jmix.ui.components.OptionsGroup
+import io.jmix.ui.component.OptionsGroup
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.optionsgroup.screens.OptionsGroupTestScreen

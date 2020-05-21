@@ -18,8 +18,8 @@
 package com.haulmont.cuba.gui.components.filter;
 
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import io.jmix.core.commons.datastruct.Node;
-import io.jmix.core.commons.datastruct.Tree;
+import io.jmix.core.common.datastruct.Node;
+import io.jmix.core.common.datastruct.Tree;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

@@ -19,5 +19,5 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.ResizableTextArea;
 
 @Deprecated
-public class WebResizableTextArea<V> extends io.jmix.ui.components.impl.WebResizableTextArea<V> implements ResizableTextArea<V> {
+public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResizableTextArea<V> implements ResizableTextArea<V> {
 }

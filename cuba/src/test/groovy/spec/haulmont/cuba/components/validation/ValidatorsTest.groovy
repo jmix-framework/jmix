@@ -17,11 +17,11 @@
 package spec.haulmont.cuba.components.validation
 
 import io.jmix.core.TimeSource
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry
-import io.jmix.core.metamodel.datatypes.impl.DateTimeDatatype
-import io.jmix.core.metamodel.datatypes.impl.LocalTimeDatatype
-import io.jmix.ui.components.*
-import io.jmix.ui.components.validation.*
+import io.jmix.core.metamodel.datatype.DatatypeRegistry
+import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype
+import io.jmix.core.metamodel.datatype.impl.LocalTimeDatatype
+import io.jmix.ui.component.*
+import io.jmix.ui.component.validation.*
 import org.springframework.context.ApplicationContext
 import spec.haulmont.cuba.components.validation.screens.ValidatorsScreen
 import spec.haulmont.cuba.web.UiScreenSpec

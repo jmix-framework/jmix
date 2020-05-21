@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.Entity;
-import io.jmix.core.commons.datastruct.Node;
+import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.model.impl.EntityValuesComparator;

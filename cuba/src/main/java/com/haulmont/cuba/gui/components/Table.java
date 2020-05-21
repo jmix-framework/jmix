@@ -21,17 +21,17 @@ import com.haulmont.cuba.gui.components.data.table.SortableDatasourceTableItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
-import io.jmix.ui.components.data.TableItems;
+import io.jmix.ui.component.data.TableItems;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <E> entity
- * @deprecated Use {@link io.jmix.ui.components.Table} instead
+ * @deprecated Use {@link io.jmix.ui.component.Table} instead
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
-public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.components.Table<E> {
+public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Table<E> {
 
     /**
      * Sets {@code CollectionDatasource} as Table data source.

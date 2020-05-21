@@ -16,9 +16,9 @@
 
 package spec.haulmont.cuba.web.optiondialog.screens;
 
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Button;
-import io.jmix.ui.components.OptionDialogFacet;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.OptionDialogFacet;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;

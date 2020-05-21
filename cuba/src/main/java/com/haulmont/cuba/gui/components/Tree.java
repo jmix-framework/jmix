@@ -20,18 +20,18 @@ import com.haulmont.cuba.gui.components.data.tree.DatasourceTreeItems;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.Entity;
-import io.jmix.ui.components.ListComponent;
-import io.jmix.ui.components.data.TreeItems;
+import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.component.data.TreeItems;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <E> entity
- * @deprecated Use {@link io.jmix.ui.components.Tree} instead
+ * @deprecated Use {@link io.jmix.ui.component.Tree} instead
  */
 @SuppressWarnings("rawtypes")
 @Deprecated
-public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.components.Tree<E> {
+public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Tree<E> {
 
     /**
      * Sets an instance of {@code HierarchicalDatasource} as Tree data source.

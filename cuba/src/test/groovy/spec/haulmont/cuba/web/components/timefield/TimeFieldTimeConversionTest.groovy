@@ -16,8 +16,8 @@
 
 package spec.haulmont.cuba.web.components.timefield
 
-import io.jmix.ui.widgets.JmixTimeFieldWrapper
-import io.jmix.ui.widgets.client.timefield.AmPm
+import io.jmix.ui.widget.JmixTimeFieldWrapper
+import io.jmix.ui.widget.client.timefield.AmPm
 import spock.lang.Specification
 
 import java.time.LocalTime

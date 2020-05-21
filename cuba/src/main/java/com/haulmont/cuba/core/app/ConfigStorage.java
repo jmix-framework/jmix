@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.app;
 import io.jmix.core.Metadata;
 import io.jmix.core.cluster.ClusterListenerAdapter;
 import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import com.haulmont.cuba.core.entity.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

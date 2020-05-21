@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.ListComponent;
 
 import javax.annotation.Nullable;
 
-public class ListAction extends io.jmix.ui.actions.ListAction {
+public class ListAction extends io.jmix.ui.action.ListAction {
 
     protected ListComponent target;
 
@@ -38,7 +38,7 @@ public class ListAction extends io.jmix.ui.actions.ListAction {
     }
 
     @Override
-    public void setTarget(io.jmix.ui.components.ListComponent target) {
+    public void setTarget(io.jmix.ui.component.ListComponent target) {
         super.setTarget(target);
     }
 }

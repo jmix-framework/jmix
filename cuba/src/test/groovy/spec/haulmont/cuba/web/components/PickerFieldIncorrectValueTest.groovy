@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.components
 
 import com.haulmont.cuba.core.model.common.Role
 import com.haulmont.cuba.core.model.common.User
-import io.jmix.ui.components.PickerField
+import io.jmix.ui.component.PickerField
 import spec.haulmont.cuba.web.WebSpec
 
 @SuppressWarnings("GroovyAssignabilityCheck")

@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.components.filter.edit;
 
 import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
-import io.jmix.ui.components.TextField;
+import io.jmix.ui.component.TextField;
 
 import javax.inject.Inject;
 import java.util.Map;

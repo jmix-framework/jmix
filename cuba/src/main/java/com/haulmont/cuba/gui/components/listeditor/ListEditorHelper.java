@@ -20,12 +20,12 @@ import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.Datatypes;
-import io.jmix.core.metamodel.datatypes.TimeZoneAwareDatatype;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.core.global.UserSessionSource;
-import io.jmix.ui.components.ListEditor;
+import io.jmix.ui.component.ListEditor;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.function.Function;
 
-import static io.jmix.ui.components.ListEditor.ItemType.*;
+import static io.jmix.ui.component.ListEditor.ItemType.*;
 
 /**
  *

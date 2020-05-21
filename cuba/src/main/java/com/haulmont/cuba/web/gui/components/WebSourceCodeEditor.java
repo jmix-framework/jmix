@@ -19,6 +19,6 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.SourceCodeEditor;
 
 @Deprecated
-public class WebSourceCodeEditor extends io.jmix.ui.components.impl.WebSourceCodeEditor implements SourceCodeEditor {
+public class WebSourceCodeEditor extends io.jmix.ui.component.impl.WebSourceCodeEditor implements SourceCodeEditor {
 
 }

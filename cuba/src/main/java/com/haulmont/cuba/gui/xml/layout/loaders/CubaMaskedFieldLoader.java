@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.MaskedFieldLoader;
+import io.jmix.ui.xml.layout.loader.MaskedFieldLoader;
 import org.dom4j.Element;
 
 public class CubaMaskedFieldLoader extends MaskedFieldLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.MaskedField component, Element element) {
+    protected void loadData(io.jmix.ui.component.MaskedField component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

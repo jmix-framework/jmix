@@ -21,6 +21,6 @@ import io.jmix.core.Entity;
 
 @Deprecated
 public class WebLookupPickerField<V extends Entity>
-        extends io.jmix.ui.components.impl.WebLookupPickerField<V>
+        extends io.jmix.ui.component.impl.WebLookupPickerField<V>
         implements LookupPickerField<V> {
 }

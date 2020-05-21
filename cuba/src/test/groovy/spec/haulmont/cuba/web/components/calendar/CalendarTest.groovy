@@ -16,10 +16,10 @@
 
 package spec.haulmont.cuba.web.components.calendar
 
-import io.jmix.core.metamodel.annotations.DatatypeDef
-import io.jmix.core.metamodel.datatypes.Datatype
-import io.jmix.core.metamodel.datatypes.impl.*
-import io.jmix.ui.components.Calendar
+import io.jmix.core.metamodel.annotation.DatatypeDef
+import io.jmix.core.metamodel.datatype.Datatype
+import io.jmix.core.metamodel.datatype.impl.*
+import io.jmix.ui.component.Calendar
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.calendar.screens.CalendarScreen
 

@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.components.slider.screens;
 
 import com.haulmont.cuba.core.model.common.ScheduledTask;
 import io.jmix.core.Metadata;
-import io.jmix.ui.components.Slider;
+import io.jmix.ui.component.Slider;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;

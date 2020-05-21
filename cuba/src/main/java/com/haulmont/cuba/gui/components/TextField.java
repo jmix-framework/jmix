@@ -22,8 +22,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of value
- * @deprecated Use {@link io.jmix.ui.components.TextField} instead
+ * @deprecated Use {@link io.jmix.ui.component.TextField} instead
  */
 @Deprecated
-public interface TextField<V> extends TextInputField<V>, io.jmix.ui.components.TextField<V> {
+public interface TextField<V> extends TextInputField<V>, io.jmix.ui.component.TextField<V> {
 }

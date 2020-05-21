@@ -32,13 +32,13 @@ import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Tree;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Tree;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icons.JmixIcon;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.icon.Icons;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Collections;
@@ -108,7 +108,7 @@ public class CreateAction extends ListAction
      * Creates an action with default id, opening the editor screen in THIS tab.
      * @param target    component containing this action
      */
-    public static CreateAction create(io.jmix.ui.components.ListComponent target) {
+    public static CreateAction create(io.jmix.ui.component.ListComponent target) {
         return AppBeans.getPrototype("cuba_CreateAction", target);
     }
 
@@ -117,7 +117,7 @@ public class CreateAction extends ListAction
      * @param target    component containing this action
      * @param openType  how to open the editor screen
      */
-    public static CreateAction create(io.jmix.ui.components.ListComponent target, OpenType openType) {
+    public static CreateAction create(io.jmix.ui.component.ListComponent target, OpenType openType) {
         return AppBeans.getPrototype("cuba_CreateAction", target, openType);
     }
 
@@ -127,7 +127,7 @@ public class CreateAction extends ListAction
      * @param openType  how to open the editor screen
      * @param id        action name
      */
-    public static CreateAction create(io.jmix.ui.components.ListComponent target, OpenType openType, String id) {
+    public static CreateAction create(io.jmix.ui.component.ListComponent target, OpenType openType, String id) {
         return AppBeans.getPrototype("cuba_CreateAction", target, openType, id);
     }
 

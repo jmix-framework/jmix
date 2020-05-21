@@ -23,10 +23,10 @@ import io.jmix.core.Entity;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> entity
- * @deprecated Use {@link io.jmix.ui.components.SuggestionPickerField} instead
+ * @deprecated Use {@link io.jmix.ui.component.SuggestionPickerField} instead
  */
 @Deprecated
-public interface SuggestionPickerField<V extends Entity> extends SuggestionField<V>, io.jmix.ui.components.SuggestionPickerField<V> {
+public interface SuggestionPickerField<V extends Entity> extends SuggestionField<V>, io.jmix.ui.component.SuggestionPickerField<V> {
 
-    String NAME = io.jmix.ui.components.SuggestionPickerField.NAME;
+    String NAME = io.jmix.ui.component.SuggestionPickerField.NAME;
 }

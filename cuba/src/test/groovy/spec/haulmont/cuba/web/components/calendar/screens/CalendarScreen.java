@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.components.calendar.screens;
 
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.model.common.ScheduledTask;
-import io.jmix.ui.components.Calendar;
+import io.jmix.ui.component.Calendar;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;

@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.model.LocalDateTimeEntity
 import com.haulmont.cuba.core.model.TestNumberValuesEntity
 import io.jmix.core.AppBeans
 import io.jmix.core.Metadata
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry
-import io.jmix.core.metamodel.datatypes.impl.*
+import io.jmix.core.metamodel.datatype.DatatypeRegistry
+import io.jmix.core.metamodel.datatype.impl.*
 import spec.haulmont.cuba.core.CoreTestSpecification
 import spock.lang.Ignore
 

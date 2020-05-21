@@ -22,8 +22,8 @@ import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.data.DsContext;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.compatibility.CubaFragmentAdapter;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.compatibility.CubaFragmentAdapter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

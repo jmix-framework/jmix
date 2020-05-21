@@ -17,7 +17,7 @@
 package spec.haulmont.cuba.components.beanvalidation
 
 import io.jmix.core.DateTimeTransformations
-import io.jmix.ui.components.DatePicker
+import io.jmix.ui.component.DatePicker
 import spec.haulmont.cuba.components.beanvalidation.screens.DateValidationScreen
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore

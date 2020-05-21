@@ -21,13 +21,13 @@ import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.WeakCollectionChangeListener;
-import io.jmix.ui.components.data.DataUnit;
+import io.jmix.ui.component.data.DataUnit;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("rawtypes")
 @Deprecated
-public class WebRowsCount extends io.jmix.ui.components.impl.WebRowsCount implements RowsCount {
+public class WebRowsCount extends io.jmix.ui.component.impl.WebRowsCount implements RowsCount {
 
     @Override
     public CollectionDatasource getDatasource() {

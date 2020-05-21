@@ -21,9 +21,9 @@ import com.vaadin.ui.Notification
 import io.jmix.ui.GuiDevelopmentException
 import io.jmix.ui.Notifications
 import io.jmix.ui.app.main.MainScreen
-import io.jmix.ui.components.ContentMode
-import io.jmix.ui.components.impl.WebButton
-import io.jmix.ui.components.impl.WebNotificationFacet
+import io.jmix.ui.component.ContentMode
+import io.jmix.ui.component.impl.WebButton
+import io.jmix.ui.component.impl.WebNotificationFacet
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.notification.screens.ScreenWithNotification

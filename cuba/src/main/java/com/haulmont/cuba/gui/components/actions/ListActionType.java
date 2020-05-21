@@ -17,7 +17,7 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.ui.Actions;
-import io.jmix.ui.actions.Action;
+import io.jmix.ui.action.Action;
 
 /**
  * Enumerates standard list action types. Can create a corresponding action instance with default parameters.

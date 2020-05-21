@@ -25,7 +25,7 @@ import com.haulmont.cuba.gui.components.filter.dateinterval.DateIntervalValue;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.commons.datastruct.Node;
+import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.Entity;
 import io.jmix.ui.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;

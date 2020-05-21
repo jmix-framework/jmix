@@ -30,10 +30,10 @@ import com.haulmont.cuba.gui.components.filter.descriptor.DynamicAttributesCondi
 import com.haulmont.cuba.gui.components.filter.edit.CustomConditionEditor;
 import com.haulmont.cuba.gui.components.filter.edit.DynamicAttributesConditionEditor;
 import io.jmix.core.AppBeans;
-import io.jmix.core.commons.datastruct.Tree;
+import io.jmix.core.common.datastruct.Tree;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
 
 import java.util.Collection;

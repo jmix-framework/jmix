@@ -19,11 +19,11 @@ import com.haulmont.cuba.gui.components.data.value.DatasourceValueSource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.HasValue;
-import io.jmix.ui.components.data.HasValueSource;
-import io.jmix.ui.components.data.ValueSource;
-import io.jmix.ui.components.data.value.ContainerValueSource;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.value.ContainerValueSource;
 
 /**
  * A component that represents data from one property of a datasource.

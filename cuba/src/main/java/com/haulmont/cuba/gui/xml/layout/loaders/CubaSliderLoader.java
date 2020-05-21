@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.SliderLoader;
+import io.jmix.ui.xml.layout.loader.SliderLoader;
 import org.dom4j.Element;
 
 public class CubaSliderLoader extends SliderLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.Slider component, Element element) {
+    protected void loadData(io.jmix.ui.component.Slider component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

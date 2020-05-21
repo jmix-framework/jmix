@@ -16,12 +16,12 @@
 
 package spec.haulmont.cuba.web.components.timefield
 
-import io.jmix.core.metamodel.annotations.JavaClass
-import io.jmix.core.metamodel.datatypes.Datatype
-import io.jmix.core.metamodel.datatypes.impl.LocalTimeDatatype
-import io.jmix.core.metamodel.datatypes.impl.OffsetTimeDatatype
-import io.jmix.core.metamodel.datatypes.impl.TimeDatatype
-import io.jmix.ui.components.TimeField
+import io.jmix.core.metamodel.annotation.JavaClass
+import io.jmix.core.metamodel.datatype.Datatype
+import io.jmix.core.metamodel.datatype.impl.LocalTimeDatatype
+import io.jmix.core.metamodel.datatype.impl.OffsetTimeDatatype
+import io.jmix.core.metamodel.datatype.impl.TimeDatatype
+import io.jmix.ui.component.TimeField
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.timefield.screens.TimeFieldDatatypeScreen
 import spock.lang.Ignore

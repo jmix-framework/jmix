@@ -22,10 +22,10 @@ import com.haulmont.cuba.gui.data.Datasource;
 /**
  * Component compatible with {@link Datasource}.
  *
- * @deprecated Use {@link io.jmix.ui.components.RowsCount} instead
+ * @deprecated Use {@link io.jmix.ui.component.RowsCount} instead
  */
 @Deprecated
-public interface RowsCount extends io.jmix.ui.components.RowsCount {
+public interface RowsCount extends io.jmix.ui.component.RowsCount {
 
     /**
      * @deprecated assign {@link RowsCountTarget} instead.

@@ -20,18 +20,18 @@ import com.haulmont.cuba.gui.components.data.datagrid.SortableDatasourceDataGrid
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
-import io.jmix.ui.components.data.DataGridItems;
+import io.jmix.ui.component.data.DataGridItems;
 import com.haulmont.cuba.gui.components.data.datagrid.DatasourceDataGridItems;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <E> entity
- * @deprecated Use {@link io.jmix.ui.components.DataGrid} instead
+ * @deprecated Use {@link io.jmix.ui.component.DataGrid} instead
  */
 @SuppressWarnings("rawtypes, unchecked")
 @Deprecated
-public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.components.DataGrid<E> {
+public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E> {
 
     /**
      * @return the DataGrid data source

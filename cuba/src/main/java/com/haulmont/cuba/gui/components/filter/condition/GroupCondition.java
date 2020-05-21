@@ -22,7 +22,7 @@ import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescript
 import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEditor;
 import com.haulmont.cuba.gui.components.filter.operationedit.GroupOperationEditor;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 import org.dom4j.Element;
 
 /**

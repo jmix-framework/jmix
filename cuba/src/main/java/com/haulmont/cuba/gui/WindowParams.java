@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui;
 
 import io.jmix.core.Entity;
-import io.jmix.ui.components.FrameContext;
+import io.jmix.ui.component.FrameContext;
 import org.apache.commons.lang3.BooleanUtils;
 
 import javax.annotation.Nullable;

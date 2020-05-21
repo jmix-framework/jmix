@@ -19,17 +19,17 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.options.DatasourceOptions;
-import io.jmix.ui.components.data.Options;
+import io.jmix.ui.component.data.Options;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of value
  * @param <I> type of option items
- * @deprecated Use {@link io.jmix.ui.components.OptionsField} instead
+ * @deprecated Use {@link io.jmix.ui.component.OptionsField} instead
  */
 @SuppressWarnings("rawtypes")
-public interface OptionsField<V, I> extends Field<V>, io.jmix.ui.components.OptionsField<V, I> {
+public interface OptionsField<V, I> extends Field<V>, io.jmix.ui.component.OptionsField<V, I> {
 
     /**
      * @return options datasource

@@ -38,12 +38,12 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
-import io.jmix.ui.xml.layout.loaders.LayoutLoader;
+import io.jmix.ui.xml.layout.loader.LayoutLoader;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -54,7 +54,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 

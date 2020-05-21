@@ -18,8 +18,8 @@ package spec.haulmont.cuba.web.datacontext
 
 import com.haulmont.cuba.core.model.Foo
 import io.jmix.core.Sort
-import io.jmix.ui.components.Table
-import io.jmix.ui.components.data.table.ContainerTableItems
+import io.jmix.ui.component.Table
+import io.jmix.ui.component.data.table.ContainerTableItems
 import io.jmix.ui.model.CollectionChangeType
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext

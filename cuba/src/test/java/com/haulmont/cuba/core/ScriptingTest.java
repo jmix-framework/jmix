@@ -48,7 +48,7 @@ public class ScriptingTest {
 
     @Test
     public void testImportsEvaluate() {
-        String result = scripting.evaluateGroovy("import io.jmix.core.commons.util.StringHelper\n" +
+        String result = scripting.evaluateGroovy("import io.jmix.core.common.util.StringHelper\n" +
                 "return StringHelper.removeExtraSpaces(' Hello! ')", (Binding) null);
         assertNotNull(result);
     }
@@ -56,7 +56,7 @@ public class ScriptingTest {
     @Test
     public void testPackageAndImportsEvaluate() {
         String result = scripting.evaluateGroovy("package com.haulmont.cuba.core\n" +
-                "import io.jmix.core.commons.util.StringHelper\n" +
+                "import io.jmix.core.common.util.StringHelper\n" +
                 "return StringHelper.removeExtraSpaces(' Hello! ')", (Binding) null);
         assertNotNull(result);
     }

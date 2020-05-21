@@ -18,7 +18,7 @@
 package com.haulmont.cuba.web.settings;
 
 import com.vaadin.server.VaadinSession;
-import io.jmix.ui.executors.IllegalConcurrentAccessException;
+import io.jmix.ui.executor.IllegalConcurrentAccessException;
 import io.jmix.ui.settings.SettingsClient;
 import org.springframework.stereotype.Component;
 

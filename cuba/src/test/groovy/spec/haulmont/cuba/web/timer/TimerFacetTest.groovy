@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.timer
 
 import io.jmix.ui.app.main.MainScreen
 import io.jmix.ui.screen.OpenMode
-import io.jmix.ui.widgets.JmixTimer
+import io.jmix.ui.widget.JmixTimer
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.timer.screens.FragmentWithTimer
 import spec.haulmont.cuba.web.timer.screens.ScreenWithNestedFragment

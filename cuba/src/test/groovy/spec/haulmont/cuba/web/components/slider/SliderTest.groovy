@@ -17,13 +17,13 @@
 package spec.haulmont.cuba.web.components.slider
 
 import com.haulmont.cuba.core.model.common.ScheduledTask
-import io.jmix.core.metamodel.annotations.JavaClass
-import io.jmix.core.metamodel.datatypes.Datatype
-import io.jmix.core.metamodel.datatypes.impl.BigDecimalDatatype
-import io.jmix.core.metamodel.datatypes.impl.DoubleDatatype
-import io.jmix.core.metamodel.datatypes.impl.IntegerDatatype
-import io.jmix.core.metamodel.datatypes.impl.LongDatatype
-import io.jmix.ui.components.Slider
+import io.jmix.core.metamodel.annotation.JavaClass
+import io.jmix.core.metamodel.datatype.Datatype
+import io.jmix.core.metamodel.datatype.impl.BigDecimalDatatype
+import io.jmix.core.metamodel.datatype.impl.DoubleDatatype
+import io.jmix.core.metamodel.datatype.impl.IntegerDatatype
+import io.jmix.core.metamodel.datatype.impl.LongDatatype
+import io.jmix.ui.component.Slider
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.slider.screens.SliderScreen
 import spock.lang.Ignore

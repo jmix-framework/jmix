@@ -27,7 +27,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;

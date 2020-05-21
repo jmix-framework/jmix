@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.self_reference;
 
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotations.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
 import javax.persistence.Id;

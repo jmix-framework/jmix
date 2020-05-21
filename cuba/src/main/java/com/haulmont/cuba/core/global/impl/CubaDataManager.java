@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.global.DataManager;
 import io.jmix.core.entity.KeyValueEntity;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.EntityValidationException;
@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component(DataManager.NAME)
 public class CubaDataManager implements DataManager {

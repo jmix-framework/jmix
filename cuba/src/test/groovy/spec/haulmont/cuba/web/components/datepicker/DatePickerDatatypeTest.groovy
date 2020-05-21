@@ -16,10 +16,10 @@
 
 package spec.haulmont.cuba.web.components.datepicker
 
-import io.jmix.core.metamodel.annotations.JavaClass
-import io.jmix.core.metamodel.datatypes.Datatype
-import io.jmix.core.metamodel.datatypes.impl.*
-import io.jmix.ui.components.DatePicker
+import io.jmix.core.metamodel.annotation.JavaClass
+import io.jmix.core.metamodel.datatype.Datatype
+import io.jmix.core.metamodel.datatype.impl.*
+import io.jmix.ui.component.DatePicker
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datepicker.screens.DatePickerDatatypeScreen
 import spock.lang.Ignore

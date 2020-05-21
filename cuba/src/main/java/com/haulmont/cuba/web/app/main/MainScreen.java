@@ -20,18 +20,18 @@ import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.Messages;
 import com.vaadin.server.WebBrowser;
 import io.jmix.ui.*;
-import io.jmix.ui.components.*;
-import io.jmix.ui.components.dev.LayoutAnalyzerContextMenuProvider;
-import io.jmix.ui.components.mainwindow.AppMenu;
-import io.jmix.ui.components.mainwindow.SideMenu;
-import io.jmix.ui.components.mainwindow.UserIndicator;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.dev.LayoutAnalyzerContextMenuProvider;
+import io.jmix.ui.component.mainwindow.AppMenu;
+import io.jmix.ui.component.mainwindow.SideMenu;
+import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 
-import static io.jmix.ui.components.ComponentsHelper.setStyleName;
+import static io.jmix.ui.component.ComponentsHelper.setStyleName;
 
 /**
  * Base class for a controller of application Main screen.

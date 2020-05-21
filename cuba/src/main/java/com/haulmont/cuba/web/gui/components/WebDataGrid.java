@@ -20,5 +20,5 @@ import com.haulmont.cuba.gui.components.DataGrid;
 import io.jmix.core.Entity;
 
 @Deprecated
-public class WebDataGrid<E extends Entity> extends io.jmix.ui.components.impl.WebDataGrid<E> implements DataGrid<E> {
+public class WebDataGrid<E extends Entity> extends io.jmix.ui.component.impl.WebDataGrid<E> implements DataGrid<E> {
 }

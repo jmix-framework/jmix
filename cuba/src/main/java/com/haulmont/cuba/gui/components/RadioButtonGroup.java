@@ -22,8 +22,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  * Component compatible with {@link Datasource}.
  *
  * @param <I> item type
- * @deprecated Use {@link io.jmix.ui.components.RadioButtonGroup} instead
+ * @deprecated Use {@link io.jmix.ui.component.RadioButtonGroup} instead
  */
 @Deprecated
-public interface RadioButtonGroup<I> extends OptionsField<I, I>, io.jmix.ui.components.RadioButtonGroup<I> {
+public interface RadioButtonGroup<I> extends OptionsField<I, I>, io.jmix.ui.component.RadioButtonGroup<I> {
 }

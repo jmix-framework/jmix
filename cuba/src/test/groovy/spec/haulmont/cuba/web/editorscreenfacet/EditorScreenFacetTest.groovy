@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.editorscreenfacet
 
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.web.app.main.MainScreen
-import io.jmix.ui.builders.EditMode
+import io.jmix.ui.builder.EditMode
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.editorscreenfacet.screens.EditorScreenFacetTestScreen

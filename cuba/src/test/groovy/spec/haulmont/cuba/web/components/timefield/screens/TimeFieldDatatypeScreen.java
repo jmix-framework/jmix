@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.timefield.screens;
 
-import io.jmix.ui.components.TimeField;
+import io.jmix.ui.component.TimeField;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;

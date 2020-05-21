@@ -2,7 +2,7 @@ package spec.haulmont.cuba.core.query_conditions
 
 
 import io.jmix.core.AppBeans
-import io.jmix.core.queryconditions.*
+import io.jmix.core.querycondition.*
 import org.dom4j.Element
 import spec.haulmont.cuba.core.CoreTestSpecification
 

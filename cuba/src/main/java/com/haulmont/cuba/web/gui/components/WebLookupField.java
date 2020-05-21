@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.LookupField;
 
 @Deprecated
 public class WebLookupField<V>
-        extends io.jmix.ui.components.impl.WebLookupField<V>
+        extends io.jmix.ui.component.impl.WebLookupField<V>
         implements LookupField<V> {
 }

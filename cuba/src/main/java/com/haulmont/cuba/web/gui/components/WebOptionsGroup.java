@@ -20,6 +20,6 @@ import com.haulmont.cuba.gui.components.OptionsGroup;
 
 @Deprecated
 public class WebOptionsGroup<V, I>
-        extends io.jmix.ui.components.impl.WebOptionsGroup<V, I>
+        extends io.jmix.ui.component.impl.WebOptionsGroup<V, I>
         implements OptionsGroup<V, I> {
 }

@@ -17,11 +17,11 @@
 package com.haulmont.cuba.gui.components;
 
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Field;
-import io.jmix.ui.components.HasHtmlCaption;
-import io.jmix.ui.components.HasHtmlDescription;
-import io.jmix.ui.components.HasHtmlSanitizer;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.HasHtmlCaption;
+import io.jmix.ui.component.HasHtmlDescription;
+import io.jmix.ui.component.HasHtmlSanitizer;
 import io.jmix.ui.gui.OpenType;
 
 import java.util.List;

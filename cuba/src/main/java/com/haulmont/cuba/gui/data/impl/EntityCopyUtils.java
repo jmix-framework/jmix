@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.data.impl;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;

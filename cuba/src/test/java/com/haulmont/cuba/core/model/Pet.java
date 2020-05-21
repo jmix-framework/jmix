@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
 
 import javax.persistence.*;

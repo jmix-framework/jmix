@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.TokenListLoader;
+import io.jmix.ui.xml.layout.loader.TokenListLoader;
 import org.dom4j.Element;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class CubaTokenListLoader extends TokenListLoader {
 
     @Override
-    protected void loadData(io.jmix.ui.components.TokenList component, Element element) {
+    protected void loadData(io.jmix.ui.component.TokenList component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper
@@ -35,7 +35,7 @@ public class CubaTokenListLoader extends TokenListLoader {
     }
 
     @Override
-    protected void loadOptionsContainer(io.jmix.ui.components.TokenList component, Element lookupElement) {
+    protected void loadOptionsContainer(io.jmix.ui.component.TokenList component, Element lookupElement) {
         super.loadOptionsContainer(component, lookupElement);
 
         if (component.getOptions() == null) {

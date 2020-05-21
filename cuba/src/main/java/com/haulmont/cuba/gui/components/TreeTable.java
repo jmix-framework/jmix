@@ -21,8 +21,8 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.Entity;
-import io.jmix.ui.components.ListComponent;
-import io.jmix.ui.components.data.TableItems;
+import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.component.data.TableItems;
 
 import javax.annotation.Nullable;
 
@@ -30,11 +30,11 @@ import javax.annotation.Nullable;
  * Component compatible with {@link Datasource}.
  *
  * @param <E> entity
- * @deprecated Use {@link io.jmix.ui.components.TreeTable} instead
+ * @deprecated Use {@link io.jmix.ui.component.TreeTable} instead
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
-public interface TreeTable<E extends Entity> extends ListComponent<E>, io.jmix.ui.components.TreeTable<E> {
+public interface TreeTable<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeTable<E> {
 
     /**
      * @return hierarchical datasource

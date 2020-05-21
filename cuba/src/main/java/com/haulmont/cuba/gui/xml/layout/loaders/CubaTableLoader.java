@@ -23,7 +23,7 @@ import io.jmix.dynattrui.facet.DynAttrInitTask;
 import org.dom4j.Element;
 
 @SuppressWarnings("rawtypes")
-public class CubaTableLoader extends io.jmix.ui.xml.layout.loaders.TableLoader {
+public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
 
     @Override
     protected CubaTableDataHolder initTableDataHolder() {

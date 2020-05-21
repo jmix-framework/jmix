@@ -16,14 +16,14 @@
 
 package spec.haulmont.cuba.web.components.datefield
 
-import io.jmix.core.metamodel.annotations.JavaClass
-import io.jmix.core.metamodel.datatypes.Datatype
-import io.jmix.core.metamodel.datatypes.impl.DateDatatype
-import io.jmix.core.metamodel.datatypes.impl.DateTimeDatatype
-import io.jmix.core.metamodel.datatypes.impl.LocalDateDatatype
-import io.jmix.core.metamodel.datatypes.impl.LocalDateTimeDatatype
-import io.jmix.core.metamodel.datatypes.impl.OffsetDateTimeDatatype
-import io.jmix.ui.components.DateField
+import io.jmix.core.metamodel.annotation.JavaClass
+import io.jmix.core.metamodel.datatype.Datatype
+import io.jmix.core.metamodel.datatype.impl.DateDatatype
+import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype
+import io.jmix.core.metamodel.datatype.impl.LocalDateDatatype
+import io.jmix.core.metamodel.datatype.impl.LocalDateTimeDatatype
+import io.jmix.core.metamodel.datatype.impl.OffsetDateTimeDatatype
+import io.jmix.ui.component.DateField
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datefield.screens.DateFieldDatatypeScreen
 import spock.lang.Ignore

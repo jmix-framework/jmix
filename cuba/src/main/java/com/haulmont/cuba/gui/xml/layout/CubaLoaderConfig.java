@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.xml.layout.loaders.*;
-import io.jmix.ui.components.*;
+import io.jmix.ui.component.*;
 import io.jmix.ui.xml.layout.BaseLoaderConfig;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;

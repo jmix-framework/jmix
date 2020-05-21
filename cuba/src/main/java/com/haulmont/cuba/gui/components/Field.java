@@ -20,8 +20,8 @@ import com.haulmont.cuba.gui.components.data.value.DatasourceValueSource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.components.data.ValueSource;
-import io.jmix.ui.components.data.value.ContainerValueSource;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.value.ContainerValueSource;
 
 import javax.annotation.Nullable;
 
@@ -29,10 +29,10 @@ import javax.annotation.Nullable;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of value
- * @deprecated Use {@link io.jmix.ui.components.Field} instead
+ * @deprecated Use {@link io.jmix.ui.component.Field} instead
  */
 @Deprecated
-public interface Field<V> extends io.jmix.ui.components.Field<V>, DatasourceComponent<V> {
+public interface Field<V> extends io.jmix.ui.component.Field<V>, DatasourceComponent<V> {
 
     /**
      * @return datasource instance

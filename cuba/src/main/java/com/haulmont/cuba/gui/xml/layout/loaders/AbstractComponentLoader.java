@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import io.jmix.ui.components.Component;
+import io.jmix.ui.component.Component;
 
 import static com.google.common.base.Preconditions.checkState;
 
 public abstract class AbstractComponentLoader<T extends Component>
-        extends io.jmix.ui.xml.layout.loaders.AbstractComponentLoader<T> {
+        extends io.jmix.ui.xml.layout.loader.AbstractComponentLoader<T> {
 
     @Override
     protected ComponentLoaderContext getComponentContext() {

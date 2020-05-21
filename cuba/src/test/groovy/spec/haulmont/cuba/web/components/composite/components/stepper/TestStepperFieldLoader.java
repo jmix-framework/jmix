@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.composite.components.stepper;
 
-import io.jmix.ui.xml.layout.loaders.AbstractFieldLoader;
+import io.jmix.ui.xml.layout.loader.AbstractFieldLoader;
 
 public class TestStepperFieldLoader extends AbstractFieldLoader<TestStepperField> {
     @Override

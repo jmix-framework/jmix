@@ -19,14 +19,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.CheckBoxGroupLoader;
+import io.jmix.ui.xml.layout.loader.CheckBoxGroupLoader;
 import org.dom4j.Element;
 
 public class CubaCheckBoxGroupLoader extends CheckBoxGroupLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.CheckBoxGroup component, Element element) {
+    protected void loadData(io.jmix.ui.component.CheckBoxGroup component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

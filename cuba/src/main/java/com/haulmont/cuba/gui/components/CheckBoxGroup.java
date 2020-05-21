@@ -24,8 +24,8 @@ import java.util.Collection;
  * Component compatible with {@link Datasource}.
  *
  * @param <I> item type
- * @deprecated Use {@link io.jmix.ui.components.CheckBox} instead
+ * @deprecated Use {@link io.jmix.ui.component.CheckBox} instead
  */
 @Deprecated
-public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, io.jmix.ui.components.CheckBoxGroup<I> {
+public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, io.jmix.ui.component.CheckBoxGroup<I> {
 }

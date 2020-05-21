@@ -18,14 +18,14 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loaders.SuggestionFieldLoader;
+import io.jmix.ui.xml.layout.loader.SuggestionFieldLoader;
 import org.dom4j.Element;
 
 public class CubaSuggestionFieldLoader extends SuggestionFieldLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.components.SuggestionField component, Element element) {
+    protected void loadData(io.jmix.ui.component.SuggestionField component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

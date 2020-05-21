@@ -17,10 +17,10 @@
 package spec.haulmont.cuba.web.datacontext
 
 import com.haulmont.cuba.core.model.Foo
-import io.jmix.ui.components.Table
-import io.jmix.ui.components.TextField
-import io.jmix.ui.components.data.table.ContainerTableItems
-import io.jmix.ui.components.data.value.ContainerValueSource
+import io.jmix.ui.component.Table
+import io.jmix.ui.component.TextField
+import io.jmix.ui.component.data.table.ContainerTableItems
+import io.jmix.ui.component.data.value.ContainerValueSource
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.InstanceContainer
 import spec.haulmont.cuba.web.UiScreenSpec

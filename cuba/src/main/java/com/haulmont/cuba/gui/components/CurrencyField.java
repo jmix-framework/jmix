@@ -22,8 +22,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of number value
- * @deprecated Use {@link io.jmix.ui.components.CurrencyField} instead
+ * @deprecated Use {@link io.jmix.ui.component.CurrencyField} instead
  */
 @Deprecated
-public interface CurrencyField<V extends Number> extends Field<V>, io.jmix.ui.components.CurrencyField<V> {
+public interface CurrencyField<V extends Number> extends Field<V>, io.jmix.ui.component.CurrencyField<V> {
 }

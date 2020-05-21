@@ -18,8 +18,8 @@ package spec.haulmont.cuba.web.screenfacet
 
 import com.haulmont.cuba.web.app.main.MainScreen
 import io.jmix.ui.GuiDevelopmentException
-import io.jmix.ui.components.impl.WebButton
-import io.jmix.ui.components.impl.WebScreenFacet
+import io.jmix.ui.component.impl.WebButton
+import io.jmix.ui.component.impl.WebScreenFacet
 import io.jmix.ui.screen.FrameOwner
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec

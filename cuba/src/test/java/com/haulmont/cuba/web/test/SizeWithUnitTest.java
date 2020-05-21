@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.web.test;
 
-import io.jmix.ui.components.SizeUnit;
-import io.jmix.ui.components.SizeWithUnit;
+import io.jmix.ui.component.SizeUnit;
+import io.jmix.ui.component.SizeWithUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

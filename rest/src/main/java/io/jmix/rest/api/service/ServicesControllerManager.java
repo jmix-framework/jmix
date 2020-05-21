@@ -17,13 +17,13 @@
 package io.jmix.rest.api.service;
 
 import io.jmix.core.*;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.Datatypes;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.config.RestServicesConfiguration;
-import io.jmix.rest.api.controllers.ServicesController;
+import io.jmix.rest.api.controller.ServicesController;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.slf4j.Logger;

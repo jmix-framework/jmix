@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.controllers;
+package io.jmix.rest.api.controller;
 
 import io.jmix.core.Events;
 import io.jmix.rest.api.auth.OAuthTokenRevoker;
 import io.jmix.rest.api.common.RestTokenMasker;
-import io.jmix.rest.api.events.OAuthTokenRevokedResponseEvent;
+import io.jmix.rest.api.event.OAuthTokenRevokedResponseEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;

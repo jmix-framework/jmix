@@ -18,7 +18,7 @@ package io.jmix.rest.api.service;
 
 import com.google.common.base.Joiner;
 import io.jmix.core.*;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.exception.RestAPIException;
@@ -33,7 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Class is used by the {@link io.jmix.rest.api.controllers.EntitiesMetadataController}. Class is sed for getting
+ * Class is used by the {@link io.jmix.rest.api.controller.EntitiesMetadataController}. Class is sed for getting
  * entities metadata. User permissions for entities access aren't taken into account at the moment.
  */
 @Component("jmix_EntitiesMetadataControllerManager")

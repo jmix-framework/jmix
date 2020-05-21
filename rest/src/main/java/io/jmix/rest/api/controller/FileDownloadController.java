@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.controllers;
+package io.jmix.rest.api.controller;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
 import io.jmix.core.entity.FileDescriptor;
-import io.jmix.rest.api.exception.RestAPIException;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.UUID;
 
 /**
  * REST API controller that is used for downloading files by the {@link FileDescriptor} identifier

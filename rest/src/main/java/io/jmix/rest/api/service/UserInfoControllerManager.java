@@ -18,7 +18,7 @@ package io.jmix.rest.api.service;
 
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.rest.api.controllers.UserInfoController;
+import io.jmix.rest.api.controller.UserInfoController;
 import io.jmix.rest.api.service.filter.data.UserInfo;
 import org.springframework.stereotype.Component;
 

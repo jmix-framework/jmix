@@ -14,35 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.controllers;
+package io.jmix.rest.api.controller;
 
-import com.google.common.base.Strings;
 import io.jmix.core.*;
-import io.jmix.core.entity.FileDescriptor;
-import io.jmix.rest.api.exception.RestAPIException;
-import io.jmix.rest.api.service.filter.data.FileInfo;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.Nullable;
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.UUID;
 
 /**
  * REST API controller that is used for uploading files

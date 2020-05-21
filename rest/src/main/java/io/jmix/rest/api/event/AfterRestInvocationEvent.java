@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.events;
+package io.jmix.rest.api.event;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.core.Authentication;
@@ -23,20 +23,20 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * Event fired before a call of a REST controller.
- * Event listeners can prevent a controller invocation using {@link #preventInvocation()} method.
+ * Event fired after REST controller call.
  */
-public class BeforeRestInvocationEvent extends ApplicationEvent {
+public class AfterRestInvocationEvent extends ApplicationEvent {
 
     private ServletRequest request;
     private ServletResponse response;
-    private boolean invocationPrevented = false;
+    private boolean invocationPrevented;
 
-    public BeforeRestInvocationEvent(Authentication authentication,
-                                     ServletRequest request, ServletResponse response) {
+    public AfterRestInvocationEvent(Authentication authentication,
+                                    ServletRequest request, ServletResponse response, boolean invocationPrevented) {
         super(authentication);
         this.request = request;
         this.response = response;
+        this.invocationPrevented = invocationPrevented;
     }
 
     @Override
@@ -58,9 +58,5 @@ public class BeforeRestInvocationEvent extends ApplicationEvent {
 
     public boolean isInvocationPrevented() {
         return invocationPrevented;
-    }
-
-    public void preventInvocation() {
-        this.invocationPrevented = true;
     }
 }

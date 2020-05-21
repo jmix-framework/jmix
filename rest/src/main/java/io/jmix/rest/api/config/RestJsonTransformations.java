@@ -22,7 +22,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Table;
 import io.jmix.core.Resources;
-import io.jmix.core.commons.util.Dom4j;
+import io.jmix.core.common.util.Dom4j;
 import io.jmix.rest.api.transform.EntityJsonTransformer;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
 import io.jmix.rest.api.transform.StandardEntityJsonTransformer;

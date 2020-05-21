@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.controllers;
+package io.jmix.rest.api.controller;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.Datatypes;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.CurrentAuthentication;
@@ -45,7 +45,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.*;
 
-@ControllerAdvice("io.jmix.rest.api.controllers")
+@ControllerAdvice("io.jmix.rest.api.controller")
 public class RestControllerExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RestControllerExceptionHandler.class);

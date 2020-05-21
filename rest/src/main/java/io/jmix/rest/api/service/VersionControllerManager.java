@@ -17,14 +17,11 @@
 
 package io.jmix.rest.api.service;
 
-import io.jmix.rest.api.controllers.VersionController;
+import io.jmix.rest.api.controller.VersionController;
 import io.jmix.rest.api.exception.RestAPIException;
 //import io.jmix.core.entity.BuildInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 /**
  * Class that is used by {@link VersionController} for getting REST API version

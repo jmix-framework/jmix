@@ -20,7 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.gson.*;
 import io.jmix.core.*;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.impl.importexport.EntityImportException;
@@ -55,7 +55,7 @@ import java.util.*;
 //import io.jmix.ui.sys.PersistenceManagerClient;
 
 /**
- * Class that executes business logic required by the {@link io.jmix.rest.api.controllers.EntitiesController}. It
+ * Class that executes business logic required by the {@link io.jmix.rest.api.controller.EntitiesController}. It
  * performs CRUD operations with entities
  */
 @Component("jmix_EntitiesControllerManager")

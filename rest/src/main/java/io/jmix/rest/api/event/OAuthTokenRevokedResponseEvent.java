@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.events;
+package io.jmix.rest.api.event;
 
 import org.springframework.context.ApplicationEvent;
 import org.springframework.http.ResponseEntity;

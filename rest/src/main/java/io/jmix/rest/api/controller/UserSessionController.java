@@ -12,30 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package io.jmix.rest.api.controllers;
+package io.jmix.rest.api.controller;
 
-
-import io.jmix.rest.api.service.DatatypesControllerManager;
-import org.springframework.http.MediaType;
+import io.jmix.rest.api.service.UserSessionControllerManager;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
-/**
- * Controller that is used for getting datatypes information.
- */
-@RestController("jmix_DatatypesController")
-@RequestMapping(value = "/rest/metadata/datatypes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-public class DatatypesController {
+@RestController("jmix_UserSessionController")
+@RequestMapping(path = "/rest/user-session")
+public class UserSessionController {
+
     @Inject
-    protected DatatypesControllerManager datatypesControllerManager;
+    protected UserSessionControllerManager localeControllerManager;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String getDatatypes() {
-        return datatypesControllerManager.getDatatypesJson();
+    @PutMapping("/locale")
+    public void setSessionLocale(HttpServletRequest request) {
+        localeControllerManager.setSessionLocale(request);
     }
 }

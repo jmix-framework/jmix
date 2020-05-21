@@ -19,7 +19,7 @@ package io.jmix.rest.api.config;
 import com.google.common.base.Strings;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Resources;
-import io.jmix.core.commons.util.Dom4j;
+import io.jmix.core.common.util.Dom4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;

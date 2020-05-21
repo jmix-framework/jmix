@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.security.checks;
+package io.jmix.rest.security.check;
 
-import io.jmix.core.ClientType;
-import io.jmix.core.Messages;
-import io.jmix.core.security.*;
-import io.jmix.rest.exception.RestApiAccessDeniedException;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
 
 /**
  * Checks if login to REST API is permitted for user.

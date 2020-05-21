@@ -19,7 +19,7 @@ package io.jmix.rest.api.config;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Resources;
-import io.jmix.core.commons.util.Dom4j;
+import io.jmix.core.common.util.Dom4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

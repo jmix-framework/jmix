@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.controllers;
+package io.jmix.rest.api.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

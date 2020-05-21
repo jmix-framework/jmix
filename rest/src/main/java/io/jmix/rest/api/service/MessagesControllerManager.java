@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import java.util.*;
 
 /**
- * Class that executes business logic required by the {@link io.jmix.rest.api.controllers.MessagesController}.
+ * Class that executes business logic required by the {@link io.jmix.rest.api.controller.MessagesController}.
  */
 @Component("jmix_LocalizationControllerManager")
 public class MessagesControllerManager {

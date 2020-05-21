@@ -18,7 +18,7 @@ package io.jmix.rest.api.service.filter.data;
 
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import java.util.ArrayList;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.controllers;
+package io.jmix.rest.api.controller;
 
 import io.jmix.rest.api.service.PermissionsControllerManager;
 import io.jmix.rest.api.service.filter.data.EffectiveRoleInfo;

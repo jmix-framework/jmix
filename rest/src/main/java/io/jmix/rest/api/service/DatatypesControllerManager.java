@@ -18,9 +18,9 @@ package io.jmix.rest.api.service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.DatatypeRegistry;
-import io.jmix.core.metamodel.datatypes.ParameterizedDatatype;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.ParameterizedDatatype;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

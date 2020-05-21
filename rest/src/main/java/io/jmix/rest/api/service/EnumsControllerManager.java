@@ -18,7 +18,7 @@ package io.jmix.rest.api.service;
 
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.service.filter.data.EnumInfo;
 import io.jmix.rest.api.service.filter.data.EnumValueInfo;

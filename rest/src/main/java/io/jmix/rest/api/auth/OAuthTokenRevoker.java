@@ -18,7 +18,7 @@ package io.jmix.rest.api.auth;
 
 import io.jmix.core.Events;
 import io.jmix.rest.api.common.RestTokenMasker;
-import io.jmix.rest.api.events.OAuthTokenRevokedEvent;
+import io.jmix.rest.api.event.OAuthTokenRevokedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

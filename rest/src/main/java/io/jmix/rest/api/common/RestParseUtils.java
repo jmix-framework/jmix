@@ -23,7 +23,7 @@ import com.google.gson.JsonParser;
 import io.jmix.core.Entity;
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.datatypes.Datatypes;
+import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.springframework.stereotype.Component;

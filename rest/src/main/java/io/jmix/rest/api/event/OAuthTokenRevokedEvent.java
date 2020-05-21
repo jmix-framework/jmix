@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.events;
+package io.jmix.rest.api.event;
 
 import io.jmix.rest.api.auth.TokenRevocationInitiator;
 import org.springframework.context.ApplicationEvent;

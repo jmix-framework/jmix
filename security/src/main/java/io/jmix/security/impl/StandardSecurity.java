@@ -108,7 +108,7 @@ public class StandardSecurity implements Security {
 
     @Override
     public boolean isEntityAttrUpdatePermitted(MetaClass metaClass, String propertyPath) {
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, propertyPath);
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyPath);
         return metaPropertyPath != null && isEntityAttrUpdatePermitted(metaPropertyPath);
     }
 
@@ -135,7 +135,7 @@ public class StandardSecurity implements Security {
 
     @Override
     public boolean isEntityAttrReadPermitted(MetaClass metaClass, String propertyPath) {
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, propertyPath);
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyPath);
         return metaPropertyPath != null && isEntityAttrReadPermitted(metaPropertyPath);
     }
 
@@ -311,7 +311,7 @@ public class StandardSecurity implements Security {
                 //noinspection unchecked
                 return Enum.valueOf((Class<Enum>) clazz, strValue);
             } else {
-                Datatype datatype = datatypeRegistry.get(clazz);
+                Datatype datatype = datatypeRegistry.find(clazz);
                 return datatype != null ? datatype.parse(strValue) : strValue;
             }
         } catch (ParseException | IllegalArgumentException e) {

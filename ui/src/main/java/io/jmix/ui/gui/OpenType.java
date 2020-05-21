@@ -16,10 +16,10 @@
 
 package io.jmix.ui.gui;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.Screens.LaunchMode;
-import io.jmix.ui.components.SizeUnit;
-import io.jmix.ui.components.SizeWithUnit;
+import io.jmix.ui.component.SizeUnit;
+import io.jmix.ui.component.SizeWithUnit;
 import io.jmix.ui.screen.OpenMode;
 
 /**

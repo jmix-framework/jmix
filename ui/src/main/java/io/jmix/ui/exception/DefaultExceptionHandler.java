@@ -23,7 +23,7 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.widgets.ExceptionDialog;
+import io.jmix.ui.widget.ExceptionDialog;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 

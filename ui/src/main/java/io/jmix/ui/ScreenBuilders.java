@@ -18,16 +18,16 @@ package io.jmix.ui;
 
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.builders.*;
-import io.jmix.ui.components.*;
-import io.jmix.ui.components.data.DataUnit;
-import io.jmix.ui.components.data.meta.EntityDataUnit;
+import io.jmix.ui.builder.*;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.screen.FrameOwner;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component("jmix_ScreenBuilders")
 public class ScreenBuilders {

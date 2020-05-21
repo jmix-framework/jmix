@@ -16,7 +16,7 @@
 
 package io.jmix.ui.meta;
 
-import io.jmix.ui.components.Facet;
+import io.jmix.ui.component.Facet;
 
 import java.lang.annotation.*;
 

@@ -1,0 +1,82 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.ui.widget;
+
+import com.vaadin.server.Scrollable;
+import io.jmix.ui.widget.client.scrollboxlayout.JmixScrollBoxLayoutServerRpc;
+import io.jmix.ui.widget.client.scrollboxlayout.JmixScrollBoxLayoutState;
+
+public class JmixScrollBoxLayout extends JmixCssActionsLayout implements Scrollable {
+
+    protected JmixScrollBoxLayoutServerRpc serverRpc;
+
+    public JmixScrollBoxLayout() {
+        serverRpc = new JmixScrollBoxLayoutServerRpc() {
+            @Override
+            public void setDeferredScroll(int scrollTop, int scrollLeft) {
+                getState().scrollTop = scrollTop;
+                getState().scrollLeft = scrollLeft;
+            }
+
+            @Override
+            public void setDelayedScroll(int scrollTop, int scrollLeft) {
+                getState().scrollTop = scrollTop;
+                getState().scrollLeft = scrollLeft;
+            }
+        };
+        registerRpc(serverRpc);
+    }
+
+    @Override
+    protected JmixScrollBoxLayoutState getState() {
+        return (JmixScrollBoxLayoutState) super.getState();
+    }
+
+    @Override
+    protected JmixScrollBoxLayoutState getState(boolean markAsDirty) {
+        return (JmixScrollBoxLayoutState) super.getState(markAsDirty);
+    }
+
+    public void setDelayed(boolean delayed) {
+        getState().scrollChangeMode = delayed ?
+                JmixScrollBoxLayoutState.DELAYED_MODE : JmixScrollBoxLayoutState.DEFERRED_MODE;
+    }
+
+    @Override
+    public void setScrollTop(int scrollTop) {
+        if (getState(false).scrollTop != scrollTop) {
+            getState().scrollTop = scrollTop;
+        }
+    }
+
+    @Override
+    public void setScrollLeft(int scrollLeft) {
+        if (getState(false).scrollLeft != scrollLeft) {
+            getState().scrollLeft = scrollLeft;
+        }
+    }
+
+    @Override
+    public int getScrollLeft() {
+        return getState(false).scrollLeft;
+    }
+
+    @Override
+    public int getScrollTop() {
+        return getState(false).scrollTop;
+    }
+}

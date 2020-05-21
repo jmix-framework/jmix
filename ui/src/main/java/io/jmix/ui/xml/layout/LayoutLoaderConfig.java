@@ -15,15 +15,12 @@
  */
 package io.jmix.ui.xml.layout;
 
-import io.jmix.ui.xml.layout.loaders.FragmentLoader;
-import io.jmix.ui.xml.layout.loaders.WindowLoader;
+import io.jmix.ui.xml.layout.loader.FragmentLoader;
+import io.jmix.ui.xml.layout.loader.WindowLoader;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("rawtypes")
 @Component(LayoutLoaderConfig.NAME)

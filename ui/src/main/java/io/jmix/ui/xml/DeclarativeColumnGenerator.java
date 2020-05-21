@@ -17,10 +17,10 @@
 package io.jmix.ui.xml;
 
 import io.jmix.core.Entity;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.Table;
-import io.jmix.ui.components.compatibility.CubaFragmentAdapter;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.compatibility.CubaFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.context.annotation.Scope;

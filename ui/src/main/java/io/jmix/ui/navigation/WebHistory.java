@@ -16,7 +16,7 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
 import org.slf4j.Logger;

@@ -16,16 +16,16 @@
 
 package io.jmix.ui.xml.layout;
 
-import io.jmix.ui.components.*;
-import io.jmix.ui.components.mainwindow.AppMenu;
-import io.jmix.ui.components.mainwindow.FoldersPane;
-import io.jmix.ui.components.mainwindow.LogoutButton;
-import io.jmix.ui.components.mainwindow.NewWindowButton;
-import io.jmix.ui.components.mainwindow.SideMenu;
-import io.jmix.ui.components.mainwindow.TimeZoneIndicator;
-import io.jmix.ui.components.mainwindow.UserActionsButton;
-import io.jmix.ui.components.mainwindow.UserIndicator;
-import io.jmix.ui.xml.layout.loaders.*;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.mainwindow.AppMenu;
+import io.jmix.ui.component.mainwindow.FoldersPane;
+import io.jmix.ui.component.mainwindow.LogoutButton;
+import io.jmix.ui.component.mainwindow.NewWindowButton;
+import io.jmix.ui.component.mainwindow.SideMenu;
+import io.jmix.ui.component.mainwindow.TimeZoneIndicator;
+import io.jmix.ui.component.mainwindow.UserActionsButton;
+import io.jmix.ui.component.mainwindow.UserIndicator;
+import io.jmix.ui.xml.layout.loader.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

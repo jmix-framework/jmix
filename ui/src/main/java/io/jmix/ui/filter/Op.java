@@ -18,7 +18,7 @@ package io.jmix.ui.filter;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
 public enum Op implements EnumClass<String> {
     CONTAINS("like", "contains", false),

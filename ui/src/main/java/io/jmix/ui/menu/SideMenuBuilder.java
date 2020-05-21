@@ -21,10 +21,10 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.Security;
-import io.jmix.ui.components.ComponentsHelper;
-import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.components.Window;
-import io.jmix.ui.components.mainwindow.SideMenu;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.KeyCombination;
+import io.jmix.ui.component.Window;
+import io.jmix.ui.component.mainwindow.SideMenu;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.AppUI;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static io.jmix.ui.components.KeyCombination.getShortcutModifiers;
+import static io.jmix.ui.component.KeyCombination.getShortcutModifiers;
 
 /**
  * Side menu builder.

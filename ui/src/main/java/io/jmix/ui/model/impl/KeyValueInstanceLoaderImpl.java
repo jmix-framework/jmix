@@ -16,14 +16,14 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.DataManager;
 import io.jmix.core.Stores;
 import io.jmix.core.ValueLoadContext;
-import io.jmix.core.queryconditions.Condition;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.model.KeyValueContainer;

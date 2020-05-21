@@ -18,7 +18,7 @@ package io.jmix.ui.sanitizer;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import io.jmix.ui.components.RichTextArea;
+import io.jmix.ui.component.RichTextArea;
 import org.owasp.html.CssSchema;
 import org.owasp.html.HtmlPolicyBuilder;
 import org.owasp.html.PolicyFactory;
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
-import static io.jmix.ui.components.HtmlAttributes.CSS.FONT;
+import static io.jmix.ui.component.HtmlAttributes.CSS.FONT;
 
 /**
  * Utility bean that sanitizes a sting of HTML according to the factory's policy to prevent Cross-site Scripting (XSS)

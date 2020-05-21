@@ -29,20 +29,20 @@ import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.LoginException;
-import io.jmix.ui.components.RootWindow;
-import io.jmix.ui.events.AppInitializedEvent;
-import io.jmix.ui.events.UIRefreshEvent;
+import io.jmix.ui.component.RootWindow;
+import io.jmix.ui.event.AppInitializedEvent;
+import io.jmix.ui.event.UIRefreshEvent;
 import io.jmix.ui.exception.UiExceptionHandler;
-import io.jmix.ui.icons.IconResolver;
+import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.navigation.*;
 import io.jmix.ui.sys.*;
-import io.jmix.ui.sys.events.UiEventsMulticaster;
+import io.jmix.ui.sys.event.UiEventsMulticaster;
 import io.jmix.ui.theme.ThemeConstantsRepository;
-import io.jmix.ui.widgets.AppUIUtils;
-import io.jmix.ui.widgets.JmixFileDownloader;
-import io.jmix.ui.widgets.JmixTimer;
-import io.jmix.ui.widgets.client.ui.AppUIClientRpc;
-import io.jmix.ui.widgets.client.ui.AppUIConstants;
+import io.jmix.ui.widget.AppUIUtils;
+import io.jmix.ui.widget.JmixFileDownloader;
+import io.jmix.ui.widget.JmixTimer;
+import io.jmix.ui.widget.client.ui.AppUIClientRpc;
+import io.jmix.ui.widget.client.ui.AppUIConstants;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ import javax.inject.Inject;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Widgetset("${jmix.ui.widgetSet:io.jmix.ui.widgets.WidgetSet}")
+@Widgetset("${jmix.ui.widgetSet:io.jmix.ui.widget.WidgetSet}")
 @Theme("${jmix.ui.theme:helium}")
 @Push(transport = Transport.WEBSOCKET_XHR)
 @SpringUI

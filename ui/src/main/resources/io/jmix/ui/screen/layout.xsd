@@ -396,13 +396,13 @@
             </xs:simpleType>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
-                    <xs:enumeration value="io.jmix.ui.components.validators.DateValidator"/>
-                    <xs:enumeration value="io.jmix.ui.components.validators.DoubleValidator"/>
-                    <xs:enumeration value="io.jmix.ui.components.validators.EmailValidator"/>
-                    <xs:enumeration value="io.jmix.ui.components.validators.IntegerValidator"/>
-                    <xs:enumeration value="io.jmix.ui.components.validators.LongValidator"/>
-                    <xs:enumeration value="io.jmix.ui.components.validators.PatternValidator"/>
-                    <xs:enumeration value="io.jmix.ui.components.validators.ScriptValidator"/>
+                    <xs:enumeration value="io.jmix.ui.component.validator.DateValidator"/>
+                    <xs:enumeration value="io.jmix.ui.component.validator.DoubleValidator"/>
+                    <xs:enumeration value="io.jmix.ui.component.validator.EmailValidator"/>
+                    <xs:enumeration value="io.jmix.ui.component.validator.IntegerValidator"/>
+                    <xs:enumeration value="io.jmix.ui.component.validator.LongValidator"/>
+                    <xs:enumeration value="io.jmix.ui.component.validator.PatternValidator"/>
+                    <xs:enumeration value="io.jmix.ui.component.validator.ScriptValidator"/>
                 </xs:restriction>
             </xs:simpleType>
         </xs:union>
@@ -491,8 +491,8 @@
             <xs:enumeration value="java.util.Date"/>
             <xs:enumeration value="java.time.LocalDate"/>
             <xs:enumeration value="java.time.LocalDateTime"/>
-            <xs:enumeration value="io.jmix.ui.icons.Icons$Icon"/>
-            <xs:enumeration value="io.jmix.ui.components.Component"/>
+            <xs:enumeration value="io.jmix.ui.icon.Icons$Icon"/>
+            <xs:enumeration value="io.jmix.ui.component.Component"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1304,12 +1304,12 @@
 
     <xs:simpleType name="rendererList">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="io.jmix.ui.components.DataGrid$CheckBoxRenderer"/>
-            <xs:enumeration value="io.jmix.ui.components.DataGrid$ComponentRenderer"/>
-            <xs:enumeration value="io.jmix.ui.components.DataGrid$IconRenderer"/>
-            <xs:enumeration value="io.jmix.ui.components.DataGrid$HtmlRenderer"/>
-            <xs:enumeration value="io.jmix.ui.components.DataGrid$TextRenderer"/>
-            <xs:enumeration value="io.jmix.ui.components.DataGrid$ProgressBarRenderer"/>
+            <xs:enumeration value="io.jmix.ui.component.DataGrid$CheckBoxRenderer"/>
+            <xs:enumeration value="io.jmix.ui.component.DataGrid$ComponentRenderer"/>
+            <xs:enumeration value="io.jmix.ui.component.DataGrid$IconRenderer"/>
+            <xs:enumeration value="io.jmix.ui.component.DataGrid$HtmlRenderer"/>
+            <xs:enumeration value="io.jmix.ui.component.DataGrid$TextRenderer"/>
+            <xs:enumeration value="io.jmix.ui.component.DataGrid$ProgressBarRenderer"/>
         </xs:restriction>
     </xs:simpleType>
 

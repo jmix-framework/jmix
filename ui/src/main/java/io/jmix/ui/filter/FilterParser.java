@@ -16,7 +16,7 @@
 
 package io.jmix.ui.filter;
 
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.ReflectionHelper;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 

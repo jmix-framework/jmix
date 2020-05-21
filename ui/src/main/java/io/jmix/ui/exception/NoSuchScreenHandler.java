@@ -17,8 +17,7 @@ package io.jmix.ui.exception;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.NoSuchScreenException;
-import io.jmix.ui.components.Frame;
-// import io.jmix.ui.components.compatibility.WindowManager;
+// import io.jmix.ui.component.compatibility.WindowManager;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 

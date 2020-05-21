@@ -17,8 +17,8 @@
 
 package io.jmix.ui.app.core.dev;
 
-import io.jmix.ui.components.*;
-import io.jmix.ui.components.ExpandingLayout.ExpandDirection;
+import io.jmix.ui.component.*;
+import io.jmix.ui.component.ExpandingLayout.ExpandDirection;
 import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nonnull;

@@ -16,12 +16,12 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.ui.components.DialogWindow;
+import io.jmix.ui.component.DialogWindow;
 
 import java.lang.annotation.Target;
 import java.lang.annotation.*;
 
-import static io.jmix.ui.components.DialogWindow.WindowMode;
+import static io.jmix.ui.component.DialogWindow.WindowMode;
 
 /**
  * Specifies parameters of {@link DialogWindow} if the window is opened as {@link OpenMode#DIALOG}.

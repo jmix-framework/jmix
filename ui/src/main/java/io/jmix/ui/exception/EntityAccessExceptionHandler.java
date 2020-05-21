@@ -18,7 +18,6 @@ package io.jmix.ui.exception;
 
 import io.jmix.core.EntityAccessException;
 import io.jmix.core.Messages;
-import io.jmix.ui.components.Frame;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;

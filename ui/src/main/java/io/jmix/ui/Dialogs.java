@@ -16,14 +16,14 @@
 
 package io.jmix.ui;
 
-import io.jmix.ui.actions.Action;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
-import io.jmix.ui.components.ContentMode;
-import io.jmix.ui.components.SizeUnit;
-import io.jmix.ui.components.ValidationErrors;
-import io.jmix.ui.components.inputdialog.InputDialogAction;
+import io.jmix.ui.component.ContentMode;
+import io.jmix.ui.component.SizeUnit;
+import io.jmix.ui.component.ValidationErrors;
+import io.jmix.ui.component.inputdialog.InputDialogAction;
 import io.jmix.ui.screen.FrameOwner;
 
 import java.util.function.Consumer;

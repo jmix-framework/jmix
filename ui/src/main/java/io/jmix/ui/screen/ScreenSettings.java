@@ -16,10 +16,10 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.ui.components.HasDataLoadingSettings;
-import io.jmix.ui.components.HasPresentations;
-import io.jmix.ui.components.HasSettings;
-import io.jmix.ui.presentations.Presentations;
+import io.jmix.ui.component.HasDataLoadingSettings;
+import io.jmix.ui.component.HasPresentations;
+import io.jmix.ui.component.HasSettings;
+import io.jmix.ui.presentation.Presentations;
 import io.jmix.ui.settings.Settings;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
-import static io.jmix.ui.components.ComponentsHelper.walkComponents;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
+import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Component(ScreenSettings.NAME)
 public class ScreenSettings {

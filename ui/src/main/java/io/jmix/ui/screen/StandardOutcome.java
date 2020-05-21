@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.ui.builders.AfterScreenCloseEvent;
+import io.jmix.ui.builder.AfterScreenCloseEvent;
 
 /**
  * A possible outcome of screens extending {@link StandardEditor} and {@link StandardLookup}.

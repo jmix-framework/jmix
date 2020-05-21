@@ -16,13 +16,13 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.commons.util.URLEncodeUtils;
+import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.core.entity.IdProxy;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * This class is intended for serializing entity ids to be used as URL param.

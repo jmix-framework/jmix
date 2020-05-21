@@ -21,7 +21,7 @@ import com.vaadin.ui.AbstractComponent;
 import com.vaadin.v7.data.Validator;
 import io.jmix.core.Logging;
 import io.jmix.core.TimeSource;
-import io.jmix.core.commons.util.SilentException;
+import io.jmix.core.common.util.SilentException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;

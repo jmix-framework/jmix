@@ -17,11 +17,11 @@
 package io.jmix.ui.app.inputdialog;
 
 import io.jmix.core.Entity;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.FileDescriptor;
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
-import io.jmix.ui.components.Field;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.ui.component.Field;
 
 import java.math.BigDecimal;
 import java.sql.Time;

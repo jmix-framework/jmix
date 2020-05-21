@@ -16,11 +16,11 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.*;
-import io.jmix.core.queryconditions.Condition;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.*;
 import org.springframework.context.ApplicationContext;
 

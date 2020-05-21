@@ -17,7 +17,7 @@ package io.jmix.ui.exception;
 
 import com.vaadin.server.ErrorEvent;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;

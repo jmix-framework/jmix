@@ -17,15 +17,15 @@
 package io.jmix.ui.navigation.navigationhandler;
 
 import io.jmix.core.Messages;
-import io.jmix.core.commons.util.ParamsMap;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
-import io.jmix.ui.components.RootWindow;
-import io.jmix.ui.components.Window;
-import io.jmix.ui.components.impl.WebWindow;
+import io.jmix.ui.component.RootWindow;
+import io.jmix.ui.component.Window;
+import io.jmix.ui.component.impl.WebWindow;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlChangeHandler;
 import io.jmix.ui.navigation.UrlParamsChangedEvent;

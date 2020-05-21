@@ -17,12 +17,12 @@
 package io.jmix.ui.navigation;
 
 import io.jmix.core.Events;
-import io.jmix.core.commons.util.Preconditions;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
-import io.jmix.ui.components.RootWindow;
+import io.jmix.ui.component.RootWindow;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

@@ -19,8 +19,8 @@ package io.jmix.ui.sys;
 import com.vaadin.ui.Notification;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.components.ContentMode;
-import io.jmix.ui.executors.BackgroundWorker;
+import io.jmix.ui.component.ContentMode;
+import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 

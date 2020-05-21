@@ -16,7 +16,7 @@
 
 package io.jmix.ui.exception;
 
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.ReflectionHelper;
 
 import java.util.ArrayList;
 import java.util.List;

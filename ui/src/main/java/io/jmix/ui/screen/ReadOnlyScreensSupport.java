@@ -18,14 +18,14 @@ package io.jmix.ui.screen;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.Security;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.ActionsHolder;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Component.Editable;
-import io.jmix.ui.components.ComponentsHelper;
-import io.jmix.ui.components.data.HasValueSource;
-import io.jmix.ui.components.data.ValueSource;
-import io.jmix.ui.components.data.meta.EntityValueSource;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ActionsHolder;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Component.Editable;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.meta.EntityValueSource;
 
 import javax.inject.Inject;
 import java.util.Collection;

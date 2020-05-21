@@ -17,7 +17,7 @@
 package test_support.entity;
 
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

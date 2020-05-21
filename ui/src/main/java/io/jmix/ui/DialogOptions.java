@@ -16,13 +16,13 @@
 
 package io.jmix.ui;
 
-import io.jmix.ui.components.DialogWindow;
-import io.jmix.ui.components.SizeUnit;
-import io.jmix.ui.components.SizeWithUnit;
+import io.jmix.ui.component.DialogWindow;
+import io.jmix.ui.component.SizeUnit;
+import io.jmix.ui.component.SizeWithUnit;
 import io.jmix.ui.screen.DialogMode;
 import io.jmix.ui.screen.Screen;
 
-import static io.jmix.ui.components.Component.AUTO_SIZE;
+import static io.jmix.ui.component.Component.AUTO_SIZE;
 
 /**
  * Dialog options of a window. Can be changed at run time from the window controller:

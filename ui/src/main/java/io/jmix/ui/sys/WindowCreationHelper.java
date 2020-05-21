@@ -16,7 +16,7 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.ui.components.*;
+import io.jmix.ui.component.*;
 import io.jmix.ui.security.UiPermissionAware;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;

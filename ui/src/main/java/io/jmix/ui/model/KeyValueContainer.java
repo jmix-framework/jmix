@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model;
 
-import io.jmix.core.metamodel.datatypes.Datatype;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.entity.KeyValueEntity;
 
 import javax.annotation.Nullable;

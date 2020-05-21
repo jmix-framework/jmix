@@ -17,7 +17,7 @@
 package data_components
 
 import io.jmix.core.FetchPlanRepository
-import io.jmix.core.commons.util.Dom4j
+import io.jmix.core.common.util.Dom4j
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.CollectionLoader
 import io.jmix.ui.model.DataContext

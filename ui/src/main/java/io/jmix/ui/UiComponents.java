@@ -18,7 +18,7 @@ package io.jmix.ui;
 
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.BeanLocator;
-import io.jmix.ui.components.Component;
+import io.jmix.ui.component.Component;
 
 /**
  * Factory to create UI components in client independent manner.
@@ -33,7 +33,7 @@ public interface UiComponents {
      * Create a component instance by its name.
      *
      * @param name component name. It is usually defined in NAME constant inside the component interface,
-     *             e.g. {@link io.jmix.ui.components.Label#NAME}.
+     *             e.g. {@link io.jmix.ui.component.Label#NAME}.
      *             It is also usually equal to component's XML name.
      * @return component instance for the current client type (web or desktop)
      */
@@ -52,8 +52,8 @@ public interface UiComponents {
      *
      * @param type component type token
      * @return component instance for the current client type (web or desktop)
-     * @see io.jmix.ui.components.Label#TYPE_DEFAULT
-     * @see io.jmix.ui.components.TextField#TYPE_DEFAULT
+     * @see io.jmix.ui.component.Label#TYPE_DEFAULT
+     * @see io.jmix.ui.component.TextField#TYPE_DEFAULT
      */
     <T extends Component> T create(TypeToken<T> type);
 }

@@ -16,14 +16,14 @@
 package io.jmix.ui.gui.data.impl;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.metamodel.datatypes.Datatypes;
+import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.ui.components.AggregationInfo;
-import io.jmix.ui.components.data.aggregation.Aggregation;
-import io.jmix.ui.components.data.aggregation.AggregationStrategy;
-import io.jmix.ui.components.data.aggregation.Aggregations;
+import io.jmix.ui.component.AggregationInfo;
+import io.jmix.ui.component.data.aggregation.Aggregation;
+import io.jmix.ui.component.data.aggregation.AggregationStrategy;
+import io.jmix.ui.component.data.aggregation.Aggregations;
 
 import java.util.*;
 import java.util.stream.Collectors;

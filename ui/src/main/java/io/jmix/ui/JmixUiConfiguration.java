@@ -50,7 +50,7 @@ public class JmixUiConfiguration {
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
-        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.ui.actions"));
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.ui.action"));
         return actionsConfiguration;
     }
 }

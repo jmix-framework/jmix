@@ -19,8 +19,8 @@ package io.jmix.ui.screen;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Dependency;
 import com.vaadin.ui.HasDependencies;
-import io.jmix.ui.components.Window;
-import io.jmix.ui.widgets.JmixWindowVerticalLayout;
+import io.jmix.ui.component.Window;
+import io.jmix.ui.widget.JmixWindowVerticalLayout;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;

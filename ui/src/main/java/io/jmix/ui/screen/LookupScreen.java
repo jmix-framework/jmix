@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static io.jmix.ui.components.Window.SELECT_ACTION_ID;
+import static io.jmix.ui.component.Window.SELECT_ACTION_ID;
 
 /**
  * Interface for lookup screen controllers.

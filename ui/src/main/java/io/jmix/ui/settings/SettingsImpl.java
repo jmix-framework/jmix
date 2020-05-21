@@ -16,7 +16,7 @@
 package io.jmix.ui.settings;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.commons.xmlparsing.Dom4jTools;
+import io.jmix.core.common.xmlparsing.Dom4jTools;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;

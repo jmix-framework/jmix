@@ -18,10 +18,10 @@
 //
 //import io.jmix.core.FetchPlan;
 //import io.jmix.core.Entity;
-//import io.jmix.core.metamodel.datatypes.Datatype;
+//import io.jmix.core.metamodel.datatype.Datatype;
 //import io.jmix.core.metamodel.model.MetaClass;
-//import io.jmix.ui.components.HasValue;
-//import io.jmix.ui.components.PickerField;
+//import io.jmix.ui.component.HasValue;
+//import io.jmix.ui.component.PickerField;
 //import org.springframework.stereotype.Component;
 //
 //import javax.annotation.Nullable;

@@ -16,8 +16,8 @@
 
 package io.jmix.ui;
 
-import io.jmix.ui.components.ContentMode;
-import io.jmix.ui.components.HasUserOriginated;
+import io.jmix.ui.component.ContentMode;
+import io.jmix.ui.component.HasUserOriginated;
 
 import java.util.function.Consumer;
 

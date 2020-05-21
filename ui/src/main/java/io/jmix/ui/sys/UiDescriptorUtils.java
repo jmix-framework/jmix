@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.ui.screen.*;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public final class UiDescriptorUtils {
 

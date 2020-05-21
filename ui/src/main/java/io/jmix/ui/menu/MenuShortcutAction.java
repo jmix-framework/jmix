@@ -17,8 +17,8 @@ package io.jmix.ui.menu;
 
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.Component;
-import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.components.mainwindow.AppMenu;
+import io.jmix.ui.component.KeyCombination;
+import io.jmix.ui.component.mainwindow.AppMenu;
 import io.jmix.ui.AppUI;
 import org.slf4j.LoggerFactory;
 

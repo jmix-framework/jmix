@@ -17,11 +17,11 @@
 package io.jmix.ui.screen;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.commons.events.TriggerOnce;
-import io.jmix.ui.components.Fragment;
-import io.jmix.ui.components.impl.FragmentImplementation;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.event.TriggerOnce;
+import io.jmix.ui.component.Fragment;
+import io.jmix.ui.component.impl.FragmentImplementation;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.model.ScreenData;
 import org.springframework.context.ApplicationListener;

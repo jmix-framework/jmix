@@ -1,0 +1,228 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.ui.component.autocomplete.impl;
+
+import io.jmix.core.impl.jpql.*;
+import io.jmix.core.impl.jpql.model.Attribute;
+import io.jmix.core.impl.jpql.model.JpqlEntityModel;
+import io.jmix.core.impl.jpql.model.NoJpqlEntityModel;
+import io.jmix.core.impl.jpql.pointer.CollectionPointer;
+import io.jmix.core.impl.jpql.pointer.EntityPointer;
+import io.jmix.core.impl.jpql.pointer.NoPointer;
+import io.jmix.core.impl.jpql.pointer.Pointer;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTree;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class HintProvider {
+
+    private static final char CARET_POSITION_SYMBOL = '~';
+    private static final String[] ARITHMETIC_OPERATIONS = {"+", "-", "*", "/"};
+
+    protected static final Pattern COLLECTION_MEMBER_PATTERN = Pattern.compile(".*\\sin\\s*[(]\\s*[a-zA-Z0-9]+[.][a-zA-Z0-9.]*$", Pattern.DOTALL);
+    protected static final Pattern JOIN_PATTERN = Pattern.compile(".*\\sjoin\\s*[a-zA-Z0-9]+[.][a-zA-Z0-9.]*$", Pattern.DOTALL);
+
+    private DomainModel model;
+
+    public HintProvider(DomainModel model) {
+        if (model == null)
+            throw new NullPointerException("No model passed");
+        this.model = model;
+    }
+
+    /**
+     * Returns word in query denoting entity or field parameter user have requested hint for
+     * @param queryString query string
+     * @param caretPosition caret position
+     * @return matched word or empty string
+     */
+    public static String getLastWord(String queryString, int caretPosition) {
+        if (caretPosition < 0)
+            return "";
+
+        if (Character.isSpaceChar(queryString.charAt(caretPosition))) {
+            return "";
+        }
+
+        String[] words = queryString.substring(0, caretPosition + 1).split("\\s");
+        String result = words[words.length - 1];
+
+        if (StringUtils.isBlank(result)) {
+            return result;
+        }
+
+        int leftBracketsIdx = result.lastIndexOf('(');
+        if (leftBracketsIdx >= 0 && leftBracketsIdx < result.length()) {
+            result = result.substring(leftBracketsIdx + 1);
+        }
+
+        result = getLastWordWithArithmeticOperation(result);
+
+        return result;
+    }
+
+    private static String getLastWordWithArithmeticOperation(String word) {
+        if (!word.contains("'")) {
+            int operationIdx = StringUtils.lastIndexOfAny(word, ARITHMETIC_OPERATIONS);
+            if (operationIdx >= 0 && operationIdx < word.length()) {
+                return word.substring(operationIdx + 1);
+            }
+        }
+        return word;
+    }
+
+    public HintResponse requestHint(String queryStringWithCaret) throws RecognitionException {
+        int caretPosition = queryStringWithCaret.indexOf(CARET_POSITION_SYMBOL);
+        if (caretPosition == -1)
+            throw new IllegalStateException("No caret position found");
+
+        if (caretPosition == 0)
+            throw new IllegalStateException("Caret at the beginning of the query");
+
+        caretPosition -= 1;
+        String queryString = queryStringWithCaret.substring(0, caretPosition + 1) +
+                queryStringWithCaret.substring(caretPosition + 2);
+
+        MacroProcessor macroProcessor = new MacroProcessor();
+        HintRequest hintRequest = macroProcessor.inlineFake(queryString, caretPosition);
+        AliasRemover aliasRemover = new AliasRemover();
+        hintRequest = aliasRemover.replaceAliases(hintRequest);
+
+        return requestHint(hintRequest);
+    }
+
+    public HintResponse requestHint(HintRequest hintRequest) throws RecognitionException {
+        AliasRemover aliasRemover = new AliasRemover();
+        hintRequest = aliasRemover.replaceAliases(hintRequest);
+
+        String input = hintRequest.getQuery();
+        int cursorPos = hintRequest.getPosition();
+        Set<InferredType> expectedTypes = hintRequest.getExpectedTypes() == null ?
+                EnumSet.of(InferredType.Any) :
+                hintRequest.getExpectedTypes();
+        String lastWord = getLastWord(input, cursorPos);
+        expectedTypes = narrowExpectedTypes(input, cursorPos, expectedTypes);
+
+        return (!lastWord.contains(".")) ?
+                hintEntityName(lastWord) :
+                hintFieldName(lastWord, input, cursorPos, expectedTypes);
+    }
+
+    private HintResponse hintFieldName(String lastWord, String input, int caretPosition, Set<InferredType> expectedTypes) {
+        QueryTree queryTree;
+        try {
+            queryTree = new QueryTree(model, input, false);
+        } catch (JPA2RecognitionException e) {
+            List<String> errorMessages = new ArrayList<>();
+            errorMessages.add(e.getMessage());
+            return new HintResponse("Query error", errorMessages);
+        }
+        List<ErrorRec> errorRecs = queryTree.getInvalidIdVarNodes();
+        QueryVariableContext root = queryTree.getQueryVariableContext();
+        if (root == null) {
+            List<String> errorMessages = prepareErrorMessages(errorRecs);
+            errorMessages.add(0, "Query variable context is null");
+            return new HintResponse("Query error", errorMessages);
+        }
+        QueryVariableContext queryVC = root.getContextByCaretPosition(caretPosition);
+
+        EntityPath path = EntityPath.parseEntityPath(lastWord);
+        Pointer pointer = path.resolvePointer(model, queryVC);
+        if (pointer instanceof NoPointer) {
+            List<String> errorMessages = prepareErrorMessages(errorRecs);
+            errorMessages.add(0, "Cannot parse [" + lastWord + "]");
+            return new HintResponse("Query error", errorMessages);
+        }
+
+        if (pointer instanceof CollectionPointer) {
+            List<String> errorMessages = prepareErrorMessages(errorRecs);
+            errorMessages.add(0, "Cannot get attribute of collection [" + lastWord + "]");
+            return new HintResponse("Query error", errorMessages);
+        }
+
+        if (!(pointer instanceof EntityPointer)) {
+            List<String> errorMessages = prepareErrorMessages(errorRecs);
+            return new HintResponse("Query error", errorMessages);
+        }
+
+        List<Option> options = new ArrayList<>();
+        JpqlEntityModel targetEntity = ((EntityPointer) pointer).getEntity();
+        if (targetEntity instanceof NoJpqlEntityModel)
+            return new HintResponse(options, path.lastEntityFieldPattern);
+
+        List<Attribute> attributes = targetEntity.findAttributesStartingWith(
+                path.lastEntityFieldPattern, expectedTypes);
+
+        for (Attribute attribute : attributes) {
+            options.add(new Option(attribute.getName(), attribute.getUserFriendlyName()));
+        }
+        return new HintResponse(options, path.lastEntityFieldPattern);
+    }
+
+    private List<String> prepareErrorMessages(List<ErrorRec> errorRecs) {
+        List<String> errorMessages = new ArrayList<>();
+        for (ErrorRec errorRec : errorRecs) {
+            CommonTree errorNode = errorRec.node;
+            StringBuilder b = new StringBuilder();
+            for (Object child : errorNode.getChildren()) {
+                CommonTree childNode = (CommonTree) child;
+                b.append(childNode.getText());
+            }
+            String errorMessage = "Error near: \"" + b + "\"";
+            errorMessages.add(errorMessage);
+        }
+        return errorMessages;
+    }
+
+    private HintResponse hintEntityName(String lastWord) {
+        List<JpqlEntityModel> matchingEntities = model.findEntitiesStartingWith(lastWord);
+
+        List<Option> options = new ArrayList<>();
+        for (JpqlEntityModel entity : matchingEntities) {
+            options.add(new Option(entity.getName(), entity.getUserFriendlyName()));
+        }
+        return new HintResponse(options, lastWord);
+    }
+
+    public static Set<InferredType> narrowExpectedTypes(String input, int cursorPos, Set<InferredType> expectedTypes) {
+        if (StringUtils.isEmpty(input)) {
+            return expectedTypes;
+        }
+
+        if (cursorPos >= 0 && cursorPos < input.length() && input.charAt(cursorPos) == ' ') {
+            return expectedTypes;
+        }
+
+        String matchingInput = input.substring(0, cursorPos + 1);
+        Matcher matcher = COLLECTION_MEMBER_PATTERN.matcher(matchingInput);
+        if (matcher.matches()) {
+            return EnumSet.of(InferredType.Collection, InferredType.Entity);
+        }
+        matcher = JOIN_PATTERN.matcher(matchingInput);
+        if (matcher.matches()) {
+            return EnumSet.of(InferredType.Collection, InferredType.Entity);
+        }
+        return expectedTypes;
+    }
+}

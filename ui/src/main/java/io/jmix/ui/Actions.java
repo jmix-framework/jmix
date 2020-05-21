@@ -16,8 +16,8 @@
 
 package io.jmix.ui;
 
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.ActionType;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.ActionType;
 
 /**
  * Factory to create actions declared as {@link ActionType}.

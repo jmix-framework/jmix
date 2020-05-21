@@ -16,8 +16,8 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.ui.builders.EditorBuilder;
-import io.jmix.ui.builders.LookupBuilder;
+import io.jmix.ui.builder.EditorBuilder;
+import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;

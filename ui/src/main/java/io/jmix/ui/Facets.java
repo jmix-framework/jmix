@@ -17,7 +17,7 @@
 package io.jmix.ui;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.ui.components.Facet;
+import io.jmix.ui.component.Facet;
 
 /**
  * Factory to create UI facets.

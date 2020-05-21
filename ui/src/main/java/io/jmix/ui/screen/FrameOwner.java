@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.ui.components.Window;
+import io.jmix.ui.component.Window;
 
 /**
  * Marker interface for UI controllers.

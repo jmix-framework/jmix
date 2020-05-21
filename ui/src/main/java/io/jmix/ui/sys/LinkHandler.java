@@ -20,7 +20,7 @@ import com.vaadin.server.VaadinService;
 import com.vaadin.server.WrappedSession;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.sys.linkhandling.ExternalLinkContext;
 import io.jmix.ui.sys.linkhandling.LinkHandlerProcessor;
 import org.springframework.context.annotation.Scope;

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.meta;
 
-import io.jmix.ui.actions.Action;
+import io.jmix.ui.action.Action;
 
 import java.lang.annotation.*;
 

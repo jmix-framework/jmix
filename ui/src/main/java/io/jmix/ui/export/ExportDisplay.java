@@ -16,7 +16,7 @@
 package io.jmix.ui.export;
 
 import io.jmix.core.entity.FileDescriptor;
-import io.jmix.ui.components.Frame;
+import io.jmix.ui.component.Frame;
 
 import javax.annotation.Nullable;
 

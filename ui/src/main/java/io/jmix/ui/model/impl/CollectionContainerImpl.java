@@ -18,7 +18,7 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  *

@@ -17,7 +17,7 @@
 package io.jmix.ui.menu;
 
 import io.jmix.core.*;
-import io.jmix.core.commons.util.ReflectionHelper;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.IdProxy;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -26,7 +26,7 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.components.Window;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.logging.UserActionsLogger;
 import io.jmix.ui.monitoring.UiMonitoring;

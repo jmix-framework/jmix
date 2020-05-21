@@ -18,7 +18,7 @@ package io.jmix.ui.gui.data.compatibility;
 
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
-import io.jmix.ui.xml.layout.loaders.ComponentLoaderContext;
+import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
 import org.dom4j.Element;
 
 public interface DsSupport {

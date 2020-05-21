@@ -16,7 +16,7 @@
 
 package io.jmix.ui.meta;
 
-import io.jmix.ui.components.Component;
+import io.jmix.ui.component.Component;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

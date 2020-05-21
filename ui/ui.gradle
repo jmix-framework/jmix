@@ -48,7 +48,7 @@ dependencies {
 jar {
     with copySpec {
         from sourceSets.main.allJava
-        include "io/jmix/ui/widgets/client/**"
+        include "io/jmix/ui/widget/client/**"
     }
 }
 

@@ -17,7 +17,7 @@ package io.jmix.ui.xml.layout;
 
 import io.jmix.core.AppBeans;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.components.*;
+import io.jmix.ui.component.*;
 
 /**
  * Factory to create UI components in client independent manner.
@@ -34,7 +34,7 @@ public interface ComponentsFactory {
      * Create a component instance by its name.
      *
      * @param name component name. It is usually defined in NAME constant inside the component interface,
-     *             e.g. {@link io.jmix.ui.components.Label#NAME}.
+     *             e.g. {@link io.jmix.ui.component.Label#NAME}.
      *             It is also usually equal to component's XML name.
      * @return component instance for the current client type (web or desktop)
      */

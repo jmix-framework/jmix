@@ -18,8 +18,8 @@ package io.jmix.ui;
 
 import io.jmix.ui.navigation.UrlHandlingMode;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
-import io.jmix.ui.widgets.JmixMainTabSheet;
-import io.jmix.ui.widgets.JmixManagedTabSheet;
+import io.jmix.ui.widget.JmixMainTabSheet;
+import io.jmix.ui.widget.JmixManagedTabSheet;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -120,7 +120,7 @@ public class UiProperties {
             @DefaultValue("false") boolean forceRefreshAuthenticatedTabs,
             @DefaultValue("false") boolean allowAnonymousAccess,
             @DefaultValue("true") boolean htmlSanitizerEnabled,
-            @DefaultValue("io.jmix.ui.icons.JmixIcon") String iconsConfig,
+            @DefaultValue("io.jmix.ui.icon.JmixIcon") String iconsConfig,
             @DefaultValue("true") boolean compositeMenu
 
     ) {

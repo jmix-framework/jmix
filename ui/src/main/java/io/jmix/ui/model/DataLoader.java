@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model;
 
-import io.jmix.core.queryconditions.Condition;
+import io.jmix.core.querycondition.Condition;
 
 import javax.annotation.Nullable;
 import java.util.Map;

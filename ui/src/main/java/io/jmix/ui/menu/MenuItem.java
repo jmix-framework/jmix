@@ -17,7 +17,7 @@ package io.jmix.ui.menu;
 
 import io.jmix.core.security.PermissionType;
 import io.jmix.core.security.Security;
-import io.jmix.ui.components.KeyCombination;
+import io.jmix.ui.component.KeyCombination;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 

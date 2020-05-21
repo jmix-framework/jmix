@@ -16,8 +16,8 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.components.KeyCombination;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.KeyCombination;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

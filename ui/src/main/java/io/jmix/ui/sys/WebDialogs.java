@@ -23,25 +23,25 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import io.jmix.core.Messages;
 import io.jmix.ui.*;
-import io.jmix.ui.actions.AbstractAction;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.DialogAction;
+import io.jmix.ui.action.AbstractAction;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
-import io.jmix.ui.components.ContentMode;
-import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.components.SizeUnit;
-import io.jmix.ui.components.ValidationErrors;
-import io.jmix.ui.components.inputdialog.InputDialogAction;
-import io.jmix.ui.executors.BackgroundWorker;
-import io.jmix.ui.icons.IconResolver;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.component.ContentMode;
+import io.jmix.ui.component.KeyCombination;
+import io.jmix.ui.component.SizeUnit;
+import io.jmix.ui.component.ValidationErrors;
+import io.jmix.ui.component.inputdialog.InputDialogAction;
+import io.jmix.ui.executor.BackgroundWorker;
+import io.jmix.ui.icon.IconResolver;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.theme.ThemeConstants;
-import io.jmix.ui.widgets.*;
+import io.jmix.ui.widget.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
@@ -52,10 +52,10 @@ import java.util.EnumSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.jmix.ui.components.impl.WebComponentsHelper.setClickShortcut;
-import static io.jmix.ui.components.impl.WebWrapperUtils.toContentMode;
-import static io.jmix.ui.components.impl.WebWrapperUtils.toSizeUnit;
-import static io.jmix.ui.components.impl.WebWrapperUtils.toVaadinContentMode;
+import static io.jmix.ui.component.impl.WebComponentsHelper.setClickShortcut;
+import static io.jmix.ui.component.impl.WebWrapperUtils.toContentMode;
+import static io.jmix.ui.component.impl.WebWrapperUtils.toSizeUnit;
+import static io.jmix.ui.component.impl.WebWrapperUtils.toVaadinContentMode;
 
 public class WebDialogs implements Dialogs {
 

@@ -16,11 +16,11 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
-import io.jmix.ui.components.Fragment;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.Window;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.component.Fragment;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.settings.Settings;
 import org.springframework.context.ApplicationListener;

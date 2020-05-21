@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.metamodel.datatypes.Datatype;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.impl.keyvalue.KeyValueMetaProperty;
 import io.jmix.core.entity.KeyValueEntity;

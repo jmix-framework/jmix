@@ -17,8 +17,8 @@
 
 package io.jmix.ui.app.core.dev;
 
-import io.jmix.ui.components.Button;
-import io.jmix.ui.components.TextArea;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.component.TextArea;
 import io.jmix.ui.screen.DialogMode;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.Screen;

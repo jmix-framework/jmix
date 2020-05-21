@@ -20,12 +20,12 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.ListAction;
-import io.jmix.ui.components.ActionsHolder;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.compatibility.CubaFragmentAdapter;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.ListAction;
+import io.jmix.ui.component.ActionsHolder;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.compatibility.CubaFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 

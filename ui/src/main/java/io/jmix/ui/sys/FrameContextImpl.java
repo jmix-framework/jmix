@@ -15,15 +15,15 @@
  */
 package io.jmix.ui.sys;
 
-import io.jmix.core.commons.events.Subscription;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.HasValue;
-import io.jmix.ui.components.ListComponent;
-import io.jmix.ui.components.FrameContext;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.component.FrameContext;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.ScreenOptions;

@@ -18,8 +18,8 @@ package io.jmix.ui.sys;
 
 import io.jmix.core.HotDeployManager;
 import io.jmix.ui.Actions;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.ActionType;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;

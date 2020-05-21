@@ -16,10 +16,10 @@
 package io.jmix.ui.menu;
 
 import io.jmix.core.*;
-import io.jmix.core.commons.xmlparsing.Dom4jTools;
+import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.components.KeyCombination;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.component.KeyCombination;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static io.jmix.ui.icons.Icons.ICON_NAME_REGEX;
+import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
 
 /**
  * GenericUI class holding information about the main menu structure.

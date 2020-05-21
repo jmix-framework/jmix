@@ -18,9 +18,9 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.commons.util.ParamsMap;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.DevelopmentException;

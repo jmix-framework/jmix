@@ -20,17 +20,17 @@ import com.google.common.collect.Iterables;
 import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
-import io.jmix.core.validation.groups.UiCrossFieldChecks;
+import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.actions.Action;
-import io.jmix.ui.actions.BaseAction;
-import io.jmix.ui.actions.DialogAction;
-import io.jmix.ui.components.*;
-import io.jmix.ui.icons.JmixIcon;
-import io.jmix.ui.icons.Icons;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.component.*;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.icon.Icons;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -43,7 +43,7 @@ import javax.validation.Validator;
 import java.util.Collection;
 import java.util.Set;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
 @Component(ScreenValidation.NAME)
@@ -66,10 +66,10 @@ public class ScreenValidation {
      * @param components components collection
      * @return validation errors
      */
-    public ValidationErrors validateUiComponents(Collection<io.jmix.ui.components.Component> components) {
+    public ValidationErrors validateUiComponents(Collection<io.jmix.ui.component.Component> components) {
         ValidationErrors errors = new ValidationErrors();
 
-        for (io.jmix.ui.components.Component component : components) {
+        for (io.jmix.ui.component.Component component : components) {
             if (component instanceof Validatable) {
                 Validatable validatable = (Validatable) component;
                 if (validatable.isValidateOnCommit()) {
@@ -147,7 +147,7 @@ public class ScreenValidation {
     }
 
     protected void focusProblemComponent(ValidationErrors errors) {
-        io.jmix.ui.components.Component component = null;
+        io.jmix.ui.component.Component component = null;
         if (!errors.getAll().isEmpty()) {
             component = errors.getFirstComponent();
         }

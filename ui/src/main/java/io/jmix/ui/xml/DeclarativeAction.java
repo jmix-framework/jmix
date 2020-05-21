@@ -16,11 +16,11 @@
 
 package io.jmix.ui.xml;
 
-import io.jmix.ui.actions.BaseAction;
-import io.jmix.ui.components.ActionsHolder;
-import io.jmix.ui.components.Component;
-import io.jmix.ui.components.Frame;
-import io.jmix.ui.components.compatibility.CubaFragmentAdapter;
+import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.component.ActionsHolder;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.compatibility.CubaFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 

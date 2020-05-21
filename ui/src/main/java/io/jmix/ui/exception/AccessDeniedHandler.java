@@ -18,7 +18,6 @@ package io.jmix.ui.exception;
 
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.ui.components.Frame;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 

@@ -179,24 +179,24 @@ public class HaloTheme {
     /**
      * Removes the border and background from the LookupField. Can be combined with any other LookupField style.
      *
-     * This style can also be used for {@link io.jmix.ui.components.PickerField} and
-     * {@link io.jmix.ui.components.LookupPickerField}
+     * This style can also be used for {@link io.jmix.ui.component.PickerField} and
+     * {@link io.jmix.ui.component.LookupPickerField}
      */
     public static final String LOOKUPFIELD_BORDERLESS = "borderless";
 
     /**
      * Align the text inside the LookupField to the right. Can be combined with any other TextField style.
      *
-     * This style can also be used for {@link io.jmix.ui.components.PickerField} and
-     * {@link io.jmix.ui.components.LookupPickerField}
+     * This style can also be used for {@link io.jmix.ui.component.PickerField} and
+     * {@link io.jmix.ui.component.LookupPickerField}
      */
     public static final String LOOKUPFIELD_ALIGN_RIGHT = "align-right";
 
     /**
      * Align the text inside the LookupField to center. Can be combined with any other TextField style.
      *
-     * This style can also be used for {@link io.jmix.ui.components.PickerField} and
-     * {@link io.jmix.ui.components.LookupPickerField}
+     * This style can also be used for {@link io.jmix.ui.component.PickerField} and
+     * {@link io.jmix.ui.component.LookupPickerField}
      */
     public static final String LOOKUPFIELD_ALIGN_CENTER = "align-center";
 
@@ -332,12 +332,12 @@ public class HaloTheme {
     public static final String LAYOUT_WELL = "well";
 
     /**
-     * Side menu panel style. Used with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Side menu panel style. Used with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String LAYOUT_SIDE_MENU_PANEL = "c-sidemenu-panel";
 
     /**
-     * Side menu header style. Used with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Side menu header style. Used with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String LAYOUT_SIDE_MENU_TITLE = "c-sidemenu-title";
 
@@ -360,55 +360,55 @@ public class HaloTheme {
     public static final String CSSLAYOUT_COMPONENT_GROUP = "v-component-group";
 
     /**
-     * Add this style name to a {@link io.jmix.ui.components.VBoxLayout} or
-     * a {@link io.jmix.ui.components.HBoxLayout} to mark this layout as dropzone.
+     * Add this style name to a {@link io.jmix.ui.component.VBoxLayout} or
+     * a {@link io.jmix.ui.component.HBoxLayout} to mark this layout as dropzone.
      */
     public static final String FILEUPLOADFIELD_DROPZONE_CONTAINER = "dropzone-container";
 
     /**
-     * Add this style name to a {@link io.jmix.ui.components.Label} to mark this component as dropzone
+     * Add this style name to a {@link io.jmix.ui.component.Label} to mark this component as dropzone
      * description.
      */
     public static final String FILEUPLOADFIELD_DROPZONE_DESCRIPTION = "dropzone-description";
 
     /**
-     * Style for layout tag in mainwindow with responsive {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for layout tag in mainwindow with responsive {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_LAYOUT_RESPONSIVE = "c-sidemenu-responsive";
 
     /**
-     * Style for horizontal layout that contains {@link #SIDEMENU_PANEL} and {@link io.jmix.ui.components.mainwindow.AppWorkArea}
-     * in responsive mainwindow with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for horizontal layout that contains {@link #SIDEMENU_PANEL} and {@link io.jmix.ui.component.mainwindow.AppWorkArea}
+     * in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_LAYOUT = "c-sidemenu-layout";
 
     /**
-     * Style for side panel in responsive mainwindow with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for side panel in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_PANEL = "c-sidemenu-panel";
 
     /**
-     * Style for opened side panel in responsive mainwindow with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for opened side panel in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_PANEL_OPEN = "c-sidemenu-open";
 
     /**
-     * Style for opened side panel content in responsive mainwindow with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for opened side panel content in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_WRAP = "c-sidemenu-wrap";
 
     /**
-     * Style for side panel toggle button in responsive mainwindow with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for side panel toggle button in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_TOGGLE_BUTTON = "c-sidemenu-toggle";
 
     /**
-     * Style for mobile buttons in top panel in responsive mainwindow with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for mobile buttons in top panel in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_MOBILE_BUTTONS = "c-sidemenu-mobile-buttons";
 
     /**
-     * Style for top header in responsive mainwindow with {@link io.jmix.ui.components.mainwindow.SideMenu}.
+     * Style for top header in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_TITLE = "c-sidemenu-title";
 

@@ -16,8 +16,8 @@
 
 package io.jmix.ui.meta;
 
-import io.jmix.core.metamodel.datatypes.Datatype;
-import io.jmix.ui.icons.JmixIcon;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.ui.icon.JmixIcon;
 
 /**
  * Type of UI component property.

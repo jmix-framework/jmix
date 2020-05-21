@@ -17,14 +17,14 @@
 package io.jmix.ui.screen;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.commons.events.EventHub;
-import io.jmix.core.commons.events.Subscription;
-import io.jmix.core.commons.events.TriggerOnce;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.common.event.TriggerOnce;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.components.Window;
-import io.jmix.ui.components.impl.WindowImplementation;
+import io.jmix.ui.component.Window;
+import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.navigation.UrlParamsChangedEvent;
 import io.jmix.ui.settings.Settings;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static io.jmix.core.commons.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Base class for all screen controllers.

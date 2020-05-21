@@ -29,7 +29,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class LiquibaseChangeLogProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(LiquibaseChangeLogProcessor.class);
 
-    @Inject
+    @Autowired
     public LiquibaseChangeLogProcessor(Environment environment, JmixModules jmixModules) {
         this.environment = environment;
         this.jmixModules = jmixModules;

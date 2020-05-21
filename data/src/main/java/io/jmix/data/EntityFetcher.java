@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.Basic;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
@@ -42,19 +42,19 @@ public class EntityFetcher {
 
     private static final Logger log = LoggerFactory.getLogger(EntityFetcher.class);
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
     /**

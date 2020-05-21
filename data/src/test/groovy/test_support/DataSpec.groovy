@@ -24,17 +24,17 @@ import org.springframework.test.context.TestExecutionListeners
 import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixDataTestConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DataSpec extends Specification {
 
-    @Inject
+    @Autowired
     TransactionTemplate transaction
     
-    @Inject
+    @Autowired
     JdbcTemplate jdbc
 
     void setup() {

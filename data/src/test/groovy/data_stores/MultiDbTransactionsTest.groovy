@@ -19,15 +19,15 @@ import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Db1Order
 import test_support.entity.sec.User
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class MultiDbTransactionsTest extends DataSpec {
 
-    @Inject
+    @Autowired
     StoreAwareLocator locator
-    @Inject
+    @Autowired
     TestBeforeCommitTransactionListener listener
-    @Inject
+    @Autowired
     TestService testService
 
     User user

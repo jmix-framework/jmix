@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,15 +36,15 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class SortJpqlGenerator {
     public static final String NAME = "jmix_SortJpqlGenerator";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
-    @Inject
+    @Autowired
     protected JpqlSortExpressionProvider jpqlSortExpressionProvider;
-    @Inject
+    @Autowired
     protected DbmsSpecifics dbmsSpecifics;
 
     public String processQuery(String entityName, List<String> valueProperties, String queryString, Sort sort) {

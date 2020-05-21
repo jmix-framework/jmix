@@ -18,11 +18,11 @@ package io.jmix.data.impl;
 
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(NumberIdSource.NAME)
 public class NumberIdSourceImpl implements NumberIdSource {
-    @Inject
+    @Autowired
     protected NumberIdCache cache;
 
     @Override

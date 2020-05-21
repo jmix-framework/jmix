@@ -21,7 +21,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.impl.QueryMacroHandler;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -39,7 +39,7 @@ public abstract class AbstractQueryMacroHandler implements QueryMacroHandler {
         this.macroPattern = macroPattern;
     }
 
-    @Inject
+    @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
     }

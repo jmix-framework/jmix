@@ -21,13 +21,13 @@ import io.jmix.core.TimeSource;
 import io.jmix.data.SequenceSupport;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.SimpleDateFormat;
 
 @Component("mssqlSequenceSupport")
 public class MssqlSequenceSupport implements SequenceSupport {
 
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
 
     @Override

@@ -24,7 +24,7 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.spi.PersistenceProvider;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
 
     protected final PersistenceProvider persistenceProvider;
 
-    @Inject
+    @Autowired
     public JmixEclipseLinkJpaVendorAdapter(Environment environment,
                                            JmixEclipseLinkJpaDialect jpaDialect,
                                            BeanLocator beanLocator) {

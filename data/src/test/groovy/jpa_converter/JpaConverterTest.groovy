@@ -22,15 +22,15 @@ import test_support.DataSpec
 import test_support.entity.TestConverterEntity
 import test_support.entity.TestPhone
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import javax.sql.DataSource
 
 class JpaConverterTest extends DataSpec {
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
-    @Inject
+    @Autowired
     DataSource dataSource
 
     def "test"() {

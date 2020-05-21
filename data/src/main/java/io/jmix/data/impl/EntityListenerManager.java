@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -104,7 +104,7 @@ public class EntityListenerManager {
 
     private static final Logger log = LoggerFactory.getLogger(EntityListenerManager.class);
 
-    @Inject
+    @Autowired
     protected PersistenceTools persistenceTools;
 
     protected Map<Key, List> cache = new ConcurrentHashMap<>();

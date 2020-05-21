@@ -24,14 +24,14 @@ import test_support.entity.sec.User
 import io.jmix.core.*
 import test_support.DataSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class DataManagerTest extends DataSpec {
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
-    @Inject
+    @Autowired
     EntityStates entityStates
 
     def "create commit load"() {

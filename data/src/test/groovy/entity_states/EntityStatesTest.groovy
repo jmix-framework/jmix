@@ -32,13 +32,13 @@ import test_support.entity.sec.Role
 import test_support.entity.sec.User
 import test_support.entity.sec.UserRole
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class EntityStatesTest extends DataSpec {
 
-    @Inject
+    @Autowired
     DataManager dataManager
-    @Inject
+    @Autowired
     EntityStates entityStates
 
     def "test getCurrentFetchPlan for object graph"() {

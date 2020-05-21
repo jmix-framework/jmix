@@ -24,7 +24,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import test_support.entity.sales.Order;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 @Component("test_TestOrderChangedEventListener")
@@ -32,7 +32,7 @@ public class TestOrderChangedEventListener {
 
     public boolean enabled;
 
-    @Inject
+    @Autowired
     private DataManager tdm;
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)

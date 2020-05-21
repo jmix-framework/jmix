@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -35,7 +35,7 @@ public class StoreAwareLocator {
 
     public static final String NAME = "jmix_StoreAwareLocator";
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     public DataSource getDataSource(String storeName) {

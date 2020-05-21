@@ -21,14 +21,14 @@ import io.jmix.core.Entity;
 import io.jmix.data.event.EntityPersistingEvent;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(EntityPersistingEventManager.NAME)
 public class EntityPersistingEventManager {
 
     public static final String NAME = "jmix_EntityPersistingEventManager";
 
-    @Inject
+    @Autowired
     protected Events events;
 
     public void publishEvent(Entity entity) {

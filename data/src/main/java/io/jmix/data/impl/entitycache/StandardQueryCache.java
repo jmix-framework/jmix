@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,7 +42,7 @@ public class StandardQueryCache implements QueryCache {
     protected ConcurrentMap<String, CopyOnWriteArrayList<QueryKey>> typeIndex = new ConcurrentHashMap<>();
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    @Inject
+    @Autowired
     protected DataProperties properties;
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCache.class);

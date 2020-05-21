@@ -20,25 +20,25 @@ import test_support.entity.cars.Colour
 import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Mem1Customer
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
 class MultiDbDataManagerTest extends DataSpec {
 
-    @Inject
+    @Autowired
     Metadata metadata
-    @Inject
+    @Autowired
     DataManager dataManager
-    @Inject
+    @Autowired
     StoreAwareLocator storeAwareLocator
-    @Inject
+    @Autowired
     TransactionTemplate transactionTemplate
     @PersistenceContext
     EntityManager entityManager
-    @Inject
+    @Autowired
     JdbcTemplate jdbcTemplate
-    @Inject
+    @Autowired
     DataStoreFactory dataStoreFactory
 
     Colour colour

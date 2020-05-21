@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,7 +36,7 @@ public class TestInMemoryDataStore implements DataStore {
 
     private Map<String, Map<Object, Entity>> entities = new ConcurrentHashMap<>();
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     @Override

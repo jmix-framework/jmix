@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,16 +48,16 @@ public class FetchGroupManager {
 
     private final Logger log = LoggerFactory.getLogger(FetchGroupManager.class);
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
-    @Inject
+    @Autowired
     private MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     private FetchPlanRepository viewRepository;
 
-    @Inject
+    @Autowired
     private ExtendedEntities extendedEntities;
 
     public void setFetchPlan(JpaQuery query, String queryString, @Nullable FetchPlan fetchPlan, boolean singleResultExpected) {

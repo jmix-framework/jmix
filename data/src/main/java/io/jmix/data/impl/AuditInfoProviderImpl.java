@@ -20,12 +20,12 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.AuditInfoProvider;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(AuditInfoProvider.NAME)
 public class AuditInfoProviderImpl implements AuditInfoProvider {
 
-    @Inject
+    @Autowired
     private CurrentAuthentication currentAuthentication;
 
     @Override

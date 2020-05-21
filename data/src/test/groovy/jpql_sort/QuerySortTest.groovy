@@ -25,14 +25,14 @@ import io.jmix.data.impl.JpqlQueryBuilder
 import io.jmix.data.persistence.JpqlSortExpressionProvider
 import test_support.DataSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class QuerySortTest extends DataSpec {
 
-    @Inject
+    @Autowired
     Metadata metadata
 
-    @Inject
+    @Autowired
     JpqlSortExpressionProvider sortExpressionProvider
 
 

@@ -21,14 +21,14 @@ import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
 import test_support.DataSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 class DateTimeMacroTest extends DataSpec {
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
     private TestDateTimeEntity entity

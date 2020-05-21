@@ -54,7 +54,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,22 +70,22 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     public static final String PROP_NAME = "jmix.storeName";
 
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected EntityListenerManager entityListenerManager;
 
-    @Inject
+    @Autowired
     protected QueryCacheManager queryCacheManager;
 
-    @Inject
+    @Autowired
     protected OrmCacheSupport ormCacheSupport;
 
-    @Inject
+    @Autowired
     protected EntityChangedEventManager entityChangedEventManager;
 
     @Autowired(required = false)

@@ -24,7 +24,7 @@ import io.jmix.data.DataProperties;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -38,11 +38,11 @@ public class NumberIdCache {
 
     public static final String NAME = "jmix_NumberIdCache";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected NumberIdWorker numberIdWorker;
-    @Inject
+    @Autowired
     protected DataProperties dataProperties;
 
     protected ConcurrentMap<String, Generator> cache = new ConcurrentHashMap<>();

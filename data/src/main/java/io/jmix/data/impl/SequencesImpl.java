@@ -33,7 +33,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.math.BigDecimal;
@@ -49,9 +49,9 @@ import java.util.regex.Pattern;
 @Component(Sequences.NAME)
 public class SequencesImpl implements Sequences {
 
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
-    @Inject
+    @Autowired
     protected DbmsSpecifics dbmsSpecifics;
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public class PersistenceConfigProcessor {
     protected Environment environment;
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     public PersistenceConfigProcessor(Environment environment, Metadata metadata, DbmsSpecifics dbmsSpecifics,
                                       JmixModulesClasspathScanner classpathScanner) {
         this.environment = environment;

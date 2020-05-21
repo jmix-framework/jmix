@@ -28,7 +28,7 @@ import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import java.util.List;
 
@@ -37,19 +37,19 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
 
     public static final String NAME = "jmix_EclipseLinkDescriptorEventListener";
 
-    @Inject
+    @Autowired
     protected EntityListenerManager manager;
 
-    @Inject
+    @Autowired
     protected PersistenceTools persistenceTools;
 
-    @Inject
+    @Autowired
     protected AuditInfoProvider auditInfoProvider;
 
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
 
-    @Inject
+    @Autowired
     protected PersistenceSupport support;
 
     protected boolean justDeleted(SoftDelete entity) {

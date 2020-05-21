@@ -31,7 +31,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -48,19 +48,19 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     private final Logger log = LoggerFactory.getLogger(QueryResultsManagerImpl.class);
 
-    @Inject
+    @Autowired
     protected DbmsSpecifics dbmsSpecifics;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
-    @Inject
+    @Autowired
     protected ClusterManager clusterManager;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     private MetadataTools metadataTools;
 
     @PersistenceContext
@@ -76,12 +76,12 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     protected static final int INACTIVE_DELETION_MAX = 100000;
 
-    @Inject
+    @Autowired
     protected void setDataSource(DataSource dataSource) {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @Inject
+    @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
         transaction = new TransactionTemplate(transactionManager);
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);

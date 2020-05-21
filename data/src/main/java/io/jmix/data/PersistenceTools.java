@@ -42,7 +42,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
@@ -65,16 +65,16 @@ public class PersistenceTools {
     @PersistenceContext
     protected EntityManager entityManager;
 
-    @Inject
+    @Autowired
     protected DataSource dataSource;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     /**

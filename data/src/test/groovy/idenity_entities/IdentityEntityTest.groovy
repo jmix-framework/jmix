@@ -23,11 +23,11 @@ import io.jmix.core.DataManager
 import io.jmix.core.entity.IdProxy
 import test_support.DataSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class IdentityEntityTest extends DataSpec {
 
-    @Inject DataManager dataManager
+    @Autowired DataManager dataManager
 
     def "equality: newly created instances are not equal"() {
         when:

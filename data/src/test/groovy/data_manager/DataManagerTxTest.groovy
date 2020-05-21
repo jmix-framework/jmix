@@ -26,17 +26,17 @@ import test_support.DataSpec
 import test_support.TestCustomerListener
 import test_support.entity.sales.Customer
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class DataManagerTxTest extends DataSpec {
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
-    @Inject
+    @Autowired
     PlatformTransactionManager txManager
 
-    @Inject
+    @Autowired
     TestCustomerListener listener
 
     def "joins current transaction on save"() {

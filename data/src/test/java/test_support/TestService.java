@@ -23,14 +23,14 @@ import org.springframework.transaction.annotation.Transactional;
 import test_support.entity.multidb.Db1Customer;
 import test_support.entity.sec.User;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Component
 public class TestService {
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     @PersistenceContext

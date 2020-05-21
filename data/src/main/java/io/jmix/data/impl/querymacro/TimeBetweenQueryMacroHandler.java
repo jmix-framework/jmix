@@ -23,7 +23,7 @@ import io.jmix.core.TimeSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -61,9 +61,9 @@ public class TimeBetweenQueryMacroHandler extends AbstractQueryMacroHandler {
                     )
                     .build();
 
-    @Inject
+    @Autowired
     protected DateTimeTransformations transformations;
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
 
     protected List<MacroArgsTimeBetween> macroArgs = new ArrayList<>();

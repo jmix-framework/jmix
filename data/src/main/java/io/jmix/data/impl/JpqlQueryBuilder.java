@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
@@ -68,22 +68,22 @@ public class JpqlQueryBuilder {
     protected String resultQuery;
     protected Map<String, Object> resultParameters;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected PersistenceSecurity security;
 
-    @Inject
+    @Autowired
     protected ConditionJpqlGenerator conditionJpqlGenerator;
 
-    @Inject
+    @Autowired
     protected SortJpqlGenerator sortJpqlGenerator;
 
-    @Inject
+    @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     public JpqlQueryBuilder setId(Object id) {

@@ -22,14 +22,14 @@ import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import test_support.DataSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class SoftDeleteTest extends DataSpec {
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
-    @Inject
+    @Autowired
     EntityStates entityStates
 
     def "load deleted entity with filter by soft delete"() {

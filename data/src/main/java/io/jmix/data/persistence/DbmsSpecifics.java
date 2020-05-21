@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Factory for obtaining implementations of DBMS-specific objects, particularly {@link DbmsFeatures},
@@ -34,10 +34,10 @@ public class DbmsSpecifics {
 
     public static final String NAME = "jmix_DbmsSpecifics";
 
-    @Inject
+    @Autowired
     protected DbmsType dbmsType;
 
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
 
     public DbmsFeatures getDbmsFeatures() {

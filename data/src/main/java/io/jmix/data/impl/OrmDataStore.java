@@ -43,7 +43,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -83,47 +83,47 @@ public class OrmDataStore implements DataStore {
 //    @Value("jmix.data.useReadOnlyTransactionForLoad:false")
 //    protected boolean useReadOnlyTransactionForLoad;
 
-    @Inject
+    @Autowired
     protected DataProperties properties;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    @Inject
+    @Autowired
     protected Security security;
-    @Inject
+    @Autowired
     protected PersistenceSecurity persistenceSecurity;
-    @Inject
+    @Autowired
     protected PersistenceAttributeSecurity attributeSecurity;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
-    @Inject
+    @Autowired
     protected QueryResultsManager queryResultsManager;
 
-    @Inject
+    @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
 
-    @Inject
+    @Autowired
     protected EntityFetcher entityFetcher;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
-    @Inject
+    @Autowired
     protected EntityChangedEventManager entityChangedEventManager;
 
-    @Inject
+    @Autowired
     protected DbmsSpecifics dbmsSpecifics;
 
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
     @Autowired(required = false)

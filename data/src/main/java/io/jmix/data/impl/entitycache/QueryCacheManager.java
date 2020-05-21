@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.TypedQuery;
@@ -48,17 +48,17 @@ public class QueryCacheManager {
 
     public static final String NAME = "jmix_QueryCacheManager";
 
-    @Inject
+    @Autowired
     protected DataProperties properties;
-    @Inject
+    @Autowired
     protected ClusterManager clusterManager;
-    @Inject
+    @Autowired
     protected QueryCache queryCache;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCacheManager.class);

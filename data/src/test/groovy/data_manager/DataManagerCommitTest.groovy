@@ -30,17 +30,17 @@ import test_support.DataSpec
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class DataManagerCommitTest extends DataSpec {
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
-    @Inject
+    @Autowired
     EntityStates entityStates
 
-    @Inject
+    @Autowired
     TestOrderChangedEventListener orderChangedEventListener
 
     TestAppEntity appEntity

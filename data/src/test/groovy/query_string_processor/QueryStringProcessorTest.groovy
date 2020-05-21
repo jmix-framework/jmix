@@ -20,11 +20,11 @@ import test_support.entity.TestAppEntity
 import io.jmix.core.QueryStringProcessor
 import test_support.DataSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class QueryStringProcessorTest extends DataSpec {
 
-    @Inject
+    @Autowired
     QueryStringProcessor processor
 
     def "test from clause in query"() {

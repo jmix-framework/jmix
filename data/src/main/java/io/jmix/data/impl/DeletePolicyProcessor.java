@@ -34,7 +34,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.sql.DataSource;
@@ -52,25 +52,25 @@ public class DeletePolicyProcessor {
     protected MetaClass metaClass;
     protected String primaryKeyName;
 
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
-    @Inject
+    @Autowired
     protected DataSource dataSource;
 
-    @Inject
+    @Autowired
     protected DbmsSpecifics dbmsSpecifics;
 
-    @Inject
+    @Autowired
     protected PersistenceSupport persistenceSupport;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
     protected EntityManager entityManager;

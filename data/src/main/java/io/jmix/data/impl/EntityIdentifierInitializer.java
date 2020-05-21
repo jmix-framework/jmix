@@ -25,7 +25,7 @@ import io.jmix.data.entity.BaseLongIdEntity;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import java.util.List;
@@ -35,13 +35,13 @@ import java.util.stream.Collectors;
 public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
     public static final String NAME = "jmix_EntityIdentifierInitializer";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected NumberIdSource numberIdSource;
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
 
     @Override

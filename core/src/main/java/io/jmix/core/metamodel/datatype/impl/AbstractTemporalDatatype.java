@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.datatype.ParameterizedDatatype;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
@@ -36,7 +36,7 @@ import java.util.Map;
 
 public abstract class AbstractTemporalDatatype<T extends Temporal> implements Datatype<T>, ParameterizedDatatype {
 
-    @Inject
+    @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
     protected String formatPattern;

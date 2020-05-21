@@ -34,7 +34,7 @@ import test_support.app.TestAppConfiguration
 import test_support.app.entity.Address
 import test_support.app.entity.Owner
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Collectors
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
@@ -42,16 +42,16 @@ import java.util.stream.Collectors
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class InstanceNameTest extends Specification {
 
-    @Inject
+    @Autowired
     Metadata metadata
 
-    @Inject
+    @Autowired
     InstanceNameProvider instanceNameProvider
 
-    @Inject
+    @Autowired
     AuthenticationManager authenticationManager
 
-    @Inject
+    @Autowired
     AuthenticatorImpl authenticator
 
     def "instance name method with injected Locale"() {

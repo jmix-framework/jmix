@@ -33,14 +33,14 @@ import test_support.AppContextTestExecutionListener
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Pet
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MetadataTest extends Specification {
 
-    @Inject
+    @Autowired
     Metadata metadata
 
     def "entities are in metadata"() {

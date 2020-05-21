@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,19 +74,19 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
 
     protected Map<LockKey, LockInfo> locks = new ConcurrentHashMap<>();
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     @Autowired
@@ -94,7 +94,7 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
 
     protected ClusterManager clusterManager;
 
-    @Inject
+    @Autowired
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
         this.clusterManager.addListener(LockInfo.class, this);

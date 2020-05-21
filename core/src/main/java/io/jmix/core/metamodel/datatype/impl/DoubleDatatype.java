@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
@@ -37,7 +37,7 @@ import java.util.Locale;
 )
 public class DoubleDatatype extends NumberDatatype implements Datatype<Double> {
 
-    @Inject
+    @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
     @Override

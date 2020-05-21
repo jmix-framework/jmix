@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @Component(DatatypeRegistry.NAME)
@@ -36,7 +36,7 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
     protected Map<Class<?>, Datatype> datatypeByClass = new HashMap<>();
     protected Map<String, Datatype> datatypeById = new HashMap<>();
 
-    @Inject
+    @Autowired
     public DatatypeRegistryImpl(List<Datatype> datatypeList) {
         for (Datatype datatype : datatypeList) {
             register(datatype, datatype.getId(), DatatypeDefUtils.isDefaultForClass(datatype));

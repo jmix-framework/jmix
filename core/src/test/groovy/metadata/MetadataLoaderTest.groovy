@@ -26,14 +26,14 @@ import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.base.entity.BaseUuidEntity
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MetadataLoaderTest extends Specification {
 
-    @Inject
+    @Autowired
     MetadataLoader metadataLoader
 
     def "loads metadata from core and add-on"() {

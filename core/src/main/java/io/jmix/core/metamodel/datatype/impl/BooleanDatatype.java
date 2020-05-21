@@ -23,14 +23,14 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.Locale;
 
 @DatatypeDef(id = "boolean", javaClass = Boolean.class, defaultForClass = true, value = "jmix_BooleanDatatype")
 public class BooleanDatatype implements Datatype<Boolean> {
 
-    @Inject
+    @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
     @Override

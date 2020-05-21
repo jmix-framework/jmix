@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -41,7 +41,7 @@ import java.util.List;
 public class EntityPostConstructInitializer implements EntityInitializer {
     public static final String NAME = "jmix_EntityPostConstructInitializer";
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     // stores methods in the execution order, all methods are accessible

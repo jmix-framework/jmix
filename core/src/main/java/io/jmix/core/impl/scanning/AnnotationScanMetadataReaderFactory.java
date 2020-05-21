@@ -20,12 +20,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component("jmix_AnnotationScanMetadataReaderFactory")
 public class AnnotationScanMetadataReaderFactory extends CachingMetadataReaderFactory {
 
-    @Inject
+    @Autowired
     public AnnotationScanMetadataReaderFactory(ApplicationContext applicationContext) {
         super(applicationContext);
     }

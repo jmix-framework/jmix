@@ -32,7 +32,7 @@ import org.springframework.test.context.TestPropertySource
 import spock.lang.Ignore
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
@@ -40,13 +40,13 @@ import javax.inject.Inject
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class CoreSecurityImplTest extends Specification {
 
-    @Inject
+    @Autowired
     Security security
 
-    @Inject
+    @Autowired
     ApplicationContext context
 
-    @Inject
+    @Autowired
     AuthenticationManager authenticationManager
 
     def "Security impl is default"() {

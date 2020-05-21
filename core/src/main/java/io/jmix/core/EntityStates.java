@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,16 +42,16 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class EntityStates {
     public static final String NAME = "jmix_EntityStates";
 
-    @Inject
+    @Autowired
     protected PersistentAttributesLoadChecker checker;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     private static final Logger log = LoggerFactory.getLogger(EntityStates.class);

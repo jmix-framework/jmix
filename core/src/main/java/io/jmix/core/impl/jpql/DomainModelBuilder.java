@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
@@ -39,16 +39,16 @@ public class DomainModelBuilder {
 
     public static final String NAME = "jmix_DomainModelBuilder";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
     protected boolean loadCaptions;

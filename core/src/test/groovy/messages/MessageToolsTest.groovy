@@ -27,17 +27,17 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MessageToolsTest extends Specification {
 
-    @Inject
+    @Autowired
     MessageTools messageTools
 
-    @Inject
+    @Autowired
     Metadata metadata
 
     static final LOC_EN = Locale.ENGLISH

@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
@@ -36,19 +36,19 @@ public class MetadataImpl implements Metadata {
 
 //    protected volatile List<String> rootPackages;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
-    @Inject
+    @Autowired
     protected MetadataTools tools;
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
     @Autowired(required = false)
     protected List<EntityInitializer> entityInitializers;
 
-    @Inject
+    @Autowired
     public MetadataImpl(MetadataLoader metadataLoader) {
 //        rootPackages = metadataLoader.getRootPackages();
         session = metadataLoader.getSession();

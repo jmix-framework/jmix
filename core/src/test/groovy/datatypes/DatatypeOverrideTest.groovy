@@ -26,14 +26,14 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DatatypeOverrideTest extends Specification {
 
-    @Inject
+    @Autowired
     DatatypeRegistry registry
 
     def "TestStringDatatype is default for String java class"() {

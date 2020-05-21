@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Locale;
@@ -50,19 +50,19 @@ public class MessageTools {
 
     protected volatile Boolean useLocaleLanguageOnly;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
-    @Inject
+    @Autowired
     protected CoreProperties properties;
 
     /**

@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @Component(DataManager.NAME)
@@ -33,23 +33,23 @@ public class DataManagerImpl implements DataManager {
 
     private static final Logger log = LoggerFactory.getLogger(DataManagerImpl.class);
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
-    @Inject
+    @Autowired
     protected Stores stores;
 
-    @Inject
+    @Autowired
     protected DataStoreFactory dataStoreFactory;
 
     // todo entity log
-//    @Inject
+//    @Autowired
 //    protected EntityLogAPI entityLog;
 
     @Nullable

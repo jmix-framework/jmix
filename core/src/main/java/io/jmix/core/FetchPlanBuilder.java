@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -34,11 +34,11 @@ public class FetchPlanBuilder {
 
     public static final String NAME = "jmix_ViewBuilder";
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
     protected Class<? extends Entity> entityClass;

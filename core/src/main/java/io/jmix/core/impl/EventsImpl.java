@@ -21,12 +21,12 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(Events.NAME)
 public class EventsImpl implements Events {
 
-    @Inject
+    @Autowired
     protected ApplicationEventPublisher eventPublisher;
 
     @Override

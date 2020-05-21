@@ -27,15 +27,15 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(EntityEmbeddedInitializer.NAME)
 public class EntityEmbeddedInitializer implements EntityInitializer, Ordered {
     public static final String NAME = "jmix_EntityEmbeddedInitializer";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     @Override

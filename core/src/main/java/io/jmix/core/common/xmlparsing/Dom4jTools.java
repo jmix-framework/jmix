@@ -27,7 +27,7 @@ import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.xml.parsers.SAXParser;
 import java.io.*;
 import java.util.Map;
@@ -51,7 +51,7 @@ public class Dom4jTools {
     /**
      * INTERNAL
      */
-    @Inject
+    @Autowired
     public Dom4jTools(CoreProperties properties) {
         this.properties = properties;
         initPool();

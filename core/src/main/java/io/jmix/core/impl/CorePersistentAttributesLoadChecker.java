@@ -25,20 +25,20 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.List;
 
 @Component(PersistentAttributesLoadChecker.NAME)
 public class CorePersistentAttributesLoadChecker implements PersistentAttributesLoadChecker {
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-//    @Inject
+//    @Autowired
 //    protected DynamicAttributes dynamicAttributes;
 
     protected enum PropertyLoadedState {

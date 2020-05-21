@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 import test_support.AppContextTestExecutionListener
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
@@ -36,7 +36,7 @@ import javax.inject.Inject
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class AuthenticatorTest extends Specification {
 
-    @Inject
+    @Autowired
     AuthenticatorImpl authenticator
 
     def "authenticate as system"() {

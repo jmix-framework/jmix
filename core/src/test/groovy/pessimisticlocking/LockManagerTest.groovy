@@ -30,7 +30,7 @@ import test_support.app.TestAppConfiguration
 import test_support.app.entity.LockableChildEntity
 import test_support.app.entity.LockableParentEntity
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static org.junit.jupiter.api.Assertions.assertNotNull
 import static org.junit.jupiter.api.Assertions.assertNull
@@ -41,13 +41,13 @@ import static org.junit.jupiter.api.Assertions.assertNull
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class LockManagerTest extends Specification {
 
-    @Inject
+    @Autowired
     Metadata metadata
 
-    @Inject
+    @Autowired
     LockManager lockManager
 
-    @Inject
+    @Autowired
     AuthenticatorImpl authenticator
 
     void setup() {

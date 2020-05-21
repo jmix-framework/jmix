@@ -42,7 +42,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.lang.annotation.Annotation;
@@ -73,7 +73,7 @@ public class MetaModelLoader {
 
     private static final Logger log = LoggerFactory.getLogger(MetaModelLoader.class);
 
-    @Inject
+    @Autowired
     public MetaModelLoader(DatatypeRegistry datatypes, Stores stores) {
         this.datatypes = datatypes;
         this.stores = stores;

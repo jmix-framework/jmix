@@ -23,7 +23,7 @@ import io.jmix.core.entity.annotation.Extends;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class ExtendedEntities {
 
     public static final String NAME = "jmix_ExtendedEntities";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     protected Map<Class, MetaClass> replacedMetaClasses = new HashMap<>();

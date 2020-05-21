@@ -21,7 +21,7 @@ import io.jmix.core.DataStore;
 import io.jmix.core.Stores;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,10 +36,10 @@ public class DataStoreFactory {
 
     protected Map<String, DataStore> dataStores = new ConcurrentHashMap<>();
 
-    @Inject
+    @Autowired
     protected Stores stores;
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     public DataStore get(String name) {

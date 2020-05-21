@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,19 +45,19 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 @Component(InstanceNameProvider.NAME)
 public class InstanceNameProviderImpl implements InstanceNameProvider {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     private final Logger log = LoggerFactory.getLogger(InstanceNameProviderImpl.class);
@@ -104,7 +104,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
         return resolvers;
     }
 
-    @Inject
+    @Autowired
     public void setResolvers(ContextArgumentResolverComposite resolvers) {
         this.resolvers = resolvers;
         this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);

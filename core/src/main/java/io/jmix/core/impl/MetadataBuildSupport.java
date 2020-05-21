@@ -21,10 +21,10 @@ import org.springframework.stereotype.Component;
 @Component("jmix_MetadataBuildSupport")
 public class MetadataBuildSupport {
 
-//    @Inject
+//    @Autowired
 //    protected Stores stores;
 //
-//    @Inject
+//    @Autowired
 //    protected Environment environment;
 //
 //    public static class XmlAnnotation {
@@ -61,10 +61,10 @@ public class MetadataBuildSupport {
 //    public static final String PERSISTENCE_CONFIG = "cuba.persistenceConfig";
 //    public static final String METADATA_CONFIG = "jmix.core.metadataConfig";
 //
-//    @Inject
+//    @Autowired
 //    protected Resources resources;
 //
-//    @Inject
+//    @Autowired
 //    protected DatatypeRegistry datatypes;
 //
 //    private static final Pattern JAVA_CLASS_PATTERN = Pattern.compile("([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*");

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,22 +43,22 @@ public class AnnotationLockDescriptorProvider implements LockDescriptorProvider 
 
     private final Logger log = LoggerFactory.getLogger(AnnotationLockDescriptorProvider.class);
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected JmixModules modules;
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
-    @Inject
+    @Autowired
     protected MeterRegistry meterRegistry;
 
     @Override

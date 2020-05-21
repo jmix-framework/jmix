@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +35,7 @@ public class ConditionJpqlGenerator {
 
     public static final String NAME = "jmix_ConditionJpqlGenerator";
 
-    @Inject
+    @Autowired
     private QueryTransformerFactory queryTransformerFactory;
 
     /**

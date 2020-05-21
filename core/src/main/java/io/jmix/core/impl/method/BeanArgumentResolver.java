@@ -21,7 +21,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 
 /**
@@ -33,7 +33,7 @@ public class BeanArgumentResolver implements MethodArgumentResolver {
 
     public static final String NAME = "jmix_BeanArgumentResolver";
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     @Override

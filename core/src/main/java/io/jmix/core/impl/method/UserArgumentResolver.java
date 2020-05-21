@@ -21,7 +21,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Allows resolving the current authorized {@link BaseUser} as method argument.
@@ -31,7 +31,7 @@ public class UserArgumentResolver extends TypedArgumentResolver<BaseUser> {
 
     public static final String NAME = "jmix_UserArgumentResolver";
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     public UserArgumentResolver() {

@@ -35,7 +35,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -58,25 +58,25 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     protected Map<MetaClass, Map<String, FetchPlan>> storage = new ConcurrentHashMap<>();
 
-    @Inject
+    @Autowired
     protected Environment environment;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
     
-    @Inject
+    @Autowired
     protected Resources resources;
 
-    @Inject
+    @Autowired
     protected JmixModules modules;
 
-    @Inject
+    @Autowired
     protected FetchPlanLoader fetchPlanLoader;
 
     protected volatile boolean initialized;

@@ -28,7 +28,7 @@ import test_support.addon1.TestAddon1Configuration;
 import test_support.app.TestAppConfiguration;
 import test_support.app.entity.Pet;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static io.jmix.core.FluentLoaderTestAccess.createLoadContext;
@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = {JmixCoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
 public class FluentLoaderViewBuilderTest {
 
-    @Inject
+    @Autowired
     DataManager dataManager;
 
     @Test

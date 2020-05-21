@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -53,19 +53,19 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     private static final Logger log = LoggerFactory.getLogger(EntitySerializationImpl.class);
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-//    @Inject
+//    @Autowired
 //    protected DynamicAttributes dynamicAttributes;
 
-    @Inject
+    @Autowired
     protected CoreRestProperties coreRestProperties;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
     protected ThreadLocal<EntitySerializationContext> context =

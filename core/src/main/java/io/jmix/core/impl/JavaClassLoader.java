@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -56,14 +56,14 @@ public class JavaClassLoader extends URLClassLoader {
     protected final ProxyClassLoader proxyClassLoader;
     protected final Map<String, ClassFilesProvider> classFilesProviders;
 
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
-    @Inject
+    @Autowired
     protected SpringBeanLoader springBeanLoader;
-    @Inject
+    @Autowired
     protected MeterRegistry meterRegistry;
 
-    @Inject
+    @Autowired
     public JavaClassLoader(CoreProperties coreProperties) {
         super(new URL[0], Thread.currentThread().getContextClassLoader());
 

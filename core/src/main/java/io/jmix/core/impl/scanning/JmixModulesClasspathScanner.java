@@ -27,7 +27,7 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,18 +49,18 @@ public class JmixModulesClasspathScanner extends AbstractClasspathScanner {
 
     protected Map<Class<? extends ClasspathScanCandidateDetector>, Set<String>> detectedClasses = new HashMap<>();
 
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
 
-    @Inject
+    @Autowired
     protected List<ClasspathScanCandidateDetector> candidateDetectors;
 
-    @Inject
+    @Autowired
     public void setMetadataReaderFactory(AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         this.metadataReaderFactory = metadataReaderFactory;
     }
 
-    @Inject
+    @Autowired
     public void setJmixComponents(JmixModules jmixModules) {
         basePackages = jmixModules.getAll().stream()
                 .map(JmixModuleDescriptor::getId)

@@ -37,7 +37,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -73,29 +73,29 @@ public class MetadataTools {
             HasUuid.class
     );
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
-    @Inject
+    @Autowired
     protected InstanceNameProvider instanceNameProvider;
 
     // todo dynamic attributes
-//    @Inject
+//    @Autowired
 //    protected DynamicAttributesTools dynamicAttributesTools;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    @Inject
+    @Autowired
     protected PersistentAttributesLoadChecker persistentAttributesLoadChecker;
 
     protected volatile Collection<Class> enums;

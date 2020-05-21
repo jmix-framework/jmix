@@ -31,16 +31,16 @@ import test_support.app.entity.Owner
 import test_support.app.entity.Pet
 import test_support.base.entity.StandardEntity
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MetadataToolsTest extends Specification {
 
-    @Inject
+    @Autowired
     Metadata metadata
-    @Inject
+    @Autowired
     MetadataTools metadataTools
 
     def "persistent entities"() {

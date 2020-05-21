@@ -26,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -41,7 +41,7 @@ class DatatypeRegistryTest extends Specification {
     @Autowired
     ApplicationContext context
 
-    @Inject
+    @Autowired
     DatatypeRegistry registry
 
     def "context contains beans"() {

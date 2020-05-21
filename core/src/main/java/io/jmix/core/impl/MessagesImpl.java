@@ -25,7 +25,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.IllegalFormatException;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -36,10 +36,10 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 @Component(Messages.NAME)
 public class MessagesImpl implements Messages {
 
-    @Inject
+    @Autowired
     protected MessageSource messageSource;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     protected static final Pattern ENUM_SUBCLASS_PATTERN = Pattern.compile("\\$[1-9]");

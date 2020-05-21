@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +42,7 @@ import static io.jmix.core.FetchPlanSerializationOption.INCLUDE_FETCH_MODE;
 @Component(FetchPlanSerialization.NAME)
 public class FetchPlanSerializationImpl implements FetchPlanSerialization {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     private static final Logger log = LoggerFactory.getLogger(FetchPlanSerializationImpl.class);

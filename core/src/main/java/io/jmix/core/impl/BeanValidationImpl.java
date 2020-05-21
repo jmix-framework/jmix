@@ -29,7 +29,7 @@ import org.hibernate.validator.internal.constraintvalidators.bv.time.pastorprese
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -48,17 +48,17 @@ public class BeanValidationImpl implements BeanValidation {
 
     public static final ValidationOptions NO_VALIDATION_OPTIONS = new ValidationOptions();
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
     @Override

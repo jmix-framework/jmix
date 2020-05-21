@@ -20,7 +20,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 
 /**
@@ -32,7 +32,7 @@ public class LocaleArgumentResolver extends TypedArgumentResolver<Locale> {
 
     public static final String NAME = "jmix_LocaleArgumentResolver";
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     public LocaleArgumentResolver() {

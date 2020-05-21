@@ -32,7 +32,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 @Conditional(OnCoreSecurityImplementation.class)
@@ -40,13 +40,13 @@ import javax.inject.Inject;
 @Order(100)
 public class JmixCoreSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
-//    @Inject
+//    @Autowired
 //    protected UserSessionCleanupInterceptor userSessionCleanupInterceptor;
 
-    @Inject
+    @Autowired
     protected UserRepository userRepository;
 
-    @Inject
+    @Autowired
     private CoreProperties coreProperties;
 
     @Override

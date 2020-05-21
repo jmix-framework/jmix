@@ -21,7 +21,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +35,7 @@ public class QueryStringProcessor {
 
     public static final Pattern START_PATTERN = Pattern.compile("^(\\w+)\\s");
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     public String process(String queryString, Class<? extends Entity> entityClass) {

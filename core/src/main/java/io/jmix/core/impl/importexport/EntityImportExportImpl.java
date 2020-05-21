@@ -34,7 +34,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
@@ -50,44 +50,44 @@ import java.util.zip.CRC32;
 @Component(EntityImportExport.NAME)
 public class EntityImportExportImpl implements EntityImportExport {
 
-    @Inject
+    @Autowired
     protected EntitySerialization entitySerialization;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     // todo DynamicAttributesManagerAPI
-//    @Inject
+//    @Autowired
 //    protected DynamicAttributesManagerAPI dynamicAttributesManagerAPI;
 
-//    @Inject
+//    @Autowired
 //    protected PersistenceSecurity persistenceSecurity;
 
-    @Inject
+    @Autowired
     protected BeanValidation beanValidation;
 
-    @Inject
+    @Autowired
     protected Stores stores;
 
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
 
-//    @Inject
+//    @Autowired
 //    protected StoreFactory storeFactory;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
     @Override

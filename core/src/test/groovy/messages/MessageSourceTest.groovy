@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
@@ -37,10 +37,10 @@ class MessageSourceTest extends Specification {
     static final LOC_EN = Locale.ENGLISH
     static final Locale LOC_RU = Locale.forLanguageTag('ru')
 
-    @Inject
+    @Autowired
     MessageSource messageSource
 
-    @Inject
+    @Autowired
     Environment environment
 
     def "messages in module base package"() {

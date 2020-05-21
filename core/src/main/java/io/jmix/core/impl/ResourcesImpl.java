@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ public class ResourcesImpl implements Resources, ResourceLoaderAware {
 
     private ResourceLoader delegate;
 
-    @Inject
+    @Autowired
     public ResourcesImpl(Environment environment) {
         this.environment = environment;
     }

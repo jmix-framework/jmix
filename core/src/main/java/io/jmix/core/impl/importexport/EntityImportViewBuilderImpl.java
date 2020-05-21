@@ -28,7 +28,7 @@ import io.jmix.core.security.Security;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,13 +40,13 @@ import java.util.Map;
 @Component(EntityImportViewBuilder.NAME)
 public class EntityImportViewBuilderImpl implements EntityImportViewBuilder {
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected Security security;
 
     @Override

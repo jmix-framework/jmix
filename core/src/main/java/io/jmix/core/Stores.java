@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 /**
@@ -45,22 +45,22 @@ public class Stores {
     public static final String NOOP = "noop";
     public static final String UNDEFINED = "undefined";
 
-    @Inject
+    @Autowired
     protected Environment environment;
 
-    @Inject
+    @Autowired
     protected OrmStoreDescriptor ormStoreDescriptor;
 
-    @Inject
+    @Autowired
     protected NoopStoreDescriptor noopStoreDescriptor;
 
-    @Inject
+    @Autowired
     protected UndefinedStoreDescriptor undefinedStoreDescriptor;
 
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
 
-    @Inject
+    @Autowired
     protected Map<String, StoreDescriptor> descriptors;
 
     protected Map<String, Store> stores = new HashMap<>();

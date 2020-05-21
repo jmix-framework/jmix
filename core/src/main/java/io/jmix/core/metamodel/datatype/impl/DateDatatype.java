@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.ParameterizedDatatype;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,7 +42,7 @@ import java.util.Map;
 @DateTimeFormat("yyyy-MM-dd")
 public class DateDatatype implements Datatype<Date>, ParameterizedDatatype {
 
-    @Inject
+    @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
     protected String formatPattern;

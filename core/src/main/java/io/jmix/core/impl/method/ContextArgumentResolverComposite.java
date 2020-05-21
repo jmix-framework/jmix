@@ -18,7 +18,7 @@ package io.jmix.core.impl.method;
 
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class ContextArgumentResolverComposite extends CachedArgumentResolverComp
 
     public static final String NAME = "jmix_ContextArgumentResolverComposite";
 
-    @Inject
+    @Autowired
     protected List<MethodArgumentResolver> resolvers;
 
     /**

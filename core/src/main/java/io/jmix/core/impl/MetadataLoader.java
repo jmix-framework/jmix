@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.LinkedHashMap;
@@ -53,7 +53,7 @@ public class MetadataLoader {
 
     protected Session session;
 
-    @Inject
+    @Autowired
     public MetadataLoader(JmixModulesClasspathScanner classpathScanner, MetaModelLoader metaModelLoader) {
         this.session = new SessionImpl();
 

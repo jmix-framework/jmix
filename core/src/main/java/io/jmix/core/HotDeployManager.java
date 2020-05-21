@@ -20,13 +20,13 @@ import io.jmix.core.impl.JavaClassLoader;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(HotDeployManager.NAME)
 public class HotDeployManager {
     public static final String NAME = "jmix_HotDeployManager";
 
-    @Inject
+    @Autowired
     protected JavaClassLoader javaClassLoader;
 
     /**

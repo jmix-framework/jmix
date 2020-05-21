@@ -236,7 +236,7 @@ public class AttributeLocationFragment extends ScreenFragment {
         DataGrid<CategoryAttribute> dataGrid = uiComponents.create(DataGrid.NAME);
         DataGrid.Column<CategoryAttribute> column =
                 dataGrid.addColumn("column",
-                        metadataTools.resolveMetaPropertyPath(metadata.getClass(CategoryAttribute.class), "name"));
+                        metadataTools.resolveMetaPropertyPathOrNull(metadata.getClass(CategoryAttribute.class), "name"));
         column.setSortable(false);
         column.setCaption(messages.getMessage(AttributeLocationFragment.class, "targetDataGrid.column.caption") + " " + i);
         dataGrid.setSettingsEnabled(false);

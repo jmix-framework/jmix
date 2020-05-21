@@ -199,7 +199,7 @@ public class RestControllerExceptionHandler {
     protected Datatype getDatatype(ConstraintViolation<?> violation) {
         MetaClass metaClass = metadata.getClass(violation.getRootBeanClass());
         String propertyPath = violation.getPropertyPath().toString();
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, propertyPath);
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyPath);
         return metaPropertyPath == null
                 ? Datatypes.get(Date.class)
                 : metaPropertyPath.getRange().asDatatype();

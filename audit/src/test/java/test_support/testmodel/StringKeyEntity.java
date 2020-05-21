@@ -16,7 +16,7 @@
 
 package test_support.testmodel;
 
-import io.jmix.core.metamodel.annotations.ModelProperty;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.persistence.*;
 

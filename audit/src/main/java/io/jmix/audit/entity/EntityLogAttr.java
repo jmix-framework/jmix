@@ -19,9 +19,9 @@ package io.jmix.audit.entity;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotations.ModelObject;
-import io.jmix.core.metamodel.annotations.ModelProperty;
-import io.jmix.core.metamodel.datatypes.impl.EnumClass;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.data.entity.BaseUuidEntity;
 import org.apache.commons.lang3.StringUtils;
 

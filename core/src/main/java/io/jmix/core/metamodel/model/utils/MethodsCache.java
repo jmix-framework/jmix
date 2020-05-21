@@ -143,7 +143,7 @@ public class MethodsCache {
      * @return lambda {@link Function} which represents getter
      * @throws IllegalArgumentException if getter for property not found
      */
-    public Function getGetterNN(String property) {
+    public Function getGetter(String property) {
         Function getter = getters.get(property);
         if (getter == null) {
             throw new IllegalArgumentException(
@@ -157,7 +157,7 @@ public class MethodsCache {
      * @return lambda {@link BiConsumer} which represents setter
      * @throws IllegalArgumentException if setter for property not found
      */
-    public BiConsumer getSetterNN(String property) {
+    public BiConsumer getSetter(String property) {
         BiConsumer setter = setters.get(property);
         if (setter == null) {
             throw new IllegalArgumentException(

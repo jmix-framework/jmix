@@ -33,11 +33,11 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -179,7 +179,7 @@ public class MetadataTools {
                     .map(this::format)
                     .collect(Collectors.joining(", "));
         } else {
-            Datatype datatype = datatypeRegistry.get(value.getClass());
+            Datatype datatype = datatypeRegistry.find(value.getClass());
             if (datatype != null) {
                 return datatype.format(value, currentAuthentication.getLocale());
             }
@@ -767,7 +767,7 @@ public class MetadataTools {
      * @return MetaPropertyPath instance
      */
     @Nullable
-    public MetaPropertyPath resolveMetaPropertyPath(MetaClass metaClass, String propertyPath) {
+    public MetaPropertyPath resolveMetaPropertyPathOrNull(MetaClass metaClass, String propertyPath) {
         checkNotNullArgument(metaClass, "metaClass is null");
 
         MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(propertyPath);
@@ -786,11 +786,11 @@ public class MetadataTools {
      * @param propertyPath path to the attribute
      * @return MetaPropertyPath instance
      */
-    public MetaPropertyPath resolveMetaPropertyPathNN(MetaClass metaClass, String propertyPath) {
-        MetaPropertyPath metaPropertyPath = resolveMetaPropertyPath(metaClass, propertyPath);
-
-        checkNotNullArgument(metaPropertyPath, "Could not resolve property path '%s' in '%s'", propertyPath, metaClass);
-
+    public MetaPropertyPath resolveMetaPropertyPath(MetaClass metaClass, String propertyPath) {
+        MetaPropertyPath metaPropertyPath = resolveMetaPropertyPathOrNull(metaClass, propertyPath);
+        if (metaPropertyPath == null) {
+            throw new IllegalStateException(String.format("Could not resolve property path '%s' in '%s'", propertyPath, metaClass));
+        }
         return metaPropertyPath;
     }
 

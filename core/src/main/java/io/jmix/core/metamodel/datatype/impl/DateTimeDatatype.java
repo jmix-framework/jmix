@@ -16,12 +16,12 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.text.DateFormat;
@@ -37,6 +37,9 @@ import java.util.TimeZone;
 public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, TimeZoneAwareDatatype {
 
     private String formatPattern;
+
+    @Autowired
+    protected FormatStringsRegistry formatStringsRegistry;
 
     public DateTimeDatatype() {
         DateTimeFormat dateTimeFormat = getClass().getAnnotation(DateTimeFormat.class);
@@ -71,7 +74,7 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
             return "";
         }
 
-        FormatStrings formatStrings = AppBeans.get(FormatStringsRegistry.class).getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return format(value);
         }
@@ -110,7 +113,7 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
             return null;
         }
 
-        FormatStrings formatStrings = AppBeans.get(FormatStringsRegistry.class).getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return parse(value);
         }

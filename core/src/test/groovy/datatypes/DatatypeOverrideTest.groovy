@@ -43,6 +43,6 @@ class DatatypeOverrideTest extends Specification {
         registry.get('string').class == StringDatatype
 
         registry.get('string_mod').class == TestStringDatatype
-        registry.get(String).class == TestStringDatatype
+        registry.find(String).class == TestStringDatatype
     }
 }

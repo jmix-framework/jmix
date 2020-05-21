@@ -51,7 +51,7 @@ public class DoubleDatatype extends NumberDatatype implements Datatype<Double> {
             return "";
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return format(value);
         }
@@ -76,7 +76,7 @@ public class DoubleDatatype extends NumberDatatype implements Datatype<Double> {
             return null;
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return parse(value);
         }

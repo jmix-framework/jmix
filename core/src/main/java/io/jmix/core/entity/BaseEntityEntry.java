@@ -65,7 +65,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
                 }
             }
         }
-        return (T) MethodsCache.getOrCreate(getSource().getClass()).getGetterNN(name).apply(getSource());
+        return (T) MethodsCache.getOrCreate(getSource().getClass()).getGetter(name).apply(getSource());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -83,7 +83,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
         } else {
             Object oldValue = getAttributeValue(name);
             if (!checkEquals || !EntityValues.propertyValueEquals(oldValue, value)) {
-                BiConsumer setter = MethodsCache.getOrCreate(getSource().getClass()).getSetterNN(name);
+                BiConsumer setter = MethodsCache.getOrCreate(getSource().getClass()).getSetter(name);
                 setter.accept(getSource(), value);
             }
         }

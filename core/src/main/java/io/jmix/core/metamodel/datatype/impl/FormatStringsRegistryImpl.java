@@ -35,15 +35,15 @@ public class FormatStringsRegistryImpl implements FormatStringsRegistry {
 
     @Nullable
     @Override
-    public FormatStrings getFormatStrings(Locale locale) {
+    public FormatStrings getFormatStringsOrNull(Locale locale) {
         if (useLocaleLanguageOnly)
             locale = Locale.forLanguageTag(locale.getLanguage());
         return formatStringsMap.get(locale);
     }
 
     @Override
-    public FormatStrings getFormatStringsNN(Locale locale) {
-        FormatStrings format = getFormatStrings(locale);
+    public FormatStrings getFormatStrings(Locale locale) {
+        FormatStrings format = getFormatStringsOrNull(locale);
         if (format == null) {
             throw new IllegalArgumentException("Not found format strings for locale " + locale.toLanguageTag());
         }

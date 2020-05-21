@@ -36,7 +36,7 @@ public class Datatypes {
      */
     @Nullable
     public static FormatStrings getFormatStrings(Locale locale) {
-        return getFormatStringsRegistry().getFormatStrings(locale);
+        return getFormatStringsRegistry().getFormatStringsOrNull(locale);
     }
 
     /**
@@ -46,7 +46,7 @@ public class Datatypes {
      */
     @Nonnull
     public static FormatStrings getFormatStringsNN(Locale locale) {
-        return getFormatStringsRegistry().getFormatStringsNN(locale);
+        return getFormatStringsRegistry().getFormatStrings(locale);
     }
 
     /**
@@ -65,7 +65,7 @@ public class Datatypes {
      */
     @Nullable
     public static <T> Datatype<T> get(Class<T> clazz) {
-        return getDatatypeRegistry().get(clazz);
+        return getDatatypeRegistry().find(clazz);
     }
 
     /**
@@ -75,7 +75,7 @@ public class Datatypes {
      */
     @Nonnull
     public static <T> Datatype<T> getNN(Class<T> clazz) {
-        return getDatatypeRegistry().getNN(clazz);
+        return getDatatypeRegistry().get(clazz);
     }
 
     /**

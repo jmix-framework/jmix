@@ -814,7 +814,7 @@ public class MetaModelLoader {
 
         datatype = getAdaptiveDatatype(metaProperty, type);
         if (datatype == null) {
-            datatype = datatypes.get(type);
+            datatype = datatypes.find(type);
         }
         if (datatype != null) {
             MetaClass metaClass = metaProperty.getDomain();

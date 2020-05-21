@@ -55,7 +55,7 @@ public class AdaptiveNumberDatatype extends NumberDatatype implements Datatype<N
     }
 
     protected java.text.NumberFormat createLocalizedFormat(Locale locale) {
-        FormatStrings formatStrings = AppBeans.get(FormatStringsRegistry.class).getFormatStrings(locale);
+        FormatStrings formatStrings = AppBeans.get(FormatStringsRegistry.class).getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return createFormat();
         }

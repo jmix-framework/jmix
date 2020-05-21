@@ -44,7 +44,7 @@ public class BooleanDatatype implements Datatype<Boolean> {
             return "";
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return format(value);
         }
@@ -78,7 +78,7 @@ public class BooleanDatatype implements Datatype<Boolean> {
             return null;
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return parse(value);
         }

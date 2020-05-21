@@ -49,7 +49,7 @@ public class LongDatatype extends NumberDatatype implements Datatype<Long> {
             return "";
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return format(value);
         }
@@ -74,7 +74,7 @@ public class LongDatatype extends NumberDatatype implements Datatype<Long> {
             return null;
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return parse(value);
         }

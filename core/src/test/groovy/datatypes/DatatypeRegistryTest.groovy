@@ -20,7 +20,6 @@ import test_support.AppContextTestExecutionListener
 import io.jmix.core.JmixCoreConfiguration
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.datatype.impl.*
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -107,20 +106,20 @@ class DatatypeRegistryTest extends Specification {
         registry.get('uuid') == uuidDatatype
         registry.get('byteArray') == byteArrayDatatype
 
-        registry.get(Boolean) == booleanDatatype
-        registry.get(Long) == longDatatype
-        registry.get(BigDecimal) == bigDecimalDatatype
-        registry.get(Double) == doubleDatatype
-        registry.get(String) == stringDatatype
-        registry.get(Date) == dateTimeDatatype
-        registry.get(java.sql.Date) == dateDatatype
-        registry.get(java.sql.Time) == timeDatatype
-        registry.get(LocalDateTime) == localDateTimeDatatype
-        registry.get(LocalDate) == localDateDatatype
-        registry.get(LocalTime) == localTimeDatatype
-        registry.get(OffsetDateTime) == offsetDateTimeDatatype
-        registry.get(OffsetTime) == offsetTimeDatatype
-        registry.get(UUID) == uuidDatatype
-        registry.get(byte[]) == byteArrayDatatype
+        registry.find(Boolean) == booleanDatatype
+        registry.find(Long) == longDatatype
+        registry.find(BigDecimal) == bigDecimalDatatype
+        registry.find(Double) == doubleDatatype
+        registry.find(String) == stringDatatype
+        registry.find(Date) == dateTimeDatatype
+        registry.find(java.sql.Date) == dateDatatype
+        registry.find(java.sql.Time) == timeDatatype
+        registry.find(LocalDateTime) == localDateTimeDatatype
+        registry.find(LocalDate) == localDateDatatype
+        registry.find(LocalTime) == localTimeDatatype
+        registry.find(OffsetDateTime) == offsetDateTimeDatatype
+        registry.find(OffsetTime) == offsetTimeDatatype
+        registry.find(UUID) == uuidDatatype
+        registry.find(byte[]) == byteArrayDatatype
     }
 }

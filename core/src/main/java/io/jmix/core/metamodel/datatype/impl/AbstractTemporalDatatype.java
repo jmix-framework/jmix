@@ -70,7 +70,7 @@ public abstract class AbstractTemporalDatatype<T extends Temporal> implements Da
             return "";
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return format(value);
         }
@@ -102,7 +102,7 @@ public abstract class AbstractTemporalDatatype<T extends Temporal> implements Da
             return null;
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return parse(value);
         }

@@ -84,7 +84,7 @@ class MetadataToolsTest extends Specification {
         metadataTools.isPersistent(ownerMetaClass.getProperty('address').range.asClass().getProperty('city'))
 
         // nested property of @Embedded in @Entity, passed as MetaPropertyPath
-        metadataTools.isPersistent(metadataTools.resolveMetaPropertyPath(ownerMetaClass, 'address.city'))
+        metadataTools.isPersistent(metadataTools.resolveMetaPropertyPathOrNull(ownerMetaClass, 'address.city'))
     }
 
     def "non-persistent properties"() {

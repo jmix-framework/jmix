@@ -495,7 +495,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                 if (!propertyReadRequired(propertyName)) continue;
                 JsonElement propertyValue = entry.getValue();
                 MetaClass metaClass = metadata.getClass(entity.getClass());
-                MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, propertyName);
+                MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyName);
                 MetaProperty metaProperty = metaPropertyPath != null ? metaPropertyPath.getMetaProperty() : null;
                 if (metaProperty != null) {
                     //todo dynamic attribute

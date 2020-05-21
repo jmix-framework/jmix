@@ -61,7 +61,7 @@ public class BigDecimalDatatype extends NumberDatatype implements Datatype<BigDe
             return "";
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return format(value);
         }
@@ -86,7 +86,7 @@ public class BigDecimalDatatype extends NumberDatatype implements Datatype<BigDe
             return null;
         }
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return parse(value);
         }

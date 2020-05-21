@@ -30,13 +30,13 @@ public interface FormatStringsRegistry {
      * Get format strings for a locale. Returns null if not registered.
      */
     @Nullable
-    FormatStrings getFormatStrings(Locale locale);
+    FormatStrings getFormatStringsOrNull(Locale locale);
 
     /**
      * Get format strings for a locale.
      * @throws IllegalArgumentException if not registered
      */
-    FormatStrings getFormatStringsNN(Locale locale);
+    FormatStrings getFormatStrings(Locale locale);
 
     /**
      * Register format strings for a locale.

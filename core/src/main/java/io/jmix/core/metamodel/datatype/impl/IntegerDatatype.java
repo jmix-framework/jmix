@@ -48,7 +48,7 @@ public class IntegerDatatype extends NumberDatatype implements Datatype<Integer>
         if (value == null)
             return "";
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null)
             return format(value);
 
@@ -70,7 +70,7 @@ public class IntegerDatatype extends NumberDatatype implements Datatype<Integer>
         if (StringUtils.isBlank(value))
             return null;
 
-        FormatStrings formatStrings = formatStringsRegistry.getFormatStrings(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null)
             return parse(value);
 

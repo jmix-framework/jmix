@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.StringReader;
 import java.util.*;
 
@@ -38,7 +38,7 @@ public class EntityLogItemDetachListener implements BeforeDetachEntityListener<E
     private final Logger log = LoggerFactory.getLogger(EntityLogItemDetachListener.class);
 
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
     protected final String[] skipNames = new String[]{VALUE_ID_SUFFIX,

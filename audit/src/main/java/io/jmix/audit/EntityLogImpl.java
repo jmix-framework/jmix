@@ -50,7 +50,7 @@ import org.springframework.transaction.support.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -69,42 +69,42 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 
     public static final String RESOURCE_HOLDER_KEY = EntityLogResourceHolder.class.getName();
 
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
-    @Inject
+    @Autowired
     protected PersistenceTools persistenceTools;
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
-    @Inject
+    @Autowired
     protected AuditInfoProvider auditInfoProvider;
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Inject
+    @Autowired
     protected Stores stores;
     @PersistenceContext
     protected EntityManager entityManager;
 
     protected TransactionTemplate transaction;
 
-    @Inject
+    @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
         transaction = new TransactionTemplate(transactionManager);
         transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
 //    TODO: DynamicAttributes
-//    @Inject
+//    @Autowired
 //    protected DynamicAttributes dynamicAttributes;
-//    @Inject
+//    @Autowired
 //    protected DynamicAttributesTools dynamicAttributesTools;
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
     protected AuditProperties properties;
@@ -120,7 +120,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     protected ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     protected ThreadLocal<Boolean> entityLogSwitchedOn = new ThreadLocal<>();
 
-    @Inject
+    @Autowired
     public void setProperties(AuditProperties properties) {
         this.properties = properties;
         this.enabled = properties.isEnabled();

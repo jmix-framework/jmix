@@ -39,7 +39,7 @@ import io.jmix.ui.screen.LookupComponent;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.time.DateUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @UiController("entityLog.browse")
@@ -49,80 +49,80 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
     protected static final String SELECT_ALL_CHECK_BOX = "selectAllCheckBox";
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected MessageBundle messageBundle;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
-    @Inject
+    @Autowired
     protected EntityLog entityLog;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected Dialogs dialogs;
-    @Inject
+    @Autowired
     protected Notifications notifications;
-    @Inject
+    @Autowired
     protected ScreenBuilders screenBuilders;
 
-    @Inject
+    @Autowired
     protected CollectionContainer<LoggedEntity> loggedEntityDc;
-    @Inject
+    @Autowired
     protected CollectionLoader<LoggedEntity> loggedEntityDl;
-    @Inject
+    @Autowired
     protected CollectionLoader<EntityLogItem> entityLogDl;
-    @Inject
+    @Autowired
     protected CollectionLoader<BaseUser> usersDl;
-    @Inject
+    @Autowired
     protected CollectionContainer<BaseUser> usersDc;
-    @Inject
+    @Autowired
     protected CollectionContainer<LoggedAttribute> loggedAttrDc;
-    @Inject
+    @Autowired
     protected CollectionLoader<LoggedAttribute> loggedAttrDl;
-    @Inject
+    @Autowired
     protected LookupField changeTypeField;
-    @Inject
+    @Autowired
     protected LookupField<String> entityNameField;
-    @Inject
+    @Autowired
     protected LookupField<String> userField;
-    @Inject
+    @Autowired
     protected LookupField<String> filterEntityNameField;
-    @Inject
+    @Autowired
     protected DataContext dataContext;
-    @Inject
+    @Autowired
     protected PickerField<Entity> instancePicker;
-    @Inject
+    @Autowired
     protected Table<EntityLogItem> entityLogTable;
-    @Inject
+    @Autowired
     protected GroupTable<LoggedEntity> loggedEntityTable;
-    @Inject
+    @Autowired
     protected Table<EntityLogAttr> entityLogAttrTable;
-    @Inject
+    @Autowired
     protected CheckBox manualCheckBox;
-    @Inject
+    @Autowired
     protected CheckBox autoCheckBox;
-    @Inject
+    @Autowired
     protected VBoxLayout actionsPaneLayout;
-    @Inject
+    @Autowired
     protected ScrollBoxLayout attributesBoxScroll;
-    @Inject
+    @Autowired
     protected DateField tillDateField;
-    @Inject
+    @Autowired
     protected DateField fromDateField;
-    @Inject
+    @Autowired
     protected Button cancelBtn;
-    @Inject
+    @Autowired
     protected CheckBox selectAllCheckBox;
 
     protected TreeMap<String, String> entityMetaClassesMap;

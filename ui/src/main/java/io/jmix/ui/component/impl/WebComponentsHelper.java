@@ -317,10 +317,12 @@ public class WebComponentsHelper {
 
                 if (component instanceof HasButtonsPanel) {
                     ButtonsPanel buttonsPanel = ((HasButtonsPanel) component).getButtonsPanel();
-                    if (getVaadinSource(buttonsPanel) == target) {
-                        return buttonsPanel;
-                    } else {
-                        child = findChildComponent(buttonsPanel, target);
+                    if (buttonsPanel != null) {
+                        if (getVaadinSource(buttonsPanel) == target) {
+                            return buttonsPanel;
+                        } else {
+                            child = findChildComponent(buttonsPanel, target);
+                        }
                     }
                 }
 

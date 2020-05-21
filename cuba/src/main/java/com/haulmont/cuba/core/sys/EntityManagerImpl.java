@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityNotFoundException;
 import java.sql.Connection;
 
@@ -46,11 +46,11 @@ public class EntityManagerImpl implements EntityManager {
 
     private JmixEntityManager delegate;
 
-    @Inject
+    @Autowired
     private BeanLocator beanLocator;
-    @Inject
+    @Autowired
     private MetadataTools metadataTools;
-    @Inject
+    @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
     private static final Logger log = LoggerFactory.getLogger(EntityManagerImpl.class);

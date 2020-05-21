@@ -29,18 +29,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
 @CoreTest
 public class SeveralFetchGroupsTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
-    @Inject
+    @Autowired
     private DataManager dataManager;
 
     private UUID tariffId1, tariffId2_1, tariffId3_1, tariffId4_2;

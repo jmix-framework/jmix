@@ -30,7 +30,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,33 +40,33 @@ import java.util.stream.IntStream;
 @UiDescriptor("optionslist-test-screen.xml")
 public class OptionsListTestScreen extends Screen {
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
-    @Inject
+    @Autowired
     public InstanceContainer<Order> orderDc;
-    @Inject
+    @Autowired
     public CollectionContainer<OrderLine> orderLinesDc;
-    @Inject
+    @Autowired
     public CollectionContainer<OrderLine> allOrderLinesDc;
 
-    @Inject
+    @Autowired
     public InstanceContainer<OrderLine> orderLineDc;
-    @Inject
+    @Autowired
     public InstancePropertyContainer<Product> productDc;
-    @Inject
+    @Autowired
     public CollectionContainer<Product> allProductsDc;
 
-    @Inject
+    @Autowired
     public InstanceContainer<Catalog> catalogDc;
 
-    @Inject
+    @Autowired
     public OptionsList<List<OrderLine>, OrderLine> optionsList;
-    @Inject
+    @Autowired
     public OptionsList<List<OrderLine>, OrderLine> requiredOptionsList;
-    @Inject
+    @Autowired
     public OptionsList<Product, Product> singleOptionsList;
-    @Inject
+    @Autowired
     public OptionsList<Set<Product>, Product> setOptionsList;
 
     @Subscribe

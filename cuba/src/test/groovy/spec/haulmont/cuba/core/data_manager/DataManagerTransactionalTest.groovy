@@ -31,19 +31,19 @@ import io.jmix.data.impl.EntityListenerManager
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 
 class DataManagerTransactionalTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private TransactionalDataManager txDataManager
-    @Inject
+    @Autowired
     private FetchPlanRepository viewRepository
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private EntityStates entityStates
 
     private FetchPlan baseView

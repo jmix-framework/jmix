@@ -26,21 +26,21 @@ import com.haulmont.cuba.core.TransactionalDataManager
 import io.jmix.data.event.EntityChangedEvent
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class EntityChangedEventTest extends CoreTestSpecification {
     private TestEntityChangedEventListener listener
-    @Inject
+    @Autowired
     private Events events
-    @Inject
+    @Autowired
     private DataManager dataManager
-    @Inject
+    @Autowired
     private TransactionalDataManager txDataManager
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private EntityStates entityStates
 
     void setup() {

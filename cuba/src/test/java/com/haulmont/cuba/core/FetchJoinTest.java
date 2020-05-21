@@ -25,7 +25,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CoreTest
 public class FetchJoinTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     protected JoinC joinC;

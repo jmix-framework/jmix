@@ -31,26 +31,26 @@ import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class NumberIdConcurrencyTest extends CoreTestSpecification {
 
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private DataManager dataManager
-    @Inject
+    @Autowired
     private DbmsSpecifics dbmsSpecifics
-    @Inject
+    @Autowired
     private NumberIdWorker numberIdWorker
-    @Inject
+    @Autowired
     private NumberIdCache numberIdCache
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private DataProperties dataProperties
 
     private SequenceSupport sequenceSupport

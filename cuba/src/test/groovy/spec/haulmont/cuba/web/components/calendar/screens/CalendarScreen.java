@@ -25,7 +25,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -37,25 +37,25 @@ import java.util.Date;
 @UiDescriptor("calendar-screen.xml")
 public class CalendarScreen extends Screen {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     public CollectionContainer<ScheduledTask> tasksDc;
 
-    @Inject
+    @Autowired
     protected Calendar calendarDefault;
-    @Inject
+    @Autowired
     protected Calendar<Date> calendarDate;
-    @Inject
+    @Autowired
     protected Calendar<Date> calendarDateTime;
-    @Inject
+    @Autowired
     protected Calendar<LocalDate> calendarLocalDate;
-    @Inject
+    @Autowired
     protected Calendar<LocalDateTime> calendarLocalDateTime;
-    @Inject
+    @Autowired
     protected Calendar<OffsetDateTime> calendarOffsetDateTime;
-    @Inject
+    @Autowired
     protected Calendar calendarWithContainer;
 
     @Subscribe

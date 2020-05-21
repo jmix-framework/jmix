@@ -30,7 +30,7 @@ import io.jmix.ui.relatedentities.RelatedEntitiesAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Action used in {@link RelatedEntities} visual component.
@@ -55,7 +55,7 @@ public class RelatedAction extends ListAction implements Action.HasBeforeActionP
 
     protected OpenType openType = OpenType.THIS_TAB;
 
-    @Inject
+    @Autowired
     protected RelatedEntitiesAPI relatedEntitiesApi;
 
     protected BeforeActionPerformedHandler beforeActionPerformedHandler;
@@ -76,7 +76,7 @@ public class RelatedAction extends ListAction implements Action.HasBeforeActionP
         this.metaProperty = metaProperty;
     }
 
-    @Inject
+    @Autowired
     protected void setMessageTools(MessageTools messageTools) {
         if (messageTools != null) {
             setCaption(StringUtils.capitalize(messageTools.getPropertyCaption(metaClass, metaProperty.getName())));

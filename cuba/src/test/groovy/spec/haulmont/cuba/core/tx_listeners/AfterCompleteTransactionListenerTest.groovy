@@ -28,14 +28,14 @@ import io.jmix.core.FetchPlan
 import com.haulmont.cuba.core.Persistence
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     DataManager dataManager
-    @Inject
+    @Autowired
     Persistence persistence
 
     User user

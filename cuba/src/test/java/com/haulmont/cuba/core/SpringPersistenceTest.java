@@ -20,13 +20,13 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class SpringPersistenceTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     @Test

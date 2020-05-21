@@ -27,7 +27,7 @@ import io.jmix.ui.screen.Screen;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -38,9 +38,9 @@ public class AbstractMainWindow extends AbstractTopLevelWindow
 
     protected static final String APP_LOGO_IMAGE = "application.logoImage";
 
-    @Inject
+    @Autowired
     protected Screens screens;
-    @Inject
+    @Autowired
     protected ScreenTools screenTools;
 
     protected AppWorkArea workArea;

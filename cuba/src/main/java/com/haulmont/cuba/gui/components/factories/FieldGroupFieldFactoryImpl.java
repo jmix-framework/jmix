@@ -24,11 +24,11 @@ import com.haulmont.cuba.gui.data.RuntimePropsDatasource;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.UiComponentsGenerator;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(FieldGroupFieldFactory.NAME)
 public class FieldGroupFieldFactoryImpl implements FieldGroupFieldFactory {
-    @Inject
+    @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
 
     @Override

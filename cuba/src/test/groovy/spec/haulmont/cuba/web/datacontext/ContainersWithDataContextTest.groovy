@@ -22,12 +22,12 @@ import io.jmix.ui.model.DataComponents
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @Ignore
 class ContainersWithDataContextTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     private DataComponents factory
 
     def "entity added to property container are not merged into context"() {

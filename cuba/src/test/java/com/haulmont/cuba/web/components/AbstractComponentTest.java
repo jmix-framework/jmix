@@ -23,7 +23,7 @@ import io.jmix.core.FetchPlanRepository;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Simple base class for UI component tests.
@@ -33,13 +33,13 @@ import javax.inject.Inject;
 @WebTest
 public class AbstractComponentTest {
 
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     protected <T extends Component> T create(Class<T> componentClass) {

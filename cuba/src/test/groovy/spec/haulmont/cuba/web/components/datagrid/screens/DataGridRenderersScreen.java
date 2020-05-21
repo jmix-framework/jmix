@@ -24,13 +24,13 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("datagrid-renderers-screen.xml")
 @LoadDataBeforeShow
 public class DataGridRenderersScreen extends Screen {
-    @Inject
+    @Autowired
     protected DataGrid<RendererEntity> renderersDataGrid;
 
     @Subscribe

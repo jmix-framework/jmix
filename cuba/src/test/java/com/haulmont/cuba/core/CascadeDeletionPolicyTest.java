@@ -28,7 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,9 +38,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @CoreTest
 public class CascadeDeletionPolicyTest {
 
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
     
     protected CascadeDeletionPolicyEntity root, first, second, third;

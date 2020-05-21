@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -62,9 +62,9 @@ public class QueryCacheTestClass {
     @RegisterExtension
     public TestRule testNamePrinter = new TestNamePrinter();
 
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     private JpaCache cache;

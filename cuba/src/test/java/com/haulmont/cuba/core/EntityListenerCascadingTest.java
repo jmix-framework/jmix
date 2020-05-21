@@ -28,15 +28,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EntityListenerCascadingTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
 
 

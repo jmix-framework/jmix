@@ -44,7 +44,7 @@ import io.jmix.ui.component.validator.LongValidator;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
@@ -63,25 +63,25 @@ public class RuntimePropertiesFrame extends AbstractFrame {
 
     protected boolean requiredControlEnabled = true;
 
-    @Inject
+    @Autowired
     protected BoxLayout categoryFieldBox;
 
-    @Inject
+    @Autowired
     protected LookupField categoryField;
 
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
 
-    @Inject
+    @Autowired
     protected DynamicAttributesGuiTools dynamicAttributesGuiTools;
 
-    @Inject
+    @Autowired
     protected DynAttrMetadata dynAttrMetadata;
 
-    @Inject
+    @Autowired
     protected MsgBundleTools msgBundleTools;
 
-    @Inject
+    @Autowired
     protected Security security;
 
     @WindowParam

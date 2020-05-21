@@ -24,18 +24,18 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings({"unused"})
 @UiController
 @UiDescriptor("option-dialog-screen.xml")
 public class OptionDialogScreen extends Screen {
 
-    @Inject
+    @Autowired
     public Action dialogAction;
-    @Inject
+    @Autowired
     public Button dialogButton;
-    @Inject
+    @Autowired
     public OptionDialogFacet optionDialog;
 
     @Install(subject = "actionHandler", to = "optionDialog.ok")

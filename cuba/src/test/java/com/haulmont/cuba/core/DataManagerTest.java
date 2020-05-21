@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.TemporalType;
 import java.util.*;
 
@@ -40,13 +40,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class DataManagerTest {
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected Persistence persistence;
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     protected User user;

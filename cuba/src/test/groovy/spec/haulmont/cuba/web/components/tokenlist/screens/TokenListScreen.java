@@ -22,11 +22,11 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("tokenlist-screen.xml")
 public class TokenListScreen extends Screen {
-    @Inject
+    @Autowired
     public TokenList<Constraint> tokenList;
 }

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -71,7 +71,7 @@ public class CubaMessages {
 
     protected final static Properties PROPERTIES_NOT_FOUND = new Properties();
 
-    @Inject
+    @Autowired
     protected UserSessionSource userSessionSource;
 
     protected Locale getUserLocale() {

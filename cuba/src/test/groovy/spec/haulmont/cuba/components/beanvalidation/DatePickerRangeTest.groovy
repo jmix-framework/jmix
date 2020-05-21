@@ -22,13 +22,13 @@ import spec.haulmont.cuba.components.beanvalidation.screens.DateValidationScreen
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.*
 
 @Ignore
 class DatePickerRangeTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     DateTimeTransformations dateTimeTransformations
 
     void setup() {

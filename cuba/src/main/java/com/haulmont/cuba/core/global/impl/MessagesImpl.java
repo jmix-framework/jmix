@@ -20,15 +20,15 @@ import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.MessageTools;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 
 public class MessagesImpl extends io.jmix.core.impl.MessagesImpl implements Messages {
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
-    @Inject
+    @Autowired
     protected CubaMessages cubaMessages;
 
     @Override

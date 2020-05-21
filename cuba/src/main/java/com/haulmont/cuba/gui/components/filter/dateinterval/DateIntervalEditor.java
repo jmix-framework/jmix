@@ -32,7 +32,7 @@ import io.jmix.ui.component.TextField;
 import io.jmix.ui.theme.ThemeConstants;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,22 +48,22 @@ public class DateIntervalEditor extends AbstractWindow {
     @WindowParam(required = true)
     protected String dateIntervalDescription;
 
-    @Inject
+    @Autowired
     protected TextField<Integer> numberField;
 
-    @Inject
+    @Autowired
     protected LookupField<DateIntervalValue.TimeUnit> timeUnitLookup;
 
-    @Inject
+    @Autowired
     protected OptionsGroup<DateIntervalValue.Type, DateIntervalValue.Type> typeOptionsGroup;
 
-    @Inject
+    @Autowired
     protected CheckBox includingCurrentCheckBox;
 
-    @Inject
+    @Autowired
     protected LookupField<PredefinedDateInterval> predefinedIntervalsLookup;
 
-    @Inject
+    @Autowired
     protected ThemeConstants themeConstants;
 
     protected Multimap<DateIntervalValue.Type, Component> componentsVisibilityMap = ArrayListMultimap.create();

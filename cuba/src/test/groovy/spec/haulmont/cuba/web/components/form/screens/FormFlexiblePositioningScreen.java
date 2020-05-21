@@ -26,16 +26,16 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiDescriptor("form-flexible-positioning-screen.xml")
 @UiController
 public class FormFlexiblePositioningScreen extends Screen {
 
-    @Inject
+    @Autowired
     private Form form;
 
-    @Inject
+    @Autowired
     private UiComponents uiComponents;
 
     @Subscribe

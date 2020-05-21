@@ -23,15 +23,15 @@ import io.jmix.core.*
 import io.jmix.core.entity.KeyValueEntity
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import javax.persistence.TemporalType
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class FluentValueLoaderTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private DataManager dataManager
-    @Inject
+    @Autowired
     private Metadata metadata
 
     private Customer customer

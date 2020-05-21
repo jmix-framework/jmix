@@ -26,16 +26,16 @@ import com.haulmont.cuba.core.Persistence
 import io.jmix.data.PersistenceTools
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class GetReferenceIdTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private PersistenceTools persistenceTools
 
     private Customer customer1

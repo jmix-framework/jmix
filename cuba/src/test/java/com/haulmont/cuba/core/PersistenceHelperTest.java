@@ -27,17 +27,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class PersistenceHelperTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
 
-    @Inject
+    @Autowired
     private EntityStates entityStates;
 
     @AfterEach

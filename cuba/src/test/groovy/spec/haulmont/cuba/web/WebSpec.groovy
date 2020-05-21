@@ -42,7 +42,7 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import javax.servlet.http.HttpServletRequest
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
@@ -50,37 +50,37 @@ import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField
 @WebTest
 class WebSpec extends Specification {
 
-    @Inject
+    @Autowired
     Metadata metadata
 
-    @Inject
+    @Autowired
     MetadataTools metadataTools
 
-    @Inject
+    @Autowired
     FetchPlanRepository viewRepository
 
-    @Inject
+    @Autowired
     EntityStates entityStates
 
-    @Inject
+    @Autowired
     DataManager dataManager
 
-    @Inject
+    @Autowired
     DataComponents dataComponents
 
-    @Inject
+    @Autowired
     UiComponents uiComponents
 
-    @Inject
+    @Autowired
     UserSessionSource sessionSource
 
-    @Inject
+    @Autowired
     ApplicationContext applicationContext
 
-    @Inject
+    @Autowired
     AnnotationScanMetadataReaderFactory metadataReaderFactory
 
-    @Inject
+    @Autowired
     WindowConfig windowConfig
 
     AppUI vaadinUi

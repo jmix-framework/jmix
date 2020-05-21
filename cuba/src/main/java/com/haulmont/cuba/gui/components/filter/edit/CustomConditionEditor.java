@@ -22,14 +22,14 @@ import com.haulmont.cuba.gui.components.AbstractWindow;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.theme.ThemeConstants;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 public class CustomConditionEditor extends AbstractWindow {
-    @Inject
+    @Autowired
     private CustomConditionFrame customConditionFrame;
 
-    @Inject
+    @Autowired
     protected ThemeConstants theme;
 
     @Override

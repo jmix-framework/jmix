@@ -31,36 +31,36 @@ import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import spec.haulmont.cuba.web.user.screens.UserEditTest;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings({"unused"})
 @UiController("cuba_EditorScreenFacetTestScreen")
 @UiDescriptor("editor-screen-facet-test-screen.xml")
 public class EditorScreenFacetTestScreen extends Screen {
 
-    @Inject
+    @Autowired
     public Metadata metadata;
 
-    @Inject
+    @Autowired
     public CollectionContainer<User> userDc;
 
-    @Inject
+    @Autowired
     public PickerField<User> userField;
-    @Inject
+    @Autowired
     public Table<User> usersTable;
 
-    @Inject
+    @Autowired
     public Action action;
-    @Inject
+    @Autowired
     public Button button;
 
-    @Inject
+    @Autowired
     public EditorScreenFacet<User, UserEditTest> editorScreenFacet;
-    @Inject
+    @Autowired
     public EditorScreenFacet<User, UserEditTest> tableScreenFacet;
-    @Inject
+    @Autowired
     public EditorScreenFacet<User, UserEditTest> fieldScreenFacet;
-    @Inject
+    @Autowired
     public EditorScreenFacet<User, UserEditTest> editorEntityProvider;
 
     @Install(to = "editorScreenFacet", subject = "entityProvider")

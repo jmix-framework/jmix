@@ -31,14 +31,14 @@ import spock.lang.Ignore
 import spock.lang.Unroll
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings("GroovyAssignabilityCheck")
 class DataContextParentTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     private DataComponents factory
-    @Inject
+    @Autowired
     private EntityStates entityStates
 
     @Ignore

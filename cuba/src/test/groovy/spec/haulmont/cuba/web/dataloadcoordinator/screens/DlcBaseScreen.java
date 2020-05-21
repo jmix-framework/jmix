@@ -29,14 +29,14 @@ import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Target;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class DlcBaseScreen extends Screen {
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     public static class LoadEvent {
@@ -51,16 +51,16 @@ public class DlcBaseScreen extends Screen {
 
     public List<LoadEvent> events = new ArrayList<>();
 
-    @Inject
+    @Autowired
     public DataLoadCoordinator dlc;
 
-    @Inject
+    @Autowired
     public CollectionContainer<Owner> ownersDc;
 
-    @Inject
+    @Autowired
     public TextField<String> nameFilterField;
 
-    @Inject
+    @Autowired
     public PickerField<OwnerCategory> categoryFilterField;
 
     @Install(to = "ownersDl", target = Target.DATA_LOADER)

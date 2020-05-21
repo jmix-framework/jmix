@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -36,9 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
 public class OrmBehaviorTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
     
     private UUID userId, groupId;

@@ -21,13 +21,13 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("host-screen-with-nested-timer.xml")
 public class ScreenWithNestedFragment extends Screen {
 
-    @Inject
+    @Autowired
     protected Fragment testFragment;
 
     public Fragment getTestFragment() {

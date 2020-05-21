@@ -25,17 +25,17 @@ import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 class LocalDateTimeMacroTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private DataManager dataManager
 
     private LocalDateTimeEntity entity

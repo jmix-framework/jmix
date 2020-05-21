@@ -22,13 +22,13 @@ import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 @UiController
 @UiDescriptor("screen-with-listener.xml")
 public class ScreenWithListener extends Screen {
-    @Inject
+    @Autowired
     protected FragmentWithEvent fragmentWithEvent;
 
     public Consumer<FragmentWithEvent.HelloEvent> handler;

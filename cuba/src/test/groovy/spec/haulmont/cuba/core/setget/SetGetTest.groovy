@@ -23,10 +23,10 @@ import io.jmix.core.Metadata
 import io.jmix.data.entity.StandardEntity
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class SetGetTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Metadata metadata
 
     private SetGetEntity<String> setGetEntity

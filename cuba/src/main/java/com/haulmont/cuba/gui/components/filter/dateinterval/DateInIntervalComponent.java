@@ -32,7 +32,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 import org.springframework.context.annotation.Scope;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,13 +44,13 @@ import java.util.List;
 @Scope("prototype")
 public class DateInIntervalComponent {
 
-    @Inject
+    @Autowired
     protected ComponentsFactory componentsFactory;
 
-    @Inject
+    @Autowired
     protected WindowManagerProvider windowManagerProvider;
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
 
     protected List<ValueChangeListener> valueChangeListeners = new ArrayList<>();

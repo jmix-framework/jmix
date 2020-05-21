@@ -22,12 +22,12 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("screen-with-timer.xml")
 public class ScreenWithTimer extends Screen {
-    @Inject
+    @Autowired
     private Timer testTimer;
 
     private int ticksCounter = 0;

@@ -39,7 +39,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.sql.DataSource;
 import java.util.Locale;
 
@@ -50,7 +50,7 @@ import java.util.Locale;
 @PropertySource("classpath:/com/haulmont/cuba/core/test-app.properties")
 public class WebTestConfiguration {
 
-    @Inject
+    @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
     protected VaadinSession vaadinSession;

@@ -27,7 +27,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import spec.haulmont.cuba.web.user.screens.UserBrowseTest;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 @SuppressWarnings({"unused"})
@@ -35,27 +35,27 @@ import java.util.Collection;
 @UiDescriptor("lookup-screen-facet-test-screen.xml")
 public class LookupScreenFacetTestScreen extends Screen {
 
-    @Inject
+    @Autowired
     public Metadata metadata;
 
-    @Inject
+    @Autowired
     public CollectionContainer<User> userDc;
 
-    @Inject
+    @Autowired
     public PickerField<User> pickerField;
-    @Inject
+    @Autowired
     public Table<User> usersTable;
-    @Inject
+    @Autowired
     public Button button;
 
-    @Inject
+    @Autowired
     public Action action;
 
-    @Inject
+    @Autowired
     public LookupScreenFacet<User, UserBrowseTest> lookupScreen;
-    @Inject
+    @Autowired
     public LookupScreenFacet<User, UserBrowseTest> tableLookupScreen;
-    @Inject
+    @Autowired
     public LookupScreenFacet<User, UserBrowseTest> fieldLookupScreen;
 
     @Subscribe

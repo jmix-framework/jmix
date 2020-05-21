@@ -21,11 +21,11 @@ import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanRepository
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class BaseViewTest extends CoreTestSpecification {
 
-    @Inject
+    @Autowired
     FetchPlanRepository viewRepository
 
     def "base view"() {

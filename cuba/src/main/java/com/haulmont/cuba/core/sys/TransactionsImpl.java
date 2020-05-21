@@ -25,23 +25,23 @@ import io.jmix.data.impl.PersistenceSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Named;
 
 @Component(Transactions.NAME)
 public class TransactionsImpl implements Transactions {
 
-    @Inject
+    @Autowired
     @Named("transactionManager")
     protected PlatformTransactionManager transactionManager;
 
-    @Inject
+    @Autowired
     protected PersistenceImpl persistence;
 
-    @Inject
+    @Autowired
     protected PersistenceSupport persistenceSupport;
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     @Override

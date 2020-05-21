@@ -19,11 +19,11 @@ package com.haulmont.cuba.gui.components.filter.edit;
 import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
 import io.jmix.ui.component.TextField;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 public class FtsConditionFrame extends ConditionFrame<FtsCondition> {
-    @Inject
+    @Autowired
     protected TextField<String> caption;
 
     @Override

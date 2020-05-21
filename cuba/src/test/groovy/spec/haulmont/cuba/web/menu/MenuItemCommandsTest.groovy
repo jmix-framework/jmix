@@ -31,12 +31,12 @@ import spec.haulmont.cuba.web.menu.commandtargets.TestRunnable
 import spec.haulmont.cuba.web.menu.commandtargets.TestWebBean
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @Ignore
 class MenuItemCommandsTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     MenuItemCommands menuCommands
 
     void setup() {

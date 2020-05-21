@@ -26,7 +26,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +42,7 @@ public class CubaTransactionListenersManager implements
 
     protected List<AfterCompleteTransactionListener> afterCompleteTxListeners;
 
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     @Override

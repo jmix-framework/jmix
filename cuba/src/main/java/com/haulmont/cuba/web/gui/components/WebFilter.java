@@ -35,7 +35,7 @@ import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -55,7 +55,7 @@ public class WebFilter extends WebAbstractComponent<com.vaadin.ui.Component> imp
     public WebFilter() {
     }
 
-    @Inject
+    @Autowired
     protected void setDelegate(FilterDelegate delegate) {
         this.delegate = delegate;
 

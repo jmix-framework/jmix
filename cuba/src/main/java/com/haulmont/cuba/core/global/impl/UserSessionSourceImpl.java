@@ -28,14 +28,14 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 import java.util.UUID;
 
 @Component(UserSessionSource.NAME)
 public class UserSessionSourceImpl implements UserSessionSource {
 
-    @Inject
+    @Autowired
     protected UserRepository userRepository;
 
     @Override

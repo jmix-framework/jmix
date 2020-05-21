@@ -34,7 +34,7 @@ import io.jmix.dynattrui.impl.AttributeValidators;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Consumer;
@@ -46,23 +46,23 @@ import static java.lang.String.format;
 public class DynamicAttributesGuiTools {
     public static final String NAME = "cuba_DynamicAttributesGuiTools";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected DynAttrMetadata dynAttrMetadata;
-    @Inject
+    @Autowired
     protected Security security;
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
-    @Inject
+    @Autowired
     protected AttributeValidators attributeValidators;
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     /**

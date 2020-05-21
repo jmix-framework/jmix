@@ -23,14 +23,14 @@ import io.jmix.core.Metadata
 import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class JoinedInheritanceTestClass extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private DataManager dataManager
 
 

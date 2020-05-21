@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
@@ -46,7 +46,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
 
     private final Logger log = LoggerFactory.getLogger(QueryImpl.class);
 
-    @Inject
+    @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
     private Class resultClass;

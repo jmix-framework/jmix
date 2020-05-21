@@ -19,17 +19,17 @@ package com.haulmont.cuba.core.config;
 
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 public class TestBeanToInjectConfig {
 
-    @Inject
+    @Autowired
     private TestConfig config;
 
     private TestConfig config2;
 
-    @Inject
+    @Autowired
     public void setConfig2(TestConfig config2) {
         this.config2 = config2;
     }

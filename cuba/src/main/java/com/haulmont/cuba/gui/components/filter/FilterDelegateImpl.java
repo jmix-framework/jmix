@@ -81,7 +81,7 @@ import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -102,42 +102,42 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected static final Logger log = LoggerFactory.getLogger(FilterDelegateImpl.class);
     protected static final String MODIFIED_INDICATOR_SYMBOL = " *";
 
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
-    @Inject
+    @Autowired
     protected UserSessionSource userSessionSource;
-    @Inject
+    @Autowired
     protected Configuration configuration;
-    @Inject
+    @Autowired
     protected Security security;
-    @Inject
+    @Autowired
     protected FilterHelper filterHelper;
-    @Inject
+    @Autowired
     protected FilterParser filterParser;
-    @Inject
+    @Autowired
     protected MaxResultsFieldHelper maxResultsFieldHelper;
     protected ScreenBuilders screenBuilders;
-    @Inject
+    @Autowired
     protected Dom4jTools dom4JTools;
 
-    @Inject
+    @Autowired
     protected DataManager dataService;
-    @Inject
+    @Autowired
     protected PersistenceManagerClient persistenceManager;
-    @Inject
+    @Autowired
     protected CubaProperties properties;
-    @Inject
+    @Autowired
     protected DynAttrMetadata dynAttrMetadata;
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     // protected FtsFilterHelper ftsFilterHelper; todo fts
@@ -237,7 +237,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         LAST
     }
 
-    @Inject
+    @Autowired
     public void setScreenBuilders(ScreenBuilders screenBuilders) {
         this.screenBuilders = screenBuilders;
     }

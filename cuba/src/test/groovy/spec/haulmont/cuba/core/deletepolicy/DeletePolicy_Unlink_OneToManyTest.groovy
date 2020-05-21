@@ -25,14 +25,14 @@ import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class DeletePolicy_Unlink_OneToManyTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private DataManager dataManager
 
     private DeletePolicy_Root root

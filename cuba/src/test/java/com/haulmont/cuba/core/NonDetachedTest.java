@@ -37,7 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,13 +46,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class NonDetachedTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
-    @Inject
+    @Autowired
     private EntityStates entityStates;
-    @Inject
+    @Autowired
     private DataManager dataManager;
 
     private User user;

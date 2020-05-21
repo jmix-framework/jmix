@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -48,15 +48,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class ViewTest {
-    @Inject
+    @Autowired
     private TimeSource timeSource;
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
-    @Inject
+    @Autowired
     private EntityStates entityStates;
-    @Inject
+    @Autowired
     private DataManager dataManager;
 
     private UUID userId;

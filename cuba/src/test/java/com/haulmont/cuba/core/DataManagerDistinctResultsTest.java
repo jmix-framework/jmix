@@ -34,7 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;
@@ -51,10 +51,10 @@ public class DataManagerDistinctResultsTest {
     public static final String DISTINCT_QUERY =
             "select distinct u from test$User u left join u.userRoles r where u.group.id = :groupId order by u.loginLowerCase";
 
-    @Inject
+    @Autowired
     private Persistence persistence;
 
-    @Inject
+    @Autowired
     private DataProperties dataProperties;
 
     private UUID groupId;

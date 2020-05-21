@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 import static org.junit.Assert.assertFalse;
@@ -36,9 +36,9 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
 
     public static String test;
 
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private EntityStates entityStates;
 
     @Override

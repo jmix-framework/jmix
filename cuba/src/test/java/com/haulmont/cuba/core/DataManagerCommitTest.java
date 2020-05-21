@@ -30,20 +30,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class DataManagerCommitTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
-    @Inject
+    @Autowired
     private DataManager dataManager;
-    @Inject
+    @Autowired
     private EntityStates entityStates;
 
     private UUID userId;

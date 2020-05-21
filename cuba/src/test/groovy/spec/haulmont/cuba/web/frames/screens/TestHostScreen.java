@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.AbstractWindow;
 
 public class TestHostScreen extends AbstractWindow {
 
-    /*@Inject
+    /*@Autowired
     protected UserBrowser userBrowse;
 
     public UserBrowser getUserBrowse() {

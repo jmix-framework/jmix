@@ -33,15 +33,15 @@ import org.eclipse.persistence.queries.FetchGroupTracker
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @Ignore
 class DataContextMergeTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     private DataComponents factory
 
-    @Inject
+    @Autowired
     private EntityStates entityStates
 
     def "merge equal instances"() throws Exception {

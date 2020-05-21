@@ -25,26 +25,26 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 
 @UiController
 @UiDescriptor("slider-screen.xml")
 public class SliderScreen extends Screen {
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     public InstanceContainer<ScheduledTask> taskDc;
-    @Inject
+    @Autowired
     protected Slider sliderDefault;
-    @Inject
+    @Autowired
     protected Slider<Double> sliderDouble;
-    @Inject
+    @Autowired
     protected Slider<Integer> sliderInt;
-    @Inject
+    @Autowired
     protected Slider<BigDecimal> sliderDecimal;
-    @Inject
+    @Autowired
     protected Slider<Long> sliderLong;
 
     @SuppressWarnings("unchecked")

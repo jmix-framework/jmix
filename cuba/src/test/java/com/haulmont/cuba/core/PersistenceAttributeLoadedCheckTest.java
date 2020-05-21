@@ -32,18 +32,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class PersistenceAttributeLoadedCheckTest {
-    @Inject
+    @Autowired
     private DataManager dataManager;
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private EntityStates entityStates;
 
     private UUID taskId;

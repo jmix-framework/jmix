@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,25 +58,25 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
 
     private static final Logger log = LoggerFactory.getLogger(ScreensLinkHandlerProcessor.class);
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected DataManager dataService;
 
-    @Inject
+    @Autowired
     protected WindowConfig windowConfig;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
-    @Inject
+    @Autowired
     protected EntityAccessExceptionHandler entityAccessExceptionHandler;
-    @Inject
+    @Autowired
     protected AccessDeniedHandler accessDeniedHandler;
-    @Inject
+    @Autowired
     protected NoSuchScreenHandler noSuchScreenHandler;
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
 
     @Override

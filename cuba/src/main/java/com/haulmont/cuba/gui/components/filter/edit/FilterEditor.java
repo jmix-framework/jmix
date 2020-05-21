@@ -46,7 +46,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,62 +63,62 @@ public class FilterEditor extends AbstractWindow {
 
     protected Filter filter;
 
-    @Inject
+    @Autowired
     protected ConditionsDs conditionsDs;
 
-    @Inject
+    @Autowired
     protected GridLayout filterPropertiesGrid;
 
-    @Inject
+    @Autowired
     protected TextField<String> filterName;
 
-    @Inject
+    @Autowired
     protected Label<String> filterNameLabel;
-    @Inject
+    @Autowired
     protected CheckBox availableForAllCb;
-    @Inject
+    @Autowired
     protected Label<String> availableForAllLabel;
-    @Inject
+    @Autowired
     protected CheckBox defaultCb;
-    @Inject
+    @Autowired
     protected Label<String> defaultLabel;
-    @Inject
+    @Autowired
     protected CheckBox globalDefaultCb;
-    @Inject
+    @Autowired
     protected Label<String> globalDefaultLabel;
-    @Inject
+    @Autowired
     protected CheckBox applyDefaultCb;
-    @Inject
+    @Autowired
     protected Label<String> applyDefaultLabel;
 
-    @Inject
+    @Autowired
     protected DynamicAttributesConditionFrame dynamicAttributesConditionFrame;
 
-    @Inject
+    @Autowired
     protected CustomConditionFrame customConditionFrame;
 
-    @Inject
+    @Autowired
     protected PropertyConditionFrame propertyConditionFrame;
 
-    @Inject
+    @Autowired
     protected GroupConditionFrame groupConditionFrame;
 
-    @Inject
+    @Autowired
     protected FtsConditionFrame ftsConditionFrame;
 
-    @Inject
+    @Autowired
     protected Tree<AbstractCondition> conditionsTree;
 
-    @Inject
+    @Autowired
     protected ThemeConstants theme;
 
-    @Inject
+    @Autowired
     protected UserSessionSource userSessionSource;
 
-    @Inject
+    @Autowired
     protected Companion companion;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     protected ConditionsTree conditions;
@@ -146,7 +146,7 @@ public class FilterEditor extends AbstractWindow {
 
     protected final List<String> componentsForHiddenOption = Arrays.asList("hiddenLabel", "hidden");
 
-    @Inject
+    @Autowired
     private DataManager dataManager;
 
     protected Set<Entity> modifiedGlobalDefaultFilters = new HashSet<>();

@@ -30,7 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -49,13 +49,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Component(ConfigStorageAPI.NAME)
 public class ConfigStorage implements ConfigStorageAPI {
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Inject
+    @Autowired
     private DataSource dataSource;
 
     protected TransactionTemplate transaction;
@@ -74,12 +74,12 @@ public class ConfigStorage implements ConfigStorageAPI {
         private static final long serialVersionUID = -3116358584797500962L;
     }
 
-    @Inject
+    @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
         transaction = new TransactionTemplate(transactionManager);
     }
 
-    @Inject
+    @Autowired
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
         clusterManager.addListener(InvalidateCacheMsg.class, new ClusterListenerAdapter<InvalidateCacheMsg>() {

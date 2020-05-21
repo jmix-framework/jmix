@@ -22,14 +22,14 @@ import io.jmix.ui.model.DataComponents
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.function.Consumer
 
 class PropertyContainerTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     private DataManager dataManager
-    @Inject
+    @Autowired
     private DataComponents factory
 
     @Ignore

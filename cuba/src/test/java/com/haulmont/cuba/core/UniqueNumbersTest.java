@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CoreTest
 public class UniqueNumbersTest {
-    @Inject
+    @Autowired
     private UniqueNumbersAPI uniqueNumbersAPI;
 
     String[] seqNames = {"t1", "t2", "t3", "t4"};

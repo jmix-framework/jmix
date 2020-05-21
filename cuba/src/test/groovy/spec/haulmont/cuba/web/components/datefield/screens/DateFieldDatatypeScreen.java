@@ -22,7 +22,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -31,15 +31,15 @@ import java.util.Date;
 @UiController
 @UiDescriptor("datefield-datatype-screen.xml")
 public class DateFieldDatatypeScreen extends Screen {
-    @Inject
+    @Autowired
     private DateField<java.sql.Date> dateField;
-    @Inject
+    @Autowired
     private DateField<Date> dateTimeField;
-    @Inject
+    @Autowired
     private DateField<LocalDate> localDateField;
-    @Inject
+    @Autowired
     private DateField<LocalDateTime> localDateTimeField;
-    @Inject
+    @Autowired
     private DateField<OffsetDateTime> offsetDateTimeField;
 
     @Subscribe

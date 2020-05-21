@@ -29,7 +29,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Named;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -41,24 +41,24 @@ public class PersistenceImpl implements Persistence {
 
     protected volatile boolean softDeletion = true;
 
-    @Inject
+    @Autowired
     private BeanLocator beanLocator;
 
-    @Inject
+    @Autowired
     protected PersistenceTools tools;
 
     protected EntityManagerFactory jpaEmf;
 
-    @Inject
+    @Autowired
     protected Transactions transactions;
 
-    @Inject
+    @Autowired
     protected DbmsSpecifics dbmsSpecifics;
 
-    @Inject
+    @Autowired
     protected Stores stores;
 
-    @Inject
+    @Autowired
     @Named("entityManagerFactory")
     public void setFactory(LocalContainerEntityManagerFactoryBean factoryBean) {
         this.jpaEmf = factoryBean.getObject();

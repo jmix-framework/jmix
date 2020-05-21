@@ -30,14 +30,14 @@ import groovy.sql.Sql
 import io.jmix.core.*
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class DataManagerTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private DataManager dataManager
-    @Inject
+    @Autowired
     private Persistence persistence
 
     User defaultUser

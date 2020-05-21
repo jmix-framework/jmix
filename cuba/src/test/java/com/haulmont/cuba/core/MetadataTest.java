@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @CoreTest
 public class MetadataTest {
 
-    @Inject
+    @Autowired
     private Metadata metadata;
-    @Inject
+    @Autowired
     private MetadataTools metadataTools;
 
     @Test

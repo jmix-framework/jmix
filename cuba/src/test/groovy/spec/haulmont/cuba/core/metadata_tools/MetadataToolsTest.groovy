@@ -29,12 +29,12 @@ import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class MetadataToolsTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     Metadata metadata
-    @Inject
+    @Autowired
     MetadataTools metadataTools
 
     def "primary key name for persistent entities"() {

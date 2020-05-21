@@ -23,14 +23,14 @@ import groovy.lang.Binding;
 import com.haulmont.cuba.core.global.Scripting;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class ScriptingTest {
 
-    @Inject
+    @Autowired
     protected Scripting scripting;
 
     @Test

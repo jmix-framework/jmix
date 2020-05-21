@@ -44,19 +44,19 @@ import io.jmix.core.security.impl.AuthenticatorImpl
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Collectors
 
 @ContextConfiguration(classes = [CoreTestConfiguration])
 class InstanceNameTest extends Specification {
 
-    @Inject
+    @Autowired
     Metadata metadata
 
-    @Inject
+    @Autowired
     InstanceNameProvider instanceNameProvider
 
-    @Inject
+    @Autowired
     AuthenticatorImpl authenticator
 
     def "test name pattern annotation"() {

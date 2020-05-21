@@ -21,12 +21,12 @@ import io.jmix.ui.model.DataComponents
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @Ignore
 class DataContextNullIdTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     private DataComponents factory
 
     def "can contain only 1 instance with null id"() {

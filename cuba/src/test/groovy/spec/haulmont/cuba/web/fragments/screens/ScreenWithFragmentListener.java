@@ -21,11 +21,11 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 public class ScreenWithFragmentListener extends Screen {
-    @Inject
+    @Autowired
     protected Fragments fragments;
 
     @Subscribe

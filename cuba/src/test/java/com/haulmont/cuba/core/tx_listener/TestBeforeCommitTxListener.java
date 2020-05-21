@@ -28,7 +28,7 @@ import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.FlushModeType;
 import java.util.Collection;
 import java.util.UUID;
@@ -42,13 +42,13 @@ public class TestBeforeCommitTxListener implements BeforeCommitTransactionListen
     public static String test;
     public static UUID createdEntityId;
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
-    @Inject
+    @Autowired
     private Persistence persistence;
 
-    @Inject
+    @Autowired
     private EntityStates entityStates;
 
     @Override

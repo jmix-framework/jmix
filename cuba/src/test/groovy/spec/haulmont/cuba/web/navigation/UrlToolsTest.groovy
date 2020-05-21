@@ -20,11 +20,11 @@ import io.jmix.ui.navigation.NavigationState
 import io.jmix.ui.navigation.UrlTools
 import spec.haulmont.cuba.web.UiScreenSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class UrlToolsTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     UrlTools urlTools
 
     def 'Empty state is returned in case of failure parsing'() {

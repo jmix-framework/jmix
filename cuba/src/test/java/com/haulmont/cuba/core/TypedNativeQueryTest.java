@@ -24,14 +24,14 @@ import com.haulmont.cuba.core.testsupport.TestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class TypedNativeQueryTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
     private UUID groupId, userId;
 

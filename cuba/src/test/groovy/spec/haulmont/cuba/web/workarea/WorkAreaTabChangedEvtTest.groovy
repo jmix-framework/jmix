@@ -22,12 +22,12 @@ import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.menu.commandtargets.TestWebBean
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @Ignore
 class WorkAreaTabChangedEvtTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     TestWebBean testWebBean
 
     def 'WorkAreaTabChangedEvent is fired when screen is opened or closed'() {

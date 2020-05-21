@@ -27,13 +27,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.core.env.Environment;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.Map;
 
 public class CubaMenuItemCommands extends MenuItemCommands {
 
-    @Inject
+    @Autowired
     protected Environment environment;
 
     protected Map<String, Object> loadParams(MenuItem item) {

@@ -22,7 +22,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -31,15 +31,15 @@ import java.util.Date;
 @UiController
 @UiDescriptor("datepicker-datatype-screen.xml")
 public class DatePickerDatatypeScreen extends Screen {
-    @Inject
+    @Autowired
     private DatePicker<java.sql.Date> datePicker;
-    @Inject
+    @Autowired
     private DatePicker<Date> dateTimePicker;
-    @Inject
+    @Autowired
     private DatePicker<LocalDate> localDatePicker;
-    @Inject
+    @Autowired
     private DatePicker<LocalDateTime> localDateTimePicker;
-    @Inject
+    @Autowired
     private DatePicker<OffsetDateTime> offsetDateTimePicker;
 
     @Subscribe

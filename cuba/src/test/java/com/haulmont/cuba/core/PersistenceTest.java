@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class PersistenceTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     private UUID userId, groupId;

@@ -25,24 +25,24 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("sanitizer-screen.xml")
 public class SanitizerScreen extends Screen {
 
-    @Inject
+    @Autowired
     public TextField<String> textField;
 
-    @Inject
+    @Autowired
     public RichTextArea richTextArea;
 
-    @Inject
+    @Autowired
     public MessageDialogFacet messageDialogFacet;
 
-    @Inject
+    @Autowired
     public OptionDialogFacet optionDialogFacet;
 
-    @Inject
+    @Autowired
     public NotificationFacet notificationFacet;
 }

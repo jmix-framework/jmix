@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,10 +41,10 @@ public class EntityLoadInfoBuilder {
 
     public static final String NAME = "cuba_EntityLoadInfoBuilder";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     /**

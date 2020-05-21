@@ -23,12 +23,12 @@ import io.jmix.core.BeanLocator;
 import io.jmix.ui.AppUI;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Deprecated
 @Component(WindowManagerProvider.NAME)
 public class WebWindowManagerProvider implements WindowManagerProvider {
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     @Override

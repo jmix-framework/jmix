@@ -22,12 +22,12 @@ import com.haulmont.cuba.core.model.primary_keys.EntityKey
 import com.haulmont.cuba.core.global.DataManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class EntityManagerTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private DataManager dataManager
 
 

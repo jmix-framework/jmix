@@ -28,7 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @CoreTest
 public class UnfetchedAttributeTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     private Group group, group1;

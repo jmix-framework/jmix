@@ -23,11 +23,11 @@ import org.springframework.context.event.ContextRefreshedEvent
 import spec.haulmont.cuba.core.CoreTestSpecification
 import com.haulmont.cuba.core.testsupport.TestAppContextLifecycleListener
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class AppContextLifecycleEventsTest extends CoreTestSpecification {
 
-    @Inject
+    @Autowired
     TestAppContextLifecycleListener listenerBean
 
     def "test"() {

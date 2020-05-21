@@ -35,7 +35,7 @@ import io.jmix.ui.component.Tree;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -46,25 +46,25 @@ import java.util.UUID;
  */
 public class AddConditionWindow extends AbstractWindow {
 
-    @Inject
+    @Autowired
     protected ConditionDescriptorsDs conditionDescriptorsDs;
 
-    @Inject
+    @Autowired
     protected TextField<String> treeFilter;
 
-    @Inject
+    @Autowired
     protected Tree tree;
 
-    @Inject
+    @Autowired
     protected Button cancelBtn;
 
-    @Inject
+    @Autowired
     protected Button selectBtn;
 
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     @Override

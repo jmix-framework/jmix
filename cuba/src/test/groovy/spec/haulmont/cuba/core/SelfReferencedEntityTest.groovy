@@ -20,12 +20,12 @@ import com.haulmont.cuba.core.model.self_reference.SelfReferencedEntity
 import com.haulmont.cuba.core.global.DataManager
 import io.jmix.core.Metadata
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class SelfReferencedEntityTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private DataManager dataManager
 
     private parent

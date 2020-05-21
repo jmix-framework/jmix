@@ -28,15 +28,15 @@ import io.jmix.data.EntityFetcher
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class EntityFetcherTest extends CoreTestSpecification {
 
-    @Inject
+    @Autowired
     private DataManager dataManager
-    @Inject
+    @Autowired
     private EntityFetcher entityFetcher
-    @Inject
+    @Autowired
     private Persistence persistence
 
     def "fetching entity with many-to-many collection containing detached instances"() {

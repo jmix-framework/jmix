@@ -26,12 +26,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 @Component(ViewRepository.NAME)
 public class ViewRepositoryImpl implements ViewRepository {
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
     @Override

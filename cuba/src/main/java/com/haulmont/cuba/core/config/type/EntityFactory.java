@@ -24,15 +24,15 @@ import com.haulmont.cuba.core.global.EntityLoadInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(TypeFactory.ENTITY_FACTORY_BEAN_NAME)
 public class EntityFactory extends TypeFactory {
 
-    @Inject
+    @Autowired
     private DataManager dataManager;
 
-    @Inject
+    @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
     @Override

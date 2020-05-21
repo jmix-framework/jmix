@@ -31,7 +31,7 @@ import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ import java.util.List;
 @UiDescriptor("address-fragment.xml")
 public class AddressFragment extends ScreenFragment {
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     public static class LoadEvent {
@@ -55,13 +55,13 @@ public class AddressFragment extends ScreenFragment {
 
     public List<LoadEvent> events = new ArrayList<>();
 
-    @Inject
+    @Autowired
     private LookupField<City> cityField;
 
-    @Inject
+    @Autowired
     public DataLoadCoordinator addressDlc;
 
-    @Inject
+    @Autowired
     public CollectionContainer<Country> countriesDc;
 
     @Subscribe(id = "countriesDc", target = Target.DATA_CONTAINER)

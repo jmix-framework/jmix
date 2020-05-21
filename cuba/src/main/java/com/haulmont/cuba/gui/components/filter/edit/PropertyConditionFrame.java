@@ -28,20 +28,20 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class PropertyConditionFrame extends ConditionFrame<PropertyCondition> {
 
-    @Inject
+    @Autowired
     protected BoxLayout operationLayout;
 
-    @Inject
+    @Autowired
     protected TextField<String> caption;
 
-    @Inject
+    @Autowired
     protected TextField property;
 
     protected Component operationComponent;

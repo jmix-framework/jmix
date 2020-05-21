@@ -21,11 +21,11 @@ import com.haulmont.cuba.web.testsupport.TestSupport
 import io.jmix.ui.model.DataComponents
 import spec.haulmont.cuba.web.UiScreenSpec
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class DataContextIdProxyTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     private DataComponents factory
 
     @SuppressWarnings("GroovyAccessibility")

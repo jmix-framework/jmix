@@ -23,12 +23,12 @@ import org.springframework.core.env.Environment
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @Ignore
 class ScreenHotDeployTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     Environment environment
 
     protected static final String SCREEN_TO_HOT_DEPLOY = '''

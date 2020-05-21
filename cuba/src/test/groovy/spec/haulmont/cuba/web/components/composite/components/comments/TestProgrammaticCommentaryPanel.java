@@ -35,7 +35,7 @@ import io.jmix.ui.component.impl.CompositeWithCaption;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.sys.ShowInfoAction;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Function;
 
 public class TestProgrammaticCommentaryPanel extends CompositeComponent<VBoxLayout> implements CompositeWithCaption {
@@ -43,11 +43,11 @@ public class TestProgrammaticCommentaryPanel extends CompositeComponent<VBoxLayo
     public static final String NAME = "testProgrammaticCommentaryPanel";
 
     /* Beans */
-    @Inject
+    @Autowired
     private MetadataTools metadataTools;
-    @Inject
+    @Autowired
     private UiComponents uiComponents;
-    @Inject
+    @Autowired
     private Messages messages;
 
     /* Nested Components */

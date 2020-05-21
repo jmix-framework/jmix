@@ -33,7 +33,7 @@ import io.jmix.ui.component.impl.CompositeWithCaption;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.sys.ShowInfoAction;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Function;
 
 @CompositeDescriptor("/spec/cuba/web/components/composite/components/comments/commentary-panel.xml")
@@ -42,7 +42,7 @@ public class TestCommentaryPanel extends CompositeComponent<VBoxLayout> implemen
     public static final String NAME = "testCommentaryPanel";
 
     /* Beans */
-    @Inject
+    @Autowired
     private MetadataTools metadataTools;
 
     /* Nested Components */

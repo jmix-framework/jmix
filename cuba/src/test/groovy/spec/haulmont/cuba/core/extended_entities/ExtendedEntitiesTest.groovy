@@ -22,10 +22,10 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass
 import io.jmix.core.impl.keyvalue.KeyValueMetaProperty
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class ExtendedEntitiesTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private ExtendedEntities extendedEntities
 
     def "KeyValueEntity cannot be extended so always return the same meta-class"() {

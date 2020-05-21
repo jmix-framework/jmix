@@ -32,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -41,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EntityListenerTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     private TestListenerBean listenerBean;

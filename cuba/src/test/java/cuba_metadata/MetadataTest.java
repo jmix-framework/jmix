@@ -21,14 +21,14 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class MetadataTest {
 
-    @Inject
+    @Autowired
     Metadata metadata;
 
     @Test

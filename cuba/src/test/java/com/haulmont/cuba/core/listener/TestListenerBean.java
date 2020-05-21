@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.Persistence;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,7 @@ public class TestListenerBean implements
         AfterUpdateEntityListener<Server>,
         AfterDeleteEntityListener<Server> {
 
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     public final List<String> events = new ArrayList<>();

@@ -22,13 +22,13 @@ import io.jmix.ui.screen.StandardEditor;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("demo_Owner.edit")
 @UiDescriptor("dlc-auto-with-fragment.xml")
 @EditedEntityContainer("ownerDc")
 public class DlcAutoWithFragmentScreen extends StandardEditor<Owner> {
 
-    @Inject
+    @Autowired
     public AddressFragment addressFragment;
 }

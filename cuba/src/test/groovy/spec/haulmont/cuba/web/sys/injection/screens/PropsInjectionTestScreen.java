@@ -20,12 +20,12 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("PropsInjectionTestScreen")
 @UiDescriptor("props-injection-test-screen.xml")
 public class PropsInjectionTestScreen extends Screen {
 
-    @Inject
+    @Autowired
     public PropsInjectionTestFragment testFragment;
 }

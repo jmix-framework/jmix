@@ -23,16 +23,16 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("message-dialog-screen.xml")
 public class MessageDialogScreen extends Screen {
 
-    @Inject
+    @Autowired
     public Action dialogAction;
-    @Inject
+    @Autowired
     public Button dialogButton;
-    @Inject
+    @Autowired
     public MessageDialogFacet messageDialog;
 }

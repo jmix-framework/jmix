@@ -28,22 +28,22 @@ import io.jmix.core.entity.EntityValues;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @Component(TransactionalDataManager.NAME)
 public class TransactionalDataManagerBean implements TransactionalDataManager {
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
-    @Inject
+    @Autowired
     protected Transactions transactions;
 
-    @Inject
+    @Autowired
     private Metadata metadata;
 
-    @Inject
+    @Autowired
     private EntityStates entityStates;
 
     @Override

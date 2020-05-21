@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.Objects;
@@ -64,11 +64,11 @@ public class EntityCacheTestClass {
     @RegisterExtension
     public TestRule testNamePrinter = new TestNamePrinter();
 
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
-    @Inject
+    @Autowired
     private MetadataTools metadataTools;
 
     private JpaCache cache;

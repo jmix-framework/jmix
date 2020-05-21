@@ -20,11 +20,11 @@ import com.haulmont.cuba.core.model.SettersEntity
 import io.jmix.core.Metadata
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class SettersTest extends CoreTestSpecification {
 
-    @Inject
+    @Autowired
     private Metadata metadata
 
     private SettersEntity settersEntity

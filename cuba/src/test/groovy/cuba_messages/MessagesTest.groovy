@@ -22,12 +22,12 @@ import test_support.cuba_messages.foo.Bar
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreTestConfiguration.class])
 class MessagesTest extends Specification {
 
-    @Inject
+    @Autowired
     Messages messages
 
     static final LOC_EN = Locale.ENGLISH

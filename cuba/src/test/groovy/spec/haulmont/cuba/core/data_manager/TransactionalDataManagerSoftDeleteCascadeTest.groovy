@@ -26,14 +26,14 @@ import com.haulmont.cuba.core.TransactionalDataManager
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class TransactionalDataManagerSoftDeleteCascadeTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     DataManager dm
-    @Inject
+    @Autowired
     TransactionalDataManager tdm
-    @Inject
+    @Autowired
     Persistence persistence
 
     void cleanup() {

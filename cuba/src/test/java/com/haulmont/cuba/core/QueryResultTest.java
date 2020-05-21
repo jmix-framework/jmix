@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -41,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @CoreTest
 @Disabled
 public class QueryResultTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private DataManager dataManager;
 
     private List<UUID> userIds = new ArrayList<>();

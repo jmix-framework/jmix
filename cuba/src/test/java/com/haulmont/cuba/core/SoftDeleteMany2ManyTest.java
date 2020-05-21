@@ -28,16 +28,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class SoftDeleteMany2ManyTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private Metadata metadata;
 
     private Many2ManyA many2ManyA, many2ManyA2, a1, a2;

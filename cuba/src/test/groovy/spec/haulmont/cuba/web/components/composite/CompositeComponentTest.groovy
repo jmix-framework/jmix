@@ -34,15 +34,15 @@ import spec.haulmont.cuba.web.components.composite.screens.CommentScreen
 import spec.haulmont.cuba.web.components.composite.screens.CompositeFieldScreen
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings("GroovyAssignabilityCheck")
 class CompositeComponentTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     LayoutLoaderConfig layoutLoaderConfig
 
-    @Inject
+    @Autowired
     ScreenBuilders screenBuilders
 
     void setup() {

@@ -30,14 +30,14 @@ import io.jmix.data.persistence.DbmsSpecifics
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class NumberIdGenerationTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private DbmsSpecifics dbmsSpecifics
-    @Inject
+    @Autowired
     private Persistence persistence
 
     private SequenceSupport sequenceSupport

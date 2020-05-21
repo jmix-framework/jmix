@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +43,7 @@ public class DataManagerTransactionalUsageTest {
     @Component("test_SaleProcessor")
     public static class SaleProcessor {
 
-        @Inject
+        @Autowired
         private TransactionalDataManager txDataManager;
 
         @Transactional
@@ -96,7 +96,7 @@ public class DataManagerTransactionalUsageTest {
     @Component("test_OrderLineChangedListener")
     public static class OrderLineChangedListener {
 
-        @Inject
+        @Autowired
         private TransactionalDataManager txDataManager;
 
         @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT) // same as simple @EventListener
@@ -147,9 +147,9 @@ public class DataManagerTransactionalUsageTest {
         }
     }
 
-    @Inject
+    @Autowired
     private DataManager dataManager;
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     @AfterEach

@@ -64,7 +64,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.TemporalType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -115,27 +115,27 @@ public class Param {
     protected Component editComponent;
     protected boolean isFoldersFilterEntitiesSet = false;
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected UserSessionSource userSessionSource;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected CubaProperties properties;
-    @Inject
+    @Autowired
     protected DataComponents dataComponents;
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
     protected ThemeConstants theme;
@@ -255,7 +255,7 @@ public class Param {
         }
     }
 
-    @Inject
+    @Autowired
     protected void setThemeConstantsManager(ThemeConstantsManager themeManager) {
         this.theme = themeManager.getConstants();
     }

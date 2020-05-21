@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.*;
@@ -42,25 +42,25 @@ public class CubaDataManager implements DataManager {
 
     private static final Logger log = LoggerFactory.getLogger(CubaDataManager.class);
 
-    @Inject
+    @Autowired
     protected io.jmix.core.DataManager delegate;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
-    @Inject
+    @Autowired
     protected CubaProperties properties;
 
-    @Inject
+    @Autowired
     protected BeanValidation beanValidation;
 
     @Nullable

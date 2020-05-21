@@ -22,7 +22,7 @@ import io.jmix.core.*;
 import io.jmix.ui.Actions;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Contains utility methods used by GUI actions.
@@ -32,16 +32,16 @@ public class GuiActionSupport {
 
     public static final String NAME = "cuba_GuiActionSupport";
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
-    @Inject
+    @Autowired
     protected DynamicAttributesGuiTools dynamicAttributesGuiTools;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
-    @Inject
+    @Autowired
     protected Actions actions;
 
     /**

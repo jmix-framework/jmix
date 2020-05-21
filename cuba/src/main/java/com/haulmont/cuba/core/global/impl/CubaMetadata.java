@@ -26,14 +26,14 @@ import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class CubaMetadata extends io.jmix.core.impl.MetadataImpl implements Metadata {
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    @Inject
+    @Autowired
     protected ViewRepository viewRepository;
 
     public CubaMetadata(MetadataLoader metadataLoader) {

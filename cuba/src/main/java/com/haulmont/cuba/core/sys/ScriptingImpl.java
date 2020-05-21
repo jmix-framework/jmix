@@ -23,14 +23,14 @@ import io.jmix.core.impl.SpringBeanLoader;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(Scripting.NAME)
 public class ScriptingImpl extends AbstractScripting {
 
     private String[] scriptEngineRoots;
 
-    @Inject
+    @Autowired
     public ScriptingImpl(Environment environment,
                          HotDeployManager hotDeployManager,
                          CoreProperties properties,

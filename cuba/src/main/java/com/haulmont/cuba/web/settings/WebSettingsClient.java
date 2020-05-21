@@ -33,7 +33,7 @@ import java.util.Optional;
 @Component(SettingsClient.NAME)
 public class WebSettingsClient implements SettingsClient {
 
-    /*@Inject todo user settings
+    /*@Autowired todo user settings
     protected UserSettingService userSettingService;*/
 
     @Override

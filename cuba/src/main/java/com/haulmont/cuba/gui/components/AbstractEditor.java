@@ -48,7 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
@@ -65,7 +65,7 @@ import java.util.Set;
 public class AbstractEditor<T extends Entity> extends AbstractWindow
         implements Window.Editor<T>, ReadOnlyAwareScreen {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     protected boolean showSaveNotification = true;

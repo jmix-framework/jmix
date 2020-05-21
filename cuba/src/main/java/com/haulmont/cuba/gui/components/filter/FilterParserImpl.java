@@ -39,13 +39,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(FilterParser.NAME)
 public class FilterParserImpl implements FilterParser {
     private static final Logger log = LoggerFactory.getLogger(FilterParser.class);
 
-    @Inject
+    @Autowired
     protected Dom4jTools dom4JTools;
 
     @Override

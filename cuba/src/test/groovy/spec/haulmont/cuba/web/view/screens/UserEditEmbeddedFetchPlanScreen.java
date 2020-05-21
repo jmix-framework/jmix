@@ -24,7 +24,7 @@ import io.jmix.ui.screen.StandardEditor;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("user-edit-embedded-fetch-plan.xml")
@@ -32,7 +32,7 @@ import javax.inject.Inject;
 @LoadDataBeforeShow
 public class UserEditEmbeddedFetchPlanScreen extends StandardEditor<User> {
 
-    @Inject
+    @Autowired
     public InstanceContainer<User> userDc;
 
 }

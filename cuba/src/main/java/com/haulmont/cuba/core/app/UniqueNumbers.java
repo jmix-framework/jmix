@@ -22,7 +22,7 @@ import io.jmix.data.Sequences;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Provides unique numbers based on database sequences.
@@ -30,7 +30,7 @@ import javax.inject.Inject;
 @Component(UniqueNumbersAPI.NAME)
 public class UniqueNumbers implements UniqueNumbersAPI {
 
-    @Inject
+    @Autowired
     protected Sequences sequences;
 
     @Override

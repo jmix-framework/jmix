@@ -25,13 +25,13 @@ import io.jmix.core.metamodel.datatype.impl.*
 import spec.haulmont.cuba.core.CoreTestSpecification
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.text.ParseException
 import java.time.*
 
 class DatatypeTest extends CoreTestSpecification {
 
-    @Inject
+    @Autowired
     private Metadata metadata
 
     private Locale savedLocale

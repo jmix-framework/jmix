@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.testsupport.TestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EntityStateTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     private UUID userId;

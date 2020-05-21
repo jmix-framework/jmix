@@ -31,16 +31,16 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 class JpaCascadeTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private Metadata metadata
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private EntityStates entityStates
-    @Inject
+    @Autowired
     private AuthenticationManager authenticationManager
 
     void setup() {

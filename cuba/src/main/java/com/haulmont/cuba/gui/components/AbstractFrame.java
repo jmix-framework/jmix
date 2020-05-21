@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -54,11 +54,11 @@ public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrappe
     private Component parent;
     private DsContext dsContext;
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     private MessageBundle messageBundle;
-    @Inject
+    @Autowired
     private WindowManager windowManager;
 
     public AbstractFrame() {

@@ -53,7 +53,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,41 +70,41 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
 
     protected static final String WHERE = " where ";
 
-    @Inject
+    @Autowired
     protected LookupField<ParamType> typeSelect;
-    @Inject
+    @Autowired
     protected LookupField<Object> entitySelect;
 
-    @Inject
+    @Autowired
     protected CheckBox inExprCb;
 
-    @Inject
+    @Autowired
     protected TextField<String> nameField;
-    @Inject
+    @Autowired
     protected TextField<String> entityParamViewField;
 
-    @Inject
+    @Autowired
     protected SourceCodeEditor joinField;
-    @Inject
+    @Autowired
     protected SourceCodeEditor whereField;
-    @Inject
+    @Autowired
     protected SourceCodeEditor entityParamWhereField;
 
-    @Inject
+    @Autowired
     protected CheckBox useUserTimeZone;
 
-    @Inject
+    @Autowired
     protected Label<String> paramViewLab;
-    @Inject
+    @Autowired
     protected Label<String> paramWhereLab;
-    @Inject
+    @Autowired
     protected Label<String> entityLab;
-    @Inject
+    @Autowired
     protected Label<String> nameLab;
-    @Inject
+    @Autowired
     protected Label<String> useUserTimeZoneLab;
 
-    @Inject
+    @Autowired
     protected UserSessionSource userSessionSource;
 
     protected boolean initializing;

@@ -33,7 +33,7 @@ import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,19 +44,19 @@ import java.util.UUID;
  */
 public class FilterSelectWindow extends AbstractWindow {
 
-    @Inject
+    @Autowired
     protected CollectionDatasource<FilterEntity, UUID> filterEntitiesDs;
 
-    @Inject
+    @Autowired
     protected ThemeConstantsManager themeConstantsManager;
 
-    @Inject
+    @Autowired
     protected Table<FilterEntity> filterEntitiesTable;
 
-    @Inject
+    @Autowired
     protected ComponentsFactory componentsFactory;
 
-    @Inject
+    @Autowired
     protected TextField<String> nameFilterField;
 
     protected List<FilterEntity> filterEntities;

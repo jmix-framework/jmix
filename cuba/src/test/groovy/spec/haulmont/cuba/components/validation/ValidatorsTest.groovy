@@ -27,7 +27,7 @@ import spec.haulmont.cuba.components.validation.screens.ValidatorsScreen
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.OffsetTime
@@ -36,13 +36,13 @@ import java.util.Calendar
 @SuppressWarnings("GrDeprecatedAPIUsage")
 class ValidatorsTest extends UiScreenSpec {
 
-    @Inject
+    @Autowired
     DatatypeRegistry datatypeRegistry
 
-    @Inject
+    @Autowired
     TimeSource timeSource
 
-    @Inject
+    @Autowired
     ApplicationContext applicationContext
 
     void setup() {

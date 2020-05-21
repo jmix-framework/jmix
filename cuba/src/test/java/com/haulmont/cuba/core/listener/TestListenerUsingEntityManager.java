@@ -23,14 +23,14 @@ import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 @Component("cuba_TestListenerUsingEntityManager")
 public class TestListenerUsingEntityManager
         implements BeforeInsertEntityListener<Server>, BeforeUpdateEntityListener<Server>, BeforeDeleteEntityListener<Server> {
 
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     @Override

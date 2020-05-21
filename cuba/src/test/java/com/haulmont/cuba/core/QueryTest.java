@@ -30,7 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.FlushModeType;
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class QueryTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     private UUID userId;

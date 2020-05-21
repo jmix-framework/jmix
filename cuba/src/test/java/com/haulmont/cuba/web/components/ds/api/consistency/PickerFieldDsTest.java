@@ -26,7 +26,7 @@ import io.jmix.ui.component.HasValue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Disabled
 public class PickerFieldDsTest extends AbstractComponentDsTest {
 
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
 
     @Test

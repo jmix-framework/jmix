@@ -29,7 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -40,11 +40,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CoreTest
 public class UpdateDetachedTest {
-    @Inject
+    @Autowired
     private Persistence persistence;
-    @Inject
+    @Autowired
     private EntityStates entityStates;
-    @Inject
+    @Autowired
     private DataManager dataManager;
 
     private UUID roleId, role2Id, permissionId;

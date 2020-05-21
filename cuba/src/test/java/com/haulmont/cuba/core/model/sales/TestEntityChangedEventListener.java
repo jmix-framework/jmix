@@ -32,7 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.*;
@@ -84,7 +84,7 @@ public class TestEntityChangedEventListener implements
 
     public List<EventInfo> allEvents = new ArrayList<>();
 
-    @Inject
+    @Autowired
     private Persistence persistence;
 
     public void clear() {

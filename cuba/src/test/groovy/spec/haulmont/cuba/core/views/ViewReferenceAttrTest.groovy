@@ -23,14 +23,14 @@ import com.haulmont.cuba.core.model.common.User
 import io.jmix.core.*
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class ViewReferenceAttrTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     FetchPlanRepository viewRepository
-    @Inject
+    @Autowired
     DataManager dataManager
 
     User user

@@ -27,16 +27,16 @@ import io.jmix.data.PersistenceTools
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class GetOldValueTest extends CoreTestSpecification {
-    @Inject
+    @Autowired
     private PersistenceTools persistenceTools
-    @Inject
+    @Autowired
     private Persistence persistence
-    @Inject
+    @Autowired
     private Metadata metadata
 
     private Customer customer1

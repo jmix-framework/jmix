@@ -26,18 +26,18 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @SuppressWarnings({"unused"})
 @UiController
 @UiDescriptor("screen-with-notification.xml")
 public class ScreenWithNotification extends Screen {
 
-    @Inject
+    @Autowired
     public NotificationFacet testNotification;
-    @Inject
+    @Autowired
     public Action notificationAction;
-    @Inject
+    @Autowired
     public Button notificationButton;
 
     public boolean captionProvided = false;

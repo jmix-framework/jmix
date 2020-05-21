@@ -38,7 +38,7 @@ import io.jmix.ui.widget.JmixTextField;
 import io.jmix.ui.widget.JmixTree;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,13 +49,13 @@ public class WebFilterHelper implements FilterHelper {
 
     protected static final String TREE_DRAGGED_ITEM_ID = "itemid";
 
-    @Inject
+    @Autowired
     protected Configuration configuration;
 
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     @Override

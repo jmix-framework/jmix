@@ -26,12 +26,12 @@ import spec.haulmont.cuba.web.WebSpec
 import spock.lang.Ignore
 import spock.lang.Unroll
 
-import javax.inject.Inject
+import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings("GroovyAccessibility")
 class CreateComponentTest extends WebSpec {
 
-    @Inject
+    @Autowired
     Facets facets
 
     @Ignore

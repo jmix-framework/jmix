@@ -41,33 +41,33 @@ import io.jmix.ui.filter.Op;
 import io.jmix.ui.filter.OpManager;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 import static io.jmix.ui.filter.Op.*;
 
 public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttributesCondition> {
 
-    @Inject
+    @Autowired
     protected LookupField<CategoryDefinition> categoryLookup;
-    @Inject
+    @Autowired
     protected LookupField<AttributeDefinition> attributeLookup;
-    @Inject
+    @Autowired
     protected LookupField<Op> operationLookup;
-    @Inject
+    @Autowired
     protected Label<String> categoryLabel;
-    @Inject
+    @Autowired
     protected TextField<String> caption;
 
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Inject
+    @Autowired
     protected MsgBundleTools msgBundleTools;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected DynAttrMetadata dynAttrMetadata;
-    @Inject
+    @Autowired
     protected OpManager opManager;
 
     @Override

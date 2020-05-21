@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
  * the DataSupplier in {@code dataSupplier} attribute of the {@code window} element.</p>
  *
  * <p>DataSupplier implementation can be injected to the screen controller by defining a field of {@code DataSupplier}
- * type annotated with {@code @Inject}.</p>
+ * type annotated with {@code @Autowired}.</p>
  *
  */
 public interface DataSupplier extends DataManager /*, todo vm DataService /* for backward compatibility */ {

@@ -29,7 +29,7 @@ import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 
 /**
@@ -38,19 +38,19 @@ import java.util.Arrays;
 @Component("jmix_RestControllerUtils")
 public class RestControllerUtils {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected Security security;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected RestJsonTransformations restJsonTransformations;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
     /**

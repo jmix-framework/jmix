@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * REST controller that is used for getting REST API version
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 @RequestMapping(path = "/rest/version")
 public class VersionController {
 
-    @Inject
+    @Autowired
     protected VersionControllerManager versionControllerManager;
 
     @GetMapping

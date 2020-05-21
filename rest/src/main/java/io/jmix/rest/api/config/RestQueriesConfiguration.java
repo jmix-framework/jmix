@@ -31,7 +31,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -59,10 +59,10 @@ public class RestQueriesConfiguration {
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
-    @Inject
+    @Autowired
     protected Environment environment;
 
     protected List<QueryInfo> queries = new ArrayList<>();

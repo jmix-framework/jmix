@@ -29,7 +29,7 @@ import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -43,13 +43,13 @@ import java.util.*;
 @Component("jmix_RestParseUtils")
 public class RestParseUtils {
 
-    @Inject
+    @Autowired
     protected EntitySerialization entitySerializationAPI;
 
-    @Inject
+    @Autowired
     protected RestControllerUtils restControllerUtils;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     public Object toObject(Type type, String value, @Nullable String modelVersion) throws ParseException {

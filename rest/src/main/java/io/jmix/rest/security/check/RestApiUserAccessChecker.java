@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 @Component("jmix_RestApiUserAccessChecker")
 public class RestApiUserAccessChecker /*extends AbstractUserAccessChecker implements Ordered */ {
 
-//    @Inject
+//    @Autowired
 //    public RestApiUserAccessChecker(Messages messages) {
 //        super(messages);
 //    }

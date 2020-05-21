@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.WRITE_DOC_START_MARKER;
@@ -41,10 +41,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping("/rest/docs")
 public class DocumentationController {
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
-    @Inject
+    @Autowired
     protected SwaggerGenerator swaggerGenerator;
 
     @RequestMapping(value = "/swagger.yaml", method = RequestMethod.GET, produces = "application/yaml")

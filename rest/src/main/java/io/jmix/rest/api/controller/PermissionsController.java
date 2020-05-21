@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
@@ -35,7 +35,7 @@ import java.util.Collection;
 @RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class PermissionsController {
 
-    @Inject
+    @Autowired
     protected PermissionsControllerManager permissionsControllerManager;
 
     @GetMapping("/rest/permissions")

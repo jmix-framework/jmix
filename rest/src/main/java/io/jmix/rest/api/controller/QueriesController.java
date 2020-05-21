@@ -24,7 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,7 @@ import java.util.Map;
 @RequestMapping(value = "/rest/queries", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class QueriesController {
 
-    @Inject
+    @Autowired
     protected QueriesControllerManager queriesControllerManager;
 
     @GetMapping("/{entityName}/{queryName}")

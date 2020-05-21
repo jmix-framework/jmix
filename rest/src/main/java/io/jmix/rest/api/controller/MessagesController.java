@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequestMapping(value = "/rest/messages", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class MessagesController {
 
-    @Inject
+    @Autowired
     protected MessagesControllerManager messagesControllerManager;
 
     @GetMapping("/entities/{entityName}")

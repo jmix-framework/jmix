@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Map;
 
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequestMapping(value = "/rest/services")
 public class ServicesController {
 
-    @Inject
+    @Autowired
     protected ServicesControllerManager servicesControllerManager;
 
     @PostMapping("/{serviceName}/{methodName}")

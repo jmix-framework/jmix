@@ -31,7 +31,7 @@ public class VersionControllerManager {
 
     private String apiVersion;
 
-//    @Inject
+//    @Autowired
 //    protected BuildInfo buildInfo;
 
     public String getApiVersion() {

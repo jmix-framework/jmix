@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,28 +41,28 @@ public class EntitiesMetadataControllerManager {
 
     private static final Logger log = LoggerFactory.getLogger(EntitiesMetadataControllerManager.class);
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
-    @Inject
+    @Autowired
     protected RestControllerUtils restControllersUtils;
 
-    @Inject
+    @Autowired
     protected FetchPlanSerialization viewSerializationAPI;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository viewRepository;
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    @Inject
+    @Autowired
     protected ExtendedEntities extendedEntities;
 
     public MetaClassInfo getMetaClassInfo(String entityName) {

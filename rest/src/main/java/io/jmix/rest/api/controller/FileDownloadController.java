@@ -35,13 +35,13 @@ public class FileDownloadController {
 //    @Resource(name = ServerSelector.NAME)
 //    protected ServerSelector serverSelector;
 //
-//    @Inject
+//    @Autowired
 //    protected UserSessionSource userSessionSource;
 //
-//    @Inject
+//    @Autowired
 //    protected DataManager dataService;
 //
-//    @Inject
+//    @Autowired
 //    protected FileLoader fileLoader;
 //
 //    @GetMapping("/{fileDescriptorId}")

@@ -44,7 +44,7 @@ import org.springframework.security.oauth2.provider.error.WebResponseExceptionTr
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
@@ -62,11 +62,11 @@ public class LdapAuthController implements InitializingBean {
     protected LdapTemplate ldapTemplate;
     protected String ldapUserLoginField;
 
-    @Inject
+    @Autowired
     protected RestLdapProperties restLdapProperties;
-    //    @Inject
+    //    @Autowired
 //    protected OAuthTokenIssuer oAuthTokenIssuer;
-    @Inject
+    @Autowired
     protected RestProperties restProperties;
 
     protected Set<HttpMethod> allowedRequestMethods = Collections.singleton(HttpMethod.POST);

@@ -32,7 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -51,19 +51,19 @@ import java.util.stream.Collectors;
 @Component("jmix_ServicesControllerManager")
 public class ServicesControllerManager {
 
-    @Inject
+    @Autowired
     protected RestServicesConfiguration restServicesConfiguration;
 
-    @Inject
+    @Autowired
     protected EntitySerialization entitySerializationAPI;
 
-    @Inject
+    @Autowired
     protected RestParseUtils restParseUtils;
 
-    @Inject
+    @Autowired
     protected RestControllerUtils restControllerUtils;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     private static final Logger log = LoggerFactory.getLogger(ServicesControllerManager.class);

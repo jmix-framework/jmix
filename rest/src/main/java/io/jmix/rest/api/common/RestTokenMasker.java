@@ -19,14 +19,14 @@ package io.jmix.rest.api.common;
 import io.jmix.rest.property.RestProperties;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component("jmix_RestTokenMasker")
 public class RestTokenMasker {
 
     protected static final String MASK_PREFIX = "***";
 
-    @Inject
+    @Autowired
     protected RestProperties restProperties;
 
     /**

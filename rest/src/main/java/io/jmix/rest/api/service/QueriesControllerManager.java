@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;
@@ -47,31 +47,31 @@ import java.util.*;
 @Component("jmix_QueriesControllerManager")
 public class QueriesControllerManager {
 
-    @Inject
+    @Autowired
     protected RestQueriesConfiguration restQueriesConfiguration;
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected EntitySerialization entitySerializationAPI;
 
-    @Inject
+    @Autowired
     protected Security security;
 
-    @Inject
+    @Autowired
     protected RestControllerUtils restControllerUtils;
 
-//    @Inject
+//    @Autowired
 //    protected PersistenceManagerClient persistenceManagerClient;
 
-    @Inject
+    @Autowired
     protected RestParseUtils restParseUtils;
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     public String executeQueryGet(String entityName,

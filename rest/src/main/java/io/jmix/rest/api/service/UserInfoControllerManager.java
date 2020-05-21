@@ -22,7 +22,7 @@ import io.jmix.rest.api.controller.UserInfoController;
 import io.jmix.rest.api.service.filter.data.UserInfo;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Class that is used by the {@link UserInfoController} for getting an information
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 @Component("jmix_UserInfoControllerManager")
 public class UserInfoControllerManager {
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     public UserInfo getUserInfo() {

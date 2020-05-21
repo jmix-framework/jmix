@@ -30,7 +30,7 @@ public class PermissionsControllerManager {
 
 
     //todo RolesService
-//    @Inject
+//    @Autowired
 //    private RolesService rolesService;
 
 //    public Collection<PermissionInfo> getPermissionInfos() {

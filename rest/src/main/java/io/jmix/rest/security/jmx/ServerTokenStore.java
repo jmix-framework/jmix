@@ -20,13 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Set;
 
 @Component(ServerTokenStoreMBean.NAME)
 public class ServerTokenStore implements ServerTokenStoreMBean {
 
-//    @Inject
+//    @Autowired
 //    protected io.jmix.rest.rest.ServerTokenStore serverTokenStore;
 
     //todo MG

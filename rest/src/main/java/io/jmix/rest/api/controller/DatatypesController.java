@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Controller that is used for getting datatypes information.
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 @RestController("jmix_DatatypesController")
 @RequestMapping(value = "/rest/metadata/datatypes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class DatatypesController {
-    @Inject
+    @Autowired
     protected DatatypesControllerManager datatypesControllerManager;
 
     @RequestMapping(method = RequestMethod.GET)

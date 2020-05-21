@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * REST API controller that is used for uploading files
@@ -38,19 +38,19 @@ public class FileUploadController {
 //    @Resource(name = ServerSelector.NAME)
 //    protected ServerSelector serverSelector;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected TimeSource timeSource;
 
-    @Inject
+    @Autowired
     protected DataManager dataService;
 
-//    @Inject
+//    @Autowired
 //    protected FileLoader fileLoader;
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
     protected static final String FILE_UPLOAD_PERMISSION_NAME = "cuba.restApi.fileUpload.enabled";

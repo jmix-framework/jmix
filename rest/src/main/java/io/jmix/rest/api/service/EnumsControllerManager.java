@@ -25,16 +25,16 @@ import io.jmix.rest.api.service.filter.data.EnumValueInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component("jmix_EnumsControllerManager")
 public class EnumsControllerManager {
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
     public List<EnumInfo> getAllEnumInfos() {

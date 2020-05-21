@@ -25,7 +25,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Map;
@@ -36,10 +36,10 @@ import java.util.Map;
 @Component("jmix_RestAuthUtils")
 public class RestAuthUtils {
 
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
     private static final Logger log = LoggerFactory.getLogger(RestAuthUtils.class);

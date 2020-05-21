@@ -30,7 +30,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Bean that is used for access token revocation
@@ -39,13 +39,13 @@ import javax.inject.Inject;
 public class OAuthTokenRevoker {
     protected static final Logger log = LoggerFactory.getLogger(OAuthTokenRevoker.class);
 
-    @Inject
+    @Autowired
     protected TokenStore tokenStore;
 
-    @Inject
+    @Autowired
     protected Events events;
 
-    @Inject
+    @Autowired
     protected RestTokenMasker tokenMasker;
 
     @Nullable

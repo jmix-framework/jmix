@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -66,10 +66,10 @@ public class RestServicesConfiguration {
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
-    @Inject
+    @Autowired
     protected Environment environment;
 
     /**

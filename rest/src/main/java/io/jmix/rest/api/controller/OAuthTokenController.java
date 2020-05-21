@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.security.Principal;
 
 /**
@@ -40,13 +40,13 @@ public class OAuthTokenController {
 
     private static final Logger log = LoggerFactory.getLogger(OAuthTokenController.class);
 
-    @Inject
+    @Autowired
     protected OAuthTokenRevoker oAuthTokenRevoker;
 
-    @Inject
+    @Autowired
     protected RestTokenMasker tokenMasker;
 
-    @Inject
+    @Autowired
     protected Events events;
 
     @PostMapping("/rest/oauth/revoke")

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
@@ -34,7 +34,7 @@ import java.util.Collection;
 @RestController("jmix_EntitiesMetadataController")
 @RequestMapping(value = "/rest/metadata", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class EntitiesMetadataController {
-    @Inject
+    @Autowired
     protected EntitiesMetadataControllerManager controllerManager;
 
     @GetMapping("/entities/{entityName}")

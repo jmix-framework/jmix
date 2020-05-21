@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -53,13 +53,13 @@ public class RestControllerExceptionHandler {
     protected static final Collection<Class> SERIALIZABLE_INVALID_VALUE_TYPES =
             Arrays.asList(String.class, Date.class, Number.class, Enum.class, UUID.class);
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     @ExceptionHandler(RestAPIException.class)

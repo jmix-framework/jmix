@@ -37,7 +37,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -66,14 +66,14 @@ public class RestJsonTransformations {
 
     protected Table<String, String, EntityJsonTransformer> fromVersionTransformers = HashBasedTable.create();
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
     //inject the context here because we can't use the AppContext for getting beans. REST API has its own spring context
-    @Inject
+    @Autowired
     protected WebApplicationContext restApiContext;
 
-    @Inject
+    @Autowired
     protected Environment environment;
 
     /**

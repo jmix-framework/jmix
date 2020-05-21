@@ -32,7 +32,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.*;
 
@@ -44,13 +44,13 @@ public class RestFilterParser {
 
     public static final String NAME = "jmix_RestFilterParser";
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected RestFilterOpManager restFilterOpManager;
 
     /**

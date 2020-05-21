@@ -47,7 +47,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -61,46 +61,46 @@ import java.util.*;
 @Component("jmix_EntitiesControllerManager")
 public class EntitiesControllerManager {
 
-    @Inject
+    @Autowired
     protected DataManager dataManager;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected EntitySerialization entitySerialization;
 
-    @Inject
+    @Autowired
     protected EntityImportViewBuilder entityImportViewBuilder;
 
-    @Inject
+    @Autowired
     protected EntityImportExport entityImportExport;
 
-    @Inject
+    @Autowired
     protected Security security;
 
-    @Inject
+    @Autowired
     protected BeanValidation beanValidation;
 
-    @Inject
+    @Autowired
     protected RestControllerUtils restControllerUtils;
 
-//    @Inject
+//    @Autowired
 //    protected PersistenceManagerClient persistenceManagerClient;
 
-    @Inject
+    @Autowired
     protected RestFilterParser restFilterParser;
 
-    @Inject
+    @Autowired
     protected RestProperties restProperties;
 
-    @Inject
+    @Autowired
     protected EntityStates entityStates;
 
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
     public String loadEntity(String entityName,

@@ -36,7 +36,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidGrantExcepti
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,19 +49,19 @@ public class JmixUserAuthenticationProvider implements AuthenticationProvider {
 
     private static final Logger log = LoggerFactory.getLogger(JmixUserAuthenticationProvider.class);
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
-    @Inject
+    @Autowired
     protected RestAuthUtils restAuthUtils;
 
-    @Inject
+    @Autowired
     protected RestProperties restProperties;
 
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
 
     private UserDetailsService userDetailsService;

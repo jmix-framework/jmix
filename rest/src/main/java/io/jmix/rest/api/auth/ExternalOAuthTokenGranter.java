@@ -27,7 +27,7 @@ import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 //todo fix ExternalOAuthTokenGranter?
@@ -43,11 +43,11 @@ public class ExternalOAuthTokenGranter extends AbstractTokenGranter implements O
     protected ClientDetailsService clientDetailsService;
     protected OAuth2RequestFactory requestFactory;
 
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
-    //    @Inject
+    //    @Autowired
 //    protected AuthenticationService authenticationService;
-    @Inject
+    @Autowired
     protected RestProperties restProperties;
 
     protected ExternalOAuthTokenGranter(AuthorizationServerTokenServices tokenServices,

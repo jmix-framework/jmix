@@ -24,16 +24,16 @@ public class UserInvalidationListener {
     //todo User Session
 //    private final Logger log = LoggerFactory.getLogger(UserInvalidationListener.class);
 //
-//    @Inject
+//    @Autowired
 //    protected UserManagementService userManagementService;
 //
-//    @Inject
+//    @Autowired
 //    protected ServerTokenStore serverTokenStore;
 //
-//    @Inject
+//    @Autowired
 //    protected UserSessionsImpl userSessionsAPI;
 //
-////    @Inject
+////    @Autowired
 ////    protected Persistence persistence;
 //
 //    @Order(Events.HIGHEST_CORE_PRECEDENCE + 100)

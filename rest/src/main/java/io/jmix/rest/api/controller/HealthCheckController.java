@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Provides health check URL for the blocks running REST API.
@@ -31,10 +31,10 @@ public class HealthCheckController {
 
     private static final Logger log = LoggerFactory.getLogger(HealthCheckController.class);
 
-//    @Inject
+//    @Autowired
 //    protected GlobalConfig config;
 
-    @Inject
+    @Autowired
     protected Events events;
     //todo health check
 //    @RequestMapping(value = "/health", method = RequestMethod.GET)

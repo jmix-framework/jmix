@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * REST controller that is used for getting an information about the current user
@@ -32,7 +32,7 @@ import javax.inject.Inject;
 @RequestMapping(value = "/rest/userInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserInfoController {
 
-    @Inject
+    @Autowired
     protected UserInfoControllerManager userInfoControllerManager;
 
     @GetMapping

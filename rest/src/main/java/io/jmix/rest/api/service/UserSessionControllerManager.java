@@ -23,14 +23,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
 @Component("jmix_UserSessionControllerManager")
 public class UserSessionControllerManager {
 
-    @Inject
+    @Autowired
     protected RestAuthUtils restAuthUtils;
 
     public void setSessionLocale(HttpServletRequest request) {

@@ -26,7 +26,7 @@ import io.jmix.rest.api.exception.RestAPIException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 /**
@@ -35,19 +35,19 @@ import java.util.*;
 @Component("jmix_LocalizationControllerManager")
 public class MessagesControllerManager {
 
-    @Inject
+    @Autowired
     protected RestControllerUtils restControllerUtils;
 
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected Messages messages;
 
     public Map<String, String> getLocalizationForEntity(String entityName) {

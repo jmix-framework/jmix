@@ -26,7 +26,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +39,7 @@ public class RestRequestMatcher
     protected static final String REST_BASE_PATTERN = "/rest/v2";
     protected static final String MATCH_ALL_PATTERN = "/**";
 
-    @Inject
+    @Autowired
     protected RestProperties restProperties;
 
     protected RequestMatcher matcher;

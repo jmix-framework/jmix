@@ -22,7 +22,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.Entity;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.*;
 import java.util.Date;
 import java.util.EnumSet;
@@ -34,7 +34,7 @@ import static io.jmix.rest.api.service.filter.RestFilterOp.*;
 @Component(RestFilterOpManager.NAME)
 public class RestFilterOpManagerImpl implements RestFilterOpManager {
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
     protected static final List<Class> DATE_TIME_CLASSES = ImmutableList.of(Date.class, LocalDate.class, LocalDateTime.class,

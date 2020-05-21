@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
 @Component("jmix_DatatypesControllerManager")
@@ -35,7 +35,7 @@ public class DatatypesControllerManager {
 
     private static final Logger log = LoggerFactory.getLogger(DatatypesControllerManager.class);
 
-    @Inject
+    @Autowired
     protected DatatypeRegistry datatypes;
 
     public String getDatatypesJson() {

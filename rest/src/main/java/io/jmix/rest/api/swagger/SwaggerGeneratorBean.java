@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,22 +71,22 @@ public class SwaggerGeneratorBean implements SwaggerGenerator {
 
     protected static final String ARRAY_SIGNATURE = "[]";
 
-    @Inject
+    @Autowired
     protected CoreProperties globalConfig;
 
-    @Inject
+    @Autowired
     protected Resources resources;
 
-    @Inject
+    @Autowired
     protected Metadata metadata;
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
 
-    @Inject
+    @Autowired
     protected RestQueriesConfiguration queriesConfiguration;
 
-    @Inject
+    @Autowired
     protected RestServicesConfiguration servicesConfiguration;
 
     protected Swagger swagger = null;

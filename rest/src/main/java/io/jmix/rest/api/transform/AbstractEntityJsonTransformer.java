@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.*;
 
@@ -50,7 +50,7 @@ public abstract class AbstractEntityJsonTransformer implements EntityJsonTransfo
     protected JsonTransformationDirection direction;
     protected Set<String> attributesToRemove = new HashSet<>();
 
-    @Inject
+    @Autowired
     protected RestJsonTransformations jsonTransformations;
 
     public AbstractEntityJsonTransformer(String fromEntityName,

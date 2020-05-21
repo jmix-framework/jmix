@@ -145,7 +145,7 @@ public class WebTableFieldFactory<E extends Entity> extends AbstractFieldFactory
     @Override
     protected Options getOptions(EntityValueSource valueSource, String property) {
         MetaClass metaClass = valueSource.getEntityMetaClass();
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
+        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, property);
         Table.Column columnConf = webTable.getColumnsInternal().get(metaPropertyPath);
 
         CollectionContainer collectionContainer = findOptionsContainer(columnConf);

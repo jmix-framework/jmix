@@ -2818,7 +2818,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 if (formatter != null) {
                     cellText = formatter.apply(value);
                 } else {
-                    Datatype datatype = datatypeRegistry.get(value.getClass());
+                    Datatype datatype = datatypeRegistry.find(value.getClass());
                     if (datatype != null) {
                         cellText = datatype.format(value, this.locale);
                     } else {
@@ -3478,7 +3478,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                     resultClass = aggregationInfo.getStrategy().getResultClass();
                 }
 
-                parsedValue = datatypeRegistry.getNN(resultClass).parse(value, locale);
+                parsedValue = datatypeRegistry.get(resultClass).parse(value, locale);
 
                 break;
             }

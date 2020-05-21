@@ -151,7 +151,7 @@ public class DecimalMinValidator<T> extends AbstractValidator<T> {
             constraint = getNumberConstraint((Number) value);
         } else if (value instanceof String) {
             try {
-                Datatype datatype = datatypeRegistry.getNN(BigDecimal.class);
+                Datatype datatype = datatypeRegistry.get(BigDecimal.class);
                 Locale locale = currentAuthentication.getLocale();
                 BigDecimal bigDecimal = (BigDecimal) datatype.parse((String) value, locale);
                 if (bigDecimal == null) {

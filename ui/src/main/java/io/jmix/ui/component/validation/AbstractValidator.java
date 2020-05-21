@@ -79,7 +79,7 @@ public abstract class AbstractValidator<T> implements Consumer<T> {
     }
 
     protected String formatValue(Object value) {
-        Datatype datatype = datatypeRegistry.get(value.getClass());
+        Datatype datatype = datatypeRegistry.find(value.getClass());
         if (datatype == null) {
             return value.toString();
         }

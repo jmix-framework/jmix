@@ -72,7 +72,7 @@ public abstract class WebAbstractUploadField<T extends com.vaadin.ui.AbstractFie
                 fileSizeLimitString = String.valueOf(fileSizeLimit / BYTES_IN_MEGABYTE);
             } else {
                 DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.NAME);
-                Datatype<Double> doubleDatatype = datatypeRegistry.getNN(Double.class);
+                Datatype<Double> doubleDatatype = datatypeRegistry.get(Double.class);
                 double fileSizeInMb = fileSizeLimit / ((double) BYTES_IN_MEGABYTE);
 
                 CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);

@@ -350,7 +350,7 @@ public class InputDialog extends Screen {
 
         Datatype datatype = null;
         if (parameter.getDatatypeJavaClass() != null) {
-            datatype = datatypeRegistry.get(parameter.getDatatypeJavaClass());
+            datatype = datatypeRegistry.find(parameter.getDatatypeJavaClass());
         } else if (parameter.getDatatype() != null) {
             datatype = parameter.getDatatype();
         }
@@ -360,7 +360,7 @@ public class InputDialog extends Screen {
             if (field != null) {
                 return field;
             }
-            datatype = datatypeRegistry.getNN(String.class);
+            datatype = datatypeRegistry.get(String.class);
         }
 
         if (datatype instanceof NumberDatatype

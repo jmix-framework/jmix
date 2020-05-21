@@ -468,7 +468,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     protected Table.Column loadColumn(Element element, MetaClass metaClass) {
         String id = element.attributeValue("id");
 
-        MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, id);
+        MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(metaClass, id);
 
         Table.Column column = new Table.Column(metaPropertyPath != null ? metaPropertyPath : id);
 

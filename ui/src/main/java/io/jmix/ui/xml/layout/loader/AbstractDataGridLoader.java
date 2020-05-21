@@ -503,7 +503,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
         Column column;
         if (property != null) {
-            MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, property);
+            MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(metaClass, property);
             column = component.addColumn(id, metaPropertyPath);
         } else {
             column = component.addColumn(id, null);

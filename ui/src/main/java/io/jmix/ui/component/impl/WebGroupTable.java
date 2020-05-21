@@ -278,7 +278,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupT
             List<MetaPropertyPath> properties = new ArrayList<>(elements.size());
             for (Object o : elements) {
                 String id = ((Element) o).attributeValue("id");
-                MetaPropertyPath property = metadataTools.resolveMetaPropertyPath(metaClass, id);
+                MetaPropertyPath property = metadataTools.resolveMetaPropertyPathOrNull(metaClass, id);
 
                 if (property != null) {
                     properties.add(property);

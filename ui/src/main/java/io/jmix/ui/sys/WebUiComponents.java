@@ -201,7 +201,7 @@ public class WebUiComponents implements UiComponents {
             if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class) {
                 Class actualTypeArgument = (Class) actualTypeArguments[0];
 
-                ((HasDatatype) t).setDatatype(datatypeRegistry.get(actualTypeArgument));
+                ((HasDatatype) t).setDatatype(datatypeRegistry.find(actualTypeArgument));
             }
         }
         return t;

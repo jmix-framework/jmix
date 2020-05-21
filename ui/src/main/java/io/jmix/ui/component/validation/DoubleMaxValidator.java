@@ -151,7 +151,7 @@ public class DoubleMaxValidator<T> extends AbstractValidator<T> {
             constraint = getNumberConstraint((Number) value);
         } else if (value instanceof String) {
             try {
-                Datatype datatype = datatypeRegistry.getNN(Double.class);
+                Datatype datatype = datatypeRegistry.get(Double.class);
                 Locale locale = currentAuthentication.getLocale();
                 Double num = (Double) datatype.parse((String) value, locale);
                 if (num == null) {

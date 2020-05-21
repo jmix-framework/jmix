@@ -145,10 +145,10 @@ public class WebDateField<V extends Comparable<V>>
 
         FormatStringsRegistry formatStringsRegistry = beanLocator.get(FormatStringsRegistry.NAME);
 
-        dateField.setDateFormat(formatStringsRegistry.getFormatStringsNN(locale).getDateFormat());
+        dateField.setDateFormat(formatStringsRegistry.getFormatStrings(locale).getDateFormat());
         dateField.setResolution(DateResolution.DAY);
 
-        timeField.setTimeFormat(formatStringsRegistry.getFormatStringsNN(locale).getTimeFormat());
+        timeField.setTimeFormat(formatStringsRegistry.getFormatStrings(locale).getTimeFormat());
 
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {

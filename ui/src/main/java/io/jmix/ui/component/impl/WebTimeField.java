@@ -60,7 +60,7 @@ public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, Lo
     public void afterPropertiesSet() {
         CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
         FormatStringsRegistry formatStringsRegistry = beanLocator.get(FormatStringsRegistry.NAME);
-        String timeFormat = formatStringsRegistry.getFormatStringsNN(currentAuthentication.getLocale()).getTimeFormat();
+        String timeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getTimeFormat();
         setFormat(timeFormat);
     }
 

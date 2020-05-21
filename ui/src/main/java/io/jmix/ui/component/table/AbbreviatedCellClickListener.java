@@ -53,7 +53,7 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
         Table.Column column = table.getColumn(columnId);
 
         MetaClass metaClass = metadata.getClass(item.getClass());
-        MetaProperty metaProperty = metadataTools.resolveMetaPropertyPathNN(metaClass, columnId).getMetaProperty();
+        MetaProperty metaProperty = metadataTools.resolveMetaPropertyPath(metaClass, columnId).getMetaProperty();
 
         Object value = EntityValues.getValueEx(item, columnId);
         String stringValue = metadataTools.format(value, metaProperty);

@@ -74,13 +74,7 @@ public class ContainerValueSource<E extends Entity, V> implements EntityValueSou
         MetaClass metaClass = container.getEntityMetaClass();
 
         MetadataTools metadataTools = beanLocator.get(MetadataTools.NAME);
-        MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
-        if (metaPropertyPath == null) {
-            throw new IllegalArgumentException(String.format(
-                    "Could not resolve property path '%s' in '%s'", property, metaClass));
-        }
-
-        this.metaPropertyPath = metaPropertyPath;
+        this.metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
 
         this.container.addItemChangeListener(this::containerItemChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);

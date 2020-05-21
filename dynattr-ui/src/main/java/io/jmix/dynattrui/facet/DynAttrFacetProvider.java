@@ -20,13 +20,13 @@ import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DynAttrFacetProvider.NAME)
 public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
     public static final String NAME = "dynattrui_DynamicAttributeFacetProvider";
 
-    @Inject
+    @Autowired
     protected DynAttrInitTask initTask;
 
     @Override

@@ -21,7 +21,7 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.ui.component.validation.*;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 public class AttributeValidators {
     public static final String NAME = "dynattrui_AttributeValidators";
 
-    @Inject
+    @Autowired
     protected BeanLocator beanLocator;
 
     /**

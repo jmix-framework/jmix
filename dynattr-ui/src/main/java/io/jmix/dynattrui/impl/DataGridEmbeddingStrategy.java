@@ -27,14 +27,14 @@ import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @org.springframework.stereotype.Component(DataGridEmbeddingStrategy.NAME)
 public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
     public static final String NAME = "dynattrui_DataGridEmbeddingStrategy";
 
-    @Inject
+    @Autowired
     public DataGridEmbeddingStrategy(BeanLocator beanLocator) {
         super(beanLocator);
     }

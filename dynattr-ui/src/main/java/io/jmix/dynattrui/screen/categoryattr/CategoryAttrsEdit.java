@@ -54,7 +54,7 @@ import io.jmix.ui.sys.ScreensHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -157,85 +157,85 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         FIELDS_VISIBLE_FOR_TYPES.put(ENTITY, "widthField");
     }
 
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
-    @Inject
+    @Autowired
     protected Fragments fragments;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected ScreenBuilders screenBuilders;
-    @Inject
+    @Autowired
     protected Dialogs dialogs;
-    @Inject
+    @Autowired
     protected Notifications notifications;
-    @Inject
+    @Autowired
     protected ScreensHelper screensHelper;
 
-    @Inject
+    @Autowired
     protected CheckBox lookupField;
-    @Inject
+    @Autowired
     protected DateField<Date> defaultDateField;
-    @Inject
+    @Autowired
     protected DateField<LocalDate> defaultDateWithoutTimeField;
-    @Inject
+    @Autowired
     protected Form optionalAttributeForm;
-    @Inject
+    @Autowired
     protected LinkButton constraintWizardField;
-    @Inject
+    @Autowired
     protected LookupField<AttributeType> dataTypeField;
-    @Inject
+    @Autowired
     protected LookupField<String> entityClassField;
-    @Inject
+    @Autowired
     protected LookupField<String> screenField;
-    @Inject
+    @Autowired
     protected LookupField<Boolean> defaultBooleanField;
-    @Inject
+    @Autowired
     protected LookupField<OptionsLoaderType> optionsLoaderTypeField;
-    @Inject
+    @Autowired
     protected PickerField<Entity> defaultEntityIdField;
-    @Inject
+    @Autowired
     protected SourceCodeEditor optionsLoaderScriptField;
-    @Inject
+    @Autowired
     protected SourceCodeEditor joinClauseField;
-    @Inject
+    @Autowired
     protected SourceCodeEditor whereClauseField;
-    @Inject
+    @Autowired
     protected SourceCodeEditor validationScriptField;
-    @Inject
+    @Autowired
     protected SourceCodeEditor recalculationScriptField;
-    @Inject
+    @Autowired
     protected GroupTable<ScreenAndComponent> targetScreensTable;
-    @Inject
+    @Autowired
     protected TabSheet tabSheet;
-    @Inject
+    @Autowired
     protected TextField<String> codeField;
-    @Inject
+    @Autowired
     protected TextField<BigDecimal> defaultDecimalField;
-    @Inject
+    @Autowired
     protected TextField<BigDecimal> minDecimalField;
-    @Inject
+    @Autowired
     protected TextField<BigDecimal> maxDecimalField;
-    @Inject
+    @Autowired
     protected TokenList<CategoryAttribute> dependsOnAttributesField;
 
-    @Inject
+    @Autowired
     protected CollectionContainer<ScreenAndComponent> targetScreensDc;
-    @Inject
+    @Autowired
     protected InstanceContainer<CategoryAttributeConfiguration> configurationDc;
 
     protected AttributeLocalizationFragment localizationFragment;

@@ -26,7 +26,7 @@ import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.ValueSourceProvider;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -35,7 +35,7 @@ import java.util.OptionalDouble;
 public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
     public static final String NAME = "dynattrui_FormEmbeddingStrategy";
 
-    @Inject
+    @Autowired
     public FormEmbeddingStrategy(BeanLocator beanLocator) {
         super(beanLocator);
     }

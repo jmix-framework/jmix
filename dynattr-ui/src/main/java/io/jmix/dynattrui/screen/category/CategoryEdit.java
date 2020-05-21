@@ -49,7 +49,7 @@ import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -63,27 +63,27 @@ public class CategoryEdit extends StandardEditor<Category> {
 
     protected static final String ATTRIBUTES_LOCATION_TAB = "attributesLocationTab";
 
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected Fragments fragments;
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
 
-    @Inject
+    @Autowired
     protected LookupField<MetaClass> entityTypeField;
-    @Inject
+    @Autowired
     protected VBoxLayout categoryAttrsBox;
-    @Inject
+    @Autowired
     protected TabSheet tabSheet;
 
-    @Inject
+    @Autowired
     protected InstanceContainer<Category> categoryDc;
-    @Inject
+    @Autowired
     protected CollectionContainer<CategoryAttribute> categoryAttributesDc;
 
     protected AttributeLocalizationFragment localizationFragment;

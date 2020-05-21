@@ -24,7 +24,7 @@ import io.jmix.core.LocaleResolver;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public final class MsgBundleTools {
     public static final String NAME = "dynattrui_MsgBundleTools";
 
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     public String getLocalizedValue(String msgBundle, String defaultValue) {

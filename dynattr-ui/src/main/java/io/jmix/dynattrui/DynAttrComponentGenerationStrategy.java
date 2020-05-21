@@ -38,7 +38,7 @@ import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.core.Ordered;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -59,7 +59,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected AttributeOptionsLoader optionsLoader;
     protected AttributeValidators attributeValidators;
 
-    @Inject
+    @Autowired
     public DynAttrComponentGenerationStrategy(Messages messages, UiComponents uiComponents,
                                               DynAttrMetadata dynamicModelMetadata,
                                               MsgBundleTools msgBundleTools,

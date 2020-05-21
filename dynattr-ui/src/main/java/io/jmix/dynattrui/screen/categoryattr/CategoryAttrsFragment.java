@@ -37,7 +37,7 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.BooleanUtils;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -50,32 +50,32 @@ import java.util.Set;
 @UiDescriptor("category-attrs-fragment.xml")
 public class CategoryAttrsFragment extends ScreenFragment {
 
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected CurrentAuthentication currentAuthentication;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
-    @Inject
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
 
-    @Inject
+    @Autowired
     protected CollectionPropertyContainer<CategoryAttribute> categoryAttributesDc;
-    @Inject
+    @Autowired
     protected GroupTable<CategoryAttribute> categoryAttrsTable;
-    @Inject
+    @Autowired
     protected Button moveUpBtn;
-    @Inject
+    @Autowired
     protected Button moveDownBtn;
 
     @Install(to = "categoryAttrsTable.defaultValue", subject = "columnGenerator")

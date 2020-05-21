@@ -49,7 +49,7 @@ import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import io.jmix.ui.widget.JmixGrid;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,22 +61,22 @@ public class AttributeLocationFragment extends ScreenFragment {
 
     protected static String EMPTY_CATEGORY_ATTRIBUTE_NAME = "   ";
 
-    @Inject
+    @Autowired
     protected DynAttrUiProperties properties;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MetadataTools metadataTools;
-    @Inject
+    @Autowired
     protected Messages messages;
 
-    @Inject
+    @Autowired
     protected LookupField<Integer> columnsCountLookupField;
-    @Inject
+    @Autowired
     protected HBoxLayout targetDataGridBox;
-    @Inject
+    @Autowired
     protected DataGrid<CategoryAttribute> sourceDataGrid;
 
     protected List<CategoryAttribute> sourceDataContainer;

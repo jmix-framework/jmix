@@ -49,7 +49,7 @@ import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,24 +61,24 @@ import java.util.stream.Collectors;
 @DialogMode(forceDialog = true)
 public class AttributeEnumerationScreen extends Screen {
 
-    @Inject
+    @Autowired
     protected Fragments fragments;
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MsgBundleTools msgBundleTools;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
 
-    @Inject
+    @Autowired
     protected VBoxLayout localizationBox;
-    @Inject
+    @Autowired
     protected TextField<String> valueField;
-    @Inject
+    @Autowired
     protected CollectionLoader<AttributeLocalizedEnumValue> localizedEnumValuesDl;
-    @Inject
+    @Autowired
     protected CollectionContainer<AttributeLocalizedEnumValue> localizedEnumValuesDc;
 
     protected String enumeration;

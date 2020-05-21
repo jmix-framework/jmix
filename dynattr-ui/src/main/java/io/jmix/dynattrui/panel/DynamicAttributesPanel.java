@@ -38,7 +38,7 @@ import io.jmix.ui.component.impl.CompositeDescriptor;
 import io.jmix.ui.model.InstanceContainer;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.Positive;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,15 +50,15 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
 
     public static final String DEFAULT_FIELD_WIDTH = "100%";
 
-    @Inject
+    @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected Security security;
-    @Inject
+    @Autowired
     protected DynAttrMetadata dynAttrMetadata;
 
     protected InstanceContainer<Entity> instanceContainer;

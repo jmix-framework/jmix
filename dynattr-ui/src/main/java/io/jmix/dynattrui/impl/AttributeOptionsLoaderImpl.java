@@ -29,7 +29,7 @@ import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
@@ -41,13 +41,13 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
 
     protected final Map<String, OptionsLoaderStrategy> loaderStrategies = new HashMap<>();
 
-    @Inject
+    @Autowired
     protected StoreAwareLocator storeAwareLocator;
-    @Inject
+    @Autowired
     protected DataManager dataManager;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected ScriptEvaluator scriptEvaluator;
 
     protected static final String ENTITY_QUERY_PARAM = "entity";

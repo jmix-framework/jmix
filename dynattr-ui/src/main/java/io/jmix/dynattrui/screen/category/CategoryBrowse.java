@@ -43,7 +43,7 @@ import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.BooleanUtils;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("sys$Category.browse")
 @UiDescriptor("category-browse.xml")
@@ -51,24 +51,24 @@ import javax.inject.Inject;
 @LoadDataBeforeShow
 public class CategoryBrowse extends StandardLookup<Category> {
 
-    @Inject
+    @Autowired
     protected Notifications notifications;
-    @Inject
+    @Autowired
     protected Messages messages;
-    @Inject
+    @Autowired
     protected UiComponents uiComponents;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected MessageTools messageTools;
-    @Inject
+    @Autowired
     protected DynAttrMetadata dynAttrMetadata;
 
-    @Inject
+    @Autowired
     protected CollectionContainer<CategoryAttribute> attributesDc;
-    @Inject
+    @Autowired
     protected InstanceContainer<Category> categoryDc;
-    @Inject
+    @Autowired
     protected InstanceLoader<Category> categoryDl;
 
     @Subscribe

@@ -33,7 +33,7 @@ import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -48,20 +48,20 @@ public class AttributeLocalizationFragment extends ScreenFragment {
     protected static final String NAME_PROPERTY = "name";
     protected static final String DESCRIPTION_PROPERTY = "description";
 
-    @Inject
+    @Autowired
     protected CoreProperties coreProperties;
-    @Inject
+    @Autowired
     protected MsgBundleTools msgBundleTools;
-    @Inject
+    @Autowired
     protected Metadata metadata;
-    @Inject
+    @Autowired
     protected Messages messages;
 
-    @Inject
+    @Autowired
     protected CollectionLoader<AttributeLocalizedValue> localizedValuesDl;
-    @Inject
+    @Autowired
     protected CollectionContainer<AttributeLocalizedValue> localizedValuesDc;
-    @Inject
+    @Autowired
     protected DataGrid<AttributeLocalizedValue> localizedValuesDataGrid;
 
     protected List<AttributeLocalizedValue> localizedValues = new ArrayList<>();

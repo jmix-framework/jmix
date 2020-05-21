@@ -30,14 +30,14 @@ import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.table.ContainerTableItems;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @org.springframework.stereotype.Component(TableEmbeddingStrategy.NAME)
 public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
     public static final String NAME = "dynattrui_TableEmbeddingStrategy";
 
-    @Inject
+    @Autowired
     public TableEmbeddingStrategy(BeanLocator beanLocator) {
         super(beanLocator);
     }

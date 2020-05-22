@@ -37,7 +37,7 @@ import org.springframework.core.ResolvableTypeProvider;
  * public class OrderLineChangedListener {
  *
  *     {@literal @}EventListener
- *     protected void orderLineChanged(EntityChangedEvent&lt;OrderLine, UUID&gt; event) {
+ *     protected void orderLineChanged(EntityChangedEvent&lt;OrderLine&gt; event) {
  *         AttributeChanges changes = event.getChanges();
  *         //...
  *     }
@@ -45,7 +45,6 @@ import org.springframework.core.ResolvableTypeProvider;
  * </pre>
  *
  * @param <E> entity type
- * @param <K> entity identifier type
  */
 public class EntityChangedEvent<E extends Entity> extends ApplicationEvent implements ResolvableTypeProvider {
 

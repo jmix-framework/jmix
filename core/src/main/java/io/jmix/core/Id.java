@@ -78,10 +78,10 @@ public final class Id<T extends Entity> implements Serializable {
     }
 
     /**
-     * @param id entity id
+     * @param id          entity id
      * @param entityClass entity class
-     * @param <K>    type of entity key
-     * @param <T>    entity type
+     * @param <K>         type of entity key
+     * @param <T>         entity type
      * @return Id of the passed entity
      */
     public static <T extends Entity> Id<T> of(Object id, Class<T> entityClass) {

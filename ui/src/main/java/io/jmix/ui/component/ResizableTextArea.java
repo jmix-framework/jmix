@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 
+import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
@@ -55,7 +56,7 @@ public interface ResizableTextArea<V> extends TextArea<V>, HasSettings {
      */
     ResizeDirection getResizableDirection();
 
-    class ResizeEvent {
+    class ResizeEvent extends EventObject {
         private final ResizableTextArea component;
         private final String prevWidth;
         private final String width;
@@ -63,6 +64,8 @@ public interface ResizableTextArea<V> extends TextArea<V>, HasSettings {
         private final String height;
 
         public ResizeEvent(ResizableTextArea component, String prevWidth, String width, String prevHeight, String height) {
+            super(component);
+
             this.component = component;
             this.prevWidth = prevWidth;
             this.width = width;
@@ -70,8 +73,21 @@ public interface ResizableTextArea<V> extends TextArea<V>, HasSettings {
             this.height = height;
         }
 
+        /**
+         * @return resizable text area
+         * @deprecated Use {@link #getSource()} instead.
+         */
+        @Deprecated
         public ResizableTextArea getComponent() {
             return component;
+        }
+
+        /**
+         * @return source component of event
+         */
+        @Override
+        public ResizableTextArea getSource() {
+            return (ResizableTextArea) super.getSource();
         }
 
         public String getHeight() {

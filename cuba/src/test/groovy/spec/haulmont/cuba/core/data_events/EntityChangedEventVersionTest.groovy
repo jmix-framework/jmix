@@ -25,6 +25,7 @@ import io.jmix.core.*
 import com.haulmont.cuba.core.Persistence
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
+import com.haulmont.cuba.core.entity.contracts.Id
 
 import org.springframework.beans.factory.annotation.Autowired
 

@@ -21,6 +21,7 @@ import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
+import com.haulmont.cuba.core.entity.contracts.Id;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -168,7 +169,7 @@ public interface DataManager {
      *
      * @param entityId entity id
      */
-    default <T extends Entity> void remove(Id<T> entityId) {
+    default <T extends Entity, K> void remove(Id<T, K> entityId) {
         remove(getReference(entityId));
     }
 
@@ -229,7 +230,7 @@ public interface DataManager {
      *
      * @param entityId {@link Id} of entity that needs to be loaded
      */
-    default <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId) {
+    default <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
         FluentLoader<E> loader = new FluentLoader<>(entityId.getEntityClass(), getDelegate());
         loader.joinTransaction(false);
         return loader.id(entityId.getValue());
@@ -315,7 +316,7 @@ public interface DataManager {
      * @param entityId id of an existing object
      * @see #getReference(Class, Object)
      */
-    default <T extends Entity> T getReference(Id<T> entityId) {
+    default <T extends Entity, K> T getReference(Id<T, K> entityId) {
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return getReference(entityId.getEntityClass(), entityId.getValue());
     }

@@ -26,6 +26,7 @@ import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import org.springframework.stereotype.Component;
+import com.haulmont.cuba.core.entity.contracts.Id;
 
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     }
 
     @Override
-    public <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId) {
+    public <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
         return new FluentLoader<>(entityId.getEntityClass(), dataManager.getDelegate()).id(entityId.getValue());
     }
 

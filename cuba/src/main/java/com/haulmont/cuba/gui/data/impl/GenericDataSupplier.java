@@ -23,6 +23,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.gui.data.DataSupplier;
+import com.haulmont.cuba.core.entity.contracts.Id;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,7 +83,7 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <T extends Entity> void remove(Id<T> entityId) {
+    public <T extends Entity, K> void remove(Id<T, K> entityId) {
         getDataManager().remove(entityId);
     }
 
@@ -107,7 +108,7 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId) {
+    public <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
         return getDataManager().load(entityId);
     }
 
@@ -132,7 +133,7 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <T extends Entity> T getReference(Id<T> entityId) {
+    public <T extends Entity, K> T getReference(Id<T, K> entityId) {
         return null;
     }
 

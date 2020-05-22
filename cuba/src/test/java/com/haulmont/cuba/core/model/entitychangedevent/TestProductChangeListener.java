@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.model.entitychangedevent;
 
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.TransactionalDataManager;
-import io.jmix.data.event.EntityChangedEvent;
+import com.haulmont.cuba.core.app.events.EntityChangedEvent ;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -39,7 +39,7 @@ public class TestProductChangeListener {
     private DataManager dm;
 
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
-    void beforeCommit(EntityChangedEvent<EceTestProduct> event) {
+    void beforeCommit(EntityChangedEvent<EceTestProduct, UUID> event) {
         if (event.getType() == EntityChangedEvent.Type.DELETED)
             return;
 

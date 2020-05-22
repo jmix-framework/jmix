@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.entitychangedevent.EceTestLogEntry
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestProduct
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestStock
 import com.haulmont.cuba.core.global.DataManager
-import io.jmix.core.Id
+import com.haulmont.cuba.core.entity.contracts.Id
 import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.TransactionalDataManager
 import org.springframework.jdbc.core.JdbcTemplate

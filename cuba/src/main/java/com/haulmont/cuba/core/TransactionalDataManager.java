@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.TransactionalAction;
 import io.jmix.core.Entity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
@@ -27,6 +29,7 @@ import com.haulmont.cuba.core.entity.contracts.Id;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 
 /**
@@ -269,4 +272,13 @@ public interface TransactionalDataManager {
      * </pre>
      */
     Transactions transactions();
+
+
+    /**
+     * Entry point to TransactionalAction API.
+     * @param supplier  defines how to retrieve {@link com.haulmont.cuba.core.global.CommitContext}
+     * @return          instance of {@link com.haulmont.cuba.core.global.TransactionalAction} without any additional
+     *                  actions ({@code onSuccess, onFail, beforeCommit, afterCompletion}) and with {@code joinTransaction=true}
+     */
+    TransactionalAction commitAction(Supplier<CommitContext> supplier);
 }

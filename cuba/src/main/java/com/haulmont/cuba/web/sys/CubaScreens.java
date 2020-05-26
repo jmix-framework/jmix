@@ -334,7 +334,6 @@ public final class CubaScreens extends WebScreens implements WindowManager {
         Dialogs.MessageDialogBuilder builder = ui.getDialogs().createMessageDialog()
                 .withCaption(title)
                 .withMessage(message)
-                .withType(convertMessageType(messageType.getMessageMode()))
                 .withContentMode(
                         Frame.MessageMode.isHTML(messageType.getMessageMode()) ? ContentMode.HTML : ContentMode.TEXT
                 );
@@ -356,27 +355,11 @@ public final class CubaScreens extends WebScreens implements WindowManager {
         builder.show();
     }
 
-    protected Dialogs.MessageType convertMessageType(Frame.MessageMode messageMode) {
-        switch (messageMode) {
-            case CONFIRMATION:
-            case CONFIRMATION_HTML:
-                return Dialogs.MessageType.CONFIRMATION;
-
-            case WARNING:
-            case WARNING_HTML:
-                return Dialogs.MessageType.WARNING;
-
-            default:
-                throw new UnsupportedOperationException("Unsupported message type");
-        }
-    }
-
     @Override
     public void showOptionDialog(String title, String message, Frame.MessageType messageType, Action[] actions) {
         Dialogs.OptionDialogBuilder builder = ui.getDialogs().createOptionDialog()
                 .withCaption(title)
                 .withMessage(message)
-                .withType(convertMessageType(messageType.getMessageMode()))
                 .withContentMode(
                         Frame.MessageMode.isHTML(messageType.getMessageMode()) ? ContentMode.HTML : ContentMode.TEXT
                 )

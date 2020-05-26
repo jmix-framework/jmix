@@ -57,7 +57,7 @@ public class ShowLinkAction extends BaseAction {
 
         Dialogs dialogs = AppUI.getCurrent().getDialogs();
 
-        dialogs.createMessageDialog(Dialogs.MessageType.CONFIRMATION)
+        dialogs.createMessageDialog()
                 .withCaption(messages.getMessage("table.showLinkAction"))
                 .withMessage(compileLink(ds))
                 .show();

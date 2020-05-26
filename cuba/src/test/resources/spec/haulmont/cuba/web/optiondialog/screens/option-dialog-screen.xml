@@ -22,7 +22,6 @@
         <optionDialog id="optionDialog"
                       caption="OptionDialog Facet"
                       message="OptionDialog Test"
-                      type="CONFIRMATION"
                       contentMode="HTML"
                       height="200"
                       width="350"

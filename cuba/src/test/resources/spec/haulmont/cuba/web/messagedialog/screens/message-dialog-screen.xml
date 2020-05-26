@@ -22,7 +22,6 @@
         <messageDialog id="messageDialog"
                        caption="MessageDialog Facet"
                        message="MessageDialog Test"
-                       type="WARNING"
                        contentMode="HTML"
                        height="200px"
                        width="350px"

@@ -49,7 +49,6 @@ class OptionDialogFacetTest extends UiScreenSpec {
         optionDialog.id == 'optionDialog'
         optionDialog.caption == 'OptionDialog Facet'
         optionDialog.message == 'OptionDialog Test'
-        optionDialog.type == Dialogs.MessageType.CONFIRMATION
         optionDialog.contentMode == ContentMode.HTML
         optionDialog.height == 200
         optionDialog.width == 350

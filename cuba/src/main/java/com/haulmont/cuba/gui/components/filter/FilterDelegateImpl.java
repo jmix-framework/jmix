@@ -1426,7 +1426,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                 adapter.unpinAllQuery();
                 this.layout.remove(appliedFiltersLayout);
             } else {
-                getDialogs().createOptionDialog(Dialogs.MessageType.WARNING)
+                getDialogs().createOptionDialog()
                         .withCaption(messages.getMainMessage("removeApplied.title"))
                         .withMessage(messages.getMainMessage("removeApplied.message"))
                         .withActions(new DialogAction(Type.YES).withHandler(event -> {
@@ -2837,7 +2837,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         @Override
         public void actionPerform(Component component) {
             if (filterEntity == adHocFilter) return;
-            getDialogs().createOptionDialog(Dialogs.MessageType.CONFIRMATION)
+            getDialogs().createOptionDialog()
                     .withCaption(getMainMessage("filter.removeDialogTitle"))
                     .withMessage(getMainMessage("filter.removeDialogMessage"))
                     .withActions(new DialogAction(Type.YES).withHandler(event -> {

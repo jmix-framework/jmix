@@ -49,7 +49,6 @@ class MessageDialogFacetTest extends UiScreenSpec {
         messageDialog.id == 'messageDialog'
         messageDialog.caption == 'MessageDialog Facet'
         messageDialog.message == 'MessageDialog Test'
-        messageDialog.type == Dialogs.MessageType.WARNING
         messageDialog.contentMode == ContentMode.HTML
         messageDialog.height == 200
         messageDialog.width == 350

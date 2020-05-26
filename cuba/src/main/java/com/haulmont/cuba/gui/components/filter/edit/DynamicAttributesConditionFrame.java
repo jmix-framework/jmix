@@ -135,7 +135,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
 
         String where;
         if (op == Op.NOT_EMPTY) {
-            where = "(exists (select " + cavAlias + " from sys$CategoryAttributeValue " + cavAlias +
+            where = "(exists (select " + cavAlias + " from sys_CategoryAttributeValue " + cavAlias +
                     " where " + cavAlias + ".entity." + cavEntityId + "=" +
                     "{E}" +
                     propertyPath +
@@ -157,7 +157,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                 valueFieldName = "dateValue";
 
             if (attribute.isCollection()) {
-                condition.setJoin(", sys$CategoryAttributeValue " + cavAlias + " ");
+                condition.setJoin(", sys_CategoryAttributeValue " + cavAlias + " ");
 
                 String paramStr = " ? ";
                 where = cavAlias + ".entity." + cavEntityId + "=" +
@@ -171,7 +171,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                         attributeLookup.getValue().getId() + "'";
                 where = where.replace("?", ":" + paramName);
             } else {
-                where = "(exists (select " + cavAlias + " from sys$CategoryAttributeValue " + cavAlias +
+                where = "(exists (select " + cavAlias + " from sys_CategoryAttributeValue " + cavAlias +
                         " where " + cavAlias + ".entity." + cavEntityId + "=" + "{E}" + propertyPath + ".id and "
                         + cavAlias + "." + valueFieldName + " = :" + paramName + " and " +
                         cavAlias + ".categoryAttribute.id='" + attributeLookup.getValue().getId() + "'))";

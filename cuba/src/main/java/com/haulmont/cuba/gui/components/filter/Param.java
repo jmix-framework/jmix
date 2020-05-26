@@ -972,7 +972,7 @@ public class Param {
             return createBooleanField(valueProperty);
         }
         LoadContext<CategoryAttribute> context = new LoadContext<>(CategoryAttribute.class);
-        LoadContext.Query q = context.setQueryString("select a from sys$CategoryAttribute a where a.id = :id");
+        LoadContext.Query q = context.setQueryString("select a from sys_CategoryAttribute a where a.id = :id");
         context.setView("_local");
         q.setParameter("id", categoryAttrId);
         CategoryAttribute categoryAttribute = dataManager.load(context);

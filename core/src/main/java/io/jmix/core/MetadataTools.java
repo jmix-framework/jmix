@@ -85,10 +85,6 @@ public class MetadataTools {
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
 
-    // todo dynamic attributes
-//    @Autowired
-//    protected DynamicAttributesTools dynamicAttributesTools;
-
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
@@ -97,6 +93,9 @@ public class MetadataTools {
 
     @Autowired
     protected PersistentAttributesLoadChecker persistentAttributesLoadChecker;
+
+    @Autowired(required = false)
+    protected Collection<MetaPropertyPathResolver> metaPropertyPathResolvers;
 
     protected volatile Collection<Class> enums;
 
@@ -539,7 +538,7 @@ public class MetadataTools {
 
     @Nonnull
     public Collection<MetaProperty> getInstanceNameRelatedProperties(MetaClass metaClass, boolean useOriginal) {
-        return instanceNameProvider.getInstanceNameRelatedProperties(metaClass,useOriginal);
+        return instanceNameProvider.getInstanceNameRelatedProperties(metaClass, useOriginal);
     }
 
     /**
@@ -771,10 +770,14 @@ public class MetadataTools {
         checkNotNullArgument(metaClass, "metaClass is null");
 
         MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(propertyPath);
-        // todo dynamic attributes
-//        if (metaPropertyPath == null && DynamicAttributesUtils.isDynamicAttribute(propertyPath)) {
-//            metaPropertyPath = dynamicAttributesTools.getMetaPropertyPath(metaClass, propertyPath);
-//        }
+        if (metaPropertyPath == null) {
+            for (MetaPropertyPathResolver resolver : metaPropertyPathResolvers) {
+                metaPropertyPath = resolver.resolveMetaPropertyPath(metaClass, propertyPath);
+                if (metaPropertyPath != null) {
+                    break;
+                }
+            }
+        }
         return metaPropertyPath;
     }
 

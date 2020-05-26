@@ -16,14 +16,12 @@
 
 package io.jmix.core;
 
-import java.io.Serializable;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-public interface EntityEntryExtraState extends Serializable {
-    /**
-     * Copies the extra state.
-     */
-    default void copy(EntityEntryExtraState extraState) {
-    }
+import javax.annotation.Nullable;
 
-    EntityEntry getEntityEntry();
+public interface MetaPropertyPathResolver {
+    @Nullable
+    MetaPropertyPath resolveMetaPropertyPath(MetaClass metaClass, String propertyPath);
 }

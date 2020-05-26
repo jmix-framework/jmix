@@ -36,7 +36,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     protected transient Collection<WeakReference<EntityPropertyChangeListener>> propertyChangeListeners;
     protected Entity source;
     protected Map<Class<?>, EntityEntryExtraState> extraStateMap;
-    protected List<EntityValuesProvider> entityValuesProviders;
+    protected Map<Class<?>, EntityValuesProvider> entityValuesProviders;
 
     public static final int NEW = 1;
     public static final int DETACHED = 2;
@@ -59,7 +59,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     @Override
     public <T> T getAttributeValue(@NonNull String name) {
         if (entityValuesProviders != null) {
-            for (EntityValuesProvider valuesProvider : entityValuesProviders) {
+            for (EntityValuesProvider valuesProvider : entityValuesProviders.values()) {
                 if (valuesProvider.supportAttribute(name)) {
                     return valuesProvider.getAttributeValue(name);
                 }
@@ -73,7 +73,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     public void setAttributeValue(@NonNull String name, Object value, boolean checkEquals) {
         EntityValuesProvider valuesProvider = null;
         if (entityValuesProviders != null) {
-            valuesProvider = entityValuesProviders.stream()
+            valuesProvider = entityValuesProviders.values().stream()
                     .filter(provider -> provider.supportAttribute(name))
                     .findFirst()
                     .orElse(null);
@@ -222,9 +222,9 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
         extraStateMap.put(extraState.getClass(), extraState);
         if (extraState instanceof EntityValuesProvider) {
             if (entityValuesProviders == null) {
-                entityValuesProviders = new ArrayList<>();
+                entityValuesProviders = new HashMap<>();
             }
-            entityValuesProviders.add((EntityValuesProvider) extraState);
+            entityValuesProviders.put(extraState.getClass(), (EntityValuesProvider) extraState);
         }
     }
 

@@ -69,7 +69,7 @@
                                 </validators>
                             </textField>
                             <textField id="rowsCountField" property="rowsCount">
-                                <validator class="io.jmix.ui.component.validators.IntegerValidator" minValue="1"
+                                <validator class="io.jmix.ui.component.validator.IntegerValidator" minValue="1"
                                            maxValue="40" message="msg://rowsCountField.validationMessage"/>
                             </textField>
                             <pickerField id="defaultEntityIdField"

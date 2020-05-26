@@ -780,7 +780,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     protected void showMessageDialog(String caption, String message) {
-        dialogs.createMessageDialog(Dialogs.MessageType.CONFIRMATION)
+        dialogs.createMessageDialog()
                 .withCaption(caption)
                 .withMessage(message)
                 .withContentMode(ContentMode.HTML)

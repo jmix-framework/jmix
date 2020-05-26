@@ -18,6 +18,8 @@ package io.jmix.ui.xml.layout;
 
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
+
 /**
  * Marker interface for component loaders.
  */
@@ -33,11 +35,18 @@ public interface LoaderConfig {
 
     /**
      * @param element element to load
-     *
      * @return {@link ComponentLoader} instance
      */
     @SuppressWarnings("rawtypes")
     Class<? extends ComponentLoader> getLoader(Element element);
+
+    /**
+     * @param root fragment's root element
+     * @return loader class for fragment or {@code null} if config does not support given {@code root}
+     */
+    @SuppressWarnings("rawtypes")
+    @Nullable
+    Class<? extends ComponentLoader> getFragmentLoader(Element root);
 
     /**
      * Defines the highest precedence for {@link org.springframework.core.Ordered} or

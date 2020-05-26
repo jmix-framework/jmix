@@ -110,6 +110,8 @@ public abstract class BaseLoaderConfig {
 
         loaders.put(Form.NAME, FormLoader.class);
 
+        loaders.put(Fragment.NAME, FragmentComponentLoader.class);
+
         /* Main window components */
 
         loaders.put(AppMenu.NAME, AppMenuLoader.class);

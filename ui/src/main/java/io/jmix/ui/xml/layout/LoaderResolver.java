@@ -41,4 +41,16 @@ public class LoaderResolver {
         }
         return null;
     }
+
+    @SuppressWarnings("rawtypes")
+    @Nullable
+    public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
+        for (LoaderConfig config : loaderConfigs) {
+            Class<? extends ComponentLoader> loader = config.getFragmentLoader(root);
+            if (loader != null) {
+                return loader;
+            }
+        }
+        return null;
+    }
 }

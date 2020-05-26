@@ -52,12 +52,6 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
 
     @Override
     public void loadComponent() {
-        /*
-        TODO: legacy-ui
-        if (resultComponent.getFrameOwner() instanceof AbstractFrame) {
-            getScreenViewsLoader().deployViews(element);
-        }*/
-
         ComponentContext componentContext = getComponentContext();
 
         if (componentContext.getParent() == null) {
@@ -88,22 +82,7 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
         loadResponsive(resultComponent, layoutElement);
         loadCss(resultComponent, element);
 
-        Element dataEl = element.element("data");
-        if (dataEl != null) {
-            loadScreenData(dataEl);
-        }/*
-         TODO: legacy-ui
-         else if (resultComponent.getFrameOwner() instanceof LegacyFrame) {
-            Element dsContextElement = element.element("dsContext");
-            loadDsContext(dsContextElement);
-        }
-
-        if (resultComponent.getFrameOwner() instanceof AbstractFrame) {
-            Element companionsElem = element.element("companions");
-            if (companionsElem != null) {
-                componentContext.addInjectTask(new FragmentLoaderCompanionTask(resultComponent));
-            }
-        }*/
+        loadDataElement(element);
 
         loadSubComponentsAndExpand(resultComponent, layoutElement);
         setComponentsRatio(resultComponent, layoutElement);
@@ -115,7 +94,12 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
         return beanLocator.get(ScreenViewsLoader.NAME);
     }
 
-    protected void loadScreenData(Element dataEl) {
+    protected void loadDataElement(Element element) {
+        Element dataEl = element.element("data");
+        if (dataEl == null) {
+            return;
+        }
+
         ScreenData hostScreenData = null;
         ComponentContext parent = getComponentContext().getParent();
         while (hostScreenData == null && parent != null) {
@@ -139,89 +123,6 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
 
                 resultComponent.addFacet(facet);
             }
-        }
-    }
-
-    protected void loadDsContext(@Nullable Element dsContextElement) {
-        /*
-        TODO: legacy-ui
-        DsContext dsContext = null;
-        if (resultComponent.getFrameOwner() instanceof LegacyFrame) {
-            DsContextLoader dsContextLoader;
-            DsContext parentDsContext = getComponentContext().getParent().getDsContext();
-            if (parentDsContext != null){
-                dsContextLoader = new DsContextLoader(parentDsContext.getDataSupplier());
-            } else {
-                dsContextLoader = new DsContextLoader(new GenericDataSupplier());
-            }
-
-            dsContext = dsContextLoader.loadDatasources(dsContextElement, parentDsContext,
-                    getComponentContext().getAliasesMap());
-            ((ComponentLoaderContext) context).setDsContext(dsContext);
-        }
-        if (dsContext != null) {
-            FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
-            if (frameOwner instanceof LegacyFrame) {
-                LegacyFrame frame = (LegacyFrame) frameOwner;
-                frame.setDsContext(dsContext);
-
-                for (Datasource ds : dsContext.getAll()) {
-                    if (ds instanceof DatasourceImplementation) {
-                        ((DatasourceImplementation) ds).initialized();
-                    }
-                }
-
-                dsContext.setFrameContext(resultComponent.getContext());
-            }
-        }*/
-    }
-
-    protected class FragmentLoaderCompanionTask implements InjectTask {
-        protected Fragment fragment;
-
-        public FragmentLoaderCompanionTask(Fragment fragment) {
-            this.fragment = fragment;
-        }
-
-        @Override
-        public void execute(ComponentContext context, Frame frame) {
-            /*
-            TODO: legacy-ui
-            String loggingId = context.getFullFrameId();
-            try {
-                if (fragment.getFrameOwner() instanceof AbstractFrame) {
-                    Element companionsElem = element.element("companions");
-                    if (companionsElem != null) {
-                        initCompanion(companionsElem, (AbstractFrame) fragment.getFrameOwner());
-                    }
-                }
-            } catch (Throwable e) {
-                throw new RuntimeException("Unable to init frame companion", e);
-            }*/
-        }
-
-        protected void initCompanion(Element companionsElem/*, AbstractFrame frame TODO: legacy-ui */) {
-            // todo companions
-            throw new UnsupportedOperationException();
-//            String clientTypeId = AppConfig.getClientType().toString().toLowerCase();
-//            Element element = companionsElem.element(clientTypeId);
-//            if (element != null) {
-//                String className = element.attributeValue("class");
-//                if (!StringUtils.isBlank(className)) {
-//                    Class aClass = getScripting().loadClassNN(className);
-//                    Object companion;
-//                    try {
-//                        companion = aClass.newInstance();
-//                        frame.setCompanion(companion);
-//
-//                        CompanionDependencyInjector cdi = new CompanionDependencyInjector(frame, companion);
-//                        cdi.setBeanLocator(beanLocator);
-//                        cdi.inject();
-//                    } catch (Exception e) {
-//                        throw new RuntimeException("Unable to init companion for frame", e);
-//                    }
-//                }
-//            }
         }
     }
 }

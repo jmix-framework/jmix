@@ -86,12 +86,11 @@ public class LayoutLoader {
         return initLoader(element, loaderClass);
     }
 
-    // todo fragments
-    /*protected FragmentLoader getFragmentLoader(Element element) {
-        Class<? extends ComponentLoader> loaderClass = config.getFragmentLoader();
+    protected FragmentLoader getFragmentLoader(Element rootWindowElement) {
+        Class<? extends ComponentLoader> loaderClass = loaderResolver.getFragmentLoader(rootWindowElement);
 
-        return (FragmentLoader) initLoader(element, loaderClass);
-    }*/
+        return (FragmentLoader) initLoader(rootWindowElement, loaderClass);
+    }
 
     protected WindowLoader getWindowLoader(Element element) {
         Class<? extends ComponentLoader> loaderClass = config.getWindowLoader();
@@ -135,16 +134,15 @@ public class LayoutLoader {
     }
 
     public ComponentLoader<Fragment> createFragmentContent(Fragment fragment, Element rootWindowElement) {
-        /*FragmentLoader fragmentLoader = getFragmentLoader(rootWindowElement);
+        FragmentLoader fragmentLoader = getFragmentLoader(rootWindowElement);
         fragmentLoader.setResultComponent(fragment);
 
         Element layout = rootWindowElement.element("layout");
         if (layout != null) {
             fragmentLoader.createContent(layout);
-        }*/
+        }
 
-        // return fragmentLoader;
-        throw new UnsupportedOperationException(); // todo fragments
+        return fragmentLoader;
     }
 
     public ComponentLoader<Window> createWindowContent(Window window, Element rootWindowElement) {

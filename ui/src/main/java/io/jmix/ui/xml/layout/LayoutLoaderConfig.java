@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("rawtypes")
 @Component(LayoutLoaderConfig.NAME)
 public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
@@ -45,15 +47,14 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
     }
 
     protected boolean isNotLegacyScreen(Element element) {
-        Element parent = element.getParent();
-
-        while (parent != null
-                && !"window".equals(parent.getName())) {
-            parent = parent.getParent();
+        // is screen
+        Element window = getRootElement("window", element);
+        if (window != null) {
+            return window.attribute("class") == null;
         }
-
-        return parent != null
-                && parent.attribute("class") == null;
+        // is fragment
+        return getRootElement("fragment", element) != null
+                || "fragment".equals(element.getName());
     }
 
     /**
@@ -70,9 +71,12 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
         return windowLoader;
     }
 
-    public Class<? extends ComponentLoader> getFragmentLoader() {
-        // return fragmentLoader;
-        throw new UnsupportedOperationException(); // todo fragments
+    @Override
+    public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
+        if (isNotLegacyScreen(root))
+            return fragmentLoader;
+
+        return null;
     }
 
     public Class<? extends ComponentLoader> getLoader(String name) {
@@ -89,5 +93,17 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
 
     protected void register(String tagName, Class<? extends ComponentLoader> loaderClass) {
         loaders.put(tagName, loaderClass);
+    }
+
+    @Nullable
+    protected Element getRootElement(String rootName, Element child) {
+        Element parent = child.getParent();
+
+        while (parent != null
+                && !rootName.equals(parent.getName())) {
+            parent = parent.getParent();
+        }
+
+        return parent;
     }
 }

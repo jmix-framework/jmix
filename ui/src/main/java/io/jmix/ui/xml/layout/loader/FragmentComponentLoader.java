@@ -109,7 +109,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
                 frameId = parentContext.getFullFrameId() + "." + frameId;
             }
 
-            innerContext = new ComponentLoaderContext(getComponentContext().getOptions());
+            innerContext = createInnerContext();
             innerContext.setMessagesPack(fragmentHelper.getMessagePack(windowInfo.getTemplate()));
             innerContext.setCurrentFrameId(fragmentId);
             innerContext.setFullFrameId(frameId);
@@ -135,6 +135,10 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
         createSample.stop(createScreenTimer(getMeterRegistry(), ScreenLifeCycle.CREATE, windowInfo.getId()));
 
         this.resultComponent = fragment;
+    }
+
+    protected ComponentLoaderContext createInnerContext() {
+        return new ComponentLoaderContext(getComponentContext().getOptions());
     }
 
     protected FragmentHelper getFragmentHelper() {

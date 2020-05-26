@@ -42,9 +42,9 @@ import io.jmix.ui.component.validator.DoubleValidator;
 import io.jmix.ui.component.validator.IntegerValidator;
 import io.jmix.ui.component.validator.LongValidator;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
@@ -290,7 +290,7 @@ public class RuntimePropertiesFrame extends AbstractFrame {
             MetaClass metaClass = rds.resolveCategorizedEntityClass();
             getAttributeByPropertyName(metaClass, field.getProperty())
                     .ifPresent(attribute -> {
-                        MetaProperty metaProperty = DynAttrUtils.getMetaProperty(attribute);
+                        MetaProperty metaProperty = attribute.getMetaProperty();
                         MetaPropertyPath propertyPath = new MetaPropertyPath(metaClass, metaProperty);
 
                         boolean editableFromPermissions = security.isEntityAttrUpdatePermitted(metaClass, propertyPath.toString());

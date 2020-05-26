@@ -31,7 +31,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Label;
@@ -40,8 +39,8 @@ import io.jmix.ui.component.TextField;
 import io.jmix.ui.filter.Op;
 import io.jmix.ui.filter.OpManager;
 import org.apache.commons.lang3.RandomStringUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.*;
 
 import static io.jmix.ui.filter.Op.*;
@@ -126,7 +125,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
         String operation = operationLookup.getValue().forJpql();
         Op op = operationLookup.getValue();
 
-        Class javaClass = DynAttrUtils.getMetaProperty(attribute).getJavaType();
+        Class javaClass = attribute.getMetaProperty().getJavaType();
         String propertyPath = Strings.isNullOrEmpty(condition.getPropertyPath()) ? "" : "." + condition.getPropertyPath();
         ConditionParamBuilder paramBuilder = AppBeans.get(ConditionParamBuilder.class);
         paramName = paramBuilder.createParamName(condition);
@@ -191,7 +190,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                 .setName(paramName)
                 .setJavaClass(paramJavaClass)
                 .setMetaClass(condition.getEntityMetaClass())
-                .setProperty(DynAttrUtils.getMetaProperty(attribute))
+                .setProperty(attribute.getMetaProperty())
                 .setInExpr(condition.getInExpr())
                 .setRequired(condition.getRequired())
                 .setCategoryAttrId(attribute.getId())
@@ -271,7 +270,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
     }
 
     protected void fillOperationSelect(AttributeDefinition attribute) {
-        Class clazz = DynAttrUtils.getMetaProperty(attribute).getJavaType();
+        Class clazz = attribute.getMetaProperty().getJavaType();
         EnumSet<Op> availableOps = attribute.isCollection() ?
                 EnumSet.of(CONTAINS, DOES_NOT_CONTAIN, NOT_EMPTY) : opManager.availableOps(clazz);
         List<Op> ops = new LinkedList<>(availableOps);

@@ -299,13 +299,13 @@ public class DynAttrManagerImpl implements DynAttrManager {
         List<CategoryAttributeValue> result;
         if (HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
             result = entityManager.createQuery(
-                    String.format("select v from sys$CategoryAttributeValue v where v.entity.%s in :ids and v.parent is null",
+                    String.format("select v from sys_CategoryAttributeValue v where v.entity.%s in :ids and v.parent is null",
                             referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
                     .setParameter("ids", entityIds)
                     .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                     .getResultList();
         } else {
-            result = entityManager.createQuery(String.format("select v from sys$CategoryAttributeValue v where v.entity.%s in :ids " +
+            result = entityManager.createQuery(String.format("select v from sys_CategoryAttributeValue v where v.entity.%s in :ids " +
                             "and v.categoryAttribute.categoryEntityType = :entityType and v.parent is null",
                     referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
                     .setParameter("ids", entityIds)
@@ -382,7 +382,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                         builder -> builder.addFetchPlan(FetchPlan.LOCAL).add("category"))
                 .build();
 
-        return entityManager.createQuery("select v from sys$CategoryAttributeValue v where v.id in :ids", CategoryAttributeValue.class)
+        return entityManager.createQuery("select v from sys_CategoryAttributeValue v where v.id in :ids", CategoryAttributeValue.class)
                 .setParameter("ids", ids)
                 .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                 .getResultList();

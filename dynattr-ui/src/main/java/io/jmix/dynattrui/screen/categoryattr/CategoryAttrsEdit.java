@@ -82,7 +82,7 @@ import static io.jmix.dynattr.OptionsLoaderType.SQL;
 import static java.lang.String.format;
 import static org.eclipse.persistence.jpa.jpql.parser.Expression.WHERE;
 
-@UiController("sys$CategoryAttribute.edit")
+@UiController("sys_CategoryAttribute.edit")
 @UiDescriptor("category-attrs-edit.xml")
 @LoadDataBeforeShow
 @EditedEntityContainer("categoryAttributeDc")

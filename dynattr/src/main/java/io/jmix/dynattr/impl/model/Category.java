@@ -57,10 +57,10 @@ public class Category extends StandardEntity {
     @Column(name = "LOCALE_NAMES")
     protected String localeNames;
 
-    @Transient
-    @InstanceName
-    @ModelProperty(related = "localeNames,name")
-    protected String localeName;
+//    @Transient
+//    @InstanceName
+//    @ModelProperty(related = "localeNames,name")
+//    protected String localeName;
 
     @Column(name = "SPECIAL")
     protected String special;

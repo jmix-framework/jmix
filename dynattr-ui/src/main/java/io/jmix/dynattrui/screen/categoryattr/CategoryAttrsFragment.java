@@ -46,7 +46,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Set;
 
-@UiController("sys$CategoryAttribute.fragment")
+@UiController("sys_CategoryAttribute.fragment")
 @UiDescriptor("category-attrs-fragment.xml")
 public class CategoryAttrsFragment extends ScreenFragment {
 

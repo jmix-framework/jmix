@@ -34,7 +34,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-@javax.persistence.Entity(name = "sys$CategoryAttributeValue")
+@javax.persistence.Entity(name = "sys_CategoryAttributeValue")
 @Table(name = "SYS_ATTR_VALUE")
 @SystemLevel
 public class CategoryAttributeValue extends StandardEntity {

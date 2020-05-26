@@ -21,9 +21,9 @@ import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.data.entity.BaseUuidEntity;
 
-@ModelObject(name = "sys$ScreenAndComponent")
+@ModelObject(name = "sys_TargetScreenComponent")
 @SystemLevel
-public class ScreenAndComponent extends BaseUuidEntity {
+public class TargetScreenComponent extends BaseUuidEntity {
 
     private static final long serialVersionUID = -6064270441563369464L;
 
@@ -33,10 +33,10 @@ public class ScreenAndComponent extends BaseUuidEntity {
     @ModelProperty
     protected String component;
 
-    public ScreenAndComponent() {
+    public TargetScreenComponent() {
     }
 
-    public ScreenAndComponent(String screen, String component) {
+    public TargetScreenComponent(String screen, String component) {
         this.screen = screen;
         this.component = component;
     }

@@ -34,7 +34,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.impl.model.Category;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.dynattr.impl.model.CategoryAttributeConfiguration;
-import io.jmix.dynattrui.impl.model.ScreenAndComponent;
+import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
@@ -46,15 +46,16 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.data.options.MapOptions;
+import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ScreensHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -219,7 +220,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Autowired
     protected SourceCodeEditor recalculationScriptField;
     @Autowired
-    protected GroupTable<ScreenAndComponent> targetScreensTable;
+    protected GroupTable<TargetScreenComponent> targetScreensTable;
     @Autowired
     protected TabSheet tabSheet;
     @Autowired
@@ -234,13 +235,13 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected TokenList<CategoryAttribute> dependsOnAttributesField;
 
     @Autowired
-    protected CollectionContainer<ScreenAndComponent> targetScreensDc;
+    protected CollectionContainer<TargetScreenComponent> targetScreensDc;
     @Autowired
     protected InstanceContainer<CategoryAttributeConfiguration> configurationDc;
 
     protected AttributeLocalizationFragment localizationFragment;
 
-    protected List<ScreenAndComponent> targetScreens = new ArrayList<>();
+    protected List<TargetScreenComponent> targetScreens = new ArrayList<>();
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -251,8 +252,12 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     @Subscribe
-    protected void onAfterShow(AfterShowEvent event) {
+    protected void onBeforeShow(BeforeShowEvent event) {
         initTargetScreensTable();
+    }
+
+    @Subscribe
+    protected void onAfterShow(AfterShowEvent event) {
         initCategoryAttributeConfigurationField();
         initLocalizationTab();
         initDependsOnAttributesField();
@@ -346,13 +351,13 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     @Install(to = "targetScreensDl", target = Target.DATA_LOADER)
-    protected List<ScreenAndComponent> targetScreensDlLoadDelegate(LoadContext<ScreenAndComponent> loadContext) {
+    protected List<TargetScreenComponent> targetScreensDlLoadDelegate(LoadContext<TargetScreenComponent> loadContext) {
         return targetScreens;
     }
 
     @Subscribe("targetScreensTable.create")
     protected void onTargetScreensTableCreate(Action.ActionPerformedEvent event) {
-        targetScreensDc.getMutableItems().add(metadata.create(ScreenAndComponent.class));
+        targetScreensDc.getMutableItems().add(metadata.create(TargetScreenComponent.class));
     }
 
     @Subscribe("constraintWizardField")
@@ -439,25 +444,26 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         Category category = getEditedEntity().getCategory();
         if (category != null) {
             MetaClass categorizedEntityMetaClass = metadata.findClass(getEditedEntity().getCategory().getEntityType());
-            Map<String, String> optionsMap = categorizedEntityMetaClass != null ?
+            Map<String, String> availableScreensMap = categorizedEntityMetaClass != null ?
                     new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(), true)) :
                     new HashMap<>();
 
             targetScreensTable.addGeneratedColumn(
                     "screen",
                     entity -> {
-                        LookupField<String> lookupField = uiComponents.create(LookupField.class);
-                        lookupField.setOptionsMap(optionsMap);
+                        LookupField<String> screenField = uiComponents.create(LookupField.class);
+                        screenField.setValueSource(new ContainerValueSource<>(targetScreensTable.getInstanceContainer(entity), "screen"));
+                        screenField.setOptionsMap(availableScreensMap);
                         //noinspection RedundantCast
-                        lookupField.setNewOptionHandler((Consumer<String>) caption -> {
-                            if (caption != null && !optionsMap.containsKey(caption)) {
-                                optionsMap.put(caption, caption);
-                                lookupField.setValue(caption);
+                        screenField.setNewOptionHandler((Consumer<String>) caption -> {
+                            if (caption != null && !availableScreensMap.containsKey(caption)) {
+                                availableScreensMap.put(caption, caption);
+                                screenField.setValue(caption);
                             }
                         });
-                        lookupField.setRequired(true);
-                        lookupField.setWidth("100%");
-                        return lookupField;
+                        screenField.setRequired(true);
+                        screenField.setWidth("100%");
+                        return screenField;
                     }
             );
         }
@@ -467,7 +473,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         targetScreens.clear();
         Set<String> targetScreensSet = getEditedEntity().getTargetScreensSet();
         for (String targetScreen : targetScreensSet) {
-            ScreenAndComponent screenAndComponent = metadata.create(ScreenAndComponent.class);
+            TargetScreenComponent targetScreenComponent = metadata.create(TargetScreenComponent.class);
             String screen;
             String component = null;
 
@@ -479,10 +485,10 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 screen = targetScreen;
             }
 
-            screenAndComponent.setScreen(screen);
-            screenAndComponent.setComponent(component);
+            targetScreenComponent.setScreen(screen);
+            targetScreenComponent.setComponent(component);
 
-            targetScreens.add(screenAndComponent);
+            targetScreens.add(targetScreenComponent);
         }
     }
 
@@ -935,12 +941,12 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected void preCommitTargetScreensField() {
         CategoryAttribute attribute = getEditedEntity();
         StringBuilder stringBuilder = new StringBuilder();
-        for (ScreenAndComponent screenAndComponent : targetScreensDc.getItems()) {
-            if (StringUtils.isNotBlank(screenAndComponent.getScreen())) {
-                stringBuilder.append(screenAndComponent.getScreen());
-                if (StringUtils.isNotBlank(screenAndComponent.getComponent())) {
+        for (TargetScreenComponent targetScreenComponent : targetScreensDc.getItems()) {
+            if (StringUtils.isNotBlank(targetScreenComponent.getScreen())) {
+                stringBuilder.append(targetScreenComponent.getScreen());
+                if (StringUtils.isNotBlank(targetScreenComponent.getComponent())) {
                     stringBuilder.append("#");
-                    stringBuilder.append(screenAndComponent.getComponent());
+                    stringBuilder.append(targetScreenComponent.getComponent());
                 }
                 stringBuilder.append(",");
             }

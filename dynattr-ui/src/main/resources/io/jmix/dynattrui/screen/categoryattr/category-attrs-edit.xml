@@ -32,7 +32,7 @@
             <instance id="configurationDc" property="configuration"/>
         </instance>
         <collection id="targetScreensDc"
-                    class="io.jmix.dynattrui.impl.model.ScreenAndComponent"
+                    class="io.jmix.dynattrui.impl.model.TargetScreenComponent"
                     fetchPlan="_local">
             <loader id="targetScreensDl"/>
         </collection>

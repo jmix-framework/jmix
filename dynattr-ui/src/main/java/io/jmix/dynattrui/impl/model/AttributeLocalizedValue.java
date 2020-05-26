@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.data.entity.BaseUuidEntity;
 
-@ModelObject(name = "sys$AttributeLocalizedValue")
+@ModelObject(name = "sys_AttributeLocalizedValue")
 @SystemLevel
 public class AttributeLocalizedValue extends BaseUuidEntity {
 

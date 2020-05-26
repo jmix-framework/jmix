@@ -16,14 +16,7 @@
 
 package io.jmix.dynattrui.screen.category;
 
-import io.jmix.core.CoreProperties;
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.LoadContext;
-import io.jmix.core.MessageTools;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.SaveContext;
+import io.jmix.core.*;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.impl.model.Category;
@@ -73,6 +66,8 @@ public class CategoryEdit extends StandardEditor<Category> {
     protected Fragments fragments;
     @Autowired
     protected CoreProperties coreProperties;
+    @Autowired
+    protected ExtendedEntities extendedEntities;
 
     @Autowired
     protected LookupField<MetaClass> entityTypeField;
@@ -142,8 +137,6 @@ public class CategoryEdit extends StandardEditor<Category> {
     }
 
     protected void initEntityTypeField() {
-        //final ExtendedEntities extendedEntities = metadata.getExtendedEntities();
-
         Map<String, MetaClass> options = new TreeMap<>();//the map sorts meta classes by the string key
         for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
             if (metadataTools.hasCompositePrimaryKey(metaClass) && !HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
@@ -154,7 +147,7 @@ public class CategoryEdit extends StandardEditor<Category> {
         entityTypeField.setOptionsMap(options);
 
         if (getEditedEntity().getEntityType() != null) {
-            entityTypeField.setValue(categoryDc.getEntityMetaClass());
+            entityTypeField.setValue(extendedEntities.getEffectiveMetaClass(getEditedEntity().getEntityType()));
         }
     }
 

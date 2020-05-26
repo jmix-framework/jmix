@@ -58,7 +58,7 @@ public class CommonAttributeDefinition implements AttributeDefinition {
 
         @Override
         public Set<String> getScreens() {
-            if (Strings.isNullOrEmpty(attribute.getTargetScreens())) {
+            if (!Strings.isNullOrEmpty(attribute.getTargetScreens())) {
                 return Sets.newHashSet(Splitter.on(",").omitEmptyStrings().split(attribute.getTargetScreens()));
             } else {
                 return Collections.emptySet();

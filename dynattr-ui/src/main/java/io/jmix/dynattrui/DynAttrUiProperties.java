@@ -26,9 +26,7 @@ public class DynAttrUiProperties {
 
     int dynamicAttributesPanelMaxColumnsCount;
 
-    public DynAttrUiProperties(
-            @DefaultValue("4") int dynamicAttributesPanelMaxCount
-    ) {
+    public DynAttrUiProperties(@DefaultValue("4") int dynamicAttributesPanelMaxCount) {
         this.dynamicAttributesPanelMaxColumnsCount = dynamicAttributesPanelMaxCount;
     }
 

@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-@UiController("sys$Category.edit")
+@UiController("sys_Category.edit")
 @UiDescriptor("category-edit.xml")
 @EditedEntityContainer("categoryDc")
 @LoadDataBeforeShow
@@ -120,7 +120,7 @@ public class CategoryEdit extends StandardEditor<Category> {
             LoadContext<Category> lc = new LoadContext<>(Category.class)
                     .setFetchPlan(fetchPlan);
             Category category = getEditedEntity();
-            lc.setQueryString("select c from sys$Category c where c.entityType = :entityType and not c.id = :id")
+            lc.setQueryString("select c from sys_Category c where c.entityType = :entityType and not c.id = :id")
                     .setParameter("entityType", category.getEntityType())
                     .setParameter("id", category.getId());
             List<Category> result = dataManager.loadList(lc);

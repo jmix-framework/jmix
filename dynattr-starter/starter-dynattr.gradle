@@ -1,0 +1,32 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+group = 'io.jmix.starter.dynattr'
+
+dependencies {
+    api project(':modules:core')
+    api project(':modules:dynattr')
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+}
+
+jar {
+    archivesBaseName = 'jmix-starter-dynattr'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        javaMaven(MavenPublication) {
+            artifactId = 'jmix-starter-dynattr'
+            from components.java
+        }
+    }
+}

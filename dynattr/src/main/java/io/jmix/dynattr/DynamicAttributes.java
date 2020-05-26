@@ -16,13 +16,15 @@
 
 package io.jmix.dynattr;
 
+import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DynamicAttributes {
+public class DynamicAttributes implements Serializable {
     protected final Map<String, ValueHolder> values;
 
-    public static class Changes {
+    public static class Changes implements Serializable {
         protected Set<String> created;
         protected Set<String> updated;
         protected Set<String> deleted;
@@ -62,7 +64,7 @@ public class DynamicAttributes {
         }
     }
 
-    protected static class ValueHolder {
+    protected static class ValueHolder implements Serializable {
         protected String code;
         protected Object value;
         protected State state;
@@ -111,7 +113,7 @@ public class DynamicAttributes {
                         Map.Entry::getKey, e -> new ValueHolder(e.getKey(), e.getValue())));
     }
 
-    public void setValue(String code, Object value) {
+    public void setValue(String code, @Nullable Object value) {
         ValueHolder holder = values.get(code);
         if (value == null) {
             if (holder != null) {
@@ -151,5 +153,14 @@ public class DynamicAttributes {
         }
 
         return new Changes(created, updated, deleted);
+    }
+
+    public void copy(DynamicAttributes dynamicAttributes) {
+        for (Map.Entry<String, ValueHolder> entry : dynamicAttributes.values.entrySet()) {
+            ValueHolder fromValueHolder = entry.getValue();
+            ValueHolder valueHolder = new ValueHolder(fromValueHolder.getCode(), fromValueHolder.getValue());
+            valueHolder.setState(fromValueHolder.getState());
+            this.values.put(entry.getKey(), valueHolder);
+        }
     }
 }

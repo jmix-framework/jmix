@@ -25,7 +25,7 @@ import io.jmix.core.impl.EntityInternals;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class DynamicAttributesState<K> implements EntityEntryExtraState, EntityValuesProvider {
+public class DynamicAttributesState implements EntityEntryExtraState, EntityValuesProvider {
     protected EntityEntry entityEntry;
     protected DynamicAttributes dynamicModel;
 
@@ -60,16 +60,25 @@ public class DynamicAttributesState<K> implements EntityEntryExtraState, EntityV
 
         String code = DynAttrUtils.getAttributeCodeFromProperty(name);
         Object oldValue = dynamicModel.getValue(code);
-        //todo: check sequence
-        dynamicModel.setValue(code, value);
 
-        if (value != null && !Objects.equals(value, oldValue)) {
-            EntityInternals.fireListeners(getEntityEntry().getSource(), name, oldValue, value);
+        if (!Objects.equals(value, oldValue)) {
+            dynamicModel.setValue(code, value);
+            if (value != null) {
+                EntityInternals.fireListeners(getEntityEntry().getSource(), name, oldValue, value);
+            }
         }
     }
 
     @Override
     public EntityEntry getEntityEntry() {
         return entityEntry;
+    }
+
+    @Override
+    public void copy(EntityEntryExtraState extraState) {
+        if (extraState instanceof DynamicAttributesState) {
+            this.dynamicModel = new DynamicAttributes();
+            this.dynamicModel.copy(((DynamicAttributesState) extraState).dynamicModel);
+        }
     }
 }

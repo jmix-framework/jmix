@@ -25,7 +25,6 @@ import io.jmix.core.security.Security;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.impl.model.Category;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiComponents;
@@ -36,9 +35,9 @@ import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
 import io.jmix.ui.component.impl.CompositeComponent;
 import io.jmix.ui.component.impl.CompositeDescriptor;
 import io.jmix.ui.model.InstanceContainer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.Positive;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -186,7 +185,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     }
 
     protected Component generateFieldComponent(AttributeDefinition attribute) {
-        MetaProperty metaProperty = DynAttrUtils.getMetaProperty(attribute);
+        MetaProperty metaProperty = attribute.getMetaProperty();
         ValueSource valueSource = new ContainerValueSource<>(instanceContainer, metaProperty.getName());
 
         ComponentGenerationContext componentContext =

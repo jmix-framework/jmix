@@ -27,15 +27,12 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.HasLoader;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.InstanceLoader;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
@@ -82,6 +79,8 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
             DataLoader dataLoader = ((HasLoader) container).getLoader();
             if (dataLoader instanceof InstanceLoader) {
                 ((InstanceLoader<?>) dataLoader).setLoadDynamicAttributes(true);
+            } else if (dataLoader instanceof CollectionLoader) {
+                ((CollectionLoader<?>) dataLoader).setLoadDynamicAttributes(true);
             }
         }
     }
@@ -91,13 +90,14 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
         return dynAttrMetadata.getAttributes(entityMetaClass).stream()
                 .filter(attr -> isVisibleAttribute(attr, windowId, componentId))
                 .filter(this::checkPermissions)
-                .sorted()
+                .sorted(Comparator.comparingInt(AttributeDefinition::getOrderNo))
                 .collect(Collectors.toList());
     }
 
     protected boolean isVisibleAttribute(AttributeDefinition attributeDefinition, String screen, String componentId) {
-        Set<String> screens = attributeDefinition.getConfiguration().getScreens();
-        return screens.contains(screen) || screens.contains(screen + "#" + componentId);
+        return true;
+//        Set<String> screens = attributeDefinition.getConfiguration().getScreens();
+//        return screens.contains(screen) || screens.contains(screen + "#" + componentId);
     }
 
     protected boolean checkPermissions(AttributeDefinition attributeDefinition) {

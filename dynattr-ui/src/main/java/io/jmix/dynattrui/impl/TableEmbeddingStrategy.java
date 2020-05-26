@@ -23,14 +23,12 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
-import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.table.ContainerTableItems;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
 @org.springframework.stereotype.Component(TableEmbeddingStrategy.NAME)
@@ -57,7 +55,7 @@ public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
     }
 
     protected void addAttributeColumn(Table table, AttributeDefinition attribute) {
-        MetaProperty metaProperty = DynAttrUtils.getMetaProperty(attribute);
+        MetaProperty metaProperty = attribute.getMetaProperty();
         MetaClass entityMetaClass = getEntityMetaClass(table);
 
         Table.Column column = new Table.Column(new MetaPropertyPath(entityMetaClass, metaProperty));
@@ -90,7 +88,7 @@ public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
     protected void setLoadDynamicAttributes(Component component) {
         Table table = (Table) component;
         if (table.getItems() instanceof ContainerTableItems) {
-            setLoadDynamicAttributes(((ContainerDataGridItems<?>) table.getItems()).getContainer());
+            setLoadDynamicAttributes(((ContainerTableItems<?>) table.getItems()).getContainer());
         }
     }
 

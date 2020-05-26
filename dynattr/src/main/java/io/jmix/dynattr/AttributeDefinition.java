@@ -17,6 +17,7 @@
 package io.jmix.dynattr;
 
 import io.jmix.core.Entity;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 
 import javax.annotation.Nullable;
@@ -95,6 +96,8 @@ public interface AttributeDefinition {
 
     String getCode();
 
+    MetaProperty getMetaProperty();
+
     @Nullable
     String getName();
 
@@ -119,6 +122,8 @@ public interface AttributeDefinition {
     Object getDefaultValue();
 
     boolean isDefaultDateCurrent();
+
+    int getOrderNo();
 
     @Nullable
     String getNameMsgBundle();

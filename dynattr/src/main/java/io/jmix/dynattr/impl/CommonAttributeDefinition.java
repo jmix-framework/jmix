@@ -20,6 +20,8 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import io.jmix.core.Entity;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.OptionsLoaderType;
@@ -33,6 +35,7 @@ import java.util.Set;
 public class CommonAttributeDefinition implements AttributeDefinition {
     protected final CategoryAttribute attribute;
     protected final AttributeDefinition.Configuration configuration;
+    protected final MetaProperty metaProperty;
 
     protected static class CommonAttributeConfiguration implements AttributeDefinition.Configuration {
         protected final CategoryAttribute attribute;
@@ -156,14 +159,20 @@ public class CommonAttributeDefinition implements AttributeDefinition {
         }
     }
 
-    public CommonAttributeDefinition(CategoryAttribute attribute) {
+    public CommonAttributeDefinition(CategoryAttribute attribute, MetaProperty metaProperty) {
         this.attribute = attribute;
         this.configuration = new CommonAttributeConfiguration(attribute);
+        this.metaProperty = metaProperty;
     }
 
     @Override
     public String getId() {
         return attribute.getId().toString();
+    }
+
+    @Override
+    public MetaProperty getMetaProperty() {
+        return metaProperty;
     }
 
     @Override
@@ -231,6 +240,11 @@ public class CommonAttributeDefinition implements AttributeDefinition {
     @Override
     public boolean isDefaultDateCurrent() {
         return Boolean.TRUE.equals(attribute.getDefaultDateIsCurrent());
+    }
+
+    @Override
+    public int getOrderNo() {
+        return attribute.getOrderNo() == null ? 0 : attribute.getOrderNo();
     }
 
     @Override

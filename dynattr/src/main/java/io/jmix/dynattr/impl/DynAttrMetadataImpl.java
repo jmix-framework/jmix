@@ -20,18 +20,21 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import io.jmix.core.*;
+import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.dynattr.CategoryDefinition;
-import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.*;
 import io.jmix.dynattr.impl.model.Category;
+import io.jmix.dynattr.impl.model.CategoryAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +48,8 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     protected ExtendedEntities extendedEntities;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
 
     protected volatile Cache cache;
 
@@ -109,6 +114,7 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     }
 
     protected List<CategoryDefinition> loadCategoryDefinitions() {
+        //noinspection ConstantConditions
         return storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)
                 .execute(transactionStatus -> {
                     EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
@@ -125,11 +131,39 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
                     return entityManager.createQuery("select c from sys_Category c", Category.class)
                             .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                             .getResultList().stream()
-                            .map(CommonCategoryDefinition::new)
+                            .map(this::buildCategoryDefinition)
                             .collect(Collectors.toList());
                 });
     }
 
+    protected CategoryDefinition buildCategoryDefinition(Category category) {
+        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(category.getEntityType()));
+        List<AttributeDefinition> attributes;
+        if (category.getCategoryAttrs() != null) {
+            attributes = Collections.unmodifiableList(category.getCategoryAttrs().stream()
+                    .map(attr -> new CommonAttributeDefinition(attr, buildMetaProperty(attr, metaClass)))
+                    .collect(Collectors.toList()));
+        } else {
+            attributes = Collections.emptyList();
+        }
+        return new CommonCategoryDefinition(category, attributes);
+    }
+
+    protected MetaProperty buildMetaProperty(CategoryAttribute categoryAttribute, MetaClass metaClass) {
+        String name = DynAttrUtils.getPropertyFromAttributeCode(categoryAttribute.getCode());
+
+        Class<?> javaClass;
+        Datatype<?> datatype = null;
+        MetaClass propertyMetaClass = null;
+        if (categoryAttribute.getDataType() == AttributeType.ENTITY) {
+            javaClass = ReflectionHelper.getClass(categoryAttribute.getEntityClass());
+            propertyMetaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(javaClass));
+        } else {
+            javaClass = DynAttrUtils.getDatatypeClass(categoryAttribute.getDataType());
+            datatype = datatypeRegistry.get(javaClass);
+        }
+        return new DynAttrMetaProperty(name, metaClass, javaClass, propertyMetaClass, datatype);
+    }
 
     protected class Cache {
         protected final Multimap<String, CategoryDefinition> categories;

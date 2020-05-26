@@ -36,10 +36,10 @@ import io.jmix.dynattr.impl.model.CategoryAttributeValue;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -94,7 +94,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
     @SuppressWarnings("unchecked")
     protected void doStoreValues(Entity entity) {
-        DynamicAttributesState<CategoryAttributeValue> state = (DynamicAttributesState<CategoryAttributeValue>)
+        DynamicAttributesState state = (DynamicAttributesState)
                 entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
         if (state != null && state.getDynamicAttributes() != null) {
             EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
@@ -185,7 +185,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
         if (dynAttrMetadata.getAttributes(metaClass).isEmpty() ||
                 metadataTools.hasCompositePrimaryKey(metaClass) && !HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
             for (Entity entity : entities) {
-                DynamicAttributesState<?> state = new DynamicAttributesState<>(entity.__getEntityEntry());
+                DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
                 entity.__getEntityEntry().addExtraState(state);
             }
         } else {
@@ -213,7 +213,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
             for (Entity entity : entities) {
                 Collection<CategoryAttributeValue> values = allAttributeValues.get(referenceToEntitySupport.getReferenceId(entity));
-                DynamicAttributesState<?> state = new DynamicAttributesState<>(entity.__getEntityEntry());
+                DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
                 entity.__getEntityEntry().addExtraState(state);
 
                 Map<String, Object> map = new HashMap<>();

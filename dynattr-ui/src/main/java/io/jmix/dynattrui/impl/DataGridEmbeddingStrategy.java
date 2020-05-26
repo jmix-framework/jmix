@@ -21,13 +21,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
 @org.springframework.stereotype.Component(DataGridEmbeddingStrategy.NAME)
@@ -71,7 +70,7 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void addAttributeColumn(DataGrid dataGrid, AttributeDefinition attribute) {
-        MetaProperty metaProperty = DynAttrUtils.getMetaProperty(attribute);
+        MetaProperty metaProperty = attribute.getMetaProperty();
         MetaClass metaClass = getEntityMetaClass(dataGrid);
 
         DataGrid.Column column = dataGrid.addColumn(metaProperty.getName(), new MetaPropertyPath(metaClass, metaProperty));

@@ -17,7 +17,9 @@
 
 package io.jmix.dynattr;
 
-import io.jmix.core.metamodel.model.MetaProperty;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 
 public final class DynAttrUtils {
     private DynAttrUtils() {
@@ -44,7 +46,25 @@ public final class DynAttrUtils {
         return attributeCode.startsWith("+") ? attributeCode : "+" + attributeCode;
     }
 
-    public static MetaProperty getMetaProperty(AttributeDefinition attributeDefinition) {
-        return null;
+    public static Class getDatatypeClass(AttributeType attributeType) {
+        switch (attributeType) {
+            case STRING:
+                return String.class;
+            case INTEGER:
+                return Integer.class;
+            case DOUBLE:
+                return Double.class;
+            case DECIMAL:
+                return BigDecimal.class;
+            case BOOLEAN:
+                return Boolean.class;
+            case DATE:
+                return Date.class;
+            case DATE_WITHOUT_TIME:
+                return LocalDate.class;
+            case ENUMERATION:
+                return String.class;
+        }
+        return String.class;
     }
 }

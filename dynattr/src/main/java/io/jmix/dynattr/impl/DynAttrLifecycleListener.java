@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattr;
+package io.jmix.dynattr.impl;
 
 import io.jmix.core.Entity;
 import io.jmix.core.LoadContext;
 import io.jmix.data.impl.OrmLifecycleListener;
+import io.jmix.dynattr.DynAttrManager;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;

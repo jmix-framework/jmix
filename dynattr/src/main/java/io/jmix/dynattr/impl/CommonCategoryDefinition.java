@@ -22,23 +22,15 @@ import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.impl.model.Category;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CommonCategoryDefinition implements CategoryDefinition {
     protected final Category category;
     protected final List<AttributeDefinition> attributes;
 
-    public CommonCategoryDefinition(Category category) {
+    public CommonCategoryDefinition(Category category, List<AttributeDefinition> attributes) {
         this.category = category;
-        if (category.getCategoryAttrs() != null) {
-            this.attributes = Collections.unmodifiableList(category.getCategoryAttrs().stream()
-                    .map(CommonAttributeDefinition::new)
-                    .collect(Collectors.toList()));
-        } else {
-            this.attributes = Collections.emptyList();
-        }
+        this.attributes = attributes;
     }
 
     @Override

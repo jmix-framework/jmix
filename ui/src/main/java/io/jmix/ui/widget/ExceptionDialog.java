@@ -25,7 +25,6 @@ import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.Security;
 import io.jmix.ui.*;
-import io.jmix.ui.Dialogs.MessageType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.KeyCombination;
@@ -377,7 +376,7 @@ public class ExceptionDialog extends JmixWindow {
     protected void logoutPrompt() {
         Dialogs dialogs = ((AppUI) getUI()).getDialogs();
 
-        dialogs.createOptionDialog(MessageType.WARNING)
+        dialogs.createOptionDialog()
                 .withCaption(messages.getMessage("exceptionDialog.logoutCaption"))
                 .withMessage(messages.getMessage("exceptionDialog.logoutMessage"))
                 .withActions(

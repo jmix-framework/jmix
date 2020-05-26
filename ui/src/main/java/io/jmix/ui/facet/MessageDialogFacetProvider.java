@@ -67,7 +67,6 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
         loadWidth(facet, element);
         loadHeight(facet, element);
 
-        loadType(facet, element);
         loadContentMode(facet, element);
         loadMaximized(facet, element);
         loadModal(facet, element);
@@ -97,13 +96,6 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
         String message = element.attributeValue("message");
         if (isNotEmpty(message)) {
             facet.setMessage(loadResourceString(context, message));
-        }
-    }
-
-    protected void loadType(MessageDialogFacet facet, Element element) {
-        String type = element.attributeValue("type");
-        if (isNotEmpty(type)) {
-            facet.setType(Dialogs.MessageType.valueOf(type));
         }
     }
 

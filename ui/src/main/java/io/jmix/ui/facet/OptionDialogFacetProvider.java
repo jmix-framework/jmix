@@ -76,7 +76,6 @@ public class OptionDialogFacetProvider
         loadId(facet, element);
         loadCaption(facet, element, context);
         loadMessage(facet, element, context);
-        loadType(facet, element);
 
         loadWidth(facet, element);
         loadHeight(facet, element);
@@ -112,13 +111,6 @@ public class OptionDialogFacetProvider
         String message = element.attributeValue("message");
         if (isNotEmpty(message)) {
             facet.setMessage(loadResourceString(context, message));
-        }
-    }
-
-    protected void loadType(OptionDialogFacet facet, Element element) {
-        String type = element.attributeValue("type");
-        if (isNotEmpty(type)) {
-            facet.setType(Dialogs.MessageType.valueOf(type));
         }
     }
 

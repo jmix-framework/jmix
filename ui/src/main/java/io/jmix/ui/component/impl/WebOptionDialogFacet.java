@@ -42,7 +42,6 @@ public class WebOptionDialogFacet extends WebAbstractFacet
     protected boolean maximized;
     protected String styleName;
 
-    protected Dialogs.MessageType type = Dialogs.MessageType.CONFIRMATION;
     protected ContentMode contentMode = ContentMode.TEXT;
 
     protected String actionId;
@@ -80,16 +79,6 @@ public class WebOptionDialogFacet extends WebAbstractFacet
     @Override
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public void setType(Dialogs.MessageType type) {
-        this.type = type;
-    }
-
-    @Override
-    public Dialogs.MessageType getType() {
-        return type;
     }
 
     @Override
@@ -191,7 +180,7 @@ public class WebOptionDialogFacet extends WebAbstractFacet
 
         Dialogs.OptionDialogBuilder builder = UiControllerUtils.getScreenContext(owner.getFrameOwner())
                 .getDialogs()
-                .createOptionDialog(type);
+                .createOptionDialog();
 
         if (width != null) {
             builder.withWidth(width.stringValue());

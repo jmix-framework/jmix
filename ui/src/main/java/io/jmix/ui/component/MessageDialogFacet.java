@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.Dialogs;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperties;
@@ -60,18 +59,6 @@ public interface MessageDialogFacet extends Facet {
      * @return dialog message
      */
     String getMessage();
-
-    /**
-     * Sets dialog type.
-     * @param type type
-     */
-    @StudioProperty(type = PropertyType.ENUMERATION)
-    void setType(Dialogs.MessageType type);
-
-    /**
-     * @return dialog type
-     */
-    Dialogs.MessageType getType();
 
     /**
      * Sets dialog message content mode.

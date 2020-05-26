@@ -41,7 +41,6 @@ public class WebMessageDialogFacet extends WebAbstractFacet
 
     protected String styleName;
 
-    protected Dialogs.MessageType type = Dialogs.MessageType.CONFIRMATION;
     protected ContentMode contentMode = ContentMode.TEXT;
 
     protected String actionId;
@@ -69,16 +68,6 @@ public class WebMessageDialogFacet extends WebAbstractFacet
     @Override
     public String getMessage() {
         return message;
-    }
-
-    @Override
-    public void setType(Dialogs.MessageType type) {
-        this.type = type;
-    }
-
-    @Override
-    public Dialogs.MessageType getType() {
-        return type;
     }
 
     @Override
@@ -216,7 +205,7 @@ public class WebMessageDialogFacet extends WebAbstractFacet
         Dialogs.MessageDialogBuilder builder = UiControllerUtils
                 .getScreenContext(owner.getFrameOwner())
                 .getDialogs()
-                .createMessageDialog(type);
+                .createMessageDialog();
 
         if (width != null) {
             builder.withWidth(width.stringValue());

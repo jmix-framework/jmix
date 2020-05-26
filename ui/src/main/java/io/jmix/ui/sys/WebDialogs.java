@@ -93,22 +93,10 @@ public class WebDialogs implements Dialogs {
     }
 
     @Override
-    public OptionDialogBuilder createOptionDialog(MessageType messageType) {
-        return createOptionDialog()
-                .withType(messageType);
-    }
-
-    @Override
     public MessageDialogBuilder createMessageDialog() {
         backgroundWorker.checkUIAccess();
 
         return new MessageDialogBuilderImpl();
-    }
-
-    @Override
-    public MessageDialogBuilder createMessageDialog(MessageType messageType) {
-        return createMessageDialog()
-                .withType(messageType);
     }
 
     @Override
@@ -155,8 +143,6 @@ public class WebDialogs implements Dialogs {
         protected JmixLabel messageLabel;
         protected VerticalLayout layout;
         protected HorizontalLayout buttonsContainer;
-
-        protected MessageType type = MessageType.CONFIRMATION;
 
         protected boolean htmlSanitizerEnabled = properties.isHtmlSanitizerEnabled();
 
@@ -213,17 +199,6 @@ public class WebDialogs implements Dialogs {
         @Override
         public String getMessage() {
             return messageLabel.getValue();
-        }
-
-        @Override
-        public OptionDialogBuilder withType(MessageType type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public MessageType getType() {
-            return type;
         }
 
         @Override
@@ -426,8 +401,6 @@ public class WebDialogs implements Dialogs {
         protected VerticalLayout layout;
         protected JmixButton okButton;
 
-        protected MessageType type = MessageType.CONFIRMATION;
-
         protected boolean htmlSanitizerEnabled = properties.isHtmlSanitizerEnabled();
 
         public MessageDialogBuilderImpl() {
@@ -486,17 +459,6 @@ public class WebDialogs implements Dialogs {
         @Override
         public String getMessage() {
             return messageLabel.getValue();
-        }
-
-        @Override
-        public MessageDialogBuilder withType(MessageType type) {
-            this.type = type;
-            return this;
-        }
-
-        @Override
-        public MessageType getType() {
-            return type;
         }
 
         @Override

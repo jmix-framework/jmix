@@ -196,7 +196,6 @@ public class ScreenValidation {
         dialogs.createOptionDialog()
                 .withCaption(messages.getMessage("closeUnsaved.caption"))
                 .withMessage(messages.getMessage("closeUnsaved"))
-                .withType(Dialogs.MessageType.WARNING)
                 .withActions(
                         new DialogAction(DialogAction.Type.YES)
                                 .withHandler(e -> {

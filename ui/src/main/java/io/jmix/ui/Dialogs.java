@@ -39,7 +39,6 @@ public interface Dialogs {
      * Example of showing an option dialog:
      * <pre>{@code
      * dialogs.createOptionDialog()
-     *         .withType(MessageType.CONFIRMATION)
      *         .withCaption("Question")
      *         .withMessage("Do you want to discard data?")
      *         .withActions(
@@ -58,41 +57,11 @@ public interface Dialogs {
     OptionDialogBuilder createOptionDialog();
 
     /**
-     * Creates option dialog builder with the passed message type.
-     * <br>
-     * Example of showing an option dialog:
-     * <pre>{@code
-     * dialogs.createOptionDialog()
-     *         .withType(MessageType.CONFIRMATION)
-     *         .withCaption("Question")
-     *         .withMessage("Do you want to save data?")
-     *         .withActions(
-     *                 new DialogAction(DialogAction.Type.YES).withHandler(e -> {
-     *                     // YES option selected
-     *                 }),
-     *                 new DialogAction(DialogAction.Type.NO)
-     *                         .withCaption("I am not sure")
-     *                         .withHandler(e -> {
-     *                     // NO option selected
-     *                 }),
-     *                 new DialogAction(DialogAction.Type.CANCEL).withHandler(e -> {
-     *                     // CANCEL option selected
-     *                 })
-     *         )
-     *         .show();
-     * }</pre>
-     *
-     * @return builder
-     */
-    OptionDialogBuilder createOptionDialog(MessageType messageType);
-
-    /**
      * Creates message dialog builder.
      * <br>
      * Example of showing a message dialog:
      * <pre>{@code
      * dialogs.createMessageDialog()
-     *         .withType(MessageType.WARNING)
      *         .withCaption("Alert")
      *         .withMessage("Report has been saved")
      *         .show();
@@ -101,21 +70,6 @@ public interface Dialogs {
      * @return builder
      */
     MessageDialogBuilder createMessageDialog();
-
-    /**
-     * Creates message dialog builder with the passed message type.
-     * <br>
-     * Example of showing a message dialog:
-     * <pre>{@code
-     * dialogs.createMessageDialog(MessageType.WARNING)
-     *         .withCaption("Alert")
-     *         .withMessage("Report has been saved")
-     *         .show();
-     * }</pre>
-     *
-     * @return builder
-     */
-    MessageDialogBuilder createMessageDialog(MessageType messageType);
 
     /**
      * Creates exception dialog builder.
@@ -161,7 +115,6 @@ public interface Dialogs {
      */
     interface OptionDialogBuilder
             extends DialogBuilder<OptionDialogBuilder>,
-            HasType<OptionDialogBuilder>,
             HasMessage<OptionDialogBuilder>,
             HasContentMode<OptionDialogBuilder>,
             HasMaximized<OptionDialogBuilder>,
@@ -191,7 +144,6 @@ public interface Dialogs {
      */
     interface MessageDialogBuilder
             extends DialogBuilder<MessageDialogBuilder>,
-            HasType<MessageDialogBuilder>,
             HasMessage<MessageDialogBuilder>,
             HasContentMode<MessageDialogBuilder>,
             HasModal<MessageDialogBuilder>,
@@ -628,39 +580,5 @@ public interface Dialogs {
          * @return html sanitizer is enabled for dialog content
          */
         boolean isHtmlSanitizerEnabled();
-    }
-
-    /**
-     * Marker interface for Dialog Builders that have message type setting.
-     *
-     * @param <T> return type of fluent API methods
-     */
-    interface HasType<T> {
-        /**
-         * Sets message type, e.g. {@link MessageType#CONFIRMATION} or {@link MessageType#WARNING}.
-         *
-         * @param type message type
-         * @return builder
-         */
-        T withType(MessageType type);
-
-        /**
-         * @return message type
-         */
-        MessageType getType();
-    }
-
-    /**
-     * Message type of a dialog.
-     */
-    enum MessageType {
-        /**
-         * Confirmation message.
-         */
-        CONFIRMATION,
-        /**
-         * Warning message.
-         */
-        WARNING
     }
 }

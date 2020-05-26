@@ -45,8 +45,18 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
     }
 
     @Override
+    public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
+        if (isLegacyScreen(root))
+            return CubaFragmentLoader.class;
+
+        return null;
+    }
+
+    @Override
     protected void initStandardLoaders() {
         super.initStandardLoaders();
+
+        loaders.put("frame", CubaFragmentComponentLoader.class);
 
         loaders.put(Calendar.NAME, CubaCalendarLoader.class);
         loaders.put(Tree.NAME, CubaTreeLoader.class);
@@ -90,6 +100,10 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
     }
 
     protected boolean isLegacyScreen(Element element) {
+        if ("window".equals(element.getName())) {
+            return element.attribute("class") != null;
+        }
+
         Element parent = element.getParent();
 
         while (parent != null

@@ -38,21 +38,5 @@ import javax.sql.DataSource;
 @Configuration
 @Import({JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixAuditConfiguration.class})
 public class JmixAuditAutoConfiguration {
-
-    @Bean
-    @Primary
-    @ConditionalOnMissingBean(name = "entityManagerFactory")
-    protected LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                          PersistenceConfigProcessor processor,
-                                                                          JpaVendorAdapter jpaVendorAdapter) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
-    }
-
-    @Bean
-    @Primary
-    @ConditionalOnMissingBean(name = "transactionManager")
-    protected PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
-    }
 }
 

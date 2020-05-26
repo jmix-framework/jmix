@@ -31,10 +31,10 @@ import io.jmix.dynattr.impl.model.Categorized;
 import io.jmix.dynattr.impl.model.Category;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.dynattrui.impl.AttributeValidators;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Consumer;
@@ -84,7 +84,7 @@ public class DynamicAttributesGuiTools {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
         Collection<AttributeDefinition> attributes = dynAttrMetadata.getAttributes(metaClass);
 
-        DynamicAttributesState<?> state = (DynamicAttributesState<?>) item.__getEntityEntry().getExtraState(DynamicAttributesState.class);
+        DynamicAttributesState state = (DynamicAttributesState) item.__getEntityEntry().getExtraState(DynamicAttributesState.class);
         if (state != null) {
             DynamicAttributes dynamicAttributes = state.getDynamicAttributes();
             if (dynamicAttributes == null) {
@@ -122,9 +122,9 @@ public class DynamicAttributesGuiTools {
                 .setId(EntityValues.getId(entity));
         Entity reloadedEntity = dataManager.load(loadContext);
         if (reloadedEntity != null) {
-            DynamicAttributesState<?> state = (DynamicAttributesState<?>) entity.
+            DynamicAttributesState state = (DynamicAttributesState) entity.
                     __getEntityEntry().getExtraState(DynamicAttributesState.class);
-            DynamicAttributesState<?> reloadedState = (DynamicAttributesState<?>) reloadedEntity.
+            DynamicAttributesState reloadedState = (DynamicAttributesState) reloadedEntity.
                     __getEntityEntry().getExtraState(DynamicAttributesState.class);
             if (state != null && reloadedState != null) {
                 //noinspection ConstantConditions
@@ -134,7 +134,7 @@ public class DynamicAttributesGuiTools {
     }
 
     public boolean hasDynamicAttributes(Entity entity) {
-        DynamicAttributesState<?> state = (DynamicAttributesState<?>) entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
+        DynamicAttributesState state = (DynamicAttributesState) entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
         if (state != null) {
             return state.getDynamicAttributes() != null;
         }

@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  * @deprecated Use {@link io.jmix.ui.component.Image} instead
  */
 @Deprecated
-public interface Image extends io.jmix.ui.component.Image {
+public interface Image extends DatasourceComponent<FileDescriptor>, io.jmix.ui.component.Image {
 
     /**
      * Sets datasource and its property.

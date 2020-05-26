@@ -16,11 +16,11 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.cuba.web.app.loginwindow.AppLoginWindow"
-        caption="mainMsg://loginWindow.caption">
+        caption="msg://loginWindow.caption">
 
     <actions>
         <action id="submit" shortcut="ENTER" invoke="login"
-                caption="mainMsg://loginWindow.okButton"
+                caption="msg://loginWindow.okButton"
                 icon="app/images/login-button.png"/>
     </actions>
 
@@ -45,7 +45,7 @@
                     <label id="welcomeLabel"
                            align="MIDDLE_LEFT"
                            stylename="c-login-caption"
-                           value="mainMsg://loginWindow.welcomeLabel"/>
+                           value="msg://loginWindow.welcomeLabel"/>
                 </hbox>
 
                 <capsLockIndicator id="capsLockIndicator"
@@ -59,19 +59,19 @@
                                stylename="c-login-credentials">
                         <textField id="loginField"
                                    htmlName="loginField"
-                                   inputPrompt="mainMsg://loginWindow.loginPlaceholder"
+                                   inputPrompt="msg://loginWindow.loginPlaceholder"
                                    stylename="c-login-username"/>
                         <passwordField id="passwordField"
                                        autocomplete="true"
                                        htmlName="passwordField"
-                                       inputPrompt="mainMsg://loginWindow.passwordPlaceholder"
+                                       inputPrompt="msg://loginWindow.passwordPlaceholder"
                                        capsLockIndicator="capsLockIndicator"
                                        stylename="c-login-password"/>
                     </cssLayout>
                     <hbox id="rememberLocalesBox"
                           stylename="c-login-remember-locales">
                         <checkBox id="rememberMeCheckBox"
-                                  caption="mainMsg://loginWindow.rememberMe"
+                                  caption="msg://loginWindow.rememberMe"
                                   stylename="c-login-remember-me"/>
                         <lookupField id="localesSelect"
                                      nullOptionVisible="false"
@@ -90,6 +90,6 @@
                align="MIDDLE_CENTER"
                htmlEnabled="true"
                stylename="c-powered-by"
-               value="mainMsg://cuba.poweredBy"/>
+               value="msg://cuba.poweredBy"/>
     </layout>
 </window>

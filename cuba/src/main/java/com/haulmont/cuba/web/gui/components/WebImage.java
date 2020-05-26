@@ -17,7 +17,26 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Image;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.entity.FileDescriptor;
+
+import java.util.function.Consumer;
 
 @Deprecated
 public class WebImage extends io.jmix.ui.component.impl.WebImage implements Image {
+
+    @Override
+    public FileDescriptor getValue() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setValue(FileDescriptor value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Subscription addValueChangeListener(Consumer<ValueChangeEvent<FileDescriptor>> listener) {
+        throw new UnsupportedOperationException();
+    }
 }

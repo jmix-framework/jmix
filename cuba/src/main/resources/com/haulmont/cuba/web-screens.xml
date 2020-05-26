@@ -17,4 +17,6 @@
 <screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
     <screen id="loginWindow"
             template="/com/haulmont/cuba/web/app/loginwindow/loginwindow.xml"/>
+    <screen id="mainWindow"
+            template="/com/haulmont/cuba/web/app/mainwindow/mainwindow.xml"/>
 </screen-config>

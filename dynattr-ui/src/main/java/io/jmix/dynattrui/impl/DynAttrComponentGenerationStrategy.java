@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrui;
+package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -29,6 +29,7 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
+import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.dynattrui.impl.AttributeOptionsLoader;
 import io.jmix.dynattrui.impl.AttributeValidators;
 import io.jmix.ui.UiComponents;

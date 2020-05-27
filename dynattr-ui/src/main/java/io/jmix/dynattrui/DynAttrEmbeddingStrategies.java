@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrui.facet;
+package io.jmix.dynattrui;
 
 import io.jmix.dynattrui.impl.EmbeddingStrategy;
 import io.jmix.ui.component.Component;
@@ -25,14 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-@org.springframework.stereotype.Component(DynAttrInitTask.NAME)
-public class DynAttrInitTask implements ComponentLoader.InitTask {
-    public static final String NAME = "dynattrui_DynAttrInitTask";
+@org.springframework.stereotype.Component(DynAttrEmbeddingStrategies.NAME)
+public class DynAttrEmbeddingStrategies {
+    public static final String NAME = "dynattrui_DynAttrEmbeddingStrategies";
 
     @Autowired(required = false)
     protected List<EmbeddingStrategy> embeddingStrategies;
 
-    protected void embedAttributes(Component component, Frame frame) {
+    public void embedAttributes(Component component, Frame frame) {
         if (embeddingStrategies != null) {
             for (EmbeddingStrategy strategy : embeddingStrategies) {
                 if (strategy.supportComponent(component)) {
@@ -40,10 +40,5 @@ public class DynAttrInitTask implements ComponentLoader.InitTask {
                 }
             }
         }
-    }
-
-    @Override
-    public void execute(ComponentLoader.ComponentContext context, Frame window) {
-        ComponentsHelper.walkComponents(window, (component, name) -> embedAttributes(component, context.getFrame()));
     }
 }

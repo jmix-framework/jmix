@@ -16,10 +16,11 @@
 
 package io.jmix.dynattrui.facet;
 
+import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DynAttrFacetProvider.NAME)
@@ -27,7 +28,7 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
     public static final String NAME = "dynattrui_DynamicAttributeFacetProvider";
 
     @Autowired
-    protected DynAttrInitTask initTask;
+    protected DynAttrEmbeddingStrategies embeddingStrategies;
 
     @Override
     public Class<DynAttrFacet> getFacetClass() {
@@ -46,6 +47,8 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
     @Override
     public void loadFromXml(DynAttrFacet facet, Element element, ComponentLoader.ComponentContext context) {
-        context.addInitTask(initTask);
+        context.addInitTask((context1, window) ->
+                ComponentsHelper.walkComponents(window,
+                        (component, name) -> embeddingStrategies.embedAttributes(component, context1.getFrame())));
     }
 }

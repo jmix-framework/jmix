@@ -39,10 +39,10 @@ public class CubaDataGridDynamicAttributesEmbeddingStrategy extends DataGridEmbe
 
     @Override
     protected void setLoadDynamicAttributes(Component component) {
-        Table table = (Table) component;
-        if (table.getItems() instanceof DatasourceDataGridItems) {
+        DataGrid dataGrid = (DataGrid) component;
+        if (dataGrid.getItems() instanceof DatasourceDataGridItems) {
             //noinspection rawtypes
-            ((DatasourceTableItems) table.getItems()).getDatasource().setLoadDynamicAttributes(true);
+            ((DatasourceDataGridItems) dataGrid.getItems()).getDatasource().setLoadDynamicAttributes(true);
         }
     }
 }

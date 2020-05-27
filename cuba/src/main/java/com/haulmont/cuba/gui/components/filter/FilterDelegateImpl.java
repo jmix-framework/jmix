@@ -1201,6 +1201,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                 .fetchPlan("app")
                 .query("select f from sec$Filter f " +  /*"left join f.user u " +*/
                         "where f.componentId = :component" /*+ "and (u.id = :userId or u is null) order by f.name"*/)
+                .parameter("component", CubaComponentsHelper.getFilterComponentPath(filter))
                 //.parameter("userId", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getId())
                 .list());
     }

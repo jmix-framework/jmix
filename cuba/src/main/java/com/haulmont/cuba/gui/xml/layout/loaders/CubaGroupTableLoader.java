@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.GroupTable;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.dynattrui.facet.DynAttrInitTask;
+import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.xml.layout.loader.GroupTableLoader;
 import org.dom4j.Element;
 
@@ -53,7 +53,8 @@ public class CubaGroupTableLoader extends GroupTableLoader {
         }
         ((GroupTable) resultComponent).setDatasource(datasource);
 
-        getComponentContext().addInitTask(beanLocator.get(DynAttrInitTask.class));
+        DynAttrEmbeddingStrategies embeddingStrategies = beanLocator.get(DynAttrEmbeddingStrategies.class);
+        embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
     }
 
     protected static class CubaGroupTableDataHolder extends TableDataHolder {

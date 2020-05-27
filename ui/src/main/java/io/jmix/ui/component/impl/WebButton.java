@@ -160,10 +160,10 @@ public class WebButton extends WebAbstractComponent<JmixButton> implements Butto
                 };
                 action.addPropertyChangeListener(actionPropertyChangeListener);
 
-                if (component.getCubaId() == null) {
+                if (component.getJTestId() == null) {
                     AppUI ui = AppUI.getCurrent();
                     if (ui != null && ui.isTestMode()) {
-                        component.setCubaId(action.getId());
+                        component.setJTestId(action.getId());
                     }
                 }
             }

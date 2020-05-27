@@ -295,12 +295,12 @@ public class WebTree<E extends Entity>
         AppUI ui = AppUI.getCurrent();
 
         if (ui != null && ui.isTestMode()
-                && getComponent().getCubaId() == null) {
+                && getComponent().getJTestId() == null) {
 
             String testId = UiTestIds.getInferredTestId(items, "Tree");
             if (testId != null) {
-                getComponent().setCubaId(testId);
-                componentComposition.setCubaId(testId + "_composition");
+                getComponent().setJTestId(testId);
+                componentComposition.setJTestId(testId + "_composition");
             }
         }
     }
@@ -327,7 +327,7 @@ public class WebTree<E extends Entity>
         if (id != null
                 && ui != null
                 && ui.isTestMode()) {
-            componentComposition.setCubaId(id + "_composition");
+            componentComposition.setJTestId(id + "_composition");
         }
     }
 

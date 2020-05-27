@@ -1454,12 +1454,12 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         AppUI ui = AppUI.getCurrent();
 
         if (ui != null && ui.isTestMode()
-                && getComponent().getCubaId() == null) {
+                && getComponent().getJTestId() == null) {
 
             String testId = UiTestIds.getInferredTestId(items, "Table");
             if (testId != null) {
-                getComponent().setCubaId(testId);
-                componentComposition.setCubaId(testId + "_composition");
+                getComponent().setJTestId(testId);
+                componentComposition.setJTestId(testId + "_composition");
             }
         }
     }
@@ -1796,7 +1796,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         if (id != null
                 && ui != null
                 && ui.isTestMode()) {
-            componentComposition.setCubaId(id + "_composition");
+            componentComposition.setJTestId(id + "_composition");
         }
     }
 

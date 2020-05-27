@@ -745,7 +745,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         @Override
         public void setTabCubaId(String tabId, String id) {
             Tab tab = getTabNN(tabId);
-            tabSheet.tabbedHeader.setCubaId(((TabImpl) tab).getTabbarTab(), id);
+            tabSheet.tabbedHeader.setJTestId(((TabImpl) tab).getTabbarTab(), id);
         }
 
         @Override

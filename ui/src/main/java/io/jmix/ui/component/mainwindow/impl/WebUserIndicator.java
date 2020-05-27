@@ -74,7 +74,7 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 //            userNameLabel.setSizeUndefined();
 //
 //            if (ui != null && ui.isTestMode()) {
-//                userNameLabel.setCubaId("currentUserLabel");
+//                userNameLabel.setJTestId("currentUserLabel");
 //            }
 //
 //            component.addComponent(userNameLabel);
@@ -89,7 +89,7 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 //
 //            if (ui != null) {
 //                if (ui.isTestMode()) {
-//                    userComboBox.setCubaId("substitutedUserSelect");
+//                    userComboBox.setJTestId("substitutedUserSelect");
 //                }
 //                if (ui.isPerformanceTestMode()) {
 //                    userComboBox.setId(ui.getTestIdManager().getTestId("substitutedUserSelect"));

@@ -60,11 +60,11 @@ public abstract class WebAbstractValueComponent<T extends com.vaadin.ui.Componen
         AppUI ui = AppUI.getCurrent();
 
         if (ui != null && ui.isTestMode()
-                && getComponent().getCubaId() == null) {
+                && getComponent().getJTestId() == null) {
 
             String testId = UiTestIds.getInferredTestId(valueSource);
             if (testId != null) {
-                getComponent().setCubaId(testId);
+                getComponent().setJTestId(testId);
             }
         }
     }

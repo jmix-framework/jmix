@@ -152,8 +152,8 @@ public class WebDateField<V extends Comparable<V>>
 
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {
-            timeField.setCubaId("timepart");
-            dateField.setCubaId("datepart");
+            timeField.setJTestId("timepart");
+            dateField.setJTestId("datepart");
         }
     }
 

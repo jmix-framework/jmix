@@ -371,7 +371,7 @@ public class WebDialogs implements Dialogs {
                 buttonsContainer.addComponent(button);
 
                 if (ui.isTestMode()) {
-                    button.setCubaId("optionDialog_" + action.getId());
+                    button.setJTestId("optionDialog_" + action.getId());
                 }
                 if (ui.isPerformanceTestMode()) {
                     button.setId(ui.getTestIdManager().getTestId("optionDialog_" + action.getId()));
@@ -389,8 +389,8 @@ public class WebDialogs implements Dialogs {
             }
 
             if (ui.isTestMode()) {
-                window.setCubaId("optionDialog");
-                messageLabel.setCubaId("optionDialogLabel");
+                window.setJTestId("optionDialog");
+                messageLabel.setJTestId("optionDialogLabel");
             }
             if (ui.isPerformanceTestMode()) {
                 window.setId(ui.getTestIdManager().getTestId("optionDialog"));
@@ -637,9 +637,9 @@ public class WebDialogs implements Dialogs {
             initShortcuts();
 
             if (ui.isTestMode()) {
-                window.setCubaId("messageDialog");
-                messageLabel.setCubaId("messageDialogLabel");
-                okButton.setCubaId("messageDialogOk");
+                window.setJTestId("messageDialog");
+                messageLabel.setJTestId("messageDialogLabel");
+                okButton.setJTestId("messageDialogOk");
             }
 
             if (ui.isPerformanceTestMode()) {

@@ -61,7 +61,7 @@ public class JmixMenuBar extends com.vaadin.ui.MenuBar {
         shortcuts.put(item, str);
     }
 
-    public void setCubaId(MenuItem item, String id) {
+    public void setJTestId(MenuItem item, String id) {
         if (cubaIds == null) {
             cubaIds = new HashMap<>();
         }

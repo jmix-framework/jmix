@@ -283,8 +283,8 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
                     item.put(MENU_ITEM_BADGE_TEXT, Json.create(menuItem.getBadgeText()));
                 }
 
-                if (menuItem.getCubaId() != null) {
-                    item.put(MENU_ITEM_CUBA_ID, Json.create(menuItem.getCubaId()));
+                if (menuItem.getJTestId() != null) {
+                    item.put(MENU_ITEM_CUBA_ID, Json.create(menuItem.getJTestId()));
                 }
 
                 if (menuItem.getIcon() != null) {
@@ -552,11 +552,11 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
             }
         }
 
-        public String getCubaId() {
+        public String getJTestId() {
             return cubaId;
         }
 
-        public void setCubaId(String cubaId) {
+        public void setJTestId(String cubaId) {
             if (!Objects.equals(this.cubaId, cubaId)) {
                 String oldCubaId = this.cubaId;
                 this.cubaId = cubaId;

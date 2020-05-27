@@ -101,7 +101,7 @@ public abstract class WebAbstractActionsHolderComponent<T extends com.vaadin.ui.
 
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {
-            contextMenuPopup.setCubaId("cubaContextMenu");
+            contextMenuPopup.setJTestId("cubaContextMenu");
         }
     }
 

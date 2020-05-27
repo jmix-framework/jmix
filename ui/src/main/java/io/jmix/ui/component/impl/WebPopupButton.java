@@ -280,7 +280,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
         AppUI ui = AppUI.getCurrent();
         if (ui != null) {
             if (ui.isTestMode()) {
-                button.setCubaId(action.getId());
+                button.setJTestId(action.getId());
             }
 
             if (ui.isPerformanceTestMode()) {

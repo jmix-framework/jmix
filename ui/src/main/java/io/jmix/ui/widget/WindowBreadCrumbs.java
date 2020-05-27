@@ -236,7 +236,7 @@ public class WindowBreadCrumbs extends CssLayout {
             button.setTabIndex(-1);
 
             if (isTestMode) {
-                button.setCubaId("breadCrubms_Button_" + window.getId());
+                button.setJTestId("breadCrubms_Button_" + window.getId());
             }
 
             if (ui.isPerformanceTestMode()) {
@@ -271,10 +271,10 @@ public class WindowBreadCrumbs extends CssLayout {
         adjustParentStyles();
 
         if (ui.isTestMode()) {
-            linksLayout.setCubaId("breadCrumbs");
+            linksLayout.setJTestId("breadCrumbs");
 
             if (closeBtn != null) {
-                closeBtn.setCubaId("closeBtn");
+                closeBtn.setJTestId("closeBtn");
             }
         }
 

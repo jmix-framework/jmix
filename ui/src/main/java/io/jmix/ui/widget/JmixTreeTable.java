@@ -707,7 +707,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
 
         // paint cuba-ids
 
-        if (getCubaId() != null) {
+        if (getJTestId() != null) {
             ArrayList<String> visibleColOrder = new ArrayList<>();
             for (Object columnId : _visibleColumns()) {
                 if (!isColumnCollapsed(columnId)) {

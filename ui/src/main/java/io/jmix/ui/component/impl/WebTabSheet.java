@@ -331,7 +331,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
                     AppUI.getCurrent().getTestIdManager().getTestId(getDebugId() + "." + name));
         }
         if (AppUI.getCurrent().isTestMode()) {
-            this.component.setCubaId(tabControl, name);
+            this.component.setJTestId(tabControl, name);
         }
 
         if (frame != null) {
@@ -399,7 +399,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
                     AppUI.getCurrent().getTestIdManager().getTestId(getDebugId() + "." + name));
         }
         if (AppUI.getCurrent().isTestMode()) {
-            this.component.setCubaId(tabControl, name);
+            this.component.setJTestId(tabControl, name);
         }
 
         if (context instanceof ComponentLoader.ComponentContext) {

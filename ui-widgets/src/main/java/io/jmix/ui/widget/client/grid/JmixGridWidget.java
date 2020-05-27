@@ -247,7 +247,7 @@ public class JmixGridWidget extends Grid<JsonObject> {
                         : cell.getColumn();
 
                 Element cellElement = cell.getElement();
-                cellElement.setAttribute("jmix-id", JMIX_ID_COLUMN_PREFIX + columnId);
+                cellElement.setAttribute("j-test-id", JMIX_ID_COLUMN_PREFIX + columnId);
             }
         }
 
@@ -352,7 +352,7 @@ public class JmixGridWidget extends Grid<JsonObject> {
             if (columnIds != null) {
                 Object columnId = (columnIds.get(column));
                 if (columnId != null) {
-                    return "jmix-id=\"" +
+                    return "j-test-id=\"" +
                             JMIX_ID_COLUMN_HIDING_TOGGLE_PREFIX +
                             JMIX_ID_COLUMN_PREFIX +
                             columnId + "\"";

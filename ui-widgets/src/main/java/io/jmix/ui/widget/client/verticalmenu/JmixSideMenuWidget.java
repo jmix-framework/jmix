@@ -616,7 +616,7 @@ public class JmixSideMenuWidget extends FocusableFlowPanel
 
         public void setJmixId(String jmixId) {
             if (jmixId != null && !jmixId.isEmpty()) {
-                getElement().setAttribute("jmix-id", jmixId);
+                getElement().setAttribute("j-test-id", jmixId);
             }
         }
 

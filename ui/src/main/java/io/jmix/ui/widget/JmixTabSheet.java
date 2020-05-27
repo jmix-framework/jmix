@@ -29,13 +29,13 @@ public class JmixTabSheet extends TabSheet {
         getState(true).tabs.get(tabPosition).id = testId;
     }
 
-    public void setCubaId(Tab tab, String id) {
+    public void setJTestId(Tab tab, String id) {
         int tabPosition = getTabPosition(tab);
-        getState(true).tabs.get(tabPosition).cubaId = id;
+        getState(true).tabs.get(tabPosition).jTestId = id;
     }
 
-    public String getCubaId(Tab tab) {
+    public String getJTestId(Tab tab) {
         int tabPosition = getTabPosition(tab);
-        return getState(true).tabs.get(tabPosition).cubaId;
+        return getState(true).tabs.get(tabPosition).jTestId;
     }
 }

@@ -128,7 +128,7 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
         }
 
         MenuBar.MenuItem delegateItem = ((MenuItemImpl) menuItem).getDelegateItem();
-        component.setCubaId(delegateItem, id);
+        component.setJTestId(delegateItem, id);
     }
 
     @Override

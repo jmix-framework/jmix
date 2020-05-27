@@ -187,7 +187,7 @@ public class ExceptionDialog extends JmixWindow {
                 buttonsLayout.addComponent(reportButton);
 
                 if (ui.isTestMode()) {
-                    reportButton.setCubaId("errorReportButton");
+                    reportButton.setJTestId("errorReportButton");
                 }
             }
         }
@@ -210,15 +210,15 @@ public class ExceptionDialog extends JmixWindow {
         setResizable(false);
 
         if (ui.isTestMode()) {
-            setCubaId("exceptionDialog");
+            setJTestId("exceptionDialog");
 
-            closeButton.setCubaId("closeButton");
+            closeButton.setJTestId("closeButton");
             if (copyButton != null) {
-                copyButton.setCubaId("copyStackTraceButton");
+                copyButton.setJTestId("copyStackTraceButton");
             }
-            showStackTraceButton.setCubaId("showStackTraceButton");
-            stackTraceTextArea.setCubaId("stackTraceTextArea");
-            logoutButton.setCubaId("logoutButton");
+            showStackTraceButton.setJTestId("showStackTraceButton");
+            stackTraceTextArea.setJTestId("stackTraceTextArea");
+            logoutButton.setJTestId("logoutButton");
         }
 
         if (ui.isPerformanceTestMode()) {

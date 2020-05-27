@@ -697,7 +697,7 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
 
         // paint cuba-ids
 
-        if (getCubaId() != null) {
+        if (getJTestId() != null) {
             List<String> visibleColOrder = new ArrayList<>();
             for (Object columnId : _visibleColumns()) {
                 if (!isColumnCollapsed(columnId)) {

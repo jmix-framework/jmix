@@ -519,7 +519,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     /**
-     * @return true if UI test mode is enabled and jmix-id attribute should be added to DOM tree
+     * @return true if UI test mode is enabled and j-test-id attribute should be added to DOM tree
      */
     public boolean isTestMode() {
         return properties.isTestMode();

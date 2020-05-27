@@ -48,10 +48,10 @@ public class JmixTree<T> extends Tree<T> implements Action.ShortcutNotifier {
     }
 
     @Override
-    public void setCubaId(String cubaId) {
-        super.setCubaId(cubaId);
+    public void setJTestId(String cubaId) {
+        super.setJTestId(cubaId);
 
-        getCompositionRoot().setCubaId(cubaId);
+        getCompositionRoot().setJTestId(cubaId);
     }
 
     @Override

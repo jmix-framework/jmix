@@ -325,7 +325,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
 
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {
-            button.setCubaId(action.getId());
+            button.setJTestId(action.getId());
         }
 
         action.addPropertyChangeListener(actionPropertyChangeListener);

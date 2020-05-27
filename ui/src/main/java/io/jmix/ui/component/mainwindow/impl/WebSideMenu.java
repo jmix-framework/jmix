@@ -198,7 +198,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
     }
 
     protected void assignCubaIdInternal(MenuItem menuItem) {
-        ((MenuItemImpl) menuItem).setCubaId(menuItem.getId());
+        ((MenuItemImpl) menuItem).setJTestId(menuItem.getId());
 
         if (menuItem.hasChildren()) {
             for (MenuItem item : menuItem.getChildren()) {
@@ -468,12 +468,12 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
             delegateItem.setBadgeText(badgeText);
         }
 
-        protected String getCubaId() {
-            return delegateItem.getCubaId();
+        protected String getJTestId() {
+            return delegateItem.getJTestId();
         }
 
-        protected void setCubaId(String cubaId) {
-            delegateItem.setCubaId(cubaId);
+        protected void setJTestId(String cubaId) {
+            delegateItem.setJTestId(cubaId);
         }
 
         @Override

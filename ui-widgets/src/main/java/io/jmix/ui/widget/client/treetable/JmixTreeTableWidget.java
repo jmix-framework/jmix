@@ -498,9 +498,9 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
             String colKey = action.getColKey();
             HeaderCell headerCell = getHeaderCell(colKey);
             if (headerCell != null) {
-                String jmixId = headerCell.getElement().getAttribute("jmix-id");
+                String jmixId = headerCell.getElement().getAttribute("j-test-id");
                 if (jmixId != null) {
-                    return "jmix-id=\"cc_" + jmixId + "\"";
+                    return "j-test-id=\"cc_" + jmixId + "\"";
                 }
             }
 
@@ -1043,12 +1043,12 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
                     HeaderCell headerCell = headerCellMap.get(key);
 
                     if (headerCell != null) {
-                        headerCell.getElement().setAttribute("jmix-id", "column_" + coljmixids[i]);
+                        headerCell.getElement().setAttribute("j-test-id", "column_" + coljmixids[i]);
                     }
                 }
             } catch (Exception e) {
                 Logger.getLogger("JmixTreeTableWidget").log(Level.SEVERE,
-                        "Unable to init jmix-id for columns " + e.getMessage());
+                        "Unable to init j-test-id for columns " + e.getMessage());
             }
         }
     }

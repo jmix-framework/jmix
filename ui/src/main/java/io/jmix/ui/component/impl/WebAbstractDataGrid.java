@@ -956,12 +956,12 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         AppUI ui = AppUI.getCurrent();
 
         if (ui != null && ui.isTestMode()
-                && getComponent().getCubaId() == null) {
+                && getComponent().getJTestId() == null) {
 
             String testId = UiTestIds.getInferredTestId(items, "DataGrid");
             if (testId != null) {
-                getComponent().setCubaId(testId);
-                componentComposition.setCubaId(testId + "_composition");
+                getComponent().setJTestId(testId);
+                componentComposition.setJTestId(testId + "_composition");
             }
         }
     }
@@ -2081,7 +2081,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         if (id != null
                 && ui != null
                 && ui.isTestMode()) {
-            componentComposition.setCubaId(id + "_composition");
+            componentComposition.setJTestId(id + "_composition");
         }
     }
 

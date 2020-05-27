@@ -54,7 +54,7 @@ public class JmixMenuBarConnector extends MenuBarConnector {
     @Override
     protected void assignAdditionalAttributes(VMenuBar.CustomMenuItem currentItem, UIDL item) {
         if (item.hasAttribute("cid")) {
-            currentItem.getElement().setAttribute("jmix-id", item.getStringAttribute("cid"));
+            currentItem.getElement().setAttribute("j-test-id", item.getStringAttribute("cid"));
         }
     }
 

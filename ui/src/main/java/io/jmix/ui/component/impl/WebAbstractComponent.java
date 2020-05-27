@@ -150,7 +150,7 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
             AppUI ui = AppUI.getCurrent();
             if (ui != null) {
                 if (this.component != null && ui.isTestMode()) {
-                    this.component.setCubaId(id);
+                    this.component.setJTestId(id);
                 }
             }
 

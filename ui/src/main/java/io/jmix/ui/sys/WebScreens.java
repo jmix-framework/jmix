@@ -1297,7 +1297,7 @@ public class WebScreens implements Screens {
 
             String cubaId = "dialog_" + window.getId();
             if (ui.isTestMode()) {
-                vWindow.setCubaId(cubaId);
+                vWindow.setJTestId(cubaId);
             }
             if (ui.isPerformanceTestMode()) {
                 vWindow.setId(ui.getTestIdManager().getTestId(cubaId));

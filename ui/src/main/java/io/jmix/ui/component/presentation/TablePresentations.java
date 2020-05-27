@@ -268,7 +268,7 @@ public class TablePresentations extends VerticalLayout {
         AppUI ui = AppUI.getCurrent();
         if (ui != null) {
             if (ui.isTestMode()) {
-                actionBtn.setCubaId(action.getId());
+                actionBtn.setJTestId(action.getId());
             }
 
             if (ui.isPerformanceTestMode()) {

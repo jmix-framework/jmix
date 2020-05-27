@@ -149,7 +149,7 @@ public class CompositeComponent<T extends Component>
                 if (root != null && ui.isTestMode()) {
                     com.vaadin.ui.Component vComponent = root.unwrap(com.vaadin.ui.Component.class);
                     if (vComponent != null) {
-                        vComponent.setCubaId(id);
+                        vComponent.setJTestId(id);
                     }
                 }
             }

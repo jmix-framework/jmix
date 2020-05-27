@@ -30,16 +30,21 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.dynattrui.MsgBundleTools;
-import io.jmix.dynattrui.impl.AttributeOptionsLoader;
-import io.jmix.dynattrui.impl.AttributeValidators;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.WindowConfig;
+import io.jmix.ui.action.picker.ClearAction;
+import io.jmix.ui.action.picker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ListOptions;
+import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.sys.ScreensHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -59,19 +64,28 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected MsgBundleTools msgBundleTools;
     protected AttributeOptionsLoader optionsLoader;
     protected AttributeValidators attributeValidators;
+    protected WindowConfig windowConfig;
+    protected ScreensHelper screensHelper;
+    protected Actions actions;
 
     @Autowired
     public DynAttrComponentGenerationStrategy(Messages messages, UiComponents uiComponents,
                                               DynAttrMetadata dynamicModelMetadata,
                                               MsgBundleTools msgBundleTools,
                                               AttributeOptionsLoader optionsLoader,
-                                              AttributeValidators attributeValidators) {
+                                              AttributeValidators attributeValidators,
+                                              WindowConfig windowConfig,
+                                              ScreensHelper screensHelper,
+                                              Actions actions) {
         this.messages = messages;
         this.uiComponents = uiComponents;
         this.dynamicModelMetadata = dynamicModelMetadata;
         this.msgBundleTools = msgBundleTools;
         this.optionsLoader = optionsLoader;
         this.attributeValidators = attributeValidators;
+        this.windowConfig = windowConfig;
+        this.screensHelper = screensHelper;
+        this.actions = actions;
     }
 
     public Component createComponent(ComponentGenerationContext context) {
@@ -86,20 +100,20 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createComponentInternal(ComponentGenerationContext context, MetaClass metaClass, String propertyName) {
-        AttributeDefinition attributeDefinition = dynamicModelMetadata.getAttributeByCode(metaClass,
+        AttributeDefinition attribute = dynamicModelMetadata.getAttributeByCode(metaClass,
                 DynAttrUtils.getAttributeCodeFromProperty(propertyName)).orElse(null);
 
-        if (attributeDefinition == null) {
+        if (attribute == null) {
             return null;
         }
 
         Component resultComponent = null;
-        if (attributeDefinition.isCollection()) {
-            resultComponent = createCollectionField(context, attributeDefinition);
-        } else if (attributeDefinition.getDataType() == ENTITY) {
-            resultComponent = createClassField(context, attributeDefinition);
+        if (attribute.isCollection()) {
+            resultComponent = createCollectionField(context, attribute);
+        } else if (attribute.getDataType() == ENTITY) {
+            resultComponent = createClassField(context, attribute);
         } else {
-            resultComponent = createDatatypeField(context, attributeDefinition);
+            resultComponent = createDatatypeField(context, attribute);
         }
 
         if (resultComponent instanceof HasValue) {
@@ -107,46 +121,46 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         }
 
         if (resultComponent instanceof Component.Editable) {
-            setEditable((Component.Editable) resultComponent, attributeDefinition);
+            setEditable((Component.Editable) resultComponent, attribute);
         }
 
         if (resultComponent instanceof Component.HasCaption) {
-            setCaption((Component.HasCaption) resultComponent, attributeDefinition);
+            setCaption((Component.HasCaption) resultComponent, attribute);
         }
 
         if (resultComponent instanceof Field) {
-            setRequired((Field<?>) resultComponent, attributeDefinition);
+            setRequired((Field<?>) resultComponent, attribute);
         }
 
         return resultComponent;
     }
 
-    protected Component createClassField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
-        Class<?> javaType = attributeDefinition.getJavaType();
+    protected Component createClassField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        Class<?> javaType = attribute.getJavaType();
 
         if (FileDescriptor.class.isAssignableFrom(javaType)) {
             return createFileUploadField(context);
         } else {
-            return createEntityField(context, attributeDefinition);
+            return createEntityField(context, attribute);
         }
     }
 
-    protected Component createDatatypeField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
-        AttributeType type = attributeDefinition.getDataType();
-        AttributeDefinition.Configuration configuration = attributeDefinition.getConfiguration();
+    protected Component createDatatypeField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        AttributeType type = attribute.getDataType();
+        AttributeDefinition.Configuration configuration = attribute.getConfiguration();
 
         if (configuration.isLookup()) {
-            return createLookupField(context, attributeDefinition);
+            return createLookupField(context, attribute);
         } else if (type == STRING) {
-            return createStringField(context, attributeDefinition);
+            return createStringField(context, attribute);
         } else if (type == BOOLEAN) {
-            return createBooleanField(context, attributeDefinition);
+            return createBooleanField(context, attribute);
         } else if (type == DATE || type == DATE_WITHOUT_TIME) {
-            return createDateField(context, attributeDefinition);
+            return createDateField(context, attribute);
         } else if (type == INTEGER || type == DOUBLE || type == DECIMAL) {
-            return createNumberField(context, attributeDefinition);
+            return createNumberField(context, attribute);
         } else if (type == ENUMERATION) {
-            return createStringField(context, attributeDefinition);
+            return createEnumerationField(context, attribute);
         }
 
         return null;
@@ -184,10 +198,10 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         return listEditor;
     }
 
-    protected Component createStringField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
+    protected Component createStringField(ComponentGenerationContext context, AttributeDefinition attribute) {
         TextInputField textField;
 
-        Integer rowsCount = attributeDefinition.getConfiguration().getRowsCount();
+        Integer rowsCount = attribute.getConfiguration().getRowsCount();
         if (rowsCount != null && rowsCount > 1) {
             TextArea textArea = uiComponents.create(TextArea.class);
             textArea.setRows(rowsCount);
@@ -196,48 +210,59 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             textField = uiComponents.create(TextField.class);
         }
 
-        setValidators(textField, attributeDefinition);
+        setValidators(textField, attribute);
         setValueSource(textField, context);
 
         return textField;
     }
 
-    protected Component createLookupField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
+    protected Component createEnumerationField(ComponentGenerationContext context, AttributeDefinition attribute) {
         LookupField lookupField = uiComponents.create(LookupField.class);
 
-        if (context.getValueSource() instanceof ContainerValueSource) {
-            setOptionsLoader(lookupField, attributeDefinition, (ContainerValueSource) context.getValueSource());
-        }
+        lookupField.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));
 
         setValueSource(lookupField, context);
-        setValidators(lookupField, attributeDefinition);
+        setValidators(lookupField, attribute);
 
         return lookupField;
     }
 
-    protected Field createBooleanField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
+    protected Component createLookupField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        LookupField lookupField = uiComponents.create(LookupField.class);
+
+        if (context.getValueSource() instanceof ContainerValueSource) {
+            setOptionsLoader(lookupField, attribute, (ContainerValueSource) context.getValueSource());
+        }
+
+        setValueSource(lookupField, context);
+        setValidators(lookupField, attribute);
+
+        return lookupField;
+    }
+
+    protected Field createBooleanField(ComponentGenerationContext context, AttributeDefinition attribute) {
         CheckBox component = uiComponents.create(CheckBox.class);
 
-        setValidators(component, attributeDefinition);
+        setValidators(component, attribute);
         setValueSource(component, context);
 
         return component;
     }
 
-    protected Component createDateField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
+    protected Component createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
         DateField dateField = uiComponents.create(DateField.class);
 
-        setValidators(dateField, attributeDefinition);
+        setValidators(dateField, attribute);
         setValueSource(dateField, context);
 
         return dateField;
     }
 
-    protected Field createNumberField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
+    protected Field createNumberField(ComponentGenerationContext context, AttributeDefinition attribute) {
         TextField component = uiComponents.create(TextField.class);
 
-        setValidators(component, attributeDefinition);
-        setCustomDatatype(component, attributeDefinition);
+        setValidators(component, attribute);
+        setCustomDatatype(component, attribute);
         setValueSource(component, context);
 
         return component;
@@ -265,30 +290,30 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     @SuppressWarnings("unchecked")
-    protected Component createEntityField(ComponentGenerationContext context, AttributeDefinition attributeDefinition) {
-        if (attributeDefinition.getConfiguration().isLookup()) {
+    protected Component createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        if (attribute.getConfiguration().isLookup()) {
             LookupPickerField lookupPickerField = uiComponents.create(LookupPickerField.class);
 
             if (context.getValueSource() instanceof ContainerValueSource) {
-                setOptionsLoader(lookupPickerField, attributeDefinition, (ContainerValueSource) context.getValueSource());
+                setOptionsLoader(lookupPickerField, attribute, (ContainerValueSource) context.getValueSource());
             }
 
             setValueSource(lookupPickerField, context);
-            setValidators(lookupPickerField, attributeDefinition);
+            setValidators(lookupPickerField, attribute);
 
             return lookupPickerField;
         } else {
             PickerField pickerField = uiComponents.create(PickerField.class);
 
-            //todo:
-            pickerField.addClearAction();
-            pickerField.addLookupAction();
+            LookupAction lookupAction = actions.create(LookupAction.class);
 
-            // todo: filter support FilteringLookupAction
-            //getDynamicAttributesGuiTools().initEntityPickerField(pickerField, attributeDefinition);
+            setLookupActionScreen(lookupAction, attribute);
+
+            pickerField.addAction(lookupAction);
+            pickerField.addAction(actions.create(ClearAction.class));
 
             setValueSource(pickerField, context);
-            setValidators(pickerField, attributeDefinition);
+            setValidators(pickerField, attribute);
 
             return pickerField;
         }
@@ -332,24 +357,24 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 //        }
     }
 
-    protected void setEditable(Component.Editable component, AttributeDefinition attributeDefinition) {
-        if (Boolean.TRUE.equals(attributeDefinition.isReadOnly())) {
+    protected void setEditable(Component.Editable component, AttributeDefinition attribute) {
+        if (Boolean.TRUE.equals(attribute.isReadOnly())) {
             component.setEditable(false);
         }
     }
 
-    protected void setCaption(Component.HasCaption component, AttributeDefinition attributeDefinition) {
+    protected void setCaption(Component.HasCaption component, AttributeDefinition attribute) {
         component.setCaption(
-                msgBundleTools.getLocalizedValue(attributeDefinition.getNameMsgBundle(), attributeDefinition.getName()));
+                msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName()));
         component.setDescription(
-                msgBundleTools.getLocalizedValue(attributeDefinition.getDescriptionsMsgBundle(), attributeDefinition.getDescription()));
+                msgBundleTools.getLocalizedValue(attribute.getDescriptionsMsgBundle(), attribute.getDescription()));
     }
 
-    protected void setRequired(Field<?> field, AttributeDefinition attributeDefinition) {
-        field.setRequired(attributeDefinition.isRequired());
+    protected void setRequired(Field<?> field, AttributeDefinition attribute) {
+        field.setRequired(attribute.isRequired());
         field.setRequiredMessage(messages.formatMessage(
                 "validation.required.defaultMsg",
-                msgBundleTools.getLocalizedValue(attributeDefinition.getNameMsgBundle(), attributeDefinition.getName())));
+                msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
     }
 
     protected ListEditor.ItemType getListEditorItemType(AttributeType attributeType) {
@@ -415,6 +440,26 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                     }
                 }
             });
+        }
+    }
+
+    protected void setLookupActionScreen(LookupAction lookupAction, AttributeDefinition attribute) {
+        String screen = attribute.getConfiguration().getLookupScreen();
+        if (!Strings.isNullOrEmpty(screen)) {
+            lookupAction.setScreenId(screen);
+        } else {
+            Class<?> javaType = attribute.getJavaType();
+            MetaClass metaClass = metadata.getClass(javaType);
+            screen = windowConfig.getBrowseScreenId(metaClass);
+            Map<String, String> screensMap = screensHelper.getAvailableBrowserScreens(javaType);
+            if (windowConfig.findWindowInfo(screen) != null && screensMap.containsValue(screen)) {
+                lookupAction.setScreenId(screen);
+                lookupAction.setOpenMode(OpenMode.THIS_TAB);
+            } else {
+//                lookupAction.setLookupScreen(CommonLookupController.SCREEN_ID);
+//                lookupAction.setLookupScreenParams(ParamsMap.of(CommonLookupController.CLASS_PARAMETER, metaClass));
+//                lookupAction.setLookupScreenOpenType(OpenType.DIALOG);
+            }
         }
     }
 

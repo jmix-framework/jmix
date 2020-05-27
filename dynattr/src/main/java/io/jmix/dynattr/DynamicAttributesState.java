@@ -63,9 +63,7 @@ public class DynamicAttributesState implements EntityEntryExtraState, EntityValu
 
         if (!Objects.equals(value, oldValue)) {
             dynamicModel.setValue(code, value);
-            if (value != null) {
-                EntityInternals.fireListeners(getEntityEntry().getSource(), name, oldValue, value);
-            }
+            EntityInternals.fireListeners(getEntityEntry().getSource(), name, oldValue, value);
         }
     }
 

@@ -67,6 +67,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
     protected EntityStates entityStates;
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
 
     protected String dynamicAttributesStore = Stores.MAIN;
 
@@ -353,8 +355,9 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 List<Entity> resultList = entityManager.createQuery(
                         String.format("select e from %s e where e.%s in :ids", metaClass.getName(), pkName))
                         .setParameter("ids", ids)
-                        .setHint(PersistenceHints.FETCH_PLAN, FetchPlan.MINIMAL)
+                        .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.MINIMAL))
                         .getResultList();
+
 
                 Map<Object, Entity> entityById = new LinkedHashMap<>();
                 for (Entity entity : resultList) {

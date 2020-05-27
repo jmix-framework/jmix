@@ -27,6 +27,7 @@ import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -156,6 +157,12 @@ public class CommonAttributeDefinition implements AttributeDefinition {
         @Override
         public List<CategoryAttribute> getDependsOnAttributes() {
             return attribute.getConfiguration().getDependsOnAttributes();
+        }
+
+        @Nullable
+        @Override
+        public String getLookupScreen() {
+            return attribute.getScreen();
         }
     }
 

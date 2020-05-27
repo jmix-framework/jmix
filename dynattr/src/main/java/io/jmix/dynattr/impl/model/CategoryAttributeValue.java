@@ -18,6 +18,7 @@
 package io.jmix.dynattr.impl.model;
 
 
+import io.jmix.core.AppBeans;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.Metadata;
 import io.jmix.core.ReferenceToEntitySupport;
@@ -97,14 +98,10 @@ public class CategoryAttributeValue extends StandardEntity {
     @Transient
     private List<Object> transientCollectionValue;
 
-    @Transient
-    private transient ReferenceToEntitySupport referenceToEntitySupport;
-
     @PostConstruct
-    public void init(Metadata metadata, ReferenceToEntitySupport referenceToEntitySupport) {
+    public void init(Metadata metadata) {
         entity = metadata.create(ReferenceToEntity.class);
         entityValue = metadata.create(ReferenceToEntity.class);
-        this.referenceToEntitySupport = referenceToEntitySupport;
     }
 
     public void setCategoryAttribute(CategoryAttribute categoryAttribute) {
@@ -253,6 +250,7 @@ public class CategoryAttributeValue extends StandardEntity {
         } else if (value instanceof Boolean) {
             setBooleanValue((Boolean) value);
         } else if (value instanceof io.jmix.core.Entity) {
+            ReferenceToEntitySupport referenceToEntitySupport = AppBeans.get(ReferenceToEntitySupport.class);
             Object referenceId = referenceToEntitySupport.getReferenceId((io.jmix.core.Entity) value);
             entityValue.setObjectEntityId(referenceId);
             setTransientEntityValue((io.jmix.core.Entity) value);

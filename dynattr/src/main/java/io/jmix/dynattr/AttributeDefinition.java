@@ -90,6 +90,9 @@ public interface AttributeDefinition {
 
         @Nullable
         List<CategoryAttribute> getDependsOnAttributes();
+
+        @Nullable
+        String getLookupScreen();
     }
 
     String getId();

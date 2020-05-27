@@ -100,7 +100,7 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
             for (FieldConfig fc : fields.values()) {
                 com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(fc.getComponentNN());
                 if (composition != null) {
-                    composition.setCubaId(fc.getId());
+                    composition.setJTestId(fc.getId());
                 }
             }
         }
@@ -553,7 +553,7 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
 
         if (ui.isTestMode()) {
             if (composition != null) {
-                composition.setCubaId(fc.getId());
+                composition.setJTestId(fc.getId());
             }
         }
 

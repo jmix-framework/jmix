@@ -370,7 +370,7 @@ public class WebFilterHelper implements FilterHelper {
     public void setInternalDebugId(io.jmix.ui.component.Component component, String id) {
         AppUI ui = AppUI.getCurrent();
         if (ui != null && ui.isTestMode()) {
-            component.unwrap(Component.class).setCubaId(id);
+            component.unwrap(Component.class).setJTestId(id);
         }
     }
 

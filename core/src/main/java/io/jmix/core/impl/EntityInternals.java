@@ -65,7 +65,7 @@ public class EntityInternals {
     }
 
     @SuppressWarnings("unused")
-    public static void fireListeners(Entity entity, String property, Object prevValue, Object newValue) {
+    public static void fireListeners(Entity entity, String property, @Nullable Object prevValue, @Nullable Object newValue) {
         if (!EntityValues.propertyValueEquals(prevValue, newValue)) {
             ((BaseEntityEntry) entity.__getEntityEntry()).firePropertyChanged(property, prevValue, newValue);
         }

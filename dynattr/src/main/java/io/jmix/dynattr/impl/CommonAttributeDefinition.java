@@ -144,6 +144,12 @@ public class CommonAttributeDefinition implements AttributeDefinition {
             return attribute.getConfiguration().getOptionsLoaderType();
         }
 
+        @Nullable
+        @Override
+        public String getRecalculationScript() {
+            return attribute.getConfiguration().getRecalculationScript();
+        }
+
         @Override
         public Integer getColumnNumber() {
             return attribute.getConfiguration().getColumnNumber();

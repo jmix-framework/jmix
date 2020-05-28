@@ -25,9 +25,12 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class DynAttrUiProperties {
 
     int dynamicAttributesPanelMaxColumnsCount;
+    int maxRecalculationLevel;
 
-    public DynAttrUiProperties(@DefaultValue("4") int dynamicAttributesPanelMaxCount) {
+    public DynAttrUiProperties(@DefaultValue("4") int dynamicAttributesPanelMaxCount,
+                               @DefaultValue("10") int maxRecalculationLevel) {
         this.dynamicAttributesPanelMaxColumnsCount = dynamicAttributesPanelMaxCount;
+        this.maxRecalculationLevel = maxRecalculationLevel;
     }
 
     /**
@@ -35,5 +38,12 @@ public class DynAttrUiProperties {
      */
     public int getDynamicAttributesPanelMaxColumnsCount() {
         return dynamicAttributesPanelMaxColumnsCount;
+    }
+
+    /**
+     * @return max recalculation level for dynamic attributes
+     */
+    public int getMaxRecalculationLevel() {
+        return maxRecalculationLevel;
     }
 }

@@ -18,6 +18,7 @@ package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -46,10 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -67,6 +65,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected WindowConfig windowConfig;
     protected ScreensHelper screensHelper;
     protected Actions actions;
+    protected AttributeDependencies attributeDependencies;
+    protected BeanLocator beanLocator;
 
     @Autowired
     public DynAttrComponentGenerationStrategy(Messages messages, UiComponents uiComponents,
@@ -76,7 +76,9 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                                               AttributeValidators attributeValidators,
                                               WindowConfig windowConfig,
                                               ScreensHelper screensHelper,
-                                              Actions actions) {
+                                              Actions actions,
+                                              AttributeDependencies attributeDependencies,
+                                              BeanLocator beanLocator) {
         this.messages = messages;
         this.uiComponents = uiComponents;
         this.dynamicModelMetadata = dynamicModelMetadata;
@@ -86,6 +88,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         this.windowConfig = windowConfig;
         this.screensHelper = screensHelper;
         this.actions = actions;
+        this.attributeDependencies = attributeDependencies;
+        this.beanLocator = beanLocator;
     }
 
     public Component createComponent(ComponentGenerationContext context) {
@@ -117,7 +121,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         }
 
         if (resultComponent instanceof HasValue) {
-            setValueChangedListeners((HasValue<?>) resultComponent, context);
+            setValueChangedListeners((HasValue<?>) resultComponent, attribute);
         }
 
         if (resultComponent instanceof Component.Editable) {
@@ -346,15 +350,12 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         }
     }
 
-    protected void setValueChangedListeners(HasValue component, ComponentGenerationContext context) {
-        //todo: dynamic attributes (calculated attributes)
-//        Consumer<HasValue.ValueChangeEvent> valueChangedListener = getDynamicAttributesGuiTools()
-//                .getValueChangeEventListener(attribute);
-//
-//        if (valueChangedListener != null) {
-//            //noinspection unchecked
-//            component.addValueChangeListener(valueChangedListener);
-//        }
+    protected void setValueChangedListeners(HasValue component, AttributeDefinition attribute) {
+        Set<AttributeDefinition> dependentAttributes = attributeDependencies.getDependentAttributes(attribute);
+        if (!dependentAttributes.isEmpty()) {
+            //noinspection unchecked
+            component.addValueChangeListener(beanLocator.getPrototype(AttributeRecalculationListener.class, attribute));
+        }
     }
 
     protected void setEditable(Component.Editable component, AttributeDefinition attribute) {

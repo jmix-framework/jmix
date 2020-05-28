@@ -137,6 +137,10 @@ public class DynamicAttributes implements Serializable {
         return holder == null ? null : holder.getValue();
     }
 
+    public Set<String> getKeys() {
+        return Collections.unmodifiableSet(values.keySet());
+    }
+
     public Changes getChanges() {
         Set<String> created = new HashSet<>();
         Set<String> updated = new HashSet<>();

@@ -83,6 +83,9 @@ public interface AttributeDefinition {
         OptionsLoaderType getOptionsLoaderType();
 
         @Nullable
+        String getRecalculationScript();
+
+        @Nullable
         Integer getColumnNumber();
 
         @Nullable

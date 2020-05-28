@@ -55,11 +55,6 @@ public class AppMainWindow extends AbstractMainWindow {
         // todo fts
 //        initFtsField(ftsField);
 
-        // todo see #429
-//        if (webConfig.getUseInverseHeader()) {
-//            titleBar.setStyleName("c-app-menubar c-inverse-header");
-//        }
-
         //            todo folders pane
  /*       if (webConfig.getFoldersPaneEnabled()) {
             if (webConfig.getFoldersPaneVisibleByDefault()) {

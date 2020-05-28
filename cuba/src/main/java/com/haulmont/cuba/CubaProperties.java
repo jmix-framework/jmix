@@ -40,7 +40,6 @@ public class CubaProperties {
     int genericFilterPropertiesHierarchyDepth;
     boolean genericFilterTrimParamValues;
     String genericFilterMaxResultsOptions;
-    private boolean useInverseHeader;
 
     public CubaProperties(
             boolean dataManagerBeanValidation,
@@ -56,8 +55,7 @@ public class CubaProperties {
             boolean genericFilterChecking,
             @DefaultValue("2") int genericFilterPropertiesHierarchyDepth,
             @DefaultValue("true") boolean genericFilterTrimParamValues,
-            @DefaultValue("NULL, 20, 50, 100, 500, 1000, 5000") String genericFilterMaxResultsOptions,
-            @DefaultValue("true") boolean useInverseHeader
+            @DefaultValue("NULL, 20, 50, 100, 500, 1000, 5000") String genericFilterMaxResultsOptions
     ) {
         this.dataManagerBeanValidation = dataManagerBeanValidation;
         this.disableEscapingLikeForDataStores = disableEscapingLikeForDataStores;
@@ -73,7 +71,6 @@ public class CubaProperties {
         this.genericFilterPropertiesHierarchyDepth = genericFilterPropertiesHierarchyDepth;
         this.genericFilterTrimParamValues = genericFilterTrimParamValues;
         this.genericFilterMaxResultsOptions = genericFilterMaxResultsOptions;
-        this.useInverseHeader = useInverseHeader;
     }
 
     public boolean isDataManagerBeanValidation() {
@@ -165,12 +162,5 @@ public class CubaProperties {
 
     public String getGenericFilterMaxResultsOptions() {
         return genericFilterMaxResultsOptions;
-    }
-
-    /**
-     * Whether to use inverse header colors if it is supported by theme.
-     */
-    public boolean isUseInverseHeader() {
-        return useInverseHeader;
     }
 }

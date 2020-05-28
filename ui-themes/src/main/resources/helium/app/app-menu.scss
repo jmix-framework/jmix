@@ -46,70 +46,68 @@
     }
   }
 
-  @if ($v-support-inverse-menu) {
-    .c-inverse-header.c-app-menubar {
-      background: var(--menubar-background-color);
-      border: he-border($color: --menubar-border-color);
+  .c-app-menubar {
+    background: var(--menubar-background-color);
+    border: he-border($color: --menubar-border-color);
 
-      .c-main-menu {
-        .v-menubar-menuitem-more-item,
-        .v-menubar-menuitem-caption,
-        .v-menubar-menuitem-shortcut {
-          color: var(--menubar-text-color);
-        }
-
-        .v-menubar-menuitem {
-          &:before {
-            display: none;
-          }
-
-          &:hover {
-            background: var(--menubar-menuitem-hover-background-color);
-          }
-        }
-
-        .v-menubar-menuitem-selected {
-          background: var(--menubar-menuitem-selected-background-color);
-
-          &:hover {
-            background: var(--menubar-menuitem-selected-background-color);
-          }
-        }
-
-        .v-menubar-menuitem:hover .v-menubar-menuitem-caption,
-        .v-menubar-menuitem:hover .v-menubar-menuitem-shortcut,
-        .v-menubar-menuitem.v-menubar-menuitem-more-item:hover,
-        .v-menubar-menuitem-selected .v-menubar-menuitem-caption,
-        .v-menubar-menuitem-selected .v-menubar-menuitem-shortcut,
-        .v-menubar-menuitem-selected.v-menubar-menuitem-more-item {
-          color: var(--menubar-menuitem-selected-text-color);
-        }
+    .c-main-menu {
+      .v-menubar-menuitem-more-item,
+      .v-menubar-menuitem-caption,
+      .v-menubar-menuitem-shortcut {
+        color: var(--menubar-text-color);
       }
 
-      .c-user-select-label,
-      .c-user-timezone-label,
-      .c-ftsfield-button,
-      .c-logout-button,
-      .c-newwindow-button {
-        color: var(--menubar-action-button-color);
-      }
-
-      .c-ftsfield-button,
-      .c-logout-button,
-      .c-newwindow-button {
-        &:focus {
-          color: var(--menubar-action-button-hover-text-color);
+      .v-menubar-menuitem {
+        &:before {
+          display: none;
         }
 
         &:hover {
-          color: var(--menubar-action-button-hover-text-color);
-          background: var(--menubar-action-button-hover-background-color);
+          background: var(--menubar-menuitem-hover-background-color);
         }
+      }
 
-        &:active {
-          color: var(--menubar-action-button-active-text-color);
-          background: var(--menubar-action-button-active-background-color);
+      .v-menubar-menuitem-selected {
+        background: var(--menubar-menuitem-selected-background-color);
+
+        &:hover {
+          background: var(--menubar-menuitem-selected-background-color);
         }
+      }
+
+      .v-menubar-menuitem:hover .v-menubar-menuitem-caption,
+      .v-menubar-menuitem:hover .v-menubar-menuitem-shortcut,
+      .v-menubar-menuitem.v-menubar-menuitem-more-item:hover,
+      .v-menubar-menuitem-selected .v-menubar-menuitem-caption,
+      .v-menubar-menuitem-selected .v-menubar-menuitem-shortcut,
+      .v-menubar-menuitem-selected.v-menubar-menuitem-more-item {
+        color: var(--menubar-menuitem-selected-text-color);
+      }
+    }
+
+    .c-user-select-label,
+    .c-user-timezone-label,
+    .c-ftsfield-button,
+    .c-logout-button,
+    .c-newwindow-button {
+      color: var(--menubar-action-button-color);
+    }
+
+    .c-ftsfield-button,
+    .c-logout-button,
+    .c-newwindow-button {
+      &:focus {
+        color: var(--menubar-action-button-hover-text-color);
+      }
+
+      &:hover {
+        color: var(--menubar-action-button-hover-text-color);
+        background: var(--menubar-action-button-hover-background-color);
+      }
+
+      &:active {
+        color: var(--menubar-action-button-active-text-color);
+        background: var(--menubar-action-button-active-background-color);
       }
     }
   }

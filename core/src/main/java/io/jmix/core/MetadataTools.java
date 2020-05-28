@@ -771,10 +771,12 @@ public class MetadataTools {
 
         MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(propertyPath);
         if (metaPropertyPath == null) {
-            for (MetaPropertyPathResolver resolver : metaPropertyPathResolvers) {
-                metaPropertyPath = resolver.resolveMetaPropertyPath(metaClass, propertyPath);
-                if (metaPropertyPath != null) {
-                    break;
+            if (metaPropertyPathResolvers != null) {
+                for (MetaPropertyPathResolver resolver : metaPropertyPathResolvers) {
+                    metaPropertyPath = resolver.resolveMetaPropertyPath(metaClass, propertyPath);
+                    if (metaPropertyPath != null) {
+                        break;
+                    }
                 }
             }
         }

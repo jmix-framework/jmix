@@ -198,17 +198,17 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Autowired
     protected LinkButton constraintWizardField;
     @Autowired
-    protected LookupField<AttributeType> dataTypeField;
+    protected ComboBox<AttributeType> dataTypeField;
     @Autowired
-    protected LookupField<String> entityClassField;
+    protected ComboBox<String> entityClassField;
     @Autowired
-    protected LookupField<String> screenField;
+    protected ComboBox<String> screenField;
     @Autowired
-    protected LookupField<Boolean> defaultBooleanField;
+    protected ComboBox<Boolean> defaultBooleanField;
     @Autowired
-    protected LookupField<OptionsLoaderType> optionsLoaderTypeField;
+    protected ComboBox<OptionsLoaderType> optionsLoaderTypeField;
     @Autowired
-    protected PickerField<Entity> defaultEntityIdField;
+    protected EntityPicker<Entity> defaultEntityIdField;
     @Autowired
     protected SourceCodeEditor optionsLoaderScriptField;
     @Autowired
@@ -451,7 +451,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             targetScreensTable.addGeneratedColumn(
                     "screen",
                     entity -> {
-                        LookupField<String> screenField = uiComponents.create(LookupField.class);
+                        ComboBox<String> screenField = uiComponents.create(ComboBox.class);
                         screenField.setValueSource(new ContainerValueSource<>(targetScreensTable.getInstanceContainer(entity), "screen"));
                         screenField.setOptionsMap(availableScreensMap);
                         //noinspection RedundantCast

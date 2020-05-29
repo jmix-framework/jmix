@@ -18,8 +18,8 @@
 <fragment xmlns="http://jmix.io/schema/ui/fragment">
     <layout spacing="true" expand="configurationBox">
         <hbox spacing="true" expand="saveConfigurationBtn">
-            <lookupField id="columnsCountLookupField" caption="msg://columnsCountLookupField.caption"
-                         nullOptionVisible="false" width="175px"/>
+            <comboBox id="columnsCountLookupField" caption="msg://columnsCountLookupField.caption"
+                      nullOptionVisible="false" width="175px"/>
             <button id="saveConfigurationBtn" caption="msg://saveConfigurationBtn.caption" align="BOTTOM_RIGHT"/>
         </hbox>
         <hbox id="configurationBox" spacing="true">

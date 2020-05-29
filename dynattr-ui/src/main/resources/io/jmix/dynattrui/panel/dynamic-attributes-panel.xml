@@ -22,7 +22,7 @@
           width="100%">
         <hbox id="categoryFieldBox" width="100%" expand="categoryField" spacing="true">
             <label id="categoryFieldLabel" value="msg://dynamicAttributes.category" align="MIDDLE_LEFT"/>
-            <lookupField id="categoryField" captionProperty="localeName"/>
+            <comboBox id="categoryField" captionProperty="localeName"/>
         </hbox>
         <form id="propertiesForm" width="100%"/>
     </vbox>

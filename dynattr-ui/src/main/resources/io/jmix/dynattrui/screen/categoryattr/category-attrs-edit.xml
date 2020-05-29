@@ -49,7 +49,7 @@
                                        requiredMessage="msg://codeField.required"/>
                             <textArea id="descriptionField" property="description" maxLength="1000" rows="3"/>
                             <checkBox id="requiredField" property="required"/>
-                            <lookupField id="dataTypeField" property="dataType" required="true"
+                            <comboBox id="dataTypeField" property="dataType" required="true"
                                          requiredMessage="msg://dataTypeField.required"/>
                             <sourceCodeEditor id="validationScriptField" property="configuration.validatorGroovyScript"
                                               mode="Groovy" highlightActiveLine="false" showGutter="false"
@@ -62,9 +62,9 @@
                             <checkBox id="lookupField" property="lookup"
                                       contextHelpText="msg://lookupField.contextHelp"/>
                             <checkBox id="isCollectionField" property="isCollection"/>
-                            <lookupField id="entityClassField" property="entityClass" required="true"
+                            <comboBox id="entityClassField" property="entityClass" required="true"
                                          requiredMessage="msg://entityClassField.required"/>
-                            <lookupField id="screenField" property="screen" required="true"
+                            <comboBox id="screenField" property="screen" required="true"
                                          requiredMessage="msg://screenField.required"/>
                             <textField id="widthField" property="width">
                                 <validators>
@@ -76,13 +76,13 @@
                                 <validator class="io.jmix.ui.component.validator.IntegerValidator" minValue="1"
                                            maxValue="40" message="msg://rowsCountField.validationMessage"/>
                             </textField>
-                            <pickerField id="defaultEntityIdField"
+                            <entityPicker id="defaultEntityIdField"
                                          caption="msg://io.jmix.dynattr.impl.model/CategoryAttribute.defaultEntityId">
                                 <actions>
-                                    <action id="lookup" type="picker_lookup"/>
-                                    <action id="clear" type="picker_clear"/>
+                                    <action id="lookup" type="entity_lookup"/>
+                                    <action id="clear" type="entity_clear"/>
                                 </actions>
-                            </pickerField>
+                            </entityPicker>
                             <hbox id="enumerationBox" spacing="true" expand="enumerationField"
                                   caption="msg://io.jmix.dynattr.impl.model/CategoryAttribute.enumeration">
                                 <textField id="enumerationField" dataContainer="categoryAttributeDc"
@@ -95,7 +95,7 @@
                             <textField id="defaultIntField" property="defaultInt"/>
                             <textField id="defaultDoubleField" property="defaultDouble"/>
                             <textField id="defaultDecimalField" property="defaultDecimal"/>
-                            <lookupField id="defaultBooleanField" property="defaultBoolean"/>
+                            <comboBox id="defaultBooleanField" property="defaultBoolean"/>
                             <dateField id="defaultDateField" property="defaultDate"/>
                             <dateField id="defaultDateWithoutTimeField" property="defaultDateWithoutTime"/>
                             <dateField id="defaultDateIsCurrentField" property="defaultDateIsCurrent"/>
@@ -119,7 +119,7 @@
                                    inline="true">
                             <lookup lookup="false"/>
                         </tokenList>
-                        <lookupField id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
+                        <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                         <sourceCodeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
                                           showGutter="false"/>
                         <linkButton id="constraintWizardField" caption="msg://constraintWizardField.caption"

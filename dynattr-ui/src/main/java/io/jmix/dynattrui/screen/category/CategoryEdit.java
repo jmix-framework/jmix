@@ -28,7 +28,7 @@ import io.jmix.ui.Fragments;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TabSheet;
 import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.model.CollectionContainer;
@@ -70,7 +70,7 @@ public class CategoryEdit extends StandardEditor<Category> {
     protected ExtendedEntities extendedEntities;
 
     @Autowired
-    protected LookupField<MetaClass> entityTypeField;
+    protected ComboBox<MetaClass> entityTypeField;
     @Autowired
     protected VBoxLayout categoryAttrsBox;
     @Autowired

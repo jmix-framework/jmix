@@ -69,7 +69,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
 
     protected Form propertiesForm;
     protected HBoxLayout categoryFieldBox;
-    protected LookupField<Category> categoryField;
+    protected ComboBox<Category> categoryField;
 
     public DynamicAttributesPanel() {
         addCreateListener(this::onCreate);

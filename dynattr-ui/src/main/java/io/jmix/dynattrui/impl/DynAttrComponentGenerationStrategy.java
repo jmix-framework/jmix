@@ -34,8 +34,8 @@ import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.action.picker.ClearAction;
-import io.jmix.ui.action.picker.LookupAction;
+import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.component.data.options.MapOptions;
@@ -154,7 +154,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         AttributeDefinition.Configuration configuration = attribute.getConfiguration();
 
         if (configuration.isLookup()) {
-            return createLookupField(context, attribute);
+            return createComboBox(context, attribute);
         } else if (type == STRING) {
             return createStringField(context, attribute);
         } else if (type == BOOLEAN) {
@@ -221,27 +221,27 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createEnumerationField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        LookupField lookupField = uiComponents.create(LookupField.class);
+        ComboBox comboBox = uiComponents.create(ComboBox.class);
 
-        lookupField.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));
+        comboBox.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));
 
-        setValueSource(lookupField, context);
-        setValidators(lookupField, attribute);
+        setValueSource(comboBox, context);
+        setValidators(comboBox, attribute);
 
-        return lookupField;
+        return comboBox;
     }
 
-    protected Component createLookupField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        LookupField lookupField = uiComponents.create(LookupField.class);
+    protected Component createComboBox(ComponentGenerationContext context, AttributeDefinition attribute) {
+        ComboBox comboBox = uiComponents.create(ComboBox.class);
 
         if (context.getValueSource() instanceof ContainerValueSource) {
-            setOptionsLoader(lookupField, attribute, (ContainerValueSource) context.getValueSource());
+            setOptionsLoader(comboBox, attribute, (ContainerValueSource) context.getValueSource());
         }
 
-        setValueSource(lookupField, context);
-        setValidators(lookupField, attribute);
+        setValueSource(comboBox, context);
+        setValidators(comboBox, attribute);
 
-        return lookupField;
+        return comboBox;
     }
 
     protected Field createBooleanField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -296,30 +296,30 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     @SuppressWarnings("unchecked")
     protected Component createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
         if (attribute.getConfiguration().isLookup()) {
-            LookupPickerField lookupPickerField = uiComponents.create(LookupPickerField.class);
+            EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);
 
             if (context.getValueSource() instanceof ContainerValueSource) {
-                setOptionsLoader(lookupPickerField, attribute, (ContainerValueSource) context.getValueSource());
+                setOptionsLoader(entityComboBox, attribute, (ContainerValueSource) context.getValueSource());
             }
 
-            setValueSource(lookupPickerField, context);
-            setValidators(lookupPickerField, attribute);
+            setValueSource(entityComboBox, context);
+            setValidators(entityComboBox, attribute);
 
-            return lookupPickerField;
+            return entityComboBox;
         } else {
-            PickerField pickerField = uiComponents.create(PickerField.class);
+            EntityPicker entityPicker = uiComponents.create(EntityPicker.class);
 
             LookupAction lookupAction = actions.create(LookupAction.class);
 
             setLookupActionScreen(lookupAction, attribute);
 
-            pickerField.addAction(lookupAction);
-            pickerField.addAction(actions.create(ClearAction.class));
+            entityPicker.addAction(lookupAction);
+            entityPicker.addAction(actions.create(ClearAction.class));
 
-            setValueSource(pickerField, context);
-            setValidators(pickerField, attribute);
+            setValueSource(entityPicker, context);
+            setValidators(entityPicker, attribute);
 
-            return pickerField;
+            return entityPicker;
         }
     }
 
@@ -410,7 +410,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
 
-    protected void setOptionsLoader(LookupField lookupField, AttributeDefinition attribute, ContainerValueSource valueSource) {
+    protected void setOptionsLoader(ComboBox lookupField, AttributeDefinition attribute, ContainerValueSource valueSource) {
         InstanceContainer<?> container = valueSource.getContainer();
         Entity entity = container.getItemOrNull();
         if (entity != null) {

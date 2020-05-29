@@ -42,8 +42,8 @@
                                    requiredMessage="msg://nameField.required"/>
                     </column>
                     <column width="200px">
-                        <lookupField id="entityTypeField" caption="msg://io.jmix.dynattr.impl.model/Category.entityType"
-                                     required="true" requiredMessage="msg://entityTypeField.required"/>
+                        <comboBox id="entityTypeField" caption="msg://io.jmix.dynattr.impl.model/Category.entityType"
+                                  required="true" requiredMessage="msg://entityTypeField.required"/>
                     </column>
                     <column width="200px">
                         <checkBox id="isDefaultField" property="isDefault"/>

@@ -42,7 +42,7 @@ import io.jmix.ui.component.Button;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
@@ -73,7 +73,7 @@ public class AttributeLocationFragment extends ScreenFragment {
     protected Messages messages;
 
     @Autowired
-    protected LookupField<Integer> columnsCountLookupField;
+    protected ComboBox<Integer> columnsCountLookupField;
     @Autowired
     protected HBoxLayout targetDataGridBox;
     @Autowired

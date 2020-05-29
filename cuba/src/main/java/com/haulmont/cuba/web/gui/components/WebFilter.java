@@ -31,6 +31,7 @@ import io.jmix.ui.component.HasOuterMargin;
 import io.jmix.ui.component.MarginInfo;
 import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.model.BaseCollectionLoader;
+import io.jmix.ui.settings.component.SettingsWrapper;
 import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 

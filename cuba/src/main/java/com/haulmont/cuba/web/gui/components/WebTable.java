@@ -17,8 +17,15 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Table;
+import com.haulmont.cuba.settings.CubaTableSettingsBinder;
 import io.jmix.core.Entity;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 
 @Deprecated
 public class WebTable<E extends Entity> extends io.jmix.ui.component.impl.WebTable<E> implements Table<E> {
+
+    @Override
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(CubaTableSettingsBinder.NAME);
+    }
 }

@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.web.gui.components;
+package com.haulmont.cuba.settings;
 
-import com.haulmont.cuba.gui.components.TreeTable;
-import com.haulmont.cuba.settings.CubaTreeTableSettingsBinder;
-import io.jmix.core.Entity;
-import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import com.haulmont.cuba.web.gui.components.WebTreeTable;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.settings.component.binder.TreeTableSettingsBinder;
 
-@Deprecated
-public class WebTreeTable<E extends Entity> extends io.jmix.ui.component.impl.WebTreeTable<E> implements TreeTable<E> {
+@org.springframework.stereotype.Component(CubaTreeTableSettingsBinder.NAME)
+public class CubaTreeTableSettingsBinder extends TreeTableSettingsBinder {
+
+    public static final String NAME = "jmix_CubaTreeTableSettingsBinder";
 
     @Override
-    protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(CubaTreeTableSettingsBinder.NAME);
+    public Class<? extends Component> getComponentClass() {
+        return WebTreeTable.class;
     }
 }

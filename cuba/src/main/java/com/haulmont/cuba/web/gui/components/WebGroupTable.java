@@ -17,9 +17,16 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.GroupTable;
+import com.haulmont.cuba.settings.CubaGroupTableSettingsBinder;
 import io.jmix.core.Entity;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 
 @Deprecated
 public class WebGroupTable<E extends Entity> extends io.jmix.ui.component.impl.WebGroupTable<E>
         implements GroupTable<E> {
+
+    @Override
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(CubaGroupTableSettingsBinder.NAME);
+    }
 }

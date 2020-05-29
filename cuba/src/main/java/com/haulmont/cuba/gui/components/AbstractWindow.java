@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.screen.ScreenSettings;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
@@ -30,7 +31,8 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.settings.Settings;
+import io.jmix.ui.screen.compatibility.CubaLegacySettings;
+import io.jmix.ui.settings.compatibility.Settings;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 import org.dom4j.Element;
@@ -52,7 +54,8 @@ import java.util.stream.Stream;
  */
 @Deprecated
 public class AbstractWindow extends Screen
-        implements Window, Window.Wrapper, LegacyFrame, Component.HasXmlDescriptor, SecuredActionsHolder, ChangeTracker {
+        implements Window, Window.Wrapper, LegacyFrame, Component.HasXmlDescriptor, SecuredActionsHolder, ChangeTracker,
+        CubaLegacySettings {
 
     public static final String UNKNOWN_CLOSE_ACTION_ID = "unknown";
 
@@ -62,6 +65,8 @@ public class AbstractWindow extends Screen
     private Component parent;
 
     private DsContext dsContext;
+
+    private Settings settings;
 
     @Autowired
     protected Messages messages;
@@ -766,7 +771,18 @@ public class AbstractWindow extends Screen
      */
     @Override
     public void applySettings(Settings settings) {
-        super.applySettings(settings);
+        this.settings = settings;
+
+        ScreenSettings screenSettings = getBeanLocator().get(ScreenSettings.NAME);
+        screenSettings.applySettings(this, settings);
+    }
+
+    @Override
+    public void applyDataLoadingSettings(Settings settings) {
+        this.settings = settings;
+
+        ScreenSettings screenSettings = getBeanLocator().get(ScreenSettings.NAME);
+        screenSettings.applyDataLoadingSettings(this, settings);
     }
 
     /**
@@ -774,17 +790,20 @@ public class AbstractWindow extends Screen
      */
     @Override
     public void saveSettings() {
-        super.saveSettings();
+        if (settings != null) {
+            ScreenSettings screenSettings = getBeanLocator().get(ScreenSettings.NAME);
+            screenSettings.saveSettings(this, settings);
+        }
     }
 
     @Override
     public void deleteSettings() {
-        super.deleteSettings();
+        settings.delete();
     }
 
     @Override
     public Settings getSettings() {
-        return super.getSettings();
+        return settings;
     }
 
     @Override

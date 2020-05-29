@@ -65,7 +65,7 @@ import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.FrameOwner;
-import io.jmix.ui.settings.SettingsImpl;
+import io.jmix.ui.settings.compatibility.SettingsImpl;
 import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ValuePathHelper;

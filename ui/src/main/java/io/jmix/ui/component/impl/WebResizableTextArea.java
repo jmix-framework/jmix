@@ -19,6 +19,12 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.ResizableTextArea;
+import io.jmix.ui.settings.compatibility.converter.LegacyResizableTextAreaSettingsConverter;
+import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
+import io.jmix.ui.settings.component.ResizableTextAreaSettings;
+import io.jmix.ui.settings.component.SettingsWrapperImpl;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.ResizableTextAreaSettingsBinder;
 import io.jmix.ui.widget.JmixResizableTextAreaWrapper;
 import io.jmix.ui.widget.JmixTextArea;
 import com.vaadin.server.ErrorMessage;
@@ -36,7 +42,8 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
 
     protected JmixResizableTextAreaWrapper wrapper;
     protected boolean settingsEnabled = true;
-    protected boolean settingsChanged = false;
+
+    protected LegacySettingsConverter settingsConverter;
 
     public WebResizableTextArea() {
         component = createComponent();
@@ -44,6 +51,8 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
 
         wrapper = new JmixResizableTextAreaWrapper(component);
         wrapper.setResizeListener(this::onResize);
+
+        settingsConverter = createSettingConverter();
     }
 
     @Override
@@ -148,33 +157,26 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
 
     @Override
     public void applySettings(Element element) {
-        if (isSettingsEnabled() && isResizable()) {
-            String width = element.attributeValue("width");
-            String height = element.attributeValue("height");
-            if (StringUtils.isNotEmpty(width)
-                    && StringUtils.isNotEmpty(height)) {
-                setWidth(width);
-                setHeight(height);
-            }
+        if (isSettingsEnabled()) {
+            ResizableTextAreaSettings settings = settingsConverter.convertToComponentSettings(element);
+            getSettingsBinder().applySettings(this, new SettingsWrapperImpl(settings));
         }
     }
 
     @Override
     public boolean saveSettings(Element element) {
-        if (!isSettingsEnabled() || !isResizable()) {
+        if (!isSettingsEnabled()) {
             return false;
         }
 
-        if (!settingsChanged) {
-            return false;
+        ResizableTextAreaSettings settings = settingsConverter.convertToComponentSettings(element);
+
+        boolean modified = getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
+        if (modified) {
+            settingsConverter.copyToElement(settings, element);
         }
 
-        String width = getWidth() + wrapper.getWidthUnits().toString();
-        String height = getHeight() + wrapper.getHeightUnits().toString();
-        element.addAttribute("width", width);
-        element.addAttribute("height", height);
-
-        return true;
+        return modified;
     }
 
     @Override
@@ -223,7 +225,13 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
     protected void onResize(String oldWidth, String oldHeight, String width, String height) {
         ResizeEvent e = new ResizeEvent(this, oldWidth, width, oldHeight, height);
         publish(ResizeEvent.class, e);
+    }
 
-        settingsChanged = true;
+    protected LegacySettingsConverter createSettingConverter() {
+        return new LegacyResizableTextAreaSettingsConverter();
+    }
+
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(ResizableTextAreaSettingsBinder.NAME);
     }
 }

@@ -48,9 +48,9 @@ public class UiProperties {
     String pickerLookupShortcut;
     String pickerOpenShortcut;
     String pickerClearShortcut;
+    String appWindowMode;
     boolean useSaveConfirmation;
     boolean layoutAnalyzerEnabled;
-    boolean manualScreenSettingsSaving;
     int lookupFieldPageLength;
     String validationNotificationType;
     boolean reloadUnfetchedAttributesFromLookupScreens;
@@ -95,9 +95,9 @@ public class UiProperties {
             @DefaultValue("CTRL-ALT-L") String pickerLookupShortcut,
             @DefaultValue("CTRL-ALT-O") String pickerOpenShortcut,
             @DefaultValue("CTRL-ALT-C") String pickerClearShortcut,
+            @DefaultValue("TABBED") String appWindowMode,
             @DefaultValue("true") boolean useSaveConfirmation,
             @DefaultValue("true") boolean layoutAnalyzerEnabled,
-            boolean manualScreenSettingsSaving,
             @DefaultValue("10") int lookupFieldPageLength,
             @DefaultValue("TRAY") String validationNotificationType,
             @DefaultValue("true") boolean reloadUnfetchedAttributesFromLookupScreens,
@@ -142,9 +142,9 @@ public class UiProperties {
         this.pickerLookupShortcut = pickerLookupShortcut;
         this.pickerOpenShortcut = pickerOpenShortcut;
         this.pickerClearShortcut = pickerClearShortcut;
+        this.appWindowMode = appWindowMode;
         this.useSaveConfirmation = useSaveConfirmation;
         this.layoutAnalyzerEnabled = layoutAnalyzerEnabled;
-        this.manualScreenSettingsSaving = manualScreenSettingsSaving;
         this.lookupFieldPageLength = lookupFieldPageLength;
         this.validationNotificationType = validationNotificationType;
         this.reloadUnfetchedAttributesFromLookupScreens = reloadUnfetchedAttributesFromLookupScreens;
@@ -243,16 +243,19 @@ public class UiProperties {
         return pickerClearShortcut;
     }
 
+    /**
+     * @return Default main window mode.
+     */
+    public String getAppWindowMode() {
+        return appWindowMode;
+    }
+
     public boolean isUseSaveConfirmation() {
         return useSaveConfirmation;
     }
 
     public boolean isLayoutAnalyzerEnabled() {
         return layoutAnalyzerEnabled;
-    }
-
-    public boolean isManualScreenSettingsSaving() {
-        return manualScreenSettingsSaving;
     }
 
     public int getLookupFieldPageLength() {

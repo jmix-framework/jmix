@@ -49,6 +49,9 @@ import io.jmix.ui.navigation.UrlTools;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
+import io.jmix.ui.screen.compatibility.CubaLegacySettings;
+import io.jmix.ui.settings.compatibility.Settings;
+import io.jmix.ui.settings.compatibility.SettingsImpl;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
@@ -363,6 +366,8 @@ public class WebScreens implements Screens {
 
         Timer.Sample beforeShowSample = Timer.start(meterRegistry);
 
+        applyDataLoadingSettings(screen);
+
         fireEvent(screen, BeforeShowEvent.class, new BeforeShowEvent(screen));
 
         loadDataBeforeShow(screen);
@@ -506,13 +511,18 @@ public class WebScreens implements Screens {
         }
     }
 
+    protected void applyDataLoadingSettings(Screen screen) {
+        if (screen instanceof CubaLegacySettings) {
+            ((CubaLegacySettings) screen).applyDataLoadingSettings(getSettingsImpl(screen.getId()));
+        }
+    }
+
     protected void afterShowWindow(Screen screen) {
         WindowContext windowContext = screen.getWindow().getContext();
 
-        // todo settings
-        /*if (!WindowParams.DISABLE_APPLY_SETTINGS.getBool(windowContext)) {
-            applySettings(screen, getSettingsImpl(screen.getId()));
-        }*/
+        if (screen instanceof CubaLegacySettings) {
+            ((CubaLegacySettings) screen).applySettings(getSettingsImpl(screen.getId()));
+        }
 
         /*
         TODO: legacy-ui
@@ -527,10 +537,9 @@ public class WebScreens implements Screens {
 
     }
 
-    // todo settings
-    /*protected Settings getSettingsImpl(String id) {
+    protected Settings getSettingsImpl(String id) {
         return new SettingsImpl(id);
-    }*/
+    }
 
     @Override
     public void remove(Screen screen) {
@@ -1070,14 +1079,20 @@ public class WebScreens implements Screens {
     }
 
     public void saveScreenSettings() {
-        // todo settings
-        /*Screen rootScreen = getOpenedScreens().getRootScreen();
+        Screen rootScreen = getOpenedScreens().getRootScreen();
 
-        saveSettings(rootScreen);
+        if (rootScreen instanceof CubaLegacySettings)
+            ((CubaLegacySettings) rootScreen).saveSettings();
 
-        getOpenedWorkAreaScreensStream().forEach(UiControllerUtils::saveSettings);
+        getOpenedWorkAreaScreensStream().forEach(screen -> {
+            if (screen instanceof CubaLegacySettings)
+                ((CubaLegacySettings) screen).saveSettings();
+        });
 
-        getDialogScreensStream().forEach(UiControllerUtils::saveSettings);*/
+        getDialogScreensStream().forEach((screen -> {
+            if (screen instanceof CubaLegacySettings)
+                ((CubaLegacySettings) screen).saveSettings();
+        }));
     }
 
     // used only for legacy screens

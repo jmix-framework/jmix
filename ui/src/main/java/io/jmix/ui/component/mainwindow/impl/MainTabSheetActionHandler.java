@@ -43,9 +43,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
 
     protected com.vaadin.event.Action analyzeLayout;
 
-    protected com.vaadin.event.Action saveSettings;
-    protected com.vaadin.event.Action restoreToDefaults;
-
     protected boolean initialized = false;
     protected HasTabSheetBehaviour tabSheet;
 
@@ -63,8 +60,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
             closeCurrentTab = new com.vaadin.event.Action(messages.getMessage("actions.closeCurrentTab"));
             showInfo = new com.vaadin.event.Action(messages.getMessage("actions.showInfo"));
             analyzeLayout = new com.vaadin.event.Action(messages.getMessage("actions.analyzeLayout"));
-            saveSettings = new com.vaadin.event.Action(messages.getMessage("actions.saveSettings"));
-            restoreToDefaults = new com.vaadin.event.Action(messages.getMessage("actions.restoreToDefaults"));
 
             initialized = true;
         }
@@ -76,10 +71,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
 
         if (target != null) {
             UiProperties properties = AppBeans.get(UiProperties.class);
-            if (properties.isManualScreenSettingsSaving()) {
-                actions.add(saveSettings);
-                actions.add(restoreToDefaults);
-            }
 
             Security security = AppBeans.get(Security.NAME);
             if (security.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION) &&
@@ -108,10 +99,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
                 showInfo(target);
             } else if (analyzeLayout == action) {
                 analyzeLayout(target);
-            } else if (saveSettings == action) {
-                saveSettings(target);
-            } else if (restoreToDefaults == action) {
-                restoreToDefaults(target);
             }
         }
     }
@@ -165,20 +152,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
         }
 
         return null;
-    }
-
-    protected void restoreToDefaults(Object target) {
-        io.jmix.ui.component.Window window = getWindow(target);
-        if (window != null) {
-            window.deleteSettings();
-        }
-    }
-
-    protected void saveSettings(Object target) {
-        io.jmix.ui.component.Window window = getWindow(target);
-        if (window != null) {
-            window.saveSettings();
-        }
     }
 
     protected io.jmix.ui.component.Window.Editor findEditor(Layout layout) {

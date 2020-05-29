@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
+@NonNullApi
 package io.jmix.ui.settings;
 
-import javax.annotation.Nullable;
-
-/**
- * User settings provider for client application. May use caching for settings.
- *
- */
-public interface SettingsClient {
-
-    String NAME = "jmix_SettingsClient";
-
-    String getSetting(String name);
-    void setSetting(String name, @Nullable String value);
-
-    void deleteSettings(String name);
-}
+import org.springframework.lang.NonNullApi;

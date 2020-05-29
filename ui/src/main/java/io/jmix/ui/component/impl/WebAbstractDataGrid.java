@@ -72,6 +72,13 @@ import io.jmix.ui.component.valueprovider.*;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.ScreenValidation;
+import io.jmix.ui.settings.compatibility.converter.LegacyDataGridSettingsConverter;
+import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
+import io.jmix.ui.settings.component.DataGridSettings;
+import io.jmix.ui.settings.component.SettingsWrapperImpl;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.DataGridSettingsBinder;
+import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShortcutsDelegate;
 import io.jmix.ui.sys.ShowInfoAction;
@@ -171,7 +178,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected Registration columnResizeListenerRegistration;
     protected Registration contextClickListenerRegistration;
 
-    protected Document defaultSettings;
+    protected LegacySettingsConverter settingsConverter;
 
     protected Registration editorCancelListener;
     protected Registration editorOpenListener;
@@ -218,6 +225,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         component = createComponent();
         componentComposition = createComponentComposition();
         shortcutsDelegate = createShortcutsDelegate();
+        settingsConverter = createSettingsConverter();
     }
 
     protected GridComposition createComponentComposition() {
@@ -546,6 +554,13 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                 .filter(column -> !visibleColumns.contains(column))
                 .forEach(column -> newColumnsOrder.add(columnsOrder.indexOf(column), column));
         return newColumnsOrder;
+    }
+
+    /*
+     * Is used for DataGridSettingsWorker when applying column settings
+     */
+    protected void restoreColumnsOrderAndUpdate(List<Column<E>> visibleColumns) {
+        columnsOrder = restoreColumnsOrder(visibleColumns);
     }
 
     protected void initContextMenu() {
@@ -2233,137 +2248,20 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             return;
         }
 
-        if (defaultSettings == null) {
-            defaultSettings = DocumentHelper.createDocument();
-            defaultSettings.setRootElement(defaultSettings.addElement("presentation"));
-            // init default settings
-            saveSettings(defaultSettings.getRootElement());
-        }
+        DataGridSettings dataGridSettings = settingsConverter.convertToComponentSettings(element);
 
-        Element columnsElem = element.element("columns");
-        if (columnsElem != null) {
-            List<Column<E>> modelColumns = getVisibleColumns();
-            List<String> modelIds = modelColumns.stream()
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-
-            List<String> loadedIds = columnsElem.elements("columns").stream()
-                    .map(colElem -> colElem.attributeValue("id"))
-                    .collect(Collectors.toList());
-
-            if (CollectionUtils.isEqualCollection(modelIds, loadedIds)) {
-                applyColumnSettings(element, modelColumns);
-            }
-        }
+        getSettingsBinder().applySettings(this, new SettingsWrapperImpl(dataGridSettings));
     }
 
+    @Override
     public void applyDataLoadingSettings(Element element) {
         if (!isSettingsEnabled()) {
             return;
         }
-        if (isSortable() && isApplyDataLoadingSettings()) {
-            Element columnsElem = element.element("columns");
-            if (columnsElem != null) {
-                String sortColumnId = columnsElem.attributeValue("sortColumnId");
-                if (!StringUtils.isEmpty(sortColumnId)) {
-                    Grid.Column<E, ?> column = component.getColumn(sortColumnId);
-                    if (column != null) {
-                        if (getItems() instanceof DataGridItems.Sortable) {
-                            ((DataGridItems.Sortable<E>) getItems()).suppressSorting();
-                        }
-                        try {
-                            component.clearSortOrder();
-                            String sortDirection = columnsElem.attributeValue("sortDirection");
-                            if (StringUtils.isNotEmpty(sortDirection)) {
-                                List<GridSortOrder<E>> sortOrders = Collections.singletonList(new GridSortOrder<>(column,
-                                        com.vaadin.shared.data.sort.SortDirection.valueOf(sortDirection))
-                                );
-                                component.setSortOrder(sortOrders);
-                            }
-                        } finally {
-                            if (getItems() instanceof DataGridItems.Sortable) {
-                                ((DataGridItems.Sortable<E>) getItems()).enableSorting();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+        DataGridSettings dataGridSettings = settingsConverter.convertToComponentSettings(element);
 
-    protected void applyColumnSettings(Element element, Collection<Column<E>> oldColumns) {
-        Element columnsElem = element.element("columns");
-
-        List<Column<E>> newColumns = new ArrayList<>();
-
-        // add columns from saved settings
-        for (Element colElem : columnsElem.elements("columns")) {
-            for (Column<E> column : oldColumns) {
-                if (column.getId().equals(colElem.attributeValue("id"))) {
-                    newColumns.add(column);
-
-                    String width = colElem.attributeValue("width");
-                    if (width != null) {
-                        column.setWidth(Double.parseDouble(width));
-                    } else {
-                        column.setWidthAuto();
-                    }
-
-                    String collapsed = colElem.attributeValue("collapsed");
-                    if (collapsed != null && component.isColumnReorderingAllowed()) {
-                        column.setCollapsed(Boolean.parseBoolean(collapsed));
-                    }
-
-                    break;
-                }
-            }
-        }
-
-        // add columns not saved in settings (perhaps new)
-        for (Column<E> column : oldColumns) {
-            if (!newColumns.contains(column)) {
-                newColumns.add(column);
-            }
-        }
-
-        // if the data grid contains only one column, always show it
-        if (newColumns.size() == 1) {
-            newColumns.get(0).setCollapsed(false);
-        }
-
-        // We don't save settings for columns hidden by security permissions,
-        // so we need to return them back to they initial positions
-        columnsOrder = restoreColumnsOrder(newColumns);
-        component.setColumnOrder(newColumns.stream()
-                .map(Column::getId)
-                .toArray(String[]::new));
-
-        if (isSortable() && !isApplyDataLoadingSettings()) {
-            // apply sorting
-            component.clearSortOrder();
-            String sortColumnId = columnsElem.attributeValue("sortColumnId");
-            if (!StringUtils.isEmpty(sortColumnId)) {
-                Grid.Column<E, ?> column = component.getColumn(sortColumnId);
-                if (column != null) {
-                    String sortDirection = columnsElem.attributeValue("sortDirection");
-                    if (StringUtils.isNotEmpty(sortDirection)) {
-                        List<GridSortOrder<E>> sortOrders = Collections.singletonList(new GridSortOrder<>(column,
-                                com.vaadin.shared.data.sort.SortDirection.valueOf(sortDirection))
-                        );
-                        component.setSortOrder(sortOrders);
-                    }
-                }
-            }
-        }
-    }
-
-    protected boolean isApplyDataLoadingSettings() {
-        DataGridItems<E> tableItems = getItems();
-        if (tableItems instanceof ContainerDataUnit) {
-            CollectionContainer container = ((ContainerDataUnit) tableItems).getContainer();
-            return container instanceof HasLoader && ((HasLoader) container).getLoader() instanceof CollectionLoader;
-        }
-        return false;
+        DataLoadingSettingsBinder settingsBinder = (DataLoadingSettingsBinder) getSettingsBinder();
+        settingsBinder.applyDataLoadingSettings(this, new SettingsWrapperImpl(dataGridSettings));
     }
 
     @Override
@@ -2372,119 +2270,21 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             return false;
         }
 
-        Element columnsElem = element.element("columns");
+        DataGridSettings dataGridSettings = settingsConverter.convertToComponentSettings(element);
 
-        String sortColumnId = null;
-        String sortDirection = null;
+        boolean modified = getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(dataGridSettings));
+        if (modified)
+            settingsConverter.copyToElement(dataGridSettings, element);
 
-        if (columnsElem != null) {
-            sortColumnId = columnsElem.attributeValue("sortColumnId");
-            sortDirection = columnsElem.attributeValue("sortDirection");
-        }
-
-        boolean commonSettingsChanged = isCommonDataGridSettingsChanged(columnsElem);
-        boolean sortChanged = isSortPropertySettingsChanged(sortColumnId, sortDirection);
-
-        boolean settingsChanged = commonSettingsChanged || sortChanged;
-
-        if (settingsChanged) {
-            if (columnsElem != null) {
-                element.remove(columnsElem);
-            }
-            columnsElem = element.addElement("columns");
-
-            List<Column<E>> visibleColumns = getVisibleColumns();
-            for (Column<E> column : visibleColumns) {
-                Element colElem = columnsElem.addElement("columns");
-                colElem.addAttribute("id", column.toString());
-
-                double width = column.getWidth();
-                if (width > -1) {
-                    colElem.addAttribute("width", String.valueOf(width));
-                }
-
-                colElem.addAttribute("collapsed", Boolean.toString(column.isCollapsed()));
-            }
-
-            List<GridSortOrder<E>> sortOrders = component.getSortOrder();
-            if (!sortOrders.isEmpty()) {
-                GridSortOrder<E> sortOrder = sortOrders.get(0);
-
-                columnsElem.addAttribute("sortColumnId", sortOrder.getSorted().getId());
-                columnsElem.addAttribute("sortDirection", sortOrder.getDirection().toString());
-            }
-        }
-
-        return settingsChanged;
+        return modified;
     }
 
-    protected boolean isCommonDataGridSettingsChanged(Element columnsElem) {
-        if (columnsElem == null) {
-            if (defaultSettings != null) {
-                columnsElem = defaultSettings.getRootElement().element("columns");
-                if (columnsElem == null) {
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        }
-
-        List<Element> settingsColumnList = columnsElem.elements("columns");
-        List<Column<E>> visibleColumns = getVisibleColumns();
-        if (settingsColumnList.size() != visibleColumns.size()) {
-            return true;
-        }
-
-        for (int i = 0; i < visibleColumns.size(); i++) {
-            Object columnId = visibleColumns.get(i).getId();
-
-            Element settingsColumn = settingsColumnList.get(i);
-            String settingsColumnId = settingsColumn.attributeValue("id");
-
-            if (columnId.toString().equals(settingsColumnId)) {
-                double columnWidth = visibleColumns.get(i).getWidth();
-
-                String settingsColumnWidth = settingsColumn.attributeValue("width");
-                double settingColumnWidth = settingsColumnWidth == null ? -1 : Double.parseDouble(settingsColumnWidth);
-
-                if (columnWidth != settingColumnWidth) {
-                    return true;
-                }
-
-                boolean columnCollapsed = visibleColumns.get(i).isCollapsed();
-                boolean settingsColumnCollapsed = Boolean.parseBoolean(settingsColumn.attributeValue("collapsed"));
-
-                if (columnCollapsed != settingsColumnCollapsed) {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        }
-
-        return false;
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(DataGridSettingsBinder.NAME);
     }
 
-    protected boolean isSortPropertySettingsChanged(String settingsSortColumnId, String settingsSortDirection) {
-        List<GridSortOrder<E>> sortOrders = component.getSortOrder();
-
-        String columnId = null;
-        String sortDirection = null;
-
-        if (!sortOrders.isEmpty()) {
-            GridSortOrder<E> sortOrder = sortOrders.get(0);
-
-            columnId = sortOrder.getSorted().getId();
-            sortDirection = sortOrder.getDirection().toString();
-        }
-
-        if (!Objects.equals(columnId, settingsSortColumnId)
-                || !Objects.equals(sortDirection, settingsSortDirection)) {
-            return true;
-        }
-
-        return false;
+    protected LegacySettingsConverter createSettingsConverter() {
+        return new LegacyDataGridSettingsConverter();
     }
 
     @Nullable

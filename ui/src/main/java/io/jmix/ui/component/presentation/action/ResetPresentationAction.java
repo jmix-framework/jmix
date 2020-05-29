@@ -22,7 +22,7 @@ import io.jmix.ui.component.Table;
 public class ResetPresentationAction extends AbstractPresentationAction {
 
     public ResetPresentationAction(Table table) {
-        super(table, "PresentationsPopup.reset");
+        super(table, "PresentationsPopup.reset", null);
     }
 
     @Override

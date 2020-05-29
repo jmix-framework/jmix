@@ -31,7 +31,6 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.Presentation;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -61,12 +60,23 @@ import io.jmix.ui.component.presentation.TablePresentations;
 import io.jmix.ui.component.table.*;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.*;
-import io.jmix.ui.presentation.Presentations;
-import io.jmix.ui.presentation.PresentationsImpl;
+import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.InstallTargetHandler;
 import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.screen.compatibility.CubaLegacySettings;
+import io.jmix.ui.settings.ScreenSettings;
+import io.jmix.ui.settings.SettingsHelper;
+import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
+import io.jmix.ui.settings.compatibility.converter.LegacyTableSettingsConverter;
+import io.jmix.ui.settings.component.ComponentSettings;
+import io.jmix.ui.settings.component.SettingsWrapper;
+import io.jmix.ui.settings.component.SettingsWrapperImpl;
+import io.jmix.ui.settings.component.TableSettings;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
+import io.jmix.ui.settings.component.binder.TableSettingsBinder;
 import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShowInfoAction;
@@ -78,11 +88,8 @@ import io.jmix.ui.widget.JmixEnhancedTable.AggregationInputValueChangeContext;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
 import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
 import io.jmix.ui.widget.data.AggregationContainer;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,8 +181,10 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected Map<Table.Column, String> aggregationCells = null;
 
     protected boolean usePresentations;
-    protected Presentations presentations;
-    protected Document defaultSettings;
+    protected io.jmix.ui.presentation.TablePresentations presentations;
+
+    protected TableSettings defaultTableSettings;
+    protected LegacySettingsConverter settingsConverter;
 
     protected com.vaadin.v7.ui.Table.ColumnCollapseListener columnCollapseListener;
 
@@ -953,8 +962,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         component.setTabIndex(tabIndex);
     }
 
-    protected void setTablePresentations(TablePresentations tablePresentations) {
-        component.setPresentations(tablePresentations);
+    protected void setTablePresentationsLayout(TablePresentations tablePresentations) {
+        component.setPresentationsLayout(tablePresentations);
     }
 
     protected void initComponent(T component) {
@@ -1060,6 +1069,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
         setClientCaching();
         initEmptyState();
+
+        settingsConverter = createSettingsConverter();
     }
 
     protected void onAfterUnregisterComponent(Component component) {
@@ -2003,43 +2014,14 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
             return;
         }
 
-        if (defaultSettings == null) {
-            // save default view before apply custom
-            defaultSettings = DocumentHelper.createDocument();
-            defaultSettings.setRootElement(defaultSettings.addElement("presentation"));
+        TableSettings settings = settingsConverter.convertToComponentSettings(element);
 
-            saveSettings(defaultSettings.getRootElement());
+        ComponentSettingsBinder worker = getSettingsBinder();
+        if (defaultTableSettings == null) {
+            defaultTableSettings = (TableSettings) worker.getSettings(this);
         }
 
-        String textSelection = element.attributeValue("textSelection");
-        if (StringUtils.isNotEmpty(textSelection)) {
-            component.setTextSelectionEnabled(Boolean.parseBoolean(textSelection));
-
-            if (component.getPresentations() != null) {
-                ((TablePresentations) component.getPresentations()).updateTextSelection();
-            }
-        }
-
-        Element columnsElem = element.element("columns");
-        if (columnsElem != null) {
-            boolean refreshWasEnabled = component.disableContentBufferRefreshing();
-
-            Collection<String> modelIds = new ArrayList<>();
-            for (Object column : component.getVisibleColumns()) {
-                modelIds.add(String.valueOf(column));
-            }
-
-            Collection<String> loadedIds = new ArrayList<>();
-            for (Element colElem : columnsElem.elements("columns")) {
-                loadedIds.add(colElem.attributeValue("id"));
-            }
-
-            if (CollectionUtils.isEqualCollection(modelIds, loadedIds)) {
-                applyColumnSettings(element);
-            }
-
-            component.enableContentBufferRefreshing(refreshWasEnabled);
-        }
+        worker.applySettings(this, new SettingsWrapperImpl(settings));
     }
 
     @Override
@@ -2047,107 +2029,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         if (!isSettingsEnabled()) {
             return;
         }
-        if (isSortable() && isApplyDataLoadingSettings()) {
-            @SuppressWarnings("unchecked")
-            EntityTableItems<E> entityTableSource = (EntityTableItems) getItems();
-            Element columnsElem = element.element("columns");
-            if (columnsElem != null) {
-                String sortProp = columnsElem.attributeValue("sortProperty");
 
-                if (!StringUtils.isEmpty(sortProp)) {
-                    List columns = Arrays.asList(component.getVisibleColumns());
-                    MetaPropertyPath sortProperty = entityTableSource.getEntityMetaClass().getPropertyPath(sortProp);
-                    if (columns.contains(sortProperty)) {
-                        boolean sortAscending = Boolean.parseBoolean(columnsElem.attributeValue("sortAscending"));
+        ComponentSettings settings = settingsConverter.convertToComponentSettings(element);
 
-                        if (getItems() instanceof TableItems.Sortable) {
-                            ((TableItems.Sortable<E>) getItems()).suppressSorting();
-                        }
-                        try {
-                            component.setSortContainerPropertyId(null);
-                            component.setSortAscending(sortAscending);
-                            component.setSortContainerPropertyId(sortProperty);
-                        } finally {
-                            if (getItems() instanceof TableItems.Sortable) {
-                                ((TableItems.Sortable<E>) getItems()).enableSorting();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    protected void applyColumnSettings(Element element) {
-        Element columnsElem = element.element("columns");
-
-        Object[] oldColumns = component.getVisibleColumns();
-        List<Object> newColumns = new ArrayList<>();
-
-        // add columns from saved settings
-        for (Element colElem : columnsElem.elements("columns")) {
-            for (Object column : oldColumns) {
-                if (column.toString().equals(colElem.attributeValue("id"))) {
-                    newColumns.add(column);
-
-                    String width = colElem.attributeValue("width");
-                    if (width != null) {
-                        component.setColumnWidth(column, Integer.parseInt(width));
-                    } else {
-                        component.setColumnWidth(column, -1);
-                    }
-
-                    String visible = colElem.attributeValue("visible");
-                    if (visible != null) {
-                        if (component.isColumnCollapsingAllowed()) { // throws exception if not
-                            component.setColumnCollapsed(column, !Boolean.parseBoolean(visible));
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        // add columns not saved in settings (perhaps new)
-        for (Object column : oldColumns) {
-            if (!newColumns.contains(column)) {
-                newColumns.add(column);
-            }
-        }
-        // if the table contains only one column, always show it
-        if (newColumns.size() == 1) {
-            if (component.isColumnCollapsingAllowed()) { // throws exception if not
-                component.setColumnCollapsed(newColumns.get(0), false);
-            }
-        }
-
-        component.setVisibleColumns(newColumns.toArray());
-
-        @SuppressWarnings("unchecked")
-        EntityTableItems<E> entityTableSource = (EntityTableItems) getItems();
-        if (isSortable() && !isApplyDataLoadingSettings()) {
-            String sortProp = columnsElem.attributeValue("sortProperty");
-            if (!StringUtils.isEmpty(sortProp)) {
-                MetaPropertyPath sortProperty = entityTableSource.getEntityMetaClass().getPropertyPath(sortProp);
-                if (newColumns.contains(sortProperty)) {
-                    boolean sortAscending = Boolean.parseBoolean(columnsElem.attributeValue("sortAscending"));
-
-                    component.setSortContainerPropertyId(null);
-                    component.setSortAscending(sortAscending);
-                    component.setSortContainerPropertyId(sortProperty);
-                }
-            } else {
-                component.setSortContainerPropertyId(null);
-            }
-        }
-    }
-
-    protected boolean isApplyDataLoadingSettings() {
-        TableItems<E> tableItems = getItems();
-        if (tableItems instanceof ContainerDataUnit) {
-            CollectionContainer container = ((ContainerDataUnit) tableItems).getContainer();
-            return container instanceof HasLoader && ((HasLoader) container).getLoader() instanceof CollectionLoader;
-        }
-        return false;
+        DataLoadingSettingsBinder settingsBinder = (DataLoadingSettingsBinder) getSettingsBinder();
+        settingsBinder.applyDataLoadingSettings(this, new SettingsWrapperImpl(settings));
     }
 
     @Override
@@ -2156,141 +2042,22 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
             return false;
         }
 
-        boolean settingsChanged = false;
+        TableSettings tableSettings = settingsConverter.convertToComponentSettings(element);
 
-        if (isUsePresentations()) {
-            boolean textSelection = component.isTextSelectionEnabled();
-            if (textSelection != Boolean.valueOf(element.attributeValue("textSelection"))) {
-                element.addAttribute("textSelection", String.valueOf(textSelection));
+        boolean modified = getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(tableSettings));
 
-                settingsChanged = true;
-            }
-        }
+        if (modified)
+            settingsConverter.copyToElement(tableSettings, element);
 
-        String settingsSortProperty = null;
-        String settingsSortAscending = null;
-
-        Element columnsElem = element.element("columns");
-
-        if (columnsElem != null) {
-            settingsSortProperty = columnsElem.attributeValue("sortProperty");
-            settingsSortAscending = columnsElem.attributeValue("sortAscending");
-        }
-
-        boolean commonSettingsChanged = isCommonTableSettingsChanged(columnsElem);
-        boolean sortChanged = isSettingsSortPropertyChanged(settingsSortProperty, settingsSortAscending);
-
-        if (commonSettingsChanged || sortChanged) {
-            if (columnsElem != null) {
-                element.remove(columnsElem);
-            }
-            columnsElem = element.addElement("columns");
-
-            saveCommonTableColumnSettings(columnsElem);
-
-            MetaPropertyPath sortProperty = (MetaPropertyPath) component.getSortContainerPropertyId();
-            boolean sortAscending = component.isSortAscending();
-
-            columnsElem.addAttribute("sortProperty", sortProperty == null ? "" : sortProperty.toString());
-            columnsElem.addAttribute("sortAscending", Boolean.toString(sortAscending));
-
-            settingsChanged = true;
-        }
-
-        String settingsDefaultPresentation = Strings.nullToEmpty(element.attributeValue("presentation"));
-        String defaultPresentation = getDefaultPresentationId() == null ? "" : String.valueOf(getDefaultPresentationId());
-        if (!Objects.equals(settingsDefaultPresentation, defaultPresentation)) {
-            settingsChanged = true;
-        }
-
-        return settingsChanged;
+        return modified;
     }
 
-    /**
-     * Saves common table column settings (width, visible, id).
-     *
-     * @param columnsElem setting element for the columns
-     */
-    protected void saveCommonTableColumnSettings(Element columnsElem) {
-        Object[] visibleColumns = component.getVisibleColumns();
-        for (Object column : visibleColumns) {
-            Element colElem = columnsElem.addElement("columns");
-            colElem.addAttribute("id", column.toString());
-
-            int width = component.getColumnWidth(column);
-            if (width > -1)
-                colElem.addAttribute("width", String.valueOf(width));
-
-            boolean visible = !component.isColumnCollapsed(column);
-            colElem.addAttribute("visible", Boolean.toString(visible));
-        }
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(TableSettingsBinder.NAME);
     }
 
-    protected boolean isCommonTableSettingsChanged(Element columnsElem) {
-        if (columnsElem == null) {
-            if (defaultSettings != null) {
-                columnsElem = defaultSettings.getRootElement().element("columns");
-                if (columnsElem == null) {
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        }
-
-        List<Element> settingsColumnList = columnsElem.elements("columns");
-        if (settingsColumnList.size() != component.getVisibleColumns().length) {
-            return true;
-        }
-
-        Object[] visibleColumns = component.getVisibleColumns();
-        for (int i = 0; i < visibleColumns.length; i++) {
-            Object columnId = visibleColumns[i];
-
-            Element settingsColumn = settingsColumnList.get(i);
-            String settingsColumnId = settingsColumn.attributeValue("id");
-
-            if (columnId.toString().equals(settingsColumnId)) {
-                int columnWidth = component.getColumnWidth(columnId);
-
-                String settingsColumnWidth = settingsColumn.attributeValue("width");
-                int settingColumnWidth = settingsColumnWidth == null ? -1 : Integer.parseInt(settingsColumnWidth);
-
-                if (columnWidth != settingColumnWidth) {
-                    return true;
-                }
-
-                boolean columnVisible = !component.isColumnCollapsed(columnId);
-                boolean settingsColumnVisible = Boolean.parseBoolean(settingsColumn.attributeValue("visible"));
-
-                if (columnVisible != settingsColumnVisible) {
-                    return true;
-                }
-            } else {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    protected boolean isSettingsSortPropertyChanged(String settingsSortProperty, String settingsSortAscending) {
-        MetaPropertyPath sortProperty = (MetaPropertyPath) component.getSortContainerPropertyId();
-        if (sortProperty == null) {
-            return !Strings.isNullOrEmpty(settingsSortProperty);
-        }
-
-        if (settingsSortProperty == null ||
-                !sortProperty.toString().equals(settingsSortProperty)) {
-            return true;
-        }
-
-        Boolean sortAscending = component.isSortAscending();
-        if (!sortAscending.equals(Boolean.parseBoolean(settingsSortAscending))) {
-            return true;
-        }
-
-        return false;
+    protected LegacySettingsConverter createSettingsConverter() {
+        return new LegacyTableSettingsConverter();
     }
 
     @Override
@@ -2845,12 +2612,22 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
     protected boolean handleSpecificVariables(Map<String, Object> variables) {
         if (isUsePresentations() && presentations != null) {
-            Presentations p = getPresentations();
+            io.jmix.ui.presentation.TablePresentations p = getPresentations();
 
             if (p.getCurrent() != null && p.isAutoSave(p.getCurrent()) && needUpdatePresentation(variables)) {
-                Element e = p.getSettings(p.getCurrent());
-                saveSettings(e);
-                p.setSettings(p.getCurrent(), e);
+                if (getFrame().getFrameOwner() instanceof CubaLegacySettings) {
+                    Element e = p.getSettings(p.getCurrent());
+                    saveSettings(e);
+                    p.setSettings(p.getCurrent(), e);
+                } else {
+                    ComponentSettings settings = getSettingsFromPresentation(p.getCurrent());
+                    getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
+
+                    ScreenSettings screenSettings = beanLocator.getPrototype(ScreenSettings.NAME, getFrame().getId());
+                    String rawSettings = screenSettings.toSettingsString(settings);
+
+                    p.setSettings(p.getCurrent(), rawSettings);
+                }
             }
         }
 
@@ -2893,8 +2670,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
     @Override
     public void resetPresentation() {
-        if (defaultSettings != null) {
-            applySettings(defaultSettings.getRootElement());
+        if (defaultTableSettings != null) {
+            getSettingsBinder().applySettings(this, new SettingsWrapperImpl(defaultTableSettings));
             if (presentations != null) {
                 presentations.setCurrent(null);
             }
@@ -2904,16 +2681,16 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Override
     public void loadPresentations() {
         if (isUsePresentations()) {
-            presentations = new PresentationsImpl(this);
+            presentations = beanLocator.getPrototype(io.jmix.ui.presentation.TablePresentations.NAME, this);
 
-            setTablePresentations(new TablePresentations(this));
+            setTablePresentationsLayout(new TablePresentations(this, getSettingsBinder()));
         } else {
             throw new UnsupportedOperationException("Component doesn't use presentations");
         }
     }
 
     @Override
-    public Presentations getPresentations() {
+    public io.jmix.ui.presentation.TablePresentations getPresentations() {
         if (isUsePresentations()) {
             return presentations;
         } else {
@@ -2924,7 +2701,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Override
     public void applyPresentation(Object id) {
         if (isUsePresentations() && presentations != null) {
-            Presentation p = presentations.getPresentation(id);
+            TablePresentation p = presentations.getPresentation(id);
             applyPresentation(p);
         } else {
             throw new UnsupportedOperationException("Component doesn't use presentations");
@@ -2934,7 +2711,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Override
     public void applyPresentationAsDefault(Object id) {
         if (isUsePresentations() && presentations != null) {
-            Presentation p = presentations.getPresentation(id);
+            TablePresentation p = presentations.getPresentation(id);
             if (p != null) {
                 presentations.setDefault(p);
                 applyPresentation(p);
@@ -2944,13 +2721,35 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         }
     }
 
-    protected void applyPresentation(Presentation p) {
+    protected void applyPresentation(TablePresentation p) {
         if (presentations != null) {
-            Element settingsElement = presentations.getSettings(p);
-            applySettings(settingsElement);
+            if (getFrame().getFrameOwner() instanceof CubaLegacySettings) {
+                Element settingsElement = presentations.getSettings(p);
+                applySettings(settingsElement);
+            } else {
+                ComponentSettings settings = getSettingsFromPresentation(p);
+                getSettingsBinder().applySettings(this, new SettingsWrapperImpl(settings));
+            }
+
             presentations.setCurrent(p);
             component.markAsDirty();
         }
+    }
+
+    protected ComponentSettings getSettingsFromPresentation(TablePresentation p) {
+        Class<? extends ComponentSettings> settingsClass = getSettingsBinder().getSettingsClass();
+        ComponentSettings settings = SettingsHelper.createSettings(settingsClass);
+        settings.setId(getId());
+
+        String settingsString = presentations.getSettingsString(p);
+        if (settingsString != null) {
+            ScreenSettings screenSettings = beanLocator.getPrototype(ScreenSettings.NAME, getFrame().getId());
+            ComponentSettings convertedSettings = screenSettings.toComponentSettings(settingsString, settingsClass);
+            if (convertedSettings != null) {
+                settings = convertedSettings;
+            }
+        }
+        return settings;
     }
 
     @Override
@@ -2958,8 +2757,19 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         if (presentations == null) {
             return null;
         }
-        Presentation def = presentations.getDefault();
+        TablePresentation def = presentations.getDefault();
         return def == null ? null : EntityValues.<UUID>getId(def);
+    }
+
+    @Override
+    public void setDefaultSettings(SettingsWrapper wrapper) {
+        this.defaultTableSettings = wrapper.getSettings();
+    }
+
+    @Nullable
+    @Override
+    public ComponentSettings getDefaultSettings() {
+        return defaultTableSettings;
     }
 
     @Override

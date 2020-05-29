@@ -210,12 +210,12 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     }
 
     @Override
-    public Component getPresentations() {
+    public Component getPresentationsLayout() {
         return (Component) getState(false).presentations;
     }
 
     @Override
-    public void setPresentations(Component presentations) {
+    public void setPresentationsLayout(Component presentations) {
         getState().presentations = presentations;
     }
 

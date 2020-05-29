@@ -21,14 +21,24 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.Presentation;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.Security;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.component.HasPresentations;
-import io.jmix.ui.presentation.Presentations;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.HasTablePresentations;
+import io.jmix.ui.component.HasSettings;
+import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.compatibility.CubaLegacySettings;
+import io.jmix.ui.settings.ScreenSettings;
+import io.jmix.ui.settings.SettingsHelper;
+import io.jmix.ui.settings.component.ComponentSettings;
+import io.jmix.ui.settings.component.SettingsWrapperImpl;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.widget.JmixButton;
@@ -46,9 +56,12 @@ public class PresentationEditor extends JmixWindow {
 
     private static final Logger log = LoggerFactory.getLogger(PresentationEditor.class);
 
-    protected Presentation presentation;
+    protected TablePresentation presentation;
+    protected ComponentSettingsBinder settingsBinder;
 
-    protected HasPresentations component;
+    protected FrameOwner frameOwner;
+
+    protected HasTablePresentations component;
     protected TextField nameField;
     protected CheckBox autoSaveField;
     protected CheckBox defaultField;
@@ -62,9 +75,12 @@ public class PresentationEditor extends JmixWindow {
     protected CurrentAuthentication currentAuthentication;
     protected Security security;
 
-    public PresentationEditor(Presentation presentation, HasPresentations component) {
+    public PresentationEditor(FrameOwner frameOwner, TablePresentation presentation, HasTablePresentations component,
+                              ComponentSettingsBinder settingsBinder) {
         this.presentation = presentation;
         this.component = component;
+        this.frameOwner = frameOwner;
+        this.settingsBinder = settingsBinder;
 
         messages = AppBeans.get(Messages.NAME);
         currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
@@ -113,7 +129,7 @@ public class PresentationEditor extends JmixWindow {
         if (allowGlobalPresentations) {
             globalField = new CheckBox();
             globalField.setCaption(messages.getMessage("PresentationsEditor.global"));
-            globalField.setValue(!isNew && presentation.getUser() == null);
+            globalField.setValue(!isNew && presentation.getUserLogin() == null);
             root.addComponent(globalField);
         }
 
@@ -143,7 +159,7 @@ public class PresentationEditor extends JmixWindow {
     }
 
     protected boolean validate() {
-        Presentations presentations = component.getPresentations();
+        TablePresentations presentations = component.getPresentations();
 
         //check that name is empty
         if (StringUtils.isEmpty(nameField.getValue())) {
@@ -156,7 +172,7 @@ public class PresentationEditor extends JmixWindow {
         }
 
         //check that name is unique
-        final Presentation pres = presentations.getPresentationByName(nameField.getValue());
+        final TablePresentation pres = presentations.getPresentationByName(nameField.getValue());
         if (pres != null && !pres.equals(presentation)) {
             AppUI.getCurrent().getNotifications()
                     .create(Notifications.NotificationType.HUMANIZED)
@@ -169,15 +185,29 @@ public class PresentationEditor extends JmixWindow {
     }
 
     protected void commit() {
-        Presentations presentations = component.getPresentations();
+        TablePresentations presentations = component.getPresentations();
 
-        Document doc = DocumentHelper.createDocument();
-        doc.setRootElement(doc.addElement("presentation"));
+        String stringSettings;
+        if (frameOwner instanceof CubaLegacySettings) {
+            Document doc = DocumentHelper.createDocument();
+            doc.setRootElement(doc.addElement("presentation"));
 
-        component.saveSettings(doc.getRootElement());
+            if (component instanceof HasSettings) {
+                ((HasSettings) component).saveSettings(doc.getRootElement());
+                stringSettings = Dom4j.writeDocument(doc, false);
+            } else {
+                throw new IllegalStateException(String.format("Cannot commit presentation." +
+                        " Component must implement '%s'", HasSettings.class));
+            }
+        } else {
+            ComponentSettings componentSettings = SettingsHelper.createSettings(settingsBinder.getSettingsClass());
+            settingsBinder.saveSettings((Component) component, new SettingsWrapperImpl(componentSettings));
 
-        String xml = Dom4j.writeDocument(doc, false);
-        presentation.setXml(xml);
+            ScreenSettings screenSettings = AppBeans.getPrototype(ScreenSettings.NAME, ((Screen) frameOwner).getId());
+            stringSettings = screenSettings.toSettingsString(componentSettings);
+        }
+
+        presentation.setSettings(stringSettings);
 
         presentation.setName(nameField.getValue());
         presentation.setAutoSave(autoSaveField.getValue());
@@ -187,10 +217,10 @@ public class PresentationEditor extends JmixWindow {
         BaseUser user = currentAuthentication.getUser();
 
         boolean userOnly = !allowGlobalPresentations || !BooleanUtils.isTrue(globalField.getValue());
-        presentation.setUser(userOnly ? user : null);
+        presentation.setUserLogin(userOnly ? user.getUsername() : null);
 
         if (log.isTraceEnabled()) {
-            log.trace(String.format("XML: %s", Dom4j.writeDocument(doc, true)));
+            log.trace(String.format("Presentation: %s", stringSettings));
         }
 
         if (isNew) {

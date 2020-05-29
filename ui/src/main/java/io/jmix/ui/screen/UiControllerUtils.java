@@ -22,7 +22,6 @@ import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.model.ScreenData;
-import io.jmix.ui.settings.Settings;
 import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Nonnull;
@@ -96,26 +95,6 @@ public final class UiControllerUtils {
         } else if (screen instanceof ScreenFragment) {
             ((ScreenFragment) screen).setScreenData(screenData);
         }
-    }
-
-    public static void applySettings(Screen screen, Settings settings) {
-        screen.applySettings(settings);
-    }
-
-    public static void applyDataLoadingSettings(Screen screen, Settings settings) {
-        screen.applyDataLoadingSettings(settings);
-    }
-
-    public static void saveSettings(Screen screen) {
-        screen.saveSettings();
-    }
-
-    public static void deleteSettings(Screen screen) {
-        screen.deleteSettings();
-    }
-
-    public static Settings getSettings(Screen screen) {
-        return screen.getSettings();
     }
 
     public static Frame getFrame(FrameOwner frameOwner) {

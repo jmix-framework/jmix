@@ -31,6 +31,10 @@ import io.jmix.ui.component.table.GroupTableDataContainer;
 import io.jmix.ui.component.table.TableDataContainer;
 import io.jmix.ui.component.table.TableItemsEventsDelegate;
 import io.jmix.ui.gui.data.GroupInfo;
+import io.jmix.ui.settings.compatibility.converter.LegacyGroupTableSettingsConverter;
+import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.GroupTableSettingsBinder;
 import io.jmix.ui.widget.JmixEnhancedTable.AggregationInputValueChangeContext;
 import io.jmix.ui.widget.JmixGroupTable;
 import io.jmix.ui.widget.JmixGroupTable.GroupAggregationContext;
@@ -190,105 +194,13 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupT
     }
 
     @Override
-    public boolean saveSettings(Element element) {
-        if (!isSettingsEnabled()) {
-            return false;
-        }
-
-        boolean commonTableSettingsChanged = super.saveSettings(element);
-        boolean groupTableSettingsChanged = isGroupTableSettingsChanged(element.element("groupProperties"));
-
-        if (!groupTableSettingsChanged && !commonTableSettingsChanged) {
-            return false;
-        }
-
-        if (groupTableSettingsChanged) {
-
-            // add "column" if there is no such element
-            if (element.element("columns") == null) {
-                Element columnsElem = element.addElement("columns");
-                saveCommonTableColumnSettings(columnsElem);
-            }
-
-            Element groupPropertiesElement = element.element("groupProperties");
-            if (groupPropertiesElement != null) {
-                element.remove(groupPropertiesElement);
-            }
-
-            groupPropertiesElement = element.addElement("groupProperties");
-
-            for (Object groupProperty : component.getGroupProperties()) {
-                Column<E> column = getColumn(groupProperty.toString());
-
-                if (getNotCollapsedColumns().contains(column)) {
-                    Element groupPropertyElement = groupPropertiesElement.addElement("property");
-                    groupPropertyElement.addAttribute("id", groupProperty.toString());
-                }
-            }
-        }
-
-        return true;
-    }
-
-    protected boolean isGroupTableSettingsChanged(Element groupPropertiesElement) {
-        if (groupPropertiesElement == null) {
-            if (defaultSettings != null) {
-                groupPropertiesElement = defaultSettings.getRootElement().element("groupProperties");
-                if (groupPropertiesElement == null) {
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        }
-
-        List<Element> settingsProperties = groupPropertiesElement.elements("property");
-        if (settingsProperties.size() != component.getGroupProperties().size()) {
-            return true;
-        }
-
-        List<Object> groupProperties = new ArrayList<>(component.getGroupProperties());
-
-        for (int i = 0; i < groupProperties.size(); i++) {
-            String columnId = groupProperties.get(i).toString();
-
-            String settingsColumnId = settingsProperties.get(i).attributeValue("id");
-
-            Column<E> column = getColumn(columnId);
-            if (getNotCollapsedColumns().contains(column)) {
-                if (!columnId.equals(settingsColumnId)) {
-                    return true;
-                }
-            } else if (columnId.equals(settingsColumnId)) {
-                return true;
-            }
-        }
-
-        return false;
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(GroupTableSettingsBinder.NAME);
     }
 
     @Override
-    public void applyColumnSettings(Element element) {
-        super.applyColumnSettings(element);
-
-        Element groupPropertiesElement = element.element("groupProperties");
-        if (groupPropertiesElement != null) {
-            MetaClass metaClass = ((EntityTableItems) getItems()).getEntityMetaClass();
-            List elements = groupPropertiesElement.elements("property");
-            List<MetaPropertyPath> properties = new ArrayList<>(elements.size());
-            for (Object o : elements) {
-                String id = ((Element) o).attributeValue("id");
-                MetaPropertyPath property = metadataTools.resolveMetaPropertyPathOrNull(metaClass, id);
-
-                if (property != null) {
-                    properties.add(property);
-                } else {
-                    LoggerFactory.getLogger(WebGroupTable.class)
-                            .warn("Ignored group property '{}'", id);
-                }
-            }
-            groupBy(properties.toArray());
-        }
+    protected LegacySettingsConverter createSettingsConverter() {
+        return new LegacyGroupTableSettingsConverter();
     }
 
     @Override

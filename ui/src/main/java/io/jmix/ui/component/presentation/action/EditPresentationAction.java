@@ -16,23 +16,24 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.entity.Presentation;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.presentation.Presentations;
+import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 
 public class EditPresentationAction extends AbstractEditPresentationAction {
 
-    public EditPresentationAction(Table table) {
-        super(table, "PresentationsPopup.edit");
+    public EditPresentationAction(Table table, ComponentSettingsBinder settingsBinder) {
+        super(table, "PresentationsPopup.edit", settingsBinder);
     }
 
     @Override
     public void actionPerform(Component component) {
         tableImpl.hidePresentationsPopup();
 
-        Presentations presentations = table.getPresentations();
-        Presentation current = presentations.getCurrent();
+        TablePresentations presentations = table.getPresentations();
+        TablePresentation current = presentations.getCurrent();
         openEditor(current);
     }
 }

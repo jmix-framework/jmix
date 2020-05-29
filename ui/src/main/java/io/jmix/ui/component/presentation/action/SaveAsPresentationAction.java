@@ -18,24 +18,25 @@ package io.jmix.ui.component.presentation.action;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.Presentation;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Table;
+import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 
 public class SaveAsPresentationAction extends AbstractEditPresentationAction {
 
     protected Metadata metadata = AppBeans.get(Metadata.NAME);
 
-    public SaveAsPresentationAction(Table table) {
-        super(table, "PresentationsPopup.saveAs");
+    public SaveAsPresentationAction(Table table, ComponentSettingsBinder settingsBinder) {
+        super(table, "PresentationsPopup.saveAs", settingsBinder);
     }
 
     @Override
     public void actionPerform(Component component) {
         tableImpl.hidePresentationsPopup();
 
-        Presentation presentation = metadata.create(Presentation.class);
+        TablePresentation presentation = table.getPresentations().create();
         presentation.setComponentId(ComponentsHelper.getComponentPath(table));
 
         openEditor(presentation);

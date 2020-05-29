@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component;
+@NonNullApi
+package io.jmix.ui.settings.component.binder;
 
-import io.jmix.ui.presentation.Presentations;
-
-/**
- * Component having presentations.
- */
-public interface HasPresentations extends HasSettings {
-    void usePresentations(boolean b);
-    boolean isUsePresentations();
-
-    void resetPresentation();
-    void loadPresentations();
-
-    Presentations getPresentations();
-
-    void applyPresentation(Object id);
-    void applyPresentationAsDefault(Object id);
-
-    Object getDefaultPresentationId();
-}
+import org.springframework.lang.NonNullApi;

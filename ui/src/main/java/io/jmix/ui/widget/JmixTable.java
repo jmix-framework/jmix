@@ -154,12 +154,12 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
     }
 
     @Override
-    public Component getPresentations() {
+    public Component getPresentationsLayout() {
         return (Component) getState(false).presentations;
     }
 
     @Override
-    public void setPresentations(Component presentations) {
+    public void setPresentationsLayout(Component presentations) {
         getState(true).presentations = presentations;
     }
 

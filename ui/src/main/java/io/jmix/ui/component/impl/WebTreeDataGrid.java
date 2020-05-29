@@ -31,8 +31,11 @@ import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.TreeDataGridItems;
 import io.jmix.ui.component.datagrid.DataGridDataProvider;
 import io.jmix.ui.component.datagrid.HierarchicalDataGridDataProvider;
+import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
+import io.jmix.ui.settings.compatibility.converter.LegacyTreeDataGridSettingsConverter;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.TreeDataGridSettingsBinder;
 import io.jmix.ui.widget.JmixTreeGrid;
-import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -268,36 +271,13 @@ public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<JmixT
     }
 
     @Override
-    public void applySettings(Element element) {
-        super.applySettings(element);
-
-        if (!isSettingsEnabled()) {
-            return;
-        }
-
-        String hierarchyColumn = element.attributeValue("hierarchyColumn");
-        if (!Strings.isNullOrEmpty(hierarchyColumn)
-                && getColumn(hierarchyColumn) != null) {
-            setHierarchyColumn(hierarchyColumn);
-        }
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(TreeDataGridSettingsBinder.NAME);
     }
 
     @Override
-    public boolean saveSettings(Element element) {
-        boolean settingsChanged = super.saveSettings(element);
-
-        if (!isSettingsEnabled()) {
-            return false;
-        }
-
-        Column<E> hierarchyColumn = getHierarchyColumn();
-        if (hierarchyColumn != null
-                && !hierarchyColumn.getId().equals(element.attributeValue("hierarchyColumn"))) {
-            element.addAttribute("hierarchyColumn", hierarchyColumn.getId());
-            settingsChanged = true;
-        }
-
-        return settingsChanged;
+    protected LegacySettingsConverter createSettingsConverter() {
+        return new LegacyTreeDataGridSettingsConverter();
     }
 
     @Override

@@ -13,25 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.settings;
+package io.jmix.ui.settings.compatibility;
 
+import io.jmix.ui.screen.Screen;
 import org.dom4j.Element;
-
-import javax.annotation.Nonnull;
 
 /**
  * Interface defining methods for working with screen settings.
  * <p>Screen settings are saved in the database for the current user.
+ * <p>
+ * <br>
+ * See {@code com.haulmont.cuba.gui.components.AbstractWindow#getSettings()}
+ * <p>
+ * See {@code com.haulmont.cuba.gui.components.AbstractWindow#applySettings(Settings)}
  *
- * @see io.jmix.ui.component.AbstractWindow#getSettings()
- * @see io.jmix.ui.component.AbstractWindow#applySettings(Settings)
+ * @deprecated For the {@link Screen} use ScreenSettingsFacet in the "ui-persistence" add-on instead.
  */
+@Deprecated
 public interface Settings {
 
     /**
      * @return root element of the screen settings. Never null.
      */
-    @Nonnull
     Element get();
 
     /**
@@ -41,7 +44,6 @@ public interface Settings {
      *     getSettings().get(hintBox.getId()).addAttribute("visible", "false");
      * </pre>
      */
-    @Nonnull
     Element get(String componentId);
 
     /**

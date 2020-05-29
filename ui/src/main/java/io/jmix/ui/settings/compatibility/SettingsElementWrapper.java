@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.settings;
+package io.jmix.ui.settings.compatibility;
 
+import io.jmix.ui.screen.Screen;
 import org.dom4j.*;
 
 import java.io.IOException;
@@ -24,6 +25,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated For the {@link Screen} use ScreenSettingsFacet in the "ui-persistence" add-on instead.
+ */
+@Deprecated
 public class SettingsElementWrapper implements Element {
     private final Element target;
     private final Settings settings;

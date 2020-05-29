@@ -25,7 +25,6 @@ import io.jmix.ui.component.compatibility.*;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.AfterCloseEvent;
-import io.jmix.ui.settings.Settings;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 
@@ -168,28 +167,6 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     }
 
     /**
-     * This method is called by the framework after opening the screen to apply user settings to all components.
-     */
-    default void applySettings(Settings settings) {
-        UiControllerUtils.applySettings(getFrameOwner(), settings);
-    }
-
-    /**
-     * This method is called by the framework when closing the screen
-     * to save user settings if they have been changed.
-     */
-    default void saveSettings() {
-        UiControllerUtils.saveSettings(getFrameOwner());
-    }
-    
-    /**
-     * @return object encapsulating user settings for the current screen
-     */
-    default Settings getSettings() {
-        return UiControllerUtils.getSettings(getFrameOwner());
-    }
-
-    /**
      * Close the screen.
      * <br>
      * If the screen has uncommitted changes in its {@code DsContext},
@@ -206,13 +183,6 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     default boolean close(String actionId) {
         OperationResult result = getFrameOwner().close(new StandardCloseAction(actionId));
         return result.getStatus() == OperationResult.Status.SUCCESS;
-    }
-
-    /**
-     * This method is called by the framework on reset to defaults action
-     */
-    default void deleteSettings() {
-        UiControllerUtils.deleteSettings(getFrameOwner());
     }
 
     /**

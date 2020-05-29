@@ -17,9 +17,9 @@ package io.jmix.ui.presentation;
 
 public interface PresentationsChangeListener {
 
-    void currentPresentationChanged(Presentations presentations, Object oldPresentationId);
+    void currentPresentationChanged(TablePresentations presentations, Object oldPresentationId);
 
-    void presentationsSetChanged(Presentations presentations);
+    void presentationsSetChanged(TablePresentations presentations);
 
-    void defaultPresentationChanged(Presentations presentations, Object oldPresentationId);
+    void defaultPresentationChanged(TablePresentations presentations, Object oldPresentationId);
 }

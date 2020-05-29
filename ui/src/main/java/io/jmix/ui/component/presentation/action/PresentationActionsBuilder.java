@@ -17,11 +17,12 @@
 package io.jmix.ui.component.presentation.action;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.entity.Presentation;
 import io.jmix.core.security.Security;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.presentation.Presentations;
+import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,9 +46,12 @@ public class PresentationActionsBuilder {
 
     protected Collection actionTypes;
 
-    public PresentationActionsBuilder(Table component) {
+    protected ComponentSettingsBinder settingsBinder;
+
+    public PresentationActionsBuilder(Table component, ComponentSettingsBinder settingsBinder) {
         table = component;
         security = AppBeans.get(Security.NAME);
+        this.settingsBinder = settingsBinder;
     }
 
     public Collection<AbstractAction> build() {
@@ -99,17 +103,17 @@ public class PresentationActionsBuilder {
 
     protected AbstractAction buildSaveAction() {
         if (isGlobalPresentation())
-            return new SavePresentationAction(table);
+            return new SavePresentationAction(table, settingsBinder);
         return null;
     }
 
     protected AbstractAction buildSaveAsAction() {
-        return new SaveAsPresentationAction(table);
+        return new SaveAsPresentationAction(table, settingsBinder);
     }
 
     protected AbstractAction buildEditAction() {
         if (isGlobalPresentation())
-            return new EditPresentationAction(table);
+            return new EditPresentationAction(table, settingsBinder);
         return null;
     }
 
@@ -124,8 +128,8 @@ public class PresentationActionsBuilder {
     }
 
     protected boolean isGlobalPresentation() {
-        Presentations presentations = table.getPresentations();
-        Presentation presentation = presentations.getCurrent();
+        TablePresentations presentations = table.getPresentations();
+        TablePresentation presentation = presentations.getCurrent();
         return presentation != null && (!presentations.isGlobal(presentation) ||
                 security.isSpecificPermitted("cuba.gui.presentations.global"));
     }

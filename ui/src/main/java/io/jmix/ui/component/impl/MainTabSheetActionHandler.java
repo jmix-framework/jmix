@@ -42,9 +42,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
 
     protected Action analyzeLayout;
 
-    protected Action saveSettings;
-    protected Action restoreToDefaults;
-
     protected boolean initialized = false;
     protected HasTabSheetBehaviour tabSheet;
 
@@ -62,8 +59,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
             closeCurrentTab = new Action(messages.getMessage("actions.closeCurrentTab"));
             showInfo = new Action(messages.getMessage("actions.showInfo"));
             analyzeLayout = new Action(messages.getMessage("actions.analyzeLayout"));
-            saveSettings = new Action(messages.getMessage("actions.saveSettings"));
-            restoreToDefaults = new Action(messages.getMessage("actions.restoreToDefaults"));
 
             initialized = true;
         }
@@ -75,10 +70,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
 
         if (target != null) {
             UiProperties properties = AppBeans.get(UiProperties.class);
-            if (properties.isManualScreenSettingsSaving()) {
-                actions.add(saveSettings);
-                actions.add(restoreToDefaults);
-            }
 
             CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
             // todo permissions
@@ -108,10 +99,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
                 showInfo(target);
             } else if (analyzeLayout == action) {
                 analyzeLayout(target);
-            } else if (saveSettings == action) {
-                saveSettings(target);
-            } else if (restoreToDefaults == action) {
-                restoreToDefaults(target);
             }
         }
     }
@@ -162,22 +149,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
         }
 
         return null;
-    }
-
-    protected void restoreToDefaults(Object target) {
-        Window window = getWindow(target);
-        if (window != null) {
-            // todo
-            // window.deleteSettings();
-        }
-    }
-
-    protected void saveSettings(Object target) {
-        Window window = getWindow(target);
-        if (window != null) {
-            // todo
-            // window.saveSettings();
-        }
     }
 
     // todo

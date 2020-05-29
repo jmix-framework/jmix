@@ -21,6 +21,12 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.*;
+import io.jmix.ui.settings.compatibility.converter.LegacyGroupBoxSettingsConverter;
+import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
+import io.jmix.ui.settings.component.GroupBoxSettings;
+import io.jmix.ui.settings.component.SettingsWrapperImpl;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.GroupBoxSettingsBinder;
 import io.jmix.ui.widget.JmixGroupBox;
 import io.jmix.ui.widget.JmixHorizontalActionsLayout;
 import io.jmix.ui.widget.JmixOrderedActionsLayout;
@@ -47,6 +53,8 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
 
     protected Map<ShortcutAction, ShortcutListener> shortcuts;
 
+    protected LegacySettingsConverter settingsConverter;
+
     public WebGroupBox() {
         component = new JmixGroupBox();
         component.addStyleName(GROUPBOX_PANEL_STYLENAME);
@@ -55,6 +63,8 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
         JmixVerticalActionsLayout container = new JmixVerticalActionsLayout();
         container.setStyleName("c-groupbox-inner");
         component.setContent(container);
+
+        settingsConverter = createSettingsConverter();
     }
 
     @Override
@@ -274,13 +284,8 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
     @Override
     public void applySettings(Element element) {
         if (isSettingsEnabled()) {
-            Element groupBoxElement = element.element("groupBox");
-            if (groupBoxElement != null) {
-                String expanded = groupBoxElement.attributeValue("expanded");
-                if (expanded != null) {
-                    setExpanded(Boolean.parseBoolean(expanded));
-                }
-            }
+            GroupBoxSettings settings = settingsConverter.convertToComponentSettings(element);
+            getSettingsBinder().applySettings(this, new SettingsWrapperImpl(settings));
         }
     }
 
@@ -290,17 +295,14 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
             return false;
         }
 
-        if (!settingsChanged) {
-            return false;
+        GroupBoxSettings settings = settingsConverter.convertToComponentSettings(element);
+
+        boolean modified = getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
+        if (modified) {
+            settingsConverter.copyToElement(settings, element);
         }
 
-        Element groupBoxElement = element.element("groupBox");
-        if (groupBoxElement != null) {
-            element.remove(groupBoxElement);
-        }
-        groupBoxElement = element.addElement("groupBox");
-        groupBoxElement.addAttribute("expanded", BooleanUtils.toStringTrueFalse(isExpanded()));
-        return true;
+        return modified;
     }
 
     @Override
@@ -447,5 +449,13 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
         for (Component component : ownComponents) {
             ((AttachNotifier) component).detached();
         }
+    }
+
+    protected LegacySettingsConverter createSettingsConverter() {
+        return new LegacyGroupBoxSettingsConverter();
+    }
+
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(GroupBoxSettingsBinder.NAME);
     }
 }

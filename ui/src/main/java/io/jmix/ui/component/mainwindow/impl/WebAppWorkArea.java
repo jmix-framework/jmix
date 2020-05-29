@@ -101,7 +101,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
         this.tabbedContainer = createTabbedModeContainer();
 
-        // todo settings
+        // todo remove extra AppWorkArea #364
 //        UserSettingsTools userSettingsTools = beanLocator.get(UserSettingsTools.NAME);
 //        setMode(userSettingsTools.loadAppWindowMode());
     }

@@ -16,16 +16,56 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.settings.UserSettingService;
+import io.jmix.ui.settings.component.ComponentSettings;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.dom4j.Element;
 
 /**
  * Object supporting save/restore of user settings.
- * @see com.haulmont.cuba.security.app.UserSettingService
+ *
+ * @see UserSettingService
+ * @deprecated for component settings use "ui-persistence" add-on. Also see {@link ComponentSettingsBinder},
+ * {@link ComponentSettings}, {@link ScreenSettingsFacet}.
  */
+@Deprecated
 public interface HasSettings {
+
+    /**
+     * Applies user settings for object.
+     *
+     * @param element settings element
+     * @deprecated for components that should have settings use {@link ComponentSettingsBinder}
+     * and {@link ComponentSettings} instead.
+     */
+    @Deprecated
     void applySettings(Element element);
+
+    /**
+     * Saves object settings to the element.
+     *
+     * @param element settings element
+     * @return true if settings were modified
+     * @deprecated for components that should have settings use {@link ComponentSettingsBinder}
+     * and {@link ComponentSettings} instead.
+     */
+    @Deprecated
     boolean saveSettings(Element element);
 
+    /**
+     * @return true if object allows to save and apply settings
+     * @deprecated to enable/disable component settings use {@link ScreenSettingsFacet} instead.
+     */
+    @Deprecated
     boolean isSettingsEnabled();
+
+    /**
+     * Set to true if object should allow to save and apply settings
+     *
+     * @param settingsEnabled whether settings should be enabled for the object
+     * @deprecated to enable/disable component settings use {@link ScreenSettingsFacet} instead.
+     */
+    @Deprecated
     void setSettingsEnabled(boolean settingsEnabled);
 }

@@ -16,23 +16,23 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.entity.Presentation;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.presentation.Presentations;
+import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.presentation.model.TablePresentation;
 
 public class DeletePresentationAction extends AbstractPresentationAction {
 
     public DeletePresentationAction(Table table) {
-        super(table, "PresentationsPopup.delete");
+        super(table, "PresentationsPopup.delete", null);
     }
 
     @Override
     public void actionPerform(Component component) {
         tableImpl.hidePresentationsPopup();
 
-        Presentations presentations = table.getPresentations();
-        Presentation current = presentations.getCurrent();
+        TablePresentations presentations = table.getPresentations();
+        TablePresentation current = presentations.getCurrent();
         presentations.remove(current);
         presentations.commit();
     }

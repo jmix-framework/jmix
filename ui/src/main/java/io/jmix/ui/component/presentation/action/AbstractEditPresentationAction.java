@@ -17,11 +17,13 @@
 package io.jmix.ui.component.presentation.action;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.entity.Presentation;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.component.HasPresentations;
-import io.jmix.ui.component.Table;
 import io.jmix.ui.component.presentation.PresentationEditor;
+import io.jmix.ui.component.HasTablePresentations;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -30,27 +32,29 @@ public abstract class AbstractEditPresentationAction extends AbstractPresentatio
 
     protected Class<? extends PresentationEditor> editorClass;
 
-    public AbstractEditPresentationAction(Table table, String id) {
-        super(table, id);
+    public AbstractEditPresentationAction(Table table, String id, ComponentSettingsBinder settingsBinder) {
+        super(table, id, settingsBinder);
     }
 
-    protected void openEditor(Presentation presentation) {
-        PresentationEditor window = createEditor(presentation);
+    protected void openEditor(TablePresentation presentation) {
+        PresentationEditor window = createEditor(presentation, settingsBinder);
         AppUI.getCurrent().addWindow(window);
         window.center();
     }
 
-    protected PresentationEditor createEditor(Presentation presentation) {
+    protected PresentationEditor createEditor(TablePresentation presentation, ComponentSettingsBinder settingsBinder) {
         Class<? extends PresentationEditor> windowClass = getPresentationEditorClass();
-        PresentationEditor window;
         try {
-            Constructor<? extends PresentationEditor> windowConstructor = windowClass
-                    .getConstructor(Presentation.class, HasPresentations.class);
-            window = windowConstructor.newInstance(presentation, table);
+            Constructor<? extends PresentationEditor> windowConstructor = windowClass.getConstructor(
+                    FrameOwner.class,
+                    TablePresentation.class,
+                    HasTablePresentations.class,
+                    ComponentSettingsBinder.class);
+
+            return windowConstructor.newInstance(table.getFrame().getFrameOwner(), presentation, table, settingsBinder);
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new DevelopmentException("Invalid presentation's screen");
         }
-        return window;
     }
 
     protected Class<? extends PresentationEditor> getPresentationEditorClass() {

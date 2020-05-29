@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.settings;
+package io.jmix.ui.settings.compatibility;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.settings.UiSettingsCache;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import javax.annotation.Nonnull;
 
+/**
+ * @deprecated For the {@link Screen} use ScreenSettingsFacet in the "ui-persistence" add-on instead.
+ */
+@Deprecated
 public class SettingsImpl implements Settings {
 
     protected final String name;
-    protected transient SettingsClient settingsClient;
+    protected transient UiSettingsCache settingsClient;
     protected Element root;
     protected boolean modified;
 
@@ -34,9 +40,9 @@ public class SettingsImpl implements Settings {
         this.name = name;
     }
 
-    protected SettingsClient getSettingsClient() {
+    protected UiSettingsCache getSettingsClient() {
         if (settingsClient == null) {
-            settingsClient = AppBeans.get(SettingsClient.NAME);
+            settingsClient = AppBeans.get(UiSettingsCache.NAME);
         }
         return settingsClient;
     }

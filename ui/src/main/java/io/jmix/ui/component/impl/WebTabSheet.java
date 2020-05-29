@@ -21,18 +21,19 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.screen.compatibility.CubaLegacySettings;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
-import io.jmix.ui.settings.Settings;
+import io.jmix.ui.settings.compatibility.Settings;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.widget.JmixTabSheet;
 import io.jmix.ui.xml.layout.ComponentLoader;
-import io.jmix.ui.xml.layout.ComponentsFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
@@ -369,8 +370,8 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
 
     @Override
     public TabSheet.Tab addLazyTab(String name, Element descriptor, ComponentLoader loader) {
-        ComponentsFactory cf = AppBeans.get(ComponentsFactory.NAME); // todo replace
-        CssLayout tabContent = cf.createComponent(CssLayout.NAME);
+        UiComponents uiComponents = AppBeans.get(UiComponents.NAME);
+        CssLayout tabContent = uiComponents.create(CssLayout.NAME);
         tabContent.setStyleName("c-tabsheet-lazytab");
         tabContent.setSizeFull();
 
@@ -636,21 +637,38 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
 
                 Window window = ComponentsHelper.getWindow(WebTabSheet.this);
                 if (window != null) {
-                    Settings settings = UiControllerUtils.getSettings(window.getFrameOwner());
-                    if (settings != null) {
-                        walkComponents(tabContent, (settingsComponent, name) -> {
-                            if (settingsComponent.getId() != null
-                                    && settingsComponent instanceof HasSettings) {
-                                Element e = settings.get(name);
-                                ((HasSettings) settingsComponent).applySettings(e);
+                    if (window.getFrameOwner() instanceof CubaLegacySettings) {
+                        Settings settings = ((CubaLegacySettings) window.getFrameOwner()).getSettings();
+                        if (settings != null) {
+                            walkComponents(tabContent, (settingsComponent, name) -> {
+                                if (settingsComponent.getId() != null
+                                        && settingsComponent instanceof HasSettings) {
+                                    Element e = settings.get(name);
+                                    ((HasSettings) settingsComponent).applySettings(e);
 
-                                if (component instanceof HasPresentations
-                                        && e.attributeValue("presentation") != null) {
-                                    final String def = e.attributeValue("presentation");
-                                    if (!StringUtils.isEmpty(def)) {
-                                        UUID defaultId = UUID.fromString(def);
-                                        ((HasPresentations) component).applyPresentationAsDefault(defaultId);
+                                    if (component instanceof HasTablePresentations
+                                            && e.attributeValue("presentation") != null) {
+                                        final String def = e.attributeValue("presentation");
+                                        if (!StringUtils.isEmpty(def)) {
+                                            UUID defaultId = UUID.fromString(def);
+                                            ((HasTablePresentations) component).applyPresentationAsDefault(defaultId);
+                                        }
                                     }
+                                }
+                            });
+                        }
+                    } else {
+                        window.getFacets().forEach(facet -> {
+                            if (facet instanceof ScreenSettingsFacet) {
+                                ScreenSettingsFacet settingsFacet = (ScreenSettingsFacet) facet;
+                                Consumer<ScreenSettingsFacet.SettingsContext> applyHandler = settingsFacet.getApplySettingsDelegate();
+                                if (applyHandler != null) {
+                                    applyHandler.accept(new ScreenSettingsFacet.SettingsContext(
+                                            WebTabSheet.this,
+                                            tabContent.getComponents(),
+                                            settingsFacet.getSettings()));
+                                } else {
+                                    settingsFacet.applySettings(settingsFacet.getSettings());
                                 }
                             }
                         });

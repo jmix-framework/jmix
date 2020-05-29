@@ -37,10 +37,13 @@ import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.validator.*;
+import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.presentation.EmptyTablePresentationsImpl;
+import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
@@ -50,11 +53,14 @@ import io.jmix.ui.xml.DeclarativeTrackingAction;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
 import io.jmix.ui.xml.layout.LoaderResolver;
+import io.jmix.ui.xml.layout.loader.LoadPresentationsPostInitTask;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nonnull;
@@ -71,6 +77,8 @@ import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public abstract class AbstractComponentLoader<T extends Component> implements ComponentLoader<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractComponentLoader.class);
 
     // todo shortcuts https://github.com/jmix-framework/jmix/issues/312
 //    protected static final Map<String, Function<UiProperties, String>> SHORTCUT_ALIASES =
@@ -506,12 +514,17 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         }
     }
 
-    // todo vm
-    protected void loadPresentations(HasPresentations component, Element element) {
+    protected void loadPresentations(HasTablePresentations component, Element element) {
         String presentations = element.attributeValue("presentations");
         if (StringUtils.isNotEmpty(presentations)) {
-            component.usePresentations(Boolean.parseBoolean(presentations));
-            getComponentContext().addPostInitTask(new LoadPresentationsPostInitTask(component));
+            TablePresentations presentationBean = beanLocator.getPrototype(TablePresentations.NAME, component);
+            if (!(presentationBean instanceof EmptyTablePresentationsImpl)) {
+                component.usePresentations(Boolean.parseBoolean(presentations));
+                getComponentContext().addPostInitTask(new LoadPresentationsPostInitTask(component));
+            } else {
+                log.warn("Presentations is not available for the project. Add `ui-persistence`" +
+                        " add-on in order to use Presentations.");
+            }
         }
     }
 

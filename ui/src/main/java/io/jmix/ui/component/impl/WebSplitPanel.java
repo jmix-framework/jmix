@@ -18,14 +18,18 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.*;
+import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
+import io.jmix.ui.settings.compatibility.converter.LegacySplitPanelSettingsConverter;
+import io.jmix.ui.settings.component.SettingsWrapperImpl;
+import io.jmix.ui.settings.component.SplitPanelSettings;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.SplitPanelSettingsBinder;
 import io.jmix.ui.widget.JmixDockableSplitPanel;
 import io.jmix.ui.widget.JmixHorizontalSplitPanel;
 import io.jmix.ui.widget.JmixVerticalSplitPanel;
 import io.jmix.ui.widget.client.split.SplitPanelDockMode;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.AbstractSplitPanel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
@@ -45,6 +49,12 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
 
     protected float currentPosition = 0;
     protected boolean inverse = false;
+
+    protected LegacySettingsConverter settingsConverter;
+
+    public WebSplitPanel() {
+        settingsConverter = createSettingsConverter();
+    }
 
     @Override
     public void add(Component childComponent) {
@@ -183,21 +193,8 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
             return;
         }
 
-        Element e = element.element("position");
-        if (e != null) {
-            String value = e.attributeValue("value");
-            String unit = e.attributeValue("unit");
-
-            if (!StringUtils.isBlank(value) && !StringUtils.isBlank(unit)) {
-                Unit convertedUnit;
-                if (NumberUtils.isNumber(unit)) {
-                    convertedUnit = convertLegacyUnit(Integer.parseInt(unit));
-                } else {
-                    convertedUnit = Unit.getUnitFromSymbol(unit);
-                }
-                component.setSplitPosition(Float.parseFloat(value), convertedUnit, component.isSplitPositionReversed());
-            }
-        }
+        SplitPanelSettings settings = settingsConverter.convertToComponentSettings(element);
+        getSettingsBinder().applySettings(this, new SettingsWrapperImpl(settings));
     }
 
     @Override
@@ -206,17 +203,14 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
             return false;
         }
 
-        if (!settingsChanged) {
-            return false;
+        SplitPanelSettings settings = settingsConverter.convertToComponentSettings(element);
+
+        boolean modified = getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
+        if (modified) {
+            settingsConverter.copyToElement(settings, element);
         }
 
-        Element e = element.element("position");
-        if (e == null) {
-            e = element.addElement("position");
-        }
-        e.addAttribute("value", String.valueOf(component.getSplitPosition()));
-        e.addAttribute("unit", String.valueOf(component.getSplitPositionUnit()));
-        return true;
+        return modified;
     }
 
     @Override
@@ -397,5 +391,13 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
         for (Component component : ownComponents) {
             ((AttachNotifier) component).detached();
         }
+    }
+
+    protected LegacySettingsConverter createSettingsConverter() {
+        return new LegacySplitPanelSettingsConverter();
+    }
+
+    protected ComponentSettingsBinder getSettingsBinder() {
+        return beanLocator.get(SplitPanelSettingsBinder.NAME);
     }
 }

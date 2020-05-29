@@ -93,34 +93,34 @@
     <layout spacing="true">
         <tabSheet id="tabsheet" width="100%" height="100%">
             <tab id="view" caption="msg://view" expand="split1" spacing="true">
-                <grid id="grid" spacing="true" margin="true,false,false,false">
+                <gridLayout id="grid" spacing="true" margin="true,false,false,false">
                     <columns count="7"/>
                     <rows>
                         <row id="gridRowUp">
                             <label value="msg://user" align="MIDDLE_LEFT"/>
-                            <lookupField id="userField" width="${fieldWidth}"/><!--optionsContainer="usersDc" -->
+                            <comboBox id="userField" width="${fieldWidth}"/><!--optionsContainer="usersDc" -->
                             <label value="msg://changeType" align="MIDDLE_LEFT"/>
-                            <lookupField id="changeTypeField" width="${fieldWidth}"/>
+                            <comboBox id="changeTypeField" width="${fieldWidth}"/>
                             <label value="msg://from" align="MIDDLE_LEFT"/>
                             <dateField id="fromDateField"/>
                             <button id="searchBtn" width="${buttonWidth}" caption="msg://search"/>
                         </row>
                         <row id="gridRowDown">
                             <label value="msg://entity" align="MIDDLE_LEFT"/>
-                            <lookupField id="filterEntityNameField" width="${fieldWidth}"/>
+                            <comboBox id="filterEntityNameField" width="${fieldWidth}"/>
                             <label value="msg://instance" align="MIDDLE_LEFT"/>
-                            <pickerField id="instancePicker" width="${fieldWidth}">
+                            <entityPicker id="instancePicker" width="${fieldWidth}">
                                 <actions>
-                                    <action id="lookup" type="picker_lookup"/>
-                                    <action id="clear" type="picker_clear"/>
+                                    <action id="lookup" type="entity_lookup"/>
+                                    <action id="clear" type="entity_clear"/>
                                 </actions>
-                            </pickerField>
+                            </entityPicker>
                             <label value="msg://till" align="MIDDLE_LEFT"/>
                             <dateField id="tillDateField"/>
                             <button id="clearEntityLogTableBtn" width="${buttonWidth}" caption="msg://clear"/>
                         </row>
                     </rows>
-                </grid>
+                </gridLayout>
 
                 <split id="split1" orientation="horizontal" pos="70" width="100%">
                     <vbox id="entityLogTableBox"
@@ -191,7 +191,7 @@
                     <vbox id="loggedEntityMiscBox" expand="attributesBox" height="100%" width="100%"
                           margin="false,false,false,true" spacing="true">
                         <label id="miscNameLabel" value="msg://name"/>
-                        <lookupField width="100%" dataContainer="loggedEntityDc" id="entityNameField" property="name"/>
+                        <comboBox width="100%" dataContainer="loggedEntityDc" id="entityNameField" property="name"/>
                         <hbox id="checkersBox" width="100%">
                             <checkBox id="autoCheckBox" caption="msg://auto" dataContainer="loggedEntityDc"
                                       property="auto"/>

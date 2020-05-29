@@ -91,17 +91,17 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     @Autowired
     protected CollectionLoader<LoggedAttribute> loggedAttrDl;
     @Autowired
-    protected LookupField changeTypeField;
+    protected ComboBox changeTypeField;
     @Autowired
-    protected LookupField<String> entityNameField;
+    protected ComboBox<String> entityNameField;
     @Autowired
-    protected LookupField<String> userField;
+    protected ComboBox<String> userField;
     @Autowired
-    protected LookupField<String> filterEntityNameField;
+    protected ComboBox<String> filterEntityNameField;
     @Autowired
     protected DataContext dataContext;
     @Autowired
-    protected PickerField<Entity> instancePicker;
+    protected EntityPicker<Entity> instancePicker;
     @Autowired
     protected Table<EntityLogItem> entityLogTable;
     @Autowired

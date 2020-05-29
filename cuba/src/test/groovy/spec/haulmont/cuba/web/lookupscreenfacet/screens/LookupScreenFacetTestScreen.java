@@ -21,7 +21,7 @@ import io.jmix.core.Metadata;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.LookupScreenFacet;
-import io.jmix.ui.component.PickerField;
+import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
@@ -42,7 +42,7 @@ public class LookupScreenFacetTestScreen extends Screen {
     public CollectionContainer<User> userDc;
 
     @Autowired
-    public PickerField<User> pickerField;
+    public EntityPicker<User> userPicker;
     @Autowired
     public Table<User> usersTable;
     @Autowired
@@ -63,7 +63,7 @@ public class LookupScreenFacetTestScreen extends Screen {
         User testUser = metadata.create(User.class);
         testUser.setName("Test user");
 
-        pickerField.setValue(testUser);
+        userPicker.setValue(testUser);
     }
 
     @Install(to = "lookupScreen", subject = "selectHandler")

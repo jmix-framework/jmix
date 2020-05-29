@@ -59,12 +59,12 @@ public class WebFilterHelper implements FilterHelper {
     protected BeanLocator beanLocator;
 
     @Override
-    public void setLookupNullSelectionAllowed(LookupField lookupField, boolean value) {
+    public void setLookupNullSelectionAllowed(ComboBox lookupField, boolean value) {
         lookupField.setNullOptionVisible(value);
     }
 
     @Override
-    public void setLookupTextInputAllowed(LookupField lookupField, boolean value) {
+    public void setLookupTextInputAllowed(ComboBox lookupField, boolean value) {
         lookupField.setTextInputAllowed(value);
     }
 
@@ -331,7 +331,7 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     @Override
-    public void setLookupCaptions(LookupField lookupField, Map<Object, String> captions) {
+    public void setLookupCaptions(ComboBox lookupField, Map<Object, String> captions) {
         lookupField.setOptionCaptionProvider(captions::get);
     }
 
@@ -362,7 +362,7 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     @Override
-    public void setLookupFieldPageLength(LookupField lookupField, int pageLength) {
+    public void setLookupFieldPageLength(ComboBox lookupField, int pageLength) {
         lookupField.setPageLength(pageLength);
     }
 

@@ -16,14 +16,42 @@
 
 package com.haulmont.cuba.gui.xml.layout;
 
-import com.haulmont.cuba.gui.components.BulkEditor;
-import com.haulmont.cuba.gui.components.FieldGroup;
-import com.haulmont.cuba.gui.components.Filter;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.xml.layout.loaders.*;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Calendar;
+import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.CheckBoxGroup;
+import io.jmix.ui.component.ColorPicker;
+import io.jmix.ui.component.CurrencyField;
+import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.component.DateField;
+import io.jmix.ui.component.DatePicker;
+import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.component.Image;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.MaskedField;
+import io.jmix.ui.component.OptionsGroup;
+import io.jmix.ui.component.OptionsList;
+import io.jmix.ui.component.PasswordField;
+import io.jmix.ui.component.RadioButtonGroup;
+import io.jmix.ui.component.ResizableTextArea;
+import io.jmix.ui.component.RichTextArea;
+import io.jmix.ui.component.Slider;
+import io.jmix.ui.component.SourceCodeEditor;
+import io.jmix.ui.component.SuggestionField;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.TextArea;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.TimeField;
+import io.jmix.ui.component.TokenList;
+import io.jmix.ui.component.Tree;
+import io.jmix.ui.component.TreeDataGrid;
+import io.jmix.ui.component.TreeTable;
+import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.xml.layout.BaseLoaderConfig;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;
+import io.jmix.ui.xml.layout.loader.GridLayoutLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
@@ -97,6 +125,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(FieldGroup.NAME, FieldGroupLoader.class);
         loaders.put(BulkEditor.NAME, BulkEditorLoader.class);
         loaders.put(Filter.NAME, FilterLoader.class);
+        loaders.put("grid", GridLayoutLoader.class);
     }
 
     protected boolean isLegacyScreen(Element element) {

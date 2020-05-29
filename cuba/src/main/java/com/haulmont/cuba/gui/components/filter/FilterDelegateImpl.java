@@ -167,7 +167,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected BoxLayout maxResultsLayout;
     protected Field<Integer> maxResultsField;
     protected TextField<Integer> maxResultsTextField;
-    protected LookupField<Integer> maxResultsLookupField;
+    protected ComboBox<Integer> maxResultsLookupField;
     protected BoxLayout controlsLayout;
     protected ComponentContainer appliedFiltersLayout;
     protected PopupButton settingsBtn;
@@ -212,7 +212,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected PinAppliedAction pinAppliedAction;
     protected SaveAsFolderAction saveAsAppFolderAction;
     protected SaveAsFolderAction saveAsSearchFolderAction;
-    protected LookupField<FilterEntity> filtersLookup;
+    protected ComboBox<FilterEntity> filtersLookup;
 
     protected Consumer<FDExpandedStateChangeEvent> expandedStateChangeListener;
 
@@ -330,7 +330,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         filterHelper.setInternalDebugId(filtersPopupButton, "filtersPopupButton");
         filtersPopupBox.add(filtersPopupButton);
 
-        filtersLookup = uiComponents.create(LookupField.class);
+        filtersLookup = uiComponents.create(ComboBox.class);
         filtersLookup.setWidth(theme.get("cuba.gui.filter.select.width"));
         filtersLookup.addValueChangeListener(new FiltersLookupChangeListener());
         filterHelper.setLookupNullSelectionAllowed(filtersLookup, false);
@@ -1580,12 +1580,12 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         if (maxResultsAddedToLayout) {
             if (!textMaxResults) {
-                List<Integer> optionsList = ((LookupField) maxResultsField).getOptionsList();
+                List<Integer> optionsList = ((ComboBox) maxResultsField).getOptionsList();
                 if (!optionsList.contains(maxResults)) {
                     maxResults = findClosestValue(maxResults, optionsList);
 
                     Collections.sort(optionsList);
-                    ((LookupField) maxResultsField).setOptionsList(optionsList);
+                    ((ComboBox) maxResultsField).setOptionsList(optionsList);
                 }
             }
             maxResultsField.setValue(maxResults);

@@ -18,6 +18,8 @@ package spec.haulmont.cuba.web.components
 
 import com.haulmont.cuba.gui.components.BulkEditor
 import com.haulmont.cuba.gui.components.FieldGroup
+import com.haulmont.cuba.gui.components.SearchField
+import com.haulmont.cuba.gui.components.SearchPickerField
 import io.jmix.ui.Facets
 import io.jmix.ui.component.*
 import io.jmix.ui.component.impl.JavaScriptComponent
@@ -77,13 +79,13 @@ class CreateComponentTest extends WebSpec {
                 TreeDataGrid.NAME,
                 DateField.NAME,
                 TimeField.NAME,
-                LookupField.NAME,
+                ComboBox.NAME,
                 SearchField.NAME,
-                PickerField.NAME,
+                EntityPicker.NAME,
                 SuggestionField.NAME,
-                SuggestionPickerField.NAME,
+                EntitySuggestionField.NAME,
                 ColorPicker.NAME,
-                LookupPickerField.NAME,
+                EntityComboBox.NAME,
                 SearchPickerField.NAME,
                 OptionsGroup.NAME,
                 CheckBoxGroup.NAME,

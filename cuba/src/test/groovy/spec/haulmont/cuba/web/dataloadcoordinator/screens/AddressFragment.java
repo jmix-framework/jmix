@@ -18,10 +18,10 @@ package spec.haulmont.cuba.web.dataloadcoordinator.screens;
 
 import com.haulmont.cuba.core.model.City;
 import com.haulmont.cuba.core.model.Country;
-import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.DataLoadCoordinator;
+import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.Install;
@@ -56,7 +56,7 @@ public class AddressFragment extends ScreenFragment {
     public List<LoadEvent> events = new ArrayList<>();
 
     @Autowired
-    private LookupField<City> cityField;
+    private EntityComboBox<City> cityField;
 
     @Autowired
     public DataLoadCoordinator addressDlc;

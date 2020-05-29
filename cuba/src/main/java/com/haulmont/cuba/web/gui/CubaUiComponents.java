@@ -16,10 +16,40 @@
 
 package com.haulmont.cuba.web.gui;
 
-import com.haulmont.cuba.gui.components.FieldGroup;
-import com.haulmont.cuba.gui.components.Filter;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.web.gui.components.*;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Calendar;
+import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.CheckBoxGroup;
+import io.jmix.ui.component.ColorPicker;
+import io.jmix.ui.component.CurrencyField;
+import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.component.DateField;
+import io.jmix.ui.component.DatePicker;
+import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.component.Image;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.MaskedField;
+import io.jmix.ui.component.OptionsGroup;
+import io.jmix.ui.component.OptionsList;
+import io.jmix.ui.component.PasswordField;
+import io.jmix.ui.component.RadioButtonGroup;
+import io.jmix.ui.component.ResizableTextArea;
+import io.jmix.ui.component.RichTextArea;
+import io.jmix.ui.component.RowsCount;
+import io.jmix.ui.component.Slider;
+import io.jmix.ui.component.SourceCodeEditor;
+import io.jmix.ui.component.SuggestionField;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.TextArea;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.TimeField;
+import io.jmix.ui.component.TokenList;
+import io.jmix.ui.component.Tree;
+import io.jmix.ui.component.TreeDataGrid;
+import io.jmix.ui.component.TreeTable;
+import io.jmix.ui.component.TwinColumn;
+import io.jmix.ui.component.impl.WebGridLayout;
 import io.jmix.ui.sys.WebUiComponents;
 
 public class CubaUiComponents extends WebUiComponents {
@@ -68,5 +98,6 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(FieldGroup.NAME, WebFieldGroup.class);
 
         classes.put(Filter.NAME, WebFilter.class);
+        classes.put("grid", WebGridLayout.class);
     }
 }

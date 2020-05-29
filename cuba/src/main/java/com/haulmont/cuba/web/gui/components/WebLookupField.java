@@ -17,9 +17,46 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.LookupField;
+import io.jmix.ui.component.impl.WebComboBox;
+
+import java.util.function.Function;
 
 @Deprecated
-public class WebLookupField<V>
-        extends io.jmix.ui.component.impl.WebLookupField<V>
-        implements LookupField<V> {
+public class WebLookupField<V> extends WebComboBox<V> implements LookupField<V> {
+
+    protected V nullOption;
+
+    @Override
+    public V getNullOption() {
+        return nullOption;
+    }
+
+    @Override
+    public void setNullOption(V nullOption) {
+        this.nullOption = nullOption;
+        setNullSelectionCaption(generateItemCaption(nullOption));
+    }
+
+    @Override
+    public boolean isNewOptionAllowed() {
+        return component.getNewItemHandler() != null;
+    }
+
+    @Override
+    public void setNewOptionAllowed(boolean newItemAllowed) {
+        if (newItemAllowed
+                && component.getNewItemHandler() == null) {
+            component.setNewItemHandler(this::onNewItemEntered);
+        }
+
+        if (!newItemAllowed
+                && component.getNewItemHandler() != null) {
+            component.setNewItemHandler(null);
+        }
+    }
+
+    @Override
+    public void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider) {
+        setOptionIconProvider(optionIconProvider);
+    }
 }

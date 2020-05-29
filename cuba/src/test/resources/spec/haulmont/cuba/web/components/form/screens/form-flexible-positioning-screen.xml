@@ -18,10 +18,10 @@
     <layout>
         <form id="form">
             <column>
-                <lookupField id="component00" caption="[D] LookupField [0, 0] - [1, 0]" colspan="2" width="100%"/>
+                <comboBox id="component00" caption="[D] LookupField [0, 0] - [1, 0]" colspan="2" width="100%"/>
             </column>
             <column>
-                <pickerField id="component12" caption="[D] PickerField ex:[1, 2] - [1, 2]"/>
+                <entityPicker id="component12" caption="[D] PickerField ex:[1, 2] - [1, 2]"/>
             </column>
             <column>
                 <dateField id="component20" caption="[D] DateField [2, 0] - [2, 0]"/>

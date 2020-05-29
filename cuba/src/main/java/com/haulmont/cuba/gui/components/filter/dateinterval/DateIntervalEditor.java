@@ -25,7 +25,7 @@ import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.OptionsField;
 import io.jmix.ui.component.OptionsGroup;
 import io.jmix.ui.component.TextField;
@@ -52,7 +52,7 @@ public class DateIntervalEditor extends AbstractWindow {
     protected TextField<Integer> numberField;
 
     @Autowired
-    protected LookupField<DateIntervalValue.TimeUnit> timeUnitLookup;
+    protected ComboBox<DateIntervalValue.TimeUnit> timeUnitLookup;
 
     @Autowired
     protected OptionsGroup<DateIntervalValue.Type, DateIntervalValue.Type> typeOptionsGroup;
@@ -61,7 +61,7 @@ public class DateIntervalEditor extends AbstractWindow {
     protected CheckBox includingCurrentCheckBox;
 
     @Autowired
-    protected LookupField<PredefinedDateInterval> predefinedIntervalsLookup;
+    protected ComboBox<PredefinedDateInterval> predefinedIntervalsLookup;
 
     @Autowired
     protected ThemeConstants themeConstants;

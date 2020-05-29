@@ -49,7 +49,7 @@ class EditorScreenFacetTest extends UiScreenSpec {
         editorScreenFacet.launchMode == OpenMode.DIALOG
         editorScreenFacet.entityClass == User
         editorScreenFacet.actionTarget == 'action'
-        editorScreenFacet.pickerField == screenWithFacet.userField
+        editorScreenFacet.entityPicker == screenWithFacet.userField
         editorScreenFacet.listComponent == screenWithFacet.usersTable
         editorScreenFacet.editMode == EditMode.EDIT
         editorScreenFacet.addFirst

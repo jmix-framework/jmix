@@ -68,7 +68,7 @@
                 <rowsCount/>
                 <buttonsPanel id="buttonsPanel"
                               alwaysVisible="true">
-                    <pickerField id="categoryFilterField" metaClass="pc_OwnerCategory" width="150px"/>
+                    <entityPicker id="categoryFilterField" metaClass="pc_OwnerCategory" width="150px"/>
                     <textField id="nameFilterField" width="100px"/>
                 </buttonsPanel>
             </groupTable>

@@ -73,10 +73,10 @@
                         <checkBox id="rememberMeCheckBox"
                                   caption="msg://loginWindow.rememberMe"
                                   stylename="c-login-remember-me"/>
-                        <lookupField id="localesSelect"
-                                     nullOptionVisible="false"
-                                     stylename="c-login-locale"
-                                     textInputAllowed="false"/>
+                        <comboBox id="localesSelect"
+                                  nullOptionVisible="false"
+                                  stylename="c-login-locale"
+                                  textInputAllowed="false"/>
                     </hbox>
                     <button id="loginButton"
                             align="MIDDLE_CENTER"

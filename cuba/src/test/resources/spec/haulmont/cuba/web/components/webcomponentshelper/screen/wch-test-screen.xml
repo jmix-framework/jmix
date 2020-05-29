@@ -23,12 +23,12 @@
         <action id="screenAction"/>
     </actions>
     <layout>
-        <lookupPickerField id="lookupPickerField"
-                           metaClass="sec_User">
+        <entityComboBox id="entityComboBox"
+                        metaClass="sec_User">
             <actions>
                 <action id="lpfAction"/>
             </actions>
-        </lookupPickerField>
+        </entityComboBox>
 
         <table id="table"
                dataContainer="userDc">

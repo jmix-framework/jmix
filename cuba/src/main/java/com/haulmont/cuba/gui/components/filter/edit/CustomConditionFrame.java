@@ -39,7 +39,7 @@ import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.DateField;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Label;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.SourceCodeEditor;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
@@ -71,9 +71,9 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
     protected static final String WHERE = " where ";
 
     @Autowired
-    protected LookupField<ParamType> typeSelect;
+    protected ComboBox<ParamType> typeSelect;
     @Autowired
-    protected LookupField<Object> entitySelect;
+    protected ComboBox<Object> entitySelect;
 
     @Autowired
     protected CheckBox inExprCb;

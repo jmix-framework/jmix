@@ -34,7 +34,7 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Label;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.filter.Op;
 import io.jmix.ui.filter.OpManager;
@@ -48,11 +48,11 @@ import static io.jmix.ui.filter.Op.*;
 public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttributesCondition> {
 
     @Autowired
-    protected LookupField<CategoryDefinition> categoryLookup;
+    protected ComboBox<CategoryDefinition> categoryLookup;
     @Autowired
-    protected LookupField<AttributeDefinition> attributeLookup;
+    protected ComboBox<AttributeDefinition> attributeLookup;
     @Autowired
-    protected LookupField<Op> operationLookup;
+    protected ComboBox<Op> operationLookup;
     @Autowired
     protected Label<String> categoryLabel;
     @Autowired

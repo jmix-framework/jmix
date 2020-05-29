@@ -17,13 +17,93 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.ui.component.ComboBox;
+
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <V> type of options and value
- * @deprecated Use {@link io.jmix.ui.component.LookupField} instead
+ * @deprecated Use {@link ComboBox} instead
  */
 @Deprecated
-public interface LookupField<V> extends OptionsField<V, V>, io.jmix.ui.component.LookupField<V> {
+public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V> {
+
+    String NAME = "lookupField";
+
+    /**
+     * @deprecated Use {@link #getNullSelectionCaption()} instead
+     */
+    @Deprecated
+    V getNullOption();
+
+    /**
+     * @deprecated Use {@link #setNullSelectionCaption(String)} instead
+     */
+    @Deprecated
+    void setNullOption(V nullOption);
+
+    /**
+     * @return true if the component handles new options entered by user.
+     * @see #setNewOptionHandler(Consumer)
+     */
+    @Deprecated
+    boolean isNewOptionAllowed();
+    /**
+     * Makes the component handle new options entered by user.
+     *
+     * @see #setNewOptionHandler(Consumer)
+     * @deprecated setting the new option handler enables new options
+     */
+    @Deprecated
+    void setNewOptionAllowed(boolean newOptionAllowed);
+
+    /**
+     * Set the icon provider for LookupField.
+     *
+     * @param optionClass        class of the option
+     * @param optionIconProvider provider which provides icons for options
+     *
+     * @deprecated Use {@link #setOptionIconProvider(Function)}
+     */
+    @Deprecated
+    void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider);
+
+    /**
+     * Interface to be implemented if {@link #setNewOptionAllowed(boolean)} is set to true.
+     */
+    @Deprecated
+    interface NewOptionHandler extends Consumer<String> {
+        @Override
+        default void accept(String caption) {
+            addNewOption(caption);
+        }
+
+        /**
+         * Called when user enters a value which is not in the options list, and presses Enter.
+         * @param caption value entered by user
+         */
+        void addNewOption(String caption);
+    }
+
+    /**
+     * Allows to set icons for particular elements in the options list.
+     */
+    @Deprecated
+    interface OptionIconProvider<T> extends Function<T, String> {
+        @Override
+        default String apply(T item) {
+            return getItemIcon(item);
+        }
+
+        /**
+         * Called when component paints its content.
+         *
+         * @param item item from options list, options map or enum options
+         * @return icon name or null to show no icon
+         */
+        String getItemIcon(T item);
+    }
 }

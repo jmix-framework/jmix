@@ -16,18 +16,23 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.EntitySuggestionField;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <V> entity
- * @deprecated Use {@link io.jmix.ui.component.SuggestionPickerField} instead
+ * @deprecated Use {@link EntitySuggestionField} instead
  */
 @Deprecated
-public interface SearchPickerField<V extends Entity> extends SearchField<V>, PickerField<V>,
-        io.jmix.ui.component.SearchPickerField<V> {
+public interface SearchPickerField<V extends Entity> extends SearchField<V>, PickerField<V> {
 
-    String NAME = io.jmix.ui.component.SearchPickerField.NAME;
+    String NAME = "searchPickerField";
+
+    static <T extends Entity> TypeToken<SearchPickerField<T>> of(Class<T> valueClass) {
+        return new TypeToken<SearchPickerField<T>>() {};
+    }
 }

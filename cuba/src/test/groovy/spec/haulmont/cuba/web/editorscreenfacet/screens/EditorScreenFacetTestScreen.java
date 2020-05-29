@@ -22,7 +22,7 @@ import io.jmix.core.Metadata;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.EditorScreenFacet;
-import io.jmix.ui.component.PickerField;
+import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.Install;
@@ -45,7 +45,7 @@ public class EditorScreenFacetTestScreen extends Screen {
     public CollectionContainer<User> userDc;
 
     @Autowired
-    public PickerField<User> userField;
+    public EntityPicker<User> userField;
     @Autowired
     public Table<User> usersTable;
 

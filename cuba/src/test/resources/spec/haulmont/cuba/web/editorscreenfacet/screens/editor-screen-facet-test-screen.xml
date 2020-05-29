@@ -54,8 +54,8 @@
     <layout>
         <button id="button"/>
 
-        <pickerField id="userField"
-                     metaClass="test$User"/>
+        <entityPicker id="userField"
+                      metaClass="test$User"/>
 
         <table id="usersTable"
                dataContainer="userDc">

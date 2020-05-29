@@ -73,7 +73,7 @@ public class DateInIntervalComponent {
         layout.add(textField);
 
         Button openEditorBtn = componentsFactory.createComponent(Button.class);
-        openEditorBtn.setIconFromSet(JmixIcon.PICKERFIELD_LOOKUP);
+        openEditorBtn.setIconFromSet(JmixIcon.ENTITYPICKER_LOOKUP);
         openEditorBtn.setStyleName("c-dateintervaleditor-button");
         openEditorBtn.setCaption("");
         openEditorBtn.setAction(new AbstractAction("openEditor") {
@@ -102,7 +102,7 @@ public class DateInIntervalComponent {
         layout.add(openEditorBtn);
 
         Button clearBtn = componentsFactory.createComponent(Button.class);
-        clearBtn.setIconFromSet(JmixIcon.PICKERFIELD_CLEAR);
+        clearBtn.setIconFromSet(JmixIcon.ENTITYPICKER_CLEAR);
         clearBtn.setStyleName("c-dateintervaleditor-button");
         clearBtn.setCaption("");
         clearBtn.setAction(new AbstractAction("clear") {

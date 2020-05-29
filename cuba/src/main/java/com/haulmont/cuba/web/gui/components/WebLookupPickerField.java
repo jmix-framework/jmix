@@ -17,10 +17,73 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.LookupPickerField;
+import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.impl.WebEntityComboBox;
+
+import java.util.function.Function;
 
 @Deprecated
-public class WebLookupPickerField<V extends Entity>
-        extends io.jmix.ui.component.impl.WebLookupPickerField<V>
+public class WebLookupPickerField<V extends Entity> extends WebEntityComboBox<V>
         implements LookupPickerField<V> {
+
+    protected V nullOption;
+
+    @Deprecated
+    @Override
+    public PickerField.LookupAction addLookupAction() {
+        PickerField.LookupAction action = PickerField.LookupAction.create(this);
+        addAction(action);
+        return action;
+    }
+
+    @Override
+    @Deprecated
+    public PickerField.ClearAction addClearAction() {
+        PickerField.ClearAction action = PickerField.ClearAction.create(this);
+        addAction(action);
+        return action;
+    }
+
+    @Deprecated
+    @Override
+    public PickerField.OpenAction addOpenAction() {
+        PickerField.OpenAction action = PickerField.OpenAction.create(this);
+        addAction(action);
+        return action;
+    }
+
+    @Override
+    public V getNullOption() {
+        return nullOption;
+    }
+
+    @Override
+    public void setNullOption(V nullOption) {
+        this.nullOption = nullOption;
+        setNullSelectionCaption(generateItemCaption(nullOption));
+    }
+
+    @Override
+    public boolean isNewOptionAllowed() {
+        return getComponent().getNewItemHandler() != null;
+    }
+
+    @Override
+    public void setNewOptionAllowed(boolean newItemAllowed) {
+        if (newItemAllowed
+                && getComponent().getNewItemHandler() == null) {
+            getComponent().setNewItemHandler(this::onNewItemEntered);
+        }
+
+        if (!newItemAllowed
+                && getComponent().getNewItemHandler() != null) {
+            getComponent().setNewItemHandler(null);
+        }
+    }
+
+    @Override
+    public void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider) {
+        setOptionIconProvider(optionIconProvider);
+    }
 }

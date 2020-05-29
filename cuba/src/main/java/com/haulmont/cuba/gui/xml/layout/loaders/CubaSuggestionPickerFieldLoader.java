@@ -17,20 +17,57 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.PickerField;
+import com.haulmont.cuba.gui.components.SuggestionPickerField;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loader.SuggestionPickerFieldLoader;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ActionsHolder;
+import io.jmix.ui.component.EntitySuggestionField;
+import io.jmix.ui.xml.layout.loader.EntitySuggestionFieldLoader;
 import org.dom4j.Element;
 
-public class CubaSuggestionPickerFieldLoader extends SuggestionPickerFieldLoader {
+public class CubaSuggestionPickerFieldLoader extends EntitySuggestionFieldLoader {
+
+    @Override
+    public void createComponent() {
+        resultComponent = factory.create(SuggestionPickerField.NAME);
+        loadId(resultComponent, element);
+    }
+
+    @Override
+    public SuggestionPickerField getResultComponent() {
+        return (SuggestionPickerField) super.getResultComponent();
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.component.SuggestionPickerField component, Element element) {
+    protected void loadData(EntitySuggestionField component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper
                 .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setValueSource);
+    }
+
+    @Override
+    protected void addDefaultActions() {
+        if (ComponentLoaderHelper.isLegacyFrame(context)) {
+            getResultComponent().addLookupAction();
+            getResultComponent().addOpenAction();
+        } else {
+            super.addDefaultActions();
+        }
+    }
+
+    @Override
+    protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+        String id = loadActionId(element);
+
+        return ComponentLoaderHelper
+                .loadLegacyPickerAction(((PickerField) actionsHolder), element, context, id)
+                .orElseGet(() ->
+                        super.loadDeclarativeAction(actionsHolder, element));
     }
 }

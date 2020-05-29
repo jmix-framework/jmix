@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components.filter;
 import com.google.common.base.Splitter;
 import com.haulmont.cuba.CubaProperties;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 
@@ -40,14 +40,14 @@ public class MaxResultsFieldHelper {
     @Autowired
     protected CubaProperties properties;
 
-    public LookupField<Integer> createMaxResultsLookupField() {
-        LookupField<Integer> maxResultsLookupField = uiComponents.create(LookupField.of(Integer.class));
+    public ComboBox<Integer> createMaxResultsLookupField() {
+        ComboBox<Integer> maxResultsLookupField = uiComponents.create(ComboBox.of(Integer.class));
         setUpMaxResultsLookupField(maxResultsLookupField);
 
         return maxResultsLookupField;
     }
 
-    public LookupField<Integer> setUpMaxResultsLookupField(LookupField<Integer> maxResultsLookupField) {
+    public ComboBox<Integer> setUpMaxResultsLookupField(ComboBox<Integer> maxResultsLookupField) {
         ThemeConstants theme = themeConstantsManager.getConstants();
 
         maxResultsLookupField.setWidth(theme.get("cuba.gui.Filter.maxResults.lookup.width"));

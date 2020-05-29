@@ -17,17 +17,46 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loader.LookupFieldLoader;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.data.options.ContainerOptions;
+import io.jmix.ui.xml.layout.loader.ComboBoxLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class CubaLookupFieldLoader extends LookupFieldLoader {
+public class CubaLookupFieldLoader extends ComboBoxLoader {
+
+    @Override
+    public void createComponent() {
+        resultComponent = factory.create(LookupField.NAME);
+        loadId(resultComponent, element);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        LookupField lookupField = (LookupField) resultComponent;
+
+        loadNewOptionAllowed(lookupField, element);
+    }
+
+    protected void loadNewOptionAllowed(LookupField lookupField, Element element) {
+        String newOptionAllowed = element.attributeValue("newOptionAllowed");
+        if (StringUtils.isNotEmpty(newOptionAllowed)) {
+            lookupField.setNewOptionAllowed(Boolean.parseBoolean(newOptionAllowed));
+        }
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.component.LookupField component, Element element) {
+    protected void loadData(ComboBox component, Element element) {
         super.loadData(component, element);
+
+        loadOptionsContainer(element).ifPresent(optionsContainer ->
+                component.setOptions(new ContainerOptions(optionsContainer)));
 
         DatasourceLoaderHelper
                 .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,

@@ -16,18 +16,23 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.EntityComboBox;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <V> entity
- * @deprecated Use {@link io.jmix.ui.component.LookupPickerField} instead
+ * @deprecated Use {@link EntityComboBox} instead
  */
 @Deprecated
-public interface LookupPickerField<V extends Entity> extends io.jmix.ui.component.LookupPickerField<V>, LookupField<V>,
-        PickerField<V> {
+public interface LookupPickerField<V extends Entity> extends EntityComboBox<V>, LookupField<V>, PickerField<V> {
 
-    String NAME = io.jmix.ui.component.LookupPickerField.NAME;
+    String NAME = "lookupPickerField";
+
+    static <T extends Entity> TypeToken<LookupPickerField<T>> of(Class<T> valueClass) {
+        return new TypeToken<LookupPickerField<T>>() {};
+    }
 }

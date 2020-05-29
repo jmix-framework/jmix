@@ -18,16 +18,58 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.OptionsField;
+import com.haulmont.cuba.gui.components.SearchField;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.component.LookupField;
-import io.jmix.ui.xml.layout.loader.SearchFieldLoader;
+import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.component.ComboBox;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class CubaSearchFieldLoader extends SearchFieldLoader {
+public class CubaSearchFieldLoader extends CubaLookupFieldLoader {
+
+    @Override
+    public void createComponent() {
+        resultComponent = factory.create(SearchField.NAME);
+        loadId(resultComponent, element);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        SearchField searchField = (SearchField) resultComponent;
+
+        String minSearchStringLength = element.attributeValue("minSearchStringLength");
+        if (StringUtils.isNotEmpty(minSearchStringLength)) {
+            searchField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
+        }
+
+        String modeString = element.attributeValue("mode");
+        if (StringUtils.isNotEmpty(modeString)) {
+            SearchField.Mode mode;
+            try {
+                mode = SearchField.Mode.valueOf(StringUtils.upperCase(modeString));
+            } catch (IllegalArgumentException e) {
+                throw new GuiDevelopmentException("Unable to parse mode for search",
+                        context, "mode", modeString);
+            }
+            searchField.setMode(mode);
+        }
+
+        String escapeValueForLike = element.attributeValue("escapeValueForLike");
+        if (StringUtils.isNotEmpty(escapeValueForLike)) {
+            searchField.setEscapeValueForLike(Boolean.parseBoolean(escapeValueForLike));
+        }
+    }
+
+    @Override
+    protected void loadTextInputAllowed() {
+        // do nothing
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(LookupField component, Element element) {
+    protected void loadData(ComboBox component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

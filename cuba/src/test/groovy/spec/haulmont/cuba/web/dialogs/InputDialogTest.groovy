@@ -110,7 +110,7 @@ class InputDialogTest extends UiScreenSpec {
         bigDecimalField.getDatatype().getClass() == BigDecimalDatatype
 
         (CheckBox) form.getComponentNN("boolean")
-        (PickerField) form.getComponentNN("entity")
+        (EntityPicker) form.getComponentNN("entity")
 
         def timeField = (TimeField) form.getComponentNN("time")
         timeField.getDatatype().getClass() == TimeDatatype

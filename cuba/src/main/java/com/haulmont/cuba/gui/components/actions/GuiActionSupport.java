@@ -16,10 +16,20 @@
 
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.*;
+import io.jmix.core.entity.annotation.Lookup;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
+import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.OpenAction;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.meta.EntityValueSource;
+import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +50,8 @@ public class GuiActionSupport {
     protected DynamicAttributesGuiTools dynamicAttributesGuiTools;
     @Autowired
     protected DataManager dataManager;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Autowired
     protected Actions actions;
@@ -67,5 +79,58 @@ public class GuiActionSupport {
             dynamicAttributesGuiTools.reloadDynamicAttributes(entity);
         }
         return entity;
+    }
+
+    public boolean createActionsByMetaAnnotations(PickerField pickerField) {
+        ValueSource valueSource = pickerField.getValueSource();
+        if (!(valueSource instanceof EntityValueSource)) {
+            return false;
+        }
+
+        EntityValueSource entityValueSource = (EntityValueSource) pickerField.getValueSource();
+        MetaPropertyPath mpp = entityValueSource.getMetaPropertyPath();
+        if (mpp == null) {
+            return false;
+        }
+
+        String[] actionIds = (String[]) metadataTools
+                .getMetaAnnotationAttributes(mpp.getMetaProperty().getAnnotations(), Lookup.class)
+                .get("actions");
+        if (actionIds != null && actionIds.length > 0) {
+            for (String actionId : actionIds) {
+                if (pickerField.getFrame() != null
+                        && pickerField.getFrame().getFrameOwner() instanceof CubaLegacyFrame) {
+
+                    // in legacy screens
+                    for (PickerField.ActionType actionType : PickerField.ActionType.values()) {
+                        if (actionType.getId().equals(actionId.trim())) {
+                            pickerField.addAction(actionType.createAction(pickerField));
+                            break;
+                        }
+                    }
+                } else {
+                    switch (actionId) {
+                        case "lookup":
+                            pickerField.addAction(actions.create(LookupAction.ID));
+                            break;
+
+                        case "open":
+                            pickerField.addAction(actions.create(OpenAction.ID));
+                            break;
+
+                        case "clear":
+                            pickerField.addAction(actions.create(ClearAction.ID));
+                            break;
+
+                        default:
+                            LoggerFactory.getLogger(GuiActionSupport.class)
+                                    .warn("Unsupported PickerField action type " + actionId);
+                            break;
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

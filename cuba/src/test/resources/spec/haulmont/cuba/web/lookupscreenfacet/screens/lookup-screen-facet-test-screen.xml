@@ -36,7 +36,7 @@
                       entityClass="com.haulmont.cuba.core.model.common.User"
                       openMode="DIALOG"
                       onAction="action"
-                      field="pickerField"
+                      field="userPicker"
                       container="userDc"
                       listComponent="usersTable"/>
 
@@ -45,11 +45,11 @@
                       onButton="button"/>
 
         <lookupScreen id="fieldLookupScreen"
-                      field="pickerField"/>
+                      field="userPicker"/>
     </facets>
     <layout>
-        <pickerField id="pickerField"
-                     metaClass="test$User"/>
+        <entityPicker id="userPicker"
+                      metaClass="test$User"/>
         <button id="button"/>
         <table id="usersTable"
                dataContainer="userDc">

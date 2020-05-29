@@ -38,8 +38,8 @@
     <layout>
         <form dataContainer="addressDc">
             <textField id="postcodeField" property="postcode"/>
-            <lookupField id="countryField" property="country" optionsContainer="countriesDc"/>
-            <lookupField id="cityField" property="city" optionsContainer="citiesDc"/>
+            <entityComboBox id="countryField" property="country" optionsContainer="countriesDc"/>
+            <entityComboBox id="cityField" property="city" optionsContainer="citiesDc"/>
             <textField id="line1Field" property="line1"/>
             <textField id="line2Field" property="line2"/>
         </form>

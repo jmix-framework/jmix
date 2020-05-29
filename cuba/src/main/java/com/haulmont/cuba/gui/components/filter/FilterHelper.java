@@ -23,7 +23,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
 
@@ -60,9 +60,9 @@ public interface FilterHelper {
         }
     }
 
-    void setLookupNullSelectionAllowed(LookupField lookupField, boolean value);
+    void setLookupNullSelectionAllowed(ComboBox lookupField, boolean value);
 
-    void setLookupTextInputAllowed(LookupField lookupField, boolean value);
+    void setLookupTextInputAllowed(ComboBox lookupField, boolean value);
 
     /**
      * Saves a folder to a FoldersPane
@@ -95,13 +95,13 @@ public interface FilterHelper {
 
     void setComponentFocusable(Component component, boolean focusable);
 
-    void setLookupCaptions(LookupField lookupField, Map<Object, String> captions);
+    void setLookupCaptions(ComboBox lookupField, Map<Object, String> captions);
 
     void addTextChangeListener(TextField textField, TextChangeListener listener);
 
     void addShortcutListener(TextField textField, ShortcutListener listener);
 
-    void setLookupFieldPageLength(LookupField lookupField, int pageLength);
+    void setLookupFieldPageLength(ComboBox lookupField, int pageLength);
 
     void setInternalDebugId(Component component, String id);
 

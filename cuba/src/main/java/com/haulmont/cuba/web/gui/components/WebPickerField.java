@@ -18,8 +18,31 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.impl.WebEntityPicker;
 
-public class WebPickerField<V extends Entity>
-        extends io.jmix.ui.component.impl.WebPickerField<V>
-        implements PickerField<V> {
+public class WebPickerField<V extends Entity> extends WebEntityPicker<V> implements PickerField<V> {
+
+    @Deprecated
+    @Override
+    public PickerField.LookupAction addLookupAction() {
+        PickerField.LookupAction action = PickerField.LookupAction.create(this);
+        addAction(action);
+        return action;
+    }
+
+    @Override
+    @Deprecated
+    public PickerField.ClearAction addClearAction() {
+        PickerField.ClearAction action = PickerField.ClearAction.create(this);
+        addAction(action);
+        return action;
+    }
+
+    @Deprecated
+    @Override
+    public PickerField.OpenAction addOpenAction() {
+        PickerField.OpenAction action = PickerField.OpenAction.create(this);
+        addAction(action);
+        return action;
+    }
 }

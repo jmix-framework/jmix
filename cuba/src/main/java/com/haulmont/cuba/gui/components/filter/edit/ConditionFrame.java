@@ -46,7 +46,7 @@ public abstract class ConditionFrame<T extends AbstractCondition> extends Abstra
     protected Component defaultValueComponent;
     protected CheckBox required;
     protected CheckBox hidden;
-    protected LookupField<Integer> width;
+    protected ComboBox<Integer> width;
     protected BoxLayout defaultValueLayout;
 
     @Override
@@ -63,7 +63,7 @@ public abstract class ConditionFrame<T extends AbstractCondition> extends Abstra
     protected void initComponents() {
         required = (CheckBox) getComponent("required");
         hidden = (CheckBox) getComponent("hidden");
-        width = (LookupField) getComponent("width");
+        width = (ComboBox) getComponent("width");
 
         if (width != null) {
             List<Integer> widthValues = new ArrayList<>();

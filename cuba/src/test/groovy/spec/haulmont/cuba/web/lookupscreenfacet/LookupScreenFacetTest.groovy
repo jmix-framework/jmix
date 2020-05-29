@@ -51,7 +51,7 @@ class LookupScreenFacetTest extends UiScreenSpec {
         lookupScreenFacet.entityClass == User
         lookupScreenFacet.launchMode == OpenMode.DIALOG
         lookupScreenFacet.actionTarget == 'action'
-        lookupScreenFacet.pickerField == screenWithFacet.pickerField
+        lookupScreenFacet.entityPicker == screenWithFacet.userPicker
         lookupScreenFacet.container == screenWithFacet.userDc
         lookupScreenFacet.listComponent == screenWithFacet.usersTable
 
@@ -60,7 +60,7 @@ class LookupScreenFacetTest extends UiScreenSpec {
         tableLookupScreenFacet.buttonTarget == 'button'
 
         fieldLookupScreenFacet.id == 'fieldLookupScreen'
-        fieldLookupScreenFacet.pickerField == screenWithFacet.pickerField
+        fieldLookupScreenFacet.entityPicker == screenWithFacet.userPicker
     }
 
     def 'LookupScreenFacet opens lookup by entity class'() {

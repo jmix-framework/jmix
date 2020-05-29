@@ -19,11 +19,11 @@ package spec.haulmont.cuba.web.dataloadcoordinator.screens;
 import com.haulmont.cuba.core.model.Owner;
 import com.haulmont.cuba.core.model.OwnerCategory;
 import com.haulmont.cuba.core.model.Pet;
-import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.DataLoadCoordinator;
+import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
@@ -61,7 +61,7 @@ public class DlcBaseScreen extends Screen {
     public TextField<String> nameFilterField;
 
     @Autowired
-    public PickerField<OwnerCategory> categoryFilterField;
+    public EntityPicker<OwnerCategory> categoryFilterField;
 
     @Install(to = "ownersDl", target = Target.DATA_LOADER)
     private List<Owner> ownersDlLoadDelegate(LoadContext<Owner> loadContext) {

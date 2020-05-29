@@ -18,16 +18,65 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.OptionsField;
+import com.haulmont.cuba.gui.components.PickerField;
+import com.haulmont.cuba.gui.components.SearchPickerField;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.component.LookupField;
-import io.jmix.ui.xml.layout.loader.SearchPickerFieldLoader;
+import io.jmix.core.Metadata;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ActionsHolder;
+import io.jmix.ui.component.ComboBox;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class CubaSearchPickerFieldLoader extends SearchPickerFieldLoader {
+public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
+
+    @Override
+    public void createComponent() {
+        resultComponent = factory.create(SearchPickerField.NAME);
+        loadId(resultComponent, element);
+    }
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        SearchPickerField searchPickerField = (SearchPickerField) resultComponent;
+
+        String metaClass = element.attributeValue("metaClass");
+        if (!StringUtils.isEmpty(metaClass)) {
+            searchPickerField.setMetaClass(getMetadata().findClass(metaClass));
+        }
+
+        loadActions(searchPickerField, element);
+        if (searchPickerField.getActions().isEmpty()) {
+            searchPickerField.addLookupAction();
+            searchPickerField.addOpenAction();
+        }
+
+        String minSearchStringLength = element.attributeValue("minSearchStringLength");
+        if (StringUtils.isNotEmpty(minSearchStringLength)) {
+            searchPickerField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
+        }
+    }
+
+    @Override
+    protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+        String id = loadActionId(element);
+
+        return ComponentLoaderHelper
+                .loadLegacyPickerAction(((PickerField) actionsHolder), element, context, id)
+                .orElseGet(() ->
+                        super.loadDeclarativeAction(actionsHolder, element));
+    }
+
+    protected Metadata getMetadata() {
+        return beanLocator.get(Metadata.NAME);
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(LookupField component, Element element) {
+    protected void loadData(ComboBox component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

@@ -43,7 +43,10 @@ import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.DynAttrUtils;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueConversionException;
 import io.jmix.ui.component.data.options.ContainerOptions;
@@ -134,6 +137,8 @@ public class Param {
     protected CubaProperties properties;
     @Autowired
     protected DataComponents dataComponents;
+    @Autowired
+    private Actions actions;
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
@@ -538,7 +543,7 @@ public class Param {
      * @return GUI component for condition parameter.
      */
     public Component createEditComponentForDefaultValue() {
-        return createEditComponent(null, Param.ValueProperty.DEFAULT_VALUE);
+        return createEditComponent(null, ValueProperty.DEFAULT_VALUE);
     }
 
     /**
@@ -547,7 +552,7 @@ public class Param {
      * @return GUI component for condition parameter.
      */
     public Component createEditComponentForFilterValue(FilterDataContext filterDataContext) {
-        return createEditComponent(filterDataContext, Param.ValueProperty.VALUE);
+        return createEditComponent(filterDataContext, ValueProperty.VALUE);
     }
 
     /**
@@ -794,7 +799,7 @@ public class Param {
     }
 
     protected Component createBooleanField(ValueProperty valueProperty) {
-        LookupField<Object> field = uiComponents.create(LookupField.NAME);
+        ComboBox<Object> field = uiComponents.create(ComboBox.NAME);
         field.setWidth(theme.get("cuba.gui.filter.Param.booleanLookup.width"));
 
         Map<String, Object> values = ParamsMap.of(
@@ -864,12 +869,12 @@ public class Param {
                 initListEditor(listEditor, valueProperty);
                 return listEditor;
             } else {
-                PickerField<Entity> picker = uiComponents.create(PickerField.NAME);
+                EntityPicker<Entity> picker = uiComponents.create(EntityPicker.NAME);
                 picker.setMetaClass(metaClass);
 
                 picker.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
-                picker.addLookupAction();
-                picker.addClearAction();
+                picker.addAction(actions.create(OpenAction.ID));
+                picker.addAction(actions.create(ClearAction.ID));
 
                 picker.addValueChangeListener(e ->
                         _setValue(e.getValue(), valueProperty));
@@ -910,9 +915,9 @@ public class Param {
                         dataComponents.createCollectionContainer(metaClass.getJavaClass());
                 loader.setContainer(container);
 
-                LookupPickerField<Entity> lookup = uiComponents.create(LookupPickerField.NAME);
+                EntityComboBox<Entity> lookup = uiComponents.create(EntityComboBox.NAME);
                 lookup.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
-                lookup.addClearAction();
+                lookup.addAction(actions.create(ClearAction.ID));
                 lookup.setOptions(new ContainerOptions<>(container));
 
                 Consumer<CollectionContainer.CollectionChangeEvent<?>> listener = e -> lookup.setValue(null);
@@ -956,7 +961,7 @@ public class Param {
             return listEditor;
 
         } else {
-            LookupField<Object> lookup = uiComponents.create(LookupField.NAME);
+            ComboBox<Object> lookup = uiComponents.create(ComboBox.NAME);
             lookup.setOptionsEnum(javaClass);
 
             lookup.addValueChangeListener(e -> _setValue(e.getValue(), valueProperty));

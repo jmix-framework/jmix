@@ -55,9 +55,9 @@ class WebComponentsHelperTest extends UiScreenSpec {
 
         tableAction
 
-        when: 'Finding LookupPickerField action'
+        when: 'Finding EntityComboBox action'
 
-        def lpfAction = WebComponentsHelper.findAction(frame, 'lookupPickerField.lpfAction')
+        def lpfAction = WebComponentsHelper.findAction(frame, 'entityComboBox.lpfAction')
 
         then: 'Action found'
 

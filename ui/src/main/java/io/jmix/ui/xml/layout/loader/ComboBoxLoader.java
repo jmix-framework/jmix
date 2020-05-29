@@ -19,8 +19,8 @@ package io.jmix.ui.xml.layout.loader;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.CaptionMode;
-import io.jmix.ui.component.LookupField;
-import io.jmix.ui.component.data.options.ContainerOptions;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -29,11 +29,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
+public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(LookupField.NAME);
+        resultComponent = factory.create(ComboBox.NAME);
         loadId(resultComponent, element);
     }
 
@@ -45,8 +45,8 @@ public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
 
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setOptionCaptionProvider(o -> CaptionMode.PROPERTY);
-            resultComponent.setOptionCaptionProvider(o -> captionProperty);
+            resultComponent.setOptionCaptionProvider(
+                    new LegacyCaptionAdapter(CaptionMode.PROPERTY, captionProperty));
         }
 
         String nullName = element.attributeValue("nullName");
@@ -73,14 +73,14 @@ public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
     }
 
     @SuppressWarnings("unchecked")
-    protected void loadOptionsEnum(LookupField resultComponent, Element element) {
+    protected void loadOptionsEnum(ComboBox resultComponent, Element element) {
         String optionsEnumClass = element.attributeValue("optionsEnum");
         if (StringUtils.isNotEmpty(optionsEnumClass)) {
             resultComponent.setOptionsEnum(getHotDeployManager().findClass(optionsEnumClass));
         }
     }
 
-    protected void loadNullOptionVisible(LookupField resultComponent, Element element) {
+    protected void loadNullOptionVisible(ComboBox resultComponent, Element element) {
         String nullOptionVisible = element.attributeValue("nullOptionVisible");
         if (StringUtils.isNotEmpty(nullOptionVisible)) {
             resultComponent.setNullOptionVisible(Boolean.parseBoolean(nullOptionVisible));
@@ -94,12 +94,7 @@ public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
         }
     }
 
-    protected void loadNewOptionHandler(LookupField component, Element element) {
-        String newOptionAllowed = element.attributeValue("newOptionAllowed");
-        if (StringUtils.isNotEmpty(newOptionAllowed)) {
-            component.setNewOptionAllowed(Boolean.parseBoolean(newOptionAllowed));
-        }
-
+    protected void loadNewOptionHandler(ComboBox component, Element element) {
         String newOptionHandlerMethod = element.attributeValue("newOptionHandler");
         if (StringUtils.isNotEmpty(newOptionHandlerMethod)) {
             FrameOwner controller = getComponentContext().getFrame().getFrameOwner();
@@ -107,7 +102,7 @@ public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
 
             Method newOptionHandler;
             try {
-                newOptionHandler = windowClass.getMethod(newOptionHandlerMethod, LookupField.class, String.class);
+                newOptionHandler = windowClass.getMethod(newOptionHandlerMethod, ComboBox.class, String.class);
             } catch (NoSuchMethodException e) {
                 Map<String, Object> params = ParamsMap.of(
                         "LookupField Id", component.getId(),
@@ -128,19 +123,10 @@ public class LookupFieldLoader extends AbstractFieldLoader<LookupField> {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected void loadData(LookupField component, Element element) {
-        super.loadData(component, element);
-
-        loadOptionsContainer(element).ifPresent(optionsContainer ->
-                component.setOptions(new ContainerOptions(optionsContainer)));
-    }
-
-    protected void loadFilterMode(LookupField component, Element element) {
+    protected void loadFilterMode(ComboBox component, Element element) {
         String filterMode = element.attributeValue("filterMode");
         if (!StringUtils.isEmpty(filterMode)) {
-            component.setFilterMode(LookupField.FilterMode.valueOf(filterMode));
+            component.setFilterMode(ComboBox.FilterMode.valueOf(filterMode));
         }
     }
 }

@@ -17,18 +17,17 @@
 package io.jmix.ui.component.impl;
 
 import io.jmix.core.EntityStates;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
-import io.jmix.ui.action.picker.ClearAction;
-import io.jmix.ui.action.picker.LookupAction;
-import io.jmix.ui.action.picker.OpenAction;
-import io.jmix.ui.component.PickerField;
+import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.OpenAction;
+import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
-import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
@@ -53,18 +52,18 @@ public class GuiActionSupport {
     protected Actions actions;
 
     /**
-     * Adds actions specified in {@link Lookup} annotation on entity attribute to the given PickerField.
+     * Adds actions specified in {@link Lookup} annotation on entity attribute to the given {@link EntityPicker}.
      *
-     * @param pickerField field
+     * @param entityPicker field
      * @return true if actions have been added
      */
-    public boolean createActionsByMetaAnnotations(PickerField pickerField) {
-        ValueSource valueSource = pickerField.getValueSource();
+    public boolean createActionsByMetaAnnotations(EntityPicker entityPicker) {
+        ValueSource valueSource = entityPicker.getValueSource();
         if (!(valueSource instanceof EntityValueSource)) {
             return false;
         }
 
-        EntityValueSource entityValueSource = (EntityValueSource) pickerField.getValueSource();
+        EntityValueSource entityValueSource = (EntityValueSource) entityPicker.getValueSource();
         MetaPropertyPath mpp = entityValueSource.getMetaPropertyPath();
         if (mpp == null) {
             return false;
@@ -73,41 +72,31 @@ public class GuiActionSupport {
         String[] actionIds = (String[]) metadataTools
                 .getMetaAnnotationAttributes(mpp.getMetaProperty().getAnnotations(), Lookup.class)
                 .get("actions");
+
         if (actionIds != null && actionIds.length > 0) {
             for (String actionId : actionIds) {
-                if (pickerField.getFrame() != null
-                        && pickerField.getFrame().getFrameOwner() instanceof CubaLegacyFrame) {
+                switch (actionId) {
+                    case "lookup":
+                        entityPicker.addAction(actions.create(LookupAction.ID));
+                        break;
 
-                    // in legacy screens
-                    for (PickerField.ActionType actionType : PickerField.ActionType.values()) {
-                        if (actionType.getId().equals(actionId.trim())) {
-                            pickerField.addAction(actionType.createAction(pickerField));
-                            break;
-                        }
-                    }
-                } else {
-                    switch (actionId) {
-                        case "lookup":
-                            pickerField.addAction(actions.create(LookupAction.ID));
-                            break;
+                    case "open":
+                        entityPicker.addAction(actions.create(OpenAction.ID));
+                        break;
 
-                        case "open":
-                            pickerField.addAction(actions.create(OpenAction.ID));
-                            break;
+                    case "clear":
+                        entityPicker.addAction(actions.create(ClearAction.ID));
+                        break;
 
-                        case "clear":
-                            pickerField.addAction(actions.create(ClearAction.ID));
-                            break;
-
-                        default:
-                            LoggerFactory.getLogger(GuiActionSupport.class)
-                                    .warn("Unsupported PickerField action type " + actionId);
-                            break;
-                    }
+                    default:
+                        LoggerFactory.getLogger(GuiActionSupport.class)
+                                .warn("Unsupported EntityPicker action type " + actionId);
                 }
             }
+
             return true;
         }
+
         return false;
     }
 }

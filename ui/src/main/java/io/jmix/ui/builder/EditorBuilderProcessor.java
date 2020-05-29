@@ -144,9 +144,9 @@ public class EditorBuilderProcessor {
                     E entityFromEditor = editorScreen.getEditedEntity();
                     E editedEntity = transform(entityFromEditor, builder);
 
-                    if (field instanceof LookupPickerField) {
-                        LookupPickerField lookupPickerField = ((LookupPickerField) field);
-                        Options options = lookupPickerField.getOptions();
+                    if (field instanceof EntityComboBox) {
+                        EntityComboBox entityComboBox = ((EntityComboBox) field);
+                        Options options = entityComboBox.getOptions();
                         if (options instanceof EntityOptions) {
                             EntityOptions entityOptions = (EntityOptions) options;
                             if (entityOptions.containsItem(editedEntity)) {

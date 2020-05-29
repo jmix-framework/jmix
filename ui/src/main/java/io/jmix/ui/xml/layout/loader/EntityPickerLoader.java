@@ -18,19 +18,20 @@ package io.jmix.ui.xml.layout.loader;
 import io.jmix.core.Metadata;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.picker.ClearAction;
-import io.jmix.ui.action.picker.LookupAction;
+import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.CaptionMode;
-import io.jmix.ui.component.PickerField;
+import io.jmix.ui.component.EntityPicker;
+import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
 import io.jmix.ui.component.impl.GuiActionSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class PickerFieldLoader extends AbstractFieldLoader<PickerField> {
+public class EntityPickerLoader extends AbstractFieldLoader<EntityPicker> {
     @Override
     public void createComponent() {
-        resultComponent = factory.create(PickerField.NAME);
+        resultComponent = factory.create(EntityPicker.NAME);
         loadId(resultComponent, element);
     }
 
@@ -42,35 +43,39 @@ public class PickerFieldLoader extends AbstractFieldLoader<PickerField> {
 
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setCaptionMode(CaptionMode.PROPERTY);
-            resultComponent.setCaptionProperty(captionProperty);
+            resultComponent.setOptionCaptionProvider(
+                    new LegacyCaptionAdapter(CaptionMode.PROPERTY, captionProperty));
         }
 
-        final String metaClass = element.attributeValue("metaClass");
-        if (!StringUtils.isEmpty(metaClass)) {
-            resultComponent.setMetaClass(getMetadata().getClass(metaClass));
-        }
-
+        loadMetaClass(resultComponent, element);
         loadActions(resultComponent, element);
+
         if (resultComponent.getActions().isEmpty()) {
-            GuiActionSupport guiActionSupport = getGuiActionSupport();
-
-            boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(resultComponent);
+            boolean actionsByMetaAnnotations = createActionsByMetaAnnotations();
             if (!actionsByMetaAnnotations) {
-
-                if (isLegacyFrame()) {
-                    resultComponent.addLookupAction();
-                    resultComponent.addClearAction();
-                } else {
-                    Actions actions = getActions();
-
-                    resultComponent.addAction(actions.create(LookupAction.ID));
-                    resultComponent.addAction(actions.create(ClearAction.ID));
-                }
+                addDefaultActions();
             }
         }
 
         loadBuffered(resultComponent, element);
+    }
+
+    protected boolean createActionsByMetaAnnotations() {
+        return getGuiActionSupport().createActionsByMetaAnnotations(resultComponent);
+    }
+
+    protected void addDefaultActions() {
+        Actions actions = getActions();
+
+        resultComponent.addAction(actions.create(LookupAction.ID));
+        resultComponent.addAction(actions.create(ClearAction.ID));
+    }
+
+    protected void loadMetaClass(EntityPicker resultComponent, Element element) {
+        String metaClass = element.attributeValue("metaClass");
+        if (!StringUtils.isEmpty(metaClass)) {
+            resultComponent.setMetaClass(getMetadata().getClass(metaClass));
+        }
     }
 
     protected Actions getActions() {
@@ -87,6 +92,6 @@ public class PickerFieldLoader extends AbstractFieldLoader<PickerField> {
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        return loadPickerDeclarativeAction(actionsHolder, element);
+        return loadEntityPickerDeclarativeAction(actionsHolder, element);
     }
 }

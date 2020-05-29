@@ -26,7 +26,7 @@ public interface GridLayout extends ComponentContainer, HasSpacing, HasMargin, C
         Component.HasIcon, Component.HasCaption, HasContextHelp, LayoutClickNotifier, ShortcutNotifier,
         HasHtmlCaption, HasHtmlDescription, HasRequiredIndicator, HasHtmlSanitizer {
 
-    String NAME = "grid";
+    String NAME = "gridLayout";
 
     float getColumnExpandRatio(int col);
     void setColumnExpandRatio(int col, float ratio);

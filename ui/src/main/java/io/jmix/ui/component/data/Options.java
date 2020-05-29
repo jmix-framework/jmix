@@ -19,7 +19,7 @@ package io.jmix.ui.component.data;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.CheckBoxGroup;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.RadioButtonGroup;
 
 import java.util.EventObject;
@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  *
  * @param <I> type of option object
  *
- * @see LookupField
+ * @see ComboBox
  * @see CheckBoxGroup
  * @see RadioButtonGroup
  */

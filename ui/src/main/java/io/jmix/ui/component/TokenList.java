@@ -52,14 +52,14 @@ public interface TokenList<V extends Entity> extends Field<Collection<V>>,
     /**
      * @return options filter mode
      */
-    LookupField.FilterMode getFilterMode();
+    ComboBox.FilterMode getFilterMode();
 
     /**
      * Sets the given {@code mode} to manage how options should be filtered.
      *
      * @param mode options filter mode
      */
-    void setFilterMode(LookupField.FilterMode mode);
+    void setFilterMode(ComboBox.FilterMode mode);
 
     /**
      * Sets function that provides caption for LookupField options.

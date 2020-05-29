@@ -20,22 +20,15 @@ import com.google.common.reflect.TypeToken;
 import io.jmix.core.Entity;
 
 /**
- * LookupPickerField adds to PickerField the ability to select an entity from drop-down list.
+ * SuggestionPickerField adds to PickerField the ability to search an entity by user input.
+ *
+ * @param <V> type of value
  */
-public interface LookupPickerField<V extends Entity> extends LookupField<V>, PickerField<V> {
+public interface EntitySuggestionField<V extends Entity> extends SuggestionField<V>, EntityPicker<V> {
 
-    String NAME = "lookupPickerField";
+    String NAME = "entitySuggestionField";
 
-    static <T extends Entity> TypeToken<LookupPickerField<T>> of(Class<T> valueClass) {
-        return new TypeToken<LookupPickerField<T>>() {};
+    static <T extends Entity> TypeToken<EntitySuggestionField<T>> of(Class<T> valueClass) {
+        return new TypeToken<EntitySuggestionField<T>>() {};
     }
-
-    /**
-     * Use this method to enable items refreshing in component after closing lookup window.
-     *
-     * @deprecated Override LookupAction if needed instead of using this option.
-     */
-    @Deprecated
-    void setRefreshOptionsOnLookupClose(boolean refresh);
-    boolean isRefreshOptionsOnLookupClose();
 }

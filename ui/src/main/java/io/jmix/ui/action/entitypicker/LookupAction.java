@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.action.picker;
+package io.jmix.ui.action.entitypicker;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.Entity;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.builder.EditorBuilder;
+import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.PickerField;
+import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.meta.StudioAction;
@@ -41,52 +38,54 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
 
 /**
- * Standard picker field action for opening an entity instance in its editor screen.
+ * Standard action for setting an entity to the entity picker using the entity lookup screen.
  * <p>
- * Should be defined for {@code PickerField} or its subclass in a screen XML descriptor.
+ * Should be defined for {@link EntityPicker} or its subclass in a screen XML descriptor.
  * <p>
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
+ *
+ * @param <E> type of entity
  */
-@StudioAction(category = "Picker Actions", description = "Opens an entity using the entity edit screen")
-@ActionType(OpenAction.ID)
-public class OpenAction<E extends Entity> extends BaseAction implements PickerField.PickerFieldAction, InitializingBean {
+@StudioAction(category = "EntityPicker Actions", description = "Sets an entity to the entity picker using the entity lookup screen")
+@ActionType(LookupAction.ID)
+public class LookupAction<E extends Entity> extends BaseAction implements EntityPicker.EntityPickerAction, InitializingBean {
 
-    public static final String ID = "picker_open";
+    public static final String ID = "entity_lookup";
 
-    protected PickerField<Entity> pickerField;
-    protected Icons icons;
-
-    protected Messages messages;
-    protected UiProperties properties;
+    protected EntityPicker entityPicker;
 
     @Autowired
     protected ScreenBuilders screenBuilders;
+    protected Icons icons;
+    protected Messages messages;
+    protected UiProperties properties;
 
     protected boolean editable = true;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
 
-    private Consumer<E> afterCommitHandler;
-    private Function<E, E> transformation;
+    protected Predicate<LookupScreen.ValidationContext<E>> selectValidator;
+    protected Function<Collection<E>, Collection<E>> transformation;
 
-    public OpenAction() {
-        super(ID);
+    public LookupAction() {
+        super(LookupAction.ID);
     }
 
-    public OpenAction(String id) {
+    public LookupAction(String id) {
         super(id);
     }
 
     /**
-     * Returns the editor screen open mode if it was set by {@link #setOpenMode(OpenMode)} or in the screen XML.
+     * Returns the lookup screen open mode if it was set by {@link #setOpenMode(OpenMode)} or in the screen XML.
      * Otherwise returns null.
      */
     @Nullable
@@ -95,7 +94,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Sets the editor screen open mode.
+     * Sets the lookup screen open mode.
      */
     @StudioPropertiesItem
     public void setOpenMode(OpenMode openMode) {
@@ -103,7 +102,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Returns the editor screen id if it was set by {@link #setScreenId(String)} or in the screen XML.
+     * Returns the lookup screen id if it was set by {@link #setScreenId(String)} or in the screen XML.
      * Otherwise returns null.
      */
     @Nullable
@@ -112,7 +111,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Sets the editor screen id.
+     * Sets the lookup screen id.
      */
     @StudioPropertiesItem
     public void setScreenId(String screenId) {
@@ -120,7 +119,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Returns the editor screen class if it was set by {@link #setScreenClass(Class)} or in the screen XML.
+     * Returns the lookup screen class if it was set by {@link #setScreenClass(Class)} or in the screen XML.
      * Otherwise returns null.
      */
     @Nullable
@@ -129,7 +128,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Sets the editor screen id.
+     * Sets the lookup screen id.
      */
     @StudioPropertiesItem
     public void setScreenClass(Class screenClass) {
@@ -137,13 +136,13 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Sets the editor screen options supplier. The supplier provides {@code ScreenOptions} to the
+     * Sets the lookup screen options supplier. The supplier provides {@code ScreenOptions} to the
      * opened screen.
      * <p>
      * The preferred way to set the supplier is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petField.open", subject = "screenOptionsSupplier")
-     * protected ScreenOptions petFieldOpenScreenOptionsSupplier() {
+     * &#64;Install(to = "petField.lookup", subject = "screenOptionsSupplier")
+     * protected ScreenOptions petFieldLookupScreenOptionsSupplier() {
      *     return new MapScreenOptions(ParamsMap.of("someParameter", 10));
      * }
      * </pre>
@@ -154,14 +153,14 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Sets the editor screen configurer. Use the configurer if you need to provide parameters to the
+     * Sets the lookup screen configurer. Use the configurer if you need to provide parameters to the
      * opened screen through setters.
      * <p>
      * The preferred way to set the configurer is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petField.open", subject = "screenConfigurer")
-     * protected void petFieldOpenScreenConfigurer(Screen editorScreen) {
-     *     ((PetEdit) editorScreen).setSomeParameter(someValue);
+     * &#64;Install(to = "petField.lookup", subject = "screenConfigurer")
+     * protected void petFieldLookupScreenConfigurer(Screen lookupScreen) {
+     *     ((PetBrowse) lookupScreen).setSomeParameter(someValue);
      * }
      * </pre>
      */
@@ -171,12 +170,12 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Sets the handler to be invoked when the editor screen closes.
+     * Sets the handler to be invoked when the lookup screen closes.
      * <p>
      * The preferred way to set the handler is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petField.open", subject = "afterCloseHandler")
-     * protected void petFieldOpenAfterCloseHandler(AfterCloseEvent event) {
+     * &#64;Install(to = "petField.lookup", subject = "afterCloseHandler")
+     * protected void petFieldLookupAfterCloseHandler(AfterCloseEvent event) {
      *     CloseAction closeAction = event.getCloseAction();
      *     System.out.println("Closed with " + closeAction);
      * }
@@ -188,60 +187,49 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     }
 
     /**
-     * Sets the handler to be invoked when the editor screen commits the entity.
+     * Sets the validator to be invoked when the user selects entities in the lookup screen.
      * <p>
-     * The preferred way to set the handler is using a controller method annotated with {@link Install}, e.g.:
+     * The preferred way to set the validator is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petField.open", subject = "afterCommitHandler")
-     * protected void petFieldOpenAfterCommitHandler(Pet entity) {
-     *     System.out.println("Committed " + entity);
+     * &#64;Install(to = "petField.lookup", subject = "selectValidator")
+     * protected void petFieldLookupSelectValidator(LookupScreen.ValidationContext&lt;Pet&gt; context) {
+     *     return checkSelected(context.getSelectedItems());
      * }
      * </pre>
      */
-    public void setAfterCommitHandler(Consumer<E> afterCommitHandler) {
-        this.afterCommitHandler = afterCommitHandler;
+    @StudioDelegate
+    public void setSelectValidator(Predicate<LookupScreen.ValidationContext<E>> selectValidator) {
+        this.selectValidator = selectValidator;
     }
 
     /**
-     * Sets the function to transform the committed in the editor screen entity before setting it to the target data container.
+     * Sets the function to transform selected in the lookup screen entities.
      * <p>
      * The preferred way to set the function is using a controller method annotated with {@link Install}, e.g.:
      * <pre>
-     * &#64;Install(to = "petField.open", subject = "transformation")
-     * protected Pet petFieldOpenTransformation(Pet entity) {
-     *     return doTransform(entity);
+     * &#64;Install(to = "petField.lookup", subject = "transformation")
+     * protected Collection&lt;Pet&gt; petFieldLookupTransformation(Collection&lt;Pet&gt; entities) {
+     *     return doTransform(entities);
      * }
      * </pre>
      */
-    public void setTransformation(Function<E, E> transformation) {
+    @StudioDelegate
+    public void setTransformation(Function<Collection<E>, Collection<E>> transformation) {
         this.transformation = transformation;
     }
 
-    @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        this.properties = properties;
+    @Override
+    public void setEntityPicker(EntityPicker entityPicker) {
+        this.entityPicker = entityPicker;
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
-        setShortcut(properties.getPickerOpenShortcut());
-        setDescription(messages.getMessage("pickerField.action.open.tooltip")
-                + " (" + getShortcutCombination().format() + ")");
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setPickerField(PickerField pickerField) {
-        this.pickerField = pickerField;
-    }
-
-    @Override
-    public void editableChanged(PickerField pickerField, boolean editable) {
-        // open action is available in read-only picker
+    public void editableChanged(boolean editable) {
+        setEditable(editable);
         if (editable) {
-            setIcon(icons.get(JmixIcon.PICKERFIELD_OPEN));
+            setIcon(icons.get(JmixIcon.ENTITYPICKER_LOOKUP));
         } else {
-            setIcon(icons.get(JmixIcon.PICKERFIELD_OPEN_READONLY));
+            setIcon(icons.get(JmixIcon.ENTITYPICKER_LOOKUP_READONLY));
         }
     }
 
@@ -262,12 +250,24 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     protected void setIcons(Icons icons) {
         this.icons = icons;
 
-        setIcon(icons.get(JmixIcon.PICKERFIELD_OPEN));
+        setIcon(icons.get(JmixIcon.ENTITYPICKER_LOOKUP));
     }
 
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setUiProperties(UiProperties properties) {
+        this.properties = properties;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        setShortcut(properties.getPickerLookupShortcut());
+        setDescription(messages.getMessage("entityPicker.action.lookup.tooltip")
+                + " (" + getShortcutCombination().format() + ")");
     }
 
     @Override
@@ -284,57 +284,30 @@ public class OpenAction<E extends Entity> extends BaseAction implements PickerFi
     /**
      * Executes the action.
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     public void execute() {
-        if (!checkFieldValue())
-            return;
-
-        Entity entity = pickerField.getValue();
-
-        if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted()) {
-            ScreenContext screenContext = ComponentsHelper.getScreenContext(pickerField);
-            Notifications notifications = screenContext.getNotifications();
-
-            notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withDescription(messages.getMessage("OpenAction.objectIsDeleted"))
-                    .show();
-
-            return;
-        }
-
-        MetaClass metaClass = pickerField.getMetaClass();
+        MetaClass metaClass = entityPicker.getMetaClass();
         if (metaClass == null) {
             throw new DevelopmentException("Neither metaClass nor datasource/property is specified " +
-                    "for the PickerField", "action ID", getId());
+                    "for the EntityPicker", "action ID", getId());
         }
 
-        EditorBuilder builder = screenBuilders.editor(pickerField);
+        LookupBuilder builder = screenBuilders.lookup(entityPicker);
 
         builder = screenInitializer.initBuilder(builder);
 
+        if (selectValidator != null) {
+            builder = builder.withSelectValidator(selectValidator);
+        }
+
         if (transformation != null) {
-            builder.withTransformation(transformation);
+            builder = builder.withTransformation(transformation);
         }
 
-        Screen editor = builder.build();
+        Screen lookupScreen = builder.build();
 
-        if (afterCommitHandler != null) {
-            editor.addAfterCloseListener(afterCloseEvent -> {
-                CloseAction closeAction = afterCloseEvent.getCloseAction();
-                if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
-                    Entity committedEntity = ((EditorScreen) editor).getEditedEntity();
-                    afterCommitHandler.accept((E) committedEntity);
-                }
-            });
-        }
+        screenInitializer.initScreen(lookupScreen);
 
-        screenInitializer.initScreen(editor);
-
-        editor.show();
-    }
-
-    protected boolean checkFieldValue() {
-        Entity entity = pickerField.getValue();
-        return entity != null;
+        lookupScreen.show();
     }
 }

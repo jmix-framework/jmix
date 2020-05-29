@@ -126,7 +126,7 @@ public class WebEditorScreenFacet<E extends Entity, S extends Screen & EditorScr
     protected S createScreen(EditorBuilder<E> builder) {
         return (S) builder
                 .withListComponent(listComponent)
-                .withField(pickerField)
+                .withField(entityPicker)
                 .withContainer(container)
                 .withAddFirst(addFirst)
                 .withScreenId(screenId)
@@ -150,8 +150,8 @@ public class WebEditorScreenFacet<E extends Entity, S extends Screen & EditorScr
             builder = (EditorBuilder<E>) screenBuilders.editor(entityToEdit.getClass(), owner.getFrameOwner());
         } else if (listComponent != null) {
             builder = screenBuilders.editor(listComponent);
-        } else if (pickerField != null) {
-            builder = screenBuilders.editor(pickerField);
+        } else if (entityPicker != null) {
+            builder = screenBuilders.editor(entityPicker);
         } else {
             throw new IllegalStateException(
                     "Unable to create EditorScreen Facet. At least one of entityClass, listComponent or field must be specified");
@@ -188,8 +188,8 @@ public class WebEditorScreenFacet<E extends Entity, S extends Screen & EditorScr
         }
 
         if (entity == null
-                && pickerField != null) {
-            entity = pickerField.getValue();
+                && entityPicker != null) {
+            entity = entityPicker.getValue();
         }
 
         return entity;

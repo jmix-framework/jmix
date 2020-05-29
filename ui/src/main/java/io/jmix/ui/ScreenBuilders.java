@@ -111,27 +111,27 @@ public class ScreenBuilders {
     }
 
     /**
-     * Creates a screen builder using {@link PickerField} component.
+     * Creates a screen builder using {@link EntityPicker} component.
      * <p>
      * Example of building a screen for editing a currently set value:
      * <pre>{@code
-     * SomeCustomerEditor screen = screenBuilders.editor(customerPickerField)
+     * SomeCustomerEditor screen = screenBuilders.editor(customerPicker)
      *          .withScreen(SomeCustomerEditor.class)
      *          .build();
      * }</pre>
      * <p>
      * Example of building a screen for creating a new entity instance:
      * <pre>{@code
-     * SomeCustomerEditor screen = screenBuilders.editor(customerPickerField)
+     * SomeCustomerEditor screen = screenBuilders.editor(customerPicker)
      *          .withScreen(SomeCustomerEditor.class)
      *          .newEntity()
      *          .build();
      * }</pre>
      *
-     * @param field {@link PickerField}, {@link LookupPickerField} or another picker component
+     * @param field {@link EntityPicker}, {@link EntityComboBox} or another picker component
      * @see #editor(Class, FrameOwner)
      */
-    public <E extends Entity> EditorBuilder<E> editor(PickerField<E> field) {
+    public <E extends Entity> EditorBuilder<E> editor(EntityPicker<E> field) {
         checkNotNullArgument(field);
         checkNotNullArgument(field.getFrame());
 
@@ -217,20 +217,20 @@ public class ScreenBuilders {
     }
 
     /**
-     * Creates a screen builder using {@link PickerField} component.
+     * Creates a screen builder using {@link EntityPicker} component.
      * <p>
-     * Example of building a lookup screen for setting value to PickerField:
+     * Example of building a lookup screen for setting value to {@link EntityPicker}:
      * <pre>{@code
-     * SomeCustomerListScreen screen = screenBuilders.lookup(customerPickerField)
+     * SomeCustomerListScreen screen = screenBuilders.lookup(customerPicker)
      *         .withScreen(SomeCustomerListScreen.class)
      *         .build();
      * }</pre>
      *
-     * @param field {@link PickerField}, {@link LookupPickerField} or another picker component
+     * @param field {@link EntityPicker}, {@link EntityComboBox} or another picker component
      * @param <E>   type of entity
      * @see #lookup(Class, FrameOwner)
      */
-    public <E extends Entity> LookupBuilder<E> lookup(PickerField<E> field) {
+    public <E extends Entity> LookupBuilder<E> lookup(EntityPicker<E> field) {
         checkNotNullArgument(field);
         checkNotNullArgument(field.getFrame());
 

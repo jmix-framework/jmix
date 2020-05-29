@@ -39,7 +39,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jmix.ui.component.impl.WebLookupField.NULL_ITEM_ICON_GENERATOR;
+import static io.jmix.ui.component.impl.WebComboBox.NULL_ITEM_ICON_GENERATOR;
 
 public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGroup<V>, V, V>
         implements RadioButtonGroup<V>, InitializingBean {

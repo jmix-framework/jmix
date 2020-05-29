@@ -19,7 +19,7 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.EntityAwareScreenFacet;
 import io.jmix.ui.component.ListComponent;
-import io.jmix.ui.component.PickerField;
+import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.Screen;
 
@@ -29,7 +29,7 @@ public abstract class WebAbstractEntityAwareScreenFacet<E extends Entity, S exte
 
     protected Class<E> entityClass;
 
-    protected PickerField<E> pickerField;
+    protected EntityPicker<E> entityPicker;
     protected ListComponent<E> listComponent;
     protected CollectionContainer<E> container;
 
@@ -54,13 +54,13 @@ public abstract class WebAbstractEntityAwareScreenFacet<E extends Entity, S exte
     }
 
     @Override
-    public void setPickerField(PickerField<E> pickerField) {
-        this.pickerField = pickerField;
+    public void setEntityPicker(EntityPicker<E> entityPicker) {
+        this.entityPicker = entityPicker;
     }
 
     @Override
-    public PickerField<E> getPickerField() {
-        return pickerField;
+    public EntityPicker<E> getEntityPicker() {
+        return entityPicker;
     }
 
     @Override

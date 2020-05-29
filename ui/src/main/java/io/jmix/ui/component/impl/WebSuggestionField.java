@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Function;
 
-import static io.jmix.ui.component.impl.WebLookupField.NULL_STYLE_GENERATOR;
+import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
 public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionField<V>, V, V>
         implements SuggestionField<V>, InitializingBean {

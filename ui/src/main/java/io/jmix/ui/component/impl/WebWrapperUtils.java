@@ -33,7 +33,7 @@ import com.vaadin.v7.ui.AbstractSelect;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.DataGrid.DataGridStaticCellType;
-import io.jmix.ui.component.LookupField.FilterMode;
+import io.jmix.ui.component.ComboBox.FilterMode;
 import io.jmix.ui.widget.client.fieldgrouplayout.CaptionAlignment;
 import io.jmix.ui.widget.client.popupview.PopupPosition;
 import io.jmix.ui.widget.client.resizabletextarea.ResizeDirection;

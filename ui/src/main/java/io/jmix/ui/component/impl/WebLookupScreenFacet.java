@@ -92,7 +92,7 @@ public class WebLookupScreenFacet<E extends Entity, S extends Screen & LookupScr
 
     protected S createScreen(LookupBuilder<E> builder) {
         return (S) builder
-                .withField(pickerField)
+                .withField(entityPicker)
                 .withListComponent(listComponent)
                 .withContainer(container)
                 .withScreenId(screenId)
@@ -116,8 +116,8 @@ public class WebLookupScreenFacet<E extends Entity, S extends Screen & LookupScr
             builder = screenBuilders.lookup(entityClass, owner.getFrameOwner());
         } else if (listComponent != null) {
             builder = screenBuilders.lookup(listComponent);
-        } else if (pickerField != null) {
-            builder = screenBuilders.lookup(pickerField);
+        } else if (entityPicker != null) {
+            builder = screenBuilders.lookup(entityPicker);
         } else {
             throw new IllegalStateException(
                     "Unable to create EditorScreen Facet. At least one of entityClass, listComponent or field must be specified");

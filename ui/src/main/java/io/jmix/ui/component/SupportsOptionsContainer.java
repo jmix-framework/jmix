@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,15 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.Entity;
+import io.jmix.ui.model.CollectionContainer;
 
-/**
- * SuggestionPickerField adds to PickerField the ability to search an entity by user input.
- *
- * @param <V> type of value
- */
-public interface SuggestionPickerField<V extends Entity> extends SuggestionField<V>, PickerField<V> {
-
-    String NAME = "suggestionPickerField";
-
-    static <T extends Entity> TypeToken<SuggestionPickerField<T>> of(Class<T> valueClass) {
-        return new TypeToken<SuggestionPickerField<T>>() {};
-    }
+public interface SupportsOptionsContainer<E extends Entity> {
+    /**
+     * Sets options from the passed {@link CollectionContainer}.
+     *
+     * @param container a {@link CollectionContainer} to be used as options source
+     * @see io.jmix.ui.component.data.options.ContainerOptions
+     */
+    void setOptionsContainer(CollectionContainer<E> container);
 }

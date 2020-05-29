@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.action.picker;
+package io.jmix.ui.action.entitypicker;
 
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.meta.StudioAction;
@@ -27,11 +27,11 @@ import io.jmix.ui.meta.StudioAction;
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
  */
-@StudioAction(category = "Picker Actions", description = "Opens a one-to-one composition entity using the entity edit screen")
+@StudioAction(category = "EntityPicker Actions", description = "Opens a one-to-one composition entity using the entity edit screen")
 @ActionType(OpenCompositionAction.ID)
 public class OpenCompositionAction extends OpenAction {
 
-    public static final String ID = "picker_open_composition";
+    public static final String ID = "entity_open_composition";
 
     public OpenCompositionAction() {
         super(ID);

@@ -22,32 +22,20 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * A filtering dropdown single-select. Items are filtered based on user input.
+ * A filtering dropdown single-select component. Items are filtered based on user input.
  *
  * @param <V> type of options and value
  */
-public interface LookupField<V> extends OptionsField<V, V>, HasInputPrompt, Buffered, LookupComponent,
+public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffered, LookupComponent,
         Component.Focusable, HasOptionsStyleProvider<V> {
 
-    String NAME = "lookupField";
+    String NAME = "comboBox";
 
-    TypeToken<LookupField<String>> TYPE_STRING = new TypeToken<LookupField<String>>(){};
+    TypeToken<ComboBox<String>> TYPE_STRING = new TypeToken<ComboBox<String>>(){};
 
-    static <T> TypeToken<LookupField<T>> of(Class<T> valueClass) {
-        return new TypeToken<LookupField<T>>() {};
+    static <T> TypeToken<ComboBox<T>> of(Class<T> valueClass) {
+        return new TypeToken<ComboBox<T>>() {};
     }
-
-    /**
-     * @deprecated Use {@link #getNullSelectionCaption()} instead
-     */
-    @Deprecated
-    V getNullOption();
-
-    /**
-     * @deprecated Use {@link #setNullSelectionCaption(String)} instead
-     */
-    @Deprecated
-    void setNullOption(V nullOption);
 
     /**
      * @return the null selection caption, not {@code null}
@@ -67,21 +55,6 @@ public interface LookupField<V> extends OptionsField<V, V>, HasInputPrompt, Buff
 
     FilterMode getFilterMode();
     void setFilterMode(FilterMode mode);
-
-    /**
-     * @return true if the component handles new options entered by user.
-     * @see #setNewOptionHandler(Consumer)
-     */
-    @Deprecated
-    boolean isNewOptionAllowed();
-    /**
-     * Makes the component handle new options entered by user.
-     *
-     * @see #setNewOptionHandler(Consumer)
-     * @deprecated setting the new option handler enables new options
-     */
-    @Deprecated
-    void setNewOptionAllowed(boolean newOptionAllowed);
 
     /**
      * @return true if text input allowed
@@ -142,17 +115,6 @@ public interface LookupField<V> extends OptionsField<V, V>, HasInputPrompt, Buff
      * @param optionIconProvider provider which provides icons for options
      */
     void setOptionIconProvider(Function<? super V, String> optionIconProvider);
-
-    /**
-     * Set the icon provider for LookupField.
-     *
-     * @param optionClass        class of the option
-     * @param optionIconProvider provider which provides icons for options
-     *
-     * @deprecated Use {@link #setOptionIconProvider(Function)}
-     */
-    @Deprecated
-    void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider);
 
     /**
      * @return icon provider of the LookupField.
@@ -223,41 +185,5 @@ public interface LookupField<V> extends OptionsField<V, V>, HasInputPrompt, Buff
         NO,
         STARTS_WITH,
         CONTAINS
-    }
-
-    /**
-     * Interface to be implemented if {@link #setNewOptionAllowed(boolean)} is set to true.
-     */
-    @Deprecated
-    interface NewOptionHandler extends Consumer<String> {
-        @Override
-        default void accept(String caption) {
-            addNewOption(caption);
-        }
-
-        /**
-         * Called when user enters a value which is not in the options list, and presses Enter.
-         * @param caption value entered by user
-         */
-        void addNewOption(String caption);
-    }
-
-    /**
-     * Allows to set icons for particular elements in the options list.
-     */
-    @Deprecated
-    interface OptionIconProvider<T> extends Function<T, String> {
-        @Override
-        default String apply(T item) {
-            return getItemIcon(item);
-        }
-
-        /**
-         * Called when component paints its content.
-         *
-         * @param item item from options list, options map or enum options
-         * @return icon name or null to show no icon
-         */
-        String getItemIcon(T item);
     }
 }

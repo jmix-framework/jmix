@@ -21,7 +21,7 @@ import com.vaadin.ui.StyleGenerator;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.ValueSource;
@@ -47,15 +47,14 @@ import java.util.stream.Stream;
 import static com.vaadin.event.ShortcutAction.KeyCode;
 import static com.vaadin.event.ShortcutAction.ModifierKey;
 
-public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
-        implements LookupField<V>, InitializingBean {
+public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
+        implements ComboBox<V>, InitializingBean {
 
     public static final StyleGenerator NULL_STYLE_GENERATOR = item -> null;
     public static final IconGenerator NULL_ITEM_ICON_GENERATOR = item -> null;
 
-    protected LookupField.FilterMode filterMode = FilterMode.CONTAINS;
+    protected ComboBox.FilterMode filterMode = FilterMode.CONTAINS;
 
-    protected V nullOption;
     protected boolean nullOptionVisible = true;
 
     protected Consumer<String> newOptionHandler;
@@ -74,7 +73,7 @@ public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
 
     protected Locale locale;
 
-    public WebLookupField() {
+    public WebComboBox() {
         this.component = createComponent();
 
         attachValueChangeListener(component);
@@ -203,17 +202,6 @@ public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     }
 
     @Override
-    public V getNullOption() {
-        return nullOption;
-    }
-
-    @Override
-    public void setNullOption(V nullOption) {
-        this.nullOption = nullOption;
-        setNullSelectionCaption(generateItemCaption(nullOption));
-    }
-
-    @Override
     public String getNullSelectionCaption() {
         return component.getEmptySelectionCaption();
     }
@@ -261,24 +249,6 @@ public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;
-    }
-
-    @Override
-    public boolean isNewOptionAllowed() {
-        return component.getNewItemHandler() != null;
-    }
-
-    @Override
-    public void setNewOptionAllowed(boolean newItemAllowed) {
-        if (newItemAllowed
-                && component.getNewItemHandler() == null) {
-            component.setNewItemHandler(this::onNewItemEntered);
-        }
-
-        if (!newItemAllowed
-                && component.getNewItemHandler() != null) {
-            component.setNewItemHandler(null);
-        }
     }
 
     protected void onNewItemEntered(String newItemCaption) {
@@ -363,11 +333,6 @@ public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     }
 
     @Override
-    public void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider) {
-        setOptionIconProvider(optionIconProvider);
-    }
-
-    @Override
     public Function<? super V, String> getOptionIconProvider() {
         return optionIconProvider;
     }
@@ -377,7 +342,7 @@ public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         try {
             resourceId = optionIconProvider.apply(item);
         } catch (Exception e) {
-            LoggerFactory.getLogger(WebLookupField.class)
+            LoggerFactory.getLogger(WebComboBox.class)
                     .warn("Error invoking optionIconProvider apply method", e);
             return null;
         }
@@ -409,7 +374,7 @@ public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         try {
             resource = optionImageProvider.apply(item);
         } catch (Exception e) {
-            LoggerFactory.getLogger(WebLookupField.class)
+            LoggerFactory.getLogger(WebComboBox.class)
                     .warn("Error invoking optionImageProvider apply method", e);
             return null;
         }
@@ -427,7 +392,7 @@ public class WebLookupField<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     @Override
     public void setInputPrompt(String inputPrompt) {
         if (StringUtils.isNotBlank(inputPrompt)) {
-            setNullOption(null);
+            setNullSelectionCaption(generateItemCaption(null));
         }
         component.setPlaceholder(inputPrompt);
     }

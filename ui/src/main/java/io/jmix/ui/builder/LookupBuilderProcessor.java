@@ -26,10 +26,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.ListComponent;
-import io.jmix.ui.component.LookupPickerField;
-import io.jmix.ui.component.SupportsUserAction;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.ValueSource;
@@ -196,15 +193,15 @@ public class LookupBuilderProcessor {
             newValue = dataManager.load(Id.of(newValue)).fetchPlan(fetchPlanForField).one();
         }
 
-        if (field instanceof LookupPickerField) {
-            LookupPickerField lookupPickerField = (LookupPickerField) field;
-            Options options = lookupPickerField.getOptions();
+        if (field instanceof EntityComboBox) {
+            EntityComboBox entityComboBox = (EntityComboBox) field;
+            Options options = entityComboBox.getOptions();
             if (options instanceof EntityOptions) {
                 EntityOptions entityOptions = (EntityOptions) options;
                 if (entityOptions.containsItem(newValue)) {
                     entityOptions.updateItem(newValue);
                 }
-                if (lookupPickerField.isRefreshOptionsOnLookupClose()) {
+                if (entityComboBox.isRefreshOptionsOnLookupClose()) {
                     entityOptions.refresh();
                 }
             }
@@ -285,7 +282,7 @@ public class LookupBuilderProcessor {
     }
 
     /**
-     * If the value for a component (e.g. {@link io.jmix.ui.component.PickerField}) is selected from lookup screen then there may be cases
+     * If the value for a component (e.g. {@link EntityPicker}) is selected from lookup screen then there may be cases
      * when in entities in lookup screen some attributes required in the editor are not loaded.
      * <p>
      * The method evaluates the fetch plan that is used for the entity in the given {@code field}

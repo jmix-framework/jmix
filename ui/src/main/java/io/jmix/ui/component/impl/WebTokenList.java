@@ -67,7 +67,7 @@ public class WebTokenList<V extends Entity>
     protected Button addButton;
     protected Button clearButton;
 
-    protected LookupPickerField<V> lookupPickerField;
+    protected EntityComboBox<V> entityComboBox;
     protected Action lookupAction;
     protected String lookupScreen;
     protected Map<String, Object> lookupScreenParams;
@@ -169,8 +169,8 @@ public class WebTokenList<V extends Entity>
         clearButton.setCaption(messages.getMessage("actions.Clear"));
 
         //noinspection unchecked
-        lookupPickerField = uiComponents.create(LookupPickerField.class);
-        lookupPickerField.addValueChangeListener(lookupSelectListener);
+        entityComboBox = uiComponents.create(EntityComboBox.class);
+        entityComboBox.addValueChangeListener(lookupSelectListener);
 
         setMultiSelect(false);
     }
@@ -224,7 +224,7 @@ public class WebTokenList<V extends Entity>
     @Override
     public void setFrame(Frame frame) {
         super.setFrame(frame);
-        lookupPickerField.setFrame(frame);
+        entityComboBox.setFrame(frame);
     }
 
     @Override
@@ -238,53 +238,53 @@ public class WebTokenList<V extends Entity>
     }
 
     @Override
-    public LookupField.FilterMode getFilterMode() {
-        return lookupPickerField.getFilterMode();
+    public ComboBox.FilterMode getFilterMode() {
+        return entityComboBox.getFilterMode();
     }
 
     @Override
-    public void setFilterMode(LookupField.FilterMode mode) {
-        lookupPickerField.setFilterMode(mode);
+    public void setFilterMode(ComboBox.FilterMode mode) {
+        entityComboBox.setFilterMode(mode);
     }
 
     @Override
     public void setLookupFieldOptionsCaptionProvider(Function<? super V, String> optionsCaptionProvider) {
-        lookupPickerField.setOptionCaptionProvider(optionsCaptionProvider);
+        entityComboBox.setOptionCaptionProvider(optionsCaptionProvider);
     }
 
     @Override
     public Function<? super V, String> getLookupFieldOptionsCaptionProvider() {
-        return lookupPickerField.getOptionCaptionProvider();
+        return entityComboBox.getOptionCaptionProvider();
     }
 
     @Override
     public String getOptionsCaptionProperty() {
-        return lookupPickerField.getCaptionProperty();
+        return entityComboBox.getCaptionProperty();
     }
 
     @Override
     public void setOptionsCaptionProperty(String optionsCaptionProperty) {
-        lookupPickerField.setCaptionProperty(optionsCaptionProperty);
+        entityComboBox.setCaptionProperty(optionsCaptionProperty);
     }
 
     @Override
     public CaptionMode getOptionsCaptionMode() {
-        return lookupPickerField.getCaptionMode();
+        return entityComboBox.getCaptionMode();
     }
 
     @Override
     public void setOptionsCaptionMode(CaptionMode optionsCaptionMode) {
-        lookupPickerField.setCaptionMode(optionsCaptionMode);
+        entityComboBox.setCaptionMode(optionsCaptionMode);
     }
 
     @Override
     public void setRefreshOptionsOnLookupClose(boolean refresh) {
-        lookupPickerField.setRefreshOptionsOnLookupClose(refresh);
+        entityComboBox.setRefreshOptionsOnLookupClose(refresh);
     }
 
     @Override
     public boolean isRefreshOptionsOnLookupClose() {
-        return lookupPickerField.isRefreshOptionsOnLookupClose();
+        return entityComboBox.isRefreshOptionsOnLookupClose();
     }
 
     @Override
@@ -293,12 +293,12 @@ public class WebTokenList<V extends Entity>
                 && !(options instanceof EntityOptions)) {
             throw new IllegalArgumentException("TokenList supports only EntityOptions");
         }
-        lookupPickerField.setOptions(options);
+        entityComboBox.setOptions(options);
     }
 
     @Override
     public Options<V> getOptions() {
-        return lookupPickerField.getOptions();
+        return entityComboBox.getOptions();
     }
 
     @Override
@@ -325,9 +325,9 @@ public class WebTokenList<V extends Entity>
         if (this.lookup != lookup) {
             if (lookup) {
                 lookupAction = createLookupAction();
-                lookupPickerField.addAction(lookupAction);
+                entityComboBox.addAction(lookupAction);
             } else {
-                lookupPickerField.removeAction(lookupAction);
+                entityComboBox.removeAction(lookupAction);
             }
         }
         this.lookup = lookup;
@@ -336,7 +336,7 @@ public class WebTokenList<V extends Entity>
 
     protected Action createLookupAction() {
         return new BaseAction("")
-                .withIcon(icons.get(JmixIcon.PICKERFIELD_LOOKUP))
+                .withIcon(icons.get(JmixIcon.ENTITYPICKER_LOOKUP))
                 .withHandler(e -> openLookup(null));
     }
 
@@ -754,12 +754,12 @@ public class WebTokenList<V extends Entity>
 
     @Override
     public String getLookupInputPrompt() {
-        return lookupPickerField.getInputPrompt();
+        return entityComboBox.getInputPrompt();
     }
 
     @Override
     public void setLookupInputPrompt(String inputPrompt) {
-        this.lookupPickerField.setInputPrompt(inputPrompt);
+        this.entityComboBox.setInputPrompt(inputPrompt);
     }
 
     protected String getInstanceCaption(V instance) {
@@ -795,15 +795,15 @@ public class WebTokenList<V extends Entity>
     }
 
     protected void addValueFromLookupPickerField() {
-        V newItem = lookupPickerField.getValue();
+        V newItem = entityComboBox.getValue();
         if (newItem == null) {
             return;
         }
 
         handleSelection(Collections.singleton(newItem));
 
-        lookupPickerField.setValue(null);
-        lookupPickerField.focus();
+        entityComboBox.setValue(null);
+        entityComboBox.focus();
     }
 
     @Override
@@ -817,7 +817,7 @@ public class WebTokenList<V extends Entity>
         if (simple) {
             addButton.focus();
         } else {
-            lookupPickerField.focus();
+            entityComboBox.focus();
         }
     }
 

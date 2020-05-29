@@ -19,19 +19,19 @@ package io.jmix.ui.xml.layout.loader;
 import io.jmix.core.Metadata;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.picker.LookupAction;
-import io.jmix.ui.action.picker.OpenAction;
+import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.CaptionMode;
-import io.jmix.ui.component.SuggestionPickerField;
+import io.jmix.ui.component.EntitySuggestionField;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class SuggestionPickerFieldLoader extends SuggestionFieldQueryLoader<SuggestionPickerField> {
+public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<EntitySuggestionField> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(SuggestionPickerField.NAME);
+        resultComponent = factory.create(EntitySuggestionField.NAME);
         loadId(resultComponent, element);
     }
 
@@ -63,14 +63,14 @@ public class SuggestionPickerFieldLoader extends SuggestionFieldQueryLoader<Sugg
         return beanLocator.get(Metadata.NAME);
     }
 
-    protected void loadPopupWidth(SuggestionPickerField suggestionField, Element element) {
+    protected void loadPopupWidth(EntitySuggestionField suggestionField, Element element) {
         String popupWidth = element.attributeValue("popupWidth");
         if (StringUtils.isNotEmpty(popupWidth)) {
             suggestionField.setPopupWidth(popupWidth);
         }
     }
 
-    protected void loadCaptionProperty(SuggestionPickerField suggestionField, Element element) {
+    protected void loadCaptionProperty(EntitySuggestionField suggestionField, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
             suggestionField.setCaptionMode(CaptionMode.PROPERTY);
@@ -78,27 +78,25 @@ public class SuggestionPickerFieldLoader extends SuggestionFieldQueryLoader<Sugg
         }
     }
 
-    protected void loadActions(SuggestionPickerField suggestionField) {
+    protected void loadActions(EntitySuggestionField suggestionField) {
         loadActions(suggestionField, element);
         if (suggestionField.getActions().isEmpty()) {
-
-            if (isLegacyFrame()) {
-                suggestionField.addLookupAction();
-                suggestionField.addOpenAction();
-            } else {
-                Actions actions = getActions();
-
-                suggestionField.addAction(actions.create(LookupAction.ID));
-                suggestionField.addAction(actions.create(OpenAction.ID));
-            }
+            addDefaultActions();
         }
+    }
+
+    protected void addDefaultActions() {
+        Actions actions = getActions();
+
+        getResultComponent().addAction(actions.create(LookupAction.ID));
+        getResultComponent().addAction(actions.create(OpenAction.ID));
     }
 
     protected Actions getActions() {
         return beanLocator.get(Actions.NAME);
     }
 
-    protected void loadMetaClass(SuggestionPickerField suggestionField, Element element) {
+    protected void loadMetaClass(EntitySuggestionField suggestionField, Element element) {
         String metaClass = element.attributeValue("metaClass");
         if (!StringUtils.isEmpty(metaClass)) {
             suggestionField.setMetaClass(getMetadata().findClass(metaClass));
@@ -107,24 +105,24 @@ public class SuggestionPickerFieldLoader extends SuggestionFieldQueryLoader<Sugg
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        return loadPickerDeclarativeAction(actionsHolder, element);
+        return loadEntityPickerDeclarativeAction(actionsHolder, element);
     }
 
-    protected void loadSuggestionsLimit(SuggestionPickerField suggestionField, Element element) {
+    protected void loadSuggestionsLimit(EntitySuggestionField suggestionField, Element element) {
         String suggestionsLimit = element.attributeValue("suggestionsLimit");
         if (StringUtils.isNotEmpty(suggestionsLimit)) {
             suggestionField.setSuggestionsLimit(Integer.parseInt(suggestionsLimit));
         }
     }
 
-    protected void loadMinSearchStringLength(SuggestionPickerField suggestionField, Element element) {
+    protected void loadMinSearchStringLength(EntitySuggestionField suggestionField, Element element) {
         String minSearchStringLength = element.attributeValue("minSearchStringLength");
         if (StringUtils.isNotEmpty(minSearchStringLength)) {
             suggestionField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
         }
     }
 
-    protected void loadAsyncSearchDelayMs(SuggestionPickerField suggestionField, Element element) {
+    protected void loadAsyncSearchDelayMs(EntitySuggestionField suggestionField, Element element) {
         String asyncSearchDelayMs = element.attributeValue("asyncSearchDelayMs");
         if (StringUtils.isNotEmpty(asyncSearchDelayMs)) {
             suggestionField.setAsyncSearchDelayMs(Integer.parseInt(asyncSearchDelayMs));

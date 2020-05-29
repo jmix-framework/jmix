@@ -22,14 +22,16 @@ import io.jmix.core.Entity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.component.LookupPickerField;
+import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.SecuredActionsHolder;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.OptionsBinding;
+import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.options.OptionsBinder;
 import io.jmix.ui.icon.IconResolver;
+import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.widget.JmixComboBoxPickerField;
 import io.jmix.ui.widget.JmixPickerField;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
@@ -43,13 +45,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jmix.ui.component.impl.WebLookupField.NULL_ITEM_ICON_GENERATOR;
-import static io.jmix.ui.component.impl.WebLookupField.NULL_STYLE_GENERATOR;
+import static io.jmix.ui.component.impl.WebComboBox.NULL_ITEM_ICON_GENERATOR;
+import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
-public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
-        implements LookupPickerField<V>, SecuredActionsHolder {
+public class WebEntityComboBox<V extends Entity> extends WebEntityPicker<V>
+        implements EntityComboBox<V>, SecuredActionsHolder {
 
-    protected V nullOption;
     protected boolean nullOptionVisible = true;
 
     protected FilterMode filterMode = FilterMode.CONTAINS;
@@ -69,7 +70,7 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
 
     protected Locale locale;
 
-    public WebLookupPickerField() {
+    public WebEntityComboBox() {
     }
 
     @Override
@@ -148,17 +149,6 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    public V getNullOption() {
-        return nullOption;
-    }
-
-    @Override
-    public void setNullOption(V nullOption) {
-        this.nullOption = nullOption;
-        setNullSelectionCaption(generateItemCaption(nullOption));
-    }
-
-    @Override
     public String getNullSelectionCaption() {
         return getComponent().getEmptySelectionCaption();
     }
@@ -178,24 +168,6 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     @Override
     public void setFilterMode(FilterMode filterMode) {
         this.filterMode = filterMode;
-    }
-
-    @Override
-    public boolean isNewOptionAllowed() {
-        return getComponent().getNewItemHandler() != null;
-    }
-
-    @Override
-    public void setNewOptionAllowed(boolean newItemAllowed) {
-        if (newItemAllowed
-                && getComponent().getNewItemHandler() == null) {
-            getComponent().setNewItemHandler(this::onNewItemEntered);
-        }
-
-        if (!newItemAllowed
-                && getComponent().getNewItemHandler() != null) {
-            getComponent().setNewItemHandler(null);
-        }
     }
 
     protected void onNewItemEntered(String newItemCaption) {
@@ -291,11 +263,6 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    public void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider) {
-        setOptionIconProvider(optionIconProvider);
-    }
-
-    @Override
     public Function<? super V, String> getOptionIconProvider() {
         return optionIconProvider;
     }
@@ -305,7 +272,7 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
         try {
             resourceId = optionIconProvider.apply(item);
         } catch (Exception e) {
-            LoggerFactory.getLogger(WebLookupPickerField.class)
+            LoggerFactory.getLogger(WebEntityComboBox.class)
                     .warn("Error invoking optionIconProvider apply method", e);
             return null;
         }
@@ -337,7 +304,7 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
         try {
             resource = optionImageProvider.apply(item);
         } catch (Exception e) {
-            LoggerFactory.getLogger(WebLookupField.class)
+            LoggerFactory.getLogger(WebComboBox.class)
                     .warn("Error invoking OptionImageProvider apply method", e);
             return null;
         }
@@ -375,7 +342,7 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
     @Override
     public void setInputPrompt(String inputPrompt) {
         if (StringUtils.isNotBlank(inputPrompt)) {
-            setNullOption(null);
+            setNullSelectionCaption(generateItemCaption(null));
         }
         getComponent().setPlaceholder(inputPrompt);
     }
@@ -402,6 +369,11 @@ public class WebLookupPickerField<V extends Entity> extends WebPickerField<V>
                 setMetaClass(((EntityOptions<V>) options).getEntityMetaClass());
             }
         }
+    }
+
+    @Override
+    public void setOptionsContainer(CollectionContainer<V> container) {
+        setOptions(new ContainerOptions<>(container));
     }
 
     protected void setItemsToPresentation(Stream<V> options) {

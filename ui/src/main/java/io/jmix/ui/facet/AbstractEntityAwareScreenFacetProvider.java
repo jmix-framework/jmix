@@ -105,8 +105,8 @@ public abstract class AbstractEntityAwareScreenFacetProvider<T extends ScreenFac
         if (isNotEmpty(fieldId)) {
             Component component = context.getFrame().getComponent(fieldId);
             if (component != null) {
-                if (component instanceof PickerField) {
-                    facet.setPickerField(((PickerField) component));
+                if (component instanceof EntityPicker) {
+                    facet.setEntityPicker(((EntityPicker) component));
                 } else {
                     throw new GuiDevelopmentException(
                             String.format("Screen field '%s' should be PickerField", fieldId),

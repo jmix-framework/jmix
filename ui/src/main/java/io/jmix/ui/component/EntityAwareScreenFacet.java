@@ -61,17 +61,17 @@ public interface EntityAwareScreenFacet<E extends Entity> {
     ListComponent<E> getListComponent();
 
     /**
-     * Sets the {@link PickerField} component.
+     * Sets the {@link EntityPicker} component.
      * <p>
      * If the field is set, the framework sets the committed entity to the field after successful editor commit.
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setPickerField(PickerField<E> pickerField);
+    void setEntityPicker(EntityPicker<E> entityPicker);
 
     /**
-     * @return {@link PickerField}
+     * @return {@link EntityPicker}
      */
-    PickerField<E> getPickerField();
+    EntityPicker<E> getEntityPicker();
 
     /**
      * Sets {@link CollectionContainer}.

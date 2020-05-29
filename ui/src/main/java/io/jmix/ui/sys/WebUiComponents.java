@@ -93,14 +93,12 @@ public class WebUiComponents implements UiComponents {
         classes.put(TreeDataGrid.NAME, WebTreeDataGrid.class);
         classes.put(DateField.NAME, WebDateField.class);
         classes.put(TimeField.NAME, WebTimeField.class);
-        classes.put(LookupField.NAME, WebLookupField.class);
-        classes.put(SearchField.NAME, WebSearchField.class);
-        classes.put(PickerField.NAME, WebPickerField.class);
+        classes.put(ComboBox.NAME, WebComboBox.class);
+        classes.put(EntityPicker.NAME, WebEntityPicker.class);
         classes.put(SuggestionField.NAME, WebSuggestionField.class);
-        classes.put(SuggestionPickerField.NAME, WebSuggestionPickerField.class);
+        classes.put(EntitySuggestionField.NAME, WebEntitySuggestionField.class);
         classes.put(ColorPicker.NAME, WebColorPicker.class);
-        classes.put(LookupPickerField.NAME, WebLookupPickerField.class);
-        classes.put(SearchPickerField.NAME, WebSearchPickerField.class);
+        classes.put(EntityComboBox.NAME, WebEntityComboBox.class);
         classes.put(OptionsGroup.NAME, WebOptionsGroup.class);
         classes.put(CheckBoxGroup.NAME, WebCheckBoxGroup.class);
         classes.put(RadioButtonGroup.NAME, WebRadioButtonGroup.class);

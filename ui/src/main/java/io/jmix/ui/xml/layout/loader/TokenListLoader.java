@@ -17,7 +17,7 @@ package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.CaptionMode;
-import io.jmix.ui.component.LookupField;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TokenList;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.gui.OpenType;
@@ -227,7 +227,7 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
     protected void loadFilterMode(TokenList component, Element element) {
         final String filterMode = element.attributeValue("filterMode");
         if (!StringUtils.isEmpty(filterMode)) {
-            component.setFilterMode(LookupField.FilterMode.valueOf(filterMode));
+            component.setFilterMode(ComboBox.FilterMode.valueOf(filterMode));
         }
     }
 

@@ -20,10 +20,10 @@ import com.vaadin.data.ValueProvider;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.Registration;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.AppUI;
@@ -52,8 +52,8 @@ import java.util.function.Function;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.ComponentsHelper.findActionById;
 
-public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPickerField<V>, V, V>
-        implements PickerField<V>, SecuredActionsHolder, InitializingBean {
+public class WebEntityPicker<V extends Entity> extends WebV8AbstractField<JmixPickerField<V>, V, V>
+        implements EntityPicker<V>, SecuredActionsHolder, InitializingBean {
 
     /* Beans */
     protected Metadata metadata;
@@ -66,13 +66,13 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
     protected Registration fieldListenerRegistration;
 
     protected ActionsPermissions actionsPermissions = new ActionsPermissions(this);
-    protected WebPickerFieldActionHandler actionHandler;
+    protected WebEntityPickerActionHandler actionHandler;
 
     protected Consumer<PropertyChangeEvent> actionPropertyChangeListener = this::actionPropertyChanged;
     protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> iconProvider;
 
-    public WebPickerField() {
+    public WebEntityPicker() {
         component = createComponent();
 
         attachValueChangeListener(this.component);
@@ -84,7 +84,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
 
     @Autowired
     protected void setUiProperties(UiProperties properties) {
-        actionHandler = new WebPickerFieldActionHandler(properties);
+        actionHandler = new WebEntityPickerActionHandler(properties);
         component.addActionHandler(actionHandler);
     }
 
@@ -185,30 +185,6 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
         this.metaClass = metaClass;
     }
 
-    @Deprecated
-    @Override
-    public LookupAction addLookupAction() {
-        LookupAction action = LookupAction.create(this);
-        addAction(action);
-        return action;
-    }
-
-    @Override
-    @Deprecated
-    public ClearAction addClearAction() {
-        ClearAction action = ClearAction.create(this);
-        addAction(action);
-        return action;
-    }
-
-    @Deprecated
-    @Override
-    public PickerField.OpenAction addOpenAction() {
-        OpenAction action = OpenAction.create(this);
-        addAction(action);
-        return action;
-    }
-
     @Override
     public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
         this.optionCaptionProvider = optionCaptionProvider;
@@ -240,7 +216,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
         try {
             resourceId = iconProvider.apply(item);
         } catch (Exception e) {
-            LoggerFactory.getLogger(WebPickerField.class)
+            LoggerFactory.getLogger(WebEntityPicker.class)
                     .warn("Error invoking optionIconProvider apply method", e);
             return null;
         }
@@ -290,11 +266,11 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
             vButton.setId(testIdManager.getTestId(getDebugId() + "_" + action.getId()));
         }
 
-        if (action instanceof PickerFieldAction) {
-            PickerFieldAction pickerFieldAction = (PickerFieldAction) action;
-            pickerFieldAction.setPickerField(this);
+        if (action instanceof EntityPicker.EntityPickerAction) {
+            EntityPickerAction entityPickerAction = (EntityPickerAction) action;
+            entityPickerAction.setEntityPicker(this);
             if (!isEditable()) {
-                pickerFieldAction.editableChanged(this, isEditable());
+                entityPickerAction.editableChanged(isEditable());
             }
         }
 
@@ -358,9 +334,9 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
             button.setEnabled(action.isEnabled());
         } else if (Action.PROP_VISIBLE.equals(evt.getPropertyName())) {
             button.setVisible(action.isVisible());
-        } else if (action instanceof PickerFieldAction
-                && PickerFieldAction.PROP_EDITABLE.equals(evt.getPropertyName())) {
-            button.setVisible(((PickerFieldAction) action).isEditable());
+        } else if (action instanceof EntityPicker.EntityPickerAction
+                && EntityPickerAction.PROP_EDITABLE.equals(evt.getPropertyName())) {
+            button.setVisible(((EntityPickerAction) action).isEditable());
         }
     }
 
@@ -393,8 +369,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
                 action.removePropertyChangeListener(actionPropertyChangeListener);
             }
 
-            if (action instanceof PickerFieldAction) {
-                ((PickerFieldAction) action).setPickerField(null);
+            if (action instanceof EntityPicker.EntityPickerAction) {
+                ((EntityPickerAction) action).setEntityPicker(null);
             }
         }
     }
@@ -492,8 +468,8 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
         super.setEditableToComponent(editable);
 
         for (Action action : getActions()) {
-            if (action instanceof PickerFieldAction) {
-                ((PickerFieldAction) action).editableChanged(this, editable);
+            if (action instanceof EntityPicker.EntityPickerAction) {
+                ((EntityPickerAction) action).editableChanged(editable);
             }
         }
     }
@@ -532,7 +508,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
                         refreshActionsState());
     }
 
-    public class WebPickerFieldActionHandler implements com.vaadin.event.Action.Handler {
+    public class WebEntityPickerActionHandler implements com.vaadin.event.Action.Handler {
 
         private int[] modifiers;
 
@@ -542,7 +518,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
 
         protected List<Action> actionList = new ArrayList<>(4);
 
-        public WebPickerFieldActionHandler(UiProperties properties) {
+        public WebEntityPickerActionHandler(UiProperties properties) {
             String[] strModifiers = StringUtils.split(properties.getPickerShortcutModifiers().toUpperCase(), "-");
             modifiers = new int[strModifiers.length];
             for (int i = 0; i < modifiers.length; i++) {
@@ -609,7 +585,7 @@ public class WebPickerField<V extends Entity> extends WebV8AbstractField<JmixPic
             @SuppressWarnings("SuspiciousMethodCalls")
             Action pickerAction = actionsMap.get(action);
             if (pickerAction != null) {
-                pickerAction.actionPerform(WebPickerField.this);
+                pickerAction.actionPerform(WebEntityPicker.this);
             }
         }
     }

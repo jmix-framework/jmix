@@ -691,7 +691,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="lookupFieldStylename">
+    <xs:simpleType name="comboBoxStylename">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -710,7 +710,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="pickerFieldStylename">
+    <xs:simpleType name="entityPickerStylename">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -729,7 +729,7 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="lookupPickerFieldStylename">
+    <xs:simpleType name="entityComboBoxStylename">
         <xs:union>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
@@ -1160,11 +1160,6 @@
 
     <xs:attributeGroup name="hasConversionErrorMessage">
         <xs:attribute name="conversionErrorMessage" type="resourceString"/>
-    </xs:attributeGroup>
-
-    <xs:attributeGroup name="hasOptions">
-        <xs:attribute name="optionsDatasource" type="xs:string"/>
-        <xs:attribute name="optionsContainer" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="hasCaptionSource">
@@ -1975,8 +1970,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- LookupField-->
-    <xs:complexType name="lookupFieldComponent">
+    <!-- ComboBox-->
+    <xs:complexType name="comboBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
@@ -1985,15 +1980,13 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasBuffered"/>
-                <xs:attributeGroup ref="hasOptions"/>
                 <xs:attributeGroup ref="hasCaptionSource"/>
 
-                <xs:attribute name="stylename" type="lookupFieldStylename"/>
+                <xs:attribute name="stylename" type="comboBoxStylename"/>
                 <xs:attribute name="filterMode" type="filterMode"/>
                 <xs:attribute name="nullName" type="xs:string"/>
                 <xs:attribute name="pageLength" type="xs:int"/>
 
-                <xs:attribute name="newOptionAllowed" type="xs:boolean"/>
                 <xs:attribute name="textInputAllowed" type="xs:boolean"/>
                 <xs:attribute name="nullOptionVisible" type="xs:boolean"/>
                 <xs:attribute name="newOptionHandler" type="xs:string"/>
@@ -2002,35 +1995,6 @@
                 <xs:attribute name="optionsEnum" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasTabIndex"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <!-- SearchField-->
-    <xs:complexType name="searchFieldComponent">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
-                    <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
-                </xs:sequence>
-
-                <xs:attributeGroup ref="hasBuffered"/>
-                <xs:attributeGroup ref="hasCaptionSource"/>
-                <xs:attributeGroup ref="hasContextHelp"/>
-                <xs:attributeGroup ref="hasDatasource"/>
-                <xs:attributeGroup ref="hasEditable"/>
-                <xs:attributeGroup ref="hasRequirements"/>
-                <xs:attributeGroup ref="hasTabIndex"/>
-
-                <xs:attribute name="optionsDatasource" type="xs:string"/>
-
-                <xs:attribute name="nullName" type="resourceString"/>
-                <xs:attribute name="inputPrompt" type="resourceString"/>
-
-                <xs:attribute name="minSearchStringLength" type="xs:integer"/>
-                <xs:attribute name="mode" type="searchMode"/>
-                <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2073,8 +2037,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- SuggestionPickerField -->
-    <xs:complexType name="suggestionPickerFieldComponent">
+    <!-- EntitySuggestionField -->
+    <xs:complexType name="entitySuggestionFieldComponent">
         <xs:complexContent>
             <xs:extension base="suggestionFieldComponent">
                 <xs:sequence>
@@ -2089,8 +2053,8 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- PickerField -->
-    <xs:complexType name="pickerFieldComponent">
+    <!-- EntityPicker -->
+    <xs:complexType name="entityPickerComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
@@ -2104,13 +2068,13 @@
                 <xs:attributeGroup ref="hasTabIndex"/>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
-                <xs:attribute name="stylename" type="pickerFieldStylename"/>
+                <xs:attribute name="stylename" type="entityPickerStylename"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- LookupPickerField -->
-    <xs:complexType name="lookupPickerFieldComponent">
+    <!-- EntityComboBox -->
+    <xs:complexType name="entityComboBoxComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
@@ -2119,13 +2083,13 @@
                     <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
                 </xs:sequence>
 
-                <xs:attribute name="stylename" type="lookupPickerFieldStylename"/>
+                <xs:attribute name="stylename" type="entityComboBoxStylename"/>
 
                 <xs:attributeGroup ref="hasBuffered"/>
-                <xs:attributeGroup ref="hasOptions"/>
                 <xs:attributeGroup ref="hasCaptionSource"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
 
+                <xs:attribute name="optionsContainer" type="xs:string"/>
                 <xs:attribute name="refreshOptionsOnLookupClose" type="xs:boolean"/>
                 <xs:attribute name="nullOptionVisible" type="xs:boolean"/>
                 <xs:attribute name="filterMode" type="filterMode"/>
@@ -2133,37 +2097,6 @@
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attribute name="pageLength" type="xs:int"/>
                 <xs:attribute name="inputPrompt" type="resourceString"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <!-- SearchPickerField -->
-    <xs:complexType name="searchPickerFieldComponent">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
-                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
-                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
-                </xs:sequence>
-
-                <xs:attributeGroup ref="hasBuffered"/>
-                <xs:attributeGroup ref="hasCaptionSource"/>
-                <xs:attributeGroup ref="hasContextHelp"/>
-                <xs:attributeGroup ref="hasDatasource"/>
-                <xs:attributeGroup ref="hasEditable"/>
-                <xs:attributeGroup ref="hasRequirements"/>
-                <xs:attributeGroup ref="hasTabIndex"/>
-
-                <xs:attribute name="optionsDatasource" type="xs:string"/>
-                <xs:attribute name="metaClass" type="xs:string"/>
-
-                <xs:attribute name="nullName" type="resourceString"/>
-                <xs:attribute name="inputPrompt" type="resourceString"/>
-
-                <xs:attribute name="minSearchStringLength" type="xs:integer"/>
-                <xs:attribute name="mode" type="searchMode"/>
-                <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2177,9 +2110,9 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasCaptionSource"/>
-                <xs:attributeGroup ref="hasOptions"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
 
+                <xs:attribute name="optionsContainer" type="xs:string"/>
                 <xs:attribute name="optionsEnum" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
@@ -2537,6 +2470,7 @@
         <xs:attribute name="align" type="columnAlignment"/>
         <xs:attribute name="captionAsHtml" type="xs:boolean"/>
         <xs:attribute name="expandRatio" type="xs:float"/>
+        <xs:attribute name="optionsContainer" type="xs:string"/>
 
         <!-- Show entity reference as clickable link -->
         <xs:attribute name="link" type="xs:boolean"/>
@@ -2545,7 +2479,6 @@
         <xs:attribute name="linkScreenOpenType" type="openType"/>
 
         <!-- Additional attributes, use only for editable table -->
-        <xs:attributeGroup ref="hasOptions"/>
         <xs:attributeGroup ref="hasEditable"/>
         <xs:attributeGroup ref="hasRequirements"/>
         <xs:attributeGroup ref="hasCaptionSource"/>
@@ -2933,7 +2866,7 @@
                 <xs:all>
                     <xs:element name="lookup">
                         <xs:complexType>
-                            <xs:attributeGroup ref="hasOptions"/>
+                            <xs:attribute name="optionsContainer" type="xs:string"/>
                             <xs:attribute name="captionProperty" type="xs:string"/>
                             <xs:attribute name="lookupScreen" type="xs:string"/>
                             <xs:attribute name="lookup" type="xs:boolean"/>
@@ -2989,11 +2922,12 @@
                 <xs:attributeGroup ref="hasEditable"/>
                 <xs:attributeGroup ref="hasDatasource"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
-                <xs:attributeGroup ref="hasOptions"/>
                 <xs:attributeGroup ref="hasCaptionSource"/>
                 <xs:attributeGroup ref="hasRequirements"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
+
+                <xs:attribute name="optionsContainer" type="xs:string"/>
 
                 <xs:attribute name="leftColumnCaption" type="resourceString"/>
                 <xs:attribute name="rightColumnCaption" type="resourceString"/>
@@ -3790,7 +3724,7 @@
 
                 <xs:element name="htmlBox" type="htmlBoxLayout"/>
                 <xs:element name="scrollBox" type="scrollBoxLayout"/>
-                <xs:element name="grid" type="gridLayout"/>
+                <xs:element name="gridLayout" type="gridLayout"/>
                 <xs:element name="groupBox" type="groupBoxLayout"/>
 
                 <xs:element name="split" type="splitContainer"/>
@@ -3828,13 +3762,11 @@
                 <xs:element name="dateField" type="dateFieldComponent"/>
                 <xs:element name="timeField" type="timeFieldComponent"/>
 
-                <xs:element name="lookupField" type="lookupFieldComponent"/>
-                <xs:element name="searchField" type="searchFieldComponent"/>
+                <xs:element name="comboBox" type="comboBoxComponent"/>
                 <xs:element name="suggestionField" type="suggestionFieldComponent"/>
-                <xs:element name="suggestionPickerField" type="suggestionPickerFieldComponent"/>
-                <xs:element name="pickerField" type="pickerFieldComponent"/>
-                <xs:element name="lookupPickerField" type="lookupPickerFieldComponent"/>
-                <xs:element name="searchPickerField" type="searchPickerFieldComponent"/>
+                <xs:element name="entitySuggestionField" type="entitySuggestionFieldComponent"/>
+                <xs:element name="entityPicker" type="entityPickerComponent"/>
+                <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
 
                 <xs:element name="colorPicker" type="colorPickerComponent"/>
                 <xs:element name="optionsGroup" type="optionsGroupComponent"/>

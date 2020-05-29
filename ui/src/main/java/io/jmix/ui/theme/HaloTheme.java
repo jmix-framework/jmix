@@ -179,24 +179,24 @@ public class HaloTheme {
     /**
      * Removes the border and background from the LookupField. Can be combined with any other LookupField style.
      *
-     * This style can also be used for {@link io.jmix.ui.component.PickerField} and
-     * {@link io.jmix.ui.component.LookupPickerField}
+     * This style can also be used for {@link io.jmix.ui.component.EntityPicker} and
+     * {@link io.jmix.ui.component.EntityComboBox}
      */
     public static final String LOOKUPFIELD_BORDERLESS = "borderless";
 
     /**
      * Align the text inside the LookupField to the right. Can be combined with any other TextField style.
      *
-     * This style can also be used for {@link io.jmix.ui.component.PickerField} and
-     * {@link io.jmix.ui.component.LookupPickerField}
+     * This style can also be used for {@link io.jmix.ui.component.EntityPicker} and
+     * {@link io.jmix.ui.component.EntityComboBox}
      */
     public static final String LOOKUPFIELD_ALIGN_RIGHT = "align-right";
 
     /**
      * Align the text inside the LookupField to center. Can be combined with any other TextField style.
      *
-     * This style can also be used for {@link io.jmix.ui.component.PickerField} and
-     * {@link io.jmix.ui.component.LookupPickerField}
+     * This style can also be used for {@link io.jmix.ui.component.EntityPicker} and
+     * {@link io.jmix.ui.component.EntityComboBox}
      */
     public static final String LOOKUPFIELD_ALIGN_CENTER = "align-center";
 

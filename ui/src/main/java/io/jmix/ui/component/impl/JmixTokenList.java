@@ -124,14 +124,14 @@ public class JmixTokenList<T extends Entity> extends CustomField<Collection<T>> 
                 editor.setWidth("100%");
 
                 if (!owner.isSimple()) {
-                    owner.lookupPickerField.setWidthFull();
+                    owner.entityComboBox.setWidthFull();
                 }
             } else {
                 composition.setWidthUndefined();
                 editor.setWidthUndefined();
 
                 if (!owner.isSimple()) {
-                    owner.lookupPickerField.setWidthAuto();
+                    owner.entityComboBox.setWidthAuto();
                 }
             }
         }
@@ -151,10 +151,10 @@ public class JmixTokenList<T extends Entity> extends CustomField<Collection<T>> 
         editor.removeAllComponents();
 
         if (!owner.isSimple()) {
-            owner.lookupPickerField.setWidthAuto();
-            editor.addComponent(WebComponentsHelper.getComposition(owner.lookupPickerField));
+            owner.entityComboBox.setWidthAuto();
+            editor.addComponent(WebComponentsHelper.getComposition(owner.entityComboBox));
         }
-        owner.lookupPickerField.setVisible(!owner.isSimple());
+        owner.entityComboBox.setVisible(!owner.isSimple());
 
         owner.addButton.setVisible(owner.isSimple());
         owner.addButton.setStyleName(ADD_BTN_STYLENAME);
@@ -337,14 +337,14 @@ public class JmixTokenList<T extends Entity> extends CustomField<Collection<T>> 
             editor.setWidth("100%");
 
             if (!owner.isSimple()) {
-                owner.lookupPickerField.setWidthFull();
+                owner.entityComboBox.setWidthFull();
             }
         } else {
             composition.setWidthUndefined();
             editor.setWidthUndefined();
 
             if (!owner.isSimple()) {
-                owner.lookupPickerField.setWidthAuto();
+                owner.entityComboBox.setWidthAuto();
             }
         }
     }

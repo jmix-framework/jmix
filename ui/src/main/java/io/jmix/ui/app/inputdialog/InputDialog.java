@@ -30,8 +30,8 @@ import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
-import io.jmix.ui.action.picker.ClearAction;
-import io.jmix.ui.action.picker.LookupAction;
+import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.inputdialog.InputDialogAction;
@@ -397,17 +397,17 @@ public class InputDialog extends Screen {
         Action clearAction = actions.create(ClearAction.ID);
 
         if (persistenceManagerClient.useLookupScreen(metaClass.getName())) {
-            PickerField pickerField = uiComponents.create(PickerField.NAME);
+            EntityPicker pickerField = uiComponents.create(EntityPicker.NAME);
             pickerField.setMetaClass(metadata.getClass(parameter.getEntityClass()));
             pickerField.addAction(lookupAction);
             pickerField.addAction(clearAction);
             pickerField.setWidthFull();
             return pickerField;
         } else {
-            LookupPickerField lookupPickerField = uiComponents.create(LookupPickerField.NAME);
-            lookupPickerField.addAction(lookupAction);
-            lookupPickerField.addAction(clearAction);
-            lookupPickerField.setWidthFull();
+            EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.NAME);
+            entityComboBox.addAction(lookupAction);
+            entityComboBox.addAction(clearAction);
+            entityComboBox.setWidthFull();
 
             CollectionContainer container = dataComponents.createCollectionContainer(parameter.getEntityClass());
             CollectionLoader loader = dataComponents.createCollectionLoader();
@@ -416,17 +416,17 @@ public class InputDialog extends Screen {
             loader.setContainer(container);
             loader.load();
 
-            lookupPickerField.setOptions(new ContainerOptions(container));
-            return lookupPickerField;
+            entityComboBox.setOptions(new ContainerOptions(container));
+            return entityComboBox;
         }
     }
 
     @SuppressWarnings("unchecked")
     protected Field createEnumField(InputParameter parameter) {
-        LookupField lookupField = uiComponents.create(LookupField.NAME);
-        lookupField.setOptionsEnum(parameter.getEnumClass());
-        lookupField.setWidthFull();
-        return lookupField;
+        ComboBox comboBox = uiComponents.create(ComboBox.NAME);
+        comboBox.setOptionsEnum(parameter.getEnumClass());
+        comboBox.setWidthFull();
+        return comboBox;
     }
 
     @SuppressWarnings("unchecked")

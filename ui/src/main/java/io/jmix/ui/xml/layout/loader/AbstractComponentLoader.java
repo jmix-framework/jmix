@@ -851,7 +851,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return null;
     }
 
-    protected Action loadPickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+    protected Action loadEntityPickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String id = loadActionId(element);
 
         if (StringUtils.isBlank(element.attributeValue("invoke"))) {

@@ -40,7 +40,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jmix.ui.component.impl.WebLookupField.NULL_ITEM_ICON_GENERATOR;
+import static io.jmix.ui.component.impl.WebComboBox.NULL_ITEM_ICON_GENERATOR;
 
 public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>, Set<V>, Collection<V>>
         implements CheckBoxGroup<V>, InitializingBean {

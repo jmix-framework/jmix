@@ -23,10 +23,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.impl.GuiActionSupport;
+import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
 import io.jmix.ui.component.data.Options;
+import io.jmix.ui.component.impl.GuiActionSupport;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +49,7 @@ import static io.jmix.ui.component.DateField.Resolution;
 
 public abstract class AbstractComponentGenerationStrategy implements ComponentGenerationStrategy {
 
+    protected Actions actions;
     protected Messages messages;
     protected UiComponents uiComponents;
     protected GuiActionSupport guiActionSupport;
@@ -51,6 +57,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     public AbstractComponentGenerationStrategy(Messages messages,
                                                GuiActionSupport guiActionSupport) {
         this.messages = messages;
+        this.guiActionSupport = guiActionSupport;
     }
 
     protected Component createComponentInternal(ComponentGenerationContext context) {
@@ -147,7 +154,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     }
 
     protected Field createEnumField(ComponentGenerationContext context) {
-        LookupField component = uiComponents.create(LookupField.class);
+        ComboBox component = uiComponents.create(ComboBox.class);
         setValueSource(component, context);
         return component;
     }
@@ -308,41 +315,41 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         if (!Boolean.parseBoolean(linkAttribute)) {
             Options options = context.getOptions();
 
-            PickerField pickerField;
+            EntityPicker entityPicker;
             if (options == null) {
-                pickerField = uiComponents.create(PickerField.class);
-                setValueSource(pickerField, context);
+                entityPicker = uiComponents.create(EntityPicker.class);
+                setValueSource(entityPicker, context);
 
                 if (mpp.getMetaProperty().getType() == MetaProperty.Type.ASSOCIATION) {
-                    pickerField.addLookupAction();
-                    boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(pickerField);
+                    entityPicker.addAction(actions.create(LookupAction.ID));
+                    boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(entityPicker);
                     if (!actionsByMetaAnnotations) {
-                        pickerField.addClearAction();
+                        entityPicker.addAction(actions.create(ClearAction.ID));
                     }
                 } else {
-                    pickerField.addOpenAction();
-                    pickerField.addClearAction();
+                    entityPicker.addAction(actions.create(OpenAction.ID));
+                    entityPicker.addAction(actions.create(ClearAction.ID));
                 }
             } else {
-                LookupPickerField lookupPickerField = uiComponents.create(LookupPickerField.class);
+                EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);
 
-                setValueSource(lookupPickerField, context);
-                lookupPickerField.setOptions(options);
+                setValueSource(entityComboBox, context);
+                entityComboBox.setOptions(options);
 
-                pickerField = lookupPickerField;
+                entityPicker = entityComboBox;
 
-                guiActionSupport.createActionsByMetaAnnotations(pickerField);
+                guiActionSupport.createActionsByMetaAnnotations(entityPicker);
             }
 
             if (xmlDescriptor != null) {
                 String captionProperty = xmlDescriptor.attributeValue("captionProperty");
                 if (StringUtils.isNotEmpty(captionProperty)) {
-                    pickerField.setCaptionMode(CaptionMode.PROPERTY);
-                    pickerField.setCaptionProperty(captionProperty);
+                    entityPicker.setOptionCaptionProvider(
+                            new LegacyCaptionAdapter(CaptionMode.PROPERTY, captionProperty));
                 }
             }
 
-            return pickerField;
+            return entityPicker;
         } else {
             EntityLinkField linkField = uiComponents.create(EntityLinkField.class);
 

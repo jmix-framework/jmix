@@ -20,7 +20,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.SecuredActionsHolder;
-import io.jmix.ui.component.SuggestionPickerField;
+import io.jmix.ui.component.EntitySuggestionField;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
@@ -38,12 +38,12 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.jmix.ui.component.impl.WebLookupField.NULL_STYLE_GENERATOR;
+import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
-public class WebSuggestionPickerField<V extends Entity> extends WebPickerField<V>
-        implements SuggestionPickerField<V>, SecuredActionsHolder {
+public class WebEntitySuggestionField<V extends Entity> extends WebEntityPicker<V>
+        implements EntitySuggestionField<V>, SecuredActionsHolder {
 
-    private static final Logger log = LoggerFactory.getLogger(WebSuggestionPickerField.class);
+    private static final Logger log = LoggerFactory.getLogger(WebEntitySuggestionField.class);
 
     protected BackgroundWorker backgroundWorker;
 
@@ -58,7 +58,7 @@ public class WebSuggestionPickerField<V extends Entity> extends WebPickerField<V
 
     protected Locale locale;
 
-    public WebSuggestionPickerField() {
+    public WebEntitySuggestionField() {
     }
 
     @Override

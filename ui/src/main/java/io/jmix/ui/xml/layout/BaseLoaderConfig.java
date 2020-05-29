@@ -66,13 +66,12 @@ public abstract class BaseLoaderConfig {
         loaders.put(DateField.NAME, DateFieldLoader.class);
         loaders.put(TimeField.NAME, TimeFieldLoader.class);
         loaders.put(DatePicker.NAME, DatePickerLoader.class);
-        loaders.put(LookupField.NAME, LookupFieldLoader.class);
+        loaders.put(ComboBox.NAME, ComboBoxLoader.class);
         loaders.put(SuggestionField.NAME, SuggestionFieldLoader.class);
-        loaders.put(SuggestionPickerField.NAME, SuggestionPickerFieldLoader.class);
-        loaders.put(PickerField.NAME, PickerFieldLoader.class);
+        loaders.put(EntitySuggestionField.NAME, EntitySuggestionFieldLoader.class);
+        loaders.put(EntityPicker.NAME, EntityPickerLoader.class);
         loaders.put(ColorPicker.NAME, ColorPickerLoader.class);
-        loaders.put(LookupPickerField.NAME, LookupPickerFieldLoader.class);
-        loaders.put(SearchPickerField.NAME, SearchPickerFieldLoader.class);
+        loaders.put(EntityComboBox.NAME, EntityComboBoxLoader.class);
         loaders.put(OptionsGroup.NAME, OptionsGroupLoader.class);
         loaders.put(CheckBoxGroup.NAME, CheckBoxGroupLoader.class);
         loaders.put(RadioButtonGroup.NAME, RadioButtonGroupLoader.class);
@@ -103,7 +102,6 @@ public abstract class BaseLoaderConfig {
         loaders.put(TokenList.NAME, TokenListLoader.class);
         loaders.put(TwinColumn.NAME, TwinColumnLoader.class);
         loaders.put(ProgressBar.NAME, ProgressBarLoader.class);
-        loaders.put(SearchField.NAME, SearchFieldLoader.class);
         loaders.put(RelatedEntities.NAME, RelatedEntitiesLoader.class);
 
         loaders.put(CapsLockIndicator.NAME, CapsLockIndicatorLoader.class);

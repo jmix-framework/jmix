@@ -47,8 +47,19 @@
 
   .#{$item-stylename}:hover,
   .#{$item-stylename}-selected {
-    @include he-selection-item-selected-style();
+    &:not(.#{$item-stylename}-disabled) {
+      @include he-selection-item-selected-style();
+    }
   }
+
+  .#{$item-stylename}-disabled {
+    @include he-selection-item-disabled-style();
+  }
+}
+
+@mixin he-selection-item-disabled-style() {
+  background: var(--selection-overlay-disabled-item-background-color);
+  color: var(--selection-overlay-disabled-item-text-color);
 }
 
 @mixin he-selection-item-selected-style() {

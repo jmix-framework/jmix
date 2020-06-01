@@ -626,6 +626,9 @@
   --selection-overlay-selected-item-text-color: var(--primary-contrast-text-color);
   --selection-overlay-selected-item-active-background-color: var(--primary-color-shade-2);
 
+  --selection-overlay-disabled-item-background-color: transparent;
+  --selection-overlay-disabled-item-text-color: var(--text-dim-color);
+
   /* DragAndDrop */
 
   --drag-element-shadow: var(--box-shadow);

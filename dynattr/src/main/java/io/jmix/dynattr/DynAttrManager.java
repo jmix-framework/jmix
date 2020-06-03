@@ -20,6 +20,7 @@ package io.jmix.dynattr;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public interface DynAttrManager {
@@ -28,7 +29,7 @@ public interface DynAttrManager {
     /**
      * Fetch dynamic attributes from dynamic attributes store for each entity
      */
-    void loadValues(Collection<Entity> entities, FetchPlan fetchPlan);
+    void loadValues(Collection<Entity> entities, @Nullable FetchPlan fetchPlan);
 
     /**
      * Store dynamic attributes from the entity to store

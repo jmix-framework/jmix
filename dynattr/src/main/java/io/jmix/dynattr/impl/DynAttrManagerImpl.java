@@ -82,7 +82,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 });
     }
 
-    public void loadValues(Collection<Entity> entities, FetchPlan fetchPlan) {
+    public void loadValues(Collection<Entity> entities, @Nullable FetchPlan fetchPlan) {
         Multimap<MetaClass, Entity> entitiesToLoad = collectEntitiesToLoad(entities, fetchPlan);
         if (!entitiesToLoad.isEmpty()) {
             storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)

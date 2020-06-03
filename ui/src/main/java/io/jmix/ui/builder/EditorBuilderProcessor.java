@@ -17,9 +17,9 @@
 package io.jmix.ui.builder;
 
 import io.jmix.core.DevelopmentException;
+import io.jmix.core.Entity;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -41,10 +41,11 @@ import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.Nested;
 import io.jmix.ui.screen.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
@@ -60,6 +61,8 @@ public class EditorBuilderProcessor {
     protected WindowConfig windowConfig;
     @Autowired
     protected UiProperties properties;
+    @Autowired
+    protected List<EditedEntityTransformer> editedEntityTransformers;
 
     @SuppressWarnings("unchecked")
     public  <E extends Entity, S extends Screen> S buildEditor(EditorBuilder<E> builder) {
@@ -96,7 +99,8 @@ public class EditorBuilderProcessor {
                 CloseAction closeAction = event.getCloseAction();
                 if (isCommitCloseAction(closeAction)) {
                     E entityFromEditor = getCommittedEntity(editorScreen, parentDataContext);
-                    E committedEntity = transform(entityFromEditor, builder);
+                    E reloadedEntity = transformForCollectionContainer(entityFromEditor, ct);
+                    E committedEntity = transform(reloadedEntity, builder);
 
                     if (builder.getMode() == EditMode.CREATE) {
                         boolean addsFirst;
@@ -142,7 +146,8 @@ public class EditorBuilderProcessor {
                 CloseAction closeAction = event.getCloseAction();
                 if (isCommitCloseAction(closeAction)) {
                     E entityFromEditor = editorScreen.getEditedEntity();
-                    E editedEntity = transform(entityFromEditor, builder);
+                    E reloadedEntity = transformForField(entityFromEditor, field);
+                    E editedEntity = transform(reloadedEntity, builder);
 
                     if (field instanceof EntityComboBox) {
                         EntityComboBox entityComboBox = ((EntityComboBox) field);
@@ -184,6 +189,22 @@ public class EditorBuilderProcessor {
             return builder.getTransformation().apply(entity);
         }
         return entity;
+    }
+
+    protected  <E extends Entity> E transformForCollectionContainer(E entity, CollectionContainer<E> container) {
+        E result = entity;
+        for (EditedEntityTransformer transformer : editedEntityTransformers) {
+            result = transformer.transformForCollectionContainer(result, container);
+        }
+        return result;
+    }
+
+    protected <E extends Entity> E transformForField(E entity, HasValue<E> field) {
+        E result = entity;
+        for (EditedEntityTransformer transformer : editedEntityTransformers) {
+            result = transformer.transformForField(result, field);
+        }
+        return result;
     }
 
     protected <E extends Entity> E getCommittedEntity(EditorScreen<E> editorScreen, @Nullable DataContext parentDataContext) {

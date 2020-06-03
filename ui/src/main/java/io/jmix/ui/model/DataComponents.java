@@ -151,7 +151,9 @@ public class DataComponents implements ApplicationContextAware {
      * Creates {@code KeyValueCollectionContainer}.
      */
     public KeyValueCollectionContainer createKeyValueCollectionContainer() {
-        return new KeyValueCollectionContainerImpl(applicationContext);
+        KeyValueCollectionContainerImpl container = new KeyValueCollectionContainerImpl(applicationContext);
+        container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
+        return container;
     }
 
     /**

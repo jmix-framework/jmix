@@ -95,6 +95,10 @@ public class DataContextImpl implements DataContext {
         return applicationContext.getBean(EntitySystemStateSupport.NAME, EntitySystemStateSupport.class);
     }
 
+    protected EntityReferencesNormalizer getEntityReferencesNormalizer() {
+        return applicationContext.getBean(EntityReferencesNormalizer.NAME, EntityReferencesNormalizer.class);
+    }
+
     @Nullable
     @Override
     public DataContext getParent() {
@@ -642,6 +646,8 @@ public class DataContextImpl implements DataContext {
         SaveContext saveContext = new SaveContext()
                 .saving(isolate(filterCommittedInstances(modifiedInstances)))
                 .removing(isolate(filterCommittedInstances(removedInstances)));
+
+        getEntityReferencesNormalizer().updateReferences(saveContext.getEntitiesToSave());
 
         for (Entity entity : saveContext.getEntitiesToSave()) {
             saveContext.getFetchPlans().put(entity, getEntityStates().getCurrentFetchPlan(entity));

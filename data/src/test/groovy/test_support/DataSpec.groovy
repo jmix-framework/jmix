@@ -54,6 +54,7 @@ class DataSpec extends Specification {
         jdbc.update('delete from TEST_IDENTITY_ID_ENTITY')
         jdbc.update('delete from TEST_IDENTITY_UUID_ENTITY')
         jdbc.update('delete from TEST_COMPOSITE_KEY_ENTITY')
+        jdbc.update('delete from TEST_ENTITY_WITH_NON_PERSISTENT_REF')
 
         jdbc.update('delete from SALES_PRODUCT')
     }

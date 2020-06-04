@@ -17,12 +17,17 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.xml.layout.loader.DataGridLoader;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
 public class CubaDataGridLoader extends DataGridLoader {
@@ -57,6 +62,24 @@ public class CubaDataGridLoader extends DataGridLoader {
 
         DynAttrEmbeddingStrategies embeddingStrategies = beanLocator.get(DynAttrEmbeddingStrategies.class);
         embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+    }
+
+    @Override
+    protected io.jmix.ui.component.DataGrid.Column loadColumn(io.jmix.ui.component.DataGrid component,
+                                                              Element element,
+                                                              MetaClass metaClass) {
+        DataGrid.Column column = (DataGrid.Column) super.loadColumn(component, element, metaClass);
+        column.setGeneratedType(loadGeneratedType(element));
+        return column;
+    }
+
+    @Nullable
+    protected Class loadGeneratedType(Element columnElement) {
+        String colGenType = columnElement.attributeValue("generatedType");
+        if (StringUtils.isNotEmpty(colGenType)) {
+            return beanLocator.get(Scripting.class).loadClassNN(colGenType);
+        }
+        return null;
     }
 
     protected static class CubaDataGridDataHolder extends DataGridDataHolder {

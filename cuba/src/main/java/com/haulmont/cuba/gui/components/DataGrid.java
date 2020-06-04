@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.components.data.datagrid.DatasourceDataGridItems;
 import com.haulmont.cuba.gui.components.data.datagrid.SortableDatasourceDataGridItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.data.DataGridItems;
-import com.haulmont.cuba.gui.components.data.datagrid.DatasourceDataGridItems;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -65,5 +65,101 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
             }
             setItems(dataGridItems);
         }
+    }
+
+    /**
+     * @param <E> DataGrid data type
+     * @param <T> column data type
+     */
+    interface ColumnGenerator<E extends Entity, T> {
+        /**
+         * Returns value for given event.
+         *
+         * @param event an event providing more information
+         * @return generated value
+         */
+        T getValue(ColumnGeneratorEvent<E> event);
+
+        /**
+         * Return column type for this generator.
+         *
+         * @return type of generated property
+         */
+        Class<T> getType();
+    }
+
+    /**
+     * INTERNAL
+     * <p>
+     * ColumnGenerator that is used for declaratively installed generators.
+     *
+     * @param <E> DataGrid data type
+     * @param <T> Column data type
+     */
+    interface GenericColumnGenerator<E extends Entity, T> {
+
+        /**
+         * Returns value for given event.
+         *
+         * @param event an event providing more information
+         * @return generated value
+         */
+        T getValue(ColumnGeneratorEvent<E> event);
+    }
+
+    /**
+     * Add a generated column to the DataGrid.
+     *
+     * @param columnId  column identifier as defined in XML descriptor
+     * @param generator column generator instance
+     * @see #addGeneratedColumn(String, ColumnGenerator, int)
+     */
+    io.jmix.ui.component.DataGrid.Column<E> addGeneratedColumn(String columnId, ColumnGenerator<E, ?> generator);
+
+    /**
+     * Add a generated column to the DataGrid.
+     *
+     * @param columnId  column identifier as defined in XML descriptor
+     * @param generator column generator instance
+     * @param index     index of a new generated column
+     * @see #addGeneratedColumn(String, ColumnGenerator)
+     */
+    io.jmix.ui.component.DataGrid.Column<E> addGeneratedColumn(String columnId, ColumnGenerator<E, ?> generator, int index);
+
+    /**
+     * INTERNAL
+     * <p>
+     * Adds a generated column to the DataGrid.
+     *
+     * @param columnId  column identifier as defined in XML descriptor
+     * @param generator column generator instance
+     */
+    io.jmix.ui.component.DataGrid.Column<E> addGeneratedColumn(String columnId, GenericColumnGenerator<E, ?> generator);
+
+    /**
+     * A column in the DataGrid.
+     */
+    interface Column<E extends Entity> extends io.jmix.ui.component.DataGrid.Column<E> {
+
+        /**
+         * @return the type of value represented by this column
+         */
+        Class getType();
+
+        /**
+         * INTERNAL
+         * <p>
+         * Sets a type of generated column.
+         *
+         * @param generatedType generated column type
+         */
+        void setGeneratedType(Class generatedType);
+
+        /**
+         * INTERNAL.
+         *
+         * @return generated column type
+         */
+        Class getGeneratedType();
     }
 }

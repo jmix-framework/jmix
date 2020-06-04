@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -31,6 +30,7 @@ import io.jmix.data.*;
 import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.persistence.exceptions.QueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,9 +43,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -128,6 +128,9 @@ public class OrmDataStore implements DataStore {
 
     @Autowired(required = false)
     protected List<OrmLifecycleListener> ormLifecycleListeners;
+
+    @Autowired
+    private EntityReferencesNormalizer entityReferencesNormalizer;
 
     protected String storeName;
 
@@ -625,7 +628,9 @@ public class OrmDataStore implements DataStore {
                     }
                 }
             }
-            updateReferences(persisted, resultEntities);
+            // Update references from newly persisted entities to merged detached entities. Otherwise a new entity can
+            // contain a stale instance of a merged one.
+            entityReferencesNormalizer.updateReferences(persisted, resultEntities);
         }
 
         return context.isDiscardSaved() ? Collections.emptySet() : resultEntities;
@@ -650,7 +655,7 @@ public class OrmDataStore implements DataStore {
                 for (Entity entity : entitiesToReload) {
                     FetchPlan fetchPlan = context.getFetchPlans().get(entity);
                     log.debug("Reloading {} according to the requested fetchPlan", entity);
-                    Entity reloadedEntity = em.find(entity.getClass(), EntityValues.getId(entity),
+                    Entity reloadedEntity = em.find(entity.getClass(), getId(entity),
                             PersistenceHints.builder().withFetchPlan(fetchPlan).build());
                     resultEntities.remove(entity);
                     if (reloadedEntity != null) {
@@ -938,8 +943,8 @@ public class OrmDataStore implements DataStore {
             } else {
                 list = query.getResultList();
             }
-        } catch (javax.persistence.PersistenceException e) {
-            if (e.getCause() instanceof org.eclipse.persistence.exceptions.QueryException
+        } catch (PersistenceException e) {
+            if (e.getCause() instanceof QueryException
                     && e.getMessage() != null
                     && e.getMessage().contains("Fetch group cannot be set on report query")) {
                 throw new DevelopmentException("DataManager cannot execute query for single attributes");
@@ -1078,57 +1083,6 @@ public class OrmDataStore implements DataStore {
             }
         }
         return indexes;
-    }
-
-    /**
-     * Update references from newly persisted entities to merged detached entities. Otherwise a new entity can
-     * contain a stale instance of merged entity.
-     *
-     * @param persisted persisted entities
-     * @param committed all committed entities
-     */
-    protected void updateReferences(Collection<Entity> persisted, Collection<Entity> committed) {
-        for (Entity persistedEntity : persisted) {
-            for (Entity entity : committed) {
-                if (entity != persistedEntity) {
-                    updateReferences(persistedEntity, entity, new HashSet<>());
-                }
-            }
-        }
-    }
-
-    protected void updateReferences(Entity entity, Entity refEntity, Set<Entity> visited) {
-        if (entity == null || refEntity == null || visited.contains(entity))
-            return;
-        visited.add(entity);
-
-        MetaClass refEntityMetaClass = metadata.getClass(refEntity);
-        for (MetaProperty property : metadata.getClass(entity).getProperties()) {
-            if (!property.getRange().isClass() || !property.getRange().asClass().equals(refEntityMetaClass))
-                continue;
-            if (entityStates.isLoaded(entity, property.getName())) {
-                if (property.getRange().getCardinality().isMany()) {
-                    Collection collection = getValue(entity, property.getName());
-                    if (collection != null) {
-                        for (Object obj : collection) {
-                            updateReferences((Entity) obj, refEntity, visited);
-                        }
-                    }
-                } else {
-                    Entity value = getValue(entity, property.getName());
-                    if (value != null) {
-                        if (Objects.equals(getId(value), getId(refEntity))) {
-                            if (property.isReadOnly() && !metadataTools.isPersistent(property)) {
-                                continue;
-                            }
-                            EntityValues.setValue(entity, property.getName(), refEntity, false);
-                        } else {
-                            updateReferences(value, refEntity, visited);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     protected boolean needToFilterByInMemoryReadConstraints(LoadContext context) {

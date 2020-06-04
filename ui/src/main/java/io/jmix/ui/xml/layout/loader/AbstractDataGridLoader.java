@@ -590,8 +590,6 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             column.setMaximumWidth(maximumWidth);
         }
 
-        column.setGeneratedType(loadGeneratedType(element));
-
         column.setFormatter(loadFormatter(element));
         column.setRenderer(loadRenderer(element));
 
@@ -683,14 +681,6 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         if (StringUtils.isNotEmpty(formatString)) {
             renderer.setFormatString(formatString);
         }
-    }
-
-    protected Class loadGeneratedType(Element columnElement) {
-        String colGenType = columnElement.attributeValue("generatedType");
-        if (StringUtils.isNotEmpty(colGenType)) {
-            return getHotDeployManager().loadClass(colGenType);
-        }
-        return null;
     }
 
     protected String loadCaption(Element element) {

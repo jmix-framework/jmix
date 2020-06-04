@@ -141,7 +141,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
     protected final Map<String, Column<E>> columns = new HashMap<>();
     protected List<Column<E>> columnsOrder = new ArrayList<>();
-    protected final Map<String, ColumnGenerator<E, ?>> columnGenerators = new HashMap<>();
+    protected final Map<String, Function<ColumnGeneratorEvent<E>, ?>> columnGenerators = new HashMap<>();
 
     protected final List<Action> actionList = new ArrayList<>();
     protected final ShortcutsDelegate<ShortcutListener> shortcutsDelegate;
@@ -699,9 +699,13 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
     @Override
     public Column<E> addColumn(String id, MetaPropertyPath propertyPath, int index) {
-        ColumnImpl<E> column = new ColumnImpl<>(id, propertyPath, this);
+        ColumnImpl<E> column = createColumn(id, propertyPath, this);
         addColumnInternal(column, index);
         return column;
+    }
+
+    protected ColumnImpl<E> createColumn(String id, @Nullable MetaPropertyPath propertyPath, WebAbstractDataGrid<?, E> owner) {
+        return new ColumnImpl<>(id, propertyPath, owner);
     }
 
     protected void addColumnInternal(ColumnImpl<E> column, int index) {
@@ -819,7 +823,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
                 return new FormatterBasedValueProvider<>(new CollectionFormatter(metadataTools));
             }
-            if (column.getType() == Boolean.class) {
+            if (metaProperty.getJavaType() == Boolean.class) {
                 return new YesNoIconPresentationValueProvider();
             }
         }
@@ -839,7 +843,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                 ? column.getPropertyPath().getMetaProperty()
                 : null;
 
-        return column.getType() == Boolean.class && metaProperty != null
+        return metaProperty != null && metaProperty.getJavaType() == Boolean.class
                 ? new com.vaadin.ui.renderers.HtmlRenderer()
                 : new com.vaadin.ui.renderers.TextRenderer();
     }
@@ -1036,7 +1040,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             if (!property.getRange().getCardinality().isMany()
                     && !metadataTools.isSystem(property)) {
                 String propertyName = property.getName();
-                ColumnImpl<E> column = new ColumnImpl<>(propertyName, metaPropertyPath, this);
+                ColumnImpl<E> column = createColumn(propertyName, metaPropertyPath, this);
                 MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
                 column.setCaption(messageTools.getPropertyCaption(propertyMetaClass, propertyName));
 
@@ -2406,54 +2410,12 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     @Override
-    public Column<E> addGeneratedColumn(String columnId, ColumnGenerator<E, ?> generator) {
+    public Column<E> addGeneratedColumn(String columnId, Function<ColumnGeneratorEvent<E>, ?> generator) {
         return addGeneratedColumn(columnId, generator, columnsOrder.size());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Column<E> addGeneratedColumn(String columnId, GenericColumnGenerator<E, ?> generator) {
-        Column<E> column = getColumn(columnId);
-        if (column == null) {
-            throw new DevelopmentException("Unable to set ColumnGenerator for non-existing column: " + columnId);
-        }
-
-        Class<? extends Renderer> rendererType = null;
-
-        Renderer renderer = column.getRenderer();
-        if (renderer != null) {
-            Class<?>[] rendererInterfaces = renderer.getClass().getInterfaces();
-
-            rendererType = (Class<? extends Renderer>) Arrays.stream(rendererInterfaces)
-                    .filter(Renderer.class::isAssignableFrom)
-                    .findFirst()
-                    .orElseThrow(() ->
-                            new DevelopmentException(
-                                    "Renderer should be specified explicitly for generated column: " + columnId));
-        }
-
-
-        Column<E> generatedColumn = addGeneratedColumn(columnId, new ColumnGenerator<E, Object>() {
-            @Override
-            public Object getValue(ColumnGeneratorEvent<E> event) {
-                return generator.getValue(event);
-            }
-
-            @Override
-            public Class<Object> getType() {
-                return column.getGeneratedType();
-            }
-        });
-
-        if (renderer != null) {
-            generatedColumn.setRenderer(createRenderer(rendererType));
-        }
-
-        return column;
-    }
-
-    @Override
-    public Column<E> addGeneratedColumn(String columnId, ColumnGenerator<E, ?> generator, int index) {
+    public Column<E> addGeneratedColumn(String columnId, Function<ColumnGeneratorEvent<E>, ?> generator, int index) {
         checkNotNullArgument(columnId, "columnId is null");
         checkNotNullArgument(generator, "generator is null for column id '%s'", columnId);
 
@@ -2467,9 +2429,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                 component.addColumn(createGeneratedColumnValueProvider(columnId, generator));
 
         // Pass propertyPath from the existing column to support sorting
-        ColumnImpl<E> column = new ColumnImpl<>(columnId,
+        ColumnImpl<E> column = createColumn(columnId,
                 existingColumn != null ? existingColumn.getPropertyPath() : null,
-                generator.getType(), this);
+                this);
         if (existingColumn != null) {
             copyColumnProperties(column, existingColumn);
         } else {
@@ -2489,16 +2451,16 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     protected ValueProvider<E, Object> createGeneratedColumnValueProvider(String columnId,
-                                                                          ColumnGenerator<E, ?> generator) {
+                                                                          Function<ColumnGeneratorEvent<E>, ?> generator) {
         return (ValueProvider<E, Object>) item -> {
             ColumnGeneratorEvent<E> event = new ColumnGeneratorEvent<>(WebAbstractDataGrid.this,
                     item, columnId, this::createInstanceContainer);
-            return generator.getValue(event);
+            return generator.apply(event);
         };
     }
 
     @Override
-    public ColumnGenerator<E, ?> getColumnGenerator(String columnId) {
+    public Function<ColumnGeneratorEvent<E>, ?> getColumnGenerator(String columnId) {
         return columnGenerators.get(columnId);
     }
 
@@ -2525,6 +2487,20 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         if (column.getPropertyPath() != null
                 && column.getPropertyPath().equals(existingColumn.getPropertyPath())) {
             column.setSortable(existingColumn.isSortable());
+        }
+
+        Renderer renderer = existingColumn.getRenderer();
+        if (renderer != null) {
+            Class<?>[] rendererInterfaces = renderer.getClass().getInterfaces();
+
+            Class<? extends Renderer> rendererType = (Class<? extends Renderer>) Arrays.stream(rendererInterfaces)
+                    .filter(Renderer.class::isAssignableFrom)
+                    .findFirst()
+                    .orElseThrow(() ->
+                            new DevelopmentException(
+                                    "Renderer should be specified explicitly for generated column: " + column.getId()));
+
+            column.setRenderer(createRenderer(rendererType));
         }
     }
 
@@ -3404,8 +3380,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         protected Function<? super E, String> descriptionProvider;
         protected ContentMode descriptionContentMode = ContentMode.PREFORMATTED;
 
-        protected final Class type;
-        protected Class generatedType;
         protected Element element;
 
         protected WebAbstractDataGrid<?, E> owner;
@@ -3414,19 +3388,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         protected ColumnEditorFieldGenerator fieldGenerator;
         protected Function<EditorFieldGenerationContext<E>, Field<?>> generator;
 
-        public ColumnImpl(String id, @Nullable MetaPropertyPath propertyPath, WebAbstractDataGrid<?, E> owner) {
-            this(id, propertyPath, propertyPath != null ? propertyPath.getRangeJavaClass() : String.class, owner);
-        }
-
-        public ColumnImpl(String id, Class type, WebAbstractDataGrid<?, E> owner) {
-            this(id, null, type, owner);
-        }
-
-        protected ColumnImpl(String id,
-                             @Nullable MetaPropertyPath propertyPath, Class type, WebAbstractDataGrid<?, E> owner) {
+        protected ColumnImpl(String id, @Nullable MetaPropertyPath propertyPath, WebAbstractDataGrid<?, E> owner) {
             this.id = id;
             this.propertyPath = propertyPath;
-            this.type = type;
             this.owner = owner;
 
             setupDefaults();
@@ -3768,21 +3732,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         public void setConverter(Converter<?, ?> converter) {
             this.converter = converter;
             updateRendererInternal();
-        }
-
-        @Override
-        public Class getType() {
-            return type;
-        }
-
-        @Override
-        public void setGeneratedType(Class generatedType) {
-            this.generatedType = generatedType;
-        }
-
-        @Override
-        public Class getGeneratedType() {
-            return generatedType;
         }
 
         public boolean isGenerated() {

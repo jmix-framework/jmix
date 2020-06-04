@@ -482,20 +482,6 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="dataGridColumnGeneratedType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="java.lang.Boolean"/>
-            <xs:enumeration value="java.lang.Integer"/>
-            <xs:enumeration value="java.lang.Double"/>
-            <xs:enumeration value="java.lang.String"/>
-            <xs:enumeration value="java.util.Date"/>
-            <xs:enumeration value="java.time.LocalDate"/>
-            <xs:enumeration value="java.time.LocalDateTime"/>
-            <xs:enumeration value="io.jmix.ui.icon.Icons$Icon"/>
-            <xs:enumeration value="io.jmix.ui.component.Component"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <!-- Style names -->
 
     <xs:simpleType name="labelStylename">
@@ -2586,8 +2572,6 @@
         <xs:attributeGroup ref="hasWidthProp"/>
         <xs:attribute name="minimumWidth" type="xs:string"/>
         <xs:attribute name="maximumWidth" type="xs:string"/>
-
-        <xs:attribute name="generatedType" type="dataGridColumnGeneratedType"/>
     </xs:complexType>
 
     <!-- DataGrid -->

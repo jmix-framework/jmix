@@ -67,7 +67,8 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
                     anonymousConfigurer.principal(userRepository.getAnonymousUser());
                 })
-                .csrf().disable();
+                .csrf().disable()
+                .headers().frameOptions().sameOrigin();
     }
 
     @Bean(name = "jmix_authenticationManager")

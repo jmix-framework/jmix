@@ -2118,16 +2118,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- OptionsGroup -->
-    <xs:complexType name="optionsGroupComponent">
-        <xs:complexContent>
-            <xs:extension base="optionsBaseFieldComponent">
-                <xs:attribute name="orientation" type="orientation"/>
-                <xs:attribute name="multiselect" type="xs:boolean"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <!-- OptionsList -->
     <xs:complexType name="optionsListComponent">
         <xs:complexContent>
@@ -3778,7 +3768,6 @@
                 <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
 
                 <xs:element name="colorPicker" type="colorPickerComponent"/>
-                <xs:element name="optionsGroup" type="optionsGroupComponent"/>
                 <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>
                 <xs:element name="checkBoxGroup" type="checkBoxGroupComponent"/>
                 <xs:element name="optionsList" type="optionsListComponent"/>

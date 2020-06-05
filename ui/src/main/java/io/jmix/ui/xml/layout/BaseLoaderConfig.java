@@ -72,7 +72,6 @@ public abstract class BaseLoaderConfig {
         loaders.put(EntityPicker.NAME, EntityPickerLoader.class);
         loaders.put(ColorPicker.NAME, ColorPickerLoader.class);
         loaders.put(EntityComboBox.NAME, EntityComboBoxLoader.class);
-        loaders.put(OptionsGroup.NAME, OptionsGroupLoader.class);
         loaders.put(CheckBoxGroup.NAME, CheckBoxGroupLoader.class);
         loaders.put(RadioButtonGroup.NAME, RadioButtonGroupLoader.class);
         loaders.put(OptionsList.NAME, OptionsListLoader.class);

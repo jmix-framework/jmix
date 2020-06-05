@@ -99,7 +99,6 @@ public class WebUiComponents implements UiComponents {
         classes.put(EntitySuggestionField.NAME, WebEntitySuggestionField.class);
         classes.put(ColorPicker.NAME, WebColorPicker.class);
         classes.put(EntityComboBox.NAME, WebEntityComboBox.class);
-        classes.put(OptionsGroup.NAME, WebOptionsGroup.class);
         classes.put(CheckBoxGroup.NAME, WebCheckBoxGroup.class);
         classes.put(RadioButtonGroup.NAME, WebRadioButtonGroup.class);
         classes.put(OptionsList.NAME, WebOptionsList.class);

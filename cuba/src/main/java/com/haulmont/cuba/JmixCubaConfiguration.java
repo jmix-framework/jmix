@@ -24,13 +24,13 @@ import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import io.jmix.core.*;
-import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.data.JmixDataConfiguration;
 import io.jmix.dynattr.JmixDynAttrConfiguration;
 import io.jmix.dynattrui.JmixDynAttrUiConfiguration;
+import io.jmix.fsfilestorage.JmixFileSystemFileStorageConfiguration;
 import io.jmix.ui.JmixUiConfiguration;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.menu.MenuItemCommands;
@@ -55,7 +55,7 @@ import java.util.Collections;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixUiConfiguration.class,
-        JmixDynAttrConfiguration.class, JmixDynAttrUiConfiguration.class})
+        JmixDynAttrConfiguration.class, JmixDynAttrUiConfiguration.class, JmixFileSystemFileStorageConfiguration.class})
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 public class JmixCubaConfiguration {
 

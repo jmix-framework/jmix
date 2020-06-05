@@ -16,14 +16,25 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.core.app.CubaFileStorage;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.Image;
+import io.jmix.ui.component.Resource;
+import io.jmix.ui.component.impl.WebFileStorageResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.FileDescriptor;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebImage extends io.jmix.ui.component.impl.WebImage implements Image {
+public class WebImage extends io.jmix.ui.component.impl.WebImage<FileDescriptor> implements Image {
+
+    protected CubaFileStorage cubaFileStorage;
+
+    @Autowired
+    public void setCubaFileStorage(CubaFileStorage cubaFileStorage) {
+        this.cubaFileStorage = cubaFileStorage;
+    }
 
     @Override
     public FileDescriptor getValue() {
@@ -38,5 +49,19 @@ public class WebImage extends io.jmix.ui.component.impl.WebImage implements Imag
     @Override
     public Subscription addValueChangeListener(Consumer<ValueChangeEvent<FileDescriptor>> listener) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected Resource createImageResource(Object resourceObject) {
+        Resource resource = super.createImageResource(resourceObject);
+        if (resource instanceof WebFileStorageResource) {
+            ((WebFileStorageResource) resource).setFileStorage(cubaFileStorage.asFileStorage());
+        }
+        return resource;
+    }
+
+    @Override
+    protected boolean isFileReference(Object resourceObject) {
+        return FileDescriptor.class.isAssignableFrom(resourceObject.getClass());
     }
 }

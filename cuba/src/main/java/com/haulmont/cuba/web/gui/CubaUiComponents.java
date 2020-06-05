@@ -74,6 +74,8 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(SuggestionField.NAME, WebSuggestionField.class);
         classes.put(Slider.NAME, WebSlider.class);
         classes.put(CurrencyField.NAME, WebCurrencyField.class);
+        classes.put(com.haulmont.cuba.gui.components.FileUploadField.NAME, WebFileUploadField.class);
+        classes.put(FileMultiUploadField.NAME, WebFileMultiUploadField.class);
         classes.put(ColorPicker.NAME, WebColorPicker.class);
         classes.put(TimeField.NAME, WebTimeField.class);
         classes.put(RichTextArea.NAME, WebRichTextArea.class);

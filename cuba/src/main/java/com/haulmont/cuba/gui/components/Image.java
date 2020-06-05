@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.components.data.value.DatasourceValueSource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.entity.FileDescriptor;
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  * @deprecated Use {@link io.jmix.ui.component.Image} instead
  */
 @Deprecated
-public interface Image extends DatasourceComponent<FileDescriptor>, io.jmix.ui.component.Image {
+public interface Image extends DatasourceComponent<FileDescriptor>, io.jmix.ui.component.Image<FileDescriptor> {
 
     /**
      * Sets datasource and its property.

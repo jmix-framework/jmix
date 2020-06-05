@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer.widget.progressbar;
 
-import com.vaadin.client.renderers.Renderer;
-import com.vaadin.client.widget.grid.RendererCellReference;
+import io.jmix.ui.widget.client.grid.HasClickSettings;
+import com.vaadin.client.ui.VProgressBar;
 
-public class JmixCheckBoxRenderer implements Renderer<Boolean> {
-
-    protected static final String BASE_STYLE = "boolean-value";
+public class JmixProgressBarWidget extends VProgressBar implements HasClickSettings {
+    protected boolean clickThroughEnabled = false;
 
     @Override
-    public void render(RendererCellReference cell, Boolean data) {
-        cell.getElement().setInnerHTML(getHtmlString(data));
+    public boolean isClickThroughEnabled() {
+        return clickThroughEnabled;
     }
 
-    protected String getHtmlString(Boolean value) {
-        return "<div class=\"" + BASE_STYLE + " " + BASE_STYLE + "-" + value + "\"/>";
+    @Override
+    public void setClickThroughEnabled(boolean enabled) {
+        clickThroughEnabled = enabled;
     }
 }

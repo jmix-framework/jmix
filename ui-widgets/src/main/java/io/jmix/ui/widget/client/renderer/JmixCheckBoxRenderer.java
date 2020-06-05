@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer;
 
-import com.google.gwt.core.shared.GWT;
-import io.jmix.ui.widget.client.renderers.widgets.progressbar.JmixProgressBarWidget;
-import com.vaadin.client.renderers.ProgressBarRenderer;
+import com.vaadin.client.renderers.Renderer;
+import com.vaadin.client.widget.grid.RendererCellReference;
 
-public class JmixProgressBarRenderer extends ProgressBarRenderer {
+public class JmixCheckBoxRenderer implements Renderer<Boolean> {
+
+    protected static final String BASE_STYLE = "boolean-value";
 
     @Override
-    public JmixProgressBarWidget createWidget() {
-        JmixProgressBarWidget progressBar = GWT.create(JmixProgressBarWidget.class);
-        progressBar.addStyleDependentName("static");
-        progressBar.setClickThroughEnabled(true);
-        return progressBar;
+    public void render(RendererCellReference cell, Boolean data) {
+        cell.getElement().setInnerHTML(getHtmlString(data));
+    }
+
+    protected String getHtmlString(Boolean value) {
+        return "<div class=\"" + BASE_STYLE + " " + BASE_STYLE + "-" + value + "\"/>";
     }
 }

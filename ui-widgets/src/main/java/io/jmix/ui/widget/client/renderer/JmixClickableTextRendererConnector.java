@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer;
 
-import com.google.gwt.core.shared.GWT;
-import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.vaadin.client.connectors.ClickableRendererConnector;
 import com.vaadin.client.renderers.ClickableRenderer;
-import com.vaadin.client.widget.grid.RendererCellReference;
+import com.vaadin.shared.ui.Connect;
+import elemental.json.JsonObject;
 
-public class JmixClickableTextRenderer extends ClickableRenderer<String, InlineHTML> {
+@Connect(io.jmix.ui.widget.renderer.JmixClickableTextRenderer.class)
+public class JmixClickableTextRendererConnector extends ClickableRendererConnector<String> {
+
     @Override
-    public InlineHTML createWidget() {
-        InlineHTML inlineHTML = GWT.create(InlineHTML.class);
-        inlineHTML.addClickHandler(this);
-        inlineHTML.setStyleName("v-link");
-        return inlineHTML;
+    public JmixClickableTextRenderer getRenderer() {
+        return (JmixClickableTextRenderer) super.getRenderer();
     }
 
     @Override
-    public void render(RendererCellReference cell, String text, InlineHTML inlineHTML) {
-        inlineHTML.setText(text);
+    protected HandlerRegistration addClickHandler(ClickableRenderer.RendererClickHandler<JsonObject> handler) {
+        return getRenderer().addClickHandler(handler);
     }
 }

@@ -28,26 +28,32 @@
  * the License.
  */
 
-package io.jmix.ui.widget.client.renderers.componentrenderer.detailskeys;
+package io.jmix.ui.widget.client.renderer.componentrenderer.focuspreserve;
 
-import com.vaadin.shared.communication.ServerRpc;
+import com.vaadin.shared.communication.ClientRpc;
 
 /**
- * Handles the expansion and collapsing of the detailsrow. It is necessary
- * to do that on server-side to keep the details-states of client and server-side
- * synced.
+ * Provides rpc-methods to save and restore the current focus of the grid. This
+ * is needed to preserve the current focus when issuing a full rerendering of
+ * the grid.
+ *
+ * <ul>
+ *     <li>save the current focus using {@link #saveFocus()}</li>
+ *     <li>rerender the grid</li>
+ *     <li>restore the current focus using {@link #restoreFocus()}</li>
+ * </ul>
  *
  * @author Jonas Hahn (jonas.hahn@datenhahn.de)
  */
-public interface DetailsOpenCloseServerRpc extends ServerRpc {
+public interface FocusPreservingRefreshClientRpc extends ClientRpc {
 
     /**
-     * Sets the details of a row visible or hidden.
-     *
-     * @param rowIndex the rowIndex of the row, this is the rowIndex of an IndexedContainer,
-     *                 this is NOT the rowId (= id in the container) or the
-     *                 rowKey (= internal key in client side grid implementation)
-     * @param visible set the details to visible (= true) or hidden (= false)
+     * Saves the grid's current focus in this extension's internal state.
      */
-    void setDetailsVisible(int rowIndex, boolean visible);
+    void saveFocus();
+
+    /**
+     * Restores the grid's focus from  extension's internal state.
+     */
+    void restoreFocus();
 }

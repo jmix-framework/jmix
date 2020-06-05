@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer;
 
-import com.vaadin.client.connectors.ImageRendererConnector;
-import com.vaadin.shared.ui.Connect;
+import com.google.gwt.core.shared.GWT;
+import io.jmix.ui.widget.client.renderer.widget.progressbar.JmixProgressBarWidget;
+import com.vaadin.client.renderers.ProgressBarRenderer;
 
-@Connect(io.jmix.ui.widget.renderer.JmixImageRenderer.class)
-public class JmixImageRendererConnector extends ImageRendererConnector {
+public class JmixProgressBarRenderer extends ProgressBarRenderer {
+
     @Override
-    public JmixImageRenderer getRenderer() {
-        return (JmixImageRenderer) super.getRenderer();
+    public JmixProgressBarWidget createWidget() {
+        JmixProgressBarWidget progressBar = GWT.create(JmixProgressBarWidget.class);
+        progressBar.addStyleDependentName("static");
+        progressBar.setClickThroughEnabled(true);
+        return progressBar;
     }
 }

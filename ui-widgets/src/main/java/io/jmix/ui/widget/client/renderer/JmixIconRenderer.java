@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer;
 
 import com.google.gwt.dom.client.Element;
 import com.vaadin.client.renderers.Renderer;

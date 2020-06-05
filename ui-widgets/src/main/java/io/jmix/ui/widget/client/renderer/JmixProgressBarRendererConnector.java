@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers.widgets.progressbar;
+package io.jmix.ui.widget.client.renderer;
 
-import io.jmix.ui.widget.client.grid.HasClickSettings;
-import com.vaadin.client.ui.VProgressBar;
+import com.vaadin.client.connectors.grid.ProgressBarRendererConnector;
+import com.vaadin.shared.ui.Connect;
 
-public class JmixProgressBarWidget extends VProgressBar implements HasClickSettings {
-    protected boolean clickThroughEnabled = false;
-
-    @Override
-    public boolean isClickThroughEnabled() {
-        return clickThroughEnabled;
-    }
+@Connect(io.jmix.ui.widget.renderer.JmixProgressBarRenderer.class)
+public class JmixProgressBarRendererConnector extends ProgressBarRendererConnector {
 
     @Override
-    public void setClickThroughEnabled(boolean enabled) {
-        clickThroughEnabled = enabled;
+    public JmixProgressBarRenderer getRenderer() {
+        return (JmixProgressBarRenderer) super.getRenderer();
     }
 }

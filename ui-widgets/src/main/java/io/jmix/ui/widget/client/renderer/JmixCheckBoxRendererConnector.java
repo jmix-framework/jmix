@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers.widgets.image;
+package io.jmix.ui.widget.client.renderer;
 
-import com.google.gwt.user.client.ui.Image;
-import io.jmix.ui.widget.client.grid.HasClickSettings;
+import com.vaadin.client.connectors.AbstractRendererConnector;
+import com.vaadin.shared.ui.Connect;
 
-public class JmixImageWidget extends Image implements HasClickSettings {
-    protected boolean clickThroughEnabled = false;
-
-    @Override
-    public boolean isClickThroughEnabled() {
-        return clickThroughEnabled;
-    }
+@Connect(io.jmix.ui.widget.renderer.JmixCheckBoxRenderer.class)
+public class JmixCheckBoxRendererConnector extends AbstractRendererConnector<Boolean> {
 
     @Override
-    public void setClickThroughEnabled(boolean enabled) {
-        clickThroughEnabled = enabled;
+    public JmixCheckBoxRenderer getRenderer() {
+        return (JmixCheckBoxRenderer) super.getRenderer();
     }
 }

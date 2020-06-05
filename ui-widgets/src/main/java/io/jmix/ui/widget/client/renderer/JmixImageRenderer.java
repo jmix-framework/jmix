@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Image;
-import io.jmix.ui.widget.client.renderers.widgets.image.JmixImageWidget;
+import io.jmix.ui.widget.client.renderer.widget.image.JmixImageWidget;
 import com.vaadin.client.renderers.ImageRenderer;
 import com.vaadin.client.widget.grid.RendererCellReference;
 

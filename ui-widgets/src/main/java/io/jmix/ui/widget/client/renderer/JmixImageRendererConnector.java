@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer;
 
-import com.vaadin.client.connectors.AbstractRendererConnector;
+import com.vaadin.client.connectors.ImageRendererConnector;
 import com.vaadin.shared.ui.Connect;
 
-@Connect(io.jmix.ui.widget.renderer.JmixCheckBoxRenderer.class)
-public class JmixCheckBoxRendererConnector extends AbstractRendererConnector<Boolean> {
-
+@Connect(io.jmix.ui.widget.renderer.JmixImageRenderer.class)
+public class JmixImageRendererConnector extends ImageRendererConnector {
     @Override
-    public JmixCheckBoxRenderer getRenderer() {
-        return (JmixCheckBoxRenderer) super.getRenderer();
+    public JmixImageRenderer getRenderer() {
+        return (JmixImageRenderer) super.getRenderer();
     }
 }

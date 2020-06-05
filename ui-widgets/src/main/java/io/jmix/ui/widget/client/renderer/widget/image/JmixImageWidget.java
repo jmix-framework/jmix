@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.renderers;
+package io.jmix.ui.widget.client.renderer.widget.image;
 
-import com.vaadin.client.connectors.grid.ProgressBarRendererConnector;
-import com.vaadin.shared.ui.Connect;
+import com.google.gwt.user.client.ui.Image;
+import io.jmix.ui.widget.client.grid.HasClickSettings;
 
-@Connect(io.jmix.ui.widget.renderer.JmixProgressBarRenderer.class)
-public class JmixProgressBarRendererConnector extends ProgressBarRendererConnector {
+public class JmixImageWidget extends Image implements HasClickSettings {
+    protected boolean clickThroughEnabled = false;
 
     @Override
-    public JmixProgressBarRenderer getRenderer() {
-        return (JmixProgressBarRenderer) super.getRenderer();
+    public boolean isClickThroughEnabled() {
+        return clickThroughEnabled;
+    }
+
+    @Override
+    public void setClickThroughEnabled(boolean enabled) {
+        clickThroughEnabled = enabled;
     }
 }

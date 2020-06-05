@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,7 +34,10 @@ public class CoreProperties {
     String webHostName;
     String webPort;
     String confDir;
+    String workDir;
+    String tempDir;
     String dbDir;
+    String defaultFileStorage;
     private String anonymousAuthenticationTokenKey;
     Map<String, Locale> availableLocales;
     boolean localeSelectVisible;
@@ -47,6 +51,8 @@ public class CoreProperties {
             String webHostName,
             String webPort,
             String confDir,
+            String workDir,
+            String tempDir,
             String dbDir,
             Map<String, String> availableLocales,
             @DefaultValue("true") boolean localeSelectVisible,
@@ -54,14 +60,17 @@ public class CoreProperties {
             @DefaultValue("true") boolean idGenerationForEntitiesInAdditionalDataStoresEnabled,
             @DefaultValue("100") int dom4jMaxPoolSize,
             @DefaultValue("1000") int dom4jMaxBorrowWaitMillis,
-            @DefaultValue("de72c623-6d3d-458c-a187-c526de515ecd") String anonymousAuthenticationTokenKey
-
+            @DefaultValue("de72c623-6d3d-458c-a187-c526de515ecd") String anonymousAuthenticationTokenKey,
+            String defaultFileStorage
     ) {
         this.webContextName = webContextName;
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
+        this.workDir = workDir;
+        this.tempDir = tempDir;
         this.dbDir = dbDir;
+        this.defaultFileStorage = defaultFileStorage;
         this.anonymousAuthenticationTokenKey = anonymousAuthenticationTokenKey;
 
         if (availableLocales == null) {
@@ -105,8 +114,21 @@ public class CoreProperties {
         return confDir;
     }
 
+    public String getWorkDir() {
+        return workDir;
+    }
+
+    public String getTempDir() {
+        return tempDir;
+    }
+
     public String getDbDir() {
         return dbDir;
+    }
+
+    @Nullable
+    public String getDefaultFileStorage() {
+        return defaultFileStorage;
     }
 
     public Map<String, Locale> getAvailableLocales() {

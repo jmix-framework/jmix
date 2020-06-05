@@ -70,7 +70,8 @@ public class JmixCoreSecurityConfiguration extends WebSecurityConfigurerAdapter 
                     anonymousConfigurer.principal(anonymousUser);
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
                 })
-                .csrf().disable();
+                .csrf().disable()
+                .headers().frameOptions().sameOrigin();
     }
 
     //todo MG why?

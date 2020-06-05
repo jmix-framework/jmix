@@ -17,14 +17,22 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.HasOrientation;
+import io.jmix.ui.component.LookupComponent;
 
 /**
  * Component compatible with {@link Datasource}.
  *
  * @param <V> value type: single type or {@code Collection<I>}
  * @param <I> item type
- * @deprecated Use {@link io.jmix.ui.component.OptionsGroup}
+ * @deprecated Use either {@link io.jmix.ui.component.CheckBoxGroup}
+ * or {@link io.jmix.ui.component.RadioButtonGroup}
  */
 @Deprecated
-public interface OptionsGroup<V, I> extends OptionsField<V, I>, io.jmix.ui.component.OptionsGroup<V, I> {
+public interface OptionsGroup<V, I> extends OptionsField<V, I>, LookupComponent, Component.Focusable, HasOrientation {
+    String NAME = "optionsGroup";
+
+    boolean isMultiSelect();
+    void setMultiSelect(boolean multiselect);
 }

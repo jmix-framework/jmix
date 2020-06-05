@@ -30,7 +30,6 @@ import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Image;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.MaskedField;
-import io.jmix.ui.component.OptionsGroup;
 import io.jmix.ui.component.OptionsList;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.RadioButtonGroup;

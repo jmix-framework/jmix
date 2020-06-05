@@ -275,7 +275,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
     protected Field createFileUploadField(ComponentGenerationContext context) {
         FileUploadField fileUploadField = uiComponents.create(FileUploadField.NAME);
-        fileUploadField.setMode(FileUploadField.FileStoragePutMode.IMMEDIATE);
 
         fileUploadField.setUploadButtonCaption(null);
         fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));

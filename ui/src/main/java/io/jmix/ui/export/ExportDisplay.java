@@ -15,15 +15,12 @@
  */
 package io.jmix.ui.export;
 
-import io.jmix.core.entity.FileDescriptor;
 import io.jmix.ui.component.Frame;
 
 import javax.annotation.Nullable;
 
 /**
  * Generic interface to show data exported from the system.
- * <br>
- * Use client-specific implementation obtained by injection into a screen controller.
  */
 public interface ExportDisplay {
 
@@ -46,21 +43,22 @@ public interface ExportDisplay {
      */
     void show(ExportDataProvider dataProvider, String resourceName);
 
+    /**
+     * Export a file from file storage.
+     *
+     * @param fileReference file reference
+     * @param <R>           file reference type
+     */
+    <R> void show(R fileReference);
 
     /**
      * Export a file from file storage.
      *
-     * @param fileDescriptor file descriptor
-     * @param format         export format, can be null
+     * @param fileReference file reference
+     * @param <R>           file reference type
+     * @param format        export format, can be null
      */
-    void show(FileDescriptor fileDescriptor, @Nullable ExportFormat format);
-
-    /**
-     * Export a file from file storage.
-     *
-     * @param fileDescriptor file descriptor
-     */
-    void show(FileDescriptor fileDescriptor);
+    <R> void show(R fileReference, @Nullable ExportFormat format);
 
     /**
      * @return true if export display should open a new window with the file content
@@ -74,6 +72,8 @@ public interface ExportDisplay {
      */
     void setShowNewWindow(boolean showNewWindow);
 
-    /** INTERNAL. Don't call from application code. */
+    /**
+     * INTERNAL. Don't call from application code.
+     */
     void setFrame(Frame frame);
 }

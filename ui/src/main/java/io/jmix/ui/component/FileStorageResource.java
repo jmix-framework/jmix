@@ -16,13 +16,11 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.entity.FileDescriptor;
-
 /**
- * A resource that can be obtained from the <code>FileStorage</code> using the given <code>FileDescriptor</code>.
+ * A resource that can be obtained from the <code>FileStorage</code> using the given file reference.
  */
-public interface FileDescriptorResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
-    FileDescriptorResource setFileDescriptor(FileDescriptor fileDescriptor);
+public interface FileStorageResource<T> extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
+    FileStorageResource<T> setFileReference(T fileReference);
 
-    FileDescriptor getFileDescriptor();
+    T getFileReference();
 }

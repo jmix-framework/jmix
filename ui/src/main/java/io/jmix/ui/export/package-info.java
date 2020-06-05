@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright (c) 2008-2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.component;
 
-/**
- * Component for uploading files from client to server.
- */
-public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
-    String NAME = "upload";
+@NonNullApi
+package io.jmix.ui.export;
 
-    String getFileName();
-
-    /**
-     * Sets caption to be shown in the file download link next to upload button.
-     * <p>
-     * By default: "attachment (file_size Kb)".
-     */
-    void setFileName(String filename);
-}
+import org.springframework.lang.NonNullApi;

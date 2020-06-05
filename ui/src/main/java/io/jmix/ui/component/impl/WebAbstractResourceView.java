@@ -39,8 +39,7 @@ public abstract class WebAbstractResourceView<T extends AbstractEmbedded> extend
         builder.put(UrlResource.class, WebUrlResource.class);
         builder.put(ClasspathResource.class, WebClasspathResource.class);
         builder.put(ThemeResource.class, WebThemeResource.class);
-        // todo file descriptor
-//        builder.put(FileDescriptorResource.class, WebFileDescriptorResource.class);
+        builder.put(FileStorageResource.class, WebFileStorageResource.class);
         builder.put(FileResource.class, WebFileResource.class);
         builder.put(StreamResource.class, WebStreamResource.class);
         builder.put(RelativePathResource.class, WebRelativePathResource.class);

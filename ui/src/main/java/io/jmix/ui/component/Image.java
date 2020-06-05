@@ -17,7 +17,6 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.FileDescriptor;
 import io.jmix.ui.component.data.HasValueSource;
 
 import java.util.EventObject;
@@ -26,7 +25,7 @@ import java.util.function.Consumer;
 /**
  * The Image component is intended for displaying graphic content.
  */
-public interface Image extends ResourceView, HasValueSource<FileDescriptor> {
+public interface Image<T> extends ResourceView, HasValueSource<T> {
     String NAME = "image";
 
     /**

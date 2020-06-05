@@ -75,6 +75,8 @@ public class UiProperties {
     boolean htmlSanitizerEnabled;
     String iconsConfig;
     private boolean compositeMenu;
+    List<String> viewFileExtensions;
+    int saveExportedByteArrayDataThresholdBytes;
 
     public UiProperties(
             boolean testMode,
@@ -121,7 +123,9 @@ public class UiProperties {
             @DefaultValue("false") boolean allowAnonymousAccess,
             @DefaultValue("true") boolean htmlSanitizerEnabled,
             @DefaultValue("io.jmix.ui.icon.JmixIcon") String iconsConfig,
-            @DefaultValue("true") boolean compositeMenu
+            @DefaultValue("true") boolean compositeMenu,
+            @DefaultValue("htm,html,jpg,png,jpeg,pdf") List<String> viewFileExtensions,
+            @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes
 
     ) {
         this.testMode = testMode;
@@ -169,6 +173,8 @@ public class UiProperties {
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
         this.iconsConfig = iconsConfig;
         this.compositeMenu = compositeMenu;
+        this.viewFileExtensions = viewFileExtensions;
+        this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -401,5 +407,13 @@ public class UiProperties {
 
     public boolean isCompositeMenu() {
         return compositeMenu;
+    }
+
+    public List<String> getViewFileExtensions() {
+        return viewFileExtensions;
+    }
+
+    public int getSaveExportedByteArrayDataThresholdBytes() {
+        return saveExportedByteArrayDataThresholdBytes;
     }
 }

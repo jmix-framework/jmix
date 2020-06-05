@@ -16,14 +16,21 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.BoxLayout;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.FileUploadField;
+import io.jmix.ui.component.SingleFileUploadField;
+import io.jmix.ui.component.UploadField;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class FileUploadFieldLoader extends AbstractFieldLoader<FileUploadField> {
+public class FileUploadFieldLoader<T extends Field & SingleFileUploadField>
+        extends AbstractFieldLoader<T> {
 
     @Override
     public void loadComponent() {
@@ -63,7 +70,6 @@ public class FileUploadFieldLoader extends AbstractFieldLoader<FileUploadField> 
 
         loadFileSizeLimit();
 
-        loadMode(resultComponent, element);
         loadShowFileName(resultComponent, element);
 
         loadClearButton(resultComponent, element);
@@ -79,7 +85,7 @@ public class FileUploadFieldLoader extends AbstractFieldLoader<FileUploadField> 
         }
     }
 
-    protected void loadUploadButton(FileUploadField resultComponent, Element element) {
+    protected void loadUploadButton(SingleFileUploadField resultComponent, Element element) {
         String uploadButtonCaption = element.attributeValue("uploadButtonCaption");
         if (uploadButtonCaption != null) {
             resultComponent.setUploadButtonCaption(loadResourceString(uploadButtonCaption));
@@ -96,7 +102,7 @@ public class FileUploadFieldLoader extends AbstractFieldLoader<FileUploadField> 
         }
     }
 
-    protected void loadClearButton(FileUploadField resultComponent, Element element) {
+    protected void loadClearButton(SingleFileUploadField resultComponent, Element element) {
         String showClearButton = element.attributeValue("showClearButton");
         if (StringUtils.isNotEmpty(showClearButton)) {
             resultComponent.setShowClearButton(Boolean.valueOf(showClearButton));
@@ -118,17 +124,10 @@ public class FileUploadFieldLoader extends AbstractFieldLoader<FileUploadField> 
         }
     }
 
-    protected void loadShowFileName(FileUploadField resultComponent, Element element) {
+    protected void loadShowFileName(SingleFileUploadField resultComponent, Element element) {
         String showFileName = element.attributeValue("showFileName");
         if (StringUtils.isNotEmpty(showFileName)) {
             resultComponent.setShowFileName(Boolean.valueOf(showFileName));
-        }
-    }
-
-    protected void loadMode(FileUploadField resultComponent, Element element) {
-        String fileStoragePutMode = element.attributeValue("fileStoragePutMode");
-        if (StringUtils.isNotEmpty(fileStoragePutMode)) {
-            resultComponent.setMode(FileUploadField.FileStoragePutMode.valueOf(fileStoragePutMode));
         }
     }
 

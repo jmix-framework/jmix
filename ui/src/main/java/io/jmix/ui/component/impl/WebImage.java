@@ -17,13 +17,14 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.event.MouseEvents;
+import io.jmix.core.FileStorage;
+import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.Entity;
-import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.component.FileDescriptorResource;
+import io.jmix.ui.component.FileStorageResource;
 import io.jmix.ui.component.Image;
 import io.jmix.ui.component.Resource;
 import io.jmix.ui.component.StreamResource;
@@ -35,10 +36,10 @@ import org.springframework.beans.factory.InitializingBean;
 import java.io.ByteArrayInputStream;
 import java.util.function.Consumer;
 
-public class WebImage extends WebAbstractResourceView<JmixImage> implements Image, InitializingBean {
+public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements Image<T>, InitializingBean {
     protected static final String IMAGE_STYLENAME = "c-image";
 
-    protected ValueSource<FileDescriptor> valueSource;
+    protected ValueSource<T> valueSource;
 
     protected Subscription valueChangeSubscription;
     protected Subscription instanceChangeSubscription;
@@ -65,7 +66,7 @@ public class WebImage extends WebAbstractResourceView<JmixImage> implements Imag
     }
 
     @Override
-    public void setValueSource(ValueSource<FileDescriptor> valueSource) {
+    public void setValueSource(ValueSource<T> valueSource) {
         if (this.valueSource == valueSource) {
             return;
         }
@@ -104,13 +105,13 @@ public class WebImage extends WebAbstractResourceView<JmixImage> implements Imag
 
         valueChangeSubscription = valueSource.addValueChangeListener(event -> updateComponent());
         if (valueSource instanceof EntityValueSource) {
-            instanceChangeSubscription = ((EntityValueSource<Entity, FileDescriptor>) valueSource)
+            instanceChangeSubscription = ((EntityValueSource<Entity, T>) valueSource)
                     .addInstanceChangeListener(event -> updateComponent());
         }
     }
 
     @Override
-    public ValueSource<FileDescriptor> getValueSource() {
+    public ValueSource<T> getValueSource() {
         return valueSource;
     }
 
@@ -121,14 +122,10 @@ public class WebImage extends WebAbstractResourceView<JmixImage> implements Imag
         updateValue(resource);
     }
 
+    @SuppressWarnings("unchecked")
     protected Resource createImageResource(final Object resourceObject) {
         if (resourceObject == null) {
             return null;
-        }
-
-        if (resourceObject instanceof FileDescriptor) {
-            return createResource(FileDescriptorResource.class)
-                    .setFileDescriptor((FileDescriptor) resourceObject);
         }
 
         if (resourceObject instanceof byte[]) {
@@ -136,10 +133,19 @@ public class WebImage extends WebAbstractResourceView<JmixImage> implements Imag
                     .setStreamSupplier(() ->
                             new ByteArrayInputStream((byte[]) resourceObject));
         }
+        if (isFileReference(resourceObject)) {
+            return createResource(FileStorageResource.class)
+                    .setFileReference(resourceObject);
+        }
 
         throw new GuiDevelopmentException(
-                "The Image component supports only FileDescriptor and byte[] datasource property value binding",
-                getFrame().getId());
+                "The Image component does not support property value binding for the property of type: "
+                        + resourceObject.getClass().getName(), getFrame().getId());
+    }
+
+    protected boolean isFileReference(final Object resourceObject) {
+        FileStorage<?, ?> defaultFileStorage = beanLocator.get(FileStorageLocator.class).getDefault();
+        return defaultFileStorage.getReferenceType().isAssignableFrom(resourceObject.getClass());
     }
 
     @Override

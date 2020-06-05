@@ -33,7 +33,7 @@ public interface FileMultiUploadField extends UploadField {
     /**
      * Get uploads map
      *
-     * @return Map ( UUID - Id of file in FileUploadingAPI, String - FileName )
+     * @return Map ( UUID - Id of file in Temporary storage, String - FileName )
      */
     Map<UUID, String> getUploadsMap();
 

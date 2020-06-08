@@ -19,7 +19,10 @@ package io.jmix.ui.sys;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ScreenFacet;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.model.CollectionLoader;
+import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.model.InstanceLoader;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
@@ -202,6 +205,9 @@ public class UiControllerPropertyInjector {
                         property.getValue(), property.getName(), frameOwner);
             }
 
+        } else if (CollectionLoader.class.isAssignableFrom(propType)
+                || InstanceLoader.class.isAssignableFrom(propType)) {
+            value = findLoader(stringProp);
         }
 
         return value;
@@ -247,5 +253,19 @@ public class UiControllerPropertyInjector {
         }
         return UiControllerUtils.getScreenData(host)
                 .getContainer(containerId);
+    }
+
+    @Nullable
+    protected DataLoader findLoader(String loaderId) {
+        FrameOwner host = frameOwner instanceof ScreenFragment
+                ? ((ScreenFragment) frameOwner).getHostController()
+                : frameOwner;
+
+        if (sourceScreen != null) {
+            return UiControllerUtils.getScreenData(sourceScreen)
+                    .getLoader(loaderId);
+        }
+        return UiControllerUtils.getScreenData(host)
+                .getLoader(loaderId);
     }
 }

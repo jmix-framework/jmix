@@ -28,6 +28,7 @@ import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.dynattr.JmixDynAttrConfiguration;
 import io.jmix.dynattrui.JmixDynAttrUiConfiguration;
+import io.jmix.fsfilestorage.JmixFileSystemFileStorageConfiguration;
 import io.jmix.ui.JmixUiConfiguration;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -41,7 +42,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @Import({JmixCoreConfiguration.class, JmixCubaConfiguration.class, JmixDataConfiguration.class, JmixUiConfiguration.class,
-        JmixDynAttrConfiguration.class, JmixDynAttrUiConfiguration.class})
+        JmixDynAttrConfiguration.class, JmixDynAttrUiConfiguration.class, JmixFileSystemFileStorageConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-app.properties")
 public class CoreTestConfiguration {
 

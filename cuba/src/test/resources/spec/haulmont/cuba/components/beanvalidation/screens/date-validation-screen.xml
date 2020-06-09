@@ -19,9 +19,9 @@
         messagesPack="spec.cuba.gui.components.validation.screens">
     <data>
         <instance id="dateValidationEntityDs"
-                  class="com.haulmont.cuba.web.testmodel.beanvalidation.DateValidationEntity"
+                  class="com.haulmont.cuba.web.model.beanvalidation.DateValidationEntity"
                   fetchPlan="_local">
-            <loader/>
+            <loader id="dateValidationLd"/>
         </instance>
     </data>
     <layout>

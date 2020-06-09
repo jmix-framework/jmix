@@ -25,7 +25,6 @@ import spock.lang.Ignore
 import org.springframework.beans.factory.annotation.Autowired
 import java.time.*
 
-@Ignore
 class DatePickerRangeTest extends UiScreenSpec {
 
     @Autowired

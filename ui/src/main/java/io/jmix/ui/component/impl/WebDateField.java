@@ -32,6 +32,7 @@ import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.data.ValueSource;
@@ -84,6 +85,7 @@ public class WebDateField<V extends Comparable<V>>
     protected ThemeConstants theme;
 
     protected Subscription parentEditableChangeSubscription;
+    protected Subscription valueSourceStateChangeSubscription;
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
 
@@ -503,9 +505,20 @@ public class WebDateField<V extends Comparable<V>>
         if (valueSource instanceof EntityValueSource) {
             EntityValueSource entityValueSource = (EntityValueSource) valueSource;
             DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
-            dataAwareComponentsTools.setupDateRange(this, entityValueSource);
             dataAwareComponentsTools.setupDateFormat(this, entityValueSource);
             dataAwareComponentsTools.setupZoneId(this, entityValueSource);
+
+            if (valueSourceStateChangeSubscription != null) {
+                valueSourceStateChangeSubscription.remove();
+            }
+
+            // setup dateRange after valueSource is activated and value is set because
+            // Vaadin dateField rejects value if it is not in range
+            valueSourceStateChangeSubscription = valueSource.addStateChangeListener(event -> {
+                if (event.getState() == BindingState.ACTIVE) {
+                    dataAwareComponentsTools.setupDateRange(this, entityValueSource);
+                }
+            });
         }
     }
 

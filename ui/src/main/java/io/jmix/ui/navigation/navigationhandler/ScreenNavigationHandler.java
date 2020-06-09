@@ -23,6 +23,7 @@ import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.PermissionType;
@@ -68,7 +69,9 @@ public class ScreenNavigationHandler implements NavigationHandler {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    private FetchPlanRepository fetchPlanRepository;
+    protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Override
     public boolean doHandle(NavigationState requestedState, AppUI ui) {
@@ -340,8 +343,12 @@ public class ScreenNavigationHandler implements NavigationHandler {
             return ParamsMap.of("item", metadata.create(entityClass));
         }
 
-        Class<?> idType = metaClass.getProperty("id")
-                .getJavaType();
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+        if (primaryKeyProperty == null) {
+            throw new IllegalStateException(String.format("Entity %s has no primary key", metaClass.getName()));
+        }
+
+        Class<?> idType = primaryKeyProperty.getJavaType();
         Object id = UrlIdSerializer.deserializeId(idType, idParam);
 
         LoadContext<?> ctx = new LoadContext(metaClass);

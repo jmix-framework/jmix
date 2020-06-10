@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.data.datagrid.DatasourceDataGridItems;
 import com.haulmont.cuba.gui.components.data.datagrid.SortableDatasourceDataGridItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -32,6 +33,11 @@ import io.jmix.ui.component.data.DataGridItems;
 @SuppressWarnings("rawtypes, unchecked")
 @Deprecated
 public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E> {
+
+    static <T extends Entity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
+        return new TypeToken<DataGrid<T>>() {
+        };
+    }
 
     /**
      * @return the DataGrid data source

@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.data.datagrid.DatasourceTreeDataGridItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -32,6 +33,10 @@ import io.jmix.ui.component.data.DataGridItems;
 @SuppressWarnings("rawtypes")
 @Deprecated
 public interface TreeDataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeDataGrid<E>, DataGrid<E> {
+
+    static <T extends Entity> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
+        return new TypeToken<TreeDataGrid<T>>() {};
+    }
 
     /**
      * @return the hierarchical data source

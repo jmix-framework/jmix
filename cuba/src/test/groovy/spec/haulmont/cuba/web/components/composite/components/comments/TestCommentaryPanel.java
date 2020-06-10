@@ -17,12 +17,12 @@
 package spec.haulmont.cuba.web.components.composite.components.comments;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.web.model.compositecomponent.Comment;
 import io.jmix.core.MetadataTools;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.ComponentContainer;
-import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;

@@ -16,19 +16,27 @@
 
 package io.jmix.ui.sys.vaadin;
 
-import com.vaadin.server.DefaultUIProvider;
-import com.vaadin.server.UIProvider;
-import com.vaadin.server.VaadinServletService;
-import com.vaadin.server.VaadinSession;
+import com.vaadin.server.*;
 import com.vaadin.spring.internal.UIScopeImpl;
 import com.vaadin.spring.internal.VaadinSessionScope;
 import com.vaadin.spring.server.SpringVaadinServlet;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 // Exposes JmixUIProvider with customized widgetset lookup
 public class JmixVaadinServlet extends SpringVaadinServlet {
+
+    @Override
+    protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration)
+            throws ServiceException {
+        JmixVaadinServletService service = new JmixVaadinServletService(this, deploymentConfiguration, getServiceUrlPath());
+        service.init();
+        return service;
+    }
+
+
     @Override
     protected void servletInitialized() {
         VaadinServletService service = getService();
@@ -56,5 +64,27 @@ public class JmixVaadinServlet extends SpringVaadinServlet {
             UIScopeImpl.cleanupSession(session);
             VaadinSessionScope.cleanupSession(session);
         });
+    }
+
+    @Override
+    protected String getStaticFilePath(HttpServletRequest request) {
+        String pathInfo = request.getPathInfo();
+        if (pathInfo == null) {
+            return null;
+        }
+
+        if (pathInfo.startsWith(JmixWebJarsHandler.WEBJARS_PATH_PREFIX)) {
+            // handled in JmixWebJarsHandler
+            return null;
+        }
+
+        String servletPrefixedPath = request.getServletPath() + pathInfo;
+
+        if (servletPrefixedPath.startsWith(JmixWebJarsHandler.WEBJARS_PATH_PREFIX)) {
+            // handled in JmixWebJarsHandler
+            return null;
+        }
+
+        return super.getStaticFilePath(request);
     }
 }

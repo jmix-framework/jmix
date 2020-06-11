@@ -35,6 +35,9 @@ dependencies {
 
     api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20191001.1'
 
+    api 'org.webjars:ace-builds'
+    api 'org.webjars:diff-match-patch'
+
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

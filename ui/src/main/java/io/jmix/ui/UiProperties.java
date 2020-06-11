@@ -77,6 +77,8 @@ public class UiProperties {
     private boolean compositeMenu;
     List<String> viewFileExtensions;
     int saveExportedByteArrayDataThresholdBytes;
+    long webJarResourcesCacheTime;
+    boolean productionMode;
 
     public UiProperties(
             boolean testMode,
@@ -125,8 +127,9 @@ public class UiProperties {
             @DefaultValue("io.jmix.ui.icon.JmixIcon") String iconsConfig,
             @DefaultValue("true") boolean compositeMenu,
             @DefaultValue("htm,html,jpg,png,jpeg,pdf") List<String> viewFileExtensions,
-            @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes
-
+            @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
+            @DefaultValue("31536000") long webJarResourcesCacheTime, // 60 * 60 * 24 * 365
+            @DefaultValue("true") boolean productionMode
     ) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
@@ -175,6 +178,8 @@ public class UiProperties {
         this.compositeMenu = compositeMenu;
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
+        this.webJarResourcesCacheTime = webJarResourcesCacheTime;
+        this.productionMode = productionMode;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -415,5 +420,20 @@ public class UiProperties {
 
     public int getSaveExportedByteArrayDataThresholdBytes() {
         return saveExportedByteArrayDataThresholdBytes;
+    }
+
+    /**
+     * Enables to configure whether WebJar resources should be cached or not.
+     * <p>
+     * Zero cache time disables caching at all.
+     *
+     * @return WebJar resources cache time in seconds
+     */
+    public long getWebJarResourcesCacheTime() {
+        return webJarResourcesCacheTime;
+    }
+
+    public boolean isProductionMode() {
+        return productionMode;
     }
 }

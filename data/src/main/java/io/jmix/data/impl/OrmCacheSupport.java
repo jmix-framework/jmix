@@ -34,7 +34,7 @@ import javax.persistence.EntityManagerFactory;
 @Component(OrmCacheSupport.NAME)
 public class OrmCacheSupport {
 
-    public static final String NAME = "jmix_OrmCacheSupport";
+    public static final String NAME = "data_OrmCacheSupport";
 
     @Autowired
     protected Metadata metadata;

@@ -26,7 +26,7 @@ import java.util.UUID;
  */
 public interface QueryCache {
 
-    String NAME = "jmix_QueryCache";
+    String NAME = "data_QueryCache";
 
     /**
      * Returns the query results associated with {@code queryKey} in this cache

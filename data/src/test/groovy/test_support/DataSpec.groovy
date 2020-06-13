@@ -16,8 +16,8 @@
 
 package test_support
 
-import io.jmix.core.JmixCoreConfiguration
-import io.jmix.data.JmixDataConfiguration
+import io.jmix.core.CoreConfiguration
+import io.jmix.data.DataConfiguration
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -26,7 +26,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixDataTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, DataTestConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DataSpec extends Specification {

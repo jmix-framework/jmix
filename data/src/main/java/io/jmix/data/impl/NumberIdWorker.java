@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component(NumberIdWorker.NAME)
 public class NumberIdWorker {
 
-    public static final String NAME = "jmix_NumberIdWorker";
+    public static final String NAME = "data_NumberIdWorker";
 
     @Autowired
     protected Metadata metadata;

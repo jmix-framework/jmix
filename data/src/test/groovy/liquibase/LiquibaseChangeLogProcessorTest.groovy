@@ -16,21 +16,21 @@
 
 package liquibase
 
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.JmixModules
 import io.jmix.core.Stores
-import io.jmix.data.JmixDataConfiguration
+import io.jmix.data.DataConfiguration
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
-import test_support.JmixDataTestConfiguration
+import test_support.DataTestConfiguration
 import test_support_modules.addon.TestAddonConfiguration
 import test_support_modules.app.TestAppConfiguration
 
 @ContextConfiguration(classes = [
-        JmixCoreConfiguration, JmixDataConfiguration, JmixDataTestConfiguration, TestAddonConfiguration, TestAppConfiguration])
+        CoreConfiguration, DataConfiguration, DataTestConfiguration, TestAddonConfiguration, TestAppConfiguration])
 class LiquibaseChangeLogProcessorTest extends Specification {
 
     @Autowired

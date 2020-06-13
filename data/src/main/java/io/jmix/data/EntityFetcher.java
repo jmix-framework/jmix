@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 @Component(EntityFetcher.NAME)
 public class EntityFetcher {
 
-    public static final String NAME = "jmix_EntityFetcher";
+    public static final String NAME = "data_EntityFetcher";
 
     private static final Logger log = LoggerFactory.getLogger(EntityFetcher.class);
 

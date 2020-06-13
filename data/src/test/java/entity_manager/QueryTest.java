@@ -17,8 +17,8 @@
 package entity_manager;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.data.JmixDataConfiguration;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.data.DataConfiguration;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.JmixQuery;
 import org.junit.jupiter.api.AfterEach;
@@ -32,7 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-import test_support.JmixDataTestConfiguration;
+import test_support.DataTestConfiguration;
 import test_support.entity.sales.Customer;
 
 import javax.persistence.EntityManager;
@@ -43,7 +43,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixDataTestConfiguration.class})
+@ContextConfiguration(classes = {CoreConfiguration.class, DataConfiguration.class, DataTestConfiguration.class})
 public class QueryTest {
 
     @PersistenceContext

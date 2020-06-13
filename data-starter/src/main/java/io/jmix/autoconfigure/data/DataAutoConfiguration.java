@@ -16,9 +16,9 @@
 
 package io.jmix.autoconfigure.data;
 
-import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.Stores;
-import io.jmix.data.JmixDataConfiguration;
+import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
@@ -35,8 +35,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@Import({JmixCoreConfiguration.class, JmixDataConfiguration.class})
-public class JmixDataAutoConfiguration {
+@Import({CoreConfiguration.class, DataConfiguration.class})
+public class DataAutoConfiguration {
 
     @Bean
     @Primary

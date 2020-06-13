@@ -38,7 +38,7 @@ import java.util.List;
 @Component(LiquibaseChangeLogProcessor.NAME)
 public class LiquibaseChangeLogProcessor {
 
-    public static final String NAME = "jmix_LiquibaseChangeLogProcessor";
+    public static final String NAME = "data_LiquibaseChangeLogProcessor";
 
     private Environment environment;
     private JmixModules jmixModules;

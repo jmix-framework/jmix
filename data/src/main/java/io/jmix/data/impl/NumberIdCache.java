@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentMap;
 @Component(NumberIdCache.NAME)
 public class NumberIdCache {
 
-    public static final String NAME = "jmix_NumberIdCache";
+    public static final String NAME = "data_NumberIdCache";
 
     @Autowired
     protected Metadata metadata;

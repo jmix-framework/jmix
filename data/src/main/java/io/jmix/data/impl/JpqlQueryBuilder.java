@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @Scope("prototype")
 public class JpqlQueryBuilder {
 
-    public static final String NAME = "jmix_OrmQueryBuilder";
+    public static final String NAME = "data_OrmQueryBuilder";
 
     private static final Logger log = LoggerFactory.getLogger(JpqlQueryBuilder.class);
 

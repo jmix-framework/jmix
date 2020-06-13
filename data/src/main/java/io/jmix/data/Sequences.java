@@ -20,7 +20,7 @@ package io.jmix.data;
  * Provides access to the database sequences.
  */
 public interface Sequences {
-    String NAME = "jmix_Sequences";
+    String NAME = "data_Sequences";
 
 
     /**

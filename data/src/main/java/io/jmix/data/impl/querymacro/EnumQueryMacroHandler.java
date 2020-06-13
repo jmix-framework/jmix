@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@Component("jmix_EnumQueryMacroHandler")
+@Component("data_EnumQueryMacroHandler")
 @Scope("prototype")
 public class EnumQueryMacroHandler extends AbstractQueryMacroHandler {
 

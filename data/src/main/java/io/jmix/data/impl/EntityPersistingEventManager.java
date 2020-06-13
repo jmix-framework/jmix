@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component(EntityPersistingEventManager.NAME)
 public class EntityPersistingEventManager {
 
-    public static final String NAME = "jmix_EntityPersistingEventManager";
+    public static final String NAME = "data_EntityPersistingEventManager";
 
     @Autowired
     protected Events events;

@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component(DbmsSpecifics.NAME)
 public class DbmsSpecifics {
 
-    public static final String NAME = "jmix_DbmsSpecifics";
+    public static final String NAME = "data_DbmsSpecifics";
 
     @Autowired
     protected DbmsType dbmsType;

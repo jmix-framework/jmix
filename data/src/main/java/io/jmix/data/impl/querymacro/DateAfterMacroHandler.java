@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("jmix_DateAfterQueryMacroHandler")
+@Component("data_DateAfterQueryMacroHandler")
 @Scope("prototype")
 public class DateAfterMacroHandler extends AbstractQueryMacroHandler {
 

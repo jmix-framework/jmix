@@ -44,7 +44,7 @@ import java.util.*;
 @Scope("prototype")
 public class DeletePolicyProcessor {
 
-    public static final String NAME = "jmix_DeletePolicyProcessor";
+    public static final String NAME = "data_DeletePolicyProcessor";
 
     private static final Logger log = LoggerFactory.getLogger(DeletePolicyProcessor.class);
 

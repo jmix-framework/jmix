@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 public interface NumberIdSource {
 
-    String NAME = "jmix_NumberIdSource";
+    String NAME = "data_NumberIdSource";
 
     Long createLongId(String entityName);
 

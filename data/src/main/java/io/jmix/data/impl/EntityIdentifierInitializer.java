@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Component(EntityIdentifierInitializer.NAME)
 public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
-    public static final String NAME = "jmix_EntityIdentifierInitializer";
+    public static final String NAME = "data_EntityIdentifierInitializer";
 
     @Autowired
     protected Metadata metadata;

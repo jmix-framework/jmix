@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @Component(QueryCacheManager.NAME)
 public class QueryCacheManager {
 
-    public static final String NAME = "jmix_QueryCacheManager";
+    public static final String NAME = "data_QueryCacheManager";
 
     @Autowired
     protected DataProperties properties;

@@ -64,7 +64,7 @@ import static io.jmix.core.entity.EntityValues.getValue;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class OrmDataStore implements DataStore {
 
-    public static final String NAME = "jmix_OrmDataStore";
+    public static final String NAME = "data_OrmDataStore";
 
     public static final String LOAD_TX_PREFIX = "OrmDataStore-load-";
     public static final String SAVE_TX_PREFIX = "OrmDataStore-save-";

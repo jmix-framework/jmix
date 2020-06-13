@@ -60,7 +60,7 @@ import static io.jmix.core.entity.EntityValues.getValue;
 @Component(PersistenceTools.NAME)
 public class PersistenceTools {
 
-    public static final String NAME = "jmix_PersistenceTools";
+    public static final String NAME = "data_PersistenceTools";
 
     @PersistenceContext
     protected EntityManager entityManager;

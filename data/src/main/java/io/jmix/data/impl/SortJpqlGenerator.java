@@ -34,7 +34,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Component(SortJpqlGenerator.NAME)
 public class SortJpqlGenerator {
-    public static final String NAME = "jmix_SortJpqlGenerator";
+    public static final String NAME = "data_SortJpqlGenerator";
 
     @Autowired
     protected Metadata metadata;

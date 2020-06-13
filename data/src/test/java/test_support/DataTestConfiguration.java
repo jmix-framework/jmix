@@ -18,7 +18,7 @@ package test_support;
 
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.data.JmixDataConfiguration;
+import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
@@ -40,8 +40,8 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = JmixDataConfiguration.class)
-public class JmixDataTestConfiguration {
+@JmixModule(dependsOn = DataConfiguration.class)
+public class DataTestConfiguration {
 
     @Bean
     @Primary

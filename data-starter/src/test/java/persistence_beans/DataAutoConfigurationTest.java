@@ -16,7 +16,7 @@
 
 package persistence_beans;
 
-import io.jmix.autoconfigure.data.JmixDataAutoConfiguration;
+import io.jmix.autoconfigure.data.DataAutoConfiguration;
 import io.jmix.core.Stores;
 import io.jmix.data.impl.JmixTransactionManager;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DataAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(DataSourceAutoConfiguration.class, JmixDataAutoConfiguration.class))
+            .withConfiguration(AutoConfigurations.of(DataSourceAutoConfiguration.class, DataAutoConfiguration.class))
             .withPropertyValues("jmix.data.dbmsType=hsql", "spring.datasource.url=jdbc:hsqldb:mem:testdb", "spring.datasource.username=sa");
 
     @Test

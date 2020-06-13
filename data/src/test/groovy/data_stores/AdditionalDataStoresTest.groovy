@@ -46,7 +46,7 @@ class AdditionalDataStoresTest extends DataSpec {
 
         then:
         dbCustMetaClass.getStore().name == 'db1'
-        dbCustMetaClass.getStore().descriptor.beanName == 'jmix_OrmDataStore'
+        dbCustMetaClass.getStore().descriptor.beanName == 'data_OrmDataStore'
         dbCustMetaClass.getStore().descriptor.persistent
 
         when:

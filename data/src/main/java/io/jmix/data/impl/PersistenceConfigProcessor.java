@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 @Component(PersistenceConfigProcessor.NAME)
 public class PersistenceConfigProcessor {
 
-    public static final String NAME = "jmix_PersistenceConfigProcessor";
+    public static final String NAME = "data_PersistenceConfigProcessor";
 
     private static final Logger log = LoggerFactory.getLogger(PersistenceConfigProcessor.class);
 

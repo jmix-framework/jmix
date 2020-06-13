@@ -26,7 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Table(name = "TEST_ENTITY_WITH_NON_PERSISTENT_REF")
-@Entity(name = "jmix_TestEntityWithNonPersistentRef")
+@Entity(name = "data_TestEntityWithNonPersistentRef")
 public class TestEntityWithNonPersistentRef extends StandardEntity {
     private static final long serialVersionUID = 4905445097979368646L;
 

@@ -62,7 +62,7 @@ import java.util.stream.Collectors;
 @Component(PersistenceSupport.NAME)
 public class PersistenceSupport implements ApplicationContextAware {
 
-    public static final String NAME = "jmix_PersistenceImplSupport";
+    public static final String NAME = "data_PersistenceImplSupport";
 
     public static final String RESOURCE_HOLDER_KEY = ContainerResourceHolder.class.getName();
 

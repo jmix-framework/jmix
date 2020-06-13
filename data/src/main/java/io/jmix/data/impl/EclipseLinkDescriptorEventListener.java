@@ -35,7 +35,7 @@ import java.util.List;
 @Component(EclipseLinkDescriptorEventListener.NAME)
 public class EclipseLinkDescriptorEventListener implements DescriptorEventListener {
 
-    public static final String NAME = "jmix_EclipseLinkDescriptorEventListener";
+    public static final String NAME = "data_EclipseLinkDescriptorEventListener";
 
     @Autowired
     protected EntityListenerManager manager;

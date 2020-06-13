@@ -27,7 +27,7 @@ import java.util.Collection;
  */
 public interface PersistenceSecurity {
 
-    String NAME = "jmix_PersistenceSecurity";
+    String NAME = "data_PersistenceSecurity";
 
     String CONSTRAINT_PARAM_SESSION_ATTR = "session$";
     String CONSTRAINT_PARAM_USER_LOGIN = "userLogin";

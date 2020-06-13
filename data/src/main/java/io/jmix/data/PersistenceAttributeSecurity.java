@@ -26,7 +26,7 @@ import java.util.Collection;
  */
 public interface PersistenceAttributeSecurity {
 
-    String NAME = "jmix_PersistenceAttributeSecurity";
+    String NAME = "data_PersistenceAttributeSecurity";
 
     FetchPlan createRestrictedFetchPlan(FetchPlan fetchPlan);
 

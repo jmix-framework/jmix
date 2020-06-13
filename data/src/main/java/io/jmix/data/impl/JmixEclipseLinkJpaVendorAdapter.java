@@ -31,7 +31,7 @@ import java.util.Map;
 @Component(JmixEclipseLinkJpaVendorAdapter.NAME)
 public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter {
 
-    public static final String NAME = "jmix_JmixEclipseLinkJpaVendorAdapter";
+    public static final String NAME = "data_JmixEclipseLinkJpaVendorAdapter";
 
     protected final EclipseLinkJpaDialect jpaDialect;
 

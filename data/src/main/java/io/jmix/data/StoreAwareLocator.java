@@ -33,7 +33,7 @@ import javax.sql.DataSource;
 @Component(StoreAwareLocator.NAME)
 public class StoreAwareLocator {
 
-    public static final String NAME = "jmix_StoreAwareLocator";
+    public static final String NAME = "data_StoreAwareLocator";
 
     @Autowired
     protected BeanLocator beanLocator;

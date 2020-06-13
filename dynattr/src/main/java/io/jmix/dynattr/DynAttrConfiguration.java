@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.dynattrui;
+package io.jmix.dynattr;
 
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.data.JmixDataConfiguration;
-import io.jmix.dynattr.JmixDynAttrConfiguration;
-import io.jmix.dynattrui.JmixDynAttrUiConfiguration;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.core.annotation.JmixModule;
+import io.jmix.data.DataConfiguration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixDynAttrConfiguration.class, JmixDynAttrUiConfiguration.class})
-public class JmixDynAttrUiAutoConfiguration {
+@ComponentScan
+@ConfigurationPropertiesScan
+@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+public class DynAttrConfiguration {
 }
-

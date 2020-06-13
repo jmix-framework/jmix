@@ -18,14 +18,14 @@ package dynamic_attributes
 
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.entity.EntityValues
-import io.jmix.data.JmixDataConfiguration
+import io.jmix.data.DataConfiguration
 import io.jmix.data.entity.ReferenceToEntity
 import io.jmix.dynattr.AttributeType
 import io.jmix.dynattr.DynAttrMetadata
-import io.jmix.dynattr.JmixDynAttrConfiguration
+import io.jmix.dynattr.DynAttrConfiguration
 import io.jmix.dynattr.impl.model.CategoryAttribute
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -39,7 +39,7 @@ import test_support.entity.UserRole
 
 import javax.sql.DataSource
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixDynAttrConfiguration, JmixDynAttrTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, DynAttrConfiguration, JmixDynAttrTestConfiguration])
 class DynamicAttributesTest extends Specification {
     @Autowired
     protected DataManager dataManager

@@ -56,7 +56,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@UiController("jmix_AttributeEnumerationScreen")
+@UiController("dynattr_AttributeEnumerationScreen")
 @UiDescriptor("attribute-enumeration-screen.xml")
 @DialogMode(forceDialog = true)
 public class AttributeEnumerationScreen extends Screen {

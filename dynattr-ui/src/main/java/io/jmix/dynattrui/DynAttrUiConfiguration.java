@@ -16,18 +16,17 @@
 
 package io.jmix.dynattrui;
 
-import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.dynattr.JmixDynAttrConfiguration;
-import io.jmix.ui.JmixUiConfiguration;
+import io.jmix.dynattr.DynAttrConfiguration;
+import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StandardScriptEvaluator;
 
@@ -36,8 +35,8 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDynAttrConfiguration.class, JmixUiConfiguration.class})
-public class JmixDynAttrUiConfiguration {
+@JmixModule(dependsOn = {CoreConfiguration.class, DynAttrConfiguration.class, UiConfiguration.class})
+public class DynAttrUiConfiguration {
 
     @Bean
     public ScriptEvaluator scriptEvaluator() {
@@ -46,7 +45,7 @@ public class JmixDynAttrUiConfiguration {
         return scriptEvaluator;
     }
 
-    @Bean("jmix_DynAttrUiUiControllers")
+    @Bean("dynattr_DynAttrUiUiControllers")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers

@@ -16,14 +16,14 @@
 
 package io.jmix.autoconfigure.dynattr;
 
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.data.JmixDataConfiguration;
-import io.jmix.dynattr.JmixDynAttrConfiguration;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.data.DataConfiguration;
+import io.jmix.dynattr.DynAttrConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixDynAttrConfiguration.class})
-public class JmixDynAttrAutoConfiguration {
+@Import({CoreConfiguration.class, DataConfiguration.class, DynAttrConfiguration.class})
+public class DynAttrAutoConfiguration {
 }
 

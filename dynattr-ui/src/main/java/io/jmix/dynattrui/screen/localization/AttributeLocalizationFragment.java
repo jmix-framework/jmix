@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-@UiController("jmix_AttributeLocalizationFragment")
+@UiController("dynattr_AttributeLocalizationFragment")
 @UiDescriptor("attribute-localization-fragment.xml")
 public class AttributeLocalizationFragment extends ScreenFragment {
 

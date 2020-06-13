@@ -55,7 +55,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@UiController("jmix_AttributeLocationFragment")
+@UiController("dynattr_AttributeLocationFragment")
 @UiDescriptor("attribute-location-fragment.xml")
 public class AttributeLocationFragment extends ScreenFragment {
 

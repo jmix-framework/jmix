@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.jmix.autoconfigure.dynattr.JmixDynAttrAutoConfiguration
+  io.jmix.autoconfigure.dynattr.DynAttrAutoConfiguration

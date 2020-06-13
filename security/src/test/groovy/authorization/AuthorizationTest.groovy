@@ -17,8 +17,8 @@
 package authorization
 
 
-import io.jmix.core.JmixCoreConfiguration
-import io.jmix.data.JmixDataConfiguration
+import io.jmix.core.CoreConfiguration
+import io.jmix.data.DataConfiguration
 import io.jmix.security.JmixSecurityConfiguration
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
@@ -26,7 +26,7 @@ import spock.lang.Ignore
 import spock.lang.Specification
 import test_support.JmixSecurityTestConfiguration
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixSecurityConfiguration, JmixSecurityTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, JmixSecurityConfiguration, JmixSecurityTestConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = standard"])
 //todo MG
 @Ignore

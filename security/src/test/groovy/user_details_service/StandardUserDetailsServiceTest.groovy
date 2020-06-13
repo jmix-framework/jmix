@@ -17,8 +17,8 @@
 package user_details_service
 
 import io.jmix.core.DataManager
-import io.jmix.core.JmixCoreConfiguration
-import io.jmix.data.JmixDataConfiguration
+import io.jmix.core.CoreConfiguration
+import io.jmix.data.DataConfiguration
 import io.jmix.data.PersistenceTools
 import io.jmix.security.JmixSecurityConfiguration
 import io.jmix.security.entity.User
@@ -31,7 +31,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixSecurityConfiguration, JmixSecurityTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, JmixSecurityConfiguration, JmixSecurityTestConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = standard"])
 class StandardUserDetailsServiceTest extends Specification {
 

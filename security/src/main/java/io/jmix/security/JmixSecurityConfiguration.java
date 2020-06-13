@@ -16,14 +16,14 @@
 
 package io.jmix.security;
 
-import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@JmixModule(dependsOn = JmixCoreConfiguration.class)
+@JmixModule(dependsOn = CoreConfiguration.class)
 @PropertySource(name = "io.jmix.security", value = "classpath:/io/jmix/security/module.properties")
 @Import(StandardSecurityConfiguration.class)
 public class JmixSecurityConfiguration {

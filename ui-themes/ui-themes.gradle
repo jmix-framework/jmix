@@ -18,7 +18,7 @@ import io.jmix.gradle.ui.ThemeCompile
 
 apply plugin: 'java'
 
-group = 'io.jmix.ui-themes'
+group = 'io.jmix.ui'
 
 configurations {
     themes

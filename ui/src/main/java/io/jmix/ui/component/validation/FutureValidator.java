@@ -37,7 +37,7 @@ import java.util.Date;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *    &lt;bean id="jmix_FutureValidator" class="io.jmix.ui.component.validation.FutureValidator" scope="prototype"/&gt;
+ *    &lt;bean id="ui_FutureValidator" class="io.jmix.ui.component.validation.FutureValidator" scope="prototype"/&gt;
  *    </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -48,7 +48,7 @@ import java.util.Date;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FutureValidator<T> extends AbstractValidator<T>   {
 
-    public static final String NAME = "jmix_FutureValidator";
+    public static final String NAME = "ui_FutureValidator";
 
     protected boolean checkSeconds = false;
 

@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 @Component(LayoutLoaderConfig.NAME)
 public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
-    public static final String NAME = "jmix_LayoutLoaderConfig";
+    public static final String NAME = "ui_LayoutLoaderConfig";
 
     private static final Logger log = LoggerFactory.getLogger(LayoutLoaderConfig.class);
 

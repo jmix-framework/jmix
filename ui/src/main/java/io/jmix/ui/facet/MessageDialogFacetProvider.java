@@ -36,7 +36,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @Component(MessageDialogFacetProvider.NAME)
 public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFacet> {
 
-    public static final String NAME = "jmix_MessageDialogFacetProvider";
+    public static final String NAME = "ui_MessageDialogFacetProvider";
 
     @Autowired
     protected MessageTools messageTools;

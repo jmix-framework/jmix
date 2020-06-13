@@ -36,7 +36,7 @@ import java.util.Collection;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="jmix_NotEmptyValidator" class="io.jmix.ui.component.validation.NotEmptyValidator" scope="prototype"/&gt;
+ *     &lt;bean id="ui_NotEmptyValidator" class="io.jmix.ui.component.validation.NotEmptyValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -46,7 +46,7 @@ import java.util.Collection;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotEmptyValidator<T> extends AbstractValidator<T> {
 
-    public static final String NAME = "jmix_NotEmptyValidator";
+    public static final String NAME = "ui_NotEmptyValidator";
 
     public NotEmptyValidator() {
     }

@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- io.jmix.autoconfigure.ui.JmixUiAutoConfiguration,io.jmix.autoconfigure.ui.vaadin.VaadinAutoConfiguration
+ io.jmix.autoconfigure.ui.UiAutoConfiguration,\
+ io.jmix.autoconfigure.ui.vaadin.VaadinAutoConfiguration

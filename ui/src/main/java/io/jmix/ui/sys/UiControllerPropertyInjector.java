@@ -48,7 +48,7 @@ public class UiControllerPropertyInjector {
 
     private static final Logger log = LoggerFactory.getLogger(UiControllerPropertyInjector.class);
 
-    public static final String NAME = "jmix_UiControllerPropertyInjector";
+    public static final String NAME = "ui_UiControllerPropertyInjector";
 
     protected final FrameOwner frameOwner;
     protected final Screen sourceScreen;

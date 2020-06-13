@@ -37,7 +37,7 @@ import java.lang.reflect.InvocationTargetException;
 @Component(LayoutLoader.NAME)
 public class LayoutLoader {
 
-    public static final String NAME = "jmix_LayoutLoader";
+    public static final String NAME = "ui_LayoutLoader";
 
     protected ComponentLoader.Context context;
     protected UiComponents factory;

@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toMap;
 @ParametersAreNonnullByDefault
 public class FacetLoader {
 
-    public static final String NAME = "jmix_FacetLoader";
+    public static final String NAME = "ui_FacetLoader";
 
     protected Map<String, FacetProvider> registrations = new HashMap<>();
 

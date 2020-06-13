@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,48 +14,43 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.ui;
+package io.jmix.ui;
 
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.core.JmixModules;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.ui.JmixUiConfiguration;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Collections;
 
 @Configuration
-@Import({JmixCoreConfiguration.class, JmixUiConfiguration.class})
-public class JmixUiAutoConfiguration {
+@ComponentScan
+@ConfigurationPropertiesScan
+@JmixModule(dependsOn = CoreConfiguration.class)
+@PropertySource(name = "io.jmix.ui", value = "classpath:/io/jmix/ui/module.properties")
+public class UiConfiguration {
 
-    @Bean("jmix_AppUiControllers")
-    @ConditionalOnMissingBean(name = "jmix_AppUiControllers")
-    public UiControllersConfiguration uiControllersConfiguration(
-            ApplicationContext applicationContext,
-            AnnotationScanMetadataReaderFactory metadataReaderFactory,
-            JmixModules jmixModules) {
-
+    @Bean("ui_UiControllers")
+    public UiControllersConfiguration screens(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        uiControllers.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
+        uiControllers.setBasePackages(Collections.singletonList("io.jmix.ui.app"));
         return uiControllers;
     }
 
-    @Bean("jmix_AppUiActions")
-    @ConditionalOnMissingBean(name = "jmix_AppUiActions")
-    public ActionsConfiguration actionsConfiguration(
-            ApplicationContext applicationContext,
-            AnnotationScanMetadataReaderFactory metadataReaderFactory,
-            JmixModules jmixModules) {
-
+    @Bean("ui_UiActions")
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
-        actionsConfiguration.setBasePackages(Collections.singletonList(jmixModules.getLast().getBasePackage()));
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.ui.action"));
         return actionsConfiguration;
     }
 }

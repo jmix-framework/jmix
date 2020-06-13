@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component(BeanPropertyValidator.NAME)
 public class BeanPropertyValidator extends AbstractBeanValidator {
 
-    public static final String NAME = "jmix_BeanPropertyValidator";
+    public static final String NAME = "ui_BeanPropertyValidator";
 
     public BeanPropertyValidator(Class beanClass, String beanProperty) {
         super(beanClass, beanProperty);

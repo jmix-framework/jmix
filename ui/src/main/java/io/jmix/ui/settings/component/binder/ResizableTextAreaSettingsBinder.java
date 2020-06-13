@@ -29,7 +29,7 @@ import io.jmix.ui.widget.JmixResizableTextAreaWrapper;
 @org.springframework.stereotype.Component(ResizableTextAreaSettingsBinder.NAME)
 public class ResizableTextAreaSettingsBinder implements ComponentSettingsBinder<ResizableTextArea, ResizableTextAreaSettings> {
 
-    public static final String NAME = "jmix_ResizableTextAreaSettingsBinder";
+    public static final String NAME = "ui_ResizableTextAreaSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

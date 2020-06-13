@@ -19,11 +19,11 @@ package test_support
 import io.jmix.core.AppBeans
 import io.jmix.core.Entity
 import io.jmix.core.EntityStates
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.*
-import io.jmix.data.JmixDataConfiguration
-import io.jmix.ui.JmixUiConfiguration
+import io.jmix.data.DataConfiguration
+import io.jmix.ui.UiConfiguration
 import org.springframework.transaction.support.TransactionTemplate
 import test_support.entity.TestNullableIdEntity
 import test_support.entity.TestNullableIdItemEntity
@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import static io.jmix.core.impl.StandardSerialization.deserialize
 import static io.jmix.core.impl.StandardSerialization.serialize
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, JmixUiConfiguration, JmixDataConfiguration, DataContextTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, DataContextTestConfiguration])
 class DataContextSpec extends Specification {
 
     @Autowired

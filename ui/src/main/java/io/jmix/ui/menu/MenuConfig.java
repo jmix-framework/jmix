@@ -49,7 +49,7 @@ public class MenuConfig {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
 
-    public static final String NAME = "jmix_MenuConfig";
+    public static final String NAME = "ui_MenuConfig";
 
     public static final String MENU_CONFIG_XML_PROP = "jmix.ui.menuConfig";
 

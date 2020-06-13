@@ -30,7 +30,7 @@ import java.io.InputStream;
 @Deprecated
 public class ScreenViewsLoader {
 
-    public static final String NAME = "jmix_ScreenViewsLoader";
+    public static final String NAME = "ui_ScreenViewsLoader";
 
 
     @Autowired

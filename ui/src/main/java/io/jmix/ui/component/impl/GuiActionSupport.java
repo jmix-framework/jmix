@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component(GuiActionSupport.NAME)
 public class GuiActionSupport {
 
-    public static final String NAME = "jmix_GuiActionSupport";
+    public static final String NAME = "ui_GuiActionSupport";
 
     @Autowired
     protected FetchPlanRepository viewRepository;

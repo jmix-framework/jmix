@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="jmix_RegexpValidator" class="io.jmix.ui.component.validation.RegexpValidator" scope="prototype"/&gt;
+ *     &lt;bean id="ui_RegexpValidator" class="io.jmix.ui.component.validation.RegexpValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 @Component(RegexpValidator.NAME)
 public class RegexpValidator extends AbstractValidator<String> {
 
-    public static final String NAME = "jmix_RegexpValidator";
+    public static final String NAME = "ui_RegexpValidator";
 
     protected Pattern pattern;
 

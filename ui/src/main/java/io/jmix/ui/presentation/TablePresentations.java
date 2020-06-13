@@ -31,7 +31,7 @@ import java.util.Collection;
  */
 public interface TablePresentations {
 
-    String NAME = "jmix_Presentations";
+    String NAME = "ui_Presentations";
 
     /**
      * Returns the current active presentation or <code>null</code> if a current presentation didn't set

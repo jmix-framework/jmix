@@ -23,7 +23,7 @@ import com.vaadin.server.Resource;
  * all available {@link IconProvider} beans.
  */
 public interface IconResolver {
-    String NAME = "jmix_IconResolver";
+    String NAME = "ui_IconResolver";
 
     /**
      * Returns an instance of {@link Resource} by the given {@code iconPath}.

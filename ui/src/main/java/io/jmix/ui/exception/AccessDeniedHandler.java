@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component("jmix_AccessDeniedHandler")
+@Component("ui_AccessDeniedHandler")
 public class AccessDeniedHandler extends AbstractGenericExceptionHandler implements Ordered {
 
     @Autowired

@@ -55,7 +55,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 @Component(InputDialogFacetProvider.NAME)
 public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet> {
 
-    public static final String NAME = "jmix_InputDialogFacetProvider";
+    public static final String NAME = "ui_InputDialogFacetProvider";
 
     protected static final Pattern PARAM_TYPE_REGEX = Pattern.compile("^(\\w+)Parameter$");
 

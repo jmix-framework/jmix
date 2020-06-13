@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component("jmix_ScreenBuilderProcessor")
+@Component("ui_ScreenBuilderProcessor")
 public class ScreenBuilderProcessor {
 
     @SuppressWarnings("unchecked")

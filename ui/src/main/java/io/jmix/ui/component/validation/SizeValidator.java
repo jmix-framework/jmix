@@ -38,7 +38,7 @@ import java.util.Map;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="jmix_SizeValidator" class="io.jmix.ui.component.validation.SizeValidator" scope="prototype"/&gt;
+ *     &lt;bean id="ui_SizeValidator" class="io.jmix.ui.component.validation.SizeValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -48,7 +48,7 @@ import java.util.Map;
 @Component(SizeValidator.NAME)
 public class SizeValidator<T> extends AbstractValidator<T> {
 
-    public static final String NAME = "jmix_SizeValidator";
+    public static final String NAME = "ui_SizeValidator";
 
     protected int min;
     protected int max = Integer.MAX_VALUE;

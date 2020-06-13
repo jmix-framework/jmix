@@ -50,7 +50,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component("jmix_EditorBuilderProcessor")
+@Component("ui_EditorBuilderProcessor")
 public class EditorBuilderProcessor {
 
     @Autowired

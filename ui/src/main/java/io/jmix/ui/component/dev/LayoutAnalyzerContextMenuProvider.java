@@ -41,7 +41,7 @@ import static io.jmix.ui.app.core.dev.LayoutAnalyzerScreen.TIPS_LIST_PARAM;
 @Component(LayoutAnalyzerContextMenuProvider.NAME)
 public class LayoutAnalyzerContextMenuProvider {
 
-    public static final String NAME = "jmix_LayoutAnalyzerContextMenuProvider";
+    public static final String NAME = "ui_LayoutAnalyzerContextMenuProvider";
 
     @Autowired
     protected Messages messages;

@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-@Component("jmix_ScreenBuilders")
+@Component("ui_ScreenBuilders")
 public class ScreenBuilders {
     @Autowired
     protected EditorBuilderProcessor editorBuilderProcessor;

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  */
 public interface Icons {
 
-    String NAME = "jmix_Icons";
+    String NAME = "ui_Icons";
 
     Pattern ICON_NAME_REGEX = Pattern.compile("[A-Z_0-9]+");
 

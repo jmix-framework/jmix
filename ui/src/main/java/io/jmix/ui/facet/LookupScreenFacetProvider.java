@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LookupScreenFacetProvider
         extends AbstractEntityAwareScreenFacetProvider<LookupScreenFacet> {
 
-    public static final String NAME = "jmix_LookupScreenFacetProvider";
+    public static final String NAME = "ui_LookupScreenFacetProvider";
 
     @Autowired
     protected BeanLocator beanLocator;

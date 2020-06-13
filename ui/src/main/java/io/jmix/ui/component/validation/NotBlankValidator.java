@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *     &lt;bean id="jmix_NotBlankValidator" class="io.jmix.ui.component.validation.NotBlankValidator" scope="prototype"/&gt;
+ *     &lt;bean id="ui_NotBlankValidator" class="io.jmix.ui.component.validation.NotBlankValidator" scope="prototype"/&gt;
  *     </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  */
@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotBlankValidator extends AbstractValidator<String> {
 
-    public static final String NAME = "jmix_NotBlankValidator";
+    public static final String NAME = "ui_NotBlankValidator";
 
     public NotBlankValidator() {
     }

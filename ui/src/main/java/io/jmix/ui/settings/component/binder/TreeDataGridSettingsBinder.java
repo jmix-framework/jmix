@@ -31,7 +31,7 @@ import io.jmix.ui.settings.component.TreeDataGridSettings;
 @org.springframework.stereotype.Component(TreeDataGridSettingsBinder.NAME)
 public class TreeDataGridSettingsBinder extends AbstractDataGridSettingsBinder {
 
-    public static final String NAME = "jmix_TreeDataGridSettingsBinder";
+    public static final String NAME = "ui_TreeDataGridSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

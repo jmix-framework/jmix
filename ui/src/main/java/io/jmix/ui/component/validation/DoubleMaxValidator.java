@@ -43,7 +43,7 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
  * <pre>
- *   &lt;bean id="jmix_DoubleMaxValidator" class="io.jmix.ui.component.validation.DoubleMaxValidator" scope="prototype"/&gt;
+ *   &lt;bean id="ui_DoubleMaxValidator" class="io.jmix.ui.component.validation.DoubleMaxValidator" scope="prototype"/&gt;
  *   </pre>
  * Use {@link BeanLocator} when creating the validator programmatically.
  *
@@ -53,7 +53,7 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DoubleMaxValidator<T> extends AbstractValidator<T> {
 
-    public static final String NAME = "jmix_DoubleMaxValidator";
+    public static final String NAME = "ui_DoubleMaxValidator";
 
     protected Double max;
     protected boolean inclusive = true;

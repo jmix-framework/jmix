@@ -52,7 +52,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component("jmix_LookupBuilderProcessor")
+@Component("ui_LookupBuilderProcessor")
 public class LookupBuilderProcessor {
 
     @Autowired

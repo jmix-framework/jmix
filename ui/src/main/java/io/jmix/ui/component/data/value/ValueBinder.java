@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 @org.springframework.stereotype.Component(ValueBinder.NAME)
 public class ValueBinder {
 
-    public static final String NAME = "jmix_ValueBinder";
+    public static final String NAME = "ui_ValueBinder";
 
     @Autowired
     protected MessageTools messageTools;

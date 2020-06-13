@@ -19,5 +19,5 @@ package io.jmix.ui.settings.component.binder;
 @org.springframework.stereotype.Component(TableSettingsBinder.NAME)
 public class TableSettingsBinder extends AbstractTableSettingsBinder {
 
-    public static final String NAME = "jmix_TableSettingsBinder";
+    public static final String NAME = "ui_TableSettingsBinder";
 }

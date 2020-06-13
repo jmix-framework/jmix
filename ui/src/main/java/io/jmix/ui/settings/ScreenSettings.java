@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 public interface ScreenSettings {
 
-    String NAME = "jmix_ScreenSettings";
+    String NAME = "ui_ScreenSettings";
 
     /**
      * Set to true if screen settings changed manually. It will guarantee that settings will be persisted.

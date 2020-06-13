@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @org.springframework.stereotype.Component(OptionsBinder.NAME)
 public class OptionsBinder {
 
-    public static final String NAME = "jmix_OptionsBinder";
+    public static final String NAME = "ui_OptionsBinder";
 
     public <V> OptionsBinding<V> bind(Options<V> options, Component component,
                                       OptionsTarget<V> optionsTarget) {

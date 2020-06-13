@@ -26,7 +26,7 @@ import java.util.List;
 @Component(LoaderResolver.NAME)
 public class LoaderResolver {
 
-    public static final String NAME = "jmix_LoaderResolver";
+    public static final String NAME = "ui_LoaderResolver";
 
     @Autowired
     protected List<LoaderConfig> loaderConfigs;

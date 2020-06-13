@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Component(ActionCustomPropertyLoader.NAME)
 public class ActionCustomPropertyLoader {
 
-    public static final String NAME = "jmix_ActionCustomPropertyLoader";
+    public static final String NAME = "ui_ActionCustomPropertyLoader";
 
     private static final Logger log = LoggerFactory.getLogger(ActionCustomPropertyLoader.class);
 

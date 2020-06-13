@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Handles {@link EntityAccessException}.
  *
  */
-@Component("jmix_EntityAccessExceptionHandler")
+@Component("ui_EntityAccessExceptionHandler")
 public class EntityAccessExceptionHandler extends AbstractGenericExceptionHandler {
 
     @Autowired

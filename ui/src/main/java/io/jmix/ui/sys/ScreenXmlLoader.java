@@ -41,7 +41,7 @@ import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 @Component(ScreenXmlLoader.NAME)
 public class ScreenXmlLoader {
 
-    public static final String NAME = "jmix_ScreenXmlLoader";
+    public static final String NAME = "ui_ScreenXmlLoader";
 
     @Autowired
     protected Resources resources;

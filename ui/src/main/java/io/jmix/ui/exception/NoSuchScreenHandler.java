@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Handles {@link NoSuchScreenException}.
  *
  */
-@Component("jmix_NoSuchScreenHandler")
+@Component("ui_NoSuchScreenHandler")
 public class NoSuchScreenHandler extends AbstractGenericExceptionHandler implements Ordered {
 
     @Autowired

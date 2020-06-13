@@ -29,7 +29,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 @org.springframework.stereotype.Component(SplitPanelSettingsBinder.NAME)
 public class SplitPanelSettingsBinder implements ComponentSettingsBinder<SplitPanel, SplitPanelSettings> {
 
-    public static final String NAME = "jmix_SplitPanelSettingsBinder";
+    public static final String NAME = "ui_SplitPanelSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

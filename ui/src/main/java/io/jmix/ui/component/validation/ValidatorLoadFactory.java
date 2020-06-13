@@ -35,7 +35,7 @@ import java.util.function.BiFunction;
  */
 @Component(ValidatorLoadFactory.NAME)
 public class ValidatorLoadFactory {
-    public static final String NAME = "jmix_ValidatorFactory";
+    public static final String NAME = "ui_ValidatorFactory";
 
     protected BeanLocator beanLocator;
     protected MessageTools messageTools;

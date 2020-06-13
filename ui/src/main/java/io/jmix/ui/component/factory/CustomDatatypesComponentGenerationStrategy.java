@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @org.springframework.stereotype.Component(CustomDatatypesComponentGenerationStrategy.NAME)
 public class CustomDatatypesComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
-    public static final String NAME = "jmix_CustomDatatypesComponentGenerationStrategy";
+    public static final String NAME = "ui_CustomDatatypesComponentGenerationStrategy";
 
     @Autowired
     public CustomDatatypesComponentGenerationStrategy(Messages messages, GuiActionSupport guiActionSupport) {

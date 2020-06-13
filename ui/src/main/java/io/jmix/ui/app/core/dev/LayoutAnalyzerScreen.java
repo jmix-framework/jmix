@@ -36,7 +36,7 @@ import java.util.List;
         resizable = true,
         width = "600",
         height = "400")
-@UiController("jmix_LayoutAnalyzerScreen")
+@UiController("ui_LayoutAnalyzerScreen")
 @UiDescriptor("layout-analyzer.xml")
 public class LayoutAnalyzerScreen extends Screen {
 

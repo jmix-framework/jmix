@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
 public interface UiEventsMulticaster {
-    String NAME = "jmix_UiEventsMulticaster";
+    String NAME = "ui_UiEventsMulticaster";
 
     void addApplicationListener(ApplicationListener<?> listener);
 

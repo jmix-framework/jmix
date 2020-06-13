@@ -60,7 +60,7 @@ import java.util.stream.Collectors;
  */
 public abstract class App {
 
-    public static final String NAME = "jmix_App";
+    public static final String NAME = "ui_App";
     public static final String DEFAULT_THEME_NAME = "halo";
 
     public static final String USER_SESSION_ATTR = "userSessionId";

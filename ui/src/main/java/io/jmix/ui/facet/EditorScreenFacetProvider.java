@@ -33,7 +33,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class EditorScreenFacetProvider
         extends AbstractEntityAwareScreenFacetProvider<EditorScreenFacet> {
 
-    public static final String NAME = "jmix_EditorScreenFacetProvider";
+    public static final String NAME = "ui_EditorScreenFacetProvider";
 
     @Autowired
     protected Metadata metadata;

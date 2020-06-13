@@ -18,7 +18,7 @@ import io.jmix.gradle.JmixPlugin
 
 apply plugin: 'java'
 
-group = 'io.jmix.ui-widgets-compiled'
+group = 'io.jmix.ui'
 
 def uiWidgets = project(':modules:ui-widgets')
 def inputDir = new File(uiWidgets.buildDir, 'widgets')

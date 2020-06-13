@@ -50,7 +50,7 @@ import java.util.TimeZone;
 @Component(DataAwareComponentsTools.NAME)
 public class DataAwareComponentsTools {
 
-    public static final String NAME = "jmix_DataAwareComponentsTools";
+    public static final String NAME = "ui_DataAwareComponentsTools";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

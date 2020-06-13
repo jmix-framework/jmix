@@ -21,7 +21,7 @@ import com.google.common.cache.CacheBuilder;
 import org.dom4j.Document;
 import org.springframework.stereotype.Component;
 
-@Component("jmix_ScreenXmlDocumentCache")
+@Component("ui_ScreenXmlDocumentCache")
 public class ScreenXmlDocumentCache {
     protected Cache<String, Document> cache;
 

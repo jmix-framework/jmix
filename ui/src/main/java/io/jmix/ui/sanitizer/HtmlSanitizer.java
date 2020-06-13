@@ -42,7 +42,7 @@ import static io.jmix.ui.component.HtmlAttributes.CSS.FONT;
 @Component(HtmlSanitizer.NAME)
 public class HtmlSanitizer {
 
-    public static final String NAME = "jmix_HtmlSanitizer";
+    public static final String NAME = "ui_HtmlSanitizer";
 
     /**
      * Font size regexp. Intended to match size attribute value of font element.

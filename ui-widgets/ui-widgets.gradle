@@ -19,7 +19,7 @@ import io.jmix.gradle.ui.WidgetsCompile
 apply plugin: 'java'
 apply plugin: 'java-library'
 
-group = 'io.jmix.ui-widgets'
+group = 'io.jmix.ui'
 
 def jmixUi = rootProject.project(':modules:ui')
 

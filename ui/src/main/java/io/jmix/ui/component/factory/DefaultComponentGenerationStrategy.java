@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DefaultComponentGenerationStrategy.NAME)
 public class DefaultComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-    public static final String NAME = "jmix_DefaultMetaComponentStrategy";
+    public static final String NAME = "ui_DefaultMetaComponentStrategy";
 
     @Autowired
     public DefaultComponentGenerationStrategy(Messages messages,

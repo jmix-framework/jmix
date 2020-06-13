@@ -26,7 +26,7 @@ import java.util.List;
  */
 @org.springframework.stereotype.Component(UiComponentsGenerator.NAME)
 public class UiComponentsGenerator {
-    public static final String NAME = "jmix_UiComponentsGenerator";
+    public static final String NAME = "ui_UiComponentsGenerator";
 
     @Autowired
     protected List<ComponentGenerationStrategy> componentGenerationStrategies;

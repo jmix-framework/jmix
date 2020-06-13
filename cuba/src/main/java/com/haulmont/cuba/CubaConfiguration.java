@@ -27,11 +27,11 @@ import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.data.JmixDataConfiguration;
-import io.jmix.dynattr.JmixDynAttrConfiguration;
-import io.jmix.dynattrui.JmixDynAttrUiConfiguration;
-import io.jmix.fsfilestorage.JmixFileSystemFileStorageConfiguration;
-import io.jmix.ui.JmixUiConfiguration;
+import io.jmix.data.DataConfiguration;
+import io.jmix.dynattr.DynAttrConfiguration;
+import io.jmix.dynattrui.DynAttrUiConfiguration;
+import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
+import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.screen.FrameOwner;
@@ -54,10 +54,10 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixUiConfiguration.class,
-        JmixDynAttrConfiguration.class, JmixDynAttrUiConfiguration.class, JmixFileSystemFileStorageConfiguration.class})
+@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class,
+        DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class})
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
-public class JmixCubaConfiguration {
+public class CubaConfiguration {
 
     protected BeanLocator beanLocator;
     protected UiControllerReflectionInspector uiControllerReflectionInspector;

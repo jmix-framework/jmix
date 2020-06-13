@@ -30,7 +30,7 @@ dependencies {
     api project(':modules:security')
     api project(':modules:dynattr')
     api project(':modules:dynattr-ui')
-    api project(':modules:filestorage-fs')
+    api project(':modules:fsfilestorage')
 
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

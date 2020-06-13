@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.web.testsupport;
 
-import com.haulmont.cuba.JmixCubaConfiguration;
+import com.haulmont.cuba.CubaConfiguration;
 import com.haulmont.cuba.core.model.common.UserEntityListener;
 import com.haulmont.cuba.core.testsupport.TestEventsListener;
 import com.haulmont.cuba.core.testsupport.TestJpqlSortExpressionProvider;
@@ -46,7 +46,7 @@ import java.util.Locale;
 @Configuration
 @Import({
         JmixSecurityConfiguration.class,
-        JmixCubaConfiguration.class})
+        CubaConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-app.properties")
 public class WebTestConfiguration {
 

@@ -37,7 +37,7 @@ import java.util.Collection;
 @Component(DomainModelBuilder.NAME)
 public class DomainModelBuilder {
 
-    public static final String NAME = "jmix_DomainModelBuilder";
+    public static final String NAME = "core_DomainModelBuilder";
 
     @Autowired
     protected Metadata metadata;

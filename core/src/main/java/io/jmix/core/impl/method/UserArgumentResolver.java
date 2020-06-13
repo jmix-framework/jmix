@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component(UserArgumentResolver.NAME)
 public class UserArgumentResolver extends TypedArgumentResolver<BaseUser> {
 
-    public static final String NAME = "jmix_UserArgumentResolver";
+    public static final String NAME = "core_UserArgumentResolver";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

@@ -29,7 +29,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-@DatatypeDef(id = "long", javaClass = Long.class, defaultForClass = true, value = "jmix_LongDatatype")
+@DatatypeDef(id = "long", javaClass = Long.class, defaultForClass = true, value = "core_LongDatatype")
 @io.jmix.core.metamodel.annotation.NumberFormat(
         pattern = "0"
 )

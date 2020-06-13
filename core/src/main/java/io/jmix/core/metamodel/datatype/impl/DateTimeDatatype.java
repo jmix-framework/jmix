@@ -32,7 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-@DatatypeDef(id = "dateTime", javaClass = Date.class, defaultForClass = true, value = "jmix_DateTimeDatatype")
+@DatatypeDef(id = "dateTime", javaClass = Date.class, defaultForClass = true, value = "core_DateTimeDatatype")
 @DateTimeFormat("yyyy-MM-dd HH:mm:ss.SSS")
 public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, TimeZoneAwareDatatype {
 

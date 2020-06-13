@@ -18,7 +18,7 @@ package security
 
 import test_support.addon1.TestAddon1Configuration
 import test_support.AppContextTestExecutionListener
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.security.Security
 import io.jmix.core.security.impl.CoreSecurityImpl
 import org.springframework.context.ApplicationContext
@@ -34,7 +34,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration])
+@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)

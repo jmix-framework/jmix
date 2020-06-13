@@ -27,7 +27,7 @@ import java.util.Locale;
  * Infrastructure interface for validation with JSR303 rules.
  */
 public interface BeanValidation {
-    String NAME = "jmix_BeanValidation";
+    String NAME = "core_BeanValidation";
 
     /**
      * Get default validator for current locale if there is current UserSession or with default locale.

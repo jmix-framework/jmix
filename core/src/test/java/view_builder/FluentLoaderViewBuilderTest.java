@@ -18,7 +18,7 @@ package view_builder;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.LoadContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +35,7 @@ import static io.jmix.core.FluentLoaderTestAccess.createLoadContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {JmixCoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
+@ContextConfiguration(classes = {CoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
 public class FluentLoaderViewBuilderTest {
 
     @Autowired

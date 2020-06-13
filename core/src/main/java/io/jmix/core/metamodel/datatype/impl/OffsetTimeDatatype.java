@@ -26,7 +26,7 @@ import java.time.format.FormatStyle;
 import java.time.temporal.TemporalQuery;
 import java.util.Locale;
 
-@DatatypeDef(id = "offsetTime", javaClass = OffsetTime.class, defaultForClass = true, value = "jmix_OffsetTimeDatatype")
+@DatatypeDef(id = "offsetTime", javaClass = OffsetTime.class, defaultForClass = true, value = "core_OffsetTimeDatatype")
 @DateTimeFormat("HH:mm:ss Z")
 public class OffsetTimeDatatype extends AbstractTemporalDatatype<OffsetTime> {
 

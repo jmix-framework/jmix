@@ -19,7 +19,7 @@ package file_storage;
 import com.google.common.io.ByteStreams;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
-import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.core.CoreConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {JmixCoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
+@ContextConfiguration(classes = {CoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
 public class FileStorageTest {
 
     @Autowired

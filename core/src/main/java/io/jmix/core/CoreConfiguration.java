@@ -42,14 +42,14 @@ import org.springframework.core.annotation.Order;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {})
 @PropertySource(name = "io.jmix.core", value = "classpath:/io/jmix/core/module.properties")
-public class JmixCoreConfiguration {
+public class CoreConfiguration {
 
-    @Bean("jmix_ModulesProcessor")
+    @Bean("core_ModulesProcessor")
     public static JmixModulesProcessor modulesProcessor() {
         return new JmixModulesProcessor();
     }
 
-    @Bean("jmix_Modules")
+    @Bean("core_Modules")
     public JmixModules modules(JmixModulesProcessor processor) {
         return processor.getJmixModules();
     }

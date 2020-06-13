@@ -31,7 +31,7 @@ import java.time.temporal.TemporalQuery;
 import java.util.Locale;
 import java.util.TimeZone;
 
-@DatatypeDef(id = "offsetDateTime", javaClass = OffsetDateTime.class, defaultForClass = true, value = "jmix_OffsetDateTimeDatatype")
+@DatatypeDef(id = "offsetDateTime", javaClass = OffsetDateTime.class, defaultForClass = true, value = "core_OffsetDateTimeDatatype")
 @DateTimeFormat("yyyy-MM-dd HH:mm:ss.SSS Z")
 public class OffsetDateTimeDatatype extends AbstractTemporalDatatype<OffsetDateTime>
         implements TimeZoneAwareDatatype {

@@ -16,7 +16,7 @@
 
 package metadata
 
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import org.springframework.test.context.ContextConfiguration
@@ -33,7 +33,7 @@ import test_support.base.entity.StandardEntity
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MetadataToolsTest extends Specification {

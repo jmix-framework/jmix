@@ -17,7 +17,7 @@
 package entity_collections
 
 import io.jmix.core.EntityReferencesNormalizer
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -31,7 +31,7 @@ import test_support.app.entity.sales.OrderLineA
 import test_support.app.entity.sales.Product
 import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestBaseConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class EntityReferencesNormalizerTest extends Specification {

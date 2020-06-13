@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component(EntitySystemStateSupport.NAME)
 public class EntitySystemStateSupport {
 
-    public static final String NAME = "jmix_EntitySystemStateSupport";
+    public static final String NAME = "core_EntitySystemStateSupport";
 
     public void copySystemState(Entity src, Entity dst) {
         dst.__getEntityEntry().copy(src.__getEntityEntry());

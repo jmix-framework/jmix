@@ -31,7 +31,7 @@ import java.util.Locale;
 @Component(BeanArgumentResolver.NAME)
 public class BeanArgumentResolver implements MethodArgumentResolver {
 
-    public static final String NAME = "jmix_BeanArgumentResolver";
+    public static final String NAME = "core_BeanArgumentResolver";
 
     @Autowired
     protected BeanLocator beanLocator;

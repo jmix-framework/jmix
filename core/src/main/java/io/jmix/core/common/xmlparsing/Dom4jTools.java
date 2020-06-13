@@ -42,7 +42,7 @@ import java.util.function.Function;
 @Component(Dom4jTools.NAME)
 public class Dom4jTools {
 
-    public static final String NAME = "jmix_Dom4jTools";
+    public static final String NAME = "core_Dom4jTools";
 
     protected CoreProperties properties;
 

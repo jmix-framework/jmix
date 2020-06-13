@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Component(ConditionXmlLoader.NAME)
 public class ConditionXmlLoader {
 
-    public static final String NAME = "jmix_ConditionXmlLoader";
+    public static final String NAME = "core_ConditionXmlLoader";
 
     private Map<String, Function<Element, Condition>> factories = new LinkedHashMap<>();
 

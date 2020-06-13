@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public interface DatatypeRegistry {
 
-    String NAME = "jmix_DatatypeRegistry";
+    String NAME = "core_DatatypeRegistry";
 
     /**
      * Get Datatype instance by its unique id

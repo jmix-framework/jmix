@@ -34,7 +34,7 @@ import java.util.Map;
 @Component(ExtendedEntities.NAME)
 public class ExtendedEntities {
 
-    public static final String NAME = "jmix_ExtendedEntities";
+    public static final String NAME = "core_ExtendedEntities";
 
     @Autowired
     protected Metadata metadata;

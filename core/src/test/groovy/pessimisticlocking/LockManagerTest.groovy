@@ -16,7 +16,7 @@
 
 package pessimisticlocking
 
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.pessimisticlocking.LockInfo
 import io.jmix.core.pessimisticlocking.LockManager
@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import static org.junit.jupiter.api.Assertions.assertNotNull
 import static org.junit.jupiter.api.Assertions.assertNull
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestAppConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestAppConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)

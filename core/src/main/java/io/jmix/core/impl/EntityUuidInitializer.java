@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Component(EntityUuidInitializer.NAME)
 public class EntityUuidInitializer implements EntityInitializer, Ordered {
-    public static final String NAME = "jmix_EntityUuidInitializer";
+    public static final String NAME = "core_EntityUuidInitializer";
 
     @Override
     public void initEntity(Entity entity) {

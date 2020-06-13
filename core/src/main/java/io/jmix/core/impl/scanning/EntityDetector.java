@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 
-@Component("jmix_EntityDetector")
+@Component("core_EntityDetector")
 public class EntityDetector implements ClasspathScanCandidateDetector {
 
     @Override

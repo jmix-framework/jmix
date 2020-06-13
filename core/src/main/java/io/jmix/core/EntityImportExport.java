@@ -23,7 +23,7 @@ import java.util.Collection;
  */
 public interface EntityImportExport {
 
-    String NAME = "jmix_EntityImportExport";
+    String NAME = "core_EntityImportExport";
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}

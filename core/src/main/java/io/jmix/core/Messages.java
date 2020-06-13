@@ -24,7 +24,7 @@ import java.util.Locale;
  */
 public interface Messages {
 
-    String NAME = "jmix_Messages";
+    String NAME = "core_Messages";
 
     /**
      * Returns localized message.<br>

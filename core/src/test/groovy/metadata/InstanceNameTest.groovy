@@ -17,7 +17,7 @@
 package metadata
 
 import io.jmix.core.InstanceNameProvider
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.security.ClientDetails
 import io.jmix.core.security.SystemAuthenticationToken
@@ -37,7 +37,7 @@ import test_support.app.entity.Owner
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Collectors
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class InstanceNameTest extends Specification {

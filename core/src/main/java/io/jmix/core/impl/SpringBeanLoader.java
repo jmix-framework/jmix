@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
-@Component("jmix_SpringBeanLoader")
+@Component("core_SpringBeanLoader")
 public class SpringBeanLoader implements BeanFactoryAware {
 
     protected DefaultListableBeanFactory beanFactory;

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.Locale;
 
-@DatatypeDef(id = "boolean", javaClass = Boolean.class, defaultForClass = true, value = "jmix_BooleanDatatype")
+@DatatypeDef(id = "boolean", javaClass = Boolean.class, defaultForClass = true, value = "core_BooleanDatatype")
 public class BooleanDatatype implements Datatype<Boolean> {
 
     @Autowired

@@ -16,7 +16,7 @@
 
 package entity_scanning
 
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner
 import io.jmix.core.impl.scanning.EntityDetector
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +27,7 @@ import spock.lang.Specification
 import test_support.AppContextTestExecutionListener
 import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestBaseConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class EntitiesScannerTest extends Specification {

@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * Detected class names are stored and available through the {@link #getClassNames(Class)} method. This method
  * accepts a {@code ClasspathScanCandidateDetector} type and returns names of classes selected by this detector.
  */
-@Component("jmix_JmixModulesClasspathScanner")
+@Component("core_JmixModulesClasspathScanner")
 public class JmixModulesClasspathScanner extends AbstractClasspathScanner {
 
     private static final Logger log = LoggerFactory.getLogger(JmixModulesClasspathScanner.class);

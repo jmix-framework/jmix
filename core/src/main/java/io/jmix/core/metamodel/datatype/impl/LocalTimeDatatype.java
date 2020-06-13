@@ -26,7 +26,7 @@ import java.time.format.FormatStyle;
 import java.time.temporal.TemporalQuery;
 import java.util.Locale;
 
-@DatatypeDef(id = "localTime", javaClass = LocalTime.class, defaultForClass = true, value = "jmix_LocalTimeDatatype")
+@DatatypeDef(id = "localTime", javaClass = LocalTime.class, defaultForClass = true, value = "core_LocalTimeDatatype")
 @DateTimeFormat("HH:mm:ss")
 public class LocalTimeDatatype extends AbstractTemporalDatatype<LocalTime> {
 

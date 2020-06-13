@@ -59,7 +59,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 @Component(MetaModelLoader.NAME)
 public class MetaModelLoader {
 
-    public static final String NAME = "jmix_MetaModelLoader";
+    public static final String NAME = "core_MetaModelLoader";
 
     protected static final String VALIDATION_MIN = "_min";
     protected static final String VALIDATION_MAX = "_max";

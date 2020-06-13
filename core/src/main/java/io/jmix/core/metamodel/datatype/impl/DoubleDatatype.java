@@ -29,7 +29,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-@DatatypeDef(id = "double", javaClass = Double.class, defaultForClass = true, value = "jmix_DoubleDatatype")
+@DatatypeDef(id = "double", javaClass = Double.class, defaultForClass = true, value = "core_DoubleDatatype")
 @io.jmix.core.metamodel.annotation.NumberFormat(
         pattern = "0.###",
         decimalSeparator = ".",

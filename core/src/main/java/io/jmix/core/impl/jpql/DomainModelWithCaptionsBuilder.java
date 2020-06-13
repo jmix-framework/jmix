@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Component(DomainModelWithCaptionsBuilder.NAME)
 public class DomainModelWithCaptionsBuilder extends DomainModelBuilder {
 
-    public static final String NAME = "jmix_DomainModelWithCaptionsBuilder";
+    public static final String NAME = "core_DomainModelWithCaptionsBuilder";
 
     public DomainModelWithCaptionsBuilder() {
         this.loadCaptions = true;

@@ -30,7 +30,7 @@ import java.util.Locale;
 @Component(LocaleArgumentResolver.NAME)
 public class LocaleArgumentResolver extends TypedArgumentResolver<Locale> {
 
-    public static final String NAME = "jmix_LocaleArgumentResolver";
+    public static final String NAME = "core_LocaleArgumentResolver";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

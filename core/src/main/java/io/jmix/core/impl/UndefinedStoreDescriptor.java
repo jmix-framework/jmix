@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component(UndefinedStoreDescriptor.NAME)
 public class UndefinedStoreDescriptor implements StoreDescriptor {
 
-    public static final String NAME = "jmix_UndefinedStoreDescriptor";
+    public static final String NAME = "core_UndefinedStoreDescriptor";
 
     @Override
     public String getBeanName() {

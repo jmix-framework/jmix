@@ -16,7 +16,7 @@
 
 package metadata
 
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.impl.MetadataLoader
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -28,7 +28,7 @@ import test_support.base.entity.BaseUuidEntity
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration])
+@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MetadataLoaderTest extends Specification {

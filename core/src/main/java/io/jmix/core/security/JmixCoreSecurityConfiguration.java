@@ -80,19 +80,19 @@ public class JmixCoreSecurityConfiguration extends WebSecurityConfigurerAdapter 
 //        registry.addInterceptor(userSessionCleanupInterceptor);
 //    }
 
-    @Bean(name = "jmix_authenticationManager")
+    @Bean(name = "core_authenticationManager")
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
-//    @Bean(name = "jmix_userDetailsService")
+//    @Bean(name = "core_userDetailsService")
 //    @Override
 //    public UserDetailsService userDetailsServiceBean() throws Exception {
 //        return super.userDetailsServiceBean();
 //    }
 
-    @Bean(name = "jmix_PasswordEncoder")
+    @Bean(name = "core_PasswordEncoder")
     public PasswordEncoder getPasswordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }

@@ -39,7 +39,7 @@ import java.util.*;
 @Component(Stores.NAME)
 public class Stores {
 
-    public static final String NAME = "jmix_Stores";
+    public static final String NAME = "core_Stores";
 
     public static final String MAIN = "main";
     public static final String NOOP = "noop";

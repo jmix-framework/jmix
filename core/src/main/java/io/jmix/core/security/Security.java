@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  */
 public interface Security {
 
-    String NAME = "jmix_Security";
+    String NAME = "core_Security";
 
     /**
      * Check if current user has permission to open a screen.

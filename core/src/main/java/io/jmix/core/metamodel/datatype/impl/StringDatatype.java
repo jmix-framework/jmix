@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import java.text.ParseException;
 import java.util.Locale;
 
-@DatatypeDef(id = "string", javaClass = String.class, defaultForClass = true, value = "jmix_StringDatatype")
+@DatatypeDef(id = "string", javaClass = String.class, defaultForClass = true, value = "core_StringDatatype")
 public class StringDatatype implements Datatype<String> {
 
     @Override

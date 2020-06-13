@@ -23,7 +23,7 @@ import java.util.List;
 
 public interface LockManager {
 
-    String NAME = "jmix_LockManager";
+    String NAME = "core_LockManager";
 
     /**
      * Try to lock an arbitrary object.

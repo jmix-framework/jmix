@@ -35,7 +35,7 @@ import java.io.InputStream;
  */
 public interface Resources extends ResourceLoader {
 
-    String NAME = "jmix_Resources";
+    String NAME = "core_Resources";
 
     /**
      * Searches for a resource according to the rules explained in {@link Resources} and returns the resource as stream

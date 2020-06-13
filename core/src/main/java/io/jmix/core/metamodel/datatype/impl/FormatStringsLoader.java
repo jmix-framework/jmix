@@ -33,7 +33,7 @@ import java.util.Locale;
 @Component(FormatStringsLoader.NAME)
 public class FormatStringsLoader {
 
-    public static final String NAME = "jmix_FormatStringsLoader";
+    public static final String NAME = "core_FormatStringsLoader";
 
     private static final Logger log = LoggerFactory.getLogger(FormatStringsRegistryImpl.class);
 

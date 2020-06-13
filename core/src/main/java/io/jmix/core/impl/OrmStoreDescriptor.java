@@ -22,11 +22,11 @@ import org.springframework.stereotype.Component;
 @Component(OrmStoreDescriptor.NAME)
 public class OrmStoreDescriptor implements StoreDescriptor {
 
-    public static final String NAME = "jmix_OrmStoreDescriptor";
+    public static final String NAME = "core_OrmStoreDescriptor";
 
     @Override
     public String getBeanName() {
-        return "jmix_OrmDataStore";
+        return "data_OrmDataStore";
     }
 
     @Override

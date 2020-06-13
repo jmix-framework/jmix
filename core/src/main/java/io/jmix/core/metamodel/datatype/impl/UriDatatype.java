@@ -25,7 +25,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Locale;
 
-@DatatypeDef(id = "uri", javaClass = URI.class, defaultForClass = true, value = "jmix_UriDatatype")
+@DatatypeDef(id = "uri", javaClass = URI.class, defaultForClass = true, value = "core_UriDatatype")
 public class UriDatatype implements Datatype<URI> {
 
     @Override

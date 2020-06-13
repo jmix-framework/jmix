@@ -39,7 +39,7 @@ import java.util.Map;
  */
 @Component(AnnotationLockDescriptorProvider.NAME)
 public class AnnotationLockDescriptorProvider implements LockDescriptorProvider {
-    public static final String NAME = "jmix_AnnotationLockDescriptorProvider";
+    public static final String NAME = "core_AnnotationLockDescriptorProvider";
 
     private final Logger log = LoggerFactory.getLogger(AnnotationLockDescriptorProvider.class);
 

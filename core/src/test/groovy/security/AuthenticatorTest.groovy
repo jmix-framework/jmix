@@ -16,7 +16,7 @@
 
 package security
 
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.entity.BaseUser
 import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.core.security.impl.AuthenticatorImpl
@@ -30,7 +30,7 @@ import test_support.AppContextTestExecutionListener
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [JmixCoreConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)

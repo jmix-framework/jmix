@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-@Component("jmix_JavaClassLoader")
+@Component("core_JavaClassLoader")
 public class JavaClassLoader extends URLClassLoader {
 
     private static final Logger log = LoggerFactory.getLogger(JavaClassLoader.class);

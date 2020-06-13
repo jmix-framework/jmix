@@ -28,7 +28,7 @@ import java.util.TimeZone;
  */
 public interface CurrentAuthentication {
 
-    String NAME = "jmix_CurrentAuthentication";
+    String NAME = "core_CurrentAuthentication";
 
     @Nullable
     Authentication getAuthentication();

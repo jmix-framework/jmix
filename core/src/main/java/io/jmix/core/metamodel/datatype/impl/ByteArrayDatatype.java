@@ -24,7 +24,7 @@ import java.text.ParseException;
 import java.util.Base64;
 import java.util.Locale;
 
-@DatatypeDef(id = "byteArray", javaClass = byte[].class, defaultForClass = true, value = "jmix_ByteArrayDatatype")
+@DatatypeDef(id = "byteArray", javaClass = byte[].class, defaultForClass = true, value = "core_ByteArrayDatatype")
 public class ByteArrayDatatype implements Datatype<byte[]> {
 
     @Override

@@ -18,7 +18,7 @@ package io.jmix.core.impl;
 
 import org.springframework.stereotype.Component;
 
-@Component("jmix_MetadataBuildSupport")
+@Component("core_MetadataBuildSupport")
 public class MetadataBuildSupport {
 
 //    @Autowired

@@ -30,7 +30,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Locale;
 
-@DatatypeDef(id = "decimal", javaClass = BigDecimal.class, defaultForClass = true, value = "jmix_BigDecimalDatatype")
+@DatatypeDef(id = "decimal", javaClass = BigDecimal.class, defaultForClass = true, value = "core_BigDecimalDatatype")
 @NumberFormat(
         pattern = "0.####",
         decimalSeparator = ".",

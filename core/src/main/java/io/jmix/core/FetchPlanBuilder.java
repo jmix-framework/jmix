@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FetchPlanBuilder {
 
-    public static final String NAME = "jmix_ViewBuilder";
+    public static final String NAME = "core_ViewBuilder";
 
     @Autowired
     protected BeanLocator beanLocator;

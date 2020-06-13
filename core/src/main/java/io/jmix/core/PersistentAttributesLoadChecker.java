@@ -17,7 +17,7 @@
 package io.jmix.core;
 
 public interface PersistentAttributesLoadChecker {
-    String NAME = "jmix_PersistentAttributesLoadChecker";
+    String NAME = "core_PersistentAttributesLoadChecker";
 
     boolean isLoaded(Object entity, String property);
 }

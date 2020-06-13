@@ -30,7 +30,7 @@ import java.util.List;
  */
 public interface DataManager {
 
-    String NAME = "jmix_DataManager";
+    String NAME = "core_DataManager";
 
     /**
      * Loads a single entity instance.

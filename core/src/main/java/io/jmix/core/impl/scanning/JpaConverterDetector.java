@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Converter;
 
-@Component("jmix_JpaConverterDetector")
+@Component("core_JpaConverterDetector")
 public class JpaConverterDetector implements ClasspathScanCandidateDetector {
 
     @Override

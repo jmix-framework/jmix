@@ -27,7 +27,7 @@ import java.util.Collection;
  */
 public interface InstanceNameProvider {
 
-    String NAME = "jmix_InstanceNameProvider";
+    String NAME = "core_InstanceNameProvider";
 
     /**
      * Get entity instance name defined by {@link InstanceName} annotation

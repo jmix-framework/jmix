@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Component(ConditionJpqlGenerator.NAME)
 public class ConditionJpqlGenerator {
 
-    public static final String NAME = "jmix_ConditionJpqlGenerator";
+    public static final String NAME = "core_ConditionJpqlGenerator";
 
     @Autowired
     private QueryTransformerFactory queryTransformerFactory;

@@ -20,7 +20,7 @@ import test_support.addon1.TestAddon1Configuration
 import test_support.AppContextTestExecutionListener
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Pet
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.MessageTools
 import io.jmix.core.Metadata
 import org.springframework.test.context.ContextConfiguration
@@ -29,7 +29,7 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MessageToolsTest extends Specification {

@@ -31,7 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(EntityEmbeddedInitializer.NAME)
 public class EntityEmbeddedInitializer implements EntityInitializer, Ordered {
-    public static final String NAME = "jmix_EntityEmbeddedInitializer";
+    public static final String NAME = "core_EntityEmbeddedInitializer";
 
     @Autowired
     protected Metadata metadata;

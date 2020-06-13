@@ -40,7 +40,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  */
 @Component(EntityStates.NAME)
 public class EntityStates {
-    public static final String NAME = "jmix_EntityStates";
+    public static final String NAME = "core_EntityStates";
 
     @Autowired
     protected PersistentAttributesLoadChecker checker;

@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component(DataStoreFactory.NAME)
 public class DataStoreFactory {
 
-    public static final String NAME = "jmix_DataStoreFactory";
+    public static final String NAME = "core_DataStoreFactory";
 
     protected Map<String, DataStore> dataStores = new ConcurrentHashMap<>();
 

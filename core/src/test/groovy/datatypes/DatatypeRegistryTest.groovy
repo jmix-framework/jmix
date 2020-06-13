@@ -17,7 +17,7 @@
 package datatypes
 
 import test_support.AppContextTestExecutionListener
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.datatype.impl.*
 import org.springframework.context.ApplicationContext
@@ -32,7 +32,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.OffsetTime
 
-@ContextConfiguration(classes = [JmixCoreConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DatatypeRegistryTest extends Specification {
@@ -46,22 +46,22 @@ class DatatypeRegistryTest extends Specification {
     def "context contains beans"() {
         when:
 
-        context.getBean('jmix_BooleanDatatype', BooleanDatatype)
-        context.getBean('jmix_IntegerDatatype', IntegerDatatype)
-        context.getBean('jmix_LongDatatype', LongDatatype)
-        context.getBean('jmix_BigDecimalDatatype', BigDecimalDatatype)
-        context.getBean('jmix_DoubleDatatype', DoubleDatatype)
-        context.getBean('jmix_StringDatatype', StringDatatype)
-        context.getBean('jmix_DateTimeDatatype', DateTimeDatatype)
-        context.getBean('jmix_DateDatatype', DateDatatype)
-        context.getBean('jmix_TimeDatatype', TimeDatatype)
-        context.getBean('jmix_LocalDateTimeDatatype', LocalDateTimeDatatype)
-        context.getBean('jmix_LocalDateDatatype', LocalDateDatatype)
-        context.getBean('jmix_LocalTimeDatatype', LocalTimeDatatype)
-        context.getBean('jmix_OffsetDateTimeDatatype', OffsetDateTimeDatatype)
-        context.getBean('jmix_OffsetTimeDatatype', OffsetTimeDatatype)
-        context.getBean('jmix_UuidDatatype', UuidDatatype)
-        context.getBean('jmix_ByteArrayDatatype', ByteArrayDatatype)
+        context.getBean('core_BooleanDatatype', BooleanDatatype)
+        context.getBean('core_IntegerDatatype', IntegerDatatype)
+        context.getBean('core_LongDatatype', LongDatatype)
+        context.getBean('core_BigDecimalDatatype', BigDecimalDatatype)
+        context.getBean('core_DoubleDatatype', DoubleDatatype)
+        context.getBean('core_StringDatatype', StringDatatype)
+        context.getBean('core_DateTimeDatatype', DateTimeDatatype)
+        context.getBean('core_DateDatatype', DateDatatype)
+        context.getBean('core_TimeDatatype', TimeDatatype)
+        context.getBean('core_LocalDateTimeDatatype', LocalDateTimeDatatype)
+        context.getBean('core_LocalDateDatatype', LocalDateDatatype)
+        context.getBean('core_LocalTimeDatatype', LocalTimeDatatype)
+        context.getBean('core_OffsetDateTimeDatatype', OffsetDateTimeDatatype)
+        context.getBean('core_OffsetTimeDatatype', OffsetTimeDatatype)
+        context.getBean('core_UuidDatatype', UuidDatatype)
+        context.getBean('core_ByteArrayDatatype', ByteArrayDatatype)
 
         then:
 
@@ -70,22 +70,22 @@ class DatatypeRegistryTest extends Specification {
 
     def "test"() {
 
-        def booleanDatatype = context.getBean('jmix_BooleanDatatype', BooleanDatatype)
-        def integerDatatype = context.getBean('jmix_IntegerDatatype', IntegerDatatype)
-        def longDatatype = context.getBean('jmix_LongDatatype', LongDatatype)
-        def bigDecimalDatatype = context.getBean('jmix_BigDecimalDatatype', BigDecimalDatatype)
-        def doubleDatatype = context.getBean('jmix_DoubleDatatype', DoubleDatatype)
-        def stringDatatype = context.getBean('jmix_StringDatatype', StringDatatype)
-        def dateTimeDatatype = context.getBean('jmix_DateTimeDatatype', DateTimeDatatype)
-        def dateDatatype = context.getBean('jmix_DateDatatype', DateDatatype)
-        def timeDatatype = context.getBean('jmix_TimeDatatype', TimeDatatype)
-        def localDateTimeDatatype = context.getBean('jmix_LocalDateTimeDatatype', LocalDateTimeDatatype)
-        def localDateDatatype = context.getBean('jmix_LocalDateDatatype', LocalDateDatatype)
-        def localTimeDatatype = context.getBean('jmix_LocalTimeDatatype', LocalTimeDatatype)
-        def offsetDateTimeDatatype = context.getBean('jmix_OffsetDateTimeDatatype', OffsetDateTimeDatatype)
-        def offsetTimeDatatype = context.getBean('jmix_OffsetTimeDatatype', OffsetTimeDatatype)
-        def uuidDatatype = context.getBean('jmix_UuidDatatype', UuidDatatype)
-        def byteArrayDatatype = context.getBean('jmix_ByteArrayDatatype', ByteArrayDatatype)
+        def booleanDatatype = context.getBean('core_BooleanDatatype', BooleanDatatype)
+        def integerDatatype = context.getBean('core_IntegerDatatype', IntegerDatatype)
+        def longDatatype = context.getBean('core_LongDatatype', LongDatatype)
+        def bigDecimalDatatype = context.getBean('core_BigDecimalDatatype', BigDecimalDatatype)
+        def doubleDatatype = context.getBean('core_DoubleDatatype', DoubleDatatype)
+        def stringDatatype = context.getBean('core_StringDatatype', StringDatatype)
+        def dateTimeDatatype = context.getBean('core_DateTimeDatatype', DateTimeDatatype)
+        def dateDatatype = context.getBean('core_DateDatatype', DateDatatype)
+        def timeDatatype = context.getBean('core_TimeDatatype', TimeDatatype)
+        def localDateTimeDatatype = context.getBean('core_LocalDateTimeDatatype', LocalDateTimeDatatype)
+        def localDateDatatype = context.getBean('core_LocalDateDatatype', LocalDateDatatype)
+        def localTimeDatatype = context.getBean('core_LocalTimeDatatype', LocalTimeDatatype)
+        def offsetDateTimeDatatype = context.getBean('core_OffsetDateTimeDatatype', OffsetDateTimeDatatype)
+        def offsetTimeDatatype = context.getBean('core_OffsetTimeDatatype', OffsetTimeDatatype)
+        def uuidDatatype = context.getBean('core_UuidDatatype', UuidDatatype)
+        def byteArrayDatatype = context.getBean('core_ByteArrayDatatype', ByteArrayDatatype)
 
         expect:
 

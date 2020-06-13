@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Component(QueryTransformerFactory.NAME)
 public class QueryTransformerFactory {
 
-    public static final String NAME = "jmix_QueryTransformerFactory";
+    public static final String NAME = "core_QueryTransformerFactory";
 
     protected volatile DomainModel domainModel;
 

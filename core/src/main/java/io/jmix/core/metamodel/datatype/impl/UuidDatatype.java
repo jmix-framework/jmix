@@ -24,7 +24,7 @@ import java.text.ParseException;
 import java.util.Locale;
 import java.util.UUID;
 
-@DatatypeDef(id = "uuid", javaClass = UUID.class, defaultForClass = true, value = "jmix_UuidDatatype")
+@DatatypeDef(id = "uuid", javaClass = UUID.class, defaultForClass = true, value = "core_UuidDatatype")
 public class UuidDatatype implements Datatype<UUID> {
 
     @Override

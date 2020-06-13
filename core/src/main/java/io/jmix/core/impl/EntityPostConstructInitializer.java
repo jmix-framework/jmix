@@ -39,7 +39,7 @@ import java.util.List;
 
 @Component(EntityPostConstructInitializer.NAME)
 public class EntityPostConstructInitializer implements EntityInitializer {
-    public static final String NAME = "jmix_EntityPostConstructInitializer";
+    public static final String NAME = "core_EntityPostConstructInitializer";
 
     @Autowired
     protected BeanLocator beanLocator;

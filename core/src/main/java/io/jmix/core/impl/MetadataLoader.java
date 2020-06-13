@@ -47,7 +47,7 @@ import java.util.Map;
 @Scope("prototype")
 public class MetadataLoader {
 
-    public static final String NAME = "jmix_MetadataLoader";
+    public static final String NAME = "core_MetadataLoader";
 
     private final Logger log = LoggerFactory.getLogger(MetadataLoader.class);
 

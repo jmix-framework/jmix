@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(HotDeployManager.NAME)
 public class HotDeployManager {
-    public static final String NAME = "jmix_HotDeployManager";
+    public static final String NAME = "core_HotDeployManager";
 
     @Autowired
     protected JavaClassLoader javaClassLoader;

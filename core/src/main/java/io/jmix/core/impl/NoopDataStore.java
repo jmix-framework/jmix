@@ -41,7 +41,7 @@ import java.util.Set;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NoopDataStore implements DataStore {
 
-    public static final String NAME = "jmix_NoopDataStore";
+    public static final String NAME = "core_NoopDataStore";
 
     protected String name;
 

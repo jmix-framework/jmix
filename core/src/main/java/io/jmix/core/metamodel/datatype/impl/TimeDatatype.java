@@ -37,7 +37,7 @@ import java.util.Map;
  * <code>TimeDatatype</code> works with <code>java.sql.Time</code> but is parametrized with <code>java.util.Date</code>
  * to avoid problems with casting.
  */
-@DatatypeDef(id = "time", javaClass = java.sql.Time.class, defaultForClass = true, value = "jmix_TimeDatatype")
+@DatatypeDef(id = "time", javaClass = java.sql.Time.class, defaultForClass = true, value = "core_TimeDatatype")
 @DateTimeFormat("HH:mm:ss")
 public class TimeDatatype implements Datatype<Date>, ParameterizedDatatype {
 

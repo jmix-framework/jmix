@@ -46,7 +46,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 public class FetchPlanLoader {
 
 
-    public static final String NAME = "jmix_FetchPlanLoader";
+    public static final String NAME = "core_FetchPlanLoader";
 
     private final Logger log = LoggerFactory.getLogger(FetchPlanLoader.class);
 

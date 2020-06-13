@@ -27,7 +27,7 @@ import java.util.Collection;
  */
 public interface EntitySerialization {
 
-    String NAME = "jmix_EntitySerialization";
+    String NAME = "core_EntitySerialization";
 
     String ENTITY_NAME_PROP = "_entityName";
     String INSTANCE_NAME_PROP = "_instanceName";

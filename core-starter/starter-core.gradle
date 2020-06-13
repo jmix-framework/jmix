@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+group = 'io.jmix.starter.core'
+
+dependencies {
+    api project(':modules:core')
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+}
+
+jar {
+    archivesBaseName = 'jmix-starter-core'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        javaMaven(MavenPublication) {
+            artifactId = 'jmix-starter-core'
+            from components.java
+        }
+    }
+}

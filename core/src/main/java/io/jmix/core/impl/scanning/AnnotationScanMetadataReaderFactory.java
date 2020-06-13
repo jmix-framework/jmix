@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component("jmix_AnnotationScanMetadataReaderFactory")
+@Component("core_AnnotationScanMetadataReaderFactory")
 public class AnnotationScanMetadataReaderFactory extends CachingMetadataReaderFactory {
 
     @Autowired

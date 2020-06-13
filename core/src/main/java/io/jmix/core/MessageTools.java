@@ -44,7 +44,7 @@ public class MessageTools {
      */
     public static final String MARK = "msg://";
 
-    public static final String NAME = "jmix_MessageTools";
+    public static final String NAME = "core_MessageTools";
 
     private static final Logger log = LoggerFactory.getLogger(MessageTools.class);
 

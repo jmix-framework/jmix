@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  */
 public interface Authenticator {
 
-    String NAME = "jmix_Authenticator";
+    String NAME = "core_Authenticator";
 
     /**
      * Begins an authenticated code block.

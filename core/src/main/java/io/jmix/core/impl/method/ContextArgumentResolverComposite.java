@@ -30,7 +30,7 @@ import java.util.List;
 @Component(ContextArgumentResolverComposite.NAME)
 public class ContextArgumentResolverComposite extends CachedArgumentResolverComposite {
 
-    public static final String NAME = "jmix_ContextArgumentResolverComposite";
+    public static final String NAME = "core_ContextArgumentResolverComposite";
 
     @Autowired
     protected List<MethodArgumentResolver> resolvers;

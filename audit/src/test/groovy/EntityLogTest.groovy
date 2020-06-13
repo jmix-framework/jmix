@@ -26,10 +26,10 @@ import test_support.testmodel.StringKeyEntity
 class EntityLogTest extends AbstractEntityLogTest {
 
     void setup() {
-        clearTables("SEC_LOGGED_ATTR", "SEC_LOGGED_ENTITY")
+        clearTables("AUDIT_LOGGED_ATTR", "AUDIT_LOGGED_ENTITY")
 
         withTransaction {
-            clearTable(em, "SEC_ENTITY_LOG")
+            clearTable(em, "AUDIT_ENTITY_LOG")
             initEntityLogConfiguration()
         }
 
@@ -47,7 +47,7 @@ class EntityLogTest extends AbstractEntityLogTest {
 
 
     void cleanup() {
-        clearTables("SEC_LOGGED_ATTR", "SEC_LOGGED_ENTITY")
+        clearTables("AUDIT_LOGGED_ATTR", "AUDIT_LOGGED_ENTITY")
     }
 
 

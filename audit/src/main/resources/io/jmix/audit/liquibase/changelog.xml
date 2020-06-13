@@ -7,7 +7,7 @@
 
     <changeSet author="audit" id="1.0">
 
-        <createTable tableName="SEC_LOGGED_ENTITY">
+        <createTable tableName="AUDIT_LOGGED_ENTITY">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -20,7 +20,7 @@
             <column name="MANUAL" type="boolean"/>
         </createTable>
 
-        <createTable tableName="SEC_LOGGED_ATTR">
+        <createTable tableName="AUDIT_LOGGED_ATTR">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -28,19 +28,19 @@
             <column name="CREATED_BY" type="varchar(50)"/>
             <column name="ENTITY_ID" type="uuid">
                 <constraints nullable="false"
-                             foreignKeyName="FK_SEC_LOGGED_ATTR_ENTITY"
-                             references="SEC_LOGGED_ENTITY(ID)"/>
+                             foreignKeyName="FK_AUDIT_LOGGED_ATTR_ENTITY"
+                             references="AUDIT_LOGGED_ENTITY(ID)"/>
             </column>
             <column name="NAME" type="varchar(50)"/>
         </createTable>
 
         <addUniqueConstraint
                 columnNames="ENTITY_ID, NAME"
-                constraintName="SEC_LOGGED_ATTR_UNIQ_NAME"
-                tableName="SEC_LOGGED_ATTR"
+                constraintName="AUDIT_LOGGED_ATTR_UNIQ_NAME"
+                tableName="AUDIT_LOGGED_ATTR"
         />
 
-        <createTable tableName="SEC_ENTITY_LOG">
+        <createTable tableName="AUDIT_ENTITY_LOG">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

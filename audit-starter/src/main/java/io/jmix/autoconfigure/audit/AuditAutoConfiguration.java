@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.auditui;
+package io.jmix.autoconfigure.audit;
 
-import io.jmix.audit.JmixAuditConfiguration;
-import io.jmix.auditui.JmixAuditUiConfiguration;
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.ui.JmixUiConfiguration;
+import io.jmix.audit.AuditConfiguration;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.data.DataConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({JmixCoreConfiguration.class, JmixUiConfiguration.class, JmixAuditConfiguration.class, JmixAuditUiConfiguration.class})
-public class JmixAuditUiAutoConfiguration {
+@Import({CoreConfiguration.class, DataConfiguration.class, AuditConfiguration.class})
+public class AuditAutoConfiguration {
 }
+

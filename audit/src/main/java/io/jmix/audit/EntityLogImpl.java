@@ -362,7 +362,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         entitiesAuto = new HashMap<>();
         transaction.executeWithoutResult(status -> {
             TypedQuery<LoggedEntity> q = entityManager.createQuery(
-                    "select e from sec$LoggedEntity e where e.auto = true or e.manual = true",
+                    "select e from audit_LoggedEntity e where e.auto = true or e.manual = true",
                     LoggedEntity.class);
             List<LoggedEntity> list = q.getResultList();
             for (LoggedEntity loggedEntity : list) {

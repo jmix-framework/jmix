@@ -16,7 +16,7 @@
 
 package test_support;
 
-import io.jmix.audit.JmixAuditConfiguration;
+import io.jmix.audit.AuditConfiguration;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
@@ -38,8 +38,8 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = JmixAuditConfiguration.class)
-public class JmixAuditTestConfiguration {
+@JmixModule(dependsOn = AuditConfiguration.class)
+public class AuditTestConfiguration {
     @Bean
     @Primary
     DataSource dataSource() {

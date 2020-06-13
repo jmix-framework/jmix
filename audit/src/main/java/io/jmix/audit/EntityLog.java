@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  */
 public interface EntityLog {
 
-    String NAME = "jmix_EntityLog";
+    String NAME = "audit_EntityLog";
 
     boolean isEnabled();
 

@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Record containing changed entity attribute.
  */
-@ModelObject(name = "sec$EntityLogAttr")
+@ModelObject(name = "audit_EntityLogAttr")
 @SystemLevel
 public class EntityLogAttr extends BaseUuidEntity {
 

@@ -16,10 +16,10 @@
 
 package io.jmix.auditui;
 
-import io.jmix.audit.JmixAuditConfiguration;
-import io.jmix.core.JmixCoreConfiguration;
+import io.jmix.audit.AuditConfiguration;
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.ui.JmixUiConfiguration;
+import io.jmix.ui.UiConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @ComponentScan
 @EnableTransactionManagement
-@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixAuditConfiguration.class, JmixUiConfiguration.class})
+@JmixModule(dependsOn = {CoreConfiguration.class, AuditConfiguration.class, UiConfiguration.class})
 @PropertySource(name = "io.jmix.auditui", value = "classpath:/io/jmix/auditui/module.properties")
-public class JmixAuditUiConfiguration {
+public class AuditUiConfiguration {
 }

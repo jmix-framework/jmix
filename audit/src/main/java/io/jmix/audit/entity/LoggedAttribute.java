@@ -26,8 +26,8 @@ import java.util.Date;
 /**
  * Configuration element of <code>EntityLog</code> bean.
  */
-@Entity(name = "sec$LoggedAttribute")
-@Table(name = "SEC_LOGGED_ATTR")
+@Entity(name = "audit_LoggedAttribute")
+@Table(name = "AUDIT_LOGGED_ATTR")
 @SystemLevel
 public class LoggedAttribute extends BaseUuidEntity implements Creatable {
 

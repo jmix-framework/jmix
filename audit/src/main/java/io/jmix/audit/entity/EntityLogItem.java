@@ -39,9 +39,9 @@ import java.util.Set;
  * Record containing information about entity lifecycle event.
  * Created by <code>EntityLog</code> bean.
  */
-@Entity(name = "sec$EntityLog")
-@Table(name = "SEC_ENTITY_LOG")
-@Listeners("jmix_EntityLogItemDetachListener")
+@Entity(name = "audit_EntityLog")
+@Table(name = "AUDIT_ENTITY_LOG")
+@Listeners("audit_EntityLogItemDetachListener")
 @SystemLevel
 public class EntityLogItem extends BaseUuidEntity implements Creatable {
 

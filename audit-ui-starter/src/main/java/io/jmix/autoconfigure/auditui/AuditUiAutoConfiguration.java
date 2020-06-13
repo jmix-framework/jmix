@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.audit;
+package io.jmix.autoconfigure.auditui;
 
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.core.annotation.JmixModule;
-import io.jmix.data.JmixDataConfiguration;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
+import io.jmix.audit.AuditConfiguration;
+import io.jmix.auditui.AuditUiConfiguration;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.ui.UiConfiguration;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.context.annotation.Import;
 
 @Configuration
-@ComponentScan
-@ConfigurationPropertiesScan
-@JmixModule(dependsOn = {JmixCoreConfiguration.class, JmixDataConfiguration.class})
-@EnableTransactionManagement
-public class JmixAuditConfiguration {
+@Import({CoreConfiguration.class, UiConfiguration.class, AuditConfiguration.class, AuditUiConfiguration.class})
+public class AuditUiAutoConfiguration {
 }

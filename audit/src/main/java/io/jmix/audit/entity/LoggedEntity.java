@@ -32,8 +32,8 @@ import java.util.Set;
 /**
  * Configuration element of <code>EntityLog</code> bean.
  */
-@Entity(name = "sec$LoggedEntity")
-@Table(name = "SEC_LOGGED_ENTITY")
+@Entity(name = "audit_LoggedEntity")
+@Table(name = "AUDIT_LOGGED_ENTITY")
 @SystemLevel
 public class LoggedEntity extends BaseUuidEntity implements Creatable {
 

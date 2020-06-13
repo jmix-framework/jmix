@@ -23,14 +23,14 @@
                     class="io.jmix.audit.entity.LoggedEntity"
                     fetchPlan="loggedAttrs">
             <loader id="loggedEntityDl">
-                <query>select e from sec$LoggedEntity e order by e.name</query>
+                <query>select e from audit_LoggedEntity e order by e.name</query>
             </loader>
         </collection>
         <collection id="loggedAttrDc"
                     class="io.jmix.audit.entity.LoggedAttribute"
                     fetchPlan="_local">
             <loader id="loggedAttrDl">
-                <query>select a from sec$LoggedAttribute a where a.entity.id = :entityId</query>
+                <query>select a from audit_LoggedAttribute a where a.entity.id = :entityId</query>
             </loader>
         </collection>
         <collection id="usersDc"
@@ -45,7 +45,7 @@
                     fetchPlan="logView">
             <loader id="entityLogDl">
                 <query>
-                    select e from sec$EntityLog e order by e.eventTs
+                    select e from audit_EntityLog e order by e.eventTs
                     <condition>
                         <and>
                             <c:jpql>

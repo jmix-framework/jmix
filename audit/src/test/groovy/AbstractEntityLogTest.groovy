@@ -1,15 +1,15 @@
 import io.jmix.audit.EntityLog
-import io.jmix.audit.JmixAuditConfiguration
+import io.jmix.audit.AuditConfiguration
 import io.jmix.audit.entity.EntityLogItem
 import io.jmix.audit.entity.LoggedAttribute
 import io.jmix.audit.entity.LoggedEntity
 import io.jmix.core.AppBeans
 import io.jmix.core.Entity
-import io.jmix.core.JmixCoreConfiguration
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.entity.IdProxy
-import io.jmix.data.JmixDataConfiguration
+import io.jmix.data.DataConfiguration
 import io.jmix.data.PersistenceTools
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
@@ -17,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
-import test_support.JmixAuditTestConfiguration
+import test_support.AuditTestConfiguration
 
 import org.springframework.beans.factory.annotation.Autowired
 import javax.persistence.EntityManager
@@ -40,7 +40,7 @@ import javax.persistence.TypedQuery
  * limitations under the License.
  */
 
-@ContextConfiguration(classes = [JmixCoreConfiguration, JmixDataConfiguration, JmixAuditConfiguration, JmixAuditTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, AuditConfiguration, AuditTestConfiguration])
 class AbstractEntityLogTest extends Specification {
     @Autowired
     protected EntityLog entityLog
@@ -95,7 +95,7 @@ class AbstractEntityLogTest extends Specification {
             else entityIdField = 'entityId'
 
             TypedQuery<EntityLogItem> query = em.createQuery(
-                    "select i from sec\$EntityLog i where i.entity = ?1 and i.entityRef.$entityIdField = ?2 order by i.eventTs desc", EntityLogItem.class)
+                    "select i from audit_EntityLog i where i.entity = ?1 and i.entityRef.$entityIdField = ?2 order by i.eventTs desc", EntityLogItem.class)
             query.setParameter(1, entityName)
             query.setParameter(2, entityId)
             items = query.getResultList()

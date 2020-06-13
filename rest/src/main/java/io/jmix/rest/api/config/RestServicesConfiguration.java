@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
  * Method parameter types can be omitted if the service doesn't contain an overloaded method with the same parameters
  * number. Otherwise, types must be defined.
  */
-@Component("jmix_RestServicesConfiguration")
+@Component("rest_RestServicesConfiguration")
 public class RestServicesConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(RestServicesConfiguration.class);

@@ -44,7 +44,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.util.*;
 
-@Component("jmix_QueriesControllerManager")
+@Component("rest_QueriesControllerManager")
 public class QueriesControllerManager {
 
     @Autowired

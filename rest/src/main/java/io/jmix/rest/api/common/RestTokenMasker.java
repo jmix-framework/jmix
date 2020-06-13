@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component("jmix_RestTokenMasker")
+@Component("rest_RestTokenMasker")
 public class RestTokenMasker {
 
     protected static final String MASK_PREFIX = "***";

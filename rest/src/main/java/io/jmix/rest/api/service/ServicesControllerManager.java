@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  * Class that executes business logic required by the {@link ServicesController}. It
  * performs middleware services invocations.
  */
-@Component("jmix_ServicesControllerManager")
+@Component("rest_ServicesControllerManager")
 public class ServicesControllerManager {
 
     @Autowired

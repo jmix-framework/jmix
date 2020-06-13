@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Provides health check URL for the blocks running REST API.
  */
-@Controller("jmix_HealthCheckController")
+@Controller("rest_HealthCheckController")
 public class HealthCheckController {
 
     private static final Logger log = LoggerFactory.getLogger(HealthCheckController.class);

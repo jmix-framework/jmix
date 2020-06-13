@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * REST controller that is used for getting REST API version
  */
-@RestController("jmix_VersionController")
+@RestController("rest_VersionController")
 @RequestMapping(path = "/rest/version")
 public class VersionController {
 

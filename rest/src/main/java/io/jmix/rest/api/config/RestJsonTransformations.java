@@ -51,7 +51,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * JSON from the old data model version to the current or vice versa. JSON transformers are loaded from configuration
  * files defined by the {@code jmix.rest.jsonTransformationConfig} application property.
  */
-@Component("jmix_RestJsonTransformations")
+@Component("rest_RestJsonTransformations")
 public class RestJsonTransformations {
 
     protected static final String JMIX_REST_JSON_TRANSFORMATION_CONFIG_PROP_NAME = "jmix.rest.jsonTransformationConfig";

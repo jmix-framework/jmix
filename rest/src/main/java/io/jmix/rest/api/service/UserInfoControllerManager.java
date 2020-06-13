@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Class that is used by the {@link UserInfoController} for getting an information
  * about the current user
  */
-@Component("jmix_UserInfoControllerManager")
+@Component("rest_UserInfoControllerManager")
 public class UserInfoControllerManager {
 
     @Autowired

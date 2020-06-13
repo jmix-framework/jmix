@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * REST controller that is used for getting an information about the current user
  */
-@RestController("jmix_UserInfoController")
+@RestController("rest_UserInfoController")
 @RequestMapping(value = "/rest/userInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserInfoController {
 

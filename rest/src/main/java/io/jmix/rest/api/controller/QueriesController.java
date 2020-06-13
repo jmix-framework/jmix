@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Controller that is used for operations with predefined JPQL queries
  */
-@RestController("jmix_QueriesController")
+@RestController("rest_QueriesController")
 @RequestMapping(value = "/rest/queries", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class QueriesController {
 

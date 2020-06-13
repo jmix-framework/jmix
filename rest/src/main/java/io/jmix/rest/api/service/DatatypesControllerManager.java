@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 
-@Component("jmix_DatatypesControllerManager")
+@Component("rest_DatatypesControllerManager")
 public class DatatypesControllerManager {
 
     private static final Logger log = LoggerFactory.getLogger(DatatypesControllerManager.class);

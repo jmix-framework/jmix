@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  * config. If the query with this name is requested, the {@link QueryInfo} for the query that returns all entities will
  * be returned.
  */
-@Component("jmix_RestQueriesConfiguration")
+@Component("rest_RestQueriesConfiguration")
 public class RestQueriesConfiguration {
 
     protected static final String JMIX_REST_QUERIES_CONFIG_PROP_NAME = "jmix.rest.queriesConfig";

@@ -35,7 +35,7 @@ import java.util.Arrays;
 /**
  *
  */
-@Component("jmix_RestControllerUtils")
+@Component("rest_RestControllerUtils")
 public class RestControllerUtils {
 
     @Autowired

@@ -18,7 +18,7 @@ package io.jmix.rest.security;
 
 import org.springframework.stereotype.Component;
 
-@Component("jmix_UserInvalidationListener")
+@Component("rest_UserInvalidationListener")
 public class UserInvalidationListener {
 
     //todo User Session

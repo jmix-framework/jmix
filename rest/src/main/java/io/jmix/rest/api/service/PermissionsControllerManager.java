@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  * Class is used for getting current user permissions for the REST API. It contains a business logic required by the
  * {@link PermissionsController}
  */
-@Component("jmix_PermissionsControllerManager")
+@Component("rest_PermissionsControllerManager")
 public class PermissionsControllerManager {
 
 

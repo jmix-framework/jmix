@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * REST API authentication utility class
  */
-@Component("jmix_RestAuthUtils")
+@Component("rest_RestAuthUtils")
 public class RestAuthUtils {
 
     @Autowired

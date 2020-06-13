@@ -42,7 +42,7 @@ import java.util.*;
 @Component(RestFilterParser.NAME)
 public class RestFilterParser {
 
-    public static final String NAME = "jmix_RestFilterParser";
+    public static final String NAME = "rest_RestFilterParser";
 
     @Autowired
     protected Metadata metadata;

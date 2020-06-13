@@ -44,7 +44,7 @@ import java.util.stream.Stream;
 public class JmixRestResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
     @Autowired
-    @Qualifier("jmix_tokenStore")
+    @Qualifier("rest_tokenStore")
     protected TokenStore tokenStore;
 
     @Autowired

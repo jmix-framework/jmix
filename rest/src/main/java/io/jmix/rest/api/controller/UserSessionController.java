@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 
-@RestController("jmix_UserSessionController")
+@RestController("rest_UserSessionController")
 @RequestMapping(path = "/rest/user-session")
 public class UserSessionController {
 

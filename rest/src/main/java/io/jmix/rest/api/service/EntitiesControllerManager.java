@@ -58,7 +58,7 @@ import java.util.*;
  * Class that executes business logic required by the {@link io.jmix.rest.api.controller.EntitiesController}. It
  * performs CRUD operations with entities
  */
-@Component("jmix_EntitiesControllerManager")
+@Component("rest_EntitiesControllerManager")
 public class EntitiesControllerManager {
 
     @Autowired

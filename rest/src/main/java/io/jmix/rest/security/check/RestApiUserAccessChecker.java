@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 /**
  * Checks if login to REST API is permitted for user.
  */
-@Component("jmix_RestApiUserAccessChecker")
+@Component("rest_RestApiUserAccessChecker")
 public class RestApiUserAccessChecker /*extends AbstractUserAccessChecker implements Ordered */ {
 
 //    @Autowired

@@ -31,7 +31,7 @@ import java.util.Collection;
 /**
  * Controller that is used for getting current user permissions
  */
-@RestController("jmix_PermissionsController")
+@RestController("rest_PermissionsController")
 @RequestMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class PermissionsController {
 

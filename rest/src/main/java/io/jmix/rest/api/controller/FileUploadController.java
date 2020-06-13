@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * REST API controller that is used for uploading files
  */
-@RestController("jmix_FileUploadController")
+@RestController("rest_FileUploadController")
 @RequestMapping(path = "/rest/files")
 public class FileUploadController {
     //todo file storage

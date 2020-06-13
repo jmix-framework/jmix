@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component("jmix_EnumsControllerManager")
+@Component("rest_EnumsControllerManager")
 public class EnumsControllerManager {
     @Autowired
     protected MetadataTools metadataTools;

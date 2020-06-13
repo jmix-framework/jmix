@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * Class that is used by {@link VersionController} for getting REST API version
  */
-@Component("jmix_VersionControllerManager")
+@Component("rest_VersionControllerManager")
 public class VersionControllerManager {
 
     private String apiVersion;

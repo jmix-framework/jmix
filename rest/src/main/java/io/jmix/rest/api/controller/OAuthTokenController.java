@@ -35,7 +35,7 @@ import java.security.Principal;
 /**
  * REST controller that is used for token revocation
  */
-@RestController("jmix_OAuthTokenController")
+@RestController("rest_OAuthTokenController")
 public class OAuthTokenController {
 
     private static final Logger log = LoggerFactory.getLogger(OAuthTokenController.class);

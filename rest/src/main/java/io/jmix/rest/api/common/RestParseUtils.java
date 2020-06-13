@@ -40,7 +40,7 @@ import java.util.*;
 /**
  *
  */
-@Component("jmix_RestParseUtils")
+@Component("rest_RestParseUtils")
 public class RestParseUtils {
 
     @Autowired

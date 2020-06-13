@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * REST API controller that is used for downloading files by the {@link FileDescriptor} identifier
  */
-@RestController("jmix_FileDownloadController")
+@RestController("rest_FileDownloadController")
 @RequestMapping("/rest/files")
 public class FileDownloadController {
     //todo file storage

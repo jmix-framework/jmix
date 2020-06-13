@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Controller that performs CRUD entity operations
  */
-@RestController("jmix_EntitiesController")
+@RestController("rest_EntitiesController")
 @RequestMapping(value = "/rest/entities", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class EntitiesController {
 

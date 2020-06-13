@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Bean that is used for access token revocation
  */
-@Component("jmix_OauthTokenRevoker")
+@Component("rest_OauthTokenRevoker")
 public class OAuthTokenRevoker {
     protected static final Logger log = LoggerFactory.getLogger(OAuthTokenRevoker.class);
 

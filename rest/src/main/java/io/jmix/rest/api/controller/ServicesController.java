@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Controller that is used for service method invocations with the REST API
  */
-@RestController("jmix_ServicesController")
+@RestController("rest_ServicesController")
 @RequestMapping(value = "/rest/services")
 public class ServicesController {
 

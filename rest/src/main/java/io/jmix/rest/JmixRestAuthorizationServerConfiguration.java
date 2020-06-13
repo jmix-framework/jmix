@@ -50,7 +50,7 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
         return new UniqueAuthenticationKeyGenerator();
     }
 
-    @Bean(name = "jmix_tokenStore")
+    @Bean(name = "rest_tokenStore")
     protected TokenStore tokenStore() {
         //todo MG database token storage support
         InMemoryTokenStore tokenStore = new InMemoryTokenStore();
@@ -58,7 +58,7 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
         return tokenStore;
     }
 
-    @Bean(name = "jmix_tokenServices")
+    @Bean(name = "rest_tokenServices")
     public AuthorizationServerTokenServices tokenServices() {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
@@ -68,7 +68,7 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
         return defaultTokenServices;
     }
 
-    @Bean("jmix_clientDetailsService")
+    @Bean("rest_clientDetailsService")
     public ClientDetailsService clientDetailsService() {
         InMemoryClientDetailsServiceBuilder builder = new InMemoryClientDetailsServiceBuilder();
         builder

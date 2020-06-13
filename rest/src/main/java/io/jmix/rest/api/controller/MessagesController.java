@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Controller that returns localized messages
  */
-@RestController("jmix_MessagesController")
+@RestController("rest_MessagesController")
 @RequestMapping(value = "/rest/messages", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class MessagesController {
 

@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
-@Component("jmix_UserSessionControllerManager")
+@Component("rest_UserSessionControllerManager")
 public class UserSessionControllerManager {
 
     @Autowired

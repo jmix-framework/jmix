@@ -37,7 +37,7 @@ import java.io.IOException;
 import static com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature.WRITE_DOC_START_MARKER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@RestController("jmix_DocumentationController")
+@RestController("rest_DocumentationController")
 @RequestMapping("/rest/docs")
 public class DocumentationController {
 

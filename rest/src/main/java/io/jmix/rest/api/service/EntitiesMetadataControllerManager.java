@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * Class is used by the {@link io.jmix.rest.api.controller.EntitiesMetadataController}. Class is sed for getting
  * entities metadata. User permissions for entities access aren't taken into account at the moment.
  */
-@Component("jmix_EntitiesMetadataControllerManager")
+@Component("rest_EntitiesMetadataControllerManager")
 public class EntitiesMetadataControllerManager {
 
     private static final Logger log = LoggerFactory.getLogger(EntitiesMetadataControllerManager.class);

@@ -20,7 +20,7 @@ package io.jmix.rest.api.service.filter;
 import java.util.EnumSet;
 
 public interface RestFilterOpManager {
-    String NAME = "jmix_RestOpManager";
+    String NAME = "rest_RestOpManager";
 
     EnumSet<RestFilterOp> availableOps(Class javaClass);
 }

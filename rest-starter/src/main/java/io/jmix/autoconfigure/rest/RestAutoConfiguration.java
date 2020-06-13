@@ -16,13 +16,13 @@
 
 package io.jmix.autoconfigure.rest;
 
-import io.jmix.core.JmixCoreConfiguration;
-import io.jmix.data.JmixDataConfiguration;
-import io.jmix.rest.JmixRestConfiguration;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.data.DataConfiguration;
+import io.jmix.rest.RestConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({JmixCoreConfiguration.class, JmixDataConfiguration.class, JmixRestConfiguration.class})
-public class JmixRestAutoConfiguration {
+@Import({CoreConfiguration.class, DataConfiguration.class, RestConfiguration.class})
+public class RestAutoConfiguration {
 }

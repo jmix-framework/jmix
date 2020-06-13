@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+group = 'io.jmix.starter.fsfilestorage'
+
+dependencies {
+    api project(':modules:core')
+    api project(':modules:fsfilestorage')
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+}
+
+jar {
+    archivesBaseName = 'jmix-starter-fsfilestorage'
+}
+
+java {
+    withSourcesJar()
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+publishing {
+    publications {
+        javaMaven(MavenPublication) {
+            artifactId = 'jmix-starter-fsfilestorage'
+            from components.java
+        }
+    }
+}

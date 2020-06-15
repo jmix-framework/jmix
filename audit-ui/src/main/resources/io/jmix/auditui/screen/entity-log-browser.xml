@@ -33,13 +33,6 @@
                 <query>select a from audit_LoggedAttribute a where a.entity.id = :entityId</query>
             </loader>
         </collection>
-        <collection id="usersDc"
-                    class="io.jmix.security.entity.User"
-                    fetchPlan="_local">
-            <loader id="usersDl">
-                <query>select u from sec_User u order by u.name</query>
-            </loader>
-        </collection>
         <collection id="entityLogDc"
                     class="io.jmix.audit.entity.EntityLogItem"
                     fetchPlan="logView">
@@ -98,7 +91,8 @@
                     <rows>
                         <row id="gridRowUp">
                             <label value="msg://user" align="MIDDLE_LEFT"/>
-                            <comboBox id="userField" width="${fieldWidth}"/><!--optionsContainer="usersDc" -->
+<!--                            <comboBox id="userField" width="${fieldWidth}"/>-->
+                            <suggestionField id="userField" width="${fieldWidth}"/>
                             <label value="msg://changeType" align="MIDDLE_LEFT"/>
                             <comboBox id="changeTypeField" width="${fieldWidth}"/>
                             <label value="msg://from" align="MIDDLE_LEFT"/>
@@ -138,7 +132,7 @@
                         <table id="entityLogTable" width="100%" dataContainer="entityLogDc">
                             <columns>
                                 <column id="eventTs" caption="msg://when">
-                                    <formatter class="com.haulmont.cuba.gui.components.formatters.DateFormatter"
+                                    <formatter class="io.jmix.ui.component.formatter.DateFormatter"
                                                format="msg://dateTimeWithSeconds"/>
                                 </column>
                                 <column id="user" caption="msg://user"/>

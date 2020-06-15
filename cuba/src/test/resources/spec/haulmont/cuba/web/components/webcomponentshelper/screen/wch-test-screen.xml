@@ -24,7 +24,7 @@
     </actions>
     <layout>
         <entityComboBox id="entityComboBox"
-                        metaClass="sec_User">
+                        metaClass="test$User">
             <actions>
                 <action id="lpfAction"/>
             </actions>

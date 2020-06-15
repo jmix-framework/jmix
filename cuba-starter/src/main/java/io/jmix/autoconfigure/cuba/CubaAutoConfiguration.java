@@ -21,7 +21,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
-import io.jmix.security.JmixSecurityConfiguration;
+import io.jmix.security.SecurityConfiguration;
 import io.jmix.ui.UiConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Import;
 @Import({
         CoreConfiguration.class,
         DataConfiguration.class,
-        JmixSecurityConfiguration.class,
+        SecurityConfiguration.class,
         UiConfiguration.class,
         DynAttrConfiguration.class,
         DynAttrUiConfiguration.class,

@@ -22,13 +22,13 @@ import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticationToken;
-import io.jmix.core.security.UserAuthentication;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.authentication.CoreAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -58,9 +58,9 @@ public class UserSessionSourceImpl implements UserSessionSource {
         Authentication authentication = SecurityContextHelper.getAuthentication();
 
         UserSession session = new UserSession();
-        if (authentication instanceof UserAuthentication) {
-            session.setUser(((UserAuthentication) authentication).getUser());
-            session.setLocale(((UserAuthentication) authentication).getLocale());
+        if (authentication instanceof CoreAuthentication) {
+            session.setUser(((CoreAuthentication) authentication).getUser());
+            session.setLocale(((CoreAuthentication) authentication).getLocale());
         } else if (authentication instanceof AnonymousAuthenticationToken ||
                 authentication instanceof SystemAuthenticationToken) {
             Object principal = authentication.getPrincipal();

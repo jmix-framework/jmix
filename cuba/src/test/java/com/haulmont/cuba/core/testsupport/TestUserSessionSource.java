@@ -48,7 +48,6 @@ public class TestUserSessionSource extends UserSessionSourceImpl {
         }
         if (session == null) {
             CoreUser user = new CoreUser("test_admin", "test_admin", "Test Administrator");
-            user.setId(UUID.fromString(USER_ID));
             session = new UserSession();
             session.setUser(user);
             session.setLocale(Locale.ENGLISH);

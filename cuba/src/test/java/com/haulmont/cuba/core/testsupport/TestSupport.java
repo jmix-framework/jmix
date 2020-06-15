@@ -26,7 +26,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.UserAuthentication;
+import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import io.jmix.core.security.impl.CoreUser;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -88,7 +88,7 @@ public class TestSupport {
 
     public static void setAuthenticationToSecurityContext() {
         CoreUser user = new CoreUser("test_admin", "test_admin", "test_admin");
-        UserAuthentication authentication = new UserAuthentication(user, Collections.emptyList());
+        CoreAuthenticationToken authentication = new CoreAuthenticationToken(user, Collections.emptyList());
         authentication.setLocale(Locale.US);
         SecurityContextHelper.setAuthentication(authentication);
     }

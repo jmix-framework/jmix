@@ -17,6 +17,7 @@
 package com.haulmont.cuba.web.testsupport;
 
 import com.haulmont.cuba.CubaConfiguration;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.core.model.common.UserEntityListener;
 import com.haulmont.cuba.core.testsupport.TestEventsListener;
 import com.haulmont.cuba.core.testsupport.TestJpqlSortExpressionProvider;
@@ -26,10 +27,10 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.server.WebBrowser;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
-import io.jmix.security.JmixSecurityConfiguration;
+import io.jmix.security.SecurityConfiguration;
 import io.jmix.ui.UiComponents;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -39,13 +40,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.sql.DataSource;
 import java.util.Locale;
 
 @Configuration
 @Import({
-        JmixSecurityConfiguration.class,
+        SecurityConfiguration.class,
         CubaConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-app.properties")
 public class WebTestConfiguration {

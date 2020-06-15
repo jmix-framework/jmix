@@ -353,4 +353,9 @@ public class User extends StandardEntity implements BaseUser {
     public boolean isEnabled() {
         return Boolean.TRUE.equals(active);
     }
+
+    @Override
+    public String getDisplayName() {
+        return name;
+    }
 }

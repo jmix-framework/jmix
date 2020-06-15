@@ -23,12 +23,12 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.UserAuthentication;
+import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import io.jmix.core.security.impl.CoreUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 
 import java.util.Collections;
 
@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
 public class NamePatternTest {
+
     @Autowired
     private Metadata metadata;
 
@@ -44,7 +45,7 @@ public class NamePatternTest {
 
     @BeforeEach
     public void setUp() {
-        UserAuthentication authentication = new UserAuthentication(new CoreUser("test", "test", "test"), Collections.emptyList());
+        Authentication authentication = new CoreAuthenticationToken(new CoreUser("test", "test", "test"), Collections.emptyList());
         SecurityContextHelper.setAuthentication(authentication);
     }
 

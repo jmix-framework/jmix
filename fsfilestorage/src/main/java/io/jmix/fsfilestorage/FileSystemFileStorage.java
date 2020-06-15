@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -86,9 +85,9 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
     @Override
     public URI createReference(String fileInfo) {
         //path = yyyy/mm/dd/uuid
-        Path path = createDateDir().resolve(createUuidFilename(fileInfo));
+        String path = createDateDir() + "/" + createUuidFilename(fileInfo);
         //reference = path;filename
-        StringBuilder reference = new StringBuilder(path.toString())
+        StringBuilder reference = new StringBuilder(path)
                 .append(";").append(URLEncodeUtils.encodeUtf8(fileInfo));
         try {
             return new URI(reference.toString());
@@ -138,7 +137,7 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
 
     @Override
     public long saveStream(URI reference, InputStream inputStream) {
-        URI rawReference = getRawReference(reference);
+        Path relativePath = getRelativePathFromURI(reference);
 
         Path[] roots = getStorageRoots();
 
@@ -147,7 +146,7 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
         checkStorageDefined(roots, reference);
         checkPrimaryStorageAccessible(roots, reference);
 
-        Path path = getFilePath(roots[0], rawReference);
+        Path path = roots[0].resolve(relativePath);
         path.getParent().toFile().mkdirs();
 
         checkFileExists(path);
@@ -165,17 +164,17 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
 
         for (int i = 1; i < roots.length; i++) {
             if (!roots[i].toFile().exists()) {
-                log.error("Error saving {} into {} : directory doesn't exist", rawReference, roots[i]);
+                log.error("Error saving {} into {} : directory doesn't exist", reference, roots[i]);
                 continue;
             }
 
-            Path pathCopy = getFilePath(roots[i], rawReference);
+            Path pathCopy = roots[i].resolve(relativePath);
 
             writeExecutor.submit(() -> {
                 try {
                     FileUtils.copyFile(path.toFile(), pathCopy.toFile(), true);
                 } catch (Exception e) {
-                    log.error("Error saving {} into {} : {}", rawReference, pathCopy, e.getMessage());
+                    log.error("Error saving {} into {} : {}", reference, pathCopy, e.getMessage());
                 }
             });
         }
@@ -185,7 +184,7 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
 
     @Override
     public InputStream openStream(URI reference) {
-        URI rawReference = getRawReference(reference);
+        Path relativePath = getRelativePathFromURI(reference);
 
         Path[] roots = getStorageRoots();
         if (roots.length == 0) {
@@ -195,7 +194,7 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
 
         InputStream inputStream = null;
         for (Path root : roots) {
-            Path path = getFilePath(root, rawReference);
+            Path path = root.resolve(relativePath);
 
             if (!path.toFile().exists()) {
                 log.error("File " + path + " not found");
@@ -224,9 +223,9 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
             return;
         }
 
-        URI rawReference = getRawReference(reference);
+        Path relativePath = getRelativePathFromURI(reference);
         for (Path root : roots) {
-            Path filePath = getFilePath(root, rawReference);
+            Path filePath = root.resolve(relativePath);
             File file = filePath.toFile();
             if (file.exists()) {
                 if (!file.delete()) {
@@ -241,9 +240,9 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
     public boolean fileExists(URI reference) {
         Path[] roots = getStorageRoots();
 
-        URI rawReference = getRawReference(reference);
+        Path relativePath = getRelativePathFromURI(reference);
         for (Path root : roots) {
-            Path filePath = getFilePath(root, rawReference);
+            Path filePath = root.resolve(relativePath);
             if (filePath.toFile().exists()) {
                 return true;
             }
@@ -251,16 +250,16 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
         return false;
     }
 
-    public Path createDateDir() {
+    public String createDateDir() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(timeSource.currentTimestamp());
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH) + 1;
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        return Paths.get(String.valueOf(year),
-                StringUtils.leftPad(String.valueOf(month), 2, '0'),
-                StringUtils.leftPad(String.valueOf(day), 2, '0'));
+        return year + "/"
+                + StringUtils.leftPad(String.valueOf(month), 2, '0') + "/"
+                + StringUtils.leftPad(String.valueOf(day), 2, '0');
     }
 
     protected void checkFileExists(Path path) {
@@ -268,10 +267,6 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
             throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS,
                     path.toAbsolutePath().toString());
         }
-    }
-
-    protected Path getFilePath(Path rootDir, URI rawReference) {
-        return rootDir.resolve(Paths.get(rawReference.toString()));
     }
 
     protected void checkDirectoryExists(Path dir) {
@@ -306,12 +301,13 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
     /**
      * Returns URI containing only relative path to the file (without file name after `;`).
      */
-    protected URI getRawReference(URI encodedReference) {
-        try {
-            return new URI(getReferenceParts(encodedReference)[0]);
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e);
+    protected Path getRelativePathFromURI(URI encodedReference) {
+        String rawReference = getReferenceParts(encodedReference)[0];
+        String[] parts = rawReference.split("/", 4);
+        if (parts.length < 4) {
+            throw new IllegalArgumentException("Invalid URI reference format");
         }
+        return Paths.get(parts[0], parts[1], parts[2], parts[3]);
     }
 
     @PreDestroy

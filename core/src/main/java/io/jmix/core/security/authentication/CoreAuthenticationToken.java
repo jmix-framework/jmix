@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security;
+package io.jmix.core.security.authentication;
 
 import io.jmix.core.entity.BaseUser;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -23,22 +23,19 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 import java.util.Locale;
 
-/**
- * The {@link org.springframework.security.core.Authentication} used when user is logged in in a standard way:
- * using username and password.
- */
-public class UserAuthentication extends AbstractAuthenticationToken {
+public class CoreAuthenticationToken extends AbstractAuthenticationToken implements CoreAuthentication {
 
     private BaseUser user;
 
     private Locale locale;
 
-    public UserAuthentication(BaseUser user, Collection<? extends GrantedAuthority> authorities) {
+    public CoreAuthenticationToken(BaseUser user, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.user = user;
         super.setAuthenticated(true);
     }
 
+    @Override
     public Locale getLocale() {
         return locale;
     }
@@ -47,6 +44,7 @@ public class UserAuthentication extends AbstractAuthenticationToken {
         this.locale = locale;
     }
 
+    @Override
     public BaseUser getUser() {
         return user;
     }

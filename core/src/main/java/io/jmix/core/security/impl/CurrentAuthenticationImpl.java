@@ -19,7 +19,7 @@ package io.jmix.core.security.impl;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.UserAuthentication;
+import io.jmix.core.security.authentication.CoreAuthentication;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -54,8 +54,8 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     public Locale getLocale() {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
-            if (authentication instanceof UserAuthentication) {
-                return ((UserAuthentication) authentication).getLocale();
+            if (authentication instanceof CoreAuthentication) {
+                return ((CoreAuthentication) authentication).getLocale();
             }
             return Locale.getDefault();
         }

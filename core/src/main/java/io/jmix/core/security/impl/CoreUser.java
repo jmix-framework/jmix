@@ -16,16 +16,15 @@
 
 package io.jmix.core.security.impl;
 
-import io.jmix.core.Entity;
 import io.jmix.core.entity.BaseUser;
-import io.jmix.core.entity.HasUuid;
 import org.springframework.security.core.GrantedAuthority;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-public class CoreUser implements Entity, HasUuid, BaseUser {
+public class CoreUser implements BaseUser {
 
     private static final long serialVersionUID = 2032149054729862959L;
 
@@ -34,29 +33,15 @@ public class CoreUser implements Entity, HasUuid, BaseUser {
     private String password;
     private String name;
 
-    public CoreUser(String username, String password, String name) {
+    public CoreUser(String username, String password) {
+        this(username, password, null);
+    }
+
+    public CoreUser(String username, String password, @Nullable String name) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.id = UUID.randomUUID();
-    }
-
-    @Override
-    public UUID getUuid() {
-        return id;
-    }
-
-    @Override
-    public void setUuid(UUID uuid) {
-        this.id = uuid;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -100,6 +85,11 @@ public class CoreUser implements Entity, HasUuid, BaseUser {
 
     @Override
     public String getKey() {
-        return id.toString();
+        return username;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return name;
     }
 }

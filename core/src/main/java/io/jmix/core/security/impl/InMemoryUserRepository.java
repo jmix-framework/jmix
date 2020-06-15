@@ -17,32 +17,23 @@
 package io.jmix.core.security.impl;
 
 import io.jmix.core.entity.BaseUser;
-import io.jmix.core.security.OnCoreSecurityImplementation;
 import io.jmix.core.security.UserRepository;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Component(UserRepository.NAME)
-@Conditional(OnCoreSecurityImplementation.class)
-public class CoreUserRepository implements UserRepository {
+public class InMemoryUserRepository implements UserRepository {
 
-    private CoreUser systemUser;
-    private CoreUser anonymousUser;
+    protected CoreUser systemUser;
+    protected CoreUser anonymousUser;
+    protected List<BaseUser> users = new ArrayList<>();
 
-    private List<BaseUser> users = Arrays.asList(
-            new CoreUser("system", "{noop}", "System"),
-            new CoreUser("anonymous", "{noop}", "Anonymous"),
-            new CoreUser("admin", "{noop}admin123", "Administrator")
-    );
-
-    public CoreUserRepository() {
-        systemUser = new CoreUser("system", "", "system");
-        anonymousUser = new CoreUser("anonymous", "", "anonymous");
+    public InMemoryUserRepository(CoreUser systemUser, CoreUser anonymousUser) {
+        this.systemUser = systemUser;
+        this.anonymousUser = anonymousUser;
     }
 
     @Override
@@ -64,7 +55,17 @@ public class CoreUserRepository implements UserRepository {
     }
 
     @Override
-    public List<BaseUser> getAll() {
-        return users;
+    public List<BaseUser> getByUsernameLike(String username) {
+        return users.stream()
+                .filter(user -> user.getUsername().contains(username))
+                .collect(Collectors.toList());
+    }
+
+    public void createUser(BaseUser user) {
+        users.add(user);
+    }
+
+    public void removeUser(BaseUser user) {
+        users.remove(user);
     }
 }

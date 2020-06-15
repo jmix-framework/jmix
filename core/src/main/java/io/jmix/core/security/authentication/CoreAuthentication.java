@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security;
+package io.jmix.core.security.authentication;
 
 import io.jmix.core.entity.BaseUser;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.Authentication;
 
-import java.util.List;
+import java.util.Locale;
 
-public interface UserRepository extends UserDetailsService {
+public interface CoreAuthentication extends Authentication {
 
-    String NAME = "core_UserRepository";
+    Locale getLocale();
 
-    BaseUser getSystemUser();
+    //todo remove and use #getPrincipal ?
+    BaseUser getUser();
 
-    BaseUser getAnonymousUser();
-
-    List<BaseUser> getByUsernameLike(String username);
+    //todo
+    //TimeZone getTimeZone()
 }

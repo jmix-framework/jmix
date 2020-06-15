@@ -17,26 +17,27 @@
 package io.jmix.core.security;
 
 import io.jmix.core.entity.BaseUser;
+import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * An AuthenticationProvider that supports {@link org.springframework.security.authentication.UsernamePasswordAuthenticationToken}
- * and returns authenticated {@link UserAuthentication}
+ * and returns authenticated {@link io.jmix.core.security.authentication.CoreAuthentication}
  */
-public class UserAuthenticationProvider extends DaoAuthenticationProvider {
+public class CoreAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Override
     protected Authentication createSuccessAuthentication(Object principal, Authentication authentication, UserDetails user) {
         if (!(user instanceof BaseUser)) {
             throw new IllegalArgumentException("UserDetails must be an instance of " + BaseUser.class.getCanonicalName());
         }
-        UserAuthentication userAuthentication = new UserAuthentication((BaseUser) user, authentication.getAuthorities());
+        CoreAuthenticationToken result = new CoreAuthenticationToken((BaseUser) user, authentication.getAuthorities());
         Object details = authentication.getDetails();
         if (details instanceof ClientDetails) {
-            userAuthentication.setLocale(((ClientDetails) details).getLocale());
+            result.setLocale(((ClientDetails) details).getLocale());
         }
-        return userAuthentication;
+        return result;
     }
 }

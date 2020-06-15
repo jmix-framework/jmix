@@ -18,7 +18,7 @@ package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
-import io.jmix.core.security.JmixCoreSecurityConfiguration;
+import io.jmix.core.security.CoreSecurityConfiguration;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -37,7 +37,7 @@ import org.springframework.core.annotation.Order;
  * before {@code @Conditional} annotations that depend on {@code @JmixProperty} values.
  */
 @Configuration
-@Import(JmixCoreSecurityConfiguration.class)
+@Import(CoreSecurityConfiguration.class)
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {})

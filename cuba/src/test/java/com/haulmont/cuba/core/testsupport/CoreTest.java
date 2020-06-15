@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.testsupport;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.annotation.*;
@@ -28,5 +29,7 @@ import java.lang.annotation.*;
 @Inherited
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CoreTestConfiguration.class})
+@TestExecutionListeners(value = AppContextTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public @interface CoreTest {
 }

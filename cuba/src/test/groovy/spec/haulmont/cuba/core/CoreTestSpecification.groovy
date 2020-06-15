@@ -22,7 +22,6 @@ import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 @CoreTest
-@TestExecutionListeners(value = AppContextTestExecutionListener.class,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+
 class CoreTestSpecification extends Specification {
 }

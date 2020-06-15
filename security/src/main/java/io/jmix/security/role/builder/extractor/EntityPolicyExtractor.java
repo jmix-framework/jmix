@@ -36,7 +36,7 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
 
     public static final String NAME = "sec_EntityPolicyExtractor";
 
-    public static final EntityPolicyAction[] ALL_CRUD_ACTIONS = {
+    private static final EntityPolicyAction[] ALL_CRUD_ACTIONS = {
             EntityPolicyAction.CREATE,
             EntityPolicyAction.READ,
             EntityPolicyAction.UPDATE,

@@ -23,6 +23,7 @@ import io.jmix.core.FetchPlanBuilder
 import io.jmix.core.Id
 import io.jmix.core.SaveContext
 import org.apache.commons.lang3.RandomStringUtils
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLineA
@@ -40,6 +41,13 @@ class EntityStatesTest extends DataSpec {
     DataManager dataManager
     @Autowired
     EntityStates entityStates
+    @Autowired
+    JdbcTemplate jdbcTemplate
+
+    void cleanup() {
+        jdbcTemplate.update('delete from SALES_ORDER_LINE')
+        jdbcTemplate.update('delete from SALES_ORDER')
+    }
 
     def "test getCurrentFetchPlan for object graph"() {
         given:

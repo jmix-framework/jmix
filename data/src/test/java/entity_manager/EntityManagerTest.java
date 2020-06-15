@@ -32,8 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
+import test_support.AppContextTestExecutionListener;
 import test_support.DataTestConfiguration;
 import test_support.TestCustomerListener;
 import test_support.entity.sales.Customer;
@@ -50,6 +52,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CoreConfiguration.class, DataConfiguration.class, DataTestConfiguration.class})
+@TestExecutionListeners(value = AppContextTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class EntityManagerTest {
 
     @PersistenceContext
@@ -73,19 +77,16 @@ public class EntityManagerTest {
     List<EntityChangedEvent<Customer>> customerEvents = new ArrayList<>();
 
     @BeforeEach
-    public void setup() {
+    @AfterEach
+    public void cleanup() throws Exception {
         customerListener.changedEventConsumer = event -> {
             customerEvents.add(event);
         };
-    }
-
-    @BeforeEach
-    @AfterEach
-    public void cleanup() throws Exception {
         customerEvents.clear();
         try {
             jdbc.update("delete from SALES_CUSTOMER");
         } catch (DataAccessException e) {
+            throw new RuntimeException(e);
             // ignore
         }
     }

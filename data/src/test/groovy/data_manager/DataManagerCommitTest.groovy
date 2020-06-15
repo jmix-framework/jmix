@@ -19,6 +19,7 @@ package data_manager
 import io.jmix.core.Id
 import io.jmix.core.SaveContext
 import io.jmix.core.FetchPlan
+import org.springframework.jdbc.core.JdbcTemplate
 import test_support.TestOrderChangedEventListener
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
@@ -43,6 +44,9 @@ class DataManagerCommitTest extends DataSpec {
     @Autowired
     TestOrderChangedEventListener orderChangedEventListener
 
+    @Autowired
+    JdbcTemplate jdbcTemplate
+
     TestAppEntity appEntity
     TestAppEntityItem appEntityItem
 
@@ -52,6 +56,11 @@ class DataManagerCommitTest extends DataSpec {
         appEntityItem = new TestAppEntityItem(name: 'appEntityItem', appEntity: appEntity)
 
         dataManager.save(appEntity, appEntityItem)
+    }
+
+    void cleanup() {
+        jdbcTemplate.update('delete from SALES_ORDER')
+        jdbcTemplate.update('delete from SALES_CUSTOMER')
     }
 
 
@@ -107,7 +116,5 @@ class DataManagerCommitTest extends DataSpec {
 
         cleanup:
         orderChangedEventListener.enabled = false
-        dataManager.remove(Id.of(order))
-        dataManager.remove(Id.of(customer))
     }
 }

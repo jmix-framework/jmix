@@ -16,8 +16,8 @@
 
 package io.jmix.security.impl;
 
+
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.security.entity.Constraint;
 import io.jmix.security.entity.ConstraintCheckType;
 
 import java.io.Serializable;
@@ -32,15 +32,28 @@ public class ConstraintData implements Serializable {
     protected final String whereClause;
     protected final String groovyScript;
 
-    public ConstraintData(Constraint constraint) {
-        this.id = constraint.getId();
-        this.code = constraint.getCode();
-        this.join = constraint.getJoinClause();
-        this.whereClause = constraint.getWhereClause();
-        this.groovyScript = constraint.getGroovyScript();
-        this.operationType = constraint.getOperationType();
-        this.checkType = constraint.getCheckType();
+    public ConstraintData(UUID id, String code,
+                          ConstraintOperationType operationType,
+                          ConstraintCheckType checkType,
+                          String join, String whereClause, String groovyScript) {
+        this.id = id;
+        this.code = code;
+        this.operationType = operationType;
+        this.checkType = checkType;
+        this.join = join;
+        this.whereClause = whereClause;
+        this.groovyScript = groovyScript;
     }
+
+    //    public ConstraintData(Constraint constraint) {
+//        this.id = constraint.getId();
+//        this.code = constraint.getCode();
+//        this.join = constraint.getJoinClause();
+//        this.whereClause = constraint.getWhereClause();
+//        this.groovyScript = constraint.getGroovyScript();
+//        this.operationType = constraint.getOperationType();
+//        this.checkType = constraint.getCheckType();
+//    }
 
     public String getCode() {
         return code;

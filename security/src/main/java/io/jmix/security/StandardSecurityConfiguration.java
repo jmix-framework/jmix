@@ -17,9 +17,14 @@
 package io.jmix.security;
 
 import io.jmix.core.CoreProperties;
-import io.jmix.core.security.UserAuthenticationProvider;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.CoreUser;
+import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
+import io.jmix.security.authentication.SecuredAuthenticationProvider;
+import io.jmix.security.role.RoleRepository;
+import io.jmix.security.role.assignment.RoleAssignmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -33,8 +38,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
@@ -43,19 +46,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private CoreProperties coreProperties;
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
+    @Autowired
+    private RoleRepository roleRepository;
 
-        UserAuthenticationProvider userAuthenticationProvider = new UserAuthenticationProvider();
-        userAuthenticationProvider.setUserDetailsService(userRepository);
-        userAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
-        auth.authenticationProvider(userAuthenticationProvider);
+    @Autowired
+    private RoleAssignmentRepository roleAssignmentRepository;
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository()));
+
+        SecuredAuthenticationProvider securedAuthenticationProvider = new SecuredAuthenticationProvider(roleRepository,
+                roleAssignmentRepository);
+        securedAuthenticationProvider.setUserDetailsService(userRepository());
+        securedAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
+        auth.authenticationProvider(securedAuthenticationProvider);
     }
 
     @Override
@@ -65,26 +72,26 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
                 .and()
                 .anonymous(anonymousConfigurer -> {
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
-                    anonymousConfigurer.principal(userRepository.getAnonymousUser());
+                    anonymousConfigurer.principal(userRepository().getAnonymousUser());
                 })
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin();
     }
 
-    @Bean(name = "jmix_authenticationManager")
+    @Bean(name = "sec_AuthenticationManager")
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
-    //todo MG
-//    @Bean(name = "jmix_userDetailsService")
-//    @Override
-//    public UserDetailsService userDetailsServiceBean() throws Exception {
-//        return super.userDetailsServiceBean();
-//    }
+    @Bean(UserRepository.NAME)
+    public UserRepository userRepository() {
+        CoreUser systemUser = new CoreUser("system", "{noop}", "System");
+        CoreUser anonymousUser = new CoreUser("anonymous", "{noop}", "Anonymous");
+        return new InMemoryUserRepository(systemUser, anonymousUser);
+    }
 
-    @Bean(name = "jmix_PasswordEncoder")
+    @Bean(name = "sec_PasswordEncoder")
     public PasswordEncoder getPasswordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }

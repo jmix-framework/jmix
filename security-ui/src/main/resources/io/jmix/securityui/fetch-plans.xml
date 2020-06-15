@@ -16,10 +16,4 @@
 
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
-    <fetchPlan class="io.jmix.security.entity.User" name="userBrowse" extends="_local">
-    </fetchPlan>
-
-    <fetchPlan class="io.jmix.security.entity.User" name="userEdit" extends="_local">
-    </fetchPlan>
-
 </fetchPlans>

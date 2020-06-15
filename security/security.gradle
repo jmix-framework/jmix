@@ -25,8 +25,10 @@ dependencies {
     api platform(project(':jmix-platform'))
 
     api project(':modules:core')
+
+    //todo MG remove data dependency from security module
     api project(':modules:data')
-    
+
     implementation 'org.json:json'
 
     testImplementation 'org.springframework:spring-test'
@@ -34,6 +36,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.liquibase:liquibase-core'
+    testImplementation project(':modules:data')
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

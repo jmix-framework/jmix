@@ -17,28 +17,18 @@
 package authentication
 
 import io.jmix.core.DataManager
-import io.jmix.core.CoreConfiguration
 import io.jmix.core.security.SystemAuthenticationToken
-import io.jmix.core.security.UserAuthentication
-import io.jmix.core.security.UserRepository
-import io.jmix.data.DataConfiguration
+import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.impl.InMemoryUserRepository
 import io.jmix.data.PersistenceTools
-import io.jmix.security.JmixSecurityConfiguration
-import io.jmix.security.entity.User
-import io.jmix.security.impl.StandardUserRepository
+import io.jmix.security.authentication.SecuredAuthentication
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
-import spock.lang.Specification
-import test_support.JmixSecurityTestConfiguration
+import test_support.SecuritySpecification
 
-import org.springframework.beans.factory.annotation.Autowired
-
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, JmixSecurityConfiguration, JmixSecurityTestConfiguration])
-@TestPropertySource(properties = ["jmix.securityImplementation = standard"])
-class AuthenticationTest extends Specification {
+class AuthenticationTest extends SecuritySpecification {
 
     @Autowired
     DataManager dataManager
@@ -50,19 +40,27 @@ class AuthenticationTest extends Specification {
     AuthenticationManager authenticationManager
 
     @Autowired
-    UserRepository userRepository
+    InMemoryUserRepository userRepository
+
+    CoreUser user1
+
+    def setup() {
+        user1 = new CoreUser("user1", "{noop}123", "user1")
+        userRepository.createUser(user1)
+    }
+
+    def cleanup() {
+        userRepository.removeUser(user1)
+    }
 
     def "standard implementations are in use"() {
         expect:
 
-        userRepository instanceof StandardUserRepository
-        userRepository.loadUserByUsername('admin') instanceof User
+        userRepository instanceof InMemoryUserRepository
+        userRepository.loadUserByUsername('user1') == user1
     }
 
     def "authenticate with UsernamePasswordAuthenticationToken"() {
-
-        def user = new User(username: 'user1', password: '{noop}123')
-        dataManager.save(user)
 
         when:
 
@@ -71,19 +69,14 @@ class AuthenticationTest extends Specification {
 
         then:
 
-        authentication instanceof UserAuthentication
-        authentication.user instanceof User
-        authentication.user.username == 'user1'
+        authentication instanceof SecuredAuthentication
+        SecuredAuthentication securedAuthentication = authentication as SecuredAuthentication
+        securedAuthentication.user instanceof CoreUser
+        securedAuthentication.user == user1
 
-        cleanup:
-
-        persistenceTools.deleteRecord(user)
     }
 
     def "authenticate with SystemAuthenticationToken"() {
-
-        def user = new User(username: 'user1', password: '{noop}123')
-        dataManager.save(user)
 
         when:
 
@@ -94,10 +87,6 @@ class AuthenticationTest extends Specification {
 
         authentication instanceof SystemAuthenticationToken
         authentication.isAuthenticated()
-        authentication.principal == user
-
-        cleanup:
-
-        persistenceTools.deleteRecord(user)
+        authentication.principal == user1
     }
 }

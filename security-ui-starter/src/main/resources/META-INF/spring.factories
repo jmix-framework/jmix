@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
- io.jmix.autoconfigure.securityui.JmixSecurityUiAutoConfiguration
+ io.jmix.autoconfigure.securityui.SecurityUiAutoConfiguration

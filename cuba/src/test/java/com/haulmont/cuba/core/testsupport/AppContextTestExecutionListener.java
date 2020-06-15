@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package spec.haulmont.cuba.core
+package com.haulmont.cuba.core.testsupport;
 
-import com.haulmont.cuba.core.testsupport.AppContextTestExecutionListener
-import com.haulmont.cuba.core.testsupport.CoreTest
-import org.springframework.test.context.TestExecutionListeners
-import spock.lang.Specification
+import io.jmix.core.AppBeans;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestExecutionListener;
 
-@CoreTest
-@TestExecutionListeners(value = AppContextTestExecutionListener.class,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-class CoreTestSpecification extends Specification {
+public class AppContextTestExecutionListener implements TestExecutionListener {
+    @Override
+    public void beforeTestClass(TestContext testContext) throws Exception {
+        if (testContext.hasApplicationContext()) {
+            AppBeans.setApplicationContext(testContext.getApplicationContext());
+        }
+    }
 }

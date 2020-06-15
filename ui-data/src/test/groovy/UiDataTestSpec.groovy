@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
+
 import io.jmix.core.BeanLocator
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.UserAuthentication
+import io.jmix.core.security.authentication.CoreAuthenticationToken
 import io.jmix.core.security.impl.CoreUser
 import io.jmix.data.DataConfiguration
-import io.jmix.ui.UiConfiguration
 import io.jmix.ui.UiComponents
+import io.jmix.ui.UiConfiguration
+import io.jmix.ui.settings.ScreenSettings
 import io.jmix.uidata.UiDataConfiguration
 import io.jmix.uidata.settings.ScreenSettingsJson
 import io.jmix.uidata.settings.ScreenSettingsManager
-import io.jmix.ui.settings.ScreenSettings
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
-import test_support.UiDataTestConfiguration
 import test_support.TestUiSettingsCache
+import test_support.UiDataTestConfiguration
 
 import javax.inject.Inject
 
@@ -59,7 +60,7 @@ class UiDataTestSpec extends Specification {
         reloadScreenSettings()
 
         CoreUser user = new CoreUser("test_admin", "test_admin", "test_admin")
-        UserAuthentication authentication = new UserAuthentication(user, Collections.emptyList())
+        CoreAuthenticationToken authentication = new CoreAuthenticationToken(user, Collections.emptyList())
         authentication.setLocale(Locale.US)
         SecurityContextHelper.setAuthentication(authentication)
     }

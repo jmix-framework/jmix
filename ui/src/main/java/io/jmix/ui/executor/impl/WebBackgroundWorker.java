@@ -27,13 +27,12 @@ import io.jmix.ui.event.BackgroundTaskUnhandledExceptionEvent;
 import io.jmix.ui.executor.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PreDestroy;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -168,7 +167,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     Collections.emptyMap();
 
             // copy security context
-            this.securityContext = (SecurityContext) SecurityContextHolder.getContext().getAuthentication();
+//            this.securityContext = (SecurityContext) SecurityContextHolder.getContext().getAuthentication();
             this.username = currentAuthentication.getUser().getUsername();
 
             this.future = new FutureTask<V>(this) {

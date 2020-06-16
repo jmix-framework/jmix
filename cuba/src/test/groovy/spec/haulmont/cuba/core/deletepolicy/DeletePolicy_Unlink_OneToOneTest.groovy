@@ -16,19 +16,16 @@
 
 package spec.haulmont.cuba.core.deletepolicy
 
-import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_First
-import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_Second
+import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
-import io.jmix.core.Metadata
+import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_First
+import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_Second
 import io.jmix.core.FetchPlan
-import com.haulmont.cuba.core.Persistence
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import io.jmix.core.Metadata
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
     @Autowired
@@ -37,13 +34,11 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
     private Metadata metadata
     @Autowired
     private DataManager dataManager
-
-    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate
 
     private DeletePolicy_OneToOne_First first
     private DeletePolicy_OneToOne_Second second
-
-    private Logger logger = LoggerFactory.getLogger(DeletePolicy_Unlink_OneToOneTest.class)
 
     void setup() {
         persistence.runInTransaction({ em ->
@@ -56,7 +51,6 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
             second.setFirst(first)
             em.persist(second)
         })
-        jdbcTemplate = new JdbcTemplate(persistence.dataSource)
     }
 
     void cleanup() {

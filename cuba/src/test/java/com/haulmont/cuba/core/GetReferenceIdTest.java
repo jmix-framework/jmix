@@ -23,17 +23,16 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.Metadata;
 import io.jmix.core.FetchPlan;
-import io.jmix.data.*;
+import io.jmix.core.Metadata;
+import io.jmix.data.PersistenceTools;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
@@ -42,6 +41,8 @@ public class GetReferenceIdTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private User user;
     private Group group;
@@ -65,7 +66,7 @@ public class GetReferenceIdTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord(user, group);
+        testSupport.deleteRecord(user, group);
     }
 
     @Test
@@ -101,7 +102,7 @@ public class GetReferenceIdTest {
             }
             tx.commit();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         assertNotNull(user);
         assertNotNull(user.getUserRoles());
         user.getUserRoles().size();
@@ -132,7 +133,7 @@ public class GetReferenceIdTest {
             }
             tx.commit();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         assertNotNull(user);
         assertNotNull(user.getUserRoles());
         user.getUserRoles().size();
@@ -164,7 +165,7 @@ public class GetReferenceIdTest {
         } catch (IllegalStateException e) {
             // ok
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         assertNotNull(user);
         try {
             persistence.getTools().getReferenceId(user, "group");

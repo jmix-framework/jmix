@@ -42,6 +42,8 @@ public class SeveralFetchGroupsTest {
     private Metadata metadata;
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID tariffId1, tariffId2_1, tariffId3_1, tariffId4_2;
     private UUID tariffVersionId1, tariffVersionId2, tariffVersionId3;
@@ -109,8 +111,8 @@ public class SeveralFetchGroupsTest {
     public void tearDown() throws SQLException {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("update TEST_SEVERAL_FETCH_GROUPS_TARIFF set ACTIVE_VERSION_ID = null");
-        TestSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF_VERSION", tariffVersionId3, tariffVersionId2, tariffVersionId1);
-        TestSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF", tariffId4_2, tariffId3_1, tariffId2_1, tariffId1);
+        testSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF_VERSION", tariffVersionId3, tariffVersionId2, tariffVersionId1);
+        testSupport.deleteRecord("TEST_SEVERAL_FETCH_GROUPS_TARIFF", tariffId4_2, tariffId3_1, tariffId2_1, tariffId1);
     }
 
     @Test

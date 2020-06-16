@@ -41,6 +41,8 @@ public class ManyToManyFetchSameEntityTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     protected Many2Many_FetchSame1 same1_1, same1_2, same1_3;
     protected Many2Many_FetchSame2 same2_1, same2_2, same2_3, same2_4;
@@ -106,8 +108,8 @@ public class ManyToManyFetchSameEntityTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_MANY2_MANY_FETCH_SAME1_MANY2_MANY_FETCH_SAME2_LINK", "MANY2_MANY__FETCH_SAME1_ID", same1_1.getId(), same1_2.getId(), same1_3.getId());
-        TestSupport.deleteRecord(same2_3, same2_4, same1_1, same1_2, same1_3, same2_1, same2_2, same3_1, same3_2);
+        testSupport.deleteRecord("TEST_MANY2_MANY_FETCH_SAME1_MANY2_MANY_FETCH_SAME2_LINK", "MANY2_MANY__FETCH_SAME1_ID", same1_1.getId(), same1_2.getId(), same1_3.getId());
+        testSupport.deleteRecord(same2_3, same2_4, same1_1, same1_2, same1_3, same2_1, same2_2, same3_1, same3_2);
     }
 
     @Test

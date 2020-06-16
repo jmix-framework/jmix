@@ -33,15 +33,18 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TypedNativeQueryTest {
     @Autowired
     private Persistence persistence;
+    @Autowired
+    private TestSupport testSupport;
+
     private UUID groupId, userId;
 
     @AfterEach
     public void tearDown() throws Exception {
         if (userId != null) {
-            TestSupport.deleteRecord("TEST_USER", userId);
+            testSupport.deleteRecord("TEST_USER", userId);
         }
         if (groupId != null) {
-            TestSupport.deleteRecord("TEST_GROUP", groupId);
+            testSupport.deleteRecord("TEST_GROUP", groupId);
         }
     }
 

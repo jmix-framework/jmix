@@ -38,6 +38,8 @@ class EntityFetcherTest extends CoreTestSpecification {
     private EntityFetcher entityFetcher
     @Autowired
     private Persistence persistence
+    @Autowired
+    private TestSupport testSupport
 
     def "fetching entity with many-to-many collection containing detached instances"() {
         def ref = new Many2ManyRef(name: 'ref1')
@@ -65,6 +67,6 @@ class EntityFetcherTest extends CoreTestSpecification {
         jdbcTemplate.update('delete from TEST_MANY2MANY_AB_LINK where A_ID = ?', a1.id)
         jdbcTemplate.update('delete from TEST_MANY2MANY_AB_LINK where A_ID = ?', a2.id)
 
-        TestSupport.deleteRecord(a1, a2, b1, ref)
+        testSupport.deleteRecord(a1, a2, b1, ref)
     }
 }

@@ -48,6 +48,8 @@ public class DataManagerTest {
     protected Persistence persistence;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected TestSupport testSupport;
 
     protected User user;
     protected Group group;
@@ -76,8 +78,8 @@ public class DataManagerTest {
     public void cleanup() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_SERVER");
-        TestSupport.deleteRecord(user);
-        TestSupport.deleteRecord(group);
+        testSupport.deleteRecord(user);
+        testSupport.deleteRecord(group);
     }
 
     @Test

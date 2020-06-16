@@ -26,7 +26,9 @@ import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestAppender;
 import com.haulmont.cuba.core.testsupport.TestNamePrinter;
-import io.jmix.core.*;
+import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.AppBeans;
+import io.jmix.core.FetchPlan;
 import io.jmix.data.impl.entitycache.QueryCache;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.jpa.EntityManagerFactoryDelegate;
@@ -39,10 +41,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.rules.TestRule;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.NoResultException;
@@ -51,8 +53,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static com.haulmont.cuba.core.testsupport.TestAssertions.assertFail;
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord;
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.Assert.*;
 
 @CoreTest
@@ -66,6 +66,8 @@ public class QueryCacheTestClass {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private JpaCache cache;
     private QueryCache queryCache;
@@ -155,18 +157,18 @@ public class QueryCacheTestClass {
 
     @AfterEach
     public void tearDown() throws Exception {
-        deleteRecord(userSetting, userRole, role, user, user2);
+        testSupport.deleteRecord(userSetting, userRole, role, user, user2);
         if (role1 != null)
-            deleteRecord(role1);
+            testSupport.deleteRecord(role1);
         if (newUser != null)
-            deleteRecord(newUser);
+            testSupport.deleteRecord(newUser);
         if (user3 != null)
-            deleteRecord(user3);
+            testSupport.deleteRecord(user3);
         if (appFolder != null) {
-            deleteRecord("TEST_APP_FOLDER", "FOLDER_ID", appFolder.getId());
-            deleteRecord("TEST_FOLDER", "ID", appFolder.getId());
+            testSupport.deleteRecord("TEST_APP_FOLDER", "FOLDER_ID", appFolder.getId());
+            testSupport.deleteRecord("TEST_FOLDER", "ID", appFolder.getId());
         }
-        deleteRecord(group);
+        testSupport.deleteRecord(group);
     }
 
     @Test
@@ -828,11 +830,11 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(1, appender.filterMessages(m -> m.contains("> SELECT")).count()); // user
@@ -849,11 +851,11 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT")).count()); // user
@@ -876,13 +878,13 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
@@ -901,13 +903,13 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
@@ -926,12 +928,12 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertFail(user::getGroup);
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertFail(user::getGroup);
@@ -949,13 +951,13 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
@@ -984,11 +986,11 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(1, appender.filterMessages(m -> m.contains("> SELECT")).count()); // user
@@ -1005,11 +1007,11 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(0, appender.filterMessages(m -> m.contains("> SELECT")).count()); // user
@@ -1032,13 +1034,13 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
@@ -1057,13 +1059,13 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
@@ -1082,12 +1084,12 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertFail(user::getGroup);
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertFail(user::getGroup);
@@ -1105,13 +1107,13 @@ public class QueryCacheTestClass {
             tx.commit();
         }
 
-        user = reserialize(resultList.get(0));
+        user = testSupport.reserialize(resultList.get(0));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
         assertEquals(user.getGroup().getName(), group.getName());
 
-        user = reserialize(resultList.get(1));
+        user = testSupport.reserialize(resultList.get(1));
         assertNotNull(user.getLogin());
         assertNotNull(user.getName());
         assertEquals(user.getGroup(), group);
@@ -1203,7 +1205,7 @@ public class QueryCacheTestClass {
     }
 
     protected void assertUserBrowseView(User user) throws Exception {
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         Group g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());

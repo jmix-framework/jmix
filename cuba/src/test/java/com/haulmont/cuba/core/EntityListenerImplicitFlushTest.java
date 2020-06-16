@@ -36,13 +36,15 @@ public class EntityListenerImplicitFlushTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private Group group;
     private User user;
 
     @AfterEach
     public void cleanup() {
-        TestSupport.deleteRecord(user, group);
+        testSupport.deleteRecord(user, group);
     }
 
     @Test

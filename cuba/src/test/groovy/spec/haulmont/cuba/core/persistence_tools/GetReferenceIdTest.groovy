@@ -16,19 +16,17 @@
 
 package spec.haulmont.cuba.core.persistence_tools
 
+import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.AppBeans
-import io.jmix.core.Metadata
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanRepository
-import com.haulmont.cuba.core.Persistence
+import io.jmix.core.Metadata
 import io.jmix.data.PersistenceTools
-import spec.haulmont.cuba.core.CoreTestSpecification
-
 import org.springframework.beans.factory.annotation.Autowired
-
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
+import spec.haulmont.cuba.core.CoreTestSpecification
 
 class GetReferenceIdTest extends CoreTestSpecification {
     @Autowired
@@ -37,6 +35,8 @@ class GetReferenceIdTest extends CoreTestSpecification {
     private Metadata metadata
     @Autowired
     private PersistenceTools persistenceTools
+    @Autowired
+    private TestSupport testSupport
 
     private Customer customer1
     private Order order1
@@ -61,7 +61,7 @@ class GetReferenceIdTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        deleteRecord(order1, order2, customer1)
+        testSupport.deleteRecord(order1, order2, customer1)
     }
 
     def "get existing reference id"() {

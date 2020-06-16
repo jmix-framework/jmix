@@ -39,6 +39,9 @@ public class SoftDeleteDataManagerTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
+
     private User user;
     private Group group;
 
@@ -59,7 +62,7 @@ public class SoftDeleteDataManagerTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord(user, group);
+        testSupport.deleteRecord(user, group);
     }
 
     @Test

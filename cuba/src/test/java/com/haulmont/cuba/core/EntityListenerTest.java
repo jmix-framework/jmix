@@ -45,6 +45,8 @@ public class EntityListenerTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private TestListenerBean listenerBean;
     private TestDetachAttachListener detachAttachListener;
@@ -308,7 +310,7 @@ public class EntityListenerTest {
             }
         } finally {
             entityListenerManager.removeListener(Server.class, TestListenerThrowing.class);
-            TestSupport.deleteRecord(server);
+            testSupport.deleteRecord(server);
         }
     }
 }

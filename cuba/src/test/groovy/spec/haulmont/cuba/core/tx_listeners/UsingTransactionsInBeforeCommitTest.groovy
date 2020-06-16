@@ -18,6 +18,7 @@ package spec.haulmont.cuba.core.tx_listeners
 
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
+import com.haulmont.cuba.core.testsupport.TestSupport
 import com.haulmont.cuba.core.tx_listener.TestBeforeCommitTxListener
 import io.jmix.core.Metadata
 import com.haulmont.cuba.core.Persistence
@@ -27,13 +28,14 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class UsingTransactionsInBeforeCommitTest extends CoreTestSpecification {
     @Autowired
-    private Metadata metadata
+    Metadata metadata
     @Autowired
-    private Persistence persistence
+    Persistence persistence
+    @Autowired
+    TestSupport testSupport
 
     private Group companyGroup
 
@@ -49,7 +51,7 @@ class UsingTransactionsInBeforeCommitTest extends CoreTestSpecification {
         def jdbcTemplate = new JdbcTemplate(persistence.getDataSource())
         jdbcTemplate.update("delete from TEST_USER_ROLE")
         jdbcTemplate.update("delete from TEST_USER")
-        deleteRecord(companyGroup)
+        testSupport.deleteRecord(companyGroup)
     }
 
     def "create entity in new transaction"() {

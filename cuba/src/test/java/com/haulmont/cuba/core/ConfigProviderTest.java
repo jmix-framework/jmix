@@ -49,6 +49,8 @@ public class ConfigProviderTest {
     private Persistence persistence;
     @Autowired
     protected DataManager dataManager;
+    @Autowired
+    protected TestSupport testSupport;
 
     protected User user;
     protected Group group;
@@ -80,8 +82,8 @@ public class ConfigProviderTest {
         } finally {
             tx.end();
         }
-        TestSupport.deleteRecord(user);
-        TestSupport.deleteRecord(group);
+        testSupport.deleteRecord(user);
+        testSupport.deleteRecord(group);
     }
 
     @Test

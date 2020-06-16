@@ -45,6 +45,8 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
     private Metadata metadata
     @Autowired
     private EntityStates entityStates
+    @Autowired
+    private TestSupport testSupport
 
     private FetchPlan baseView
 
@@ -106,7 +108,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        TestSupport.deleteRecord(customer1)
+        testSupport.deleteRecord(customer1)
 
         entityListenerManager.removeListener(Customer, TestCustomerListener)
     }
@@ -150,7 +152,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        TestSupport.deleteRecord(customer1)
+        testSupport.deleteRecord(customer1)
     }
 
     def "update returns detached entities"() {
@@ -175,7 +177,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        TestSupport.deleteRecord(customer1)
+        testSupport.deleteRecord(customer1)
     }
 
     def "load returns detached entities"() {
@@ -203,7 +205,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        TestSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
+        testSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
     }
 
     def "load list returns detached entities"() {
@@ -233,7 +235,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        TestSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
+        testSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
     }
 
     def "load entity with embedded"() {
@@ -259,7 +261,7 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        TestSupport.deleteRecord(container)
+        testSupport.deleteRecord(container)
     }
 
     private void checkObjectGraph(Order order) {

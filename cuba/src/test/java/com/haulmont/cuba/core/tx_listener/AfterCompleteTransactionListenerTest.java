@@ -16,19 +16,18 @@
 
 package com.haulmont.cuba.core.tx_listener;
 
+import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.Transaction;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -38,6 +37,8 @@ public class AfterCompleteTransactionListenerTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private Group companyGroup;
 
@@ -57,7 +58,7 @@ public class AfterCompleteTransactionListenerTest {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_USER_ROLE");
         jdbcTemplate.update("delete from TEST_USER");
-        TestSupport.deleteRecord(companyGroup);
+        testSupport.deleteRecord(companyGroup);
     }
 
     @Test

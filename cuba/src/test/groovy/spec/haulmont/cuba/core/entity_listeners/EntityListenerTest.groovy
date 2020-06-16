@@ -15,21 +15,20 @@
  */
 package spec.haulmont.cuba.core.entity_listeners
 
+import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.listener.TestUserDetachListener
 import com.haulmont.cuba.core.listener.TestUserEntityListener
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
-import com.haulmont.cuba.core.Persistence
 import io.jmix.data.impl.EntityListenerManager
+import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import org.springframework.beans.factory.annotation.Autowired
 import java.util.function.Consumer
-
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class EntityListenerTest extends CoreTestSpecification {
     @Autowired
@@ -40,6 +39,8 @@ class EntityListenerTest extends CoreTestSpecification {
     private Persistence persistence
     @Autowired
     private Metadata metadata
+    @Autowired
+    private TestSupport testSupport
 
     private Group companyGroup
 
@@ -50,7 +51,7 @@ class EntityListenerTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        deleteRecord(companyGroup)
+        testSupport.deleteRecord(companyGroup)
     }
 
     def "PL-9350 onBeforeInsert listener fires twice if em.flush() is used"() {
@@ -84,7 +85,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         events.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        deleteRecord(user)
+        testSupport.deleteRecord(user)
     }
 
     def "accessing properties that are not loaded"() {
@@ -119,7 +120,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(user)
+        testSupport.deleteRecord(user)
     }
 
     def "accessing not loaded attributes in BeforeDetach"() {
@@ -178,7 +179,7 @@ class EntityListenerTest extends CoreTestSpecification {
         cleanup:
 
         entityListenerManager.removeListener(User, TestUserDetachListener)
-        deleteRecord(user)
+        testSupport.deleteRecord(user)
     }
 
     def "in BeforeInsert reference can be detached"() {
@@ -208,7 +209,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        deleteRecord(user)
+        testSupport.deleteRecord(user)
     }
 
     def "in BeforeInsert reference can be new+managed"() {
@@ -242,7 +243,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        deleteRecord(user, group)
+        testSupport.deleteRecord(user, group)
     }
 
     def "in BeforeUpdate reference is managed"() {
@@ -278,7 +279,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        deleteRecord(user, group)
+        testSupport.deleteRecord(user, group)
     }
 
     def "in BeforeUpdate reference is managed even if merged object loaded with local view"() {
@@ -312,7 +313,7 @@ class EntityListenerTest extends CoreTestSpecification {
 
         TestUserEntityListener.consumers.clear()
         entityListenerManager.removeListener(User, TestUserEntityListener)
-        deleteRecord(user)
+        testSupport.deleteRecord(user)
     }
 
 }

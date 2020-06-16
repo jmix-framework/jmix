@@ -38,7 +38,8 @@ public class EntityListenerCascadingTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
-
+    @Autowired
+    private TestSupport testSupport;
 
     private EntityListenerManager entityListenerManager;
 
@@ -74,7 +75,7 @@ public class EntityListenerCascadingTest {
     @AfterEach
     public void tearDown() throws Exception {
         entityListenerManager.removeListener(User.class, TestCascadingEntityListener.class);
-        TestSupport.deleteRecord(user, admin, group);
+        testSupport.deleteRecord(user, admin, group);
     }
 
     @Test

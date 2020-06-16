@@ -37,6 +37,8 @@ public class FetchJoinTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     protected JoinC joinC;
     protected JoinD joinD;
@@ -148,9 +150,9 @@ public class FetchJoinTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord(joinA, joinB, joinC, joinD, joinE, joinF);
-        TestSupport.deleteRecord(orderLine, order, product, salesPerson, customer, partyCustomer, partyPerson);
-        TestSupport.deleteRecord(classType, type, user);
+        testSupport.deleteRecord(joinA, joinB, joinC, joinD, joinE, joinF);
+        testSupport.deleteRecord(orderLine, order, product, salesPerson, customer, partyCustomer, partyPerson);
+        testSupport.deleteRecord(classType, type, user);
     }
 
     @Test

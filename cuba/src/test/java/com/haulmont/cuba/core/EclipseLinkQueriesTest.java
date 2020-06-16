@@ -23,16 +23,15 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchMode;
-import io.jmix.core.Metadata;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -42,6 +41,8 @@ public class EclipseLinkQueriesTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private User user1;
     private User user2;
@@ -78,8 +79,8 @@ public class EclipseLinkQueriesTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_GROUP_HIERARCHY", "GROUP_ID", group.getId());
-        TestSupport.deleteRecord(user1, user2, group, rootGroup);
+        testSupport.deleteRecord("TEST_GROUP_HIERARCHY", "GROUP_ID", group.getId());
+        testSupport.deleteRecord(user1, user2, group, rootGroup);
     }
 
     // cross join, view has ToMany reference
@@ -95,7 +96,7 @@ public class EclipseLinkQueriesTest {
             tx.commit();
         }
         for (Group group : result) {
-            group = reserialize(group);
+            group = testSupport.reserialize(group);
             group.getConstraints().size();
         }
     }
@@ -113,7 +114,7 @@ public class EclipseLinkQueriesTest {
             tx.commit();
         }
         for (Group g : result) {
-            g = reserialize(g);
+            g = testSupport.reserialize(g);
             if (g.equals(rootGroup))
                 assertNull(g.getParent());
             else if (g.equals(group))

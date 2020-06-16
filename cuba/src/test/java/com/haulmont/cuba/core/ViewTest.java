@@ -36,14 +36,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
@@ -58,6 +57,8 @@ public class ViewTest {
     private EntityStates entityStates;
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userId;
     private UUID groupId;
@@ -142,8 +143,8 @@ public class ViewTest {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
         context.getLogger("com.haulmont.cuba.core.sys.FetchGroupManager").setLevel(Level.DEBUG);
 
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord("TEST_GROUP", groupId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord("TEST_GROUP", groupId);
 
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
 
@@ -175,7 +176,7 @@ public class ViewTest {
             User user = (User) q.getSingleResult();
 
             tx.commit();
-            user = reserialize(user);
+            user = testSupport.reserialize(user);
 
             try {
                 user.getPassword();
@@ -205,7 +206,7 @@ public class ViewTest {
             User user = em.find(User.class, userId, view);
 
             tx.commit();
-            user = reserialize(user);
+            user = testSupport.reserialize(user);
 
             try {
                 user.getPassword();
@@ -237,7 +238,7 @@ public class ViewTest {
             User user = em.find(User.class, userId, view);
 
             tx.commit();
-            user = reserialize(user);
+            user = testSupport.reserialize(user);
 
             try {
                 user.getPassword();
@@ -374,7 +375,7 @@ public class ViewTest {
             tx.end();
         }
 
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         assertNotNull(user.getGroup().getName());
 
         // login is not loaded after transaction is finished
@@ -397,7 +398,7 @@ public class ViewTest {
         } finally {
             tx.end();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         try {
             user.getGroup();
             fail();
@@ -428,7 +429,7 @@ public class ViewTest {
             User user = (User) q.getSingleResult();
 
             tx.commit();
-            user = reserialize(user);
+            user = testSupport.reserialize(user);
 
             user.getUserRoles().size();
 
@@ -554,7 +555,7 @@ public class ViewTest {
             MultiLinkEntity reloadEntity = em.find(MultiLinkEntity.class, multiLinkEntity.getId(), view);
 
             tx.commit();
-            reloadEntity = reserialize(reloadEntity);
+            reloadEntity = testSupport.reserialize(reloadEntity);
             assertEquals("A", reloadEntity.getA().getName());
             assertEquals("B", reloadEntity.getB().getName());
             assertEquals("C", reloadEntity.getC().getName());

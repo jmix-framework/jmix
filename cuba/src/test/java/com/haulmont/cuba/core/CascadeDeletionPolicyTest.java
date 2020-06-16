@@ -42,6 +42,8 @@ public class CascadeDeletionPolicyTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
     
     protected CascadeDeletionPolicyEntity root, first, second, third;
 
@@ -78,7 +80,7 @@ public class CascadeDeletionPolicyTest {
 
     @AfterEach
     public void tearDown() {
-        TestSupport.deleteRecord(third, second, first, root);
+        testSupport.deleteRecord(third, second, first, root);
     }
 
     @Test

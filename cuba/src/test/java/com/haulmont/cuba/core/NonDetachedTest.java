@@ -26,18 +26,14 @@ import com.haulmont.cuba.core.model.sales.Customer;
 import com.haulmont.cuba.core.model.sales.Order;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.AppBeans;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.UuidProvider;
-import io.jmix.core.Entity;
+import io.jmix.core.*;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -54,6 +50,8 @@ public class NonDetachedTest {
     private EntityStates entityStates;
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private TestSupport testSupport;
 
     private User user;
     private Group companyGroup;
@@ -111,7 +109,7 @@ public class NonDetachedTest {
 
     @AfterEach
     public void tearDown() {
-        TestSupport.deleteRecord(order, customer, user, companyGroup);
+        testSupport.deleteRecord(order, customer, user, companyGroup);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_CASCADE_DELETION_POLICY_ENTITY");
     }
@@ -161,7 +159,7 @@ public class NonDetachedTest {
             user = persistence.callInTransaction((em) -> em.find(User.class, userCopy.getId()));
             assertEquals("new name", user.getName());
         } finally {
-            TestSupport.deleteRecord(userCopy);
+            testSupport.deleteRecord(userCopy);
         }
 
         // check non-versioned entity
@@ -174,7 +172,7 @@ public class NonDetachedTest {
             Server loaded = persistence.callInTransaction(em -> em.find(Server.class, server.getId()));
             assertNotNull(loaded);
         } finally {
-            TestSupport.deleteRecord(server);
+            testSupport.deleteRecord(server);
         }
     }
 

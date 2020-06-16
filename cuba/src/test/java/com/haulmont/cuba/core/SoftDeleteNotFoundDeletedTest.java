@@ -38,6 +38,8 @@ public class SoftDeleteNotFoundDeletedTest {
     private Persistence persistence;
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID taskId;
     private UUID serviceId;
@@ -89,10 +91,10 @@ public class SoftDeleteNotFoundDeletedTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_SOFT_DELETE_PROJECT", projectId);
-        TestSupport.deleteRecord("TEST_SOFT_DELETE_TASK_VALUE", taskValueId);
-        TestSupport.deleteRecord("TEST_SOFT_DELETE_TASK", taskId);
-        TestSupport.deleteRecord("TEST_SOFT_DELETE_SERVICE", serviceId);
+        testSupport.deleteRecord("TEST_SOFT_DELETE_PROJECT", projectId);
+        testSupport.deleteRecord("TEST_SOFT_DELETE_TASK_VALUE", taskValueId);
+        testSupport.deleteRecord("TEST_SOFT_DELETE_TASK", taskId);
+        testSupport.deleteRecord("TEST_SOFT_DELETE_SERVICE", serviceId);
     }
 
     @Test

@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.Metadata
 import io.jmix.core.FetchPlan
 import com.haulmont.cuba.core.Persistence
@@ -29,7 +30,6 @@ import spec.haulmont.cuba.core.CoreTestSpecification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class GetOldValueTest extends CoreTestSpecification {
     @Autowired
@@ -38,6 +38,8 @@ class GetOldValueTest extends CoreTestSpecification {
     private Persistence persistence
     @Autowired
     private Metadata metadata
+    @Autowired
+    private TestSupport testSupport
 
     private Customer customer1
     private Order order1
@@ -232,7 +234,7 @@ class GetOldValueTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(orderLine11, orderLine12)
+        testSupport.deleteRecord(orderLine11, orderLine12)
     }
 
     def "test enum attribute"() {

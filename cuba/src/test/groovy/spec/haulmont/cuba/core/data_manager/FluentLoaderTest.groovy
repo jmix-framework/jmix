@@ -19,13 +19,12 @@ package spec.haulmont.cuba.core.data_manager
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Status
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
+import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import org.springframework.beans.factory.annotation.Autowired
 import javax.persistence.TemporalType
-
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class FluentLoaderTest extends CoreTestSpecification {
     @Autowired
@@ -34,6 +33,8 @@ class FluentLoaderTest extends CoreTestSpecification {
     private FetchPlanRepository viewRepository
     @Autowired
     private Metadata metadata
+    @Autowired
+    private TestSupport testSupport
 
     private FetchPlan baseView
     private Customer customer, customer2
@@ -55,7 +56,7 @@ class FluentLoaderTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        deleteRecord(customer, customer2)
+        testSupport.deleteRecord(customer, customer2)
     }
 
     def "usage examples"() {

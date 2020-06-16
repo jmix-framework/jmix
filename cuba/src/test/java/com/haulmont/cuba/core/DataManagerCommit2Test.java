@@ -45,6 +45,8 @@ public class DataManagerCommit2Test {
     private EntityStates entityStates;
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userId;
     private UUID userRoleId;
@@ -105,11 +107,11 @@ public class DataManagerCommit2Test {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord(role);
-        TestSupport.deleteRecord(constraint);
-        TestSupport.deleteRecord(group1, group2);
+        testSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord(role);
+        testSupport.deleteRecord(constraint);
+        testSupport.deleteRecord(group1, group2);
     }
 
     @Test
@@ -133,7 +135,7 @@ public class DataManagerCommit2Test {
             User committedUser = dataManager.commit(user, userView);
             assertTrue(entityStates.isLoaded(committedUser.getGroup(), "createTs"));
         } finally {
-            TestSupport.deleteRecord(user);
+            testSupport.deleteRecord(user);
         }
     }
 
@@ -168,7 +170,7 @@ public class DataManagerCommit2Test {
             assertTrue(entityStates.isLoaded(committedUser.getGroup(), "createTs"));
             assertTrue(entityStates.isLoaded(committedUser.getGroup().getConstraints().iterator().next(), "entityName"));
         } finally {
-            TestSupport.deleteRecord(user);
+            testSupport.deleteRecord(user);
         }
     }
 

@@ -22,6 +22,7 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
 import io.jmix.data.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PersistenceTest {
     @Autowired
     private Persistence persistence;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userId, groupId;
 
@@ -68,8 +71,8 @@ public class PersistenceTest {
 
     @AfterEach
     public void tearDown() {
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord("TEST_GROUP", groupId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord("TEST_GROUP", groupId);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("DELETE FROM TEST_SERVER");
     }

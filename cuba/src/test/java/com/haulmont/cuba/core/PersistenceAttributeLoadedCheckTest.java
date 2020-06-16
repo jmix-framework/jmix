@@ -17,22 +17,22 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.ScheduledTask;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import com.haulmont.cuba.core.global.DataManager;
 import io.jmix.core.EntityStates;
-import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +45,8 @@ public class PersistenceAttributeLoadedCheckTest {
     private Persistence persistence;
     @Autowired
     private EntityStates entityStates;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID taskId;
     private UUID userId;
@@ -95,9 +97,9 @@ public class PersistenceAttributeLoadedCheckTest {
 
     @AfterEach
     public void tearDown() {
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord("TEST_GROUP", groupId);
-        TestSupport.deleteRecord("TEST_SCHEDULED_TASK", taskId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord("TEST_GROUP", groupId);
+        testSupport.deleteRecord("TEST_SCHEDULED_TASK", taskId);
     }
 
     @Test
@@ -123,8 +125,8 @@ public class PersistenceAttributeLoadedCheckTest {
         assertTrue(!entityStates.isLoaded(task, "methodName"));//if attribute is not in the view - it should not be loaded
         assertTrue(entityStates.isLoaded(task, "methodParametersString"));//meta properties should be marked as loaded
 
-        user = TestSupport.reserialize(user);
-        task = TestSupport.reserialize(task);
+        user = testSupport.reserialize(user);
+        task = testSupport.reserialize(task);
 
         assertTrue(entityStates.isLoaded(user, "group"));//if attribute is in the view - it should be loaded
         assertTrue(entityStates.isLoaded(user, "userRoles"));//if attribute is in the view - it should be loaded

@@ -39,6 +39,8 @@ public class SoftDeleteMany2ManyTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private Many2ManyA many2ManyA, many2ManyA2, a1, a2;
     private Many2ManyB many2ManyB, many2ManyB2, b1, b2, b3;
@@ -81,9 +83,9 @@ public class SoftDeleteMany2ManyTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_MANY2MANY_AB_LINK", "A_ID", many2ManyA.getId(), a1.getId(), a2.getId());
-        TestSupport.deleteRecord("TEST_MANY2MANY_AB_LINK2", "A_ID", many2ManyA2.getId());
-        TestSupport.deleteRecord(many2ManyA, many2ManyB, many2ManyA2, many2ManyB2, a1, a2, b1, b2, b3);
+        testSupport.deleteRecord("TEST_MANY2MANY_AB_LINK", "A_ID", many2ManyA.getId(), a1.getId(), a2.getId());
+        testSupport.deleteRecord("TEST_MANY2MANY_AB_LINK2", "A_ID", many2ManyA2.getId());
+        testSupport.deleteRecord(many2ManyA, many2ManyB, many2ManyA2, many2ManyB2, a1, a2, b1, b2, b3);
     }
 
     @Test

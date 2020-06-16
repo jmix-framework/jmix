@@ -23,18 +23,19 @@ import com.haulmont.cuba.core.model.common.Permission;
 import com.haulmont.cuba.core.model.common.PermissionType;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.*;
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Entity;
+import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +47,8 @@ public class UpdateDetachedTest {
     private EntityStates entityStates;
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID roleId, role2Id, permissionId;
 
@@ -127,7 +130,7 @@ public class UpdateDetachedTest {
         } finally {
             tx.end();
         }
-        p = reserialize(p);
+        p = testSupport.reserialize(p);
         assertTrue(entityStates.isDetached(p));
         assertNotNull(p.getRole());
         assertTrue(entityStates.isDetached(p.getRole()));
@@ -196,7 +199,7 @@ public class UpdateDetachedTest {
             if (entity.equals(p))
                 result = (Permission) entity;
         }
-        result = reserialize(result);
+        result = testSupport.reserialize(result);
         assertTrue(entityStates.isDetached(result));
         assertNotNull(result.getRole());
         assertTrue(entityStates.isDetached(result.getRole()));

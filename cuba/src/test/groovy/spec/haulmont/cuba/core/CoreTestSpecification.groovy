@@ -16,12 +16,10 @@
 
 package spec.haulmont.cuba.core
 
-import com.haulmont.cuba.core.testsupport.AppContextTestExecutionListener
+
 import com.haulmont.cuba.core.testsupport.CoreTest
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 @CoreTest
-
 class CoreTestSpecification extends Specification {
 }

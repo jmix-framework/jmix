@@ -20,16 +20,17 @@ import com.haulmont.cuba.core.model.not_persistent.CustomerWithNonPersistentRef
 import com.haulmont.cuba.core.model.not_persistent.TestNotPersistentEntity
 import com.haulmont.cuba.core.model.primary_keys.EntityKey
 import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.testsupport.TestSupport
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class EntityManagerTest extends CoreTestSpecification {
     @Autowired
     private DataManager dataManager
-
+    @Autowired
+    private TestSupport testSupport
 
     def "non-persistent property from superclass is copied back after merge #1150"() {
 
@@ -67,6 +68,6 @@ class EntityManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(customer)
+        testSupport.deleteRecord(customer)
     }
 }

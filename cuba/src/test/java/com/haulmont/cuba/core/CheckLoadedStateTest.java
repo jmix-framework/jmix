@@ -18,7 +18,6 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.UserRelatedNews;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
@@ -28,8 +27,8 @@ import io.jmix.core.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,11 +44,12 @@ public class CheckLoadedStateTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userRelatedNewsId = null;
     private List<UUID> recursiveUserRelatedIds = null;
     private UUID userId, groupId;
-
 
 
     @BeforeEach
@@ -292,7 +292,7 @@ public class CheckLoadedStateTest {
     @AfterEach
     public void tearDown() {
         if (userRelatedNewsId != null) {
-            TestSupport.deleteRecord("TEST_USER_RELATED_NEWS", userRelatedNewsId);
+            testSupport.deleteRecord("TEST_USER_RELATED_NEWS", userRelatedNewsId);
             userRelatedNewsId = null;
         }
 
@@ -300,10 +300,10 @@ public class CheckLoadedStateTest {
             Collections.reverse(recursiveUserRelatedIds);
 
             for (UUID id : recursiveUserRelatedIds) {
-                TestSupport.deleteRecord("TEST_USER_RELATED_NEWS", id);
+                testSupport.deleteRecord("TEST_USER_RELATED_NEWS", id);
             }
         }
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord("TEST_GROUP", groupId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord("TEST_GROUP", groupId);
     }
 }

@@ -45,6 +45,8 @@ public class QueryResultTest {
     private Persistence persistence;
     @Autowired
     private DataManager dataManager;
+    @Autowired
+    private TestSupport testSupport;
 
     private List<UUID> userIds = new ArrayList<>();
     private Group group;
@@ -57,9 +59,9 @@ public class QueryResultTest {
     @AfterEach
     public void tearDown() throws Exception {
         for (UUID userId : userIds) {
-            TestSupport.deleteRecord("SEC_USER", userId);
+            testSupport.deleteRecord("SEC_USER", userId);
         }
-        TestSupport.deleteRecord(group);
+        testSupport.deleteRecord(group);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from SYS_QUERY_RESULT");
     }

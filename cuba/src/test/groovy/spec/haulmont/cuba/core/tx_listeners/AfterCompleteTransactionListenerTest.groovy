@@ -16,27 +16,27 @@
 
 package spec.haulmont.cuba.core.tx_listeners
 
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.Role
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.model.common.UserRole
+import com.haulmont.cuba.core.testsupport.TestSupport
 import com.haulmont.cuba.core.tx_listener.TestAfterCompleteTxListener
 import io.jmix.core.AppBeans
-import com.haulmont.cuba.core.global.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlan
-import com.haulmont.cuba.core.Persistence
-import spec.haulmont.cuba.core.CoreTestSpecification
-
 import org.springframework.beans.factory.annotation.Autowired
-
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
+import spec.haulmont.cuba.core.CoreTestSpecification
 
 class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
     @Autowired
     DataManager dataManager
     @Autowired
     Persistence persistence
+    @Autowired
+    TestSupport testSupport
 
     User user
     Group group
@@ -53,7 +53,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        deleteRecord(userRole, role, user, group)
+        testSupport.deleteRecord(userRole, role, user, group)
     }
 
     def "reference CAN be fetched in afterComplete if entity is not partial"() {

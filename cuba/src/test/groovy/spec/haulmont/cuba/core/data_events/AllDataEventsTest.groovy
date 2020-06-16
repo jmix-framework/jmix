@@ -19,6 +19,7 @@ package spec.haulmont.cuba.core.data_events
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
 import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.Transaction
@@ -26,8 +27,6 @@ import com.haulmont.cuba.core.TransactionalDataManager
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import org.springframework.beans.factory.annotation.Autowired
-
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
 
 class AllDataEventsTest extends CoreTestSpecification {
     private TestEntityChangedEventListener listener
@@ -43,6 +42,8 @@ class AllDataEventsTest extends CoreTestSpecification {
     private EntityStates entityStates
     @Autowired
     private Persistence persistence
+    @Autowired
+    private TestSupport testSupport
 
     private Order toDiscard
 
@@ -59,7 +60,7 @@ class AllDataEventsTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        deleteRecord(toDiscard)
+        testSupport.deleteRecord(toDiscard)
         listener.clear()
     }
 
@@ -88,7 +89,7 @@ class AllDataEventsTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(order)
+        testSupport.deleteRecord(order)
     }
 
     def "update sequence"() {
@@ -121,7 +122,7 @@ class AllDataEventsTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(order)
+        testSupport.deleteRecord(order)
     }
 
     def "delete sequence"() {
@@ -153,7 +154,7 @@ class AllDataEventsTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(order)
+        testSupport.deleteRecord(order)
     }
 
     def "create/update/delete in one transaction sequence"() {
@@ -231,7 +232,7 @@ class AllDataEventsTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        deleteRecord(order)
+        testSupport.deleteRecord(order)
     }
 
     def "load/update in one transaction sequence"() {
@@ -288,7 +289,7 @@ class AllDataEventsTest extends CoreTestSpecification {
         cleanup:
 
         tx.end()
-        deleteRecord(order)
+        testSupport.deleteRecord(order)
     }
 
 }

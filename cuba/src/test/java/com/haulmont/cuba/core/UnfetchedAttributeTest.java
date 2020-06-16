@@ -27,11 +27,10 @@ import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -39,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class UnfetchedAttributeTest {
     @Autowired
     private Persistence persistence;
+    @Autowired
+    private TestSupport testSupport;
 
     private Group group, group1;
     private User user;
@@ -92,7 +93,7 @@ public class UnfetchedAttributeTest {
         } finally {
             tx.end();
         }
-        loadedUser = reserialize(loadedUser);
+        loadedUser = testSupport.reserialize(loadedUser);
         assertNotNull(loadedUser);
         assertNotNull(loadedUser.getUserRoles());
         loadedUser.getUserRoles().size();
@@ -127,7 +128,7 @@ public class UnfetchedAttributeTest {
         } finally {
             tx.end();
         }
-        loadedUser = reserialize(loadedUser);
+        loadedUser = testSupport.reserialize(loadedUser);
         assertNotNull(loadedUser);
         assertNotNull(loadedUser.getUserRoles());
         loadedUser.getUserRoles().size();
@@ -137,6 +138,6 @@ public class UnfetchedAttributeTest {
 
     @AfterEach
     public void tearDown() {
-        TestSupport.deleteRecord(user, group, group1);
+        testSupport.deleteRecord(user, group, group1);
     }
 }

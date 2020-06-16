@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.model.SoftDeleteOneToOneB;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.FetchMode;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
@@ -45,6 +46,8 @@ public class SoftDeleteTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID groupId;
     private UUID userId, user1Id, user2Id;
@@ -219,17 +222,17 @@ public class SoftDeleteTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_USER_ROLE", userRole1Id, userRole2Id, userRole3Id, userRole4Id);
-        TestSupport.deleteRecord("TEST_GROUP_HIERARCHY", groupHierarchyId);
-        TestSupport.deleteRecord("TEST_CONSTRAINT", constraint1Id, constraint2Id);
-        TestSupport.deleteRecord("TEST_ROLE", role1Id, role2Id, role3Id, role4Id);
-        TestSupport.deleteRecord("TEST_USER", userId, user1Id, user2Id);
-        TestSupport.deleteRecord("TEST_GROUP", groupId, group1Id);
-        TestSupport.deleteRecord("TEST_SOFT_DELETE_OTO_A", oneToOneA1Id, oneToOneA2Id);
+        testSupport.deleteRecord("TEST_USER_ROLE", userRole1Id, userRole2Id, userRole3Id, userRole4Id);
+        testSupport.deleteRecord("TEST_GROUP_HIERARCHY", groupHierarchyId);
+        testSupport.deleteRecord("TEST_CONSTRAINT", constraint1Id, constraint2Id);
+        testSupport.deleteRecord("TEST_ROLE", role1Id, role2Id, role3Id, role4Id);
+        testSupport.deleteRecord("TEST_USER", userId, user1Id, user2Id);
+        testSupport.deleteRecord("TEST_GROUP", groupId, group1Id);
+        testSupport.deleteRecord("TEST_SOFT_DELETE_OTO_A", oneToOneA1Id, oneToOneA2Id);
         if (oneToOneA3Id != null) {
-            TestSupport.deleteRecord("TEST_SOFT_DELETE_OTO_A", oneToOneA3Id);
+            testSupport.deleteRecord("TEST_SOFT_DELETE_OTO_A", oneToOneA3Id);
         }
-        TestSupport.deleteRecord("TEST_SOFT_DELETE_OTO_B", oneToOneB1Id, oneToOneB2Id);
+        testSupport.deleteRecord("TEST_SOFT_DELETE_OTO_B", oneToOneB1Id, oneToOneB2Id);
     }
 
     @Test

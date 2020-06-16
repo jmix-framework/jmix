@@ -17,16 +17,17 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -37,9 +38,13 @@ public class HsqlLikeNullFailTest {
     private User user;
     private Group group;
 
+    @Autowired
+    private TestSupport testSupport;
+    @Autowired
+    private DataManager dataManager;
+
     @BeforeEach
     public void setUp() {
-        DataManager dataManager = AppBeans.get(DataManager.NAME);
 
         group = new Group();
         group.setName("group");
@@ -55,7 +60,7 @@ public class HsqlLikeNullFailTest {
 
     @AfterEach
     public void tearDown() {
-        TestSupport.deleteRecord(user, group);
+        testSupport.deleteRecord(user, group);
     }
 
     @Test
@@ -65,7 +70,6 @@ public class HsqlLikeNullFailTest {
                 "where u.name like :custom_searchString or u.login like :custom_searchString")
                 .setParameter("custom_searchString", null);
 
-        DataManager dataManager = AppBeans.get(DataManager.NAME);
         List<User> list = dataManager.loadList(loadContext);
         assertEquals(0, list.size());
     }

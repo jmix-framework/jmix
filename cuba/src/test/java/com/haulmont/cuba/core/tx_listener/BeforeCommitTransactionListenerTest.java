@@ -39,6 +39,9 @@ public class BeforeCommitTransactionListenerTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
+
     private Group companyGroup;
 
     @BeforeEach
@@ -55,7 +58,7 @@ public class BeforeCommitTransactionListenerTest {
     public void tearDown() throws Exception {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_USER");
-        TestSupport.deleteRecord(companyGroup);
+        testSupport.deleteRecord(companyGroup);
     }
 
     @Test

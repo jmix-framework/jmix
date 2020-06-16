@@ -30,6 +30,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestAppender;
 import com.haulmont.cuba.core.testsupport.TestNamePrinter;
 
+import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.*;
 import com.haulmont.cuba.core.sys.QueryImpl;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
@@ -50,8 +51,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.haulmont.cuba.core.testsupport.TestAssertions.assertFail;
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord;
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.Assert.*;
 
 /**
@@ -70,7 +69,9 @@ public class EntityCacheTestClass {
     private Metadata metadata;
     @Autowired
     private MetadataTools metadataTools;
-
+    @Autowired
+    private TestSupport testSupport;
+    
     private JpaCache cache;
 
     private final TestAppender appender;
@@ -172,13 +173,13 @@ public class EntityCacheTestClass {
 
     @AfterEach
     public void tearDown() throws Exception {
-        deleteRecord(userSetting, userRole, role, userSubstitution, user, user2);
-        deleteRecord(compositePropertyTwo, compositePropertyOne, compositeTwo, compositeOne);
+        testSupport.deleteRecord(userSetting, userRole, role, userSubstitution, user, user2);
+        testSupport.deleteRecord(compositePropertyTwo, compositePropertyOne, compositeTwo, compositeOne);
         if (role1 != null)
-            deleteRecord(role1);
+            testSupport.deleteRecord(role1);
         if (user1 != null)
-            deleteRecord(user1);
-        deleteRecord(group);
+            testSupport.deleteRecord(user1);
+        testSupport.deleteRecord(group);
     }
 
     @Test
@@ -240,7 +241,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         assertNotNull(user.getGroup());
 
         assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // user, group
@@ -252,7 +253,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         Group g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -285,7 +286,7 @@ public class EntityCacheTestClass {
     }
 
     private void checkUser(User u) throws Exception {
-        u = reserialize(u);
+        u = testSupport.reserialize(u);
         assertNotNull(u);
 
         assertEquals(group, u.getGroup());
@@ -323,7 +324,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         Group g = user.getGroup();
         assertNotNull(user.getGroup());
         assertEquals(this.group, g);
@@ -339,7 +340,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -361,7 +362,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -395,7 +396,7 @@ public class EntityCacheTestClass {
         loadUser();
         assertEquals(0, appender.filterMessages(m -> m.contains("FROM TEST_USER")).count()); // inserting new entities does not affect existing in cache
 
-        deleteRecord(newUser);
+        testSupport.deleteRecord(newUser);
     }
 
     @Test
@@ -492,7 +493,7 @@ public class EntityCacheTestClass {
 
         assertEquals(2, appender.filterMessages(m -> m.contains("> SELECT")).count()); // User, UserRoles
 
-        deleteRecord(newUserRole, newRole);
+        testSupport.deleteRecord(newUserRole, newRole);
     }
 
     @Test
@@ -718,7 +719,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user = reserialize(user);
+        user =testSupport.reserialize(user);
         Group g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -746,7 +747,7 @@ public class EntityCacheTestClass {
 
             tx.commit();
         }
-        user = reserialize(user);
+        user =testSupport.reserialize(user);
         Group g = user.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());
@@ -766,7 +767,7 @@ public class EntityCacheTestClass {
             assertNotNull(us);
             tx.commit();
         }
-        us = reserialize(us);
+        us =testSupport.reserialize(us);
         assertEquals(userSetting, us);
         assertEquals(user, us.getUser());
         return us;
@@ -821,7 +822,7 @@ public class EntityCacheTestClass {
             assertNotNull(u);
             tx.commit();
         }
-        u = reserialize(u);
+        u =testSupport.reserialize(u);
         Group g = u.getGroup();
         assertEquals(this.group, g);
         assertNotNull(g.getName());

@@ -21,17 +21,16 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.Metadata;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.UUID;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @CoreTest
@@ -40,15 +39,17 @@ public class OrmBehaviorTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
-    
+    @Autowired
+    private TestSupport testSupport;
+
     private UUID userId, groupId;
 
     private static final Logger log = LoggerFactory.getLogger(OrmBehaviorTest.class);
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord("TEST_GROUP", groupId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord("TEST_GROUP", groupId);
     }
 
     /*
@@ -90,7 +91,7 @@ public class OrmBehaviorTest {
             tx.end();
         }
 
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
         assertEquals(groupId, user.getGroup().getId());
     }
 }

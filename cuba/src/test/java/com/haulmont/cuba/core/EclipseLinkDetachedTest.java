@@ -27,17 +27,18 @@ import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.UUID;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EclipseLinkDetachedTest {
     @Autowired
     private Persistence persistence;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userId;
     private UUID userRoleId;
@@ -81,10 +82,10 @@ public class EclipseLinkDetachedTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord(group);
-        TestSupport.deleteRecord(role);
+        testSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord(group);
+        testSupport.deleteRecord(role);
     }
 
     @Test
@@ -132,7 +133,7 @@ public class EclipseLinkDetachedTest {
             tx.end();
         }
 
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertEquals("testUser", user.getName());
 
@@ -195,7 +196,7 @@ public class EclipseLinkDetachedTest {
             tx.end();
         }
 
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertEquals("testLogin", user.getLogin());
         // exception on getting not loaded references
@@ -233,7 +234,7 @@ public class EclipseLinkDetachedTest {
         } finally {
             tx.end();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertEquals("testLogin", user.getLogin());
         // exception on getting not loaded references
@@ -265,7 +266,7 @@ public class EclipseLinkDetachedTest {
         } finally {
             tx.end();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertEquals("testLogin-1", user.getLogin());
         // loaded by mapping rules
@@ -292,7 +293,7 @@ public class EclipseLinkDetachedTest {
         } finally {
             tx.end();
         }
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertEquals("testLogin-1", user.getLogin());
         assertEquals("testUser", user.getName());

@@ -43,6 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QueryTest {
     @Autowired
     private Persistence persistence;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userId;
     private UUID user2Id;
@@ -91,9 +93,9 @@ public class QueryTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_USER", userId, user2Id);
-        TestSupport.deleteRecord("TEST_GROUP", group1Id, group2Id);
-        TestSupport.deleteRecord("TEST_ROLE", roleId);
+        testSupport.deleteRecord("TEST_USER", userId, user2Id);
+        testSupport.deleteRecord("TEST_GROUP", group1Id, group2Id);
+        testSupport.deleteRecord("TEST_ROLE", roleId);
     }
 
     @Test

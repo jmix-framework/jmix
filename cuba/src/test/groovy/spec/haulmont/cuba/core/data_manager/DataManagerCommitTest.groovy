@@ -21,19 +21,21 @@ import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.entity.contracts.Id
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
 import io.jmix.core.entity.KeyValueEntity
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
-
 class DataManagerCommitTest extends CoreTestSpecification {
     @Autowired
     private DataManager dataManager
     @Autowired
     private EntityStates entityStates
+    @Autowired
+    private TestSupport testSupport;
+
     private Customer customer
 
     void setup() {
@@ -56,7 +58,7 @@ class DataManagerCommitTest extends CoreTestSpecification {
         committedCustomer == customer
 
         cleanup:
-        deleteRecord(order, customer)
+        testSupport.deleteRecord(order, customer)
     }
 
     def "committed, returned entities allow you to get commited entity by reference"() {
@@ -74,7 +76,7 @@ class DataManagerCommitTest extends CoreTestSpecification {
         committedCustomer == customer
 
         cleanup:
-        deleteRecord(order, customer)
+        testSupport.deleteRecord(order, customer)
     }
 
     def "an updated object with a reference through getReference will store the correct reference"() {
@@ -97,7 +99,7 @@ class DataManagerCommitTest extends CoreTestSpecification {
         recommittedOrder.customer.name == customer.name
 
         cleanup:
-        deleteRecord(order, customer)
+        testSupport.deleteRecord(order, customer)
     }
 
     def "getReference using Id"() {
@@ -120,7 +122,7 @@ class DataManagerCommitTest extends CoreTestSpecification {
         recommittedOrder.customer.name == customer.name
 
         cleanup:
-        deleteRecord(order, customer)
+        testSupport.deleteRecord(order, customer)
     }
 
     def "an object can be removed by its reference (getReference)"() {
@@ -141,7 +143,7 @@ class DataManagerCommitTest extends CoreTestSpecification {
         reloadedCustomer.name == customer.name
 
         cleanup:
-        deleteRecord(customer)
+        testSupport.deleteRecord(customer)
     }
 
     def "KeyValueEntity can be committed to NullStore"() {

@@ -38,6 +38,8 @@ public class TransactionTest {
 
     @Autowired
     private Persistence persistence;
+    @Autowired
+    private TestSupport testSupport;
 
     private User user;
     private Group group;
@@ -62,8 +64,8 @@ public class TransactionTest {
     public void cleanup() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
         jdbcTemplate.update("delete from TEST_SERVER");
-        TestSupport.deleteRecord(user);
-        TestSupport.deleteRecord(group);
+        testSupport.deleteRecord(user);
+        testSupport.deleteRecord(group);
     }
 
     @Test

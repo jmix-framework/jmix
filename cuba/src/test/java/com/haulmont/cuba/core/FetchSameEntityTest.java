@@ -37,6 +37,8 @@ public class FetchSameEntityTest {
     private Persistence persistence;
     @Autowired
     private Metadata metadata;
+    @Autowired
+    private TestSupport testSupport;
 
     protected FetchSameMainEntity mainEntity;
     protected FetchSameLinkBEntity linkB1, linkB2;
@@ -85,7 +87,7 @@ public class FetchSameEntityTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord(linkB1, linkB2, linkA1, linkA2, mainEntity);
+        testSupport.deleteRecord(linkB1, linkB2, linkA1, linkA2, mainEntity);
     }
 
     @Test

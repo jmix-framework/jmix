@@ -32,13 +32,13 @@ import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
-
 class DataManagerTest extends CoreTestSpecification {
     @Autowired
     private DataManager dataManager
     @Autowired
     private Persistence persistence
+    @Autowired
+    private TestSupport testSupport
 
     User defaultUser
     Group defaultGroup
@@ -53,7 +53,7 @@ class DataManagerTest extends CoreTestSpecification {
     }
 
     void cleanup() {
-        deleteRecord(defaultUser, defaultGroup)
+        testSupport.deleteRecord(defaultUser, defaultGroup)
     }
 
 
@@ -200,7 +200,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(line, product)
+        testSupport.deleteRecord(line, product)
     }
 
     def "load by collection of ids"() {
@@ -220,7 +220,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(product1, product2)
+        testSupport.deleteRecord(product1, product2)
     }
 
     def "load by collection of ids throws exception if some instance not found"() {
@@ -239,7 +239,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(product1)
+        testSupport.deleteRecord(product1)
     }
 
     def "load by collection of composite ids"() {

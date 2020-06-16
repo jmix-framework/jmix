@@ -20,6 +20,7 @@ package com.haulmont.cuba.core.testsupport;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -28,28 +29,37 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import io.jmix.core.security.impl.CoreUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Locale;
 
+@Component
 public class TestSupport {
+    @Autowired
+    protected Persistence persistence;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
 
-    public static <T> T reserialize(Serializable object) throws Exception {
+    public <T> T reserialize(Serializable object) throws Exception {
         if (object == null)
             return null;
 
         return (T) StandardSerialization.deserialize(StandardSerialization.serialize(object));
     }
 
-    public static void deleteRecord(String table, Object... ids) {
+    public void deleteRecord(String table, Object... ids) {
         deleteRecord(table, "ID", ids);
     }
 
-    public static void deleteRecord(String table, String primaryKeyCol, Object... ids) {
-        Persistence persistence = AppBeans.get(Persistence.class);
+    public void deleteRecord(String table, String primaryKeyCol, Object... ids) {
         for (Object id : ids) {
             String sql = "delete from " + table + " where " + primaryKeyCol + " = '" + id.toString() + "'";
             JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
@@ -62,7 +72,7 @@ public class TestSupport {
         }
     }
 
-    public static void deleteRecord(Entity... entities) {
+    public void deleteRecord(Entity... entities) {
         if (entities == null) {
             return;
         }
@@ -72,8 +82,6 @@ public class TestSupport {
                 continue;
             }
 
-            Metadata metadata = AppBeans.get(Metadata.class);
-            MetadataTools metadataTools = metadata.getTools();
             MetaClass metaClass = metadata.getClass(entity.getClass());
 
             String table = metadataTools.getDatabaseTable(metaClass);
@@ -82,7 +90,7 @@ public class TestSupport {
                 throw new RuntimeException("Unable to determine table or primary key name for " + entity);
             }
 
-            deleteRecord(table, primaryKey, EntityValues.<Object>getId(entity));
+            deleteRecord(table, primaryKey, EntityValues.getId(entity));
         }
     }
 

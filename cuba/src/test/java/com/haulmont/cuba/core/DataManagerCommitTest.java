@@ -45,6 +45,8 @@ public class DataManagerCommitTest {
     private DataManager dataManager;
     @Autowired
     private EntityStates entityStates;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userId;
     private UUID userRoleId;
@@ -93,10 +95,10 @@ public class DataManagerCommitTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        TestSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
-        TestSupport.deleteRecord("TEST_USER", userId);
-        TestSupport.deleteRecord(role);
-        TestSupport.deleteRecord(group);
+        testSupport.deleteRecord("TEST_USER_ROLE", userRoleId);
+        testSupport.deleteRecord("TEST_USER", userId);
+        testSupport.deleteRecord(role);
+        testSupport.deleteRecord(group);
     }
 
     @Test
@@ -104,7 +106,7 @@ public class DataManagerCommitTest {
         LoadContext<User> loadContext = LoadContext.create(User.class).setId(userId).setView(view);
         User user = dataManager.load(loadContext);
         assertNotNull(user);
-        user = TestSupport.reserialize(user);
+        user = testSupport.reserialize(user);
         assertEquals(group.getId(), user.getGroup().getId());
         assertEquals(1, user.getUserRoles().size());
         assertEquals(userRoleId, user.getUserRoles().get(0).getId());
@@ -121,7 +123,7 @@ public class DataManagerCommitTest {
         //do second check to make sure isLoaded did not affect attribute fetch status
         assertTrue(!entityStates.isLoaded(user, "substitutions"));
 
-        user = TestSupport.reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertTrue(entityStates.isDetached(user));
         assertTrue(!entityStates.isNew(user));

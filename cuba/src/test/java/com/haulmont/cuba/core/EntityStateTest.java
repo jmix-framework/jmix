@@ -23,17 +23,18 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.UUID;
 
-import static com.haulmont.cuba.core.testsupport.TestSupport.reserialize;
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class EntityStateTest {
     @Autowired
     private Persistence persistence;
+    @Autowired
+    private TestSupport testSupport;
 
     private UUID userId;
     private Group group;
@@ -41,9 +42,9 @@ public class EntityStateTest {
     @AfterEach
     public void tearDown() throws Exception {
         if (userId != null)
-            TestSupport.deleteRecord("TEST_USER", userId);
+            testSupport.deleteRecord("TEST_USER", userId);
         if (group != null) {
-            TestSupport.deleteRecord(group);
+            testSupport.deleteRecord(group);
         }
     }
 
@@ -189,7 +190,7 @@ public class EntityStateTest {
         assertFalse(user.__getEntityEntry().isManaged());
         assertFalse(user.__getEntityEntry().isDetached());
 
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertTrue(user.__getEntityEntry().isNew());
 
@@ -239,7 +240,7 @@ public class EntityStateTest {
             assertTrue(localGroup.__getEntityEntry().isManaged());
             assertFalse(localGroup.__getEntityEntry().isDetached());
 
-            user = reserialize(user);
+            user = testSupport.reserialize(user);
 
             assertFalse(user.__getEntityEntry().isNew());
 
@@ -275,7 +276,7 @@ public class EntityStateTest {
         assertFalse(user.__getEntityEntry().isManaged());
         assertTrue(user.__getEntityEntry().isDetached());
 
-        user = reserialize(user);
+        user = testSupport.reserialize(user);
 
         assertFalse(user.__getEntityEntry().isNew());
 

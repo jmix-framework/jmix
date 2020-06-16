@@ -15,20 +15,18 @@
  */
 package spec.haulmont.cuba.core.data_events
 
+import com.haulmont.cuba.core.Transaction
+import com.haulmont.cuba.core.TransactionalDataManager
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
+import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
-import com.haulmont.cuba.core.Transaction
-import com.haulmont.cuba.core.TransactionalDataManager
 import io.jmix.data.event.EntityChangedEvent
-import spec.haulmont.cuba.core.CoreTestSpecification
-
 import org.springframework.beans.factory.annotation.Autowired
-
-import static com.haulmont.cuba.core.testsupport.TestSupport.deleteRecord
+import spec.haulmont.cuba.core.CoreTestSpecification
 
 class EntityChangedEventTest extends CoreTestSpecification {
     private TestEntityChangedEventListener listener
@@ -42,6 +40,8 @@ class EntityChangedEventTest extends CoreTestSpecification {
     private Metadata metadata
     @Autowired
     private EntityStates entityStates
+    @Autowired
+    private TestSupport testSupport
 
     void setup() {
         listener = AppBeans.get(TestEntityChangedEventListener)
@@ -147,7 +147,7 @@ class EntityChangedEventTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(order)
+        testSupport.deleteRecord(order)
     }
 
     def "old value of collection attribute"() {
@@ -185,6 +185,6 @@ class EntityChangedEventTest extends CoreTestSpecification {
 
         cleanup:
 
-        deleteRecord(orderLine11, orderLine12, product1, product2, order1)
+        testSupport.deleteRecord(orderLine11, orderLine12, product1, product2, order1)
     }
 }

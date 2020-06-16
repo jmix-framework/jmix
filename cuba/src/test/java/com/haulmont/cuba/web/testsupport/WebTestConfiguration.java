@@ -47,7 +47,7 @@ import java.util.Locale;
 @Import({
         SecurityConfiguration.class,
         CubaConfiguration.class})
-@PropertySource("classpath:/com/haulmont/cuba/core/test-app.properties")
+@PropertySource("classpath:/com/haulmont/cuba/core/test-web-app.properties")
 public class WebTestConfiguration {
 
     @Autowired

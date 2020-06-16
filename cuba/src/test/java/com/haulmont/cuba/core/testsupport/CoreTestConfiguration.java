@@ -44,7 +44,7 @@ import javax.sql.DataSource;
 @Configuration
 @Import({CoreConfiguration.class, CubaConfiguration.class, DataConfiguration.class, UiConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class})
-@PropertySource("classpath:/com/haulmont/cuba/core/test-app.properties")
+@PropertySource("classpath:/com/haulmont/cuba/core/test-core-app.properties")
 public class CoreTestConfiguration {
 
     @Bean

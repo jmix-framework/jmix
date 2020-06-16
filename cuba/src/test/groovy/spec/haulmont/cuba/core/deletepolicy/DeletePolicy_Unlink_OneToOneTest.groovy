@@ -41,6 +41,16 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
     private DeletePolicy_OneToOne_Second second
 
     void setup() {
+        persistence.runInTransaction({ em ->
+            first = metadata.create(DeletePolicy_OneToOne_First)
+            first.firstFld = 'first fld'
+            em.persist(first)
+
+            second = metadata.create(DeletePolicy_OneToOne_Second)
+            second.secondFld = 'second fld'
+            second.setFirst(first)
+            em.persist(second)
+        })
         jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_SECOND')
         jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_FIRST')
         persistence.runInTransaction({ em ->

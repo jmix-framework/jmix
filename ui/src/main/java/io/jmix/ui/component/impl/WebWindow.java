@@ -869,7 +869,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
 
     @Override
     public void expand(Component component) {
-        setExpandRatio(component, 1);
+        expand(component, "", "");
     }
 
     @Override

@@ -34,8 +34,6 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
     private Metadata metadata
     @Autowired
     private DataManager dataManager
-    @Autowired
-    private JdbcTemplate jdbcTemplate
 
     private DeletePolicy_OneToOne_First first
     private DeletePolicy_OneToOne_Second second
@@ -51,21 +49,10 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
             second.setFirst(first)
             em.persist(second)
         })
-        jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_SECOND')
-        jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_FIRST')
-        persistence.runInTransaction({ em ->
-            first = metadata.create(DeletePolicy_OneToOne_First)
-            first.firstFld = 'first fld'
-            em.persist(first)
-
-            second = metadata.create(DeletePolicy_OneToOne_Second)
-            second.secondFld = 'second fld'
-            second.setFirst(first)
-            em.persist(second)
-        })
     }
 
     void cleanup() {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.dataSource)
         jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_SECOND')
         jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_FIRST')
     }

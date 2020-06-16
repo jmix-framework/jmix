@@ -69,12 +69,6 @@ public class CoreTestConfiguration {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
     }
 
-    @Bean
-    @Primary
-    JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-
     @Bean(name = "test_UserEntityListener")
     UserEntityListener userEntityListener() {
         return new UserEntityListener();

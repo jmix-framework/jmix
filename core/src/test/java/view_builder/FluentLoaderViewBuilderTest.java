@@ -23,7 +23,9 @@ import io.jmix.core.LoadContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import test_support.AppContextTestExecutionListener;
 import test_support.addon1.TestAddon1Configuration;
 import test_support.app.TestAppConfiguration;
 import test_support.app.entity.Pet;
@@ -36,6 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {CoreConfiguration.class, TestAddon1Configuration.class, TestAppConfiguration.class})
+@TestExecutionListeners(value = AppContextTestExecutionListener.class,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class FluentLoaderViewBuilderTest {
 
     @Autowired

@@ -23,8 +23,6 @@ import org.springframework.test.context.TestExecutionListener;
 public class AppContextTestExecutionListener implements TestExecutionListener {
     @Override
     public void beforeTestClass(TestContext testContext) throws Exception {
-
         AppBeans.setApplicationContext(testContext.getApplicationContext());
-
     }
 }

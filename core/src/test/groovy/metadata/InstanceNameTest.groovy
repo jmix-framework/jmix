@@ -21,7 +21,6 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.security.ClientDetails
 import io.jmix.core.security.SystemAuthenticationToken
-import io.jmix.core.security.impl.AuthenticatorImpl
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
@@ -33,6 +32,7 @@ import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Address
 import test_support.app.entity.Owner
+import io.jmix.core.security.Authenticator
 
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Collectors
@@ -52,7 +52,7 @@ class InstanceNameTest extends Specification {
     AuthenticationManager authenticationManager
 
     @Autowired
-    AuthenticatorImpl authenticator
+    Authenticator authenticator
 
     def "instance name method with injected Locale"() {
 

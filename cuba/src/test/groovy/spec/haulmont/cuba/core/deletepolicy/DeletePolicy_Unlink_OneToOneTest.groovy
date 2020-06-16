@@ -23,6 +23,8 @@ import com.haulmont.cuba.core.global.LoadContext
 import io.jmix.core.Metadata
 import io.jmix.core.FetchPlan
 import com.haulmont.cuba.core.Persistence
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
@@ -36,8 +38,12 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
     @Autowired
     private DataManager dataManager
 
+    private JdbcTemplate jdbcTemplate;
+
     private DeletePolicy_OneToOne_First first
     private DeletePolicy_OneToOne_Second second
+
+    private Logger logger = LoggerFactory.getLogger(DeletePolicy_Unlink_OneToOneTest.class)
 
     void setup() {
         persistence.runInTransaction({ em ->
@@ -50,10 +56,10 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
             second.setFirst(first)
             em.persist(second)
         })
+        jdbcTemplate = new JdbcTemplate(persistence.dataSource)
     }
 
     void cleanup() {
-        def jdbcTemplate = new JdbcTemplate(persistence.dataSource)
         jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_SECOND')
         jdbcTemplate.update('delete from TEST_DELETE_POLICY_ONE_TO_ONE_FIRST')
     }

@@ -48,6 +48,7 @@ import javax.sql.DataSource;
 public class CoreTestConfiguration {
 
     @Bean
+    @Primary
     DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)

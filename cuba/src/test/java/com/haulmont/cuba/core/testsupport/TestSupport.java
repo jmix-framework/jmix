@@ -19,8 +19,6 @@ package com.haulmont.cuba.core.testsupport;
 
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.AppBeans;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -30,7 +28,6 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import io.jmix.core.security.impl.CoreUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;

@@ -25,7 +25,9 @@ import com.haulmont.cuba.core.model.number_id.NumberIdSingleTableChild
 import com.haulmont.cuba.core.model.number_id.NumberIdSingleTableGrandChild
 import com.haulmont.cuba.core.model.number_id.NumberIdSingleTableRoot
 import io.jmix.core.Metadata
+import io.jmix.core.Stores
 import io.jmix.data.SequenceSupport
+import io.jmix.data.StoreAwareLocator
 import io.jmix.data.persistence.DbmsSpecifics
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -38,7 +40,7 @@ class NumberIdGenerationTest extends CoreTestSpecification {
     @Autowired
     private DbmsSpecifics dbmsSpecifics
     @Autowired
-    private Persistence persistence
+    private StoreAwareLocator storeAwareLocator;
 
     private SequenceSupport sequenceSupport
 
@@ -153,7 +155,7 @@ class NumberIdGenerationTest extends CoreTestSpecification {
 
     private boolean sequenceExistsByName(String sequenceName) {
         def sequenceExistsSql = sequenceSupport.sequenceExistsSql(sequenceName)
-        def template = new JdbcTemplate(persistence.getDataSource())
+        def template = new JdbcTemplate(storeAwareLocator.getDataSource(Stores.MAIN))
         def rows = template.queryForList(sequenceExistsSql)
         return !rows.isEmpty()
     }
@@ -164,7 +166,7 @@ class NumberIdGenerationTest extends CoreTestSpecification {
 
     private long getCurrentSequenceValue(String sequenceName) {
         def sql = "select NEXT_VALUE from INFORMATION_SCHEMA.SYSTEM_SEQUENCES where SEQUENCE_NAME = '" + sequenceName.toUpperCase() + "'"
-        def template = new JdbcTemplate(persistence.getDataSource())
+        def template = new JdbcTemplate(storeAwareLocator.getDataSource(Stores.MAIN))
         def rows = template.queryForList(sql)
         return (rows[0]['NEXT_VALUE'] as long) - 1
     }

@@ -21,7 +21,6 @@ import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.testsupport.TestSupport
-import io.jmix.core.AppBeans
 import io.jmix.core.DevelopmentException
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanRepository
@@ -61,8 +60,6 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
                 .setView(wrongView)
         ctx.setQueryString("select u from test\$User u")
 
-        DataManager dataManager = AppBeans.get(DataManager.NAME)
-
         String exceptionMessage = ""
 
         when:
@@ -87,8 +84,6 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
         LoadContext<User> ctx = new LoadContext<>(User.class)
                 .setView(wrongView)
         ctx.setQueryString("select u from test\$User u")
-
-        DataManager dataManager = AppBeans.get(DataManager.NAME)
 
         String exceptionMessage = ""
 
@@ -117,7 +112,6 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
                 .setView(correctView)
         ctx.setQueryString("select u from test\$User u where u.login = 'admin'")
 
-        DataManager dataManager = AppBeans.get(DataManager.NAME)
         User user
 
         when:

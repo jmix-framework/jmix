@@ -38,12 +38,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-//@WebJarResource({
-//        "jquery:jquery.min.js",
-//        "jquery-ui:jquery-ui.min.js",
-//        "jquery-file-upload:jquery-fileupload.min.js",
-//        "jquery-file-upload:jquery-iframe-transport.min.js"
-//})
+@WebJarResource({
+        "jquery:jquery.min.js",
+        "jquery-ui:jquery-ui.min.js",
+        "jquery-file-upload:jquery-fileupload.min.js",
+        "jquery-file-upload:jquery-iframe-transport.min.js"
+})
 public class JmixFileUpload extends AbstractComponent
         implements Component.Focusable, UploadComponent, LegacyComponent {
 

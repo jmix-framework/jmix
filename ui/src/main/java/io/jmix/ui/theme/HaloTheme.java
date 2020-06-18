@@ -377,7 +377,7 @@ public class HaloTheme {
     public static final String SIDEMENU_LAYOUT_RESPONSIVE = "c-sidemenu-responsive";
 
     /**
-     * Style for horizontal layout that contains {@link #SIDEMENU_PANEL} and {@link io.jmix.ui.component.mainwindow.AppWorkArea}
+     * Style for horizontal layout that contains {@link #SIDEMENU_PANEL} and {@link io.jmix.ui.component.AppWorkArea}
      * in responsive mainwindow with {@link io.jmix.ui.component.mainwindow.SideMenu}.
      */
     public static final String SIDEMENU_LAYOUT = "c-sidemenu-layout";

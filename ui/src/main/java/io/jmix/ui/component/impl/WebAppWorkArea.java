@@ -25,6 +25,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.BeanLocator;
+import io.jmix.core.Events;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Screens;
 import io.jmix.ui.Screens.OpenedScreens;
@@ -46,6 +47,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -216,7 +219,10 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
             jmixTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
             jmixTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
-            jmixTabSheet.addSelectedTabChangeListener(event -> reflectTabChangeToUrl(event.isUserOriginated()));
+            jmixTabSheet.addSelectedTabChangeListener(event -> {
+                reflectTabChangeToUrl(event.isUserOriginated());
+                fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
+            });
         // } else {
             // todo managed tabsheet
             /*JmixManagedTabSheet cubaManagedTabSheet = new JmixManagedTabSheet();
@@ -234,7 +240,10 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
             cubaManagedTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
             cubaManagedTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
-            cubaManagedTabSheet.addSelectedTabChangeListener(event -> reflectTabChangeToUrl(event.isUserOriginated()));*/
+            cubaManagedTabSheet.addSelectedTabChangeListener(event -> {
+                fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
+                reflectTabChangeToUrl(event.isUserOriginated());
+            });*/
         // }
 
         tabbedContainer.setHeight(100, Sizeable.Unit.PERCENTAGE);
@@ -723,6 +732,11 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         return urlStateCounter++;
     }
 
+    protected void fireTabChangedEvent(TabSheetBehaviour tabSheet) {
+        beanLocator.get(Events.class)
+                .publish(new WorkAreaTabChangedEvent(tabSheet, this));
+    }
+
     // todo dragdroplayouts
     // Allows Tabs reordering, do not support component / text drop to Tabs panel
     /*public static class TabSheetReorderingDropHandler extends DefaultTabSheetDropHandler {
@@ -741,4 +755,33 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
             // do nothing
         }
     }*/
+
+    /**
+     * Application event that is sent after selected tab changed in the main TabSheet.
+     * <p>
+     * {@link ApplicationEvent} analogue of the {@link TabSheet.SelectedTabChangeEvent}.
+     */
+    public static class WorkAreaTabChangedEvent extends ApplicationEvent {
+
+        protected AppWorkArea workArea;
+
+        /**
+         * Creates a new WorkAreaTabChangedEvent.
+         *
+         * @param tabSheet the TabSheet on which the event initially occurred (never {@code null})
+         */
+        public WorkAreaTabChangedEvent(TabSheetBehaviour tabSheet, AppWorkArea workArea) {
+            super(tabSheet);
+            this.workArea = workArea;
+        }
+
+        @Override
+        public TabSheetBehaviour getSource() {
+            return (TabSheetBehaviour) super.getSource();
+        }
+
+        public AppWorkArea getWorkArea() {
+            return workArea;
+        }
+    }
 }

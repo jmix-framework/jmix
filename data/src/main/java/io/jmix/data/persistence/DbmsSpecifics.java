@@ -19,6 +19,7 @@ package io.jmix.data.persistence;
 import io.jmix.data.SequenceSupport;
 import io.jmix.core.Stores;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -74,7 +75,14 @@ public class DbmsSpecifics {
 
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> intf, String dbmsType, String dbmsVersion) {
-        String name = dbmsType + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
-        return (T) applicationContext.getBean(name);
+        T bean;
+        try {
+            String name = dbmsType + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
+            bean = (T) applicationContext.getBean(name);
+        }catch (NoSuchBeanDefinitionException e){
+            String name = dbmsType + intf.getSimpleName();
+            bean = (T) applicationContext.getBean(name);
+        }
+        return bean;
     }
 }

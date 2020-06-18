@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.menu.commandtargets;
 
-import io.jmix.ui.component.mainwindow.impl.WebAppWorkArea;
+import io.jmix.ui.component.impl.WebAppWorkArea;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

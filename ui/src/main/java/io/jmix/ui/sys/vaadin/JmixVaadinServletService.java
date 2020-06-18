@@ -19,6 +19,9 @@ package io.jmix.ui.sys.vaadin;
 import com.vaadin.server.*;
 import com.vaadin.server.communication.*;
 import com.vaadin.spring.server.SpringVaadinServletService;
+import elemental.json.Json;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
@@ -27,6 +30,7 @@ import io.jmix.ui.App;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.sys.event.WebSessionDestroyedEvent;
 import io.jmix.ui.sys.event.WebSessionInitializedEvent;
+import io.jmix.ui.widget.JmixFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +38,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -121,6 +125,10 @@ public class JmixVaadinServletService extends SpringVaadinServletService
             } else if (handler instanceof HeartbeatHandler) {
                 // replace HeartbeatHandler with JmixHeartbeatHandler
                 jmixRequestHandlers.add(new JmixHeartbeatHandler());
+            } else if (handler instanceof FileUploadHandler) {
+                // add support for jquery file upload
+                jmixRequestHandlers.add(handler);
+                jmixRequestHandlers.add(new JmixFileUploadHandler());
             } else if (handler instanceof ServletUIInitHandler) {
                 jmixRequestHandlers.add(new JmixServletUIInitHandler(servletContext));
             } else {
@@ -155,7 +163,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         return new JmixUidlWriter(getServlet().getServletContext());
     }
 
-     /**
+    /**
      * Add ability to redirect to base application URL if we have unparsable path tail
      */
     protected static class JmixServletBootstrapHandler extends ServletBootstrapHandler {
@@ -197,7 +205,6 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         }
     }
 
-
     /*
      * Uses JmixUidlWriter instead of default UidlWriter to support reloading screens that contain components
      * that use web resources from WebJars
@@ -232,4 +239,42 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         }
     }
 
+    /**
+     * Add support for {@link JmixFileUpload} component with XHR upload mechanism.
+     */
+    protected static class JmixFileUploadHandler extends FileUploadHandler {
+        private final Logger log = LoggerFactory.getLogger(JmixFileUploadHandler.class);
+
+        @Override
+        protected boolean isSuitableUploadComponent(ClientConnector source) {
+            if (!(source instanceof JmixFileUpload)) {
+                // this is not jquery upload request
+                return false;
+            }
+
+            log.trace("Uploading file using jquery file upload mechanism");
+
+            return true;
+        }
+
+        @Override
+        protected void sendUploadResponse(VaadinRequest request, VaadinResponse response,
+                                          String fileName, long contentLength) throws IOException {
+            JsonArray json = Json.createArray();
+            JsonObject fileInfo = Json.createObject();
+            fileInfo.put("name", fileName);
+            fileInfo.put("size", contentLength);
+
+            // just fake addresses and parameters
+            fileInfo.put("url", fileName);
+            fileInfo.put("thumbnail_url", fileName);
+            fileInfo.put("delete_url", fileName);
+            fileInfo.put("delete_type", "POST");
+            json.set(0, fileInfo);
+
+            PrintWriter writer = response.getWriter();
+            writer.write(json.toJson());
+            writer.close();
+        }
+    }
 }

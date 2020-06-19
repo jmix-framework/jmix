@@ -16,7 +16,16 @@
 
 package io.jmix.ui.widget.grid;
 
+import com.vaadin.data.provider.DataProvider;
 import com.vaadin.ui.components.grid.MultiSelectionModelImpl;
 
+import java.util.Set;
+
 public class JmixMultiSelectionModel<T> extends MultiSelectionModelImpl<T> {
+
+    @Override
+    protected boolean shouldRemoveAddedItem(T item, DataProvider<T, ?> dataProvider, Set<T> removedItems) {
+        return item == null
+                || super.shouldRemoveAddedItem(item, dataProvider, removedItems);
+    }
 }

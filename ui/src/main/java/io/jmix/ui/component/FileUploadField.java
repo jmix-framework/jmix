@@ -19,7 +19,7 @@ package io.jmix.ui.component;
  * Component for uploading files from client to server.
  */
 public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
-    String NAME = "upload";
+    String NAME = "fileUpload";
 
     String getFileName();
 

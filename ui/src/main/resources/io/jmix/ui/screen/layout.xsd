@@ -2133,7 +2133,7 @@
     </xs:complexType>
 
     <!-- FileUploadField -->
-    <xs:complexType name="uploadComponent">
+    <xs:complexType name="fileUploadComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:attributeGroup ref="hasDatasource"/>
@@ -2162,7 +2162,7 @@
     <!-- FileStorageUploadField -->
     <xs:complexType name="fileStorageUploadComponent">
         <xs:complexContent>
-            <xs:extension base="uploadComponent">
+            <xs:extension base="fileUploadComponent">
                 <xs:attribute name="fileStoragePutMode" type="fileStoragePutMode"/>
                 <xs:attribute name="fileStorage" type="xs:string"/>
             </xs:extension>
@@ -3749,9 +3749,9 @@
                 <xs:element name="optionsList" type="optionsListComponent"/>
                 <xs:element name="progressBar" type="progressBarComponent"/>
 
-                <xs:element name="upload" type="uploadComponent"/>
+                <xs:element name="fileUpload" type="fileUploadComponent"/>
                 <xs:element name="fileStorageUpload" type="fileStorageUploadComponent"/>
-                <xs:element name="multiUpload" type="multiuploadComponent"/>
+                <xs:element name="fileMultiUpload" type="multiuploadComponent"/>
                 <xs:element name="embedded" type="embeddedComponent"/>
                 <xs:element name="image" type="imageComponent"/>
                 <xs:element name="browserFrame" type="browserFrameComponent"/>

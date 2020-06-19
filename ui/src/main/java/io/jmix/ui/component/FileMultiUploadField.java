@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  */
 public interface FileMultiUploadField extends UploadField {
 
-    String NAME = "multiUpload";
+    String NAME = "fileMultiUpload";
 
     /**
      * Get uploads map

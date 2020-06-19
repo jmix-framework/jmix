@@ -37,11 +37,6 @@ public class FileUploadFieldLoader<T extends Field & SingleFileUploadField>
         assignFrame(resultComponent);
 
         loadData(resultComponent, element);
-        if (resultComponent.getValueSource() == null) {
-            // TODO: move to legacy loader
-            // loadDatasource(resultComponent, element);
-        }
-
         loadEnable(resultComponent, element);
         loadEditable(resultComponent, element);
         loadRequired(resultComponent, element);

@@ -30,7 +30,7 @@ import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.SingleFileUploadField;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.components.impl.JmixFileUploadField;
-import io.jmix.ui.export.ExportDisplay;
+import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +53,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
 
     protected static final int BYTES_IN_MEGABYTE = 1048576;
 
-    protected ExportDisplay exportDisplay;
+    protected Downloader downloader;
     protected Messages messages;
     protected Supplier<InputStream> contentProvider;
 
@@ -75,8 +75,8 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     }
 
     @Autowired
-    public void setExportDisplay(ExportDisplay exportDisplay) {
-        this.exportDisplay = exportDisplay;
+    public void setDownloader(Downloader downloader) {
+        this.downloader = downloader;
     }
 
     @Autowired

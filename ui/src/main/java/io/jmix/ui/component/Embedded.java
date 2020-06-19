@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.export.ExportDataProvider;
+import io.jmix.ui.download.DownloadDataProvider;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
@@ -40,7 +40,7 @@ public interface Embedded extends Component, Component.BelongToFrame, Component.
     void setSource(@Nullable URL src);
     void setSource(@Nullable String src);
     void setSource(String fileName, @Nullable InputStream src);
-    void setSource(String fileName, @Nullable ExportDataProvider dataProvider);
+    void setSource(String fileName, @Nullable DownloadDataProvider dataProvider);
 
     /**
      * Allows to use relative source for Embedded.

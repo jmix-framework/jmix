@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright (c) 2008-2016 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,19 +12,30 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
-package io.jmix.ui.export;
+
+package io.jmix.ui.download;
+
+import io.jmix.core.AppBeans;
+import io.jmix.core.Resources;
 
 import java.io.InputStream;
 
 /**
- * Provides data for {@link ExportDisplay}.
+ * DataProvider for application resources
  */
-public interface ExportDataProvider {
+public class ResourceDataProvider implements DownloadDataProvider {
 
-    InputStream provide();
+    private String resourcePath;
 
-    @Deprecated
-    default void close() {
+    public ResourceDataProvider(String resourcePath) {
+        this.resourcePath = resourcePath;
+    }
+
+    @Override
+    public InputStream provide() {
+        Resources resources = AppBeans.get(Resources.NAME);
+        return resources.getResourceAsStream(resourcePath);
     }
 }

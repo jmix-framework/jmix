@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.ui.export;
+package io.jmix.ui.download;
 
 import org.springframework.lang.NonNullApi;

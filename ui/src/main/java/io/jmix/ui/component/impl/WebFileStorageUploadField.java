@@ -97,10 +97,10 @@ public class WebFileStorageUploadField<T> extends WebAbstractSingleFileUploadFie
             case MANUAL:
                 String name = getFileName();
                 String fileName = StringUtils.isEmpty(name) ? getFileNameByValue(value) : name;
-                exportDisplay.show(this::getFileContent, fileName);
+                downloader.download(this::getFileContent, fileName);
                 break;
             case IMMEDIATE:
-                exportDisplay.show(this::getFileContent, getFileNameByValue(value));
+                downloader.download(this::getFileContent, getFileNameByValue(value));
                 break;
         }
     }

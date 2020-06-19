@@ -20,7 +20,7 @@ import com.vaadin.server.*;
 import io.jmix.core.AppBeans;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.Embedded;
-import io.jmix.ui.export.ExportDataProvider;
+import io.jmix.ui.download.DownloadDataProvider;
 import io.jmix.ui.sys.ControllerUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -112,7 +112,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
     }
 
     @Override
-    public void setSource(String fileName, final ExportDataProvider dataProvider) {
+    public void setSource(String fileName, final DownloadDataProvider dataProvider) {
         if (dataProvider != null) {
             resource = new StreamResource(
                     dataProvider::provide,

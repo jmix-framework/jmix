@@ -24,7 +24,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.HasXmlDescriptor;
-import io.jmix.ui.export.ExportDisplay;
+import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
@@ -52,7 +52,6 @@ import org.springframework.context.event.EventListener;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Named;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
@@ -594,11 +593,10 @@ public class UiControllerDependencyInjector {
             String facetId = elements[elements.length - 1];
             return ((Fragment) component).getFacet(facetId);
 
-        } else if (ExportDisplay.class.isAssignableFrom(type)) {
-            // Injecting an ExportDisplay
-            ExportDisplay exportDisplay = beanLocator.get(ExportDisplay.NAME);
-            exportDisplay.setFrame(frame);
-            return exportDisplay;
+        } else if (Downloader.class.isAssignableFrom(type)) {
+            // Injecting a Downloader
+            Downloader downloader = beanLocator.get(Downloader.NAME);
+            return downloader;
 
         } else if (Logger.class == type && element instanceof Field) {
             // injecting logger

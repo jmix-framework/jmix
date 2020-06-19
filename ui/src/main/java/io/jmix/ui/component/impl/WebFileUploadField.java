@@ -42,7 +42,7 @@ public class WebFileUploadField extends WebAbstractSingleFileUploadField<byte[]>
         }
         String name = getFileName();
         String fileName = StringUtils.isEmpty(name) ? DEFAULT_FILENAME : name;
-        exportDisplay.show(this::getFileContent, fileName);
+        downloader.download(this::getFileContent, fileName);
     }
 
     @Override

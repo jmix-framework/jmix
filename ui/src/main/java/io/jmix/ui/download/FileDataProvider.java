@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package io.jmix.ui.export;
+package io.jmix.ui.download;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.FileStorage;
@@ -27,7 +27,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Data provider for FileDescriptor
  */
-public class FileDataProvider<R> implements ExportDataProvider {
+public class FileDataProvider<R> implements DownloadDataProvider {
 
     protected R fileReference;
     protected FileStorage<R, ?> fileStorage;

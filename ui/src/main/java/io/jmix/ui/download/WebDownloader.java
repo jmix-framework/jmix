@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package io.jmix.ui.export;
+package io.jmix.ui.download;
 
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
@@ -25,7 +25,6 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.upload.FileTypesHelper;
 import io.jmix.ui.widget.JmixFileDownloader;
@@ -46,11 +45,11 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 /**
  * Allows to show exported data in web browser or download it.
  */
-@Component(ExportDisplay.NAME)
+@Component(Downloader.NAME)
 @Scope("prototype")
-public class WebExportDisplay implements ExportDisplay {
+public class WebDownloader implements Downloader {
 
-    private static final Logger log = LoggerFactory.getLogger(WebExportDisplay.class);
+    private static final Logger log = LoggerFactory.getLogger(WebDownloader.class);
 
     @Autowired
     protected BackgroundWorker backgroundWorker;
@@ -72,7 +71,7 @@ public class WebExportDisplay implements ExportDisplay {
     /**
      * Constructor with newWindow=false
      */
-    public WebExportDisplay() {
+    public WebDownloader() {
         this(false);
         useViewList = true;
     }
@@ -91,21 +90,21 @@ public class WebExportDisplay implements ExportDisplay {
      * @param newWindow if true, show data in the same browser window;
      *                  if false, open new browser window
      */
-    public WebExportDisplay(boolean newWindow) {
+    public WebDownloader(boolean newWindow) {
         this.newWindow = newWindow;
     }
 
     /**
      * Show/Download resource at client side
      *
-     * @param dataProvider ExportDataProvider
-     * @param resourceName ResourceName for client side
-     * @param exportFormat ExportFormat
-     * @see io.jmix.ui.export.FileDataProvider
-     * @see io.jmix.ui.export.ByteArrayDataProvider
+     * @param dataProvider   DownloadDataProvider
+     * @param resourceName   ResourceName for client side
+     * @param downloadFormat DownloadFormat
+     * @see io.jmix.ui.download.FileDataProvider
+     * @see io.jmix.ui.download.ByteArrayDataProvider
      */
     @Override
-    public void show(ExportDataProvider dataProvider, String resourceName, final ExportFormat exportFormat) {
+    public void download(DownloadDataProvider dataProvider, String resourceName, final DownloadFormat downloadFormat) {
         backgroundWorker.checkUIAccess();
 
         boolean showNewWindow = this.newWindow;
@@ -113,8 +112,8 @@ public class WebExportDisplay implements ExportDisplay {
         if (useViewList) {
             String fileExt;
 
-            if (exportFormat != null) {
-                fileExt = exportFormat.getFileExt();
+            if (downloadFormat != null) {
+                fileExt = downloadFormat.getFileExt();
             } else {
                 fileExt = FilenameUtils.getExtension(resourceName);
             }
@@ -122,9 +121,9 @@ public class WebExportDisplay implements ExportDisplay {
             showNewWindow = uiProperties.getViewFileExtensions().contains(StringUtils.lowerCase(fileExt));
         }
 
-        if (exportFormat != null) {
+        if (downloadFormat != null) {
             if (StringUtils.isEmpty(FilenameUtils.getExtension(resourceName))) {
-                resourceName += "." + exportFormat.getFileExt();
+                resourceName += "." + downloadFormat.getFileExt();
             }
         }
 
@@ -133,8 +132,8 @@ public class WebExportDisplay implements ExportDisplay {
 
         StreamResource resource = new StreamResource(dataProvider::provide, resourceName);
 
-        if (exportFormat != null && StringUtils.isNotEmpty(exportFormat.getContentType())) {
-            resource.setMIMEType(exportFormat.getContentType());
+        if (downloadFormat != null && StringUtils.isNotEmpty(downloadFormat.getContentType())) {
+            resource.setMIMEType(downloadFormat.getContentType());
         } else {
             resource.setMIMEType(FileTypesHelper.getMIMEType(resourceName));
         }
@@ -149,31 +148,32 @@ public class WebExportDisplay implements ExportDisplay {
     /**
      * Show/Download resource at client side
      *
-     * @param dataProvider ExportDataProvider
+     * @param dataProvider DownloadDataProvider
      * @param resourceName ResourceName for client side
-     * @see io.jmix.ui.export.FileDataProvider
-     * @see io.jmix.ui.export.ByteArrayDataProvider
+     * @see io.jmix.ui.download.FileDataProvider
+     * @see io.jmix.ui.download.ByteArrayDataProvider
      */
     @Override
-    public void show(ExportDataProvider dataProvider, String resourceName) {
+    public void download(DownloadDataProvider dataProvider, String resourceName) {
         String extension = FilenameUtils.getExtension(resourceName);
-        ExportFormat format = ExportFormat.getByExtension(extension);
-        show(dataProvider, resourceName, format);
+        DownloadFormat format = DownloadFormat.getByExtension(extension);
+        download(dataProvider, resourceName, format);
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public <R> void show(R fileReference, @Nullable ExportFormat format) {
+    public <R> void download(R fileReference, @Nullable DownloadFormat format) {
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
         }
         String fileName = fileStorage.getFileInfo(fileReference).toString();
-        show(new FileDataProvider<>(fileReference), fileName, format);
+        download(new FileDataProvider<>(fileReference), fileName, format);
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public <R> void setFileStorage(FileStorage<R, ?> fileStorage) {
+        this.fileStorage = fileStorage;
     }
 
     @Override
@@ -190,17 +190,17 @@ public class WebExportDisplay implements ExportDisplay {
     }
 
     @Override
-    public <R> void show(R fileReference) {
+    public <R> void download(R fileReference) {
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
         }
         String fileName = fileStorage.getFileInfo(fileReference).toString();
-        ExportFormat format = ExportFormat.getByExtension(FilenameUtils.getExtension(fileName));
-        show(new FileDataProvider<>(fileReference), format);
+        DownloadFormat format = DownloadFormat.getByExtension(FilenameUtils.getExtension(fileName));
+        download(new FileDataProvider<>(fileReference), format);
     }
 
-    public void show(byte[] content, String resourceName, ExportFormat format) {
-        show(new ByteArrayDataProvider(content), resourceName, format);
+    public void download(byte[] content, String resourceName, DownloadFormat format) {
+        download(new ByteArrayDataProvider(content), resourceName, format);
     }
 
     /**

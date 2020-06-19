@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  */
-package io.jmix.ui.export;
+package io.jmix.ui.download;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.CoreProperties;
@@ -34,7 +34,7 @@ import java.io.InputStream;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class ByteArrayDataProvider implements ExportDataProvider {
+public class ByteArrayDataProvider implements DownloadDataProvider {
 
     private static Logger log = LoggerFactory.getLogger(ByteArrayDataProvider.class);
 

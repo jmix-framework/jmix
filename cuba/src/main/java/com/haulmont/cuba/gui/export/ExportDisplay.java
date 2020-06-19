@@ -17,19 +17,37 @@
 package com.haulmont.cuba.gui.export;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
-import io.jmix.ui.export.ExportFormat;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.download.Downloader;
 
 import javax.annotation.Nullable;
 
 /**
  * Generic interface to show data exported from the system.
  *
- * @deprecated Use {@link io.jmix.ui.export.ExportDisplay} instead
+ * @deprecated Use {@link Downloader} instead
  */
 @Deprecated
-public interface ExportDisplay extends io.jmix.ui.export.ExportDisplay {
+public interface ExportDisplay {
 
     String NAME = "cuba_ExportDisplay";
+
+    /**
+     * Export an arbitrary resource defined by a ExportDataProvider.
+     *
+     * @param dataProvider resource provider
+     * @param resourceName resource name
+     * @param format       export format, can be null
+     */
+    void show(ExportDataProvider dataProvider, String resourceName, @Nullable ExportFormat format);
+
+    /**
+     * Export an arbitrary resource defined by a ExportDataProvider.
+     *
+     * @param dataProvider resource provider
+     * @param resourceName resource name
+     */
+    void show(ExportDataProvider dataProvider, String resourceName);
 
     /**
      * Export a file from file storage.
@@ -45,4 +63,19 @@ public interface ExportDisplay extends io.jmix.ui.export.ExportDisplay {
      * @param fileDescriptor file descriptor
      */
     void show(FileDescriptor fileDescriptor);
+
+    /**
+     * @return true if export display should open a new window with the file content
+     */
+    boolean isShowNewWindow();
+
+    /**
+     * Sets explicit new window option.
+     *
+     * @param showNewWindow true if export display opens new window, false otherwise
+     */
+    void setShowNewWindow(boolean showNewWindow);
+
+    /** INTERNAL. Don't call from application code. */
+    void setFrame(@Nullable Frame frame);
 }

@@ -25,8 +25,6 @@ import io.jmix.fsfilestorage.FileSystemFileStorage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -134,56 +132,58 @@ public class CubaFileStorage implements FileStorageAPI {
     /**
      * Returns an adapter to use this storage as {@link FileStorage}.
      */
-    public FileStorage<FileDescriptor, Object> asFileStorage() {
-        return new FileStorage<FileDescriptor, Object>() {
-
-            @Override
-            public Class<FileDescriptor> getReferenceType() {
-                return FileDescriptor.class;
-            }
-
-            @Override
-            public FileDescriptor createReference(Object fileInfo) {
-                String fileName = (String) fileInfo;
-
-                FileDescriptor fileDescriptor = metadata.create(FileDescriptor.class);
-                fileDescriptor.setName(fileName);
-                fileDescriptor.setExtension(FilenameUtils.getExtension(fileName));
-                fileDescriptor.setCreateDate(timeSource.currentTimestamp());
-
-                return fileDescriptor;
-            }
-
-            @Override
-            public String getFileInfo(FileDescriptor reference) {
-                return delegate.getFileInfo(toURI(reference));
-            }
-
-            @Override
-            public long saveStream(FileDescriptor reference, InputStream inputStream) {
-                return delegate.saveStream(toURI(reference), inputStream);
-            }
-
-            @Override
-            public InputStream openStream(FileDescriptor reference) {
-                return delegate.openStream(toURI(reference));
-            }
-
-            @Override
-            public void removeFile(FileDescriptor reference) {
-                delegate.removeFile(toURI(reference));
-            }
-
-            @Override
-            public boolean fileExists(FileDescriptor reference) {
-                return delegate.fileExists(toURI(reference));
-            }
-        };
+    public FileStorage<FileDescriptor, String> getFileStorageAdapter() {
+        return new CubaFileStorageAdapter();
     }
 
     protected void checkFileDescriptor(FileDescriptor fd) {
         if (fd == null || fd.getCreateDate() == null) {
             throw new IllegalArgumentException("A FileDescriptor instance with populated 'createDate' attribute must be provided");
+        }
+    }
+
+    /**
+     * An adapter to use {@link CubaFileStorage} as {@link FileStorage}.
+     */
+    protected class CubaFileStorageAdapter implements FileStorage<FileDescriptor, String> {
+        @Override
+        public Class<FileDescriptor> getReferenceType() {
+            return FileDescriptor.class;
+        }
+
+        @Override
+        public FileDescriptor createReference(String fileInfo) {
+            FileDescriptor fileDescriptor = metadata.create(FileDescriptor.class);
+            fileDescriptor.setName(fileInfo);
+            fileDescriptor.setExtension(FilenameUtils.getExtension(fileInfo));
+            fileDescriptor.setCreateDate(timeSource.currentTimestamp());
+
+            return fileDescriptor;
+        }
+
+        @Override
+        public String getFileInfo(FileDescriptor reference) {
+            return delegate.getFileInfo(toURI(reference));
+        }
+
+        @Override
+        public long saveStream(FileDescriptor reference, InputStream inputStream) {
+            return delegate.saveStream(toURI(reference), inputStream);
+        }
+
+        @Override
+        public InputStream openStream(FileDescriptor reference) {
+            return delegate.openStream(toURI(reference));
+        }
+
+        @Override
+        public void removeFile(FileDescriptor reference) {
+            delegate.removeFile(toURI(reference));
+        }
+
+        @Override
+        public boolean fileExists(FileDescriptor reference) {
+            return delegate.fileExists(toURI(reference));
         }
     }
 

@@ -55,7 +55,7 @@ public class WebImage extends io.jmix.ui.component.impl.WebImage<FileDescriptor>
     protected Resource createImageResource(Object resourceObject) {
         Resource resource = super.createImageResource(resourceObject);
         if (resource instanceof WebFileStorageResource) {
-            ((WebFileStorageResource) resource).setFileStorage(cubaFileStorage.asFileStorage());
+            ((WebFileStorageResource) resource).setFileStorage(cubaFileStorage.getFileStorageAdapter());
         }
         return resource;
     }

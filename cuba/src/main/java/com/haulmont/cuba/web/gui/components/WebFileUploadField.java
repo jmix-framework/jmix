@@ -25,6 +25,7 @@ import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
+import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
@@ -54,10 +55,11 @@ public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorage
     protected CubaFileStorage cubaFileStorage;
 
     @Autowired
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void setFileStorageLocator(FileStorageLocator fileStorageLocator) {
         //ignore FileStorageLocator and use cuba file storage
-        fileStorage = cubaFileStorage.asFileStorage();
+        fileStorage = (FileStorage) cubaFileStorage.getFileStorageAdapter();
     }
 
     @Override

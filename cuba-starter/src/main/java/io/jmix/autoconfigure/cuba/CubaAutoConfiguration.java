@@ -21,6 +21,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
+import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.ui.UiConfiguration;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ import org.springframework.context.annotation.Import;
         UiConfiguration.class,
         DynAttrConfiguration.class,
         DynAttrUiConfiguration.class,
+        FileSystemFileStorageConfiguration.class,
         CubaConfiguration.class})
 public class CubaAutoConfiguration {
 }

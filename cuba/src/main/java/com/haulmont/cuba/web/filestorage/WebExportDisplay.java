@@ -18,9 +18,12 @@ package com.haulmont.cuba.web.filestorage;
 
 import com.haulmont.cuba.core.app.CubaFileStorage;
 import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.gui.export.ExportDataProvider;
 import com.haulmont.cuba.gui.export.ExportDisplay;
-import io.jmix.core.FileStorageLocator;
-import io.jmix.ui.export.ExportFormat;
+import com.haulmont.cuba.gui.export.ExportFormat;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.download.DownloadFormat;
+import io.jmix.ui.download.Downloader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -32,26 +35,52 @@ import javax.annotation.Nullable;
  */
 @Component(ExportDisplay.NAME)
 @Scope("prototype")
-public class WebExportDisplay extends io.jmix.ui.export.WebExportDisplay implements ExportDisplay {
+public class WebExportDisplay implements ExportDisplay {
 
     @Autowired
     protected CubaFileStorage cubaFileStorage;
 
+    protected Downloader delegate;
+
     @Autowired
+    public void setDownloader(Downloader downloader) {
+        this.delegate = downloader;
+        delegate.setFileStorage(cubaFileStorage.getFileStorageAdapter());
+    }
+
     @Override
-    public void setFileStorageLocator(FileStorageLocator fileStorageLocator) {
-        super.setFileStorageLocator(fileStorageLocator);
-        //use cuba file storage
-        fileStorage = cubaFileStorage.asFileStorage();
+    public void show(ExportDataProvider dataProvider, String resourceName, @Nullable ExportFormat format) {
+        DownloadFormat downloadFormat = format == null ? null : format.getDownloadFormat();
+        delegate.download(dataProvider, resourceName, downloadFormat);
+    }
+
+    @Override
+    public void show(ExportDataProvider dataProvider, String resourceName) {
+        delegate.download(dataProvider, resourceName);
     }
 
     @Override
     public void show(FileDescriptor fileDescriptor, @Nullable ExportFormat format) {
-        super.show(fileDescriptor, format);
+        DownloadFormat downloadFormat = format == null ? null : format.getDownloadFormat();
+        delegate.download(fileDescriptor, downloadFormat);
     }
 
     @Override
     public void show(FileDescriptor fileDescriptor) {
-        super.show(fileDescriptor);
+        delegate.download(fileDescriptor);
+    }
+
+    @Override
+    public boolean isShowNewWindow() {
+        return delegate.isShowNewWindow();
+    }
+
+    @Override
+    public void setShowNewWindow(boolean showNewWindow) {
+        delegate.setShowNewWindow(showNewWindow);
+    }
+
+    @Override
+    public void setFrame(@Nullable Frame frame) {
     }
 }

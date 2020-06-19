@@ -23,4 +23,5 @@ package com.haulmont.cuba.gui.components;
  */
 @Deprecated
 public interface FileMultiUploadField extends io.jmix.ui.component.FileMultiUploadField {
+    String NAME = "multiUpload";
 }

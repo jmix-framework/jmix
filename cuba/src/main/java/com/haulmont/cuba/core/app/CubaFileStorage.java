@@ -116,11 +116,18 @@ public class CubaFileStorage implements FileStorageAPI {
         int month = cal.get(Calendar.MONTH) + 1;
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        Path datePath = Paths.get(String.valueOf(year),
-                StringUtils.leftPad(String.valueOf(month), 2, '0'),
-                StringUtils.leftPad(String.valueOf(day), 2, '0'));
+        String datePath = year + "/"
+                + StringUtils.leftPad(String.valueOf(month), 2, '0') + "/"
+                + StringUtils.leftPad(String.valueOf(day), 2, '0');
 
-        StringBuilder reference = new StringBuilder(datePath.toString())
+        String fileExtension = StringUtils.isNoneBlank(fileDescriptor.getExtension())
+                ? "." + fileDescriptor.getExtension()
+                : StringUtils.EMPTY;
+
+        StringBuilder reference = new StringBuilder(datePath)
+                .append("/")
+                .append(fileDescriptor.getId())
+                .append(fileExtension)
                 .append(";").append(URLEncodeUtils.encodeUtf8(fileDescriptor.getName()));
         try {
             return new URI(reference.toString());

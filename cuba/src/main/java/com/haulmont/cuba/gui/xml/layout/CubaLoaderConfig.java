@@ -50,6 +50,7 @@ import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.xml.layout.BaseLoaderConfig;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;
+import io.jmix.ui.xml.layout.loader.FileMultiUploadFieldLoader;
 import io.jmix.ui.xml.layout.loader.GridLayoutLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
@@ -125,6 +126,8 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(BulkEditor.NAME, BulkEditorLoader.class);
         loaders.put(Filter.NAME, FilterLoader.class);
         loaders.put("grid", GridLayoutLoader.class);
+        loaders.put(FileUploadField.NAME, CubaFileUploadFieldLoader.class);
+        loaders.put(FileMultiUploadField.NAME, FileMultiUploadFieldLoader.class);
     }
 
     protected boolean isLegacyScreen(Element element) {

@@ -23,6 +23,7 @@ import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,7 +41,7 @@ public class SavedEntitiesHolder extends ResourceHolderSupport {
 
     private Set<Entity> entities = new HashSet<>();
 
-    public static SavedEntitiesHolder setEntities(Set<Entity> saved) {
+    public static SavedEntitiesHolder setEntities(Collection<Entity> saved) {
         SavedEntitiesHolder holder = (SavedEntitiesHolder) TransactionSynchronizationManager.getResource(RESOURCE_KEY);
 
         if (holder == null) {
@@ -61,7 +62,7 @@ public class SavedEntitiesHolder extends ResourceHolderSupport {
         return holder;
     }
 
-    public Set<Entity> getEntities(Set<Entity> saved) {
+    public Set<Entity> getEntities(Collection<Entity> saved) {
         Set<Entity> result = new HashSet<>(entities);
         result.retainAll(saved);
         return result;

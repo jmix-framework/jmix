@@ -8,9 +8,9 @@ package data_stores
 import io.jmix.core.DataManager
 import io.jmix.core.EntitySet
 import io.jmix.core.Metadata
-import io.jmix.core.entity.IdProxy
 import io.jmix.core.impl.DataStoreFactory
 import io.jmix.data.StoreAwareLocator
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.support.TransactionTemplate
@@ -20,7 +20,6 @@ import test_support.entity.cars.Colour
 import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Mem1Customer
 
-import org.springframework.beans.factory.annotation.Autowired
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
@@ -66,12 +65,12 @@ class MultiDbDataManagerTest extends DataSpec {
         then:
         storeAwareLocator.getTransactionTemplate("db1").executeWithoutResult {
             EntityManager em = storeAwareLocator.getEntityManager("db1")
-            Db1Customer c = em.find(Db1Customer.class, IdProxy.of(1L))
+            Db1Customer c = em.find(Db1Customer.class, 1L)
             assert c == customer
         }
 
         and:
-        Db1Customer c = dataManager.load(Db1Customer.class).id(IdProxy.of(1L)).one()
+        Db1Customer c = dataManager.load(Db1Customer.class).id(1L).one()
         customer == c
 
         and:
@@ -98,7 +97,7 @@ class MultiDbDataManagerTest extends DataSpec {
         and:
         storeAwareLocator.getTransactionTemplate("db1").executeWithoutResult {
             EntityManager em = storeAwareLocator.getEntityManager("db1")
-            Db1Customer customer1 = em.find(Db1Customer.class, IdProxy.of(1L))
+            Db1Customer customer1 = em.find(Db1Customer.class, 1L)
             assert customer1 == customer
         }
 

@@ -16,6 +16,7 @@
 package io.jmix.data.entity;
 
 import io.jmix.core.Entity;
+import io.jmix.core.entity.annotation.JmixGeneratedId;
 import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
@@ -35,6 +36,7 @@ public abstract class BaseIntegerIdEntity implements Entity {
 
     @Id
     @Column(name = "ID")
+    @JmixGeneratedId
     protected Integer id;
 
     public Integer getId() {

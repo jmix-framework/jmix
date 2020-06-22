@@ -16,22 +16,18 @@
 
 package data_manager
 
-import io.jmix.core.Id
-import io.jmix.core.SaveContext
-import io.jmix.core.FetchPlan
+import io.jmix.core.*
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import test_support.DataSpec
 import test_support.TestOrderChangedEventListener
 import test_support.entity.TestAppEntity
 import test_support.entity.TestAppEntityItem
 import test_support.entity.TestSecondAppEntity
-import io.jmix.core.DataManager
-import io.jmix.core.EntityStates
-import io.jmix.core.FetchPlanBuilder
-import test_support.DataSpec
+import test_support.entity.nullable_id.Foo
+import test_support.entity.nullable_id.FooPart
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class DataManagerCommitTest extends DataSpec {
 
@@ -61,6 +57,8 @@ class DataManagerCommitTest extends DataSpec {
     void cleanup() {
         jdbcTemplate.update('delete from SALES_ORDER')
         jdbcTemplate.update('delete from SALES_CUSTOMER')
+        jdbcTemplate.update('delete from TEST_NULLABLE_ID_FOO_PART')
+        jdbcTemplate.update('delete from TEST_NULLABLE_ID_FOO')
     }
 
 
@@ -116,5 +114,23 @@ class DataManagerCommitTest extends DataSpec {
 
         cleanup:
         orderChangedEventListener.enabled = false
+    }
+
+    def "save entities with null id"() {
+        def foo = dataManager.save(new Foo(name: 'foo'))
+        def part = new FooPart(name: 'p1', foo: foo)
+        foo.parts = [part]
+
+        when:
+        def savedSet = dataManager.save(foo, part)
+        def foo1 = dataManager.load(Id.of(foo)).fetchPlan { fp -> fp.addAll('parts.name') }.one()
+
+        then:
+        savedSet.size() == 2
+        savedSet.get(foo) == foo
+        savedSet.get(part) == part
+
+        foo1.parts.size() == 1
+        foo1.parts[0] == part
     }
 }

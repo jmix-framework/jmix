@@ -18,22 +18,21 @@ package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.annotation.JmixGeneratedId;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.entity.BaseIntegerIdEntity;
-import io.jmix.data.entity.BaseLongIdEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component(EntityIdentifierInitializer.NAME)
-public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
-    public static final String NAME = "data_EntityIdentifierInitializer";
+@Component(GeneratedNumberIdEntityInitializer.NAME)
+public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Ordered {
+    public static final String NAME = "data_GeneratedNumberIdEntityInitializer";
 
     @Autowired
     protected Metadata metadata;
@@ -47,29 +46,35 @@ public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
     @Override
     public void initEntity(Entity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
-
-        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-        if (primaryKeyProperty != null && metadataTools.isEmbedded(primaryKeyProperty)) {
-            // create an instance of embedded ID
-            Entity key = metadata.create(primaryKeyProperty.getRange().asClass());
-            //noinspection unchecked
-            EntityValues.setId(entity, key);
-        } else if (entity instanceof BaseLongIdEntity || entity instanceof BaseIntegerIdEntity) {
-            if (!coreProperties.isIdGenerationForEntitiesInAdditionalDataStoresEnabled()
-                    && !Stores.MAIN.equals(metadataTools.getStoreName(metaClass))) {
-                return;
-            }
-            if (metadataTools.isPersistent(metaClass)) {
-                if (entity instanceof BaseLongIdEntity) {
-                    ((BaseLongIdEntity) entity).setId(numberIdSource.createLongId(getEntityNameForIdGeneration(metaClass)));
-                } else {
-                    ((BaseIntegerIdEntity) entity).setId(numberIdSource.createIntegerId(getEntityNameForIdGeneration(metaClass)));
-                }
-            }
+        if (!coreProperties.isIdGenerationForEntitiesInAdditionalDataStoresEnabled()
+                && !Stores.MAIN.equals(metadataTools.getStoreName(metaClass))) {
+            return;
         }
+
+        metaClass.getProperties().stream()
+                .filter(property -> property.getAnnotations().get(JmixGeneratedId.class.getName()) != null && isNumberType(property))
+                .findFirst()
+                .ifPresent(property -> {
+                    if (EntityValues.getValue(entity, property.getName()) == null) {
+                        String entityName = getEntityNameForIdGeneration(metaClass);
+                        if (property.getRange().asDatatype().getJavaClass().equals(Long.class)) {
+                            EntityValues.setValue(entity, property.getName(), numberIdSource.createLongId(entityName));
+                        } else {
+                            EntityValues.setValue(entity, property.getName(), numberIdSource.createIntegerId(entityName));
+                        }
+                    }
+                });
     }
 
-    protected String getEntityNameForIdGeneration(MetaClass metaClass) {
+    private boolean isNumberType(MetaProperty metaProperty) {
+        if (metaProperty.getRange().isDatatype()) {
+            Class javaClass = metaProperty.getRange().asDatatype().getJavaClass();
+            return javaClass.equals(Long.class) || javaClass.equals(Integer.class);
+        }
+        return false;
+    }
+
+    private String getEntityNameForIdGeneration(MetaClass metaClass) {
         List<MetaClass> persistentAncestors = metaClass.getAncestors().stream()
                 .filter(mc -> metadataTools.isPersistent(mc)) // filter out all mapped superclasses
                 .collect(Collectors.toList());
@@ -87,6 +92,6 @@ public class EntityIdentifierInitializer implements EntityInitializer, Ordered {
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE;
+        return HIGHEST_PLATFORM_PRECEDENCE + 5;
     }
 }

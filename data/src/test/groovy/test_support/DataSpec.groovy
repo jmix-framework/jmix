@@ -57,5 +57,9 @@ class DataSpec extends Specification {
         jdbc.update('delete from TEST_ENTITY_WITH_NON_PERSISTENT_REF')
 
         jdbc.update('delete from SALES_PRODUCT')
+
+        jdbc.update('delete from TEST_GFOO')
+        jdbc.update('delete from TEST_NFOO')
+        jdbc.update('delete from TEST_NGFOO')
     }
 }

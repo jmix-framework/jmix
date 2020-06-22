@@ -24,7 +24,6 @@ import io.jmix.core.Id;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -770,10 +769,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
     private TypedQuery<E> internalSetParameter(String name, Object value) {
         checkState();
 
-        if (value instanceof IdProxy) {
-            value = ((IdProxy) value).get();
-
-        } else if (value instanceof Id) {
+        if (value instanceof Id) {
             value = ((Id) value).getValue();
 
         } else if (value instanceof Ids) {
@@ -801,9 +797,6 @@ public class JmixQuery<E> implements TypedQuery<E> {
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException("Error setting parameter value", e);
             }
-
-        } else if (value instanceof IdProxy) {
-            value = ((IdProxy) value).get();
 
         } else if (value instanceof EnumClass) {
             value = ((EnumClass) value).getId();

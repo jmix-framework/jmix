@@ -17,10 +17,11 @@
 package io.jmix.data.impl;
 
 import com.google.common.collect.Sets;
+import io.jmix.core.Entity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.AuditInfoProvider;
@@ -166,7 +167,7 @@ public class JmixEntityManager implements EntityManager {
         //noinspection unchecked
         Class<T> effectiveClass = extendedEntities.getEffectiveClass(entityClass);
 
-        T reference = delegate.getReference(effectiveClass, getRealId(primaryKey));
+        T reference = delegate.getReference(effectiveClass, primaryKey);
         ((Entity) reference).__getEntityEntry().setNew(false);
         return reference;
     }
@@ -425,7 +426,7 @@ public class JmixEntityManager implements EntityManager {
             return findPartial(metaClass, primaryKey, fetchPlans);
         }
 
-        Object realId = getRealId(primaryKey);
+        Object realId = primaryKey;
         log.debug("find {} by id={}", entityClass.getSimpleName(), realId);
         Class<T> javaClass = metaClass.getJavaClass();
 
@@ -437,7 +438,7 @@ public class JmixEntityManager implements EntityManager {
     }
 
     private <T> T findPartial(MetaClass metaClass, Object id, Collection<FetchPlan> fetchPlans) {
-        Object realId = getRealId(id);
+        Object realId = id;
         log.debug("find {} by id={}, fetchPlans={}", metaClass.getJavaClass().getSimpleName(), realId, fetchPlans);
 
         String pkName = metadataTools.getPrimaryKeyName(metaClass);
@@ -458,18 +459,7 @@ public class JmixEntityManager implements EntityManager {
             CubaUtil.setSoftDeletion(false);
             CubaUtil.setOriginalSoftDeletion(false);
 
-            UUID uuid = null;
-            if (EntityValues.getId(entity) instanceof IdProxy) {
-                uuid = ((IdProxy) EntityValues.getId(entity)).getUuid();
-            }
-
             T merged = delegate.merge(entity);
-
-            if (EntityValues.getId(entity) instanceof IdProxy
-                    && uuid != null
-                    && !uuid.equals(((IdProxy) EntityValues.getId(merged)).getUuid())) {
-                ((IdProxy) EntityValues.getId(merged)).setUuid(uuid);
-            }
 
             // copy non-persistent attributes to the resulting merged instance
             for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
@@ -590,9 +580,5 @@ public class JmixEntityManager implements EntityManager {
                 EntityValues.setValue(dest, name, value);
             }
         }
-    }
-
-    private Object getRealId(Object id) {
-        return id instanceof IdProxy ? ((IdProxy) id).getNN() : id;
     }
 }

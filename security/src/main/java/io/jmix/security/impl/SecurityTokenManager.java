@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -31,13 +30,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -176,12 +175,7 @@ public class SecurityTokenManager {
     }
 
     protected Object getEntityId(Entity entity) {
-        Object entityId = EntityValues.getId(entity);
-        if (entityId instanceof IdProxy) {
-            return ((IdProxy) entityId).get();
-        } else {
-            return entityId;
-        }
+        return EntityValues.getId(entity);
     }
 
     protected Object convertId(Object value, MetaClass metaClass, boolean handleHasUuid) {
@@ -194,7 +188,7 @@ public class SecurityTokenManager {
             Class type = primaryKey.getJavaType();
             if (UUID.class.equals(type)) {
                 return UuidProvider.fromString((String) value);
-            } else if (Long.class.equals(type) || IdProxy.class.equals(type)) {
+            } else if (Long.class.equals(type)) {
                 return ((Integer) value).longValue();
             } else if (Integer.class.equals(type)) {
                 return value;

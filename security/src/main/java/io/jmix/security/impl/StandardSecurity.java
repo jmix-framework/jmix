@@ -21,7 +21,6 @@ import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
@@ -34,10 +33,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.runtime.MethodClosure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -287,18 +286,11 @@ public class StandardSecurity implements Security {
                 MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(metaClass);
 
                 if (pkProperty != null) {
-                    boolean dbGeneratedPrimaryKey = metadataTools.hasDbGeneratedPrimaryKey(metaClass);
                     Object pkValue = null;
                     if (Long.class.equals(pkProperty.getJavaType())) {
                         pkValue = Long.valueOf(strValue);
-                        if (dbGeneratedPrimaryKey) {
-                            pkValue = IdProxy.of((Long) pkValue);
-                        }
                     } else if (Integer.class.equals(pkProperty.getJavaType())) {
                         pkValue = Integer.valueOf(strValue);
-                        if (dbGeneratedPrimaryKey) {
-                            pkValue = IdProxy.of((Integer) pkValue);
-                        }
                     } else if (UUID.class.equals(pkProperty.getJavaType())) {
                         pkValue = UUID.fromString(strValue);
                     } else if (String.class.equals(pkProperty.getJavaType())) {

@@ -16,19 +16,17 @@
 
 package io.jmix.data.persistence;
 
-import io.jmix.data.SequenceSupport;
 import io.jmix.core.Stores;
+import io.jmix.data.SequenceSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Factory for obtaining implementations of DBMS-specific objects, particularly {@link DbmsFeatures},
  * {@link SequenceSupport} and {@link DbTypeConverter}.
- *
  */
 @Component(DbmsSpecifics.NAME)
 public class DbmsSpecifics {
@@ -79,7 +77,7 @@ public class DbmsSpecifics {
         try {
             String name = dbmsType + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
             bean = (T) applicationContext.getBean(name);
-        }catch (NoSuchBeanDefinitionException e){
+        } catch (NoSuchBeanDefinitionException e) {
             String name = dbmsType + intf.getSimpleName();
             bean = (T) applicationContext.getBean(name);
         }

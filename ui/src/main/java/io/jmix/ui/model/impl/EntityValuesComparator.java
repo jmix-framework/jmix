@@ -17,7 +17,6 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.Entity;
-import io.jmix.core.entity.IdProxy;
 
 import java.util.Comparator;
 
@@ -48,11 +47,7 @@ public class EntityValuesComparator<T> extends AbstractComparator<T> {
     protected Object transformValue(T value) {
         Object newValue = value;
         if (!(value == null || value instanceof Comparable || value instanceof Entity)) {
-            if (value instanceof IdProxy) {
-                newValue = ((IdProxy) value).get();
-            } else {
-                newValue = value.toString();
-            }
+            newValue = value.toString();
         }
         return newValue;
     }

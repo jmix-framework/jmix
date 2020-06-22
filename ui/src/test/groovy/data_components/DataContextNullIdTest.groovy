@@ -16,13 +16,13 @@
 
 package data_components
 
+import io.jmix.core.Entity
 import io.jmix.ui.model.DataComponents
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataContextSpec
 import test_support.entity.TestNullableIdEntity
 import test_support.entity.TestNullableIdItemEntity
 import test_support.entity.TestStringIdEntity
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class DataContextNullIdTest extends DataContextSpec {
 
@@ -41,8 +41,9 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.contains(merged1)
         dataContext.find(merged1).is(merged1)
 
-        and: 'if entity has no id, its identity is determined by the object itself'
-        !dataContext.contains(entity1)
+        and: 'if entity has no id, its identity is determined by generated id'
+        dataContext.contains(entity1)
+        dataContext.find(entity1).is(merged1)
         dataContext.find(TestNullableIdEntity, null) == null
 
         when:
@@ -53,7 +54,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.find(merged2).is(merged2)
 
         and:
-        !dataContext.contains(entity2)
+        dataContext.contains(entity2)
 
         when:
         dataContext.evict(merged1)
@@ -109,6 +110,10 @@ class DataContextNullIdTest extends DataContextSpec {
         !dataContext.hasChanges()
         merged.id != null
         dataContext.contains(merged)
+
+        and:
+        Map<Object, Entity> entityMap = dataContext.content.get(TestNullableIdEntity)
+        entityMap.size() == 1
     }
 
     def "commit two instances"() {

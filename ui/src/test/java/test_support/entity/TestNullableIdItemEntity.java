@@ -17,7 +17,6 @@
 package test_support.entity;
 
 import javax.persistence.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Entity(name = "test_NullableIdItemEntity")
 @Table(name = "TEST_NULLABLE_ID_ITEM_ENTITY")
@@ -25,9 +24,8 @@ public class TestNullableIdItemEntity implements io.jmix.core.Entity {
 
     private static final long serialVersionUID = 8115973479078477156L;
 
-    public static AtomicLong sequence = new AtomicLong();
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
@@ -37,12 +35,6 @@ public class TestNullableIdItemEntity implements io.jmix.core.Entity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MASTER_ID")
     private TestNullableIdEntity master;
-
-    @PrePersist
-    protected void onPrePersist() {
-        if (id == null)
-            id = sequence.incrementAndGet();
-    }
 
     public Long getId() {
         return id;

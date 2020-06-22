@@ -64,9 +64,8 @@ class CollectionContainerNullIdTest extends DataContextSpec {
         context.commit()
 
         then:
-        entity1.id == 1
         container.containsItem(entity1)
-        container.containsItem(1L)
+        container.containsItem(entity1.id)
     }
 
     def "property collection"() {
@@ -88,10 +87,8 @@ class CollectionContainerNullIdTest extends DataContextSpec {
         context.commit()
 
         then:
-        master.id == 1
-        item1.id == 1
         master.items[0].is(item1)
-        propertyContainer.getItem(1L).is(item1)
+        propertyContainer.getItem(item1.id).is(item1)
     }
 
     def "replace item"() {
@@ -107,7 +104,7 @@ class CollectionContainerNullIdTest extends DataContextSpec {
         container.replaceItem(entity2)
 
         then:
-        thrown(IllegalArgumentException)
+        noExceptionThrown()
 
         when:
         def committedEntity = context.commit().get(entity)

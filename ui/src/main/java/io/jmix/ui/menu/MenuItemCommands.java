@@ -18,7 +18,6 @@ package io.jmix.ui.menu;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -40,10 +39,10 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -196,7 +195,7 @@ public class MenuItemCommands {
         Object id = null;
 
         try {
-            if (Long.class.equals(pkType) || IdProxy.class.equals(pkType)) {
+            if (Long.class.equals(pkType)) {
                 id = Long.valueOf(entityId);
             } else if (Integer.class.equals(pkType)) {
                 id = Integer.valueOf(entityId);

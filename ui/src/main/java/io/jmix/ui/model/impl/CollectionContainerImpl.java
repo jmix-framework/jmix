@@ -61,7 +61,7 @@ public class CollectionContainerImpl<E extends Entity>
     @Override
     public void setItem(@Nullable E item) {
         if (item != null) {
-            int idx = getItemIndex(EntityValues.getId(item));
+            int idx = getItemIndex(EntityValues.getIdOrEntity(item));
             if (idx == -1) {
                 throw new IllegalArgumentException("CollectionContainer does not contain " + item);
             }
@@ -134,11 +134,18 @@ public class CollectionContainerImpl<E extends Entity>
             } else {
                 indexKey = IndexKey.ofEntity(entity);
             }
+            Integer idx = idMap.get(indexKey);
+            if (idx != null) {
+                return idx;
+            } else {
+                idx = idMap.get(IndexKey.of(entity));
+                return idx != null ? idx : -1;
+            }
         } else {
             indexKey = IndexKey.of(entityOrId);
+            Integer idx = idMap.get(indexKey);
+            return idx != null ? idx : -1;
         }
-        Integer idx = idMap.get(indexKey);
-        return idx != null ? idx : -1;
     }
 
     @Override
@@ -150,8 +157,7 @@ public class CollectionContainerImpl<E extends Entity>
     public void replaceItem(E entity) {
         checkNotNullArgument(entity, "entity is null");
 
-        Object id = EntityValues.getId(entity);
-        int idx = getItemIndex(id);
+        int idx = getItemIndex(entity);
         CollectionChangeType changeType;
         if (idx > -1) {
             E prev = collection.get(idx);
@@ -253,7 +259,7 @@ public class CollectionContainerImpl<E extends Entity>
 
     protected void clearItemIfNotExists() {
         if (item != null) {
-            int idx = getItemIndex(EntityValues.getId(item));
+            int idx = getItemIndex(EntityValues.getIdOrEntity(item));
             if (idx == -1) {
                 // item doesn't exist in the collection
                 E prevItem = item;

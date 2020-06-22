@@ -16,10 +16,10 @@
 
 package io.jmix.ui.component.data.table;
 
+import io.jmix.core.Entity;
 import io.jmix.core.Sort;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -102,7 +102,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
 
     @Override
     public Collection<?> getItemIds() {
-        return container.getItems().stream().map(e -> EntityValues.getId(e)).collect(Collectors.toList());
+        return container.getItems().stream().map(entity -> EntityValues.getIdOrEntity(entity)).collect(Collectors.toList());
     }
 
     @Override
@@ -125,7 +125,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
     public void updateItem(E item) {
         checkNotNullArgument(item, "item is null");
 
-        if (container.containsItem(EntityValues.getId(item))) {
+        if (container.containsItem(EntityValues.getIdOrEntity(item))) {
             container.replaceItem(item);
         }
     }
@@ -143,7 +143,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
 
     @Override
     public boolean containsId(Object itemId) {
-        return container.getItems().stream().anyMatch(e -> EntityValues.getId(e).equals(itemId));
+        return container.getItems().stream().anyMatch(e -> EntityValues.getIdOrEntity(e).equals(itemId));
     }
 
     @Override
@@ -207,7 +207,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
             return null;
         List<E> items = container.getItems();
         int index = container.getItemIndex(itemId);
-        return index == items.size() - 1 ? null : EntityValues.getId(items.get(index + 1));
+        return index == items.size() - 1 ? null : EntityValues.getIdOrEntity(items.get(index + 1));
     }
 
     @Override
@@ -215,13 +215,13 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
         if (itemId == null)
             return null;
         int index = container.getItemIndex(itemId);
-        return index <= 0 ? null : EntityValues.getId(container.getItems().get(index - 1));
+        return index <= 0 ? null : EntityValues.getIdOrEntity(container.getItems().get(index - 1));
     }
 
     @Override
     public Object firstItemId() {
         List<E> items = container.getItems();
-        return items.isEmpty() ? null : EntityValues.getId(items.get(0));
+        return items.isEmpty() ? null : EntityValues.getIdOrEntity(items.get(0));
     }
 
     @Override
@@ -230,7 +230,7 @@ public class ContainerTableItems<E extends Entity> implements EntityTableItems<E
         if (items.isEmpty()) {
             return null;
         }
-        return EntityValues.getId(items.get(items.size() - 1));
+        return EntityValues.getIdOrEntity(items.get(items.size() - 1));
     }
 
     @Override

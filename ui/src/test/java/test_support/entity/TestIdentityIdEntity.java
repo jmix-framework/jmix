@@ -16,17 +16,24 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.BaseIdentityIdEntity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity(name = "test$IdentityIdEntity")
 @Table(name = "TEST_IDENTITY_ID_ENTITY")
-public class TestIdentityIdEntity extends BaseIdentityIdEntity {
+public class TestIdentityIdEntity implements io.jmix.core.Entity {
 
-    private static final long serialVersionUID = 146993228195491648L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    protected Long id;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     @Column(name = "NAME")
     private String name;

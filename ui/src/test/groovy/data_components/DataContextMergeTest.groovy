@@ -672,7 +672,7 @@ class DataContextMergeTest extends DataContextSpec {
 
         then:
 
-        context.find(entity).id == null
+        context.find(mergedEntity).id == null
 
         when:
 
@@ -680,7 +680,7 @@ class DataContextMergeTest extends DataContextSpec {
 
         then:
 
-        context.find(entity).id != null
+        context.find(mergedEntity).id != null
         1 * listener.propertyChanged({ it.property == 'id' }) // is not invoked because id is set in copySystemState() by setDbGeneratedId() which is not enhanced
     }
 

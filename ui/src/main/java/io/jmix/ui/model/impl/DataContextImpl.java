@@ -20,7 +20,10 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntityPropertyChangeListener;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.Versioned;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -69,7 +72,7 @@ public class DataContextImpl implements DataContext {
 
     protected Map<Entity, Map<String, EmbeddedPropertyChangeListener>> embeddedPropertyListeners = new WeakHashMap<>();
 
-    protected Map<Entity, Entity> nullIdEntitiesMap = new IdentityHashMap<>();
+    protected Map<Entity, Entity> nullIdEntitiesMap = new /*Identity*/HashMap<>();
 
     public DataContextImpl(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -235,7 +238,7 @@ public class DataContextImpl implements DataContext {
     protected Object makeKey(Entity entity) {
         Object id = EntityValues.getId(entity);
         if (id != null) {
-            return EntityValues.getId(entity);
+            return id;
         } else {
             return entity;
         }
@@ -270,9 +273,8 @@ public class DataContextImpl implements DataContext {
 
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
-                // ignore null values in non-root source entities and do not try to assign IdProxy
-                if ((!isRoot && value == null)
-                        || (value instanceof IdProxy)) {
+                // ignore null values in non-root source entities
+                if (!isRoot && value == null) {
                     continue;
                 }
 
@@ -288,9 +290,8 @@ public class DataContextImpl implements DataContext {
 
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
-                // ignore null values in non-root source entities and do not try to assign IdProxy
-                if ((!isRoot && value == null)
-                        || (value instanceof IdProxy)) {
+                // ignore null values in non-root source entities
+                if (!isRoot && value == null) {
                     continue;
                 }
 
@@ -795,17 +796,22 @@ public class DataContextImpl implements DataContext {
         public void propertyChanged(EntityPropertyChangeEvent e) {
             // if id has been changed, put the entity to the content with the new id
             MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(e.getItem().getClass());
-            if (primaryKeyProperty != null && e.getProperty().equals(primaryKeyProperty.getName())) {
+            if (primaryKeyProperty != null
+                    && e.getProperty().equals(primaryKeyProperty.getName())) {
                 Map<Object, Entity> entityMap = content.get(e.getItem().getClass());
                 if (entityMap != null) {
-                    entityMap.remove(e.getPrevValue());
-                    entityMap.put(e.getValue(), (Entity) e.getItem());
+                    if (e.getPrevValue() == null) {
+                        entityMap.remove(e.getItem());
+                    } else {
+                        entityMap.remove(e.getPrevValue());
+                    }
+                    entityMap.put(e.getValue(), e.getItem());
                 }
             }
 
             if (!disableListeners) {
-                modifiedInstances.add((Entity) e.getItem());
-                fireChangeListener((Entity) e.getItem());
+                modifiedInstances.add(e.getItem());
+                fireChangeListener(e.getItem());
             }
         }
     }

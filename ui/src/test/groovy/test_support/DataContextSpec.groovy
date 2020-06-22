@@ -16,24 +16,19 @@
 
 package test_support
 
-import io.jmix.core.AppBeans
-import io.jmix.core.Entity
-import io.jmix.core.EntityStates
-import io.jmix.core.CoreConfiguration
-import io.jmix.core.TimeSource
-import io.jmix.core.entity.*
+import io.jmix.core.*
+import io.jmix.core.entity.Creatable
+import io.jmix.core.entity.Updatable
+import io.jmix.core.entity.Versioned
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
-import org.springframework.transaction.support.TransactionTemplate
-import test_support.entity.TestNullableIdEntity
-import test_support.entity.TestNullableIdItemEntity
 import org.eclipse.persistence.internal.queries.EntityFetchGroup
 import org.eclipse.persistence.queries.FetchGroupTracker
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
-
-import org.springframework.beans.factory.annotation.Autowired
 
 import static io.jmix.core.impl.StandardSerialization.deserialize
 import static io.jmix.core.impl.StandardSerialization.serialize
@@ -53,9 +48,6 @@ class DataContextSpec extends Specification {
     }
 
     void cleanup() {
-        TestNullableIdEntity.sequence.set(0L)
-        TestNullableIdItemEntity.sequence.set(0L)
-
         jdbc.update('delete from TEST_NULLABLE_ID_ITEM_ENTITY')
         jdbc.update('delete from TEST_NULLABLE_ID_ENTITY')
         jdbc.update('delete from TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY')

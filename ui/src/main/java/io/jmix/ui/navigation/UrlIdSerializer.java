@@ -17,7 +17,6 @@
 package io.jmix.ui.navigation;
 
 import io.jmix.core.common.util.URLEncodeUtils;
-import io.jmix.core.entity.IdProxy;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
@@ -63,12 +62,6 @@ public final class UrlIdSerializer {
 
         } else if (UUID.class == idClass) {
             serialized = CrockfordUuidEncoder.encode(((UUID) id));
-        } else if (IdProxy.class == idClass) {
-            Number dbId = ((IdProxy<? extends Number>) id).get();
-            if (dbId == null) {
-                throw new IllegalArgumentException("Id cannot be null");
-            }
-            return serializeId(dbId);
         } else {
             throw new IllegalArgumentException(
                     String.format("Unable to serialize id '%s' of type '%s'", id, idClass));

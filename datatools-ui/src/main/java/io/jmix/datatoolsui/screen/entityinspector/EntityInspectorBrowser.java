@@ -40,9 +40,9 @@ import io.jmix.ui.action.list.RefreshAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.*;
-import io.jmix.ui.export.ByteArrayDataProvider;
-import io.jmix.ui.export.ExportDisplay;
-import io.jmix.ui.export.ExportFormat;
+import io.jmix.ui.download.ByteArrayDataProvider;
+import io.jmix.ui.download.DownloadFormat;
+import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
@@ -62,8 +62,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import static io.jmix.ui.export.ExportFormat.JSON;
-import static io.jmix.ui.export.ExportFormat.ZIP;
+import static io.jmix.ui.download.DownloadFormat.JSON;
+import static io.jmix.ui.download.DownloadFormat.ZIP;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Route("jmixEntityInspector")
@@ -120,7 +120,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
     protected EntityImportExport entityImportExport;
 
     @Autowired
-    protected ExportDisplay exportDisplay;
+    protected Downloader exportDisplay;
 
     //TODO filter implementation component (Filter in Table/DataGrid #221)
     protected Component filter;
@@ -196,7 +196,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
         }
         textSelection.setVisible(true);
 
-        entitiesTable = InspectorTableBuilder.from(getBeanLocator(),createContainer(meta))
+        entitiesTable = InspectorTableBuilder.from(getBeanLocator(), createContainer(meta))
                 .withMaxTextLength(MAX_TEXT_LENGTH)
                 .withSystem(true)
                 .withButtons(this::createButtonsPanel)
@@ -231,7 +231,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
 
     private CollectionContainer createContainer(MetaClass meta) {
         entitiesDc = dataComponents.createCollectionContainer(meta.getJavaClass());
-        FetchPlan fetchPlan = InspectorFetchPlanBuilder.of(getBeanLocator(),meta.getJavaClass())
+        FetchPlan fetchPlan = InspectorFetchPlanBuilder.of(getBeanLocator(), meta.getJavaClass())
                 .withSystemProperties(true)
                 .build();
         entitiesDc.setFetchPlan(fetchPlan);
@@ -405,11 +405,11 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
 
     protected class ExportAction extends ItemTrackingAction {
 
-        private final ExportFormat exportFormat;
+        private final DownloadFormat format;
 
-        public ExportAction(String id, ExportFormat exportFormat) {
+        public ExportAction(String id, DownloadFormat format) {
             super(id);
-            this.exportFormat = exportFormat;
+            this.format = format;
         }
 
         @Override
@@ -421,15 +421,15 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
             }
 
             try {
-                if (exportFormat == ZIP) {
+                if (format == ZIP) {
                     byte[] data = entityImportExport.exportEntitiesToZIP(selected);
                     String resourceName = selectedMeta.getJavaClass().getSimpleName() + ".zip";
-                    exportDisplay.show(new ByteArrayDataProvider(data), resourceName, ZIP);
-                } else if (exportFormat == JSON) {
+                    exportDisplay.download(new ByteArrayDataProvider(data), resourceName, ZIP);
+                } else if (format == JSON) {
                     byte[] data = entityImportExport.exportEntitiesToJSON(selected)
                             .getBytes(StandardCharsets.UTF_8);
                     String resourceName = selectedMeta.getJavaClass().getSimpleName() + ".json";
-                    exportDisplay.show(new ByteArrayDataProvider(data), resourceName, JSON);
+                    exportDisplay.download(new ByteArrayDataProvider(data), resourceName, JSON);
                 }
             } catch (Exception e) {
                 notifications.create(Notifications.NotificationType.ERROR)

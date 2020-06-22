@@ -17,6 +17,7 @@
 package io.jmix.ui.component.factory;
 
 import io.jmix.core.Messages;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
@@ -34,6 +35,11 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
     public DefaultComponentGenerationStrategy(Messages messages,
                                               GuiActionSupport guiActionSupport) {
         super(messages, guiActionSupport);
+    }
+
+    @Autowired
+    public void setActions(Actions actions) {
+        this.actions = actions;
     }
 
     @Autowired

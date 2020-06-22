@@ -24,7 +24,6 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
@@ -43,6 +42,7 @@ import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChan
 import org.eclipse.persistence.internal.sessions.ObjectChangeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -50,7 +50,6 @@ import org.springframework.transaction.support.*;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -291,7 +290,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    Number id = ((IdProxy) EntityValues.getId(item.getDbGeneratedIdEntity())).getNN();
+                    Object id = EntityValues.getId(item.getDbGeneratedIdEntity());
                     item.setObjectEntityId(id);
                     transaction.executeWithoutResult(status -> {
                         entityManager.persist(item);

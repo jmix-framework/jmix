@@ -1,7 +1,6 @@
 import io.jmix.audit.entity.EntityLogItem
 import io.jmix.core.Entity
 import io.jmix.core.entity.EntityValues
-import io.jmix.core.entity.IdProxy
 import io.jmix.data.impl.EntityAttributeChanges
 import test_support.testmodel.IdentityEntity
 import test_support.testmodel.IntIdentityEntity
@@ -140,7 +139,7 @@ class EntityLogTest extends AbstractEntityLogTest {
 
         then:
 
-        List<EntityLogItem> logItems = getEntityLogItems('test$IntIdentityEntity', EntityValues.getId(intIdentityEntity).get())
+        List<EntityLogItem> logItems = getEntityLogItems('test$IntIdentityEntity', EntityValues.getId(intIdentityEntity))
         EntityLogItem logItem = logItems.first()
 
         logItems.size() == 2
@@ -223,9 +222,6 @@ class EntityLogTest extends AbstractEntityLogTest {
 
     private clearEntityById(Entity entity, String tableName) {
         Object id = EntityValues.getId(entity)
-        if (id instanceof IdProxy) {
-            id = id.get()
-        }
         if (entity && id) {
             runSqlUpdate("delete from $tableName where id = ${id}")
         }

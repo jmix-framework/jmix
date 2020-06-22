@@ -1,16 +1,16 @@
-import io.jmix.audit.EntityLog
 import io.jmix.audit.AuditConfiguration
+import io.jmix.audit.EntityLog
 import io.jmix.audit.entity.EntityLogItem
 import io.jmix.audit.entity.LoggedAttribute
 import io.jmix.audit.entity.LoggedEntity
 import io.jmix.core.AppBeans
-import io.jmix.core.Entity
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.Entity
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityValues
-import io.jmix.core.entity.IdProxy
 import io.jmix.data.DataConfiguration
 import io.jmix.data.PersistenceTools
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.PlatformTransactionManager
@@ -19,7 +19,6 @@ import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
 import test_support.AuditTestConfiguration
 
-import org.springframework.beans.factory.annotation.Autowired
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 import javax.persistence.TypedQuery
@@ -117,9 +116,6 @@ class AbstractEntityLogTest extends Specification {
 
     protected EntityLogItem getLatestEntityLogItem(String entityName, Entity entity) {
         Object id = EntityValues.getId(entity);
-        if (id instanceof IdProxy) {
-            id = id.getNN()
-        }
         getEntityLogItems(entityName, id).first()
     }
 

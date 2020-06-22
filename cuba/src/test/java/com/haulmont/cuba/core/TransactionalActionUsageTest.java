@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.core;
 
+import com.google.common.base.Strings;
 import com.haulmont.cuba.core.entity.contracts.Id;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.Metadata;
@@ -99,9 +100,8 @@ public class TransactionalActionUsageTest {
                 .withCommitContext(() -> {
                     CommitContext cc = new CommitContext();
                     Product p = metadata.create(Product.class);
-                    p.setName("test");
+                    p.setName(Strings.repeat("a", 300)); // to cause truncation error in DB
                     p.setQuantity(100);
-                    p.setId(null);
                     cc.addInstanceToCommit(p);
                     return cc;
                 })
@@ -121,9 +121,8 @@ public class TransactionalActionUsageTest {
                 .withCommitContext(() -> {
                     CommitContext cc = new CommitContext();
                     Product p = metadata.create(Product.class);
-                    p.setName("test");
+                    p.setName(Strings.repeat("a", 300)); // to cause truncation error in DB
                     p.setQuantity(100);
-                    p.setId(null);
                     cc.addInstanceToCommit(p);
                     return cc;
                 })

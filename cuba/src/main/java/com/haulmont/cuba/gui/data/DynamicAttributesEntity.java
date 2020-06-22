@@ -54,6 +54,11 @@ public class DynamicAttributesEntity implements Entity {
         }
 
         @Override
+        public Object getGeneratedIdOrNull() {
+            return getEntityId();
+        }
+
+        @Override
         public <T> T getAttributeValue(String name) {
             return (EntityValues.getValue(((DynamicAttributesEntity) source).mainItem, name));
         }

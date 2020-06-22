@@ -15,28 +15,23 @@
  */
 package com.haulmont.cuba.core.sys;
 
-import io.jmix.core.BeanLocator;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
-import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.IdProxy;
 import com.haulmont.cuba.core.EntityManager;
-import io.jmix.data.PersistenceHints;
 import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.TypedQuery;
+import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.JmixEntityManager;
 import io.jmix.data.impl.JmixQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityNotFoundException;
 import java.sql.Connection;
 
@@ -192,10 +187,6 @@ public class EntityManagerImpl implements EntityManager {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(id, "id is null");
 
-        if (id instanceof IdProxy && ((IdProxy) id).get() == null) {
-            return null;
-        }
-
         T entity = find(entityClass, id, fetchPlanNames);
         return entity;
     }
@@ -205,10 +196,6 @@ public class EntityManagerImpl implements EntityManager {
     @Override
     public <T extends Entity> T reload(T entity, String... fetchPlanNames) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
-
-        if (EntityValues.getId(entity) instanceof IdProxy && ((IdProxy) EntityValues.getId(entity)).get() == null) {
-            return null;
-        }
 
         Entity resultEntity = find(entity.getClass(), EntityValues.getId(entity), fetchPlanNames);
         return (T) resultEntity;

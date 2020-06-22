@@ -74,6 +74,11 @@ public class EmbeddableEntityEntry extends BaseEntityEntry {
     }
 
     @Override
+    public Object getGeneratedIdOrNull() {
+        return getEntityId();
+    }
+
+    @Override
     public boolean isEmbeddable() {
         return true;
     }

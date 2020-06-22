@@ -25,7 +25,6 @@ import com.google.gson.reflect.TypeToken;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.Datatypes;
@@ -36,10 +35,10 @@ import io.jmix.core.metamodel.model.Range;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -428,14 +427,6 @@ public class EntitySerializationImpl implements EntitySerialization {
                         try {
                             Datatype pkDatatype = Datatypes.getNN(primaryKeyProperty.getJavaType());
                             pkValue = pkDatatype.parse(idString);
-                            if (metadataTools.hasDbGeneratedPrimaryKey(resultMetaClass)) {
-                                pkValue = IdProxy.of((Number) pkValue);
-                                JsonPrimitive uuidPrimitive = jsonObject.getAsJsonPrimitive("uuid");
-                                if (uuidPrimitive != null) {
-                                    UUID uuid = UUID.fromString(uuidPrimitive.getAsString());
-                                    ((IdProxy) pkValue).setUuid(uuid);
-                                }
-                            }
                         } catch (ParseException e) {
                             throw new EntitySerializationException(e);
                         }
@@ -456,12 +447,7 @@ public class EntitySerializationImpl implements EntitySerialization {
 
 
             if (pkValue != null) {
-                if (pkValue instanceof IdProxy && metadataTools.hasDbGeneratedPrimaryKey(resultMetaClass)) {
-                    //noinspection unchecked
-                    EntityValues.setId(entity, pkValue);
-                } else {
-                    EntityValues.setValue(entity, "id", pkValue);
-                }
+                EntityValues.setId(entity, pkValue);
             }
 
             if (coreRestProperties.isRequiresSecurityToken()) {

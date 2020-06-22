@@ -75,6 +75,11 @@ public class KeyValueEntity
         }
 
         @Override
+        public Object getGeneratedIdOrNull() {
+            return getEntityId();
+        }
+
+        @Override
         public <T> T getAttributeValue(@NonNull String name) {
             return ((KeyValueEntity) source).getValue(name);
         }

@@ -16,8 +16,8 @@
 
 package entity_collections
 
-import io.jmix.core.EntityReferencesNormalizer
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.EntityReferencesNormalizer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -31,6 +31,9 @@ import test_support.app.entity.sales.OrderLineA
 import test_support.app.entity.sales.Product
 import test_support.base.TestBaseConfiguration
 
+import static io.jmix.core.impl.StandardSerialization.deserialize
+import static io.jmix.core.impl.StandardSerialization.serialize
+
 @ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
@@ -40,8 +43,8 @@ class EntityReferencesNormalizerTest extends Specification {
     EntityReferencesNormalizer normalizer
 
     def "update immediate to-one references"() {
-        def customer1 = new Customer(name: 'cust')
-        def customer2 = new Customer(id: customer1.id, name: 'cust')
+        Customer customer1 = new Customer(name: 'cust')
+        Customer customer2 = reserialize(customer1)
 
         def order = new Order(number: '1', customer: customer2)
 
@@ -55,8 +58,8 @@ class EntityReferencesNormalizerTest extends Specification {
     }
 
     def "update deep to-one references"() {
-        def product1 = new Product(name: 'product')
-        def product2 = new Product(id: product1.id, name: 'product')
+        Product product1 = new Product(name: 'product')
+        Product product2 = reserialize(product1)
 
         def order = new Order(number: '1')
         def orderLineA = new OrderLineA(order: order, product: product2)
@@ -69,5 +72,30 @@ class EntityReferencesNormalizerTest extends Specification {
 
         then:
         order.orderLines[0].product.is(product1)
+    }
+
+    def "update to-many collection"() {
+        def order = new Order(number: '1')
+        def orderLine1 = new OrderLineA(order: order)
+        def orderLine2 = reserialize(orderLine1)
+        order.orderLines = [orderLine2]
+
+        def collection = [order, orderLine1]
+
+        when:
+        normalizer.updateReferences(collection)
+
+        then:
+        order.orderLines.size() == 1
+        order.orderLines[0].is(orderLine1)
+    }
+
+    @SuppressWarnings("unchecked")
+    static <T> T reserialize(Serializable object) {
+        if (object == null) {
+            return null
+        }
+
+        return (T) deserialize(serialize(object))
     }
 }

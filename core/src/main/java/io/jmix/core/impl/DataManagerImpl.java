@@ -17,15 +17,16 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @Component(DataManager.NAME)
@@ -215,16 +216,12 @@ public class DataManagerImpl implements DataManager {
                         } else {
                             Object refEntityId = EntityValues.getId(refEntity);
                             MetaClass refEntityMetaClass = metadata.getClass(refEntity.getClass());
-                            if (refEntityId instanceof IdProxy) {
-                                Object realId = ((IdProxy) refEntityId).get();
-                                if (realId == null) {
-                                    if (allEntities.stream().anyMatch(e -> EntityValues.getId(e).equals(refEntityId))) {
-                                        repeatRequired = true;
-                                    } else {
-                                        log.warn("No entity with ID={} in the context, skip handling different data store", refEntityId);
-                                    }
+                            if (refEntityId == null) {
+                                Object refEntityGeneratedId = EntityValues.getGeneratedId(refEntity);
+                                if (allEntities.stream().anyMatch(e -> EntityValues.getGeneratedId(e).equals(refEntityGeneratedId))) {
+                                    repeatRequired = true;
                                 } else {
-                                    EntityValues.setValue(entity, relatedPropertyName, realId);
+                                    log.warn("No entity with generated ID={} in the context, skip handling different data store", refEntityGeneratedId);
                                 }
                             } else if (metadataTools.hasCompositePrimaryKey(refEntityMetaClass)) {
                                 MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);

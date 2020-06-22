@@ -42,6 +42,11 @@ public class BaseLockableEntity extends BaseUuidEntity {
         public void setEntityId(Object id) {
             ((BaseLockableEntity) source).setId((UUID) id);
         }
+
+        @Override
+        public Object getGeneratedIdOrNull() {
+            return getEntityId();
+        }
     }
 
     @Override

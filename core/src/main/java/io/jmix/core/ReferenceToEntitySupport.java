@@ -16,16 +16,14 @@
 
 package io.jmix.core;
 
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 /**
@@ -49,10 +47,6 @@ public class ReferenceToEntitySupport {
         if (entity instanceof HasUuid) {
             return ((HasUuid) entity).getUuid();
         }
-        Object entityId = EntityValues.getId(entity);
-        if (entityId instanceof IdProxy) {
-            return ((IdProxy) entityId).get();
-        }
         return EntityValues.getId(entity);
     }
 
@@ -63,9 +57,6 @@ public class ReferenceToEntitySupport {
     @Nullable
     public Object getReferenceIdForLink(Entity entity) {
         Object entityId = EntityValues.getId(entity);
-        if (entityId instanceof IdProxy) {
-            entityId = ((IdProxy) entityId).get();
-        }
         if (entityId == null)
             return null;
         if (metadataTools.hasCompositePrimaryKey(metadata.getClass(entity))) {
@@ -92,7 +83,7 @@ public class ReferenceToEntitySupport {
             Class type = primaryKey.getJavaType();
             if (UUID.class.equals(type)) {
                 return "entityId";
-            } else if (Long.class.equals(type) || IdProxy.class.equals(type)) {
+            } else if (Long.class.equals(type)) {
                 return "longEntityId";
             } else if (Integer.class.equals(type)) {
                 return "intEntityId";

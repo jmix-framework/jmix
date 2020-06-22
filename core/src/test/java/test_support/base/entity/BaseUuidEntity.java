@@ -17,6 +17,7 @@ package test_support.base.entity;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.HasUuid;
+import io.jmix.core.entity.annotation.JmixGeneratedId;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
@@ -32,6 +33,7 @@ public abstract class BaseUuidEntity extends BaseGenericIdEntity<UUID> implement
 
     @Id
     @Column(name = "ID")
+    @JmixGeneratedId
     protected UUID id;
 
     public BaseUuidEntity() {

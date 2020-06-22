@@ -19,17 +19,15 @@ package io.jmix.core.impl;
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.IdProxy;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -240,7 +238,8 @@ public class CrossDataStoreReferenceLoader {
             Object relatedPropertyValue = EntityValues.getValue(entity, crossDataStoreProperty.relatedPropertyName);
             loadedEntities.stream()
                     .filter(e -> {
-                        Object id = EntityValues.getId(e) instanceof IdProxy ? ((IdProxy) EntityValues.getId(e)).getNN() : EntityValues.getId(e);
+                        Object id = EntityValues.getId(e);
+                        assert id != null;
                         return id.equals(relatedPropertyValue);
                     })
                     .findAny()

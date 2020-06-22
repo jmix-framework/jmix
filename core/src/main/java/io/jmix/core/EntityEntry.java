@@ -33,6 +33,17 @@ public interface EntityEntry extends Serializable {
     void setEntityId(@Nullable Object id);
 
     @Nullable
+    Object getGeneratedIdOrNull();
+
+    default Object getGeneratedId() {
+        Object id = getGeneratedIdOrNull();
+        if (id == null) {
+            throw new IllegalStateException(String.format("Generated ID is null in %s", getSource()));
+        }
+        return id;
+    }
+
+    @Nullable
     <T> T getAttributeValue(String name);
 
     default void setAttributeValue(String name, @Nullable Object value) {

@@ -17,14 +17,13 @@
 package io.jmix.core.impl;
 
 
-import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.Entity;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.EntityEntry;
+import io.jmix.core.entity.BaseEntityEntry;
+import io.jmix.core.entity.EntityValues;
 
 import javax.annotation.Nullable;
 import java.io.ObjectOutputStream;
-import java.util.Objects;
 
 /**
  * Used by enhancing process
@@ -58,10 +57,23 @@ public class EntityInternals {
         if (o2 == null || o1.getClass() != o2.getClass())
             return false;
 
-        if (o1.__getEntityEntry().getEntityId() == null && ((Entity) o2).__getEntityEntry().getEntityId() == null)
-            return false;
+        Object id1 = o1.__getEntityEntry().getEntityId();
+        Object id2 = ((Entity) o2).__getEntityEntry().getEntityId();
 
-        return Objects.equals(o1.__getEntityEntry().getEntityId(), ((Entity) o2).__getEntityEntry().getEntityId());
+        if (id1 != null && id1.equals(id2))
+            return true;
+
+        Object generatedId1 = o1.__getEntityEntry().getGeneratedId();
+        Object generatedId2 = ((Entity) o2).__getEntityEntry().getGeneratedId();
+
+        if (generatedId1.equals(generatedId2))
+            return true;
+
+        return false;
+    }
+
+    public static int hashCode(Entity entity) {
+        return entity.__getEntityEntry().hashCode();
     }
 
     @SuppressWarnings("unused")

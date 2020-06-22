@@ -55,6 +55,11 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
         return source;
     }
 
+    @Override
+    public int hashCode() {
+        return getGeneratedId().hashCode();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getAttributeValue(@NonNull String name) {

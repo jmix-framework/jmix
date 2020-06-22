@@ -28,13 +28,22 @@ import static io.jmix.core.metamodel.model.utils.ObjectPathUtils.parseValuePath;
 
 public class EntityValues {
 
-    @SuppressWarnings("unchecked")
+    @Nullable
     public static Object getId(Entity entity) {
         return entity.__getEntityEntry().getEntityId();
     }
 
     public static void setId(Entity entity, Object key) {
         entity.__getEntityEntry().setEntityId(key);
+    }
+
+    public static Object getIdOrEntity(Entity entity) {
+        Object id = entity.__getEntityEntry().getEntityId();
+        return id != null ? id : entity;
+    }
+
+    public static Object getGeneratedId(Entity entity) {
+        return entity.__getEntityEntry().getGeneratedId();
     }
 
     /**

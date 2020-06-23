@@ -21,7 +21,6 @@ import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +38,6 @@ import java.util.List;
 @Entity(name = "test$User")
 @Table(name = "TEST_USER")
 @NamePattern("#getCaption|login,name")
-@TrackEditScreenHistory
 @Listeners("test_UserEntityListener")
 public class User extends StandardEntity implements BaseUser {
 

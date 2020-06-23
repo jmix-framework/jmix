@@ -16,12 +16,11 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
-import io.jmix.core.entity.annotation.OnDelete;
-import io.jmix.core.entity.annotation.TrackEditScreenHistory;
-import io.jmix.core.metamodel.annotation.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.DeletePolicy;
+import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -33,7 +32,6 @@ import java.util.Set;
 @Entity(name = "test$Group")
 @Table(name = "TEST_GROUP")
 @NamePattern("%s|name")
-@TrackEditScreenHistory
 public class Group extends StandardEntity {
 
     private static final long serialVersionUID = -4581386806900761785L;

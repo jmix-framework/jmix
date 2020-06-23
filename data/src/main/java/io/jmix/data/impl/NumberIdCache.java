@@ -17,15 +17,19 @@
 
 package io.jmix.data.impl;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.annotation.IdSequence;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.annotation.JmixGeneratedId;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.DataProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -46,6 +50,8 @@ public class NumberIdCache {
     protected DataProperties dataProperties;
 
     protected ConcurrentMap<String, Generator> cache = new ConcurrentHashMap<>();
+    @Autowired
+    private MetadataTools metadataTools;
 
     protected class Generator {
         protected long counter;
@@ -99,10 +105,13 @@ public class NumberIdCache {
         final boolean cached;
         final String sequenceName;
         if (metaClass != null) {
-            Map attributes = (Map) metaClass.getAnnotations().get(IdSequence.class.getName());
-            if (attributes != null) {
-                sequenceName = (String) attributes.get("name");
-                cached = Boolean.TRUE.equals(attributes.get("cached"));
+            Optional<MetaProperty> generatedIdPropertyOpt = metaClass.getProperties().stream()
+                    .filter(property -> property.getAnnotatedElement().isAnnotationPresent(JmixGeneratedId.class))
+                    .findFirst();
+            if (generatedIdPropertyOpt.isPresent()) {
+                Map<String, Object> attributes = metadataTools.getMetaAnnotationAttributes(generatedIdPropertyOpt.get().getAnnotations(), JmixGeneratedId.class);
+                sequenceName = Strings.emptyToNull((String) attributes.get("sequenceName"));
+                cached = sequenceName == null || Boolean.TRUE.equals(attributes.get("sequenceCache"));
             } else {
                 cached = true;
                 sequenceName = null;

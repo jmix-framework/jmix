@@ -20,20 +20,22 @@ import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component(UserRepository.NAME)
 public class InMemoryUserRepository implements UserRepository {
 
     protected CoreUser systemUser;
     protected CoreUser anonymousUser;
     protected List<BaseUser> users = new ArrayList<>();
 
-    public InMemoryUserRepository(CoreUser systemUser, CoreUser anonymousUser) {
-        this.systemUser = systemUser;
-        this.anonymousUser = anonymousUser;
+    public InMemoryUserRepository() {
+        systemUser = new CoreUser("system", "{noop}", "System");
+        anonymousUser = new CoreUser("anonymous", "{noop}", "Anonymous");
     }
 
     @Override

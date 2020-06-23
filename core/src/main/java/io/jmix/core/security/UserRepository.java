@@ -29,5 +29,5 @@ public interface UserRepository extends UserDetailsService {
 
     BaseUser getAnonymousUser();
 
-    List<BaseUser> getByUsernameLike(String username);
+    List<? extends BaseUser> getByUsernameLike(String username);
 }

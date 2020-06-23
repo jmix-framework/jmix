@@ -18,8 +18,6 @@ package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.entity.BaseUser;
-import io.jmix.core.security.impl.CoreUser;
-import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -47,12 +45,15 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter impl
     @Autowired
     private CoreProperties coreProperties;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository()));
+        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
 
         CoreAuthenticationProvider userAuthenticationProvider = new CoreAuthenticationProvider();
-        userAuthenticationProvider.setUserDetailsService(userRepository());
+        userAuthenticationProvider.setUserDetailsService(userRepository);
         userAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
         auth.authenticationProvider(userAuthenticationProvider);
     }
@@ -63,7 +64,7 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter impl
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
                 .anonymous(anonymousConfigurer -> {
-                    BaseUser anonymousUser = userRepository().getAnonymousUser();
+                    BaseUser anonymousUser = userRepository.getAnonymousUser();
                     anonymousConfigurer.principal(anonymousUser);
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
                 })
@@ -82,18 +83,6 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter impl
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-    @Bean(UserRepository.NAME)
-    public UserRepository userRepository() {
-        CoreUser systemUser = new CoreUser("system", "{noop}", "System");
-        CoreUser anonymousUser = new CoreUser("anonymous", "{noop}", "Anonymous");
-        return new InMemoryUserRepository(systemUser, anonymousUser);
-    }
-//    @Bean(name = "core_userDetailsService")
-//    @Override
-//    public UserDetailsService userDetailsServiceBean() throws Exception {
-//        return super.userDetailsServiceBean();
-//    }
 
     @Bean(name = "core_PasswordEncoder")
     public PasswordEncoder getPasswordEncoder() {

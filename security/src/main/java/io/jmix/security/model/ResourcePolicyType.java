@@ -21,7 +21,7 @@ package io.jmix.security.model;
  */
 public class ResourcePolicyType {
     public static final String SCREEN = "screen";
-    public static final String MENU = "screen";
+    public static final String MENU = "menu";
     public static final String ENTITY = "entity";
     public static final String ENTITY_ATTRIBUTE = "entityAttribute";
     public static final String SPECIFIC = "specific";

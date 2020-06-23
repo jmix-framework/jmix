@@ -20,6 +20,7 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.Role;
+import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.role.provider.RoleProvider;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +47,7 @@ public class DatabaseRoleProvider implements RoleProvider {
     @Override
     public Collection<Role> getAllRoles() {
         return dataManager.load(RoleEntity.class)
-                .query("select r from sec_Role r")
+//                .query("select r from sec_RoleEntity r")
                 .fetchPlan(fetchPlanBuilder -> {
                     fetchPlanBuilder
                             .addAll("name", "code", "scope")
@@ -62,7 +64,7 @@ public class DatabaseRoleProvider implements RoleProvider {
     @Override
     public Role getRoleByCode(String code) {
         return dataManager.load(RoleEntity.class)
-                .query("select r from sec_Role r where r.code = :code")
+                .query("where e.code = :code")
                 .parameter("code", code)
                 .fetchPlan(fetchPlanBuilder -> {
                     fetchPlanBuilder
@@ -79,7 +81,8 @@ public class DatabaseRoleProvider implements RoleProvider {
         Role role = new Role();
         role.setName(roleEntity.getName());
         role.setCode(roleEntity.getCode());
-        role.setScope(roleEntity.getScope());
+        role.setSource(RoleSource.DATABASE);
+        role.getCustomProperties().put("databaseId", roleEntity.getId().toString());
 
         List<ResourcePolicyEntity> resourcePolicyEntities = roleEntity.getResourcePolicies();
         if (resourcePolicyEntities != null) {
@@ -87,7 +90,8 @@ public class DatabaseRoleProvider implements RoleProvider {
                     .map(entity -> new ResourcePolicy(entity.getType(),
                             entity.getResource(),
                             entity.getAction(),
-                            entity.getEffect()))
+                            entity.getEffect(),
+                            Collections.singletonMap("databaseId", entity.getId().toString())))
                     .collect(Collectors.toList());
             role.setResourcePolicies(resourcePolicies);
         }
@@ -96,7 +100,8 @@ public class DatabaseRoleProvider implements RoleProvider {
         if (rowLevelPolicyEntities != null) {
             List<RowLevelPolicy> rowLevelPolicies = rowLevelPolicyEntities.stream()
                     .map(entity ->
-                            new RowLevelPolicy(entity.getEntityName(), entity.getWhereClause(), entity.getJoinClause())
+                            new RowLevelPolicy(entity.getEntityName(), entity.getWhereClause(), entity.getJoinClause(),
+                                    Collections.singletonMap("databaseId", entity.getId().toString()))
                     )
                     .collect(Collectors.toList());
             role.setRowLevelPolicies(rowLevelPolicies);

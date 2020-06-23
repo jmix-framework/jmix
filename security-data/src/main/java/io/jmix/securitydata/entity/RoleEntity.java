@@ -29,8 +29,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Table(name = "SEC_ROLE")
-@Entity(name = "sec_Role")
+@Table(name = "SEC_ROLE_ENTITY")
+@Entity(name = "sec_RoleEntity")
 public class RoleEntity extends StandardEntity {
     private static final long serialVersionUID = -1587602133446436634L;
 
@@ -41,7 +41,7 @@ public class RoleEntity extends StandardEntity {
     @Column(name = "CODE", nullable = false)
     private @NotNull String code;
 
-    @Column(name = "SCOPE", nullable = false)
+    @Column(name = "SCOPE")
     private @NotNull String scope;
 
     @Composition

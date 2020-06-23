@@ -18,6 +18,10 @@ package io.jmix.security.model;
 
 import io.jmix.core.Entity;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -26,41 +30,45 @@ import java.util.function.Predicate;
  */
 public class RowLevelPolicy {
 
-    public static final String TYPE_IN_MEMORY = "inMemory";
-    public static final String TYPE_JPQL = "jpql";
-
     private String entityName;
 
-    private String action;
+    private RowLevelPolicyAction action;
 
     private Predicate<? extends Entity> predicate;
 
-    private String where;
+    private String whereClause;
 
-    private String join;
+    private String joinClause;
 
-    private String type;
+    private RowLevelPolicyType type;
 
-    public RowLevelPolicy(String entityName, String where) {
-        this.entityName = entityName;
-        this.where = where;
-        this.action = RowLevelPolicyAction.READ.getId();
-        this.type = TYPE_JPQL;
+    private Map<String, String> customProperties = new HashMap<>();
+
+    public RowLevelPolicy(String entityName, String whereClause, @Nullable String joinClause) {
+        this(entityName, whereClause, joinClause, Collections.emptyMap());
     }
 
-    public RowLevelPolicy(String entityName, String where, String join) {
+    public RowLevelPolicy(String entityName, String whereClause, @Nullable String joinClause,
+                          Map<String, String> customProperties) {
         this.entityName = entityName;
-        this.where = where;
-        this.join = join;
-        this.type = TYPE_JPQL;
-        this.action = RowLevelPolicyAction.READ.getId();
+        this.whereClause = whereClause;
+        this.joinClause = joinClause;
+        this.type = RowLevelPolicyType.JPQL;
+        this.action = RowLevelPolicyAction.READ;
+        this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, String action, Predicate<? extends Entity> predicate) {
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<? extends Entity> predicate) {
+        this(entityName, action, predicate, Collections.emptyMap());
+    }
+
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<? extends Entity> predicate,
+                          Map<String, String> customProperties) {
         this.entityName = entityName;
         this.action = action;
         this.predicate = predicate;
-        this.type = TYPE_IN_MEMORY;
+        this.type = RowLevelPolicyType.PREDICATE;
+        this.customProperties = customProperties;
     }
 
     /**
@@ -71,11 +79,11 @@ public class RowLevelPolicy {
     }
 
     /**
-     * Returns entity CRUD operation. See {@link RowLevelPolicyAction}
+     * Returns entity CRUD operation
      *
      * @return entity CRUD operation
      */
-    public String getAction() {
+    public RowLevelPolicyAction getAction() {
         return action;
     }
 
@@ -91,23 +99,27 @@ public class RowLevelPolicy {
      * Returns "where" clause for JPQL policy
      * @return JPQL "where" clause
      */
-    public String getWhere() {
-        return where;
+    public String getWhereClause() {
+        return whereClause;
     }
 
     /**
      * Returns "join" clause for JPQL policy
      * @return JPQL "joine" clause
      */
-    public String getJoin() {
-        return join;
+    public String getJoinClause() {
+        return joinClause;
     }
 
     /**
-     * Returns row-level policy type. It may be in-memory or JPQL policy
+     * Returns row-level policy type. It may be in-memory predicate or JPQL policy
      * @return row-level policy type
      */
-    public String getType() {
+    public RowLevelPolicyType getType() {
         return type;
+    }
+
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
     }
 }

@@ -95,8 +95,4 @@ public @interface Role {
      */
     String code();
 
-    /**
-     * Defines role scope, e.g. "generic_ui", "rest", etc.
-     */
-    String scope()  default io.jmix.security.model.Role.DEFAULT_SCOPE;
 }

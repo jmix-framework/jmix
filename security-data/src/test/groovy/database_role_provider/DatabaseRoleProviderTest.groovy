@@ -19,10 +19,7 @@ package database_role_provider
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext
-import io.jmix.security.model.ResourcePolicy
-import io.jmix.security.model.ResourcePolicyType
-import io.jmix.security.model.Role
-import io.jmix.security.model.RowLevelPolicy
+import io.jmix.security.model.*
 import io.jmix.securitydata.entity.ResourcePolicyEntity
 import io.jmix.securitydata.entity.RoleEntity
 import io.jmix.securitydata.entity.RowLevelPolicyEntity
@@ -58,9 +55,6 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         role1 != null
         role2 != null
 
-        role1.scope == Role.DEFAULT_SCOPE
-        role2.scope == 'rest'
-
         role1.resourcePolicies.size() == 2
 
         def screen1ResourcePolicy = role1.resourcePolicies.find {it.resource == 'screen1'}
@@ -73,9 +67,9 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         role1.rowLevelPolicies.size() == 2
         def rowLevelPolicy = role1.rowLevelPolicies.find {it.entityName == 'test_Order'}
         with (rowLevelPolicy) {
-            type == RowLevelPolicy.TYPE_JPQL
-            where == 'where1'
-            join == 'join1'
+            type == RowLevelPolicyType.JPQL
+            whereClause == 'where1'
+            joinClause == 'join1'
         }
     }
 
@@ -96,7 +90,6 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         RoleEntity role1 = metadata.create(RoleEntity)
         role1.code = 'role1'
         role1.name = 'Role1'
-        role1.scope = Role.DEFAULT_SCOPE
 
         def entitiesToSave = []
 
@@ -111,7 +104,6 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         RoleEntity role2 = metadata.create(RoleEntity)
         role2.code = 'role2'
         role2.name = 'Role2'
-        role2.scope = 'rest'
 
         entitiesToSave << role1
         entitiesToSave << role2
@@ -132,10 +124,11 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
     private RowLevelPolicyEntity createRowLevelPolicyEntity(String entityName, String whereClause, String joinClause,
                                                             RoleEntity role) {
         RowLevelPolicyEntity rowLevelPolicy = metadata.create(RowLevelPolicyEntity)
-        rowLevelPolicy.type = RowLevelPolicy.TYPE_JPQL
+        rowLevelPolicy.type = RowLevelPolicyType.JPQL
         rowLevelPolicy.entityName = entityName
         rowLevelPolicy.whereClause = whereClause
         rowLevelPolicy.joinClause = joinClause
+        rowLevelPolicy.action = RowLevelPolicyAction.READ
         rowLevelPolicy.role = role
         return rowLevelPolicy
     }

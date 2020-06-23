@@ -35,9 +35,9 @@ class SecurityDataSpecification extends Specification {
     JdbcTemplate jdbcTemplate
 
     def cleanup() {
-        jdbcTemplate.update("delete from SEC_ROW_LEVEL_POLICY")
-        jdbcTemplate.update("delete from SEC_RESOURCE_POLICY")
-        jdbcTemplate.update("delete from SEC_ROLE")
-        jdbcTemplate.update("delete from SEC_ROLE_ASSIGNMENT")
+        jdbcTemplate.update("delete from SEC_ROW_LEVEL_POLICY_ENTITY")
+        jdbcTemplate.update("delete from SEC_RESOURCE_POLICY_ENTITY")
+        jdbcTemplate.update("delete from SEC_ROLE_ENTITY")
+        jdbcTemplate.update("delete from SEC_ROLE_ASSIGNMENT_ENTITY")
     }
 }

@@ -16,6 +16,9 @@
 
 package io.jmix.security.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Describes a permission to a resource.
  * <p>
@@ -40,6 +43,8 @@ public class ResourcePolicy {
     private String action;
     private String effect;
 
+    private Map<String, String> customProperties = new HashMap<>();
+
     public ResourcePolicy(String type, String resource) {
         this(type, resource, DEFAULT_ACTION, DEFAULT_EFFECT);
     }
@@ -53,6 +58,11 @@ public class ResourcePolicy {
         this.resource = resource;
         this.action = action;
         this.effect = effect;
+    }
+
+    public ResourcePolicy(String type, String resource, String action, String effect, Map<String, String> customProperties) {
+        this(type, resource, action, effect);
+        this.customProperties = customProperties;
     }
 
     /**
@@ -100,5 +110,9 @@ public class ResourcePolicy {
      */
     public String getEffect() {
         return effect;
+    }
+
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
     }
 }

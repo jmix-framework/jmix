@@ -41,7 +41,6 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
         then:
 
-        role.scope == Role.DEFAULT_SCOPE
         entityPolicies.size() == 2
         entityAttributePolicies.size() == 2
         specificPolicies.size() == 2
@@ -74,11 +73,11 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
         policies.size() == 2
 
-        def createPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE.id }
+        def createPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE }
         createPolicy != null
         createPolicy.entityName == 'test_Order'
 
-        policies.find { it.action == RowLevelPolicyAction.UPDATE.id } != null
+        policies.find { it.action == RowLevelPolicyAction.UPDATE } != null
 
         RowLevelPolicy policy = policies[0]
         policy.predicate.test(order1) == true
@@ -96,17 +95,17 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
         policies.size() == 2
 
-        def policyWithoutJoin = policies.find { !it.join }
-        def policyWithJoin = policies.find { it.join }
+        def policyWithoutJoin = policies.find { !it.joinClause }
+        def policyWithJoin = policies.find { it.joinClause }
 
-        policyWithoutJoin.where == "where1"
-        policyWithoutJoin.join == ""
-        policyWithoutJoin.action == RowLevelPolicyAction.READ.id
+        policyWithoutJoin.whereClause == "where1"
+        policyWithoutJoin.joinClause == ""
+        policyWithoutJoin.action == RowLevelPolicyAction.READ
         policyWithoutJoin.entityName == "test_Order"
 
-        policyWithJoin.where == "where2"
-        policyWithJoin.join == "join2"
-        policyWithJoin.action == RowLevelPolicyAction.READ.id
+        policyWithJoin.whereClause == "where2"
+        policyWithJoin.joinClause == "join2"
+        policyWithJoin.action == RowLevelPolicyAction.READ
         policyWithJoin.entityName == "test_Order"
     }
 
@@ -123,15 +122,5 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         resourcePolicies.find {it.action == EntityPolicyAction.READ.id}
         resourcePolicies.find {it.action == EntityPolicyAction.UPDATE.id}
         resourcePolicies.find {it.action == EntityPolicyAction.DELETE.id}
-    }
-
-    def "role with REST scope"() {
-        when:
-
-        Role role = annotatedRoleBuilder.createRole(TestRestScopeRole.class.getCanonicalName())
-
-        then:
-
-        role.scope == 'rest'
     }
 }

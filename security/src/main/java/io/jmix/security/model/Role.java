@@ -18,6 +18,8 @@ package io.jmix.security.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class is a container for security policies.
@@ -36,13 +38,12 @@ import java.util.Collection;
  */
 public class Role {
 
-    public static final String DEFAULT_SCOPE = "generic_ui";
-
     private String name;
     private String code;
-    private String scope;
+    private String source;
     private Collection<ResourcePolicy> resourcePolicies = new ArrayList<>();
     private Collection<RowLevelPolicy> rowLevelPolicies = new ArrayList<>();
+    private Map<String, String> customProperties = new HashMap<>();
 
     public String getName() {
         return name;
@@ -60,12 +61,12 @@ public class Role {
         this.code = code;
     }
 
-    public String getScope() {
-        return scope;
+    public String getSource() {
+        return source;
     }
 
-    public void setScope(String scope) {
-        this.scope = scope;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public Collection<ResourcePolicy> getResourcePolicies() {
@@ -82,5 +83,13 @@ public class Role {
 
     public void setRowLevelPolicies(Collection<RowLevelPolicy> rowLevelPolicies) {
         this.rowLevelPolicies = rowLevelPolicies;
+    }
+
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Map<String, String> customProperties) {
+        this.customProperties = customProperties;
     }
 }

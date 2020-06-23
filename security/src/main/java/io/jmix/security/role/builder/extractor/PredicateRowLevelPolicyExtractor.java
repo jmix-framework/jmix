@@ -59,7 +59,7 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }
-                RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(), action.getId(), predicate);
+                RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(), action, predicate);
                 policies.add(rowLevelPolicy);
             }
         }

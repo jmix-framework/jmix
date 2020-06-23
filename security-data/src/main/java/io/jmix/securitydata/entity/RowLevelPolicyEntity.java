@@ -17,20 +17,28 @@
 package io.jmix.securitydata.entity;
 
 import io.jmix.data.entity.StandardEntity;
+import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.security.model.RowLevelPolicyType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Table(name = "SEC_ROW_LEVEL_POLICY")
-@Entity(name = "sec_RowLevelPolicy")
+@Table(name = "SEC_ROW_LEVEL_POLICY_ENTITY")
+@Entity(name = "sec_RowLevelPolicyEntity")
 public class RowLevelPolicyEntity extends StandardEntity {
     private static final long serialVersionUID = -8009316149061437606L;
 
-    @Column(name = "TYPE_")
+    @NotNull
+    @Column(name = "TYPE_", nullable = false)
     private String type;
 
+    @NotNull
     @Column(name = "ENTITY_NAME", nullable = false)
-    private @NotNull String entityName;
+    private String entityName;
+
+    @NotNull
+    @Column(name = "ACTION_", nullable = false)
+    private String action;
 
     @Lob
     @Column(name = "WHERE_CLAUSE", length = 5000)
@@ -42,7 +50,7 @@ public class RowLevelPolicyEntity extends StandardEntity {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ROLE_ID")
+    @JoinColumn(name = "ROLE_ENTITY_ID")
     private RoleEntity role;
 
     public String getEntityName() {
@@ -51,6 +59,14 @@ public class RowLevelPolicyEntity extends StandardEntity {
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
+    }
+
+    public RowLevelPolicyAction getAction() {
+        return RowLevelPolicyAction.fromId(action);
+    }
+
+    public void setAction(RowLevelPolicyAction action) {
+        this.action = action != null ? action.getId() : null;
     }
 
     public RoleEntity getRole() {
@@ -77,8 +93,11 @@ public class RowLevelPolicyEntity extends StandardEntity {
         this.whereClause = whereClause;
     }
 
-    public String getType() {
-        return type;
+    public RowLevelPolicyType getType() {
+        return RowLevelPolicyType.fromId(type);
     }
 
+    public void setType(RowLevelPolicyType type) {
+        this.type = type != null ? type.getId() : null;
+    }
 }

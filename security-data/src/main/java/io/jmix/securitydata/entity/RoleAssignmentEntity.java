@@ -23,8 +23,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-@Table(name = "SEC_ROLE_ASSIGNMENT")
-@Entity(name = "sec_RoleAssignment")
+@Table(name = "SEC_ROLE_ASSIGNMENT_ENTITY")
+@Entity(name = "sec_RoleAssignmentEntity")
 public class RoleAssignmentEntity extends StandardEntity {
     private static final long serialVersionUID = -6805425065569471069L;
 

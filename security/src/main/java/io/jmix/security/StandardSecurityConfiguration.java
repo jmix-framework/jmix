@@ -18,8 +18,6 @@ package io.jmix.security;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.UserRepository;
-import io.jmix.core.security.impl.CoreUser;
-import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.security.authentication.SecuredAuthenticationProvider;
 import io.jmix.security.role.RoleRepository;
@@ -54,13 +52,16 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Autowired
     private RoleAssignmentRepository roleAssignmentRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository()));
+        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
 
         SecuredAuthenticationProvider securedAuthenticationProvider = new SecuredAuthenticationProvider(roleRepository,
                 roleAssignmentRepository);
-        securedAuthenticationProvider.setUserDetailsService(userRepository());
+        securedAuthenticationProvider.setUserDetailsService(userRepository);
         securedAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
         auth.authenticationProvider(securedAuthenticationProvider);
     }
@@ -72,7 +73,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
                 .and()
                 .anonymous(anonymousConfigurer -> {
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
-                    anonymousConfigurer.principal(userRepository().getAnonymousUser());
+                    anonymousConfigurer.principal(userRepository.getAnonymousUser());
                 })
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin();
@@ -82,13 +83,6 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    @Bean(UserRepository.NAME)
-    public UserRepository userRepository() {
-        CoreUser systemUser = new CoreUser("system", "{noop}", "System");
-        CoreUser anonymousUser = new CoreUser("anonymous", "{noop}", "Anonymous");
-        return new InMemoryUserRepository(systemUser, anonymousUser);
     }
 
     @Bean(name = "sec_PasswordEncoder")

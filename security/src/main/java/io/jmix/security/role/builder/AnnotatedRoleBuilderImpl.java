@@ -18,6 +18,7 @@ package io.jmix.security.role.builder;
 
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.Role;
+import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.role.builder.extractor.RowLevelPolicyExtractor;
@@ -69,73 +70,9 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
         Role role = new Role();
         role.setName(roleAnnotation.name());
         role.setCode(roleAnnotation.code());
-        role.setScope(roleAnnotation.scope());
         role.setResourcePolicies(resourcePolicies);
         role.setRowLevelPolicies(rowLevelPolicies);
+        role.setSource(RoleSource.ANNOTATED_CLASS);
         return role;
     }
-
-//    private Collection<ResourcePolicy> buildResourcePoliciesFromDefaultMethod(Method defaultMethod) {
-//        Class<?> declaringClass = defaultMethod.getDeclaringClass();
-//        InvocationHandler invocationHandler = (proxy, method, args) -> MethodHandles.lookup()
-//                .findSpecial(declaringClass,
-//                        defaultMethod.getName(),
-//                        MethodType.methodType(
-//                                Collection.class,
-//                                new Class[0]),
-//                        declaringClass)
-//                .bindTo(proxy)
-//                .invokeWithArguments(args);
-//
-//        Object proxyInstance = Proxy.newProxyInstance(this.getClass().getClassLoader(),
-//                new Class[]{declaringClass},
-//                invocationHandler);
-//
-//        try {
-//            //todo check return type
-//            return (Collection<ResourcePolicy>) defaultMethod.invoke(proxyInstance);
-//        } catch (IllegalAccessException | InvocationTargetException e) {
-//            throw new RuntimeException("Cannot invoke interface default method", e);
-//        }
-//    }
-
-//    private Collection<ResourcePolicy> buildResourcePoliciesFromDefaultMethod(Method defaultMethod) {
-//        Class<?> roleInterface = defaultMethod.getDeclaringClass();
-//        InvocationHandler invocationHandler = (proxy, method, args) -> {
-//            try {
-//                if (SystemUtils.IS_JAVA_1_8) {
-//                    // hack to invoke default method of an interface reflectively
-//                    Constructor<MethodHandles.Lookup> lookupConstructor =
-//                            MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, Integer.TYPE);
-//                    if (!lookupConstructor.isAccessible()) {
-//                        lookupConstructor.setAccessible(true);
-//                    }
-//                    return lookupConstructor.newInstance(roleInterface, MethodHandles.Lookup.PRIVATE)
-//                            .unreflectSpecial(defaultMethod, roleInterface)
-//                            .bindTo(proxy)
-//                            .invokeWithArguments(args);
-//                } else {
-//                    return MethodHandles.lookup()
-//                            .findSpecial(roleInterface, defaultMethod.getName(), MethodType.methodType(defaultMethod.getReturnType(),
-//                                    defaultMethod.getParameterTypes()), roleInterface)
-//                            .bindTo(proxy)
-//                            .invokeWithArguments(args);
-//                }
-//            } catch (Throwable throwable) {
-//                throw new RuntimeException("Error invoking default method of config interface", throwable);
-//            }
-//        };
-//
-//        Object proxyInstance = Proxy.newProxyInstance(this.getClass().getClassLoader(),
-//                new Class[]{roleInterface},
-//                invocationHandler);
-//
-//        try {
-//            //todo check return type
-//            return (Collection<ResourcePolicy>) defaultMethod.invoke(proxyInstance);
-//        } catch (IllegalAccessException | InvocationTargetException e) {
-//            throw new RuntimeException("Cannot invoke interface default method", e);
-//        }
-//    }
-
 }

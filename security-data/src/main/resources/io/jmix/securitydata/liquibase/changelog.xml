@@ -23,7 +23,7 @@
 
     <changeSet author="security-data" id="1.0">
 
-        <createTable tableName="SEC_ROLE">
+        <createTable tableName="SEC_ROLE_ENTITY">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -43,12 +43,10 @@
             <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="SCOPE" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="SCOPE" type="varchar(255)"/>
         </createTable>
 
-        <createTable tableName="SEC_RESOURCE_POLICY">
+        <createTable tableName="SEC_RESOURCE_POLICY_ENTITY">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -75,13 +73,14 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="ROLE_ID" type="uuid">
-                <constraints foreignKeyName="SYS_RESOURCE_POLICY_ROLE_ID" references="SEC_ROLE(ID)" nullable="false"/>
+            <column name="ROLE_ENTITY_ID" type="uuid">
+                <constraints foreignKeyName="FK_SEC_RESOURCE_POLICY_ENTITY_SEC_ROLE_ENTITY"
+                             references="SEC_ROLE_ENTITY(ID)" nullable="false"/>
             </column>
 
         </createTable>
 
-        <createTable tableName="SEC_ROW_LEVEL_POLICY">
+        <createTable tableName="SEC_ROW_LEVEL_POLICY_ENTITY">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -98,23 +97,23 @@
             <column name="TYPE_" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="ACTION_" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="ENTITY_NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="WHERE_CLAUSE" type="varchar(5000)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="JOIN_CLAUSE" type="varchar(5000)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="WHERE_CLAUSE" type="varchar(5000)"/>
+            <column name="JOIN_CLAUSE" type="varchar(5000)"/>
 
-            <column name="ROLE_ID" type="uuid">
-                <constraints foreignKeyName="SYS_ROW_LEVEL_POLICY_ROLE_ID" references="SEC_ROLE(ID)" nullable="false"/>
+            <column name="ROLE_ENTITY_ID" type="uuid">
+                <constraints foreignKeyName="FK_SEC_ROW_LEVEL_POLICY_ENTITY_SEC_ROLE_ENTITY"
+                             references="SEC_ROLE_ENTITY(ID)" nullable="false"/>
             </column>
 
         </createTable>
 
-        <createTable tableName="SEC_ROLE_ASSIGNMENT">
+        <createTable tableName="SEC_ROLE_ASSIGNMENT_ENTITY">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

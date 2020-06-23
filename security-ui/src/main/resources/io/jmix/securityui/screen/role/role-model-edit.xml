@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://RoleModelEdit.caption"
+        focusComponent="form">
+    <data>
+        <instance id="roleModelDc"
+                  class="io.jmix.securityui.model.RoleModel">
+            <collection id="resourcePoliciesDc" property="resourcePolicies"/>
+            <collection id="rowLevelPoliciesDc" property="rowLevelPolicies"/>
+        </instance>
+    </data>
+    <layout spacing="true" expand="policiesTabSheet">
+        <form id="form" dataContainer="roleModelDc">
+            <column width="350px">
+                <textField id="nameField" property="name"/>
+                <textField id="codeField" property="code"/>
+            </column>
+            <column width="350px">
+                <textField id="sourceField" caption="msg://io.jmix.securityui.model/RoleModel.source" editable="false"/>
+            </column>
+        </form>
+        <tabSheet id="policiesTabSheet">
+            <tab id="resourcePoliciesTab" caption="msg://io.jmix.securityui.model/RoleModel.resourcePolicies"
+                 spacing="true" margin="true;false;false;false;">
+                <groupTable id="resourcePoliciesTable" dataContainer="resourcePoliciesDc" width="100%" height="100%">
+                    <actions>
+                        <action id="createMenuPolicy" caption="msg://RoleModelEdit.menuPolicy"/>
+                        <action id="createScreenPolicy" caption="msg://RoleModelEdit.screenPolicy"/>
+                        <action id="createEntityPolicy" caption="msg://RoleModelEdit.entityPolicy"/>
+                        <action id="createEntityAttributePolicy" caption="msg://RoleModelEdit.entityAttributePolicy"/>
+                        <action id="createSpecificPolicy" caption="msg://RoleModelEdit.specificPolicy"/>
+                        <action id="createCustomPolicy" caption="msg://RoleModelEdit.customPolicy"/>
+                        <action id="edit" type="edit"/>
+                        <action id="view" type="view"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="type"/>
+                        <column id="resource"/>
+                        <column id="action"/>
+                    </columns>
+                    <buttonsPanel>
+                        <popupButton id="createResourcePolicyPopupBtn" caption="msg://RoleModelEdit.create"
+                                     stylename="primary" icon="CREATE_ACTION">
+                            <actions>
+                                <action id="resourcePoliciesTable.createMenuPolicy"
+                                        caption="msg://RoleModelEdit.menuPolicy"/>
+                                <action id="resourcePoliciesTable.createScreenPolicy"
+                                        caption="msg://RoleModelEdit.screenPolicy"/>
+                                <action id="resourcePoliciesTable.createEntityPolicy"
+                                        caption="msg://RoleModelEdit.entityPolicy"/>
+                                <action id="resourcePoliciesTable.createEntityAttributePolicy"
+                                        caption="msg://RoleModelEdit.entityAttributePolicy"/>
+                                <action id="resourcePoliciesTable.createSpecificPolicy"
+                                        caption="msg://RoleModelEdit.specificPolicy"/>
+                                <action id="resourcePoliciesTable.createCustomPolicy"
+                                        caption="msg://RoleModelEdit.customPolicy"/>
+                            </actions>
+                        </popupButton>
+                        <button action="resourcePoliciesTable.edit"/>
+                        <button action="resourcePoliciesTable.view"/>
+                        <button action="resourcePoliciesTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </tab>
+            <tab id="rowLevelPoliciesTab" caption="msg://io.jmix.securityui.model/RoleModel.rowLevelPolicies"
+                 spacing="true" margin="true;false;false;false;">
+                <groupTable id="rowLevelPoliciesTable" dataContainer="rowLevelPoliciesDc" width="100%" height="100%">
+                    <actions>
+                        <action id="create" type="create"/>
+                        <action id="edit" type="edit"/>
+                        <action id="view" type="view"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="type"/>
+                        <column id="action"/>
+                        <column id="entityName"/>
+                        <column id="whereClause"/>
+                        <column id="joinClause"/>
+                    </columns>
+                    <buttonsPanel>
+                        <button action="rowLevelPoliciesTable.create"/>
+                        <button action="rowLevelPoliciesTable.edit"/>
+                        <button action="rowLevelPoliciesTable.view"/>
+                        <button action="rowLevelPoliciesTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </tab>
+        </tabSheet>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

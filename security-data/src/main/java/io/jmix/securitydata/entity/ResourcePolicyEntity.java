@@ -21,15 +21,18 @@ import io.jmix.data.entity.StandardEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Table(name = "SEC_RESOURCE_POLICY")
-@Entity(name = "sec_ResourcePolicy")
+@Table(name = "SEC_RESOURCE_POLICY_ENTITY")
+@Entity(name = "sec_ResourcePolicyEntity")
 public class ResourcePolicyEntity extends StandardEntity {
+
     private static final long serialVersionUID = 6076849779978232260L;
 
-    @Column(name = "TYPE_")
+    @NotNull
+    @Column(name = "TYPE_", nullable = false)
     private String type;
 
-    @Column(name = "RESOURCE_")
+    @NotNull
+    @Column(name = "RESOURCE_", nullable = false, length = 1000)
     private String resource;
 
     @Column(name = "ACTION_")
@@ -40,7 +43,7 @@ public class ResourcePolicyEntity extends StandardEntity {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ROLE_ID")
+    @JoinColumn(name = "ROLE_ENTITY_ID")
     private RoleEntity role;
 
     public RoleEntity getRole() {

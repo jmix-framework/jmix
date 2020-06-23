@@ -25,6 +25,7 @@ dependencies {
     api platform(project(':jmix-platform'))
     api project(':modules:core')
     api project(':modules:security')
+    api project(':modules:security-data')
     api project(':modules:ui')
 
     testImplementation 'org.springframework:spring-test'

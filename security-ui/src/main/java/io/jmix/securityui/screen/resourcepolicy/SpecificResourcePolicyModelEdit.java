@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package test_support.annotated_role_builder;
+package io.jmix.securityui.screen.resourcepolicy;
 
-import io.jmix.security.role.annotation.Role;
+import io.jmix.securityui.model.ResourcePolicyModel;
+import io.jmix.ui.screen.EditedEntityContainer;
+import io.jmix.ui.screen.StandardEditor;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 
-@Role(name = "TestRestScopeRole", code = "TestRestScopeRole", scope = "rest")
-public interface TestRestScopeRole {
+@UiController("sec_SpecificResourcePolicyModel.edit")
+@UiDescriptor("specific-resource-policy-model-edit.xml")
+@EditedEntityContainer("resourcePolicyModelDc")
+public class SpecificResourcePolicyModelEdit extends StandardEditor<ResourcePolicyModel> {
 }

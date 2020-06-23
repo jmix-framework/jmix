@@ -150,7 +150,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         changeTypeField.setOptionsMap(changeTypeMap);
 
         userField.setSearchExecutor((searchString, searchParams) -> {
-            List<BaseUser> users = userRepository.getByUsernameLike(searchString);
+            List<? extends BaseUser> users = userRepository.getByUsernameLike(searchString);
             return users.stream()
                     .map(BaseUser::getUsername)
                     .collect(Collectors.toList());

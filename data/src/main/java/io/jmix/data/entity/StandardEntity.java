@@ -15,9 +15,11 @@
  */
 package io.jmix.data.entity;
 
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.Creatable;
+import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.entity.Updatable;
+import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.entity.annotation.UnavailableInSecurityConstraints;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -30,7 +32,6 @@ import java.util.Date;
  */
 @MappedSuperclass
 @ModelObject(name = "sys$StandardEntity")
-@UnavailableInSecurityConstraints
 public abstract class StandardEntity extends BaseUuidEntity implements Versioned, Creatable, Updatable, SoftDelete {
 
     private static final long serialVersionUID = 5642226839555253331L;

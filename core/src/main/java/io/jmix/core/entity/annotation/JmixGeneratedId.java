@@ -30,4 +30,15 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation
 public @interface JmixGeneratedId {
+
+    /**
+     * Defines an existing database sequence name to use for id generation.
+     */
+    String sequenceName() default "";
+
+    /**
+     * If this attribute is true and the {@link #sequenceName()} is set, the sequence will be incremented
+     * by {@code jmix.data.numberIdCacheSize} to cache intermediate values in memory.
+     */
+    boolean sequenceCache() default false;
 }

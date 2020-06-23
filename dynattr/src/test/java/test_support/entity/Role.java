@@ -16,7 +16,6 @@
  */
 package test_support.entity;
 
-import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.data.entity.StandardEntity;
 
@@ -30,7 +29,6 @@ import javax.persistence.Transient;
  */
 @Entity(name = "dynattr$Role")
 @Table(name = "DYNATTR_ROLE")
-@TrackEditScreenHistory
 public class Role extends StandardEntity {
 
     private static final long serialVersionUID = -4889116218059626402L;

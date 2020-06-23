@@ -16,7 +16,6 @@
 package test_support.entity;
 
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.entity.annotation.TrackEditScreenHistory;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.data.entity.StandardEntity;
@@ -29,7 +28,6 @@ import java.util.List;
  */
 @Entity(name = "dynattr$User")
 @Table(name = "DYNATTR_USER")
-@TrackEditScreenHistory
 public class User extends StandardEntity {
 
     private static final long serialVersionUID = 5007187642916030394L;

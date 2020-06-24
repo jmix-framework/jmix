@@ -21,8 +21,10 @@ import io.jmix.core.EntityEntry;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-@SuppressWarnings("unsed")
+@SuppressWarnings("unused")
 public abstract class NullableIdEntityEntry extends BaseEntityEntry {
+
+    private static final long serialVersionUID = 472062751374259587L;
 
     private long generatedId;
 

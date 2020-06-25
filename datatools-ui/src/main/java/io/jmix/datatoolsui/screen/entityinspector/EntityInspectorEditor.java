@@ -21,7 +21,9 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
+import io.jmix.core.security.Security;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFormBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
@@ -67,6 +69,8 @@ public class EntityInspectorEditor extends StandardEditor {
     protected UiComponents uiComponents;
     @Autowired
     protected DataComponents dataComponents;
+    @Autowired
+    protected Security security;
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
@@ -211,8 +215,8 @@ public class EntityInspectorEditor extends StandardEditor {
         MetaClass meta = childMeta.getRange().asClass();
 
         //don't show empty table if the user don't have permissions on the attribute or the entity
-        if (!attrViewPermitted(parent.getEntityMetaClass(), childMeta) ||
-                !entityOpPermitted(meta, EntityOp.READ)) {
+        if (!security.isEntityAttrPermitted(parent.getEntityMetaClass(), childMeta.getName(), EntityAttrAccess.VIEW) ||
+                !security.isEntityOpPermitted(meta, EntityOp.READ)) {
             return;
         }
 

@@ -16,34 +16,15 @@
 
 package io.jmix.datatoolsui.screen.entityinspector;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.EntityAttrAccess;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
 
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import java.util.UUID;
 
 public final class EntityFormUtils {
-
-    public static boolean attrViewPermitted(MetaClass metaClass, MetaProperty metaProperty) {
-        return attrPermitted(metaClass, metaProperty.getName(), EntityAttrAccess.VIEW);
-    }
-
-    public static boolean attrPermitted(MetaClass metaClass, String property, EntityAttrAccess entityAttrAccess) {
-        Security security = AppBeans.get(Security.class);
-        return security.isEntityAttrPermitted(metaClass, property, entityAttrAccess);
-    }
-
-    public static boolean entityOpPermitted(MetaClass metaClass, EntityOp entityOp) {
-        Security security = AppBeans.get(Security.class);
-        return security.isEntityOpPermitted(metaClass, entityOp);
-    }
 
     public static boolean isRequired(MetaProperty metaProperty) {
         if (metaProperty.isMandatory())
@@ -65,7 +46,7 @@ public final class EntityFormUtils {
         return metaProperty.getRange().asDatatype().getJavaClass().equals(UUID.class);
     }
 
-    public static boolean isBoolean(MetaProperty metaProperty){
+    public static boolean isBoolean(MetaProperty metaProperty) {
         return metaProperty.getRange().isDatatype() && metaProperty.getRange().asDatatype().getJavaClass().equals(Boolean.class);
     }
 

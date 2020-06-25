@@ -130,14 +130,18 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
     private CollectionLoader entitiesDl;
     private CollectionContainer entitiesDc;
 
+    protected String entityName;
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
+    }
+
     @Subscribe
-    protected void onInit(InitEvent initEvent) {
-        Map<String, Object> params = new HashMap<>(0);
-        ScreenOptions options = initEvent.getOptions();
-        if (options instanceof MapScreenOptions) {
-            params = ((MapScreenOptions) options).getParams();
-        }
-        String entityName = (String) params.get("entity");
+    public void onBeforeShow(BeforeShowEvent event) {
         getScreenData().setDataContext(dataComponents.createDataContext());
         if (entityName != null) {
             Session session = metadata.getSession();

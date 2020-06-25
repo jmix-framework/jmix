@@ -16,6 +16,8 @@
 
 package io.jmix.datatoolsui.screen.entityinspector.assistant;
 
+import io.jmix.core.security.EntityAttrAccess;
+import io.jmix.core.security.Security;
 import io.jmix.datatoolsui.screen.entityinspector.EntityInspectorBrowser;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
@@ -66,6 +68,8 @@ public class InspectorFormBuilder {
     protected Messages messages;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    protected Security security;
 
     private final InstanceContainer container;
     private Entity entityToEdit;
@@ -178,11 +182,10 @@ public class InspectorFormBuilder {
         Range range = metaProperty.getRange();
 
         boolean isRequired = isRequired(metaProperty);
-        if (!attrViewPermitted(metaClass, metaProperty))
+        if (!security.isEntityAttrPermitted(metaClass, metaProperty.getName(), EntityAttrAccess.VIEW))
             return;
 
-        if ((range.isClass())
-                && !entityOpPermitted(range.asClass(), EntityOp.READ))
+        if ((range.isClass()) && !security.isEntityOpPermitted(range.asClass(), EntityOp.READ))
             return;
 
         ValueSource valueSource = new ContainerValueSource<>(container, metaProperty.getName());

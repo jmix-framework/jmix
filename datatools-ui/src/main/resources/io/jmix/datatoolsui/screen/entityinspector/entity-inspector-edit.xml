@@ -22,7 +22,7 @@
         <action id="windowClose"/>
     </actions>
     <layout expand="tablesTabSheet" spacing="true">
-        <tabSheet id="tablesTabSheet" width="100%" height="100%">
+        <tabSheet id="tablesTabSheet" width="100%">
             <tab id="general" caption="msg://general" spacing="true">
                 <scrollBox margin="true" id="fieldsScrollBox" height="100%" width="100%" spacing="true">
                     <vbox id="contentPane" spacing="true"/>
@@ -34,9 +34,5 @@
             <button action="windowCommitAndClose"/>
             <button action="windowClose"/>
         </hbox>
-<!--        <buttonsPanel id="buttonsBox">-->
-<!--            <button action="windowCommitAndClose" icon="icons/ok.png" caption="msg://commit" primary="true"/>-->
-<!--            <button action="windowClose" icon="icons/cancel.png" caption="msg://cancel"/>-->
-<!--        </buttonsPanel>-->
     </layout>
 </window>

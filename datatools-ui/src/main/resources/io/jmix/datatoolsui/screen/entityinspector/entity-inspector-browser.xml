@@ -30,7 +30,7 @@ messagesPack="io.jmix.datatoolsui.screen.entityinspector">
             <checkBox id="textSelection" caption="msg://textSelection" align="MIDDLE_LEFT" visible="false"/>
         </hbox>
         <vbox id="filterBox" visible="false"/>
-        <vbox id="tableBox" height="100%"/>
+        <vbox id="tableBox"/>
         <hbox id="lookupActions" spacing="true" visible="false">
             <button action="lookupSelectAction"/>
             <button action="lookupCancelAction"/>

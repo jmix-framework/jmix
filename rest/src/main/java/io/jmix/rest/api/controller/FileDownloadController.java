@@ -16,13 +16,12 @@
 
 package io.jmix.rest.api.controller;
 
-import io.jmix.core.entity.FileDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST API controller that is used for downloading files by the {@link FileDescriptor} identifier
+ * REST API controller that is used for downloading files
  */
 @RestController("rest_FileDownloadController")
 @RequestMapping("/rest/files")

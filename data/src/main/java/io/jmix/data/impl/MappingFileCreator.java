@@ -17,10 +17,10 @@
 package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.entity.annotation.ReplaceEntity;
 import io.jmix.data.persistence.OrmXmlPostProcessor;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.entity.annotation.Extends;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
@@ -70,7 +70,7 @@ class MappingFileCreator {
         for (String className : classNames) {
             Class<?> aClass = ReflectionHelper.getClass(className);
             persistentClasses.add(aClass);
-            Extends annotation = aClass.getAnnotation(Extends.class);
+            ReplaceEntity annotation = aClass.getAnnotation(ReplaceEntity.class);
             if (annotation != null) {
                 Class originalClass = annotation.value();
                 extendedClasses.put(originalClass, aClass);

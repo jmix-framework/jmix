@@ -22,7 +22,6 @@ import io.jmix.core.BeanLocator;
 import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
@@ -140,13 +139,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createClassField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        Class<?> javaType = attribute.getJavaType();
-
-        if (FileDescriptor.class.isAssignableFrom(javaType)) {
-            return createFileUploadField(context);
-        } else {
-            return createEntityField(context, attribute);
-        }
+        return createEntityField(context, attribute);
     }
 
     protected Component createDatatypeField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -270,26 +263,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         setValueSource(component, context);
 
         return component;
-    }
-
-
-    protected Field createFileUploadField(ComponentGenerationContext context) {
-        FileUploadField fileUploadField = uiComponents.create(FileUploadField.NAME);
-
-        fileUploadField.setUploadButtonCaption(null);
-        fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));
-        fileUploadField.setUploadButtonIcon("icons/upload.png");
-
-        fileUploadField.setClearButtonCaption(null);
-        fileUploadField.setClearButtonDescription(messages.getMessage("upload.clear"));
-        fileUploadField.setClearButtonIcon("icons/remove.png");
-
-        fileUploadField.setShowFileName(true);
-        fileUploadField.setShowClearButton(true);
-
-        setValueSource(fileUploadField, context);
-
-        return fileUploadField;
     }
 
     @SuppressWarnings("unchecked")

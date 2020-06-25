@@ -28,7 +28,8 @@ import test_support.entity.TestOrder;
 public interface TestDifferentResourcePoliciesOnMethodRole {
 
     @EntityPolicy(entityClass = TestOrder.class,
-            actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ})
+            actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ},
+            scope = "rest")
     @EntityAttributePolicy(entityClass = TestOrder.class,
             attributes = {"number", "date"},
             actions = EntityAttributePolicyAction.UPDATE)

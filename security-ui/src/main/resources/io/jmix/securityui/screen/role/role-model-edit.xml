@@ -54,6 +54,7 @@
                         <column id="type"/>
                         <column id="resource"/>
                         <column id="action"/>
+                        <column id="scope"/>
                     </columns>
                     <buttonsPanel>
                         <popupButton id="createResourcePolicyPopupBtn" caption="msg://RoleModelEdit.create"

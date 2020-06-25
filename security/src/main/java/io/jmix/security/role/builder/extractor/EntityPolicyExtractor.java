@@ -60,10 +60,13 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
             if (Arrays.asList(actions).contains(EntityPolicyAction.ALL)) {
                 actions = ALL_CRUD_ACTIONS;
             }
+            String scope = entityPolicyAnnotation.scope();
             for (EntityPolicyAction action : actions) {
                 ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.ENTITY,
                         metaClass.getName(),
-                        action.getId());
+                        action.getId(),
+                        ResourcePolicy.DEFAULT_EFFECT,
+                        scope);
                 resourcePolicies.add(resourcePolicy);
             }
         }

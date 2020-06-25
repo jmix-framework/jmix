@@ -44,6 +44,8 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         entityPolicies.size() == 2
         entityAttributePolicies.size() == 2
         specificPolicies.size() == 2
+
+        entityPolicies[0].scope == 'rest'
     }
 
     def "resource policies created in static method with @ExplicitResourcePolicies"() {

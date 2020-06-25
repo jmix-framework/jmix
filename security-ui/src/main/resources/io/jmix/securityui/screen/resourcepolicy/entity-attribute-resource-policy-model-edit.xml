@@ -29,9 +29,10 @@
     <layout spacing="true">
         <form id="form" dataContainer="resourcePolicyModelDc">
             <column width="350px">
-                <comboBox id="entityField" caption="msg://entity" required="true"/>
-                <comboBox id="attributeField" caption="msg://attribute" required="true"/>
+                <comboBox id="entityField" caption="msg://EntityAttributeResourcePolicyModelEdit.entity" required="true"/>
+                <comboBox id="attributeField" caption="msg://EntityAttributeResourcePolicyModelEdit.attribute" required="true"/>
                 <comboBox id="actionField" property="action"/>
+                <textField id="scopeField" property="scope"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

@@ -41,6 +41,9 @@ public class ResourcePolicyEntity extends StandardEntity {
     @Column(name = "EFFECT")
     private String effect;
 
+    @Column(name = "SCOPE_")
+    private String scope;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ENTITY_ID")
@@ -86,4 +89,11 @@ public class ResourcePolicyEntity extends StandardEntity {
         this.type = type;
     }
 
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
 }

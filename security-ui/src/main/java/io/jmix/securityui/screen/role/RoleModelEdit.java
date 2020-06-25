@@ -310,6 +310,9 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
             policyEntity.setResource(policyModel.getResource());
             policyEntity.setAction(policyModel.getAction());
             policyEntity.setEffect(policyModel.getEffect());
+            policyEntity.setScope(policyModel.getScope() != null ?
+                    policyModel.getScope() :
+                    ResourcePolicy.DEFAULT_SCOPE);
         }
 
         List<RowLevelPolicyModel> rowLevelPolicyModels = modifiedInstances.stream()

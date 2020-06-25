@@ -54,4 +54,6 @@ public @interface EntityPolicy {
 
     EntityPolicyAction[] actions();
 
+    String scope() default "";
+
 }

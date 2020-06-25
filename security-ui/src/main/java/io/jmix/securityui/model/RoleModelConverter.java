@@ -48,6 +48,7 @@ public class RoleModelConverter {
                     model.setResource(resourcePolicy.getResource());
                     model.setAction(resourcePolicy.getAction());
                     model.setEffect(resourcePolicy.getEffect());
+                    model.setScope(resourcePolicy.getScope());
                     model.setCustomProperties(resourcePolicy.getCustomProperties());
                     return model;
                 })

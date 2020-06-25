@@ -42,6 +42,9 @@ public class ResourcePolicyModel extends BaseUuidEntity {
     private String effect;
 
     @ModelProperty
+    private String scope;
+
+    @ModelProperty
     private Map<String, String> customProperties = new HashMap<>();
 
     public String getType() {
@@ -74,6 +77,14 @@ public class ResourcePolicyModel extends BaseUuidEntity {
 
     public void setEffect(String effect) {
         this.effect = effect;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
     public Map<String, String> getCustomProperties() {

@@ -48,12 +48,14 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
         EntityAttributePolicy[] policyAnnotations = method.getAnnotationsByType(EntityAttributePolicy.class);
         for (EntityAttributePolicy policyAnnotation : policyAnnotations) {
             MetaClass metaClass = metadata.getClass(policyAnnotation.entityClass());
+            String scope = policyAnnotation.scope();
             for (String attribute : policyAnnotation.attributes()) {
                 for (EntityAttributePolicyAction action : policyAnnotation.actions()) {
                     String resource = metaClass.getName() + "." + attribute;
                     ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.ENTITY_ATTRIBUTE,
                             resource,
-                            action.getId());
+                            action.getId(),
+                            scope);
                     resourcePolicies.add(resourcePolicy);
                 }
             }

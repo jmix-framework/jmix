@@ -16,7 +16,7 @@
 
 package io.jmix.security.model;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -37,13 +37,15 @@ public class ResourcePolicy {
 
     public static final String DEFAULT_EFFECT = ResourcePolicyEffect.ALLOW;
     public static final String DEFAULT_ACTION = "access";
+    public static final String DEFAULT_SCOPE = "";
 
     private String type;
     private String resource;
     private String action;
     private String effect;
+    private String scope;
 
-    private Map<String, String> customProperties = new HashMap<>();
+    private Map<String, String> customProperties;
 
     public ResourcePolicy(String type, String resource) {
         this(type, resource, DEFAULT_ACTION, DEFAULT_EFFECT);
@@ -54,14 +56,24 @@ public class ResourcePolicy {
     }
 
     public ResourcePolicy(String type, String resource, String action, String effect) {
+        this(type, resource, action, effect, DEFAULT_SCOPE, Collections.emptyMap());
+    }
+
+    public ResourcePolicy(String type, String resource, String action, String effect, String scope) {
+        this(type, resource, action, effect, scope, Collections.emptyMap());
+    }
+
+    public ResourcePolicy(String type, String resource, String action, String effect, Map<String, String> customProperties) {
+        this(type, resource, action, effect, DEFAULT_SCOPE, customProperties);
+    }
+
+    public ResourcePolicy(String type, String resource, String action, String effect, String scope,
+                          Map<String, String> customProperties) {
         this.type = type;
         this.resource = resource;
         this.action = action;
         this.effect = effect;
-    }
-
-    public ResourcePolicy(String type, String resource, String action, String effect, Map<String, String> customProperties) {
-        this(type, resource, action, effect);
+        this.scope = scope;
         this.customProperties = customProperties;
     }
 
@@ -69,6 +81,7 @@ public class ResourcePolicy {
      * Returns policy type. Standard policies type are:
      *
      * <ul>
+     *     <li>menu</li>
      *     <li>screen</li>
      *     <li>entity</li>
      *     <li>entityAttribute</li>
@@ -114,5 +127,9 @@ public class ResourcePolicy {
 
     public Map<String, String> getCustomProperties() {
         return customProperties;
+    }
+
+    public String getScope() {
+        return scope;
     }
 }

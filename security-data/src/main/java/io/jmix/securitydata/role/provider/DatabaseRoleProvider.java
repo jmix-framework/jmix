@@ -68,7 +68,7 @@ public class DatabaseRoleProvider implements RoleProvider {
                 .parameter("code", code)
                 .fetchPlan(fetchPlanBuilder -> {
                     fetchPlanBuilder
-                            .addAll("name", "code", "scope")
+                            .addAll("name", "code")
                             .add("rowLevelPolicies", FetchPlan.BASE)
                             .add("resourcePolicies", FetchPlan.BASE);
                 })
@@ -91,6 +91,7 @@ public class DatabaseRoleProvider implements RoleProvider {
                             entity.getResource(),
                             entity.getAction(),
                             entity.getEffect(),
+                            entity.getScope(),
                             Collections.singletonMap("databaseId", entity.getId().toString())))
                     .collect(Collectors.toList());
             role.setResourcePolicies(resourcePolicies);

@@ -73,6 +73,8 @@
                 <constraints nullable="false"/>
             </column>
 
+            <column name="SCOPE_" type="varchar(255)"/>
+
             <column name="ROLE_ENTITY_ID" type="uuid">
                 <constraints foreignKeyName="FK_SEC_RESOURCE_POLICY_ENTITY_SEC_ROLE_ENTITY"
                              references="SEC_ROLE_ENTITY(ID)" nullable="false"/>

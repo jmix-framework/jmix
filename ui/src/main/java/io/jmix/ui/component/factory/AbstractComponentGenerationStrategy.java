@@ -17,7 +17,6 @@
 package io.jmix.ui.component.factory;
 
 import io.jmix.core.Messages;
-import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.entity.annotation.CurrencyValue;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -39,6 +38,7 @@ import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.sql.Time;
 import java.time.*;
 import java.util.Collection;
@@ -85,10 +85,6 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Component createClassField(ComponentGenerationContext context, MetaPropertyPath mpp) {
         MetaProperty metaProperty = mpp.getMetaProperty();
         Class<?> javaType = metaProperty.getJavaType();
-
-        if (FileDescriptor.class.isAssignableFrom(javaType)) {
-            return createFileUploadField(context);
-        }
 
         if (!Collection.class.isAssignableFrom(javaType)) {
             return createEntityField(context, mpp);
@@ -140,6 +136,10 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
             }
 
             return createNumberField(context);
+        } else if (type.equals(byte[].class)) {
+            return createFileUploadField(context);
+        } else if (type.equals(URI.class)) {
+            return createFileStorageUploadField(context);
         }
         return null;
     }
@@ -286,6 +286,25 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
     protected Field createFileUploadField(ComponentGenerationContext context) {
         FileUploadField fileUploadField = uiComponents.create(FileUploadField.NAME);
+
+        fileUploadField.setUploadButtonCaption(null);
+        fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));
+        fileUploadField.setUploadButtonIcon("icons/upload.png");
+
+        fileUploadField.setClearButtonCaption(null);
+        fileUploadField.setClearButtonDescription(messages.getMessage("upload.clear"));
+        fileUploadField.setClearButtonIcon("icons/remove.png");
+
+        fileUploadField.setShowFileName(true);
+        fileUploadField.setShowClearButton(true);
+
+        setValueSource(fileUploadField, context);
+
+        return fileUploadField;
+    }
+
+    protected Field createFileStorageUploadField(ComponentGenerationContext context) {
+        FileStorageUploadField fileUploadField = uiComponents.create(FileStorageUploadField.NAME);
 
         fileUploadField.setUploadButtonCaption(null);
         fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));

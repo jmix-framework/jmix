@@ -18,12 +18,12 @@ package io.jmix.ui.app.inputdialog;
 
 import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Field;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.sql.Time;
 import java.util.Date;
 import java.util.function.Supplier;
@@ -340,13 +340,23 @@ public class InputParameter {
     }
 
     /**
-     * Creates parameter with FileDescriptor type.
+     * Creates parameter with byte[] type.
+     *
+     * @param id field id
+     * @return input parameter
+     */
+    public static InputParameter byteArrayParameter(String id) {
+        return new InputParameter(id).withDatatypeJavaClass(byte[].class);
+    }
+
+    /**
+     * Creates parameter with URI (file reference) type.
      *
      * @param id field id
      * @return input parameter
      */
     public static InputParameter fileParameter(String id) {
-        return new InputParameter(id).withDatatypeJavaClass(FileDescriptor.class);
+        return new InputParameter(id).withDatatypeJavaClass(URI.class);
     }
 
     /**

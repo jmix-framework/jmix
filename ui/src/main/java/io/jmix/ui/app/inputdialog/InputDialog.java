@@ -20,7 +20,6 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.*;
@@ -44,7 +43,9 @@ import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.theme.ThemeConstants;
 
 import javax.annotation.Nullable;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -385,6 +386,16 @@ public class InputDialog extends Screen {
             return timeField;
         } else if (datatype instanceof BooleanDatatype) {
             return uiComponents.create(CheckBox.NAME);
+        } else if (datatype instanceof UriDatatype) {
+            FileStorageUploadField fileUploadField = uiComponents.create(FileStorageUploadField.class);
+            fileUploadField.setShowFileName(true);
+            fileUploadField.setShowClearButton(true);
+            return fileUploadField;
+        } else if (datatype instanceof ByteArrayDatatype) {
+            FileUploadField fileUploadField = uiComponents.create(FileUploadField.class);
+            fileUploadField.setShowFileName(true);
+            fileUploadField.setShowClearButton(true);
+            return fileUploadField;
         } else {
             throw new IllegalArgumentException("InputDialog doesn't support datatype: " + datatype.getClass());
         }
@@ -432,16 +443,6 @@ public class InputDialog extends Screen {
     @SuppressWarnings("unchecked")
     @Nullable
     protected Field createFieldByClass(@Nullable Class datatypeJavaClass) {
-        if (datatypeJavaClass == null) {
-            return null;
-        }
-
-        if (datatypeJavaClass.isAssignableFrom(FileDescriptor.class)) {
-            FileUploadField fileUploadField = uiComponents.create(FileUploadField.NAME);
-            fileUploadField.setShowFileName(true);
-            fileUploadField.setShowClearButton(true);
-            return fileUploadField;
-        }
         return null;
     }
 

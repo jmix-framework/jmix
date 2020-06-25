@@ -36,8 +36,10 @@ import test_support.app.entity.Pet
 import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(
+    value = AppContextTestExecutionListener,
+    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+)
 class MetadataTest extends Specification {
 
     @Autowired
@@ -46,11 +48,13 @@ class MetadataTest extends Specification {
     def "entities are in metadata"() {
         expect:
 
-        metadata.findClass(StandardEntity) != null
-        metadata.findClass(TestAddon1Entity) != null
+        metadata.findClass(StandardEntity)
+        metadata.findClass(TestAddon1Entity)
     }
 
     def "ancestors and descendants are collected recursively"() {
+
+        given:
 
         def pet = metadata.getClass(Pet)
         def standardEntity = metadata.getClass(StandardEntity)
@@ -64,6 +68,7 @@ class MetadataTest extends Specification {
         pet.ancestors[1] == baseUuidEntity
         pet.ancestors[2] == baseGenericIdEntity
 
+        and:
         baseGenericIdEntity.descendants.containsAll([baseUuidEntity, standardEntity, pet])
         baseUuidEntity.descendants.containsAll([standardEntity, pet])
         standardEntity.descendants.containsAll([pet])
@@ -97,109 +102,5 @@ class MetadataTest extends Specification {
         entityIdProp.domain == entityMetaClass
         entityIdProp.range == baseIdProp.range
         entityIdProp.annotatedElement == baseIdProp.annotatedElement
-    }
-
-    def "store of entity is NOOP"() {
-
-        def metaClass = metadata.getClass(TestAddon1Entity)
-
-        expect:
-
-        metaClass.store != null
-        metaClass.store.name == Stores.NOOP
-    }
-
-    def "store of mapped superclass is UNDEFINED"() {
-
-        def metaClass = metadata.getClass(StandardEntity)
-
-        expect:
-
-        metaClass.store != null
-        metaClass.store.name == Stores.UNDEFINED
-    }
-
-    def "store of embeddable and its properties is MAIN"() {
-
-        def metaClass = metadata.getClass(Address)
-
-        expect:
-
-        metaClass.store != null
-        metaClass.store.name == Stores.MAIN
-        metaClass.getProperty('city').store.name == Stores.MAIN
-    }
-
-    def "store of embedded property is MAIN"() {
-
-        def metaClass = metadata.getClass(Owner)
-        def property = metaClass.getProperty('address')
-
-        expect:
-
-        property.store.name == Stores.MAIN
-    }
-
-    def "store of entity property is NOOP"() {
-
-        def metaProperty = metadata.getClass(TestAddon1Entity).getProperty('name')
-
-        expect:
-
-        metaProperty.store != null
-        metaProperty.store.name == Stores.NOOP
-    }
-
-    def "store of mapped superclass property is UNDEFINED"() {
-
-        def metaProperty = metadata.getClass(StandardEntity).getProperty('createTs')
-
-        expect:
-
-        metaProperty.store != null
-        metaProperty.store.name == Stores.UNDEFINED
-    }
-
-    def "store of entity property inherited from mapped superclass is NOOP"() {
-
-        def idProp = metadata.getClass(TestAddon1Entity).getProperty('id')
-        def createTsProp = metadata.getClass(TestAddon1Entity).getProperty('createTs')
-
-        expect:
-
-        idProp.store.name == Stores.NOOP
-        createTsProp.store.name == Stores.NOOP
-    }
-
-    def "store of entity annotated with @Entity is MAIN"() {
-
-        def metaClass = metadata.getClass(Pet)
-        def idProp = metaClass.getProperty('id')
-        def nameProp = metaClass.getProperty('name')
-
-        expect:
-
-        idProp.store.name == Stores.MAIN
-        nameProp.store.name == Stores.MAIN
-    }
-
-    def "store of non-mapped property of entity annotated with @Entity is UNDEFINED"() {
-
-        def metaClass = metadata.getClass(Pet)
-        def nickProp = metaClass.getProperty('nick')
-
-        expect:
-
-        nickProp.store.name == Stores.UNDEFINED
-    }
-
-    def "store of method-based property of entity annotated with @Entity is UNDEFINED"() {
-
-        def metaClass = metadata.getClass(Pet)
-        def descriptionProp = metaClass.getProperty('description')
-
-        expect:
-
-        descriptionProp.store.name == Stores.UNDEFINED
     }
 }

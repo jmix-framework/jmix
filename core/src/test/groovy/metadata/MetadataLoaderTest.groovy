@@ -29,19 +29,24 @@ import test_support.base.entity.BaseUuidEntity
 import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(
+    value = AppContextTestExecutionListener,
+    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+)
 class MetadataLoaderTest extends Specification {
 
     @Autowired
     MetadataLoader metadataLoader
 
     def "loads metadata from core and add-on"() {
-        expect:
+
+        given:
 
         def session = metadataLoader.getSession()
 
-        session.findClass(BaseUuidEntity) != null
-        session.findClass(TestAddon1Entity) != null
+        expect:
+
+        session.findClass(BaseUuidEntity)
+        session.findClass(TestAddon1Entity)
     }
 }

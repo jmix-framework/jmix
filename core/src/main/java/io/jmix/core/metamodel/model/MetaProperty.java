@@ -16,6 +16,8 @@
 
 package io.jmix.core.metamodel.model;
 
+import io.jmix.core.entity.annotation.ReplaceEntity;
+
 import javax.annotation.Nullable;
 import java.lang.reflect.AnnotatedElement;
 
@@ -53,7 +55,7 @@ public interface MetaProperty extends MetadataObject {
 
     /**
      * @return MetaClass, containing this MetaProperty. <br>
-     * In case of {@link io.jmix.core.entity.annotation.Extends} returns extended meta class.
+     * In case of {@link ReplaceEntity} returns extended meta class.
      */
     MetaClass getDomain();
 

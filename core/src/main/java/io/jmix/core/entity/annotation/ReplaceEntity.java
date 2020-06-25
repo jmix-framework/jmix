@@ -24,11 +24,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks an entity as extension to some original entity.
- *
+ * Indicates that the entity extends and replaces some original entity.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Extends {
+public @interface ReplaceEntity {
     Class<? extends Entity> value();
 }

@@ -24,13 +24,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Counterpart of {@link Extends}. Normally it is not used as type annotation, but its name is used as a key of
- * meta-annotation for an entity that is extended by another one.
- *
+ * Counterpart of {@link ReplaceEntity}. Normally it is not used as type annotation, but its name is used as a key of
+ * meta-annotation for an entity that is replaced by another one.
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExtendedBy {
+public @interface ReplacedByEntity {
 
     Class<? extends Entity> value();
 }

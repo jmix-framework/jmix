@@ -16,10 +16,10 @@
 
 package io.jmix.core;
 
+import io.jmix.core.entity.annotation.ReplaceEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.entity.annotation.ExtendedBy;
-import io.jmix.core.entity.annotation.Extends;
+import io.jmix.core.entity.annotation.ReplacedByEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -125,7 +125,7 @@ public class ExtendedEntities {
      */
     @Nullable
     public Class getExtendedClass(MetaClass originalMetaClass) {
-        return (Class) originalMetaClass.getAnnotations().get(ExtendedBy.class.getName());
+        return (Class) originalMetaClass.getAnnotations().get(ReplacedByEntity.class.getName());
     }
 
     /**
@@ -136,7 +136,7 @@ public class ExtendedEntities {
      */
     @Nullable
     public Class getOriginalClass(MetaClass extendedMetaClass) {
-        return (Class) extendedMetaClass.getAnnotations().get(Extends.class.getName());
+        return (Class) extendedMetaClass.getAnnotations().get(ReplaceEntity.class.getName());
     }
 
     /**

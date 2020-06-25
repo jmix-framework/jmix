@@ -31,14 +31,17 @@ import spock.lang.Specification
 import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(
+    value = AppContextTestExecutionListener,
+    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+)
 class FetchPlanRepositoryTest extends Specification {
 
     @Autowired
     FetchPlanRepository repository
 
     def "fetchPlan is deployed from add-on's fetch-plans.xml file"() {
+
         when:
 
         def fetchPlan = repository.getFetchPlan(TestAddon1Entity, 'test-fp-1')
@@ -50,21 +53,29 @@ class FetchPlanRepositoryTest extends Specification {
 
     def "predefined fetch plans do not contain system properties"() {
 
+        given:
+
         def localFetchPlan = repository.getFetchPlan(Pet.class, FetchPlan.LOCAL)
 
         expect:
+
         !containsSystemProperties(localFetchPlan)
 
     }
 
     private boolean containsSystemProperties(FetchPlan fetchPlan) {
-        return fetchPlan.containsProperty("id") ||
-            fetchPlan.containsProperty("version") ||
-            fetchPlan.containsProperty("deleteTs") ||
-            fetchPlan.containsProperty("deletedBy") ||
-            fetchPlan.containsProperty("createTs") ||
-            fetchPlan.containsProperty("createdBy") ||
-            fetchPlan.containsProperty("updateTs") ||
-            fetchPlan.containsProperty("updatedBy")
+
+        def systemProperties = [
+            "id",
+            "version",
+            "deleteTs",
+            "deletedBy",
+            "createTs",
+            "createdBy",
+            "updateTs",
+            "updatedBy",
+        ]
+
+        systemProperties.any { systemProperty -> fetchPlan.containsProperty(systemProperty) }
     }
 }

@@ -28,8 +28,10 @@ import test_support.AppContextTestExecutionListener
 import test_support.base.TestBaseConfiguration
 
 @ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(
+    value = AppContextTestExecutionListener,
+    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+)
 class EntitiesScannerTest extends Specification {
 
     @Autowired
@@ -44,9 +46,12 @@ class EntitiesScannerTest extends Specification {
         then:
 
         scanner != null
-        scanner.applicationContext != null
-        scanner.metadataReaderFactory != null
-        scanner.basePackages == ['io.jmix.core', 'test_support.base']
+
+        with (scanner) {
+            applicationContext != null
+            metadataReaderFactory != null
+            basePackages == ['io.jmix.core', 'test_support.base']
+        }
 
         when:
 
@@ -54,6 +59,8 @@ class EntitiesScannerTest extends Specification {
 
         then:
 
-        entityDefList.find { it == 'test_support.base.entity.BaseUuidEntity' } != null
+        entityDefList.any { entity ->
+            entity == 'test_support.base.entity.BaseUuidEntity'
+        }
     }
 }

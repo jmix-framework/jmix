@@ -16,6 +16,7 @@
 
 package database_role_provider
 
+import entity.TestOrder
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext
@@ -49,24 +50,24 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         then:
         roles.size() == 2
 
-        def role1 = roles.find {it.code == 'role1'}
-        def role2 = roles.find {it.code == 'role2'}
+        def role1 = roles.find { it.code == 'role1' }
+        def role2 = roles.find { it.code == 'role2' }
 
         role1 != null
         role2 != null
 
         role1.resourcePolicies.size() == 2
 
-        def screen1ResourcePolicy = role1.resourcePolicies.find {it.resource == 'screen1'}
-        with (screen1ResourcePolicy) {
+        def screen1ResourcePolicy = role1.resourcePolicies.find { it.resource == 'screen1' }
+        with(screen1ResourcePolicy) {
             action == ResourcePolicy.DEFAULT_ACTION
             effect == ResourcePolicy.DEFAULT_EFFECT
             type == ResourcePolicyType.SCREEN
         }
 
         role1.rowLevelPolicies.size() == 2
-        def rowLevelPolicy = role1.rowLevelPolicies.find {it.entityName == 'test_Order'}
-        with (rowLevelPolicy) {
+        def rowLevelPolicy = role1.rowLevelPolicies.find { it.entityName == 'test_Order' }
+        with(rowLevelPolicy) {
             type == RowLevelPolicyType.JPQL
             whereClause == 'where1'
             joinClause == 'join1'
@@ -78,12 +79,41 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         Role role = databaseRoleProvider.getRoleByCode('role1')
 
         then:
-        with (role) {
+        with(role) {
             code == 'role1'
             name == 'Role1'
             resourcePolicies.size() == 2
             rowLevelPolicies.size() == 2
         }
+    }
+
+    def "predicate created from script"() {
+        when:
+        Role role2 = databaseRoleProvider.getRoleByCode('role2')
+
+        then:
+
+        role2.rowLevelPolicies.size() == 1
+
+
+        when:
+
+        def rowLevelPolicy = role2.rowLevelPolicies[0]
+        def testOrder = new TestOrder()
+        testOrder.number = '1'
+
+        then:
+
+        rowLevelPolicy.predicate.test(testOrder) == false
+
+        when:
+
+        testOrder.number = '2'
+
+        then:
+
+        rowLevelPolicy.predicate.test(testOrder) == true
+
     }
 
     private void prepareTestData() {
@@ -93,25 +123,31 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
         def entitiesToSave = []
 
-        entitiesToSave << createResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen1',
+        entitiesToSave << createJpqlResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen1',
                 ResourcePolicy.DEFAULT_ACTION, ResourcePolicy.DEFAULT_EFFECT, role1)
-        entitiesToSave << createResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen2',
+        entitiesToSave << createJpqlResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen2',
                 ResourcePolicy.DEFAULT_ACTION, ResourcePolicy.DEFAULT_EFFECT, role1)
 
-        entitiesToSave << createRowLevelPolicyEntity('test_Order', 'where1', 'join1', role1)
-        entitiesToSave << createRowLevelPolicyEntity('test_Customer', 'where2', 'join2', role1)
+        entitiesToSave << createJpqlRowLevelPolicyEntity('test_Order', 'where1', 'join1', role1)
+        entitiesToSave << createJpqlRowLevelPolicyEntity('test_Customer', 'where2', 'join2', role1)
 
         RoleEntity role2 = metadata.create(RoleEntity)
         role2.code = 'role2'
         role2.name = 'Role2'
+
+        String script = "return {E}.number == '2'"
+        entitiesToSave << createScriptRowLevelPolicyEntity('test_Order', RowLevelPolicyAction.CREATE, script, role2)
 
         entitiesToSave << role1
         entitiesToSave << role2
         dataManager.save(new SaveContext().saving(entitiesToSave))
     }
 
-    private ResourcePolicyEntity createResourcePolicyEntity(String type, String resource, String action,
-                                                            String effect, RoleEntity roleEntity) {
+    private ResourcePolicyEntity createJpqlResourcePolicyEntity(String type,
+                                                                String resource,
+                                                                String action,
+                                                                String effect,
+                                                                RoleEntity roleEntity) {
         def resourcePolicy = metadata.create(ResourcePolicyEntity)
         resourcePolicy.type = type
         resourcePolicy.resource = resource
@@ -121,14 +157,29 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         return resourcePolicy
     }
 
-    private RowLevelPolicyEntity createRowLevelPolicyEntity(String entityName, String whereClause, String joinClause,
-                                                            RoleEntity role) {
+    private RowLevelPolicyEntity createJpqlRowLevelPolicyEntity(String entityName,
+                                                                String whereClause,
+                                                                String joinClause,
+                                                                RoleEntity role) {
         RowLevelPolicyEntity rowLevelPolicy = metadata.create(RowLevelPolicyEntity)
         rowLevelPolicy.type = RowLevelPolicyType.JPQL
         rowLevelPolicy.entityName = entityName
         rowLevelPolicy.whereClause = whereClause
         rowLevelPolicy.joinClause = joinClause
         rowLevelPolicy.action = RowLevelPolicyAction.READ
+        rowLevelPolicy.role = role
+        return rowLevelPolicy
+    }
+
+    private RowLevelPolicyEntity createScriptRowLevelPolicyEntity(String entityName,
+                                                                  RowLevelPolicyAction action,
+                                                                  String script,
+                                                                  RoleEntity role) {
+        RowLevelPolicyEntity rowLevelPolicy = metadata.create(RowLevelPolicyEntity)
+        rowLevelPolicy.type = RowLevelPolicyType.PREDICATE
+        rowLevelPolicy.entityName = entityName
+        rowLevelPolicy.action = action
+        rowLevelPolicy.script = script
         rowLevelPolicy.role = role
         return rowLevelPolicy
     }

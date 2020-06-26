@@ -48,6 +48,10 @@ public class RowLevelPolicyEntity extends StandardEntity {
     @Column(name = "JOiN_CLAUSE", length = 5000)
     private String joinClause;
 
+    @Lob
+    @Column(name = "SCRIPT_", length = 5000)
+    private String script;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ENTITY_ID")
@@ -99,5 +103,13 @@ public class RowLevelPolicyEntity extends StandardEntity {
 
     public void setType(RowLevelPolicyType type) {
         this.type = type != null ? type.getId() : null;
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public void setScript(String script) {
+        this.script = script;
     }
 }

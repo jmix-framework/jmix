@@ -107,6 +107,7 @@
             </column>
             <column name="WHERE_CLAUSE" type="varchar(5000)"/>
             <column name="JOIN_CLAUSE" type="varchar(5000)"/>
+            <column name="SCRIPT_" type="varchar(5000)"/>
 
             <column name="ROLE_ENTITY_ID" type="uuid">
                 <constraints foreignKeyName="FK_SEC_ROW_LEVEL_POLICY_ENTITY_SEC_ROLE_ENTITY"

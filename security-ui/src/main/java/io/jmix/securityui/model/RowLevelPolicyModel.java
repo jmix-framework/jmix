@@ -47,6 +47,9 @@ public class RowLevelPolicyModel extends BaseUuidEntity {
     private String joinClause;
 
     @ModelProperty
+    private String script;
+
+    @ModelProperty
     private Map<String, String> customProperties = new HashMap<>();
 
     public RowLevelPolicyType getType() {
@@ -87,6 +90,14 @@ public class RowLevelPolicyModel extends BaseUuidEntity {
 
     public void setAction(RowLevelPolicyAction action) {
         this.action = action;
+    }
+
+    public String getScript() {
+        return script;
+    }
+
+    public void setScript(String script) {
+        this.script = script;
     }
 
     public Map<String, String> getCustomProperties() {

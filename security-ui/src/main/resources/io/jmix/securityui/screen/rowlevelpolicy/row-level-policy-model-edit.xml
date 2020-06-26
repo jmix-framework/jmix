@@ -20,8 +20,7 @@
         focusComponent="form">
     <data>
         <instance id="rowLevelPolicyModelDc"
-                  class="io.jmix.securityui.model.RowLevelPolicyModel">
-        </instance>
+                  class="io.jmix.securityui.model.RowLevelPolicyModel"/>
     </data>
     <dialogMode forceDialog="true"
                 width="AUTO"
@@ -29,11 +28,12 @@
     <layout spacing="true">
         <form id="form" dataContainer="rowLevelPolicyModelDc">
             <column width="350px">
-                <comboBox id="typeField" property="type" editable="false"/>
-                <comboBox id="actionField" property="action" editable="false"/>
+                <comboBox id="typeField" property="type"/>
+                <comboBox id="actionField" property="action"/>
                 <comboBox id="entityNameField" property="entityName"/>
-                <textArea id="whereClauseField" property="whereClause" rows="5"/>
+                <textArea id="whereClauseField" property="whereClause" rows="5" required="true"/>
                 <textArea id="joinClauseField" property="joinClause" rows="5"/>
+                <textArea id="scriptField" property="script" rows="10" required="true"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

@@ -17,6 +17,7 @@
 package io.jmix.securitydata.role.provider;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.Role;
@@ -27,12 +28,13 @@ import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.RoleEntity;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +45,9 @@ public class DatabaseRoleProvider implements RoleProvider {
 
     @Autowired
     protected DataManager dataManager;
+
+    @Autowired
+    protected ScriptEvaluator scriptEvaluator;
 
     @Override
     public Collection<Role> getAllRoles() {
@@ -100,13 +105,35 @@ public class DatabaseRoleProvider implements RoleProvider {
         List<RowLevelPolicyEntity> rowLevelPolicyEntities = roleEntity.getRowLevelPolicies();
         if (rowLevelPolicyEntities != null) {
             List<RowLevelPolicy> rowLevelPolicies = rowLevelPolicyEntities.stream()
-                    .map(entity ->
-                            new RowLevelPolicy(entity.getEntityName(), entity.getWhereClause(), entity.getJoinClause(),
-                                    Collections.singletonMap("databaseId", entity.getId().toString()))
+                    .map(policyEntity -> {
+                                switch (policyEntity.getType()) {
+                                    case JPQL:
+                                        return new RowLevelPolicy(policyEntity.getEntityName(),
+                                                policyEntity.getWhereClause(),
+                                                policyEntity.getJoinClause(),
+                                                Collections.singletonMap("databaseId", policyEntity.getId().toString()));
+                                    case PREDICATE:
+                                        return new RowLevelPolicy(policyEntity.getEntityName(),
+                                                policyEntity.getAction(),
+                                                createPredicateFromScript(policyEntity.getScript()),
+                                                Collections.singletonMap("databaseId", policyEntity.getId().toString()));
+                                    default:
+                                        throw new RuntimeException("Unknown row level policy type " + policyEntity.getType());
+                                }
+                            }
                     )
                     .collect(Collectors.toList());
             role.setRowLevelPolicies(rowLevelPolicies);
         }
         return role;
+    }
+
+    protected Predicate<? extends Entity> createPredicateFromScript(String script) {
+        return (Predicate<Entity>) entity -> {
+            String modifiedScript = script.replace("{E}", "__entity__");
+            Map<String, Object> arguments = new HashMap<>();
+            arguments.put("__entity__", entity);
+            return (boolean) scriptEvaluator.evaluate(new StaticScriptSource(modifiedScript), arguments);
+        };
     }
 }

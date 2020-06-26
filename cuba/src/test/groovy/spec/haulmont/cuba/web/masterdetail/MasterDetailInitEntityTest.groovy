@@ -16,18 +16,22 @@
 
 package spec.haulmont.cuba.web.masterdetail
 
-
+import io.jmix.ui.component.Table
+import io.jmix.ui.screen.MasterDetailScreen
 import spec.haulmont.cuba.web.UiScreenSpec
+import spec.haulmont.cuba.web.masterdetail.screens.UserMasterDetail
+
+import java.util.function.Consumer
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class MasterDetailInitEntityTest extends UiScreenSpec {
 
-    /*void setup() { todo port
+    void setup() {
         exportScreensPackages(['spec.haulmont.cuba.web.masterdetail.screens', 'com.haulmont.cuba.web.app.main'])
     }
 
     def "MasterDetailScreen fires InitEntityEvent on Create"() {
-        showMainWindow()
+        showMainScreen()
 
         def initEntityListener = Mock(Consumer)
 
@@ -35,7 +39,7 @@ class MasterDetailInitEntityTest extends UiScreenSpec {
         masterDetail.addInitEntityListener(initEntityListener)
         masterDetail.show()
 
-        def table = masterDetail.getWindow().getComponentNN("table") as Table
+        def table = (Table) masterDetail.getWindow().getComponentNN("table")
         def createAction = table.getAction("create")
 
         when:
@@ -49,5 +53,5 @@ class MasterDetailInitEntityTest extends UiScreenSpec {
         1 * initEntityListener.accept(_) >> { MasterDetailScreen.InitEntityEvent event ->
             assert event.getEntity() != null
         }
-    }*/
+    }
 }

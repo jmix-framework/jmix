@@ -16,25 +16,21 @@
 
 package spec.haulmont.cuba.web.masterdetail.screens;
 
-import io.jmix.ui.screen.LoadDataBeforeShow;
-import io.jmix.ui.screen.LookupComponent;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import com.haulmont.cuba.core.model.common.User;
+import io.jmix.ui.screen.*;
 
 @UiController
 @UiDescriptor("user-masterdetail.xml")
 @LookupComponent("table")
 @LoadDataBeforeShow
-public class UserMasterDetail /*extends MasterDetailScreen<User>*/ {
+public class UserMasterDetail extends MasterDetailScreen<User> {
 
-    /*
-    todo port
     @Subscribe
-    protected void onInitEntity(StandardEditor.InitEntityEvent<User> event) {
+    protected void onInitEntity(MasterDetailScreen.InitEntityEvent<User> event) {
         event.getEntity().setName("New user");
     }
 
     public User getEditedUser() {
         return getEditContainer().getItem();
-    }*/
+    }
 }

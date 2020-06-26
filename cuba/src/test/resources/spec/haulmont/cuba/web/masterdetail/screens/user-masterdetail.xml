@@ -19,16 +19,16 @@
         focusComponent="table">
     <data>
         <collection id="usersDc"
-                    class="com.haulmont.cuba.security.entity.User"
+                    class="com.haulmont.cuba.core.model.common.User"
                     fetchPlan="_local">
             <loader id="usersLd">
                 <query>
-                    <![CDATA[select e from sec$User e]]>
+                    <![CDATA[select e from test$User e]]>
                 </query>
             </loader>
         </collection>
         <instance id="userDc"
-                  class="com.haulmont.cuba.security.entity.User"
+                  class="com.haulmont.cuba.core.model.common.User"
                   fetchPlan="_local">
             <loader/>
         </instance>
@@ -44,9 +44,6 @@
     <layout>
         <split id="split" height="100%" orientation="horizontal" reversePosition="true" width="100%">
             <vbox id="lookupBox" expand="table" height="100%" margin="false,true,false,false" spacing="true">
-                <filter id="filter" applyTo="table" dataLoader="usersLd">
-                    <properties include=".*"/>
-                </filter>
                 <table id="table"
                        width="100%"
                        dataContainer="usersDc">

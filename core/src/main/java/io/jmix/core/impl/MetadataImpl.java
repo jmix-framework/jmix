@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
@@ -33,11 +32,6 @@ import java.util.List;
 public class MetadataImpl implements Metadata {
 
     protected volatile Session session;
-
-//    protected volatile List<String> rootPackages;
-
-    @Autowired
-    protected ExtendedEntities extendedEntities;
 
     @Autowired
     protected MetadataTools tools;
@@ -50,27 +44,8 @@ public class MetadataImpl implements Metadata {
 
     @Autowired
     public MetadataImpl(MetadataLoader metadataLoader) {
-//        rootPackages = metadataLoader.getRootPackages();
         session = metadataLoader.getSession();
     }
-
-//    protected void initMetadata(ContextRefreshedEvent event) {
-//        if (session != null) {
-//            log.warn("Repetitive initialization\n" + StackTrace.asString());
-//            return;
-//        }
-//
-//        log.info("Initializing metadata");
-//        long startTime = System.currentTimeMillis();
-//
-//        MetadataLoader metadataLoader = (MetadataLoader) event.getApplicationContext().getBean(MetadataLoader.NAME);
-//        metadataLoader.loadMetadata();
-//        rootPackages = metadataLoader.getRootPackages();
-//        session = metadataLoader.getSession();
-//        SessionImpl.setSerializationSupportSession(session);
-//
-//        log.info("Metadata initialized in {} ms", System.currentTimeMillis() - startTime);
-//    }
 
     @Override
     public Session getSession() {
@@ -83,9 +58,8 @@ public class MetadataImpl implements Metadata {
         return session.getClass(entity.getClass());
     }
 
-    protected <T extends Entity> T __create(Class<T> entityClass) {
-        @SuppressWarnings("unchecked")
-        Class<T> extClass = extendedEntities.getEffectiveClass(entityClass);
+    protected <T extends Entity> T internalCreate(Class<T> entityClass) {
+        Class<T> extClass = getSession().getClass(entityClass).getJavaClass();
         try {
             T obj = extClass.getDeclaredConstructor().newInstance();
 
@@ -103,18 +77,18 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public <T extends Entity> T create(Class<T> entityClass) {
-        return __create(entityClass);
+        return internalCreate(entityClass);
     }
 
     @Override
     public Entity create(MetaClass metaClass) {
-        return __create(metaClass.getJavaClass());
+        return internalCreate(metaClass.getJavaClass());
     }
 
     @Override
     public Entity create(String entityName) {
         MetaClass metaClass = getSession().getClass(entityName);
-        return __create(metaClass.getJavaClass());
+        return internalCreate(metaClass.getJavaClass());
     }
 
     @Nullable
@@ -125,7 +99,7 @@ public class MetadataImpl implements Metadata {
 
     @Override
     public MetaClass getClass(String name) {
-        return getSession().findClass(name);
+        return getSession().getClass(name);
     }
 
     @Nullable

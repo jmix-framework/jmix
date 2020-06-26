@@ -16,9 +16,8 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.entity.annotation.MetaAnnotation;
-import io.jmix.core.entity.annotation.OnDelete;
-import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.Entity;
+import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.scanning.EntityDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -29,14 +28,16 @@ import io.jmix.core.metamodel.model.impl.SessionImpl;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,7 +68,7 @@ public class MetadataLoader {
             initMetaAnnotations(metaClass);
         }
 
-        // todo extended entities
+        initExtensionMetaAnnotations();
 
         log.info("Metadata initialized in {} ms", System.currentTimeMillis() - startTime);
     }
@@ -148,5 +149,35 @@ public class MetadataLoader {
         return javax.persistence.Entity.class.isAssignableFrom(annotation.getClass())
                 || javax.persistence.MappedSuperclass.class.isAssignableFrom(annotation.getClass())
                 || javax.persistence.Embeddable.class.isAssignableFrom(annotation.getClass());
+    }
+
+    protected void initExtensionMetaAnnotations() {
+        for (MetaClass metaClass : session.getClasses()) {
+            Class<?> javaClass = metaClass.getJavaClass();
+
+            List<Class> superClasses = new ArrayList<>();
+            ReplaceEntity replaceAnnotation = javaClass.getAnnotation(ReplaceEntity.class);
+            while (replaceAnnotation != null) {
+                Class<? extends Entity> superClass = replaceAnnotation.value();
+                superClasses.add(superClass);
+                replaceAnnotation = superClass.getAnnotation(ReplaceEntity.class);
+            }
+
+            for (Class superClass : superClasses) {
+                metaClass.getAnnotations().put(ReplaceEntity.class.getName(), superClass);
+
+                MetaClass superMetaClass = session.getClass(superClass);
+
+                Class<?> replacedByClass = (Class) superMetaClass.getAnnotations().get(ReplacedByEntity.class.getName());
+                if (replacedByClass != null && !javaClass.equals(replacedByClass)) {
+                    if (javaClass.isAssignableFrom(replacedByClass))
+                        continue;
+                    else if (!replacedByClass.isAssignableFrom(javaClass))
+                        throw new IllegalStateException(superClass + " is already extended by " + replacedByClass);
+                }
+
+                superMetaClass.getAnnotations().put(ReplacedByEntity.class.getName(), javaClass);
+            }
+        }
     }
 }

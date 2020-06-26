@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SessionImpl implements Session {
 
@@ -61,18 +62,20 @@ public class SessionImpl implements Session {
 
     @Override
     public Collection<MetaClass> getClasses() {
-        return classByName.values();
+        return classByName.values().stream()
+                .distinct()
+                .collect(Collectors.toList());
     }
 
-    public void registerClass(MetaClassImpl clazz) {
-        classByName.put(clazz.getName(), clazz);
-        if (clazz.getJavaClass() != null) {
-            classByClass.put(clazz.getJavaClass(), clazz);
+    public void registerClass(MetaClassImpl metaClass) {
+        classByName.put(metaClass.getName(), metaClass);
+        if (metaClass.getJavaClass() != null) {
+            classByClass.put(metaClass.getJavaClass(), metaClass);
         }
     }
 
-    public void registerClass(String name, Class javaClass, MetaClassImpl clazz) {
-        classByName.put(name, clazz);
-        classByClass.put(javaClass, clazz);
+    public void registerClass(String name, Class javaClass, MetaClassImpl metaClass) {
+        classByName.put(name, metaClass);
+        classByClass.put(javaClass, metaClass);
     }
 }

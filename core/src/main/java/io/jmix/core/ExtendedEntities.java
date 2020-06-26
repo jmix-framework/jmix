@@ -16,15 +16,24 @@
 
 package io.jmix.core;
 
+import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.annotation.ReplaceEntity;
+import io.jmix.core.entity.annotation.ReplacedByEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.entity.annotation.ReplacedByEntity;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.Session;
+import io.jmix.core.metamodel.model.impl.ClassRange;
+import io.jmix.core.metamodel.model.impl.MetaClassImpl;
+import io.jmix.core.metamodel.model.impl.MetaPropertyImpl;
+import io.jmix.core.metamodel.model.impl.SessionImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,22 +45,60 @@ public class ExtendedEntities {
 
     public static final String NAME = "core_ExtendedEntities";
 
-    @Autowired
     protected Metadata metadata;
 
     protected Map<Class, MetaClass> replacedMetaClasses = new HashMap<>();
 
-    /**
-     * Default constructor used by container at runtime and in server-side integration tests.
-     */
-    public ExtendedEntities() {
-    }
-
-    /**
-     * Constructor used in client-side tests.
-     */
+    @Autowired
     public ExtendedEntities(Metadata metadata) {
         this.metadata = metadata;
+        replaceExtendedMetaClasses();
+    }
+
+    protected void replaceExtendedMetaClasses() {
+        Session session = metadata.getSession();
+        List<Pair<MetaClass, MetaClass>> replaceMap = new ArrayList<>();
+        for (MetaClass metaClass : session.getClasses()) {
+            MetaClass effectiveMetaClass = session.getClass(getEffectiveClass(metaClass));
+
+            if (effectiveMetaClass != metaClass) {
+                replaceMap.add(new Pair<>(metaClass, effectiveMetaClass));
+            }
+
+            for (MetaProperty metaProperty : metaClass.getOwnProperties()) {
+                MetaPropertyImpl propertyImpl = (MetaPropertyImpl) metaProperty;
+
+                // replace domain
+                Class effectiveDomainClass = getEffectiveClass(metaProperty.getDomain());
+                MetaClass effectiveDomainMeta = session.getClass(effectiveDomainClass);
+                if (metaProperty.getDomain() != effectiveDomainMeta) {
+                    propertyImpl.setDomain(effectiveDomainMeta);
+                }
+
+                if (metaProperty.getRange().isClass()) {
+                    // replace range class
+                    ClassRange range = (ClassRange) metaProperty.getRange();
+
+                    Class effectiveRangeClass = getEffectiveClass(range.asClass());
+                    MetaClass effectiveRangeMeta = session.getClass(effectiveRangeClass);
+                    if (effectiveRangeMeta != range.asClass()) {
+                        ClassRange newRange = new ClassRange(effectiveRangeMeta);
+                        newRange.setCardinality(range.getCardinality());
+                        newRange.setOrdered(range.isOrdered());
+
+                        ((MetaPropertyImpl) metaProperty).setRange(newRange);
+                    }
+                }
+            }
+        }
+
+        for (Pair<MetaClass, MetaClass> replace : replaceMap) {
+            MetaClass replacedMetaClass = replace.getFirst();
+            registerReplacedMetaClass(replacedMetaClass);
+
+            MetaClassImpl effectiveMetaClass = (MetaClassImpl) replace.getSecond();
+            ((SessionImpl) session).registerClass(replacedMetaClass.getName(), replacedMetaClass.getJavaClass(), effectiveMetaClass);
+        }
     }
 
     /**

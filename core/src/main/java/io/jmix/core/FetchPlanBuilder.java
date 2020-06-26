@@ -18,12 +18,12 @@ package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -63,7 +63,7 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlan build() {
-        FetchPlan view = new FetchPlan(entityClass, systemProperties);
+        FetchPlan view = new FetchPlan(metaClass.getJavaClass(), systemProperties);
         for (String property : properties) {
             FetchPlanBuilder builder = builders.get(property);
             if (builder == null) {

@@ -17,10 +17,21 @@
 package io.jmix.autoconfigure.core;
 
 import io.jmix.core.CoreConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 
 @Configuration
 @Import({CoreConfiguration.class})
 public class CoreAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(type = "org.springframework.scripting.ScriptEvaluator")
+    public ScriptEvaluator scriptEvaluator() {
+        return new GroovyScriptEvaluator();
+    }
+
 }

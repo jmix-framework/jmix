@@ -31,11 +31,12 @@ import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.ui.UiConfiguration;
 import org.springframework.context.annotation.*;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -92,5 +93,10 @@ public class CoreTestConfiguration {
     @Bean
     TestAppContextLifecycleListener testAppContextLifecycleListener() {
         return new TestAppContextLifecycleListener();
+    }
+
+    @Bean
+    public ScriptEvaluator scriptEvaluator() {
+        return new GroovyScriptEvaluator();
     }
 }

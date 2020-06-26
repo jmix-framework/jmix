@@ -36,6 +36,9 @@ public class CubaMetadata extends io.jmix.core.impl.MetadataImpl implements Meta
     @Autowired
     protected ViewRepository viewRepository;
 
+    @Autowired
+    protected ExtendedEntities extendedEntities;
+
     public CubaMetadata(MetadataLoader metadataLoader) {
         super(metadataLoader);
     }

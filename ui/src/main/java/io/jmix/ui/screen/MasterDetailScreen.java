@@ -489,7 +489,7 @@ public abstract class MasterDetailScreen<T extends Entity> extends StandardLooku
                     .fetchPlan(fetchPlan)
                     .dynamicAttributes(loadDynamicAttributes)
                     .one();
-            getBrowseContainer().setItem(reloadedItem);
+            getBrowseContainer().replaceItem(reloadedItem);
         }
 
         disableEditControls();

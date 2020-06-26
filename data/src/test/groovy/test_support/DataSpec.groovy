@@ -61,5 +61,16 @@ class DataSpec extends Specification {
         jdbc.update('delete from TEST_GFOO')
         jdbc.update('delete from TEST_NFOO')
         jdbc.update('delete from TEST_NGFOO')
+
+        jdbc.update('delete from EXTTEST_DRIVER_ALLOC')
+        jdbc.update('delete from EXTTEST_DRIVER')
+        jdbc.update('delete from EXTTEST_DRIVER_CALLSIGN')
+        jdbc.update('delete from EXTTEST_SAMPLE_PLATFORM_ENTITY')
+        jdbc.update('delete from EXTTEST_PLANT_MODEL_LINK')
+        jdbc.update('delete from EXTTEST_MODEL')
+        jdbc.update('delete from EXTTEST_PLANT')
+        jdbc.update('delete from EXTTEST_EXT_DOC')
+        jdbc.update('delete from EXTTEST_DOC')
+        jdbc.update('delete from EXTTEST_CARD')
     }
 }

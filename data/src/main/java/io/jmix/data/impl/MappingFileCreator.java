@@ -17,11 +17,10 @@
 package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.entity.annotation.ReplaceEntity;
-import io.jmix.data.persistence.OrmXmlPostProcessor;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.common.util.ReflectionHelper;
-import org.apache.commons.io.IOUtils;
+import io.jmix.core.entity.annotation.ReplaceEntity;
+import io.jmix.data.persistence.OrmXmlPostProcessor;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
 import org.slf4j.Logger;
@@ -241,14 +240,10 @@ class MappingFileCreator {
         File file = new File(dir, "orm.xml");
         log.info("Creating file " + file);
 
-        OutputStream os = null;
-        try {
-            os = new FileOutputStream(file);
+        try (OutputStream os = new FileOutputStream(file)) {
             Dom4j.writeDocument(doc, true, os);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(os);
+            throw new RuntimeException("Cannot write orm.xml", e);
         }
         return file;
     }

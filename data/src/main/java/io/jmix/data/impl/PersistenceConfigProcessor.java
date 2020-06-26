@@ -17,12 +17,14 @@
 package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.Dom4j;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.core.impl.scanning.JpaConverterDetector;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.PersistenceXmlPostProcessor;
 import org.dom4j.Document;
@@ -30,16 +32,16 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Generates a working persistence.xml file combining classes and properties from a set of given persistence.xml files,
@@ -52,16 +54,18 @@ public class PersistenceConfigProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(PersistenceConfigProcessor.class);
 
+    private ExtendedEntities extendedEntities;
     protected DbmsSpecifics dbmsSpecifics;
     private JmixModulesClasspathScanner classpathScanner;
     protected Environment environment;
     protected Metadata metadata;
 
     @Autowired
-    public PersistenceConfigProcessor(Environment environment, Metadata metadata, DbmsSpecifics dbmsSpecifics,
-                                      JmixModulesClasspathScanner classpathScanner) {
+    public PersistenceConfigProcessor(Environment environment, Metadata metadata, ExtendedEntities extendedEntities,
+                                      DbmsSpecifics dbmsSpecifics, JmixModulesClasspathScanner classpathScanner) {
         this.environment = environment;
         this.metadata = metadata;
+        this.extendedEntities = extendedEntities;
         this.dbmsSpecifics = dbmsSpecifics;
         this.classpathScanner = classpathScanner;
     }
@@ -69,11 +73,24 @@ public class PersistenceConfigProcessor {
     public String create(String storeName) {
         String fileName = getFileName(storeName);
 
-        List<String> classes = metadata.getClasses().stream()
-                .filter(metaClass -> Boolean.TRUE.equals(metaClass.getAnnotations().get("jmix.orm"))
-                        && metaClass.getStore().getName().equals(storeName))
-                .map(metaClass -> metaClass.getJavaClass().getName())
-                .collect(Collectors.toList());
+        List<String> classes = new ArrayList<>();
+
+        for (MetaClass metaClass : metadata.getClasses()) {
+            if (Boolean.TRUE.equals(metaClass.getAnnotations().get("jmix.orm"))
+                    && metaClass.getStore().getName().equals(storeName)) {
+                MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);
+                if (originalMetaClass != null) {
+                    // add all intermediate ancestors in case of multi-level extension
+                    MetaClass ancestor = metaClass.getAncestor();
+                    while (ancestor != null && !ancestor.equals(originalMetaClass)) {
+                        classes.add(ancestor.getJavaClass().getName());
+                        ancestor = ancestor.getAncestor();
+                    }
+                    classes.add(originalMetaClass.getJavaClass().getName());
+                }
+                classes.add(metaClass.getJavaClass().getName());
+            }
+        }
 
         classes.addAll(classpathScanner.getClassNames(JpaConverterDetector.class));
 
@@ -90,12 +107,11 @@ public class PersistenceConfigProcessor {
         }
         outFile.getParentFile().mkdirs();
 
-        boolean ormXmlCreated = true;
         String disableOrmGenProp = environment.getProperty("jmix.disableOrmXmlGeneration");
         if (!Boolean.parseBoolean(disableOrmGenProp)) {
             MappingFileCreator mappingFileCreator =
                     new MappingFileCreator(environment, classes, properties, outFile.getParentFile());
-            ormXmlCreated = mappingFileCreator.create();
+            mappingFileCreator.create();
         }
 
         Document doc = DocumentFactory.getInstance().createDocument();
@@ -108,10 +124,6 @@ public class PersistenceConfigProcessor {
         puElem.addAttribute("name", storeName);
 
         puElem.addElement("provider").setText("io.jmix.data.impl.JmixPersistenceProvider");
-
-        if (ormXmlCreated) {
-            puElem.addElement("mapping-file").setText("orm.xml");
-        }
 
         for (String className : classes) {
             puElem.addElement("class").setText(className);
@@ -144,8 +156,8 @@ public class PersistenceConfigProcessor {
     }
 
     protected String getFileName(String storeName) {
-        String suffix = Stores.isMain(storeName) ? "" : "-" + storeName;
-        return environment.getProperty("jmix.core.workDir") + "/META-INF/persistence" + suffix + ".xml";
+        String dir = Stores.isMain(storeName) ? "persistence" : storeName + "-persistence";
+        return environment.getProperty("jmix.core.workDir") + "/" + dir + "/META-INF/persistence.xml";
     }
 
     protected void postProcess(Document document) {

@@ -27,8 +27,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scripting.ScriptEvaluator;
-import org.springframework.scripting.support.StandardScriptEvaluator;
 
 import java.util.Collections;
 
@@ -37,13 +35,6 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DynAttrConfiguration.class, UiConfiguration.class})
 public class DynAttrUiConfiguration {
-
-    @Bean
-    public ScriptEvaluator scriptEvaluator() {
-        StandardScriptEvaluator scriptEvaluator = new StandardScriptEvaluator();
-        scriptEvaluator.setEngineName("groovy");
-        return scriptEvaluator;
-    }
 
     @Bean("dynattr_DynAttrUiUiControllers")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,

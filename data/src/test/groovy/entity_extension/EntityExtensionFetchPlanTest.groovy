@@ -17,8 +17,8 @@
 package entity_extension
 
 import io.jmix.core.FetchPlan
-import io.jmix.core.FetchPlanBuilder
 import io.jmix.core.FetchPlanRepository
+import io.jmix.core.FetchPlans
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Unroll
 import test_support.DataSpec
@@ -32,9 +32,12 @@ class EntityExtensionFetchPlanTest extends DataSpec {
     @Autowired
     FetchPlanRepository fetchPlanRepository
 
+    @Autowired
+    FetchPlans fetchPlans
+
     def "fetch plan builder"() {
         when:
-        def fetchPlan = FetchPlanBuilder.of(Driver).addAll('name', 'info').build()
+        def fetchPlan = fetchPlans.builder(Driver).addAll('name', 'info').build()
 
         then:
         fetchPlan.entityClass == ExtDriver

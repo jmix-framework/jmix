@@ -16,10 +16,7 @@
 
 package entity_manager;
 
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.CoreConfiguration;
+import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.event.EntityChangedEvent;
@@ -70,6 +67,9 @@ public class EntityManagerTest {
 
     @Autowired
     EntityStates entityStates;
+
+    @Autowired
+    FetchPlans fetchPlans;
 
     @Autowired
     TestCustomerListener customerListener;
@@ -152,7 +152,7 @@ public class EntityManagerTest {
         });
 
         // when:
-        FetchPlan fetchPlan = FetchPlanBuilder.of(Customer.class).add("name").build();
+        FetchPlan fetchPlan = fetchPlans.builder(Customer.class).add("name").build();
         fetchPlan.setLoadPartialEntities(true);
 
         Customer customer1 = entityManager.find(Customer.class, customer.getId(), PersistenceHints.builder().withFetchPlan(fetchPlan).build());

@@ -16,13 +16,9 @@
 
 package entity_states
 
-import io.jmix.core.DataManager
-import io.jmix.core.EntityStates
-import io.jmix.core.FetchPlan
-import io.jmix.core.FetchPlanBuilder
-import io.jmix.core.Id
-import io.jmix.core.SaveContext
+import io.jmix.core.*
 import org.apache.commons.lang3.RandomStringUtils
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
 import test_support.entity.sales.Order
@@ -33,8 +29,6 @@ import test_support.entity.sec.Role
 import test_support.entity.sec.User
 import test_support.entity.sec.UserRole
 
-import org.springframework.beans.factory.annotation.Autowired
-
 class EntityStatesTest extends DataSpec {
 
     @Autowired
@@ -43,6 +37,8 @@ class EntityStatesTest extends DataSpec {
     EntityStates entityStates
     @Autowired
     JdbcTemplate jdbcTemplate
+    @Autowired
+    FetchPlans fetchPlans
 
     void cleanup() {
         jdbcTemplate.update('delete from SALES_ORDER_LINE')
@@ -61,7 +57,7 @@ class EntityStatesTest extends DataSpec {
         user.userRoles = [userRole1, userRole2]
         dataManager.save(user, userRole1, userRole2)
 
-        def fetchPlan = FetchPlanBuilder.of(User).addFetchPlan(FetchPlan.LOCAL)
+        def fetchPlan = fetchPlans.builder(User).addFetchPlan(FetchPlan.LOCAL)
                 .addAll("group.name", "userRoles.role.name").build()
 
         User user1 = dataManager.load(User).id(user.id).fetchPlan(fetchPlan).one()

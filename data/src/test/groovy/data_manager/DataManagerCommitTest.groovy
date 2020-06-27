@@ -43,6 +43,9 @@ class DataManagerCommitTest extends DataSpec {
     @Autowired
     JdbcTemplate jdbcTemplate
 
+    @Autowired
+    FetchPlans fetchPlans
+
     TestAppEntity appEntity
     TestAppEntityItem appEntityItem
 
@@ -65,7 +68,7 @@ class DataManagerCommitTest extends DataSpec {
     def "test view after commit"() {
         when:
 
-        def view = FetchPlanBuilder.of(TestAppEntity)
+        def view = fetchPlans.builder(TestAppEntity)
                 .add("createTs")
                 .add("items.createTs")
                 .build()
@@ -83,7 +86,7 @@ class DataManagerCommitTest extends DataSpec {
 
         def entity = new TestSecondAppEntity(name: 'secondAppEntity', appEntity: loadedAppEntity)
 
-        def commitView = FetchPlanBuilder.of(TestSecondAppEntity)
+        def commitView = fetchPlans.builder(TestSecondAppEntity)
                 .add("name")
                 .add("appEntity.createTs")
                 .add("appEntity.items.name")
@@ -105,7 +108,7 @@ class DataManagerCommitTest extends DataSpec {
         orderChangedEventListener.enabled = true
 
         when:
-        def fetchPlan = FetchPlanBuilder.of(Order).addFetchPlan(FetchPlan.LOCAL).add('customer.name').build()
+        def fetchPlan = fetchPlans.builder(Order).addFetchPlan(FetchPlan.LOCAL).add('customer.name').build()
         def committedOrder = dataManager.save(new SaveContext().saving(order, fetchPlan)).get(order)
 
         then:

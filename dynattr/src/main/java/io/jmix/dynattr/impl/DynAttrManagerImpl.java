@@ -69,6 +69,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
     protected DynAttrMetadata dynAttrMetadata;
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    FetchPlans fetchPlans;
 
     protected String dynamicAttributesStore = Stores.MAIN;
 
@@ -290,7 +292,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
     protected List<CategoryAttributeValue> findValuesByEntityIds(MetaClass metaClass, List<Object> entityIds) {
         EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
 
-        FetchPlan fetchPlan = FetchPlanBuilder.of(CategoryAttributeValue.class)
+        FetchPlan fetchPlan = fetchPlans.builder(CategoryAttributeValue.class)
                 .add("categoryAttribute", builder -> {
                     builder.addFetchPlan(FetchPlan.LOCAL);
                     builder.add("defaultEntity", FetchPlan.LOCAL);
@@ -378,7 +380,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 .map(BaseUuidEntity::getId)
                 .collect(Collectors.toList());
 
-        FetchPlan fetchPlan = FetchPlanBuilder.of(CategoryAttributeValue.class)
+        FetchPlan fetchPlan = fetchPlans.builder(CategoryAttributeValue.class)
                 .addFetchPlan(FetchPlan.LOCAL)
                 .add("childValues", FetchPlan.LOCAL)
                 .add("categoryAttribute",

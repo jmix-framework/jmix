@@ -68,6 +68,8 @@ public class CategoryEdit extends StandardEditor<Category> {
     protected CoreProperties coreProperties;
     @Autowired
     protected ExtendedEntities extendedEntities;
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     @Autowired
     protected ComboBox<MetaClass> entityTypeField;
@@ -109,7 +111,7 @@ public class CategoryEdit extends StandardEditor<Category> {
     @Subscribe("isDefaultField")
     protected void onIsDefaultFieldValueChange(HasValue.ValueChangeEvent<Boolean> event) {
         if (Boolean.TRUE.equals(event.getValue())) {
-            FetchPlan fetchPlan = FetchPlanBuilder.of(Category.class)
+            FetchPlan fetchPlan = fetchPlans.builder(Category.class)
                     .add("isDefault")
                     .build();
             LoadContext<Category> lc = new LoadContext<>(Category.class)

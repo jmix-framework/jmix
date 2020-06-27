@@ -50,6 +50,8 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     protected Metadata metadata;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
+    @Autowired
+    FetchPlans fetchPlans;
 
     protected volatile Cache cache;
 
@@ -119,7 +121,7 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
                 .execute(transactionStatus -> {
                     EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
 
-                    FetchPlan fetchPlan = FetchPlanBuilder.of(Category.class)
+                    FetchPlan fetchPlan = fetchPlans.builder(Category.class)
                             .addFetchPlan(FetchPlan.LOCAL)
                             .add("categoryAttrs", builder -> {
                                 builder.addFetchPlan(FetchPlan.LOCAL);

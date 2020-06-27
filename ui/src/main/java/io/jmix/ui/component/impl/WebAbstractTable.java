@@ -74,7 +74,6 @@ import io.jmix.ui.settings.component.SettingsWrapperImpl;
 import io.jmix.ui.settings.component.TableSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.TableSettingsBinder;
-import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShowInfoAction;
 import io.jmix.ui.theme.ThemeConstants;
@@ -143,6 +142,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected DataComponents dataComponents;
     protected FetchPlanRepository viewRepository;
     protected UserSettingsTools userSettingsTools;
+    protected EntityStates entityStates;
 
     protected Locale locale;
 
@@ -270,6 +270,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Autowired(required = false)
     public void setUserSettingsTools(UserSettingsTools userSettingsTools) {
         this.userSettingsTools = userSettingsTools;
+    }
+
+    @Autowired
+    public void setEntityStates(EntityStates entityStates) {
+        this.entityStates = entityStates;
     }
 
     @Override
@@ -3098,7 +3103,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 break;
             }
 
-            if (!PersistenceHelper.isLoaded(currentInstance, property)) {
+            if (!entityStates.isLoaded(currentInstance, property)) {
                 LoggerFactory.getLogger(WebAbstractTable.class)
                         .warn("Ignored unfetched attribute {} of instance {} in Table cell",
                                 property, currentInstance);

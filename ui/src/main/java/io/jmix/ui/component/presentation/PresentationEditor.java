@@ -16,7 +16,6 @@
 package io.jmix.ui.component.presentation;
 
 import com.vaadin.ui.*;
-import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.BaseUser;
@@ -120,8 +119,6 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         root.setSpacing(true);
         root.setMargin(false);
         setContent(root);
-
-        messages = AppBeans.get(Messages.class);
 
         nameField = new TextField(messages.getMessage("PresentationsEditor.name"));
         nameField.setWidth(theme.get("cuba.web.PresentationEditor.name.width"));

@@ -17,6 +17,7 @@
 package io.jmix.ui.navigation;
 
 import com.vaadin.server.Page;
+import io.jmix.core.EntityStates;
 import io.jmix.core.Events;
 import io.jmix.core.Metadata;
 import io.jmix.core.Entity;
@@ -32,7 +33,6 @@ import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.sys.ControllerUtils;
-import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.sys.UiDescriptorUtils;
 import io.jmix.ui.sys.WebScreens;
 import io.jmix.ui.widget.client.ui.AppUIConstants;
@@ -68,6 +68,8 @@ public class WebUrlRouting implements UrlRouting {
     protected Metadata metadata;
     @Autowired
     protected UrlTools urlTools;
+    @Autowired
+    protected EntityStates entityStates;
 
     protected AppUI ui;
 
@@ -257,7 +259,7 @@ public class WebUrlRouting implements UrlRouting {
         if (isEditor(screen)) {
             Entity editedEntity = ((EditorScreen) screen).getEditedEntity();
             if (editedEntity != null) {
-                if (PersistenceHelper.isNew(editedEntity)) {
+                if (entityStates.isNew(editedEntity)) {
                     params.put("id", NEW_ENTITY_ID);
                 } else {
                     Object entityId = EntityValues.getId(editedEntity);
@@ -522,7 +524,7 @@ public class WebUrlRouting implements UrlRouting {
             }
 
             Map<String, String> params = new LinkedHashMap<>(1 + urlParams.size());
-            if (PersistenceHelper.isNew(entity)) {
+            if (entityStates.isNew(entity)) {
                 params.put("id", NEW_ENTITY_ID);
             } else {
                 params.put("id", UrlIdSerializer.serializeId(EntityValues.getId(entity)));

@@ -16,6 +16,7 @@
 
 package messages
 
+import spock.lang.Unroll
 import test_support.addon1.TestAddon1Configuration
 import test_support.AppContextTestExecutionListener
 import test_support.app.TestAppConfiguration
@@ -29,13 +30,13 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
+import static test_support.TestLocales.*
+
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MessageSourceTest extends Specification {
 
-    static final LOC_EN = Locale.ENGLISH
-    static final Locale LOC_RU = Locale.forLanguageTag('ru')
 
     @Autowired
     MessageSource messageSource
@@ -43,17 +44,23 @@ class MessageSourceTest extends Specification {
     @Autowired
     Environment environment
 
+    @Unroll
     def "messages in module base package"() {
         expect:
 
-        messageSource.getMessage('io.jmix.core.entity/StandardEntity.version', null, LOC_EN) == 'Version'
-        messageSource.getMessage('io.jmix.core.entity/StandardEntity.version', null, LOC_RU) == 'Версия'
+        messageSource.getMessage(code, null, locale) == expectedMessage
 
-        messageSource.getMessage('test_support.addon1.entity/TestAddon1Entity.name', null, LOC_EN) == 'Name'
-        messageSource.getMessage('test_support.addon1.entity/TestAddon1Entity.name', null, LOC_RU) == 'Наименование'
+        where:
 
-        messageSource.getMessage('test_support.app.entity/Pet.name', null, LOC_EN) == 'Name'
-        messageSource.getMessage('test_support.app.entity/Pet.name', null, LOC_RU) == 'Имя'
+        code                                               | locale || expectedMessage
+        'io.jmix.core.entity/StandardEntity.version'       | LOC_EN || 'Version'
+        'io.jmix.core.entity/StandardEntity.version'       | LOC_RU || 'Версия'
+
+        'test_support.addon1.entity/TestAddon1Entity.name' | LOC_EN || 'Name'
+        'test_support.addon1.entity/TestAddon1Entity.name' | LOC_RU || 'Наименование'
+
+        'test_support.app.entity/Pet.name'                 | LOC_EN || 'Name'
+        'test_support.app.entity/Pet.name'                 | LOC_RU || 'Имя'
     }
 
     def "message override"() {
@@ -72,9 +79,30 @@ class MessageSourceTest extends Specification {
     def "messages override in conf"() {
         setup:
 
+        File file = overrideConfigurationWith(
+            '/test_support/app/messages.properties',
+            'messageToOverrideByConf', 'conf value'
+        )
+
+        expect:
+
+        messageSource.getMessage('messageToOverrideByConf', null, LOC_EN) == 'conf value'
+
+        cleanup:
+
+        file.delete()
+        clearMessageSourceCache()
+    }
+
+    protected clearMessageSourceCache() {
+        ((ReloadableResourceBundleMessageSource) messageSource).clearCache()
+    }
+
+    protected File overrideConfigurationWith(String configurationFile, String overrideAttribute, String overrideValue) {
         def properties = new Properties()
-        properties.load(new InputStreamReader(getClass().getResourceAsStream('/test_support/app/messages.properties'), 'UTF-8'))
-        properties.setProperty('messageToOverrideByConf', 'conf value')
+        properties.load(new InputStreamReader(getClass().getResourceAsStream(configurationFile), 'UTF-8'))
+
+        properties.setProperty(overrideAttribute , overrideValue)
         def dir = new File(environment.getProperty('jmix.core.confDir'), 'test_support/app')
         dir.mkdirs()
         def file = new File(dir, 'messages.properties')
@@ -84,16 +112,8 @@ class MessageSourceTest extends Specification {
         } finally {
             stream.close()
         }
-        ((ReloadableResourceBundleMessageSource) messageSource).clearCache()
-
-        expect:
-
-        messageSource.getMessage('messageToOverrideByConf', null, LOC_EN) == 'conf value'
-
-        cleanup:
-
-        file.delete()
-        ((ReloadableResourceBundleMessageSource) messageSource).clearCache()
+        clearMessageSourceCache()
+        file
     }
 }
 

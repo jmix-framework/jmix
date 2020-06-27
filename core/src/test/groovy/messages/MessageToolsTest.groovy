@@ -16,6 +16,7 @@
 
 package messages
 
+import test_support.TestLocales
 import test_support.addon1.TestAddon1Configuration
 import test_support.AppContextTestExecutionListener
 import test_support.app.TestAppConfiguration
@@ -29,9 +30,13 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
+import static test_support.TestLocales.*
+
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(
+    value = AppContextTestExecutionListener,
+    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+)
 class MessageToolsTest extends Specification {
 
     @Autowired
@@ -39,9 +44,6 @@ class MessageToolsTest extends Specification {
 
     @Autowired
     Metadata metadata
-
-    static final LOC_EN = Locale.ENGLISH
-    static final Locale LOC_RU = Locale.forLanguageTag('ru')
 
     def "test loadString"() {
         expect:

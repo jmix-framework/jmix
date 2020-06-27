@@ -38,6 +38,8 @@ public class InspectorFetchPlanBuilder {
     protected Metadata metadata;
     @Autowired
     private MetadataTools metadataTools;
+    @Autowired
+    FetchPlans fetchPlans;
 
     private final FetchPlanBuilder fetchPlanBuilder;
 
@@ -54,7 +56,7 @@ public class InspectorFetchPlanBuilder {
 
     protected InspectorFetchPlanBuilder(Class<? extends Entity> entityClass) {
         this.entityClass = entityClass;
-        this.fetchPlanBuilder = FetchPlanBuilder.of(entityClass);
+        this.fetchPlanBuilder = fetchPlans.builder(entityClass);
     }
 
     @PostConstruct

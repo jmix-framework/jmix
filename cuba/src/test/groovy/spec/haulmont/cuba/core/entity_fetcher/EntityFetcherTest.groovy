@@ -22,13 +22,12 @@ import com.haulmont.cuba.core.model.Many2ManyB
 import com.haulmont.cuba.core.model.Many2ManyRef
 import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.DataManager
-import io.jmix.core.FetchPlanBuilder
+import io.jmix.core.FetchPlans
 import io.jmix.core.Id
 import io.jmix.data.EntityFetcher
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class EntityFetcherTest extends CoreTestSpecification {
 
@@ -40,6 +39,8 @@ class EntityFetcherTest extends CoreTestSpecification {
     private Persistence persistence
     @Autowired
     private TestSupport testSupport
+    @Autowired
+    FetchPlans fetchPlans
 
     def "fetching entity with many-to-many collection containing detached instances"() {
         def ref = new Many2ManyRef(name: 'ref1')
@@ -55,7 +56,7 @@ class EntityFetcherTest extends CoreTestSpecification {
         persistence.callInTransaction { em ->
             em.persist(a2)
 
-            entityFetcher.fetch(a2, FetchPlanBuilder.of(Many2ManyA).addAll('collectionOfB.collectionOfA.ref').build())
+            entityFetcher.fetch(a2, fetchPlans.builder(Many2ManyA).addAll('collectionOfB.collectionOfA.ref').build())
             return a2
         }
 

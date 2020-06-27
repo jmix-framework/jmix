@@ -16,21 +16,33 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.AppBeans;
-import io.jmix.core.Resources;
-import io.jmix.ui.component.ClasspathResource;
 import com.vaadin.server.StreamResource;
+import io.jmix.core.Resources;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.component.ClasspathResource;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Component(ClasspathResource.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebClasspathResource extends WebAbstractStreamSettingsResource implements WebResource, ClasspathResource {
+
+    protected Resources resources;
 
     protected String path;
 
     protected String mimeType;
+
+    @Autowired
+    public void setResources(Resources resources) {
+        this.resources = resources;
+    }
 
     @Override
     public ClasspathResource setPath(String path) {
@@ -67,7 +79,7 @@ public class WebClasspathResource extends WebAbstractStreamSettingsResource impl
         }
 
         resource = new StreamResource(() ->
-                AppBeans.get(Resources.class).getResourceAsStream(path), name.toString());
+                resources.getResourceAsStream(path), name.toString());
 
         StreamResource streamResource = (StreamResource) this.resource;
 

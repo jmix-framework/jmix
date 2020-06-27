@@ -17,7 +17,6 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.server.StreamResource;
-import io.jmix.core.AppBeans;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
@@ -25,19 +24,32 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.FileStorageResource;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Component(FileStorageResource.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebFileStorageResource<T> extends WebAbstractStreamSettingsResource
         implements WebResource, FileStorageResource<T> {
 
     protected static final String FILE_STORAGE_EXCEPTION_MESSAGE = "Can't create FileStorageResource. " +
             "An error occurred while obtaining a file from the storage";
 
+    protected FileStorageLocator fileStorageLocator;
+
     protected T fileReference;
     protected FileStorage<T, ?> fileStorage;
 
     protected String mimeType;
+
+    @Autowired
+    public void setFileStorageLocator(FileStorageLocator fileStorageLocator) {
+        this.fileStorageLocator = fileStorageLocator;
+    }
 
     @Override
     public FileStorageResource<T> setFileReference(T fileReference) {
@@ -75,7 +87,7 @@ public class WebFileStorageResource<T> extends WebAbstractStreamSettingsResource
     @SuppressWarnings("unchecked")
     protected FileStorage<T, ?> getFileStorage() {
         if (fileStorage == null) {
-            FileStorage<?, ?> defaultFileStorage = AppBeans.get(FileStorageLocator.class).getDefault();
+            FileStorage<?, ?> defaultFileStorage = fileStorageLocator.getDefault();
             if (!defaultFileStorage.getReferenceType().isAssignableFrom(fileReference.getClass())) {
                 throw new IllegalArgumentException("Reference type is not compatible with the default file storage");
             }

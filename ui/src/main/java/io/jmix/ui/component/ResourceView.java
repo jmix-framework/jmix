@@ -51,16 +51,6 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
     <R extends Resource> R setSource(Class<R> type);
 
     /**
-     * Creates resource implementation by its type.
-     *
-     * @param type resource class to be created
-     * @param <R> {@link Resource} inheritor
-     *
-     * @return new resource instance with given type
-     */
-    <R extends Resource> R createResource(Class<R> type);
-
-    /**
      * Sets this component's alternate text that can be presented instead of the component's normal content for
      * accessibility purposes.
      *

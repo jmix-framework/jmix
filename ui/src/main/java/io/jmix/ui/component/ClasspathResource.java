@@ -19,12 +19,15 @@ package io.jmix.ui.component;
 /**
  * A resource that is located in classpath with the given <code>path</code>.
  * <p>
- * For obtaining resources the {@link io.jmix.core.global.Resources} infrastructure interface is using.
+ * For obtaining resources the {@link io.jmix.core.Resources} infrastructure interface is using.
  * <p>
  * For example if your resource is located in the web module and has the following path: "com/company/app/web/images/image.png",
  * ClassPathResource's path should be: "/com/company/app/web/images/image.png".
  */
 public interface ClasspathResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
+
+    String NAME = "ui_ClasspathResource";
+
     ClasspathResource setPath(String path);
 
     String getPath();

@@ -22,6 +22,9 @@ import java.io.File;
  * A resource that is stored in the file system as the given <code>File</code>.
  */
 public interface FileResource extends Resource, ResourceView.HasStreamSettings {
+
+    String NAME = "ui_FileResource";
+
     FileResource setFile(File file);
 
     File getFile();

@@ -20,10 +20,15 @@ import com.vaadin.server.ExternalResource;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.RelativePathResource;
 import io.jmix.ui.sys.ControllerUtils;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
+@Component(RelativePathResource.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebRelativePathResource extends WebAbstractResource implements WebResource, RelativePathResource {
 
     protected String path;

@@ -16,12 +16,17 @@
 
 package io.jmix.ui.component.impl;
 
+import com.vaadin.server.ExternalResource;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.UrlResource;
-import com.vaadin.server.ExternalResource;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
+@Component(UrlResource.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebUrlResource extends WebAbstractResource implements WebResource, UrlResource {
 
     protected URL url;

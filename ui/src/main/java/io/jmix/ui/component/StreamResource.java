@@ -23,6 +23,9 @@ import java.util.function.Supplier;
  * A resource provided to the client directly by the application.
  */
 public interface StreamResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
+
+    String NAME = "ui_StreamResource";
+
     StreamResource setStreamSupplier(Supplier<InputStream> streamSupplier);
 
     Supplier<InputStream> getStreamSupplier();

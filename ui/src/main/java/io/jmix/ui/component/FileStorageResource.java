@@ -20,6 +20,9 @@ package io.jmix.ui.component;
  * A resource that can be obtained from the <code>FileStorage</code> using the given file reference.
  */
 public interface FileStorageResource<T> extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
+
+    String NAME = "ui_FileStorageResource";
+
     FileStorageResource<T> setFileReference(T fileReference);
 
     T getFileReference();

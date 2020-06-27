@@ -16,36 +16,18 @@
 
 package io.jmix.ui.component.impl;
 
-import com.google.common.collect.ImmutableMap;
-import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.component.*;
 import com.vaadin.shared.util.SharedUtil;
 import com.vaadin.ui.AbstractEmbedded;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.component.Resource;
+import io.jmix.ui.component.ResourceView;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class WebAbstractResourceView<T extends AbstractEmbedded> extends WebAbstractComponent<T>
         implements ResourceView {
 
     protected Resource resource;
-
-    protected static final Map<Class<? extends Resource>, Class<? extends Resource>> resourcesClasses;
-
-    static {
-        ImmutableMap.Builder<Class<? extends Resource>, Class<? extends Resource>> builder =
-                new ImmutableMap.Builder<>();
-
-        builder.put(UrlResource.class, WebUrlResource.class);
-        builder.put(ClasspathResource.class, WebClasspathResource.class);
-        builder.put(ThemeResource.class, WebThemeResource.class);
-        builder.put(FileStorageResource.class, WebFileStorageResource.class);
-        builder.put(FileResource.class, WebFileResource.class);
-        builder.put(StreamResource.class, WebStreamResource.class);
-        builder.put(RelativePathResource.class, WebRelativePathResource.class);
-
-        resourcesClasses = builder.build();
-    }
 
     protected Runnable resourceUpdateHandler;
 
@@ -92,26 +74,11 @@ public abstract class WebAbstractResourceView<T extends AbstractEmbedded> extend
 
     @Override
     public <R extends Resource> R setSource(Class<R> type) {
-        R resource = createResource(type);
+        R resource = beanLocator.getPrototype(type);
 
         updateValue(resource);
 
         return resource;
-    }
-
-    @Override
-    public <R extends Resource> R createResource(Class<R> type) {
-        Class<? extends Resource> resourceClass = resourcesClasses.get(type);
-        if (resourceClass == null) {
-            throw new IllegalStateException(String.format("Can't find resource class for '%s'", type.getTypeName()));
-        }
-
-        try {
-            return type.cast(resourceClass.newInstance());
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(String.format("Error creating the '%s' resource instance",
-                    type.getTypeName()), e);
-        }
     }
 
     @Override

@@ -18,9 +18,14 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.FileResource;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 
+@Component(FileResource.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebFileResource extends WebAbstractStreamSettingsResource implements WebResource, FileResource {
 
     protected File file;

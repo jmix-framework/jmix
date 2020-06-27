@@ -129,12 +129,12 @@ public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements I
         }
 
         if (resourceObject instanceof byte[]) {
-            return createResource(StreamResource.class)
+            return beanLocator.getPrototype(StreamResource.class)
                     .setStreamSupplier(() ->
                             new ByteArrayInputStream((byte[]) resourceObject));
         }
         if (isFileReference(resourceObject)) {
-            return createResource(FileStorageResource.class)
+            return beanLocator.getPrototype(FileStorageResource.class)
                     .setFileReference(resourceObject);
         }
 

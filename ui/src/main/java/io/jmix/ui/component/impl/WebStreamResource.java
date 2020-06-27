@@ -19,11 +19,16 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.StreamResource;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+@Component(StreamResource.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebStreamResource extends WebAbstractStreamSettingsResource implements WebResource, StreamResource {
 
     protected Supplier<InputStream> streamSupplier;

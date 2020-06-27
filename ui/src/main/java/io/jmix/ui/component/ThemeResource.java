@@ -20,6 +20,9 @@ package io.jmix.ui.component;
  * A theme resource, e.g. <code>VAADIN/themes/yourtheme/some/path/image.png</code>.
  */
 public interface ThemeResource extends Resource {
+
+    String NAME = "ui_ThemeResource";
+
     /**
      * @param path path to the theme resource, e.g. "some/path/image.png"
      * @return current ThemeResource instance

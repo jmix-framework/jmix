@@ -18,7 +18,12 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.ThemeResource;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component(ThemeResource.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebThemeResource extends WebAbstractResource implements WebResource, ThemeResource {
 
     protected String path;

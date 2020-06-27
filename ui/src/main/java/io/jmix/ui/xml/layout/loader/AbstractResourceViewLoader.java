@@ -74,7 +74,7 @@ public abstract class AbstractResourceViewLoader<T extends ResourceView> extends
             throw new GuiDevelopmentException("No path provided for the RelativePathResource", context);
         }
 
-        RelativePathResource resource = resultComponent.createResource(RelativePathResource.class);
+        RelativePathResource resource = beanLocator.getPrototype(RelativePathResource.class);
 
         resource.setPath(path);
 
@@ -95,7 +95,7 @@ public abstract class AbstractResourceViewLoader<T extends ResourceView> extends
             throw new GuiDevelopmentException("No url provided for the UrlResource", context);
         }
 
-        UrlResource resource = resultComponent.createResource(UrlResource.class);
+        UrlResource resource = beanLocator.getPrototype(UrlResource.class);
         try {
             resource.setUrl(new URL(url));
 
@@ -118,7 +118,7 @@ public abstract class AbstractResourceViewLoader<T extends ResourceView> extends
             throw new GuiDevelopmentException("No path provided for the ClasspathResource", context);
         }
 
-        ClasspathResource resource = resultComponent.createResource(ClasspathResource.class);
+        ClasspathResource resource = beanLocator.getPrototype(ClasspathResource.class);
 
         resource.setPath(classpathPath);
 
@@ -161,7 +161,7 @@ public abstract class AbstractResourceViewLoader<T extends ResourceView> extends
             throw new GuiDevelopmentException(msg, context);
         }
 
-        FileResource resource = resultComponent.createResource(FileResource.class);
+        FileResource resource = beanLocator.getPrototype(FileResource.class);
 
         resource.setFile(file);
 

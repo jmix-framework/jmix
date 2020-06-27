@@ -58,7 +58,7 @@ public class FluentLoaderViewBuilderTest {
         /*.one()*/;
 
         dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(FetchPlan.MINIMAL).addAll(
+                .view(viewBuilder -> viewBuilder.addFetchPlan(FetchPlan.MINIMAL).addAll(
                         "owner.name",
                         "owner.address.city"))
                 .id(petId)
@@ -74,7 +74,7 @@ public class FluentLoaderViewBuilderTest {
 
         dataManager.load(Pet.class)
                 .query("...")
-                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL).addAll(
+                .view(viewBuilder -> viewBuilder.addFetchPlan(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city"))
         /*.list()*/;
@@ -103,7 +103,7 @@ public class FluentLoaderViewBuilderTest {
 
         //noinspection unchecked
         loadContext = createLoadContext(dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL).addAll(
+                .view(viewBuilder -> viewBuilder.addFetchPlan(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city")));
 
@@ -113,7 +113,7 @@ public class FluentLoaderViewBuilderTest {
 
         //noinspection unchecked
         loadContext = createLoadContext(dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL).addAll(
+                .view(viewBuilder -> viewBuilder.addFetchPlan(FetchPlan.LOCAL).addAll(
                         "owner.name",
                         "owner.address.city")));
 
@@ -134,7 +134,7 @@ public class FluentLoaderViewBuilderTest {
 
         //noinspection unchecked
         loadContext = createLoadContext(dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addView(FetchPlan.LOCAL))
+                .view(viewBuilder -> viewBuilder.addFetchPlan(FetchPlan.LOCAL))
                 .viewProperties(
                         "owner.name",
                         "owner.address.city"));

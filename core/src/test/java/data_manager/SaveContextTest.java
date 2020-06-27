@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -40,12 +41,15 @@ import static org.junit.jupiter.api.Assertions.*;
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public class SaveContextTest {
 
+    @Autowired
+    FetchPlans fetchPlans;
+
     @Test
     public void test() {
         Pet pet = new Pet();
         Owner owner = new Owner();
-        FetchPlan petFetchPlan = FetchPlanBuilder.of(Pet.class).add("name").build();
-        FetchPlan ownerFetchPlan = FetchPlanBuilder.of(Owner.class).add("name").build();
+        FetchPlan petFetchPlan = fetchPlans.builder(Pet.class).add("name").build();
+        FetchPlan ownerFetchPlan = fetchPlans.builder(Owner.class).add("name").build();
         SaveContext ctx;
 
         // when:

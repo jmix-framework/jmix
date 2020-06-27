@@ -28,30 +28,31 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * Builds {@link FetchPlan}s.
+ * <p>
+ * Use {@link FetchPlans} factory to get the builder.
+ */
 @Component(FetchPlanBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FetchPlanBuilder {
 
-    public static final String NAME = "core_ViewBuilder";
+    public static final String NAME = "core_FetchPlanBuilder";
 
     @Autowired
     protected BeanLocator beanLocator;
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
 
     protected Class<? extends Entity> entityClass;
     protected MetaClass metaClass;
     protected Set<String> properties = new LinkedHashSet<>();
     protected Map<String, FetchPlanBuilder> builders = new HashMap<>();
-    protected Map<String, FetchPlan> views = new HashMap<>();
+    protected Map<String, FetchPlan> fetchPlans = new HashMap<>();
     protected Map<String, FetchMode> fetchModes = new HashMap<>();
     protected boolean systemProperties;
-
-    public static FetchPlanBuilder of(Class<? extends Entity> entityClass) {
-        return AppBeans.getPrototype(FetchPlanBuilder.class, entityClass);
-    }
 
     protected FetchPlanBuilder(Class<? extends Entity> entityClass) {
         this.entityClass = entityClass;
@@ -63,26 +64,26 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlan build() {
-        FetchPlan view = new FetchPlan(metaClass.getJavaClass(), systemProperties);
+        FetchPlan fetchPlan = new FetchPlan(metaClass.getJavaClass(), systemProperties);
         for (String property : properties) {
             FetchPlanBuilder builder = builders.get(property);
             if (builder == null) {
-                FetchPlan refView = views.get(property);
+                FetchPlan refView = fetchPlans.get(property);
                 if (refView == null) {
-                    view.addProperty(property);
+                    fetchPlan.addProperty(property);
                 } else {
                     FetchMode fetchMode = fetchModes.get(property);
                     if (fetchMode == null) {
-                        view.addProperty(property, refView);
+                        fetchPlan.addProperty(property, refView);
                     } else {
-                        view.addProperty(property, refView, fetchMode);
+                        fetchPlan.addProperty(property, refView, fetchMode);
                     }
                 }
             } else {
-                view.addProperty(property, builder.build());
+                fetchPlan.addProperty(property, builder.build());
             }
         }
-        return view;
+        return fetchPlan;
     }
 
     public FetchPlanBuilder add(String property) {
@@ -115,15 +116,15 @@ public class FetchPlanBuilder {
         return this;
     }
 
-    public FetchPlanBuilder add(String property, String viewName) {
+    public FetchPlanBuilder add(String property, String fetchPlanName) {
         properties.add(property);
-        FetchPlan view = viewRepository.getFetchPlan(metaClass.getProperty(property).getRange().asClass(), viewName);
-        views.put(property, view);
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass.getProperty(property).getRange().asClass(), fetchPlanName);
+        fetchPlans.put(property, fetchPlan);
         return this;
     }
 
-    public FetchPlanBuilder add(String property, String viewName, FetchMode fetchMode) {
-        add(property, viewName);
+    public FetchPlanBuilder add(String property, String fetchPlanName, FetchMode fetchMode) {
+        add(property, fetchPlanName);
         fetchModes.put(property, fetchMode);
         return this;
     }
@@ -139,34 +140,18 @@ public class FetchPlanBuilder {
         this.systemProperties = true;
         return this;
     }
-
-    /**
-     * @deprecated replaced by {@link FetchPlanBuilder#addFetchPlan(FetchPlan)}
-     */
-    @Deprecated
-    public FetchPlanBuilder addView(FetchPlan view) {
-        return addFetchPlan(view);
-    }
-
-    /**
-     * @deprecated replaced by {@link FetchPlanBuilder#addFetchPlan(String)}
-     */
-    @Deprecated
-    public FetchPlanBuilder addView(String viewName) {
-        return addFetchPlan(viewName);
-    }
-
+    
     public FetchPlanBuilder addFetchPlan(FetchPlan fetchPlan) {
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             properties.add(property.getName());
-            views.put(property.getName(), property.getFetchPlan());
+            fetchPlans.put(property.getName(), property.getFetchPlan());
             fetchModes.put(property.getName(), property.getFetchMode());
         }
         return this;
     }
 
-    public FetchPlanBuilder addFetchPlan(String planName) {
-        addFetchPlan(viewRepository.getFetchPlan(metaClass, planName));
+    public FetchPlanBuilder addFetchPlan(String fetchPlanName) {
+        addFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName));
         return this;
     }
 }

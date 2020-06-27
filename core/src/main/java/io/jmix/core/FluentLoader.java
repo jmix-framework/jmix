@@ -127,8 +127,8 @@ public class FluentLoader<E extends Entity> {
      * @deprecated replaced by {@link FluentLoader#fetchPlan(FetchPlan)}
      */
     @Deprecated
-    public FluentLoader<E> view(FetchPlan view) {
-        return fetchPlan(view);
+    public FluentLoader<E> view(FetchPlan fetchPlan) {
+        return fetchPlan(fetchPlan);
     }
 
     /**
@@ -140,12 +140,12 @@ public class FluentLoader<E extends Entity> {
     }
 
     /**
-     * Sets a view by name.
+     * Sets a fetchPlan by name.
      * @deprecated replaced by {@link FluentLoader#fetchPlan(String)}
      */
     @Deprecated
-    public FluentLoader<E> view(String viewName) {
-        return fetchPlan(viewName);
+    public FluentLoader<E> view(String fetchPlanName) {
+        return fetchPlan(fetchPlanName);
     }
 
     /**
@@ -283,12 +283,12 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view.
+         * Sets a fetchPlan.
          * @deprecated replaced by {@link ById#fetchPlan(FetchPlan)}
          */
         @Deprecated
-        public ById<E> view(FetchPlan view) {
-            return fetchPlan(view);
+        public ById<E> view(FetchPlan fetchPlan) {
+            return fetchPlan(fetchPlan);
         }
 
         /**
@@ -300,19 +300,19 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view by name.
+         * Sets a fetchPlan by name.
          * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
         @Deprecated
-        public ById<E> view(String viewName) {
-            return fetchPlan(viewName);
+        public ById<E> view(String fetchPlanName) {
+            return fetchPlan(fetchPlanName);
         }
 
         /**
          * Sets a fetch plan by name.
          */
-        public ById<E> fetchPlan(String viewName) {
-            loader.fetchPlanName = viewName;
+        public ById<E> fetchPlan(String fetchPlanName) {
+            loader.fetchPlanName = fetchPlanName;
             return this;
         }
 
@@ -320,8 +320,8 @@ public class FluentLoader<E extends Entity> {
          * @deprecated replaced by {@link ById#fetchPlan(Consumer)} )}
          */
         @Deprecated
-        public ById<E> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
-            return fetchPlan(viewBuilderConfigurer);
+        public ById<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            return fetchPlan(fetchPlanBuilderConfigurer);
         }
 
         public ById<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
@@ -389,12 +389,12 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view.
+         * Sets a fetchPlan.
          * @deprecated replaced by {@link ByIds#fetchPlan(FetchPlan)}
          */
         @Deprecated
-        public ByIds<E> view(FetchPlan view) {
-            return fetchPlan(view);
+        public ByIds<E> view(FetchPlan fetchPlan) {
+            return fetchPlan(fetchPlan);
         }
 
         /**
@@ -406,12 +406,12 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view by name.
+         * Sets a fetchPlan by name.
          * @deprecated replaced by {@link ByIds#fetchPlan(String)}
          */
         @Deprecated
-        public ByIds<E> view(String viewName) {
-            return fetchPlan(viewName);
+        public ByIds<E> view(String fetchPlanName) {
+            return fetchPlan(fetchPlanName);
         }
 
         /**
@@ -423,7 +423,7 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view configured by the {@link FetchPlanBuilder}. For example:
+         * Sets a fetchPlan configured by the {@link FetchPlanBuilder}. For example:
          * <pre>
          *     dataManager.load(Pet.class)
          *         .ids(id1, id2)
@@ -435,8 +435,8 @@ public class FluentLoader<E extends Entity> {
          * @deprecated replaced by {@link ByIds#fetchPlan(Consumer)} )}
          */
         @Deprecated
-        public ByIds<E> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
-            return fetchPlan(viewBuilderConfigurer);
+        public ByIds<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            return fetchPlan(fetchPlanBuilderConfigurer);
         }
 
         /**
@@ -457,7 +457,7 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view containing the given properties. A property can be designated by a path in the entity graph.
+         * Sets a fetchPlan containing the given properties. A property can be designated by a path in the entity graph.
          * For example:
          * <pre>
          *     dataManager.load(Pet.class)
@@ -598,12 +598,12 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view.
+         * Sets a fetchPlan.
          * @deprecated replaced by {@link ByQuery#fetchPlan(FetchPlan)}
          */
         @Deprecated
-        public ByQuery<E> view(FetchPlan view) {
-            return fetchPlan(view);
+        public ByQuery<E> view(FetchPlan fetchPlan) {
+            return fetchPlan(fetchPlan);
         }
 
         /**
@@ -615,19 +615,19 @@ public class FluentLoader<E extends Entity> {
         }
 
         /**
-         * Sets a view by name.
+         * Sets a fetchPlan by name.
          * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
         @Deprecated
-        public ByQuery<E> view(String viewName) {
-            return fetchPlan(viewName);
+        public ByQuery<E> view(String fetchPlanName) {
+            return fetchPlan(fetchPlanName);
         }
 
         /**
-         * Sets a view by name.
+         * Sets a fetchPlan by name.
          */
-        public ByQuery<E> fetchPlan(String viewName) {
-            loader.fetchPlanName = viewName;
+        public ByQuery<E> fetchPlan(String fetchPlanName) {
+            loader.fetchPlanName = fetchPlanName;
             return this;
         }
 
@@ -635,8 +635,8 @@ public class FluentLoader<E extends Entity> {
          *
          * @deprecated replaced by {@link ByQuery#fetchPlan(Consumer)} )}
          */
-        public ByQuery<E> view(Consumer<FetchPlanBuilder> viewBuilderConfigurer) {
-            return fetchPlan(viewBuilderConfigurer);
+        public ByQuery<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            return fetchPlan(fetchPlanBuilderConfigurer);
         }
 
         public ByQuery<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {

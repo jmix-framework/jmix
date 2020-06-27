@@ -16,10 +16,11 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.data.value.DatasourceValueSource;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.core.entity.FileDescriptor;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.component.Resource;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 
@@ -74,4 +75,14 @@ public interface Image extends DatasourceComponent<FileDescriptor>, io.jmix.ui.c
         return valueSource instanceof EntityValueSource ?
                 ((EntityValueSource) valueSource).getMetaPropertyPath() : null;
     }
+
+    /**
+     * Creates resource implementation by its type.
+     *
+     * @param type resource class to be created
+     * @param <R>  {@link Resource} inheritor
+     * @return new resource instance with given type
+     */
+    @Deprecated
+    <R extends Resource> R createResource(Class<R> type);
 }

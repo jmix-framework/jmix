@@ -18,6 +18,7 @@ package com.haulmont.cuba.web.gui;
 
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.web.gui.components.*;
+import io.jmix.ui.component.BrowserFrame;
 import io.jmix.ui.component.Accordion;
 import io.jmix.ui.component.Calendar;
 import io.jmix.ui.component.CheckBox;
@@ -71,6 +72,7 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(TokenList.NAME, WebTokenList.class);
         classes.put(TwinColumn.NAME, WebTwinColumn.class);
         classes.put(Image.NAME, WebImage.class);
+        classes.put(BrowserFrame.NAME, WebBrowserFrame.class);
         classes.put(CheckBoxGroup.NAME, WebCheckBoxGroup.class);
         classes.put(RadioButtonGroup.NAME, WebRadioButtonGroup.class);
         classes.put(SuggestionPickerField.NAME, WebSuggestionPickerField.class);

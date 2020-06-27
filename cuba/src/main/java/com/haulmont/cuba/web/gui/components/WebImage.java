@@ -64,4 +64,9 @@ public class WebImage extends io.jmix.ui.component.impl.WebImage<FileDescriptor>
     protected boolean isFileReference(Object resourceObject) {
         return FileDescriptor.class.isAssignableFrom(resourceObject.getClass());
     }
+
+    @Override
+    public <R extends Resource> R createResource(Class<R> type) {
+        return beanLocator.getPrototype(type);
+    }
 }

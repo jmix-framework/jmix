@@ -17,6 +17,7 @@ package com.haulmont.cuba.gui.components;
 
 import com.google.common.collect.Iterables;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.data.impl.CollectionPropertyDatasourceImpl;
@@ -42,7 +43,6 @@ import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.ReadOnlyAwareScreen;
 import io.jmix.ui.screen.ReadOnlyScreensSupport;
-import io.jmix.ui.sys.PersistenceHelper;
 import io.jmix.ui.util.OperationResult;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;

@@ -18,6 +18,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.google.common.base.Preconditions;
+import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
@@ -30,7 +31,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.*;
 import io.jmix.dynattr.impl.model.Categorized;
 import io.jmix.dynattr.impl.model.Category;
-import io.jmix.ui.sys.PersistenceHelper;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

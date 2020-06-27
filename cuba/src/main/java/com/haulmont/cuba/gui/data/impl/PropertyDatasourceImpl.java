@@ -15,6 +15,7 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.*;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.FetchPlan;
@@ -24,7 +25,6 @@ import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.sys.PersistenceHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;

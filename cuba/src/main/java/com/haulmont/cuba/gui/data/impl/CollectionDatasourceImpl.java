@@ -17,6 +17,7 @@ package com.haulmont.cuba.gui.data.impl;
 
 import com.google.common.base.Preconditions;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
@@ -31,7 +32,6 @@ import io.jmix.ui.filter.DenyingClause;
 import io.jmix.ui.filter.LogicalCondition;
 import io.jmix.ui.filter.LogicalOp;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
-import io.jmix.ui.sys.PersistenceHelper;
 import org.apache.commons.collections4.map.LinkedMap;
 
 import java.util.*;

@@ -16,6 +16,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
@@ -28,7 +29,6 @@ import io.jmix.core.entity.EntityPropertyChangeEvent;
 import io.jmix.core.entity.EntityPropertyChangeListener;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.executor.BackgroundWorker;
-import io.jmix.ui.sys.PersistenceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,6 +16,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.data.impl.compatibility.DsContextCommitListenerWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
@@ -31,7 +32,6 @@ import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.FrameContext;
 import io.jmix.ui.filter.ParameterInfo;
 import io.jmix.ui.screen.FrameOwner;
-import io.jmix.ui.sys.PersistenceHelper;
 
 import java.util.*;
 

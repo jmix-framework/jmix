@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,30 @@
  * limitations under the License.
  */
 
-package io.jmix.data;
+package io.jmix.data.impl.converters;
 
 import io.jmix.core.entity.BaseUser;
+import org.springframework.core.convert.converter.Converter;
 
-import javax.annotation.Nullable;
+import java.util.Date;
 
-/**
- * INTERNAL.
- * Provides information about current user for audit purposes -
- * Creatable, Updatable, SoftDelete entities and for Entity Log.
- */
-public interface AuditInfoProvider {
+public class AuditConverters {
 
-    String NAME = "data_AuditInfoProvider";
+    public enum DateToLongConverter implements Converter<Date, Long> {
+        INSTANCE;
 
-    @Nullable
-    String getCurrentUserUsername();
+        public Long convert(Date source) {
+            return source.getTime();
+        }
+    }
 
-    @Nullable
-    String getCurrentUserKey();
+    public enum UserToStringConverter implements Converter<BaseUser, String> {
+        INSTANCE;
 
-    @Nullable
-    BaseUser getCurrentUser();
+        public String convert(BaseUser source) {
+            return source.getUsername();
+        }
+    }
+
+
 }

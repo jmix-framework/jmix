@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,36 @@
 
 package io.jmix.core.entity;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
+import javax.annotation.Nullable;
 
-import java.util.Date;
+public interface JmixAuditable {
 
-/**
- * Interface to be implemented by entities that contain information about who created them and when.
- *
- * @deprecated use {@link CreatedBy} and {@link CreatedDate} on fields instead.
- */
-@Deprecated
-public interface Creatable {
-    Date getCreateTs();
+    void setCreatedDate(Object date);
 
-    void setCreateTs(Date date);
+    void setCreatedBy(Object createdBy);
 
-    String getCreatedBy();
+    void setUpdatedDate(Object date);
 
-    void setCreatedBy(String createdBy);
+    void setUpdatedBy(Object updatedBy);
+
+    @Nullable
+    default Class<?> getCreatedDateClass() {
+        return null;
+    }
+
+    @Nullable
+    default Class<?> getCreatedByClass() {
+        return null;
+    }
+
+    @Nullable
+    default Class<?> getUpdatedDateClass() {
+        return null;
+    }
+
+    @Nullable
+    default Class<?> getUpdatedByClass() {
+        return null;
+    }
+
 }

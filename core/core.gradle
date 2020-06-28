@@ -40,6 +40,7 @@ dependencies {
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'
     api 'org.springframework.security:spring-security-web'
+    api 'org.springframework.data:spring-data-commons'
 
     api 'javax.inject:javax.inject'
     api 'org.apache.commons:commons-collections4'

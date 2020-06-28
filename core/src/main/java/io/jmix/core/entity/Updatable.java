@@ -20,6 +20,7 @@ import java.util.Date;
 /**
  * Interface to be implemented by entities that contain information about who updated them and when.
  */
+@Deprecated
 public interface Updatable {
 
     Date getUpdateTs();

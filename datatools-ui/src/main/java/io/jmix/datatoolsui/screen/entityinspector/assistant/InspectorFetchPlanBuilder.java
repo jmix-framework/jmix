@@ -103,7 +103,7 @@ public class InspectorFetchPlanBuilder {
                             }
                         } else {
                             fetchPlanBuilder.add(metaProperty.getName(),
-                                    builder -> builder.addFetchPlan(FetchPlan.MINIMAL));
+                                    builder -> builder.addFetchPlan(FetchPlan.INSTANCE_NAME));
                         }
                     }
                     break;
@@ -116,7 +116,7 @@ public class InspectorFetchPlanBuilder {
         builder.addFetchPlan(FetchPlan.BASE);
         for (MetaProperty embeddedNestedProperty : metaClass.getProperties()) {
             if (embeddedNestedProperty.getRange().isClass() && !isMany(embeddedNestedProperty)) {
-                builder.add(embeddedNestedProperty.getName(), FetchPlan.MINIMAL);
+                builder.add(embeddedNestedProperty.getName(), FetchPlan.INSTANCE_NAME);
             }
         }
     }

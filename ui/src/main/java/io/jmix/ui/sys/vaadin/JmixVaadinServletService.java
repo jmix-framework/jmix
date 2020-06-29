@@ -30,7 +30,9 @@ import io.jmix.ui.App;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.sys.event.WebSessionDestroyedEvent;
 import io.jmix.ui.sys.event.WebSessionInitializedEvent;
+import io.jmix.ui.theme.ThemeVariantsProvider;
 import io.jmix.ui.widget.JmixFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -144,7 +147,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
             // need to keep the position of the handler on the list
             for (int i = 0; i < jmixRequestHandlers.size(); ++i) {
                 if (jmixRequestHandlers.get(i) instanceof ServletBootstrapHandler) {
-                    jmixRequestHandlers.set(i, new ServletBootstrapHandler() {
+                    jmixRequestHandlers.set(i, new JmixServletBootstrapHandler() {
                         @Override
                         protected String getServiceUrl(BootstrapContext context) {
                             return context.getRequest().getContextPath()
@@ -161,6 +164,31 @@ public class JmixVaadinServletService extends SpringVaadinServletService
     @Override
     public UidlWriter createUidlWriter() {
         return new JmixUidlWriter(getServlet().getServletContext());
+    }
+
+    protected String getThemeVariants() {
+        List<String> themeVariants = findAndEscapeThemeVariants();
+        return StringUtils.join(themeVariants, " ");
+    }
+
+    public List<String> findAndEscapeThemeVariants() {
+        if (AppBeans.containsBean(ThemeVariantsProvider.NAME)) {
+            ThemeVariantsProvider themeVariantsProvider = AppBeans.get(ThemeVariantsProvider.NAME);
+            List<String> themeVariants = themeVariantsProvider.getThemeVariants();
+            if (!themeVariants.isEmpty()) {
+                List<String> strippedVariants = new ArrayList<>(themeVariants.size());
+                for (String variant : themeVariants) {
+                    // XSS preventation, theme variants shouldn't contain special chars anyway.
+                    // The servlet denies them via url parameter.
+                    String themeVariant = VaadinServlet.stripSpecialChars(variant);
+                    strippedVariants.add(themeVariant);
+                }
+
+                return strippedVariants;
+            }
+        }
+
+        return Collections.emptyList();
     }
 
     /**
@@ -181,6 +209,17 @@ public class JmixVaadinServletService extends SpringVaadinServletService
             }
 
             return super.handleRequest(session, request, response);
+        }
+
+        @Override
+        protected String getMainDivAdditionalClassName(BootstrapContext context) {
+            VaadinRequest request = context.getRequest();
+            VaadinService service = request.getService();
+            if (service instanceof JmixVaadinServletService) {
+                return ((JmixVaadinServletService) service).getThemeVariants();
+            }
+
+            return null;
         }
     }
 

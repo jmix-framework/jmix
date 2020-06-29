@@ -41,7 +41,7 @@ public class DatatypeFormatter {
     public static final String NAME = "core_DatatypeFormatter";
 
     @Autowired
-    protected CurrentAuthentication uss;
+    protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
@@ -50,7 +50,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatDate(@Nullable Date value) {
-        return datatypeRegistry.get(java.sql.Date.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(java.sql.Date.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -58,7 +58,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatTime(@Nullable Date value) {
-        return datatypeRegistry.get(Time.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(Time.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -67,12 +67,12 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatDateTime(@Nullable Date value) {
-        TimeZone timeZone = uss.getTimeZone();
+        TimeZone timeZone = currentAuthentication.getTimeZone();
         Datatype<Date> datatype = datatypeRegistry.get(Date.class);
         if (datatype instanceof DateTimeDatatype) {
-            return ((DateTimeDatatype) datatype).format(value, uss.getLocale(), timeZone);
+            return ((DateTimeDatatype) datatype).format(value, currentAuthentication.getLocale(), timeZone);
         }
-        return datatype.format(value, uss.getLocale());
+        return datatype.format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -82,7 +82,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatLocalDate(@Nullable LocalDate value) {
-        return datatypeRegistry.get(LocalDate.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(LocalDate.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -92,7 +92,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatLocalDateTime(@Nullable LocalDateTime value) {
-        return datatypeRegistry.get(LocalDateTime.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(LocalDateTime.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -102,7 +102,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatLocalTime(@Nullable LocalTime value) {
-        return datatypeRegistry.get(LocalTime.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(LocalTime.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -112,7 +112,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatOffsetDateTime(@Nullable OffsetDateTime value) {
-        return datatypeRegistry.get(OffsetDateTime.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(OffsetDateTime.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -122,7 +122,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatOffsetTime(@Nullable OffsetTime value) {
-        return datatypeRegistry.get(OffsetTime.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(OffsetTime.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -130,7 +130,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatDouble(@Nullable Double value) {
-        return datatypeRegistry.get(Double.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(Double.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -138,7 +138,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatBigDecimal(@Nullable BigDecimal value) {
-        return datatypeRegistry.get(BigDecimal.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(BigDecimal.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -146,7 +146,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatBoolean(@Nullable Boolean value) {
-        return datatypeRegistry.get(Boolean.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(Boolean.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -154,7 +154,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatInteger(@Nullable Integer value) {
-        return datatypeRegistry.get(Integer.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(Integer.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -162,7 +162,7 @@ public class DatatypeFormatter {
      * @return string representation or empty string if the value is null
      */
     public String formatLong(@Nullable Long value) {
-        return datatypeRegistry.get(Long.class).format(value, uss.getLocale());
+        return datatypeRegistry.get(Long.class).format(value, currentAuthentication.getLocale());
     }
 
     /**
@@ -171,7 +171,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public Date parseDate(String str) throws ParseException {
-        return datatypeRegistry.get(java.sql.Date.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(java.sql.Date.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -180,7 +180,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public Date parseTime(String str) throws ParseException {
-        return datatypeRegistry.get(Time.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(Time.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -190,12 +190,12 @@ public class DatatypeFormatter {
      */
     @Nullable
     public Date parseDateTime(String str) throws ParseException {
-        TimeZone timeZone = uss.getTimeZone();
+        TimeZone timeZone = currentAuthentication.getTimeZone();
         Datatype<Date> datatype = datatypeRegistry.get(Date.class);
         if (datatype instanceof DateTimeDatatype) {
-            return ((DateTimeDatatype) datatype).parse(str, uss.getLocale(), timeZone);
+            return ((DateTimeDatatype) datatype).parse(str, currentAuthentication.getLocale(), timeZone);
         }
-        return datatype.parse(str, uss.getLocale());
+        return datatype.parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -206,7 +206,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public LocalDate parseLocalDate(String str) throws ParseException {
-        return datatypeRegistry.get(LocalDate.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(LocalDate.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -217,7 +217,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public LocalTime parseLocalTime(String str) throws ParseException {
-        return datatypeRegistry.get(LocalTime.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(LocalTime.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -228,7 +228,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public LocalDateTime parseLocalDateTime(String str) throws ParseException {
-        return datatypeRegistry.get(LocalDateTime.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(LocalDateTime.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -239,7 +239,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public OffsetDateTime parseOffsetDateTime(String str) throws ParseException {
-        return datatypeRegistry.get(OffsetDateTime.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(OffsetDateTime.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -250,7 +250,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public OffsetTime parseOffsetTime(String str) throws ParseException {
-        return datatypeRegistry.get(OffsetTime.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(OffsetTime.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -259,7 +259,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public Double parseDouble(String str) throws ParseException {
-        return datatypeRegistry.get(Double.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(Double.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -268,7 +268,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public BigDecimal parseBigDecimal(String str) throws ParseException {
-        return datatypeRegistry.get(BigDecimal.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(BigDecimal.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -277,7 +277,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public Boolean parseBoolean(String str) throws ParseException {
-        return datatypeRegistry.get(Boolean.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(Boolean.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -286,7 +286,7 @@ public class DatatypeFormatter {
      */
     @Nullable
     public Integer parseInteger(String str) throws ParseException {
-        return datatypeRegistry.get(Integer.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(Integer.class).parse(str, currentAuthentication.getLocale());
     }
 
     /**
@@ -295,6 +295,6 @@ public class DatatypeFormatter {
      */
     @Nullable
     public Long parseLong(String str) throws ParseException {
-        return datatypeRegistry.get(Long.class).parse(str, uss.getLocale());
+        return datatypeRegistry.get(Long.class).parse(str, currentAuthentication.getLocale());
     }
 }

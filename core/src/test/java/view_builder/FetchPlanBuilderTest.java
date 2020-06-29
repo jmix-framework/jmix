@@ -16,7 +16,10 @@
 
 package view_builder;
 
-import io.jmix.core.*;
+import io.jmix.core.CoreConfiguration;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanProperty;
+import io.jmix.core.FetchPlans;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,8 +141,8 @@ public class FetchPlanBuilderTest {
     }
 
     @Test
-    public void testMinimal() {
-        FetchPlan view = fetchPlans.builder(Pet.class).addFetchPlan(FetchPlan.MINIMAL).build();
+    public void testInstanceName() {
+        FetchPlan view = fetchPlans.builder(Pet.class).addFetchPlan(FetchPlan.INSTANCE_NAME).build();
 
         assertFalse(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));

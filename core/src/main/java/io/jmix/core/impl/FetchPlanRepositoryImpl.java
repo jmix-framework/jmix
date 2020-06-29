@@ -28,6 +28,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -35,7 +36,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -228,7 +228,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             if (fetchPlanMap != null && !fetchPlanMap.isEmpty()) {
                 Set<String> keySet = new HashSet<>(fetchPlanMap.keySet());
                 keySet.remove(FetchPlan.LOCAL);
-                keySet.remove(FetchPlan.MINIMAL);
+                keySet.remove(FetchPlan.INSTANCE_NAME);
                 keySet.remove(FetchPlan.BASE);
                 return keySet;
             } else {
@@ -259,12 +259,12 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         if (FetchPlan.LOCAL.equals(name)) {
             fetchPlan = new FetchPlan(javaClass, name, false);
             addAttributesToLocalFetchPlan(metaClass, fetchPlan);
-        } else if (FetchPlan.MINIMAL.equals(name)) {
+        } else if (FetchPlan.INSTANCE_NAME.equals(name)) {
             fetchPlan = new FetchPlan(javaClass, name, false);
-            addAttributesToMinimalFetchPlan(metaClass, fetchPlan, info, visited);
+            addAttributesToInstanceNameFetchPlan(metaClass, fetchPlan, info, visited);
         } else if (FetchPlan.BASE.equals(name)) {
             fetchPlan = new FetchPlan(javaClass, name, false);
-            addAttributesToMinimalFetchPlan(metaClass, fetchPlan, info, visited);
+            addAttributesToInstanceNameFetchPlan(metaClass, fetchPlan, info, visited);
             addAttributesToLocalFetchPlan(metaClass, fetchPlan);
         } else {
             throw new UnsupportedOperationException("Unsupported default fetch plan: " + name);
@@ -285,17 +285,17 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected void addAttributesToMinimalFetchPlan(MetaClass metaClass, FetchPlan fetchPlan, FetchPlanLoader.FetchPlanInfo info, Set<FetchPlanLoader.FetchPlanInfo> visited) {
+    protected void addAttributesToInstanceNameFetchPlan(MetaClass metaClass, FetchPlan fetchPlan, FetchPlanLoader.FetchPlanInfo info, Set<FetchPlanLoader.FetchPlanInfo> visited) {
         Collection<MetaProperty> metaProperties = metadataTools.getInstanceNameRelatedProperties(metaClass, true);
         for (MetaProperty metaProperty : metaProperties) {
             if (metadataTools.isPersistent(metaProperty)) {
-                addPersistentAttributeToMinimalFetchPlan(metaClass, visited, info, fetchPlan, metaProperty);
+                addPersistentAttributeToInstanceNameFetchPlan(metaClass, visited, info, fetchPlan, metaProperty);
             } else {
                 List<String> relatedProperties = metadataTools.getRelatedProperties(metaProperty);
                 for (String relatedPropertyName : relatedProperties) {
                     MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);
                     if (metadataTools.isPersistent(relatedProperty)) {
-                        addPersistentAttributeToMinimalFetchPlan(metaClass, visited, info, fetchPlan, relatedProperty);
+                        addPersistentAttributeToInstanceNameFetchPlan(metaClass, visited, info, fetchPlan, relatedProperty);
                     } else {
                         log.warn(
                                 "Transient attribute '{}' is listed in 'related' properties of another transient attribute '{}'",
@@ -306,21 +306,22 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected void addPersistentAttributeToMinimalFetchPlan(MetaClass metaClass, Set<FetchPlanLoader.FetchPlanInfo> visited, FetchPlanLoader.FetchPlanInfo info, FetchPlan fetchPlan, MetaProperty metaProperty) {
+    protected void addPersistentAttributeToInstanceNameFetchPlan(MetaClass metaClass, Set<FetchPlanLoader.FetchPlanInfo> visited, FetchPlanLoader.FetchPlanInfo info, FetchPlan fetchPlan, MetaProperty metaProperty) {
         if (metaProperty.getRange().isClass()
                 && !metaProperty.getRange().getCardinality().isMany()) {
 
             Map<String, FetchPlan> fetchPlans = storage.get(metaProperty.getRange().asClass());
-            FetchPlan refMinimalFetchPlan = (fetchPlans == null ? null : fetchPlans.get(FetchPlan.MINIMAL));
+            FetchPlan refInstanceNameFetchPlan = (fetchPlans == null ? null : fetchPlans.get(FetchPlan.INSTANCE_NAME));
 
-            if (refMinimalFetchPlan != null) {
-                fetchPlan.addProperty(metaProperty.getName(), refMinimalFetchPlan);
+            if (refInstanceNameFetchPlan != null) {
+                fetchPlan.addProperty(metaProperty.getName(), refInstanceNameFetchPlan);
             } else {
                 visited.add(info);
-                FetchPlan referenceMinimalFetchPlan = deployDefaultFetchPlan(metaProperty.getRange().asClass(), FetchPlan.MINIMAL, visited);
+                FetchPlan referenceInstanceNameFetchPlan = deployDefaultFetchPlan(metaProperty.getRange().asClass(),
+                        FetchPlan.INSTANCE_NAME, visited);
                 visited.remove(info);
 
-                fetchPlan.addProperty(metaProperty.getName(), referenceMinimalFetchPlan);
+                fetchPlan.addProperty(metaProperty.getName(), referenceInstanceNameFetchPlan);
             }
         } else {
             fetchPlan.addProperty(metaProperty.getName());
@@ -385,10 +386,14 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     protected FetchPlan retrieveFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
         Map<String, FetchPlan> fetchPlans = storage.get(metaClass);
         FetchPlan fetchPlan = (fetchPlans == null ? null : fetchPlans.get(name));
-        if (fetchPlan == null && (name.equals(FetchPlan.LOCAL) || name.equals(FetchPlan.MINIMAL) || name.equals(FetchPlan.BASE))) {
+        if (fetchPlan == null && isDefaultFetchPlan(name)) {
             fetchPlan = deployDefaultFetchPlan(metaClass, name, visited);
         }
         return fetchPlan;
+    }
+
+    protected boolean isDefaultFetchPlan(String fetchPlanName) {
+        return fetchPlanName.equals(FetchPlan.LOCAL) || fetchPlanName.equals(FetchPlan.INSTANCE_NAME) || fetchPlanName.equals(FetchPlan.BASE);
     }
 
     public FetchPlan deployFetchPlan(Element rootElem, Element fetchPlanElem) {

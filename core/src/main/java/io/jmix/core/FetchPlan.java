@@ -16,7 +16,10 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.Creatable;
+import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.entity.Updatable;
+import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +40,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
  * There are the following predefined view types:
  * <ul>
  * <li>{@link #LOCAL}</li>
- * <li>{@link #MINIMAL}</li>
+ * <li>{@link #INSTANCE_NAME}</li>
  * <li>{@link #BASE}</li>
  * </ul>
  */
@@ -89,11 +92,11 @@ public class FetchPlan implements Serializable {
     /**
      * Includes only properties contained in {@link io.jmix.core.metamodel.annotation.InstanceName}.
      */
-    public static final String MINIMAL = "_minimal";
+    public static final String INSTANCE_NAME = "_instance_name";
 
     /**
      * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
-     * (effectively {@link #MINIMAL} + {@link #LOCAL}).
+     * (effectively {@link #INSTANCE_NAME} + {@link #LOCAL}).
      */
     public static final String BASE = "_base";
 

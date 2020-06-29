@@ -16,12 +16,13 @@
 
 package view_builder;
 
+import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.LoadContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -30,7 +31,6 @@ import test_support.addon1.TestAddon1Configuration;
 import test_support.app.TestAppConfiguration;
 import test_support.app.entity.Pet;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static io.jmix.core.FluentLoaderTestAccess.createLoadContext;
@@ -58,7 +58,7 @@ public class FluentLoaderViewBuilderTest {
         /*.one()*/;
 
         dataManager.load(Pet.class)
-                .view(viewBuilder -> viewBuilder.addFetchPlan(FetchPlan.MINIMAL).addAll(
+                .view(viewBuilder -> viewBuilder.addFetchPlan(FetchPlan.INSTANCE_NAME).addAll(
                         "owner.name",
                         "owner.address.city"))
                 .id(petId)

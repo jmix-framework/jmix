@@ -26,12 +26,12 @@ import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -218,7 +218,7 @@ public class RestQueriesConfiguration {
         QueryInfo queryInfo = new QueryInfo();
         queryInfo.setName(ALL_ENTITIES_QUERY_NAME);
         queryInfo.setEntityName(entityName);
-        queryInfo.setViewName(FetchPlan.MINIMAL);
+        queryInfo.setViewName(FetchPlan.INSTANCE_NAME);
         queryInfo.setJpql(String.format("select e from %s e", entityName));
         return queryInfo;
     }

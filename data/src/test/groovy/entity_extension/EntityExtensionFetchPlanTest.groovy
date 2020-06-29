@@ -49,13 +49,13 @@ class EntityExtensionFetchPlanTest extends DataSpec {
     def "predefined fetch plans"(Class entityClass) {
         when:
         def local = fetchPlanRepository.getFetchPlan(entityClass, FetchPlan.LOCAL)
-        def minimal = fetchPlanRepository.getFetchPlan(entityClass, FetchPlan.MINIMAL)
+        def instanceName = fetchPlanRepository.getFetchPlan(entityClass, FetchPlan.INSTANCE_NAME)
 
         then:
         local.entityClass == ExtDriver
-        minimal.entityClass == ExtDriver
+        instanceName.entityClass == ExtDriver
         local.getProperty('info')
-        minimal.getProperty('info')
+        instanceName.getProperty('info')
 
         where:
         entityClass << [ExtDriver, Driver]

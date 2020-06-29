@@ -18,7 +18,6 @@ package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -32,11 +31,11 @@ import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.LoadGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -420,7 +419,7 @@ public class FetchGroupManager {
                     FetchGroupField field = createFetchGroupField(entityClass, parentField, relatedProperty);
                     fetchGroupFields.add(field);
                     if (relatedMetaProp.getRange().isClass()) {
-                        FetchPlan relatedFetchPlan = viewRepository.getFetchPlan(relatedMetaProp.getRange().asClass(), FetchPlan.MINIMAL);
+                        FetchPlan relatedFetchPlan = viewRepository.getFetchPlan(relatedMetaProp.getRange().asClass(), FetchPlan.INSTANCE_NAME);
                         processFetchPlan(relatedFetchPlan, field, fetchGroupFields, useFetchGroup);
                     }
                 }

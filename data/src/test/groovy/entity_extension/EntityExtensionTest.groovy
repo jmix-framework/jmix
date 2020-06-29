@@ -16,11 +16,7 @@
 
 package entity_extension
 
-import io.jmix.core.DataManager
-import io.jmix.core.ExtendedEntities
-import io.jmix.core.FetchPlan
-import io.jmix.core.LoadContext
-import io.jmix.core.Metadata
+import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.entity_extension.*
@@ -110,7 +106,7 @@ class EntityExtensionTest extends DataSpec {
         when:
         def callsign1 = dataManager.load(DriverCallsign)
                 .id(callsign.id)
-                .fetchPlan { fp -> fp.add('driver', FetchPlan.MINIMAL) }
+                .fetchPlan { fp -> fp.add('driver', FetchPlan.INSTANCE_NAME) }
                 .one()
 
         then:
@@ -131,7 +127,7 @@ class EntityExtensionTest extends DataSpec {
         when:
         def driverAllocation1 = dataManager.load(DriverAllocation)
                 .id(driverAllocation.id)
-                .fetchPlan { fp -> fp.add('driver', FetchPlan.MINIMAL) }
+                .fetchPlan { fp -> fp.add('driver', FetchPlan.INSTANCE_NAME) }
                 .one()
 
         then:

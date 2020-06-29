@@ -27,7 +27,7 @@
           extends="_local"
           name="driverEdit">
         <property name="callsign"
-                  fetchPlan="_minimal"/>
+                  fetchPlan="_instance_name"/>
         <property name="address"
                   fetchPlan="_local"/>
     </fetchPlan>

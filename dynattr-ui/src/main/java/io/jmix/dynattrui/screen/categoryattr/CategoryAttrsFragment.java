@@ -29,15 +29,11 @@ import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionPropertyContainer;
-import io.jmix.ui.screen.Install;
-import io.jmix.ui.screen.ScreenFragment;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -130,7 +126,7 @@ public class CategoryAttrsFragment extends ScreenFragment {
                     if (attribute.getObjectDefaultEntityId() != null) {
                         MetaClass metaClass = metadata.getClass(entityClass);
                         LoadContext<Entity> lc = new LoadContext(attribute.getJavaType());
-                        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.MINIMAL);
+                        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
                         lc.setFetchPlan(fetchPlan);
                         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
                         lc.setQueryString(String.format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))

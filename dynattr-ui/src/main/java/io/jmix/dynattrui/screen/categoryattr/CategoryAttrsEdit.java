@@ -36,11 +36,7 @@ import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.dynattr.impl.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiComponents;
+import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
@@ -58,28 +54,11 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Consumer;
 
-import static io.jmix.dynattr.AttributeType.BOOLEAN;
-import static io.jmix.dynattr.AttributeType.DATE;
-import static io.jmix.dynattr.AttributeType.DATE_WITHOUT_TIME;
-import static io.jmix.dynattr.AttributeType.DECIMAL;
-import static io.jmix.dynattr.AttributeType.DOUBLE;
-import static io.jmix.dynattr.AttributeType.ENTITY;
-import static io.jmix.dynattr.AttributeType.ENUMERATION;
-import static io.jmix.dynattr.AttributeType.INTEGER;
-import static io.jmix.dynattr.AttributeType.STRING;
-import static io.jmix.dynattr.OptionsLoaderType.GROOVY;
-import static io.jmix.dynattr.OptionsLoaderType.JPQL;
-import static io.jmix.dynattr.OptionsLoaderType.SQL;
+import static io.jmix.dynattr.AttributeType.*;
+import static io.jmix.dynattr.OptionsLoaderType.*;
 import static java.lang.String.format;
 import static org.eclipse.persistence.jpa.jpql.parser.Expression.WHERE;
 
@@ -694,7 +673,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             MetaClass metaClass = metadata.getClass(javaClass);
             if (attribute.getObjectDefaultEntityId() != null) {
                 LoadContext<Entity> lc = new LoadContext(attribute.getJavaType());
-                FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.MINIMAL);
+                FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
                 lc.setFetchPlan(fetchPlan);
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))

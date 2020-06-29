@@ -357,7 +357,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 List<Entity> resultList = entityManager.createQuery(
                         String.format("select e from %s e where e.%s in :ids", metaClass.getName(), pkName))
                         .setParameter("ids", ids)
-                        .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.MINIMAL))
+                        .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME))
                         .getResultList();
 
 

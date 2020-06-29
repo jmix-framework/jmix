@@ -41,11 +41,9 @@ import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.theme.ThemeConstants;
-
-import javax.annotation.Nullable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -423,7 +421,7 @@ public class InputDialog extends Screen {
             CollectionContainer container = dataComponents.createCollectionContainer(parameter.getEntityClass());
             CollectionLoader loader = dataComponents.createCollectionLoader();
             loader.setQuery("select e from " + metaClass.getName() + " e");
-            loader.setFetchPlan(FetchPlan.MINIMAL);
+            loader.setFetchPlan(FetchPlan.INSTANCE_NAME);
             loader.setContainer(container);
             loader.load();
 

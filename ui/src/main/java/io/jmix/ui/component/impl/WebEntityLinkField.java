@@ -16,10 +16,8 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.Datatypes;
@@ -43,9 +41,9 @@ import io.jmix.ui.screen.*;
 import io.jmix.ui.widget.JmixButtonField;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -307,7 +305,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         DataManager dataManager = beanLocator.get(DataManager.NAME);
         //noinspection unchecked
         entity = dataManager.load(Id.of(entity))
-                .fetchPlan(beanLocator.get(FetchPlanRepository.class).getFetchPlan(entity.getClass(), FetchPlan.MINIMAL))
+                .fetchPlan(beanLocator.get(FetchPlanRepository.class).getFetchPlan(entity.getClass(), FetchPlan.INSTANCE_NAME))
                 .one();
 
         String windowAlias = screen;

@@ -16,12 +16,9 @@
 
 package io.jmix.ui.navigation.navigationhandler;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
@@ -39,13 +36,13 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -353,7 +350,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
 
         LoadContext<?> ctx = new LoadContext(metaClass);
         ctx.setId(id);
-        ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.MINIMAL));
+        ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME));
 
         Entity entity = dataManager.load(ctx);
         if (entity == null) {

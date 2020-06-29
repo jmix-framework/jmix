@@ -32,7 +32,7 @@
     </fetchPlan>
 
     <fetchPlan class="test_support.entity.sec.User" name="user.browse" extends="_local" systemProperties="true">
-        <property name="group" fetchPlan="_minimal"/>
+        <property name="group" fetchPlan="_instance_name"/>
     </fetchPlan>
 
 </fetchPlans>

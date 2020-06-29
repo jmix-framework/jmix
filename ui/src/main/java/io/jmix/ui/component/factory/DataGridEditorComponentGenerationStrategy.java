@@ -37,10 +37,10 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DataGridEditorComponentGenerationStrategy.NAME)
 public class DataGridEditorComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
@@ -98,7 +98,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
             CollectionContainer<Entity> container = dataComponents.createCollectionContainer(metaClass.getJavaClass());
             CollectionLoader<Entity> loader = dataComponents.createCollectionLoader();
             loader.setQuery("select e from " + metaClass.getName() + " e");
-            loader.setFetchPlan(FetchPlan.MINIMAL);
+            loader.setFetchPlan(FetchPlan.INSTANCE_NAME);
             loader.setContainer(container);
             loader.load();
             options = new ContainerOptions(container);

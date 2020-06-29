@@ -21,7 +21,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
-import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.pessimisticlocking.LockInfo;
 import io.jmix.core.pessimisticlocking.LockManager;
 import io.jmix.core.pessimisticlocking.LockNotSupported;
@@ -378,7 +377,7 @@ public abstract class MasterDetailScreen<T extends Entity> extends StandardLooku
             justLocked = true;
         } else if (!(lockInfo instanceof LockNotSupported)) {
             Messages messages = getBeanLocator().get(Messages.class);
-            DatatypeFormatter datatypeFormatter = getBeanLocator().get(DatatypeRegistry.NAME);
+            DatatypeFormatter datatypeFormatter = getBeanLocator().get(DatatypeFormatter.NAME);
             Notifications notifications = getScreenContext().getNotifications();
 
             notifications.create(Notifications.NotificationType.HUMANIZED)

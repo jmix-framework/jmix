@@ -16,9 +16,9 @@
 package com.haulmont.cuba.core.global;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 
@@ -49,9 +49,14 @@ public class View extends FetchPlan {
     public static final String LOCAL = FetchPlan.LOCAL;
 
     /**
+     *  A synonym for {@link #INSTANCE_NAME}. Left for backward compatibility
+     */
+    public static final String MINIMAL = "_minimal";
+
+    /**
      * Includes only properties contained in {@link NamePattern}.
      */
-    public static final String MINIMAL = FetchPlan.MINIMAL;
+    public static final String INSTANCE_NAME = FetchPlan.INSTANCE_NAME;
 
     /**
      * Includes all local non-system properties and properties defined by {@link NamePattern}

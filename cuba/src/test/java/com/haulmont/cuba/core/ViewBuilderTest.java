@@ -128,7 +128,7 @@ public class ViewBuilderTest {
 
     @Test
     public void testMinimal() {
-        FetchPlan view = ViewBuilder.of(Pet.class).addView(FetchPlan.MINIMAL).build();
+        FetchPlan view = ViewBuilder.of(Pet.class).addView(FetchPlan.INSTANCE_NAME).build();
 
         assertFalse(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));

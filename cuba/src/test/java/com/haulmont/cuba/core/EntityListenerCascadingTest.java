@@ -21,13 +21,12 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
 import io.jmix.data.impl.EntityListenerManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -147,7 +146,7 @@ public class EntityListenerCascadingTest {
             u.setLogin("1-NEW-" + user.getId());
 
             TypedQuery<User> query = persistence.getEntityManager().createQuery("select u from test$User u where u.login = 'admin'", User.class);
-            query.setViewName(FetchPlan.MINIMAL);
+            query.setViewName(FetchPlan.INSTANCE_NAME);
             User admin = query.getSingleResult();
             System.out.println(admin.getLogin());
 
@@ -178,7 +177,7 @@ public class EntityListenerCascadingTest {
             u.setLogin("1-NEW-" + user.getId());
 
             TypedQuery<User> query = persistence.getEntityManager().createQuery("select u from test$User u where u.login = 'admin'", User.class);
-            query.setViewName(FetchPlan.MINIMAL);
+            query.setViewName(FetchPlan.INSTANCE_NAME);
             User admin = query.getSingleResult();
             System.out.println(admin.getLogin());
 

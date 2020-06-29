@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba;
 
+import com.haulmont.cuba.core.global.impl.CubaFetchPlanRepository;
 import com.haulmont.cuba.core.global.impl.CubaInstanceNameProviderImpl;
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
@@ -31,8 +32,8 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
-import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
@@ -90,6 +91,11 @@ public class CubaConfiguration {
     @Bean(InstanceNameProvider.NAME)
     protected InstanceNameProvider instanceNameProvider() {
         return new CubaInstanceNameProviderImpl();
+    }
+
+    @Bean(FetchPlanRepository.NAME)
+    protected FetchPlanRepository fetchPlanRepository() {
+        return new CubaFetchPlanRepository();
     }
 
     @Bean("cuba_UiControllers")

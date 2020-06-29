@@ -63,11 +63,11 @@ import org.apache.commons.text.TextStringBuilder;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.TemporalType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -243,7 +243,7 @@ public class Param {
         name = builder.name;
         setJavaClass(builder.javaClass);
         entityWhere = builder.entityWhere;
-        entityView = (builder.entityView != null) ? builder.entityView : FetchPlan.MINIMAL;
+        entityView = (builder.entityView != null) ? builder.entityView : FetchPlan.INSTANCE_NAME;
         property = builder.property;
         inExpr = builder.inExpr;
         required = builder.required;

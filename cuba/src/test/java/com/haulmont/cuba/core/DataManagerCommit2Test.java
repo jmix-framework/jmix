@@ -21,13 +21,15 @@ import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.*;
+import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
 import io.jmix.core.security.ConstraintOperationType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -116,7 +118,7 @@ public class DataManagerCommit2Test {
 
     @Test
     public void testViewAfterCommitNew() throws Exception {
-        Group group = dataManager.load(LoadContext.create(Group.class).setId(group1.getId()).setFetchPlan(FetchPlan.MINIMAL));
+        Group group = dataManager.load(LoadContext.create(Group.class).setId(group1.getId()).setFetchPlan(FetchPlan.INSTANCE_NAME));
         assertFalse(entityStates.isLoaded(group, "createTs"));
 
         User user = metadata.create(User.class);
@@ -176,7 +178,7 @@ public class DataManagerCommit2Test {
 
     @Test
     public void testViewAfterCommitModified() throws Exception {
-        Group group2 = dataManager.load(LoadContext.create(Group.class).setId(this.group2.getId()).setFetchPlan(FetchPlan.MINIMAL));
+        Group group2 = dataManager.load(LoadContext.create(Group.class).setId(this.group2.getId()).setFetchPlan(FetchPlan.INSTANCE_NAME));
         assertFalse(entityStates.isLoaded(group2, "createTs"));
 
         LoadContext<User> loadContext = LoadContext.create(User.class).setId(userId).setView(view);

@@ -234,7 +234,7 @@ public class DynamicAttributesGuiTools {
             if (attribute.getDataType() == AttributeType.ENTITY) {
                 MetaClass entityMetaClass = metadata.getClassNN(attribute.getJavaType());
                 LoadContext<Entity> lc = new LoadContext<>(entityMetaClass).setFetchPlan(
-                        fetchPlanRepository.getFetchPlan(entityMetaClass, FetchPlan.MINIMAL));
+                        fetchPlanRepository.getFetchPlan(entityMetaClass, FetchPlan.INSTANCE_NAME));
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(entityMetaClass);
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", entityMetaClass.getName(), pkName))
                         .setParameter("entityId", attribute.getDefaultValue());

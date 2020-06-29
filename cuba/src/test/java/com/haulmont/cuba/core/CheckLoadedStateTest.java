@@ -18,6 +18,7 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.UserRelatedNews;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
@@ -102,7 +103,42 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
+                .setId(userId).setFetchPlan(View.MINIMAL));
+
+        entityStates.checkLoaded(user, "login", "name");
+
+        try {
+            entityStates.checkLoaded(user, "group");
+
+            fail("user.group is not loaded");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("group is not loaded"));
+        }
+
+        try {
+            entityStates.checkLoaded(user, "password");
+
+            fail("user.password is not loaded");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("password is not loaded"));
+        }
+
+        try {
+            entityStates.checkLoaded(user, "email");
+
+            fail("user.email is not loaded");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains("email is not loaded"));
+        }
+    }
+
+    @Test
+    public void checkInstanceNameProperties() {
+        DataManager dataManager = AppBeans.get(DataManager.class);
+        EntityStates entityStates = AppBeans.get(EntityStates.class);
+
+        User user = dataManager.load(LoadContext.create(User.class)
+                .setId(userId).setFetchPlan(FetchPlan.INSTANCE_NAME));
 
         entityStates.checkLoaded(user, "login", "name");
 
@@ -144,7 +180,7 @@ public class CheckLoadedStateTest {
         entityStates.checkLoadedWithFetchPlan(user, FetchPlan.LOCAL);
 
         User userMinimal = dataManager.load(LoadContext.create(User.class)
-                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
+                .setId(userId).setFetchPlan(FetchPlan.INSTANCE_NAME));
 
         try {
             assertFalse(entityStates.isLoadedWithView(userMinimal, FetchPlan.LOCAL));
@@ -189,7 +225,7 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
+                .setId(userId).setFetchPlan(View.MINIMAL));
 
         UserRelatedNews record = metadata.create(UserRelatedNews.class);
 
@@ -209,7 +245,7 @@ public class CheckLoadedStateTest {
         assertTrue(entityStates.isLoadedWithFetchPlan(testRecord, view));
 
         UserRelatedNews minimalRecord = dataManager.load(LoadContext.create(UserRelatedNews.class)
-                .setId(userRelatedNewsId).setFetchPlan(FetchPlan.MINIMAL));
+                .setId(userRelatedNewsId).setFetchPlan(View.MINIMAL));
 
         try {
             assertFalse(entityStates.isLoadedWithFetchPlan(minimalRecord, view));
@@ -228,7 +264,7 @@ public class CheckLoadedStateTest {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
 
         User user = dataManager.load(LoadContext.create(User.class)
-                .setId(userId).setFetchPlan(FetchPlan.MINIMAL));
+                .setId(userId).setFetchPlan(FetchPlan.INSTANCE_NAME));
 
         recursiveUserRelatedIds = new ArrayList<>();
 

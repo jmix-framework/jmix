@@ -21,7 +21,7 @@ import ch.qos.logback.classic.LoggerContext;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.ViewRepository;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.model.LinkEntity;
 import com.haulmont.cuba.core.model.MultiLinkEntity;
 import com.haulmont.cuba.core.model.common.*;
@@ -59,6 +59,8 @@ public class ViewTest {
     private DataManager dataManager;
     @Autowired
     private TestSupport testSupport;
+    @Autowired
+    private ViewRepository viewRepository;
 
     private UUID userId;
     private UUID groupId;
@@ -190,6 +192,37 @@ public class ViewTest {
     }
 
     @Test
+    public void testMinimalView() throws Exception {
+        FetchPlan minimalView = viewRepository.getView(User.class, View.MINIMAL);
+
+        assertEquals(View.MINIMAL, minimalView.getName());
+
+        User user = dataManager.load(LoadContext.create(User.class).setId(userId).setView(minimalView));
+        assertFalse(entityStates.isLoaded(user, "updateTs"));
+        assertTrue(entityStates.isLoaded(user, "login"));
+
+        user = dataManager.load(LoadContext.create(User.class).setId(userId).setView(View.MINIMAL));
+        assertFalse(entityStates.isLoaded(user, "updateTs"));
+        assertTrue(entityStates.isLoaded(user, "login"));
+    }
+
+    @Test
+    public void testInstanceNameView() throws Exception {
+        FetchPlan instanceNameView = viewRepository.getView(User.class, View.INSTANCE_NAME);
+
+        assertEquals(View.INSTANCE_NAME, instanceNameView.getName());
+
+        User user = dataManager.load(LoadContext.create(User.class).setId(userId).setView(instanceNameView));
+        assertFalse(entityStates.isLoaded(user, "updateTs"));
+        assertTrue(entityStates.isLoaded(user, "login"));
+
+        user = dataManager.load(LoadContext.create(User.class).setId(userId).setView(View.INSTANCE_NAME));
+        assertFalse(entityStates.isLoaded(user, "updateTs"));
+        assertTrue(entityStates.isLoaded(user, "login"));
+
+    }
+
+    @Test
     public void testEntityManager() throws Exception {
         Transaction tx = persistence.createTransaction();
         try {
@@ -317,7 +350,7 @@ public class ViewTest {
             long ts = timeSource.currentTimeMillis();
             Thread.sleep(1000);
 
-            FetchPlan minimalView = metadata.getViewRepository().getView(User.class, FetchPlan.MINIMAL);
+            FetchPlan minimalView = metadata.getViewRepository().getView(User.class, FetchPlan.INSTANCE_NAME);
             minimalView.setLoadPartialEntities(true);
 
             EntityManager em = persistence.getEntityManager();
@@ -461,7 +494,7 @@ public class ViewTest {
     public void testViewCopy() throws Exception {
         ViewRepository viewRepository = metadata.getViewRepository();
         FetchPlan view = viewRepository.getView(User.class, FetchPlan.LOCAL);
-        view.addProperty("group", viewRepository.getView(Group.class, FetchPlan.MINIMAL));
+        view.addProperty("group", viewRepository.getView(Group.class, FetchPlan.INSTANCE_NAME));
 
         assertNotNull(view.getProperty("group"));
         assertNull(viewRepository.getView(User.class, FetchPlan.LOCAL).getProperty("group"));

@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  *      <li>A name of this object method, returning string, with {@code #} symbol in the beginning.
  *     </ul>
  *     <li>{1} - comma-separated list of field names, corresponding to format {0}. These fields are also used for
- *     defining a {@code _minimal} view of this entity.</li>
+ *     defining a {@code _instance_name} view of this entity.</li>
  * </ul>
  * Extra spaces between parts are not allowed.
  * <p>

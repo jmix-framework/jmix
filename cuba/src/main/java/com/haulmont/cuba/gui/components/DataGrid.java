@@ -168,4 +168,12 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
          */
         Class getGeneratedType();
     }
+
+    /**
+     * Creates renderer implementation by its type.
+     *
+     * @param type renderer type
+     * @return renderer instance with given type
+     */
+    <T extends Renderer> T createRenderer(Class<T> type);
 }

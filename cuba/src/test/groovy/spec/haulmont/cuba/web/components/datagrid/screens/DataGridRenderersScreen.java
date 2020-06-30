@@ -16,8 +16,8 @@
 
 package spec.haulmont.cuba.web.components.datagrid.screens;
 
+import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.web.model.sample.RendererEntity;
-import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;

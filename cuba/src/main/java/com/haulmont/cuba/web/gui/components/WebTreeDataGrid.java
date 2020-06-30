@@ -138,6 +138,11 @@ public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl
     }
 
     @Override
+    public <T extends Renderer> T createRenderer(Class<T> type) {
+        return beanLocator.getPrototype(type);
+    }
+
+    @Override
     protected ValueProvider getDefaultPresentationValueProvider(io.jmix.ui.component.DataGrid.Column<E> column) {
         MetaProperty metaProperty = column.getPropertyPath() != null
                 ? column.getPropertyPath().getMetaProperty()

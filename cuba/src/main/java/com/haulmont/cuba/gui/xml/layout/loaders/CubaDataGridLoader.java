@@ -90,6 +90,17 @@ public class CubaDataGridLoader extends DataGridLoader {
         return null;
     }
 
+    @Nullable
+    @Override
+    protected io.jmix.ui.component.DataGrid.Renderer loadRenderer(Element columnElement) {
+        io.jmix.ui.component.DataGrid.Renderer renderer = super.loadRenderer(columnElement);
+        if (renderer == null && columnElement.element("renderer") != null) {
+            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"), context, getHotDeployManager(), beanLocator);
+        }
+
+        return renderer;
+    }
+
     protected static class CubaDataGridDataHolder extends DataGridDataHolder {
 
         protected CollectionDatasource datasource;

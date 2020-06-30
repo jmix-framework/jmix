@@ -30,8 +30,7 @@ dependencies {
     api 'org.springframework:spring-test'
     api 'org.spockframework:spock-core'
     api 'org.spockframework:spock-spring'
-
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    api 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 jar {

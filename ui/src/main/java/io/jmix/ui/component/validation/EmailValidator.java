@@ -13,59 +13,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.component.validator;
+package io.jmix.ui.component.validation;
 
-import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
-import io.jmix.ui.component.Field;
 import io.jmix.ui.component.ValidationException;
-import org.dom4j.Element;
-import org.hibernate.validator.constraints.Email;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.validation.Validator;
+import javax.validation.constraints.Email;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmailValidator implements Field.Validator {
+/**
+ * Email validator checks that String value is email or contains multiple emails separated by a semicolon or comma.
+ * <p>
+ * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * for example:
+ * <pre>
+ *     &lt;bean id="ui_EmailValidator" class="io.jmix.ui.component.validation.EmailValidator" scope="prototype"/&gt;
+ *     </pre>
+ * Use {@link BeanLocator} when creating the validator programmatically.
+ */
+@Component(EmailValidator.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class EmailValidator extends AbstractValidator<String> {
 
-    protected String message;
-    protected String messagesPack;
+    public static final String NAME = "ui_EmailValidator";
+
     protected Messages messages;
     protected MessageTools messageTools;
-
     protected Validator validator;
 
+    protected String message;
+
     public EmailValidator() {
-        messages = AppBeans.get(Messages.class);
-        messageTools = AppBeans.get(MessageTools.class);
-        validator = AppBeans.get(BeanValidation.class)
-                .getValidator();
     }
 
-    public EmailValidator(Element element, String messagesPack) {
-        this();
-        message = element.attributeValue("message");
-        this.messagesPack = messagesPack;
-    }
-
-    /**
-     * INTERNAL. Used in tests.
-     */
-    protected EmailValidator(Messages messages, MessageTools messageTools, Validator validator) {
+    @Autowired
+    protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setMessageTools(MessageTools messageTools) {
         this.messageTools = messageTools;
-        this.validator = validator;
+    }
+
+    @Autowired
+    protected void setValidator(BeanValidation beanValidation) {
+        validator = beanValidation.getValidator();
     }
 
     @Override
-    public void validate(Object value) throws ValidationException {
+    public void accept(String value) {
         if (value == null) {
             return;
         }
 
-        List<String> emails = collectEmails((String) value);
+        List<String> emails = collectEmails(value);
         if (emails.isEmpty()) {
             return;
         }
@@ -73,15 +84,11 @@ public class EmailValidator implements Field.Validator {
         for (String email : emails) {
             boolean valid = validator.validateValue(EmailValidationPojo.class, "email", email).isEmpty();
             if (!valid) {
-                String msg = message != null ?
-                        messageTools.loadString(messagesPack, message)
-                        : null;
-
-                if (msg == null) {
-                    msg = messages.getMessage("validation.invalidEmail"); //todo vm mainmessages
+                if (message == null) {
+                    message = messages.getMessage("validation.invalidEmail");
                 }
 
-                throw new ValidationException(String.format(msg, value));
+                throw new ValidationException(String.format(message, value));
             }
         }
     }

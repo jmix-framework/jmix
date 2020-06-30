@@ -63,27 +63,6 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
     Collection<Consumer<V>> getValidators();
 
     /**
-     * Field validator.<br>
-     * Validators are invoked when {@link Validatable#validate()} is called.
-     * Editor screen calls {@code validate()} on commit.
-     *
-     * @deprecated Use typed {@link Consumer} instead.
-     */
-    @Deprecated
-    interface Validator<T> extends Consumer<T> {
-        /**
-         * @param value field value to validate
-         * @throws ValidationException this exception must be thrown by the validator if the value is not valid
-         */
-        void validate(@Nullable Object value) throws ValidationException;
-
-        @Override
-        default void accept(T t) {
-            validate(t);
-        }
-    }
-
-    /**
      * @return datasource property
      * @deprecated Use {@link #getValueSource()} instead
      */

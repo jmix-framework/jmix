@@ -19,13 +19,14 @@ package io.jmix.ui.component.validation;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
+import io.jmix.core.TimeSource;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.time.TimeValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.time.*;
 import java.util.Date;
 
@@ -46,9 +47,11 @@ import java.util.Date;
  */
 @Component(FutureValidator.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class FutureValidator<T> extends AbstractValidator<T>   {
+public class FutureValidator<T> extends AbstractValidator<T> {
 
     public static final String NAME = "ui_FutureValidator";
+
+    protected TimeSource timeSource;
 
     protected boolean checkSeconds = false;
 
@@ -67,6 +70,11 @@ public class FutureValidator<T> extends AbstractValidator<T>   {
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setTimeSource(TimeSource timeSource) {
+        this.timeSource = timeSource;
     }
 
     /**
@@ -92,7 +100,7 @@ public class FutureValidator<T> extends AbstractValidator<T>   {
             return;
         }
 
-        TimeValidator timeConstraint = ValidatorHelper.getTimeConstraint(value);
+        TimeValidator timeConstraint = ValidatorHelper.getTimeConstraint(timeSource, value);
         if (timeConstraint == null) {
             throw new IllegalArgumentException("FutureValidator doesn't support following type: '" + value.getClass() + "'");
         }
@@ -101,7 +109,7 @@ public class FutureValidator<T> extends AbstractValidator<T>   {
         if (!timeConstraint.isFuture()) {
             String message = getMessage();
             if (message == null) {
-                message =  messages.getMessage("validation.constraints.future");
+                message = messages.getMessage("validation.constraints.future");
             }
 
             throw new ValidationException(message);

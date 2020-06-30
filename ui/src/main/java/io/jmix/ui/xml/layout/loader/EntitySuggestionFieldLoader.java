@@ -46,7 +46,6 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
         loadCaptionProperty(resultComponent, element);
 
         loadActions(resultComponent);
-        loadValidators(resultComponent, element);
 
         loadAsyncSearchDelayMs(resultComponent, element);
         loadMinSearchStringLength(resultComponent, element);

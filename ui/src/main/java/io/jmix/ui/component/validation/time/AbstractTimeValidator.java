@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.validation.time;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.TimeSource;
 
 import java.time.*;
@@ -27,12 +26,16 @@ import java.util.Map;
 
 public abstract class AbstractTimeValidator<T> implements TimeValidator {
 
-    protected TimeSource timeSource = AppBeans.get(TimeSource.NAME);
+    protected TimeSource timeSource;
     protected T value;
 
     protected boolean checkSeconds;
 
     protected static Map<Class, TimeValidator> constraints = new HashMap<>(5);
+
+    public AbstractTimeValidator(TimeSource timeSource) {
+        this.timeSource = timeSource;
+    }
 
     @Override
     public boolean isPast() {
@@ -63,7 +66,8 @@ public abstract class AbstractTimeValidator<T> implements TimeValidator {
 
     public static class DateConstraint extends AbstractTimeValidator<Date> {
 
-        public DateConstraint(Date value) {
+        public DateConstraint(TimeSource timeSource, Date value) {
+            super(timeSource);
             this.value = value;
         }
 
@@ -91,7 +95,8 @@ public abstract class AbstractTimeValidator<T> implements TimeValidator {
 
     public static class LocalDateConstraint extends AbstractTimeValidator<LocalDate> {
 
-        public LocalDateConstraint(LocalDate value) {
+        public LocalDateConstraint(TimeSource timeSource, LocalDate value) {
+            super(timeSource);
             this.value = value;
         }
 
@@ -104,7 +109,8 @@ public abstract class AbstractTimeValidator<T> implements TimeValidator {
 
     public static class LocalDateTimeConstraint extends AbstractTimeValidator<LocalDateTime> {
 
-        public LocalDateTimeConstraint(LocalDateTime value) {
+        public LocalDateTimeConstraint(TimeSource timeSource, LocalDateTime value) {
+            super(timeSource);
             this.value = value;
         }
 
@@ -127,7 +133,8 @@ public abstract class AbstractTimeValidator<T> implements TimeValidator {
 
     public static class LocalTimeConstraint extends AbstractTimeValidator<LocalTime> {
 
-        public LocalTimeConstraint(LocalTime value) {
+        public LocalTimeConstraint(TimeSource timeSource, LocalTime value) {
+            super(timeSource);
             this.value = value;
         }
 
@@ -150,7 +157,8 @@ public abstract class AbstractTimeValidator<T> implements TimeValidator {
 
     public static class OffsetTimeConstraint extends AbstractTimeValidator<OffsetTime> {
 
-        public OffsetTimeConstraint(OffsetTime value) {
+        public OffsetTimeConstraint(TimeSource timeSource, OffsetTime value) {
+            super(timeSource);
             this.value = value;
         }
 
@@ -173,7 +181,8 @@ public abstract class AbstractTimeValidator<T> implements TimeValidator {
 
     public static class OffsetDateTimeConstraint extends AbstractTimeValidator<OffsetDateTime> {
 
-        public OffsetDateTimeConstraint(OffsetDateTime value) {
+        public OffsetDateTimeConstraint(TimeSource timeSource, OffsetDateTime value) {
+            super(timeSource);
             this.value = value;
         }
 

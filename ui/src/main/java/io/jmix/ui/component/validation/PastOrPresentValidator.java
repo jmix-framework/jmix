@@ -19,13 +19,14 @@ package io.jmix.ui.component.validation;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
+import io.jmix.core.TimeSource;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.time.TimeValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.time.*;
 import java.util.Date;
 
@@ -50,6 +51,8 @@ public class PastOrPresentValidator<T> extends AbstractValidator<T> {
 
     public static final String NAME = "ui_PastOrPresentValidator";
 
+    protected TimeSource timeSource;
+
     protected boolean checkSeconds = false;
 
     public PastOrPresentValidator() {
@@ -67,6 +70,11 @@ public class PastOrPresentValidator<T> extends AbstractValidator<T> {
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    protected void setTimeSource(TimeSource timeSource) {
+        this.timeSource = timeSource;
     }
 
     /**
@@ -92,7 +100,7 @@ public class PastOrPresentValidator<T> extends AbstractValidator<T> {
             return;
         }
 
-        TimeValidator timeConstraint = ValidatorHelper.getTimeConstraint(value);
+        TimeValidator timeConstraint = ValidatorHelper.getTimeConstraint(timeSource, value);
         if (timeConstraint == null) {
             throw new IllegalArgumentException("PastOrPresentValidator doesn't support following type: '" + value.getClass() + "'");
         }

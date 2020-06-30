@@ -389,25 +389,6 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="defaultValidator">
-        <xs:union>
-            <xs:simpleType>
-                <xs:restriction base="xs:string"/>
-            </xs:simpleType>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="io.jmix.ui.component.validator.DateValidator"/>
-                    <xs:enumeration value="io.jmix.ui.component.validator.DoubleValidator"/>
-                    <xs:enumeration value="io.jmix.ui.component.validator.EmailValidator"/>
-                    <xs:enumeration value="io.jmix.ui.component.validator.IntegerValidator"/>
-                    <xs:enumeration value="io.jmix.ui.component.validator.LongValidator"/>
-                    <xs:enumeration value="io.jmix.ui.component.validator.PatternValidator"/>
-                    <xs:enumeration value="io.jmix.ui.component.validator.ScriptValidator"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:union>
-    </xs:simpleType>
-
     <xs:simpleType name="linkTarget">
         <xs:union>
             <xs:simpleType>
@@ -1405,20 +1386,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="validatorType" mixed="true">
-        <xs:attribute name="class" type="defaultValidator"/>
-        <xs:attribute name="message" type="xs:string"/>
-        <xs:attribute name="script" type="xs:string"/>
-        <xs:attribute name="onlyPositive" type="xs:boolean"/>
-        <xs:attribute name="valueType" type="xs:string"/>
-        <xs:attribute name="minValue" type="xs:string"/>
-        <xs:attribute name="includeMinValue" type="xs:boolean"/>
-        <xs:attribute name="maxValue" type="xs:string"/>
-        <xs:attribute name="includeMaxValue" type="xs:boolean"/>
-        <xs:attribute name="ignoreCase" type="xs:boolean"/>
-        <xs:attribute name="pattern" type="xs:string"/>
-    </xs:complexType>
-
     <xs:attributeGroup name="columnsLoadType">
         <xs:attribute name="includeAll" type="xs:boolean"/>
         <xs:attribute name="exclude" type="xs:string"/>
@@ -1669,7 +1636,6 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" maxOccurs="unbounded" type="validatorType"/>
                     <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
                 </xs:sequence>
 
@@ -1855,7 +1821,6 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
 
@@ -1912,7 +1877,6 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
                 <xs:attribute name="showSeconds" type="xs:boolean"/>
@@ -1945,7 +1909,6 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
                 </xs:sequence>
 
@@ -2012,7 +1975,6 @@
         <xs:complexContent>
             <xs:extension base="suggestionFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
                 </xs:sequence>
@@ -2028,7 +1990,6 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
                 </xs:sequence>
@@ -2048,7 +2009,6 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
                 </xs:sequence>
@@ -2075,7 +2035,6 @@
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="validators" minOccurs="0" type="collectionValidatorType"/>
                 </xs:sequence>
 
@@ -2685,7 +2644,6 @@
             <xs:group ref="layoutOrComponent"/>
 
             <xs:element name="formatter" minOccurs="0" type="formatterType"/>
-            <xs:element name="validator" minOccurs="0" type="validatorType"/>
         </xs:sequence>
 
         <xs:attributeGroup ref="hasId"/>
@@ -2881,7 +2839,6 @@
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
-                    <xs:element name="validator" minOccurs="0" type="validatorType"/>
                     <xs:element name="validators" minOccurs="0" type="collectionValidatorType"/>
                 </xs:sequence>
 

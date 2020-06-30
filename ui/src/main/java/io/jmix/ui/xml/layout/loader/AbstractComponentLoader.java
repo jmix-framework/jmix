@@ -22,7 +22,6 @@ import io.jmix.core.HotDeployManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
 import io.jmix.ui.Actions;
@@ -36,8 +35,6 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.component.validator.*;
-import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
@@ -66,9 +63,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -543,69 +538,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         }
 
         return iconPath;
-    }
-
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    protected Consumer<?> loadValidator(Element validatorElement) {
-        String className = validatorElement.attributeValue("class");
-        String scriptPath = validatorElement.attributeValue("script");
-        String script = validatorElement.getText();
-
-        Consumer<?> validator = null;
-
-        if (StringUtils.isNotBlank(scriptPath) || StringUtils.isNotBlank(script)) {
-            validator = new ScriptValidator(validatorElement, context.getMessagesPack());
-        } else {
-            Class aClass = getHotDeployManager().findClass(className);
-            if (aClass == null)
-                throw new GuiDevelopmentException(String.format("Class %s is not found", className), context);
-            if (!StringUtils.isBlank(context.getMessagesPack()))
-                try {
-                    validator = (Consumer<?>) ReflectionHelper.newInstance(aClass, validatorElement, context.getMessagesPack());
-                } catch (NoSuchMethodException e) {
-                    //
-                }
-            if (validator == null) {
-                try {
-                    validator = (Consumer<?>) ReflectionHelper.newInstance(aClass, validatorElement);
-                } catch (NoSuchMethodException e) {
-                    try {
-                        validator = (Consumer<?>) ReflectionHelper.newInstance(aClass);
-                    } catch (NoSuchMethodException e1) {
-                        // todo log warn
-                    }
-                }
-            }
-            if (validator == null) {
-                throw new GuiDevelopmentException(
-                        String.format("Validator class %s has no supported constructors", aClass), context);
-            }
-        }
-        return validator;
-    }
-
-    @Deprecated
-    protected Consumer<?> getDefaultValidator(MetaProperty property) {
-        Consumer<?> validator = null;
-        if (property.getRange().isDatatype()) {
-            Messages messages = getMessages();
-
-            Class type = property.getRange().asDatatype().getJavaClass();
-            if (type.equals(Integer.class)) {
-                validator = new IntegerValidator(messages.getMessage("validation.invalidNumber"));
-
-            } else if (type.equals(Long.class)) {
-                validator = new LongValidator(messages.getMessage("validation.invalidNumber"));
-
-            } else if (type.equals(Double.class) || type.equals(BigDecimal.class)) {
-                validator = new DoubleValidator(messages.getMessage("validation.invalidNumber"));
-
-            } else if (type.equals(java.sql.Date.class)) {
-                validator = new DateValidator(messages.getMessage("validation.invalidDate"));
-            }
-        }
-        return validator;
     }
 
     protected void loadActions(ActionsHolder actionsHolder, Element element) {

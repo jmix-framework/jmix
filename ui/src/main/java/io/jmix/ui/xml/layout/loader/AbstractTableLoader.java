@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,7 +73,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         loadEnable(resultComponent, element);
         loadVisible(resultComponent, element);
         loadEditable(resultComponent, element);
-        loadValidators(resultComponent, element);
 
         loadAlign(resultComponent, element);
         loadStyleName(resultComponent, element);
@@ -171,7 +169,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
         for (Table.Column column : availableColumns) {
             resultComponent.addColumn(column);
-            loadValidators(resultComponent, column);
             loadRequired(resultComponent, column);
         }
 
@@ -440,30 +437,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         }
     }
 
-    protected void loadValidators(Table component, Table.Column column) {
-        List<Element> validatorElements = column.getXmlDescriptor().elements("validator");
-
-        if (!validatorElements.isEmpty()) {
-            for (Element validatorElement : validatorElements) {
-                Consumer<?> validator = loadValidator(validatorElement);
-                if (validator != null) {
-                    component.addValidator(column, validator);
-                }
-            }
-        } else if (column.isEditable()) {
-            if (!(column.getId() instanceof MetaPropertyPath)) {
-                throw new GuiDevelopmentException(String.format("Column '%s' has editable=true, but there is no " +
-                        "property of an entity with this id", column.getId()), context);
-            }
-
-            MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
-            Consumer<?> validator = getDefaultValidator(propertyPath.getMetaProperty());
-            if (validator != null) {
-                component.addValidator(column, validator);
-            }
-        }
-    }
-
     protected Table.Column loadColumn(Element element, MetaClass metaClass) {
         String id = element.attributeValue("id");
 
@@ -628,17 +601,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         String maxTextLength = columnElement.attributeValue("maxTextLength");
         if (!StringUtils.isBlank(maxTextLength)) {
             column.setMaxTextLength(Integer.parseInt(maxTextLength));
-        }
-    }
-
-    protected void loadValidators(Table component, Element element) {
-        List<Element> validatorElements = element.elements("validator");
-
-        for (Element validatorElement : validatorElements) {
-            Consumer<?> validator = loadValidator(validatorElement);
-            if (validator != null) {
-                component.addValidator(validator);
-            }
         }
     }
 

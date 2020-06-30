@@ -47,6 +47,7 @@ public class ValidatorLoadFactory {
             .put("doubleMin", this::loadDoubleMinValidator)
             .put("doubleMax", this::loadDoubleMaxValidator)
             .put("digits", this::loadDigitsValidator)
+            .put("email", this::loadValidatorWithoutAttributes)
             .put("future", this::loadFutureValidator)
             .put("futureOrPresent", this::loadFutureOrPresentValidator)
             .put("max", this::loadMaxValidator)
@@ -252,6 +253,9 @@ public class ValidatorLoadFactory {
     protected AbstractValidator loadValidatorWithoutAttributes(Element element, String messagePack) {
         AbstractValidator validator;
         switch (element.getName()) {
+            case "email":
+                validator = beanLocator.getPrototype(EmailValidator.NAME);
+                break;
             case "negativeOrZero":
                 validator = beanLocator.getPrototype(NegativeOrZeroValidator.NAME);
                 break;

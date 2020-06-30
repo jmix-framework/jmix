@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.validation;
 
+import io.jmix.core.TimeSource;
 import io.jmix.ui.component.validation.number.*;
 import io.jmix.ui.component.validation.time.AbstractTimeValidator.*;
 import io.jmix.ui.component.validation.time.TimeValidator;
@@ -50,26 +51,26 @@ public final class ValidatorHelper {
     }
 
     @Nullable
-    public static <T> TimeValidator getTimeConstraint(T value) {
+    public static <T> TimeValidator getTimeConstraint(TimeSource timeSource, T value) {
         if (value == null) {
             return null;
         }
 
         Class clazz = value.getClass();
         if (clazz.equals(Date.class)) {
-            return new DateConstraint((Date) value);
+            return new DateConstraint(timeSource, (Date) value);
         } else if (clazz.equals(LocalDate.class)) {
-            return new LocalDateConstraint((LocalDate) value);
+            return new LocalDateConstraint(timeSource, (LocalDate) value);
         } else if (clazz.equals(java.sql.Date.class)) {
-            return new LocalDateConstraint(((java.sql.Date) value).toLocalDate());
+            return new LocalDateConstraint(timeSource, ((java.sql.Date) value).toLocalDate());
         } else if (clazz.equals(LocalDateTime.class)) {
-            return new LocalDateTimeConstraint((LocalDateTime) value);
+            return new LocalDateTimeConstraint(timeSource, (LocalDateTime) value);
         } else if (clazz.equals(LocalTime.class)) {
-            return new LocalTimeConstraint((LocalTime) value);
+            return new LocalTimeConstraint(timeSource, (LocalTime) value);
         } else if (clazz.equals(OffsetTime.class)) {
-            return new OffsetTimeConstraint((OffsetTime) value);
+            return new OffsetTimeConstraint(timeSource, (OffsetTime) value);
         } else if (clazz.equals(OffsetDateTime.class)) {
-            return new OffsetDateTimeConstraint((OffsetDateTime) value);
+            return new OffsetDateTimeConstraint(timeSource, (OffsetDateTime) value);
         }
         return null;
     }

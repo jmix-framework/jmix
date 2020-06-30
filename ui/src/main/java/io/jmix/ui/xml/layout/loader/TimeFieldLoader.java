@@ -72,9 +72,4 @@ public class TimeFieldLoader extends AbstractFieldLoader<TimeField> {
             resultComponent.setTimeMode(TimeField.TimeMode.valueOf(timeMode));
         }
     }
-
-    @Override
-    protected void loadValidators(Field component, Element element) {
-        // don't load any validators
-    }
 }

@@ -21,12 +21,10 @@ import io.jmix.ui.component.Field;
 import io.jmix.ui.component.HasDatatype;
 import io.jmix.ui.component.validation.AbstractValidator;
 import io.jmix.ui.component.validation.ValidatorLoadFactory;
-import io.jmix.ui.component.validator.EmailValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public abstract class AbstractFieldLoader<T extends Field> extends AbstractComponentLoader<T> {
 
@@ -50,7 +48,6 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
         loadDescription(resultComponent, element);
         loadContextHelp(resultComponent, element);
 
-        loadValidators(resultComponent, element);
         loadValidation(resultComponent, element);
 
         loadRequired(resultComponent, element);
@@ -75,21 +72,6 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
     }
 
     @SuppressWarnings("unchecked")
-    protected void loadValidators(Field component, Element element) {
-        List<Element> validatorElements = element.elements("validator");
-
-        if (!validatorElements.isEmpty()) {
-            for (Element validatorElement : validatorElements) {
-                Consumer<?> validator = loadValidator(validatorElement);
-                if (validator != null) {
-                    component.addValidator(validator);
-                }
-            }
-
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     protected void loadValidation(Field component, Element element) {
         Element validatorsHolder = element.element("validators");
         if (validatorsHolder != null) {
@@ -101,8 +83,6 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
                 AbstractValidator validator = loadFactory.createValidator(validatorElem, context.getMessagesPack());
                 if (validator != null) {
                     component.addValidator(validator);
-                } else if (validatorElem.getName().equals("email")) {
-                    component.addValidator(new EmailValidator(validatorElem, context.getMessagesPack()));
                 }
             }
         }

@@ -29,7 +29,7 @@ import io.jmix.ui.settings.component.binder.SplitPanelSettingsBinder
 
 import javax.inject.Inject
 
-class ComponentSettingsTest extends UiDataTestSpec {
+class ComponentSettingsTest extends UiDataTestSpecification {
 
     @Inject
     GroupBoxSettingsBinder groupBoxBinder

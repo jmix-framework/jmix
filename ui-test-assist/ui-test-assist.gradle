@@ -24,18 +24,18 @@ group = 'io.jmix.ui'
 dependencies {
     api platform(project(':jmix-platform'))
 
-    api project(':modules:data')
-    api project(':modules:ui')
+    api project(":modules:ui")
 
-    api 'com.google.code.gson:gson:2.8.6'
+    api 'org.junit.jupiter:junit-jupiter-api'
+    api 'org.springframework:spring-test'
+    api 'org.spockframework:spock-core'
+    api 'org.spockframework:spock-spring'
 
-    testImplementation project(':modules:ui-test-assist')
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
 jar {
-    archivesBaseName = 'jmix-ui-data'
+    archivesBaseName = 'jmix-ui-test-assist'
 }
 
 java {
@@ -49,7 +49,7 @@ artifacts {
 publishing {
     publications {
         javaMaven(MavenPublication) {
-            artifactId = 'jmix-ui-data'
+            artifactId = 'jmix-ui-test-assist'
             from components.java
         }
     }

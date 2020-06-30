@@ -19,10 +19,10 @@ package spec.haulmont.cuba.web.components
 import com.haulmont.cuba.core.model.common.Role
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.gui.components.PickerField
-import spec.haulmont.cuba.web.WebSpec
+import spec.haulmont.cuba.web.UiScreenSpec
 
 @SuppressWarnings("GroovyAssignabilityCheck")
-class PickerFieldIncorrectValueTest extends WebSpec {
+class PickerFieldIncorrectValueTest extends UiScreenSpec {
 
     def "PickerField throws exception if metaClass is not set"() {
         def pickerField = uiComponents.create(PickerField.class)

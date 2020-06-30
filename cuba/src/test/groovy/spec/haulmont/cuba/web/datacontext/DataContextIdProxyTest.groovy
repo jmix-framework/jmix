@@ -17,8 +17,8 @@
 package spec.haulmont.cuba.web.datacontext
 
 import com.haulmont.cuba.core.model.TestIdentityIdEntity
-import com.haulmont.cuba.web.testsupport.TestSupport
 import io.jmix.ui.model.DataComponents
+import io.jmix.ui.testassist.TestSupport
 import spec.haulmont.cuba.web.UiScreenSpec
 
 import org.springframework.beans.factory.annotation.Autowired

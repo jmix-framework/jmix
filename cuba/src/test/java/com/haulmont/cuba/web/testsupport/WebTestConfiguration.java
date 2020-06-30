@@ -50,23 +50,6 @@ import java.util.Locale;
 @PropertySource("classpath:/com/haulmont/cuba/core/test-web-app.properties")
 public class WebTestConfiguration {
 
-    @Autowired
-    protected FormatStringsRegistry formatStringsRegistry;
-
-    protected VaadinSession vaadinSession;
-
-    @EventListener
-    public void init(ContextRefreshedEvent event) {
-        // saving session to avoid it be GC'ed
-        VaadinSession.setCurrent(vaadinSession = createTestVaadinSession());
-
-        formatStringsRegistry.setFormatStrings(Locale.ENGLISH, new FormatStrings(
-                '.', ',',
-                "#,##0", "#,##0.###", "#,##0.##",
-                "dd/MM/yyyy", "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH:mm Z", "HH:mm", "HH:mm Z",
-                "True", "False"));
-    }
-
     @Bean(name = UiComponents.NAME)
     UiComponents uiComponents() {
         return new CubaUiComponents();
@@ -98,9 +81,5 @@ public class WebTestConfiguration {
     @Bean
     TestEventsListener testEventsListener() {
         return new TestEventsListener();
-    }
-
-    protected VaadinSession createTestVaadinSession() {
-        return new TestVaadinSession(new WebBrowser(), Locale.ENGLISH);
     }
 }

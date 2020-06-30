@@ -25,14 +25,14 @@ import io.jmix.ui.Facets
 import io.jmix.ui.component.*
 import io.jmix.ui.component.impl.JavaScriptComponent
 import io.jmix.ui.component.mainwindow.*
-import spec.haulmont.cuba.web.WebSpec
+import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 import spock.lang.Unroll
 
 import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings("GroovyAccessibility")
-class CreateComponentTest extends WebSpec {
+class CreateComponentTest extends UiScreenSpec {
 
     @Autowired
     Facets facets

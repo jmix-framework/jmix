@@ -23,10 +23,10 @@ import com.haulmont.cuba.core.model.sales.Status
 import io.jmix.ui.component.TextField
 import io.jmix.ui.component.data.value.ContainerValueSource
 import io.jmix.ui.model.InstanceContainer
-import spec.haulmont.cuba.web.WebSpec
+import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-class TextFieldBindingToEntityTest extends WebSpec {
+class TextFieldBindingToEntityTest extends UiScreenSpec {
 
     private InstanceContainer<Customer> customerCt
     private InstanceContainer<Order> orderCt

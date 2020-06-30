@@ -16,27 +16,35 @@
 
 package spec.haulmont.cuba.web
 
-
+import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.UserSessionSource
 import com.haulmont.cuba.core.sys.AppProperties
-import io.jmix.ui.Screens
-import io.jmix.ui.screen.OpenMode
+import com.haulmont.cuba.web.testsupport.WebTest
 import io.jmix.ui.screen.Screen
-
+import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
-class UiScreenSpec extends WebSpec {
+@WebTest
+class UiScreenSpec extends ScreenSpecification {
 
     @Autowired
     AppProperties appProperties
 
-    protected Screens getScreens() {
-        vaadinUi.screens
+    @Autowired
+    DataManager dataManager
+
+    @Autowired
+    UserSessionSource sessionSource
+
+    @Override
+    void setup() {
+        exportScreensPackages(['com.haulmont.cuba.web.app.main'])
     }
 
-    protected Screen showMainScreen() {
-        def mainScreen = screens.create("main", OpenMode.ROOT)
-        screens.show(mainScreen)
-        mainScreen
+    protected Screen showMainWindow() {
+        def mainWindow = screens.create("mainWindow", OpenMode.ROOT)
+        screens.show(mainWindow)
+        mainWindow
     }
 }

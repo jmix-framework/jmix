@@ -18,7 +18,6 @@ package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
@@ -52,20 +51,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AbstractDataGridLoader<T extends DataGrid> extends ActionsHolderLoader<T> {
-
-    protected static final List<Class<?>> UNSUPPORTED_DECLARATIVE_RENDERERS = ImmutableList.of(
-            DataGrid.ButtonRenderer.class,
-            DataGrid.ClickableTextRenderer.class,
-            DataGrid.ImageRenderer.class
-    );
-
-    protected static final List<Class<?>> UNSUPPORTED_PARAMETERIZED_RENDERERS = ImmutableList.of(
-            DataGrid.DateRenderer.class,
-            DataGrid.LocalDateRenderer.class,
-            DataGrid.LocalDateTimeRenderer.class,
-            DataGrid.NumberRenderer.class
-    );
-
     protected static final Map<String, Class<? extends DataGrid.Renderer>> RENDERERS_MAP =
             ImmutableMap.<String, Class<? extends DataGrid.Renderer>>builder()
                     .put("checkBoxRenderer", DataGrid.CheckBoxRenderer.class)
@@ -599,18 +584,11 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
     @Nullable
     protected DataGrid.Renderer loadRenderer(Element columnElement) {
-        Element rendererElement;
-
         for (Map.Entry<String, Class<? extends DataGrid.Renderer>> entry : RENDERERS_MAP.entrySet()) {
-            rendererElement = columnElement.element(entry.getKey());
+            Element rendererElement = columnElement.element(entry.getKey());
             if (rendererElement != null) {
                 return loadRendererByClass(rendererElement, entry.getValue());
             }
-        }
-
-        rendererElement = columnElement.element("renderer");
-        if (rendererElement != null) {
-            return loadLegacyRenderer(rendererElement);
         }
 
         return null;
@@ -632,32 +610,6 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         }
 
         return renderer;
-    }
-
-    @Nullable
-    protected DataGrid.Renderer loadLegacyRenderer(Element renderer) {
-        String rendererType = renderer.attributeValue("type");
-        if (StringUtils.isEmpty(rendererType)) {
-            return null;
-        }
-
-        Class<?> rendererClass = getHotDeployManager().loadClass(rendererType);
-
-        if (UNSUPPORTED_PARAMETERIZED_RENDERERS.contains(rendererClass)) {
-            throw new GuiDevelopmentException(String.format(
-                    "DataGrid doesn't support renderer of type '%s' without required parameters. " +
-                            "Use special XML elements for parameterized renderers.",
-                    rendererType), context);
-        }
-
-        if (UNSUPPORTED_DECLARATIVE_RENDERERS.contains(rendererClass)) {
-            throw new GuiDevelopmentException(String.format(
-                    "DataGrid doesn't support declarative configuration of renderer of type '%s'. " +
-                            "Define it in screen controller.",
-                    rendererType), context);
-        }
-
-        return (DataGrid.Renderer) beanLocator.getPrototype(rendererClass);
     }
 
     protected void loadNullRepresentation(Element rendererElement, DataGrid.HasNullRepresentation renderer) {

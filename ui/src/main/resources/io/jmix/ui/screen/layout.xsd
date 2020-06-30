@@ -1279,21 +1279,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="rendererListType">
-        <xs:attribute name="type" type="rendererList" use="required"/>
-    </xs:complexType>
-
-    <xs:simpleType name="rendererList">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="io.jmix.ui.component.DataGrid$CheckBoxRenderer"/>
-            <xs:enumeration value="io.jmix.ui.component.DataGrid$ComponentRenderer"/>
-            <xs:enumeration value="io.jmix.ui.component.DataGrid$IconRenderer"/>
-            <xs:enumeration value="io.jmix.ui.component.DataGrid$HtmlRenderer"/>
-            <xs:enumeration value="io.jmix.ui.component.DataGrid$TextRenderer"/>
-            <xs:enumeration value="io.jmix.ui.component.DataGrid$ProgressBarRenderer"/>
-        </xs:restriction>
-    </xs:simpleType>
-
     <xs:group name="renderers">
         <xs:sequence>
             <xs:choice maxOccurs="1">
@@ -1307,7 +1292,6 @@
                 <xs:element name="localDateRenderer" minOccurs="0" type="formattableRendererType"/>
                 <xs:element name="localDateTimeRenderer" minOccurs="0" type="formattableRendererType"/>
                 <xs:element name="numberRenderer" minOccurs="0" type="formattableRendererType"/>
-                <xs:element name="renderer" minOccurs="0" type="rendererListType"/>
             </xs:choice>
         </xs:sequence>
     </xs:group>

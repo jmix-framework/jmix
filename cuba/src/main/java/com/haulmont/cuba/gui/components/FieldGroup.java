@@ -18,7 +18,6 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.Field.Validator;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -662,14 +661,14 @@ public interface FieldGroup extends Component, Component.BelongToFrame, Componen
      * @deprecated Use {@code FieldConfig.addValidator(validator)} instead.
      */
     @Deprecated
-    default void addValidator(FieldConfig field, Validator validator) {
+    default void addValidator(FieldConfig field, Field.Validator validator) {
         field.addValidator(validator);
     }
     /**
      * @deprecated Use {@code FieldGroup.getFieldNN(fieldId).addValidator(validator)} instead.
      */
     @Deprecated
-    default void addValidator(String fieldId, Validator validator) {
+    default void addValidator(String fieldId, Field.Validator validator) {
         getFieldNN(fieldId).addValidator(validator);
     }
 

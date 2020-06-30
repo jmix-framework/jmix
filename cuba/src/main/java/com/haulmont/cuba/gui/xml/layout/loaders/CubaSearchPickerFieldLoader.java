@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.SearchPickerField;
@@ -37,6 +38,7 @@ public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
         loadId(resultComponent, element);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
         super.loadComponent();
@@ -58,6 +60,8 @@ public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
         if (StringUtils.isNotEmpty(minSearchStringLength)) {
             searchPickerField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
         }
+
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
     }
 
     @Override

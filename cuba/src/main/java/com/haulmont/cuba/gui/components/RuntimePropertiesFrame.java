@@ -37,10 +37,10 @@ import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.SizeWithUnit;
-import io.jmix.ui.component.validator.DateValidator;
-import io.jmix.ui.component.validator.DoubleValidator;
-import io.jmix.ui.component.validator.IntegerValidator;
-import io.jmix.ui.component.validator.LongValidator;
+import com.haulmont.cuba.gui.components.validators.DateValidator;
+import com.haulmont.cuba.gui.components.validators.DoubleValidator;
+import com.haulmont.cuba.gui.components.validators.IntegerValidator;
+import com.haulmont.cuba.gui.components.validators.LongValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

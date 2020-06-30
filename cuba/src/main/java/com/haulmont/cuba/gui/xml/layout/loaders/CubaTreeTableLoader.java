@@ -21,8 +21,11 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
+import io.jmix.ui.component.Table;
 import io.jmix.ui.xml.layout.loader.TreeTableLoader;
 import org.dom4j.Element;
+
+import java.util.List;
 
 @SuppressWarnings("rawtypes")
 public class CubaTreeTableLoader extends TreeTableLoader {
@@ -32,6 +35,7 @@ public class CubaTreeTableLoader extends TreeTableLoader {
         super.loadComponent();
 
         ComponentLoaderHelper.loadSettingsEnabled((TreeTable) resultComponent, element);
+        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getHotDeployManager());
     }
 
     @Override
@@ -63,6 +67,16 @@ public class CubaTreeTableLoader extends TreeTableLoader {
 
         DynAttrEmbeddingStrategies embeddingStrategies = beanLocator.get(DynAttrEmbeddingStrategies.class);
         embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+    }
+
+    @Override
+    protected void loadTableData() {
+        super.loadTableData();
+
+        List<Table.Column> columns = resultComponent.getColumns();
+        for (io.jmix.ui.component.Table.Column column : columns) {
+            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getHotDeployManager(), getMessages());
+        }
     }
 
     protected static class CubaTreeTableDataHolder extends TableDataHolder {

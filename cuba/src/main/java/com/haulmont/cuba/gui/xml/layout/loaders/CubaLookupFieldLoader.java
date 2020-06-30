@@ -17,8 +17,10 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.OptionsField;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.data.options.ContainerOptions;
@@ -34,6 +36,7 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
         loadId(resultComponent, element);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
         super.loadComponent();
@@ -41,6 +44,7 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
         LookupField lookupField = (LookupField) resultComponent;
 
         loadNewOptionAllowed(lookupField, element);
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
     }
 
     protected void loadNewOptionAllowed(LookupField lookupField, Element element) {

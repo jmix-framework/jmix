@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.actions.GuiActionSupport;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -27,6 +28,14 @@ import io.jmix.ui.xml.layout.loader.EntityPickerLoader;
 import org.dom4j.Element;
 
 public class CubaPickerFieldLoader extends EntityPickerLoader {
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+    }
 
     @Override
     public void createComponent() {

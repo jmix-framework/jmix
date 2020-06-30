@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.BulkEditor;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
@@ -30,7 +31,6 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Field;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.JmixIcon;

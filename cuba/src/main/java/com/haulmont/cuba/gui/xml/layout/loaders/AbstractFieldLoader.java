@@ -17,12 +17,9 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.core.metamodel.model.MetaProperty;
 import org.dom4j.Element;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @Deprecated
@@ -30,29 +27,10 @@ public abstract class AbstractFieldLoader<T extends Field>
         extends io.jmix.ui.xml.layout.loader.AbstractFieldLoader<T> {
 
     @Override
-    protected void loadValidators(io.jmix.ui.component.Field component, Element element) {
-        loadValidators((Field) component, element);
-    }
+    public void loadComponent() {
+        super.loadComponent();
 
-    @SuppressWarnings("unchecked")
-    protected void loadValidators(Field component, Element element) {
-        List<Element> validatorElements = element.elements("validator");
-
-        if (!validatorElements.isEmpty()) {
-            for (Element validatorElement : validatorElements) {
-                Consumer<?> validator = loadValidator(validatorElement);
-                if (validator != null) {
-                    component.addValidator(validator);
-                }
-            }
-
-        } else if (component.getDatasource() != null) {
-            MetaProperty property = component.getMetaProperty();
-            Consumer<?> validator = getDefaultValidator(property);
-            if (validator != null) {
-                component.addValidator(validator);
-            }
-        }
+        ComponentLoaderHelper.loadValidators(resultComponent, element, context, getHotDeployManager(), getMessages());
     }
 
     @Override

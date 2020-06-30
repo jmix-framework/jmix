@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.SuggestionPickerField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -33,6 +34,14 @@ public class CubaSuggestionPickerFieldLoader extends EntitySuggestionFieldLoader
     public void createComponent() {
         resultComponent = factory.create(SuggestionPickerField.NAME);
         loadId(resultComponent, element);
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
     }
 
     @Override

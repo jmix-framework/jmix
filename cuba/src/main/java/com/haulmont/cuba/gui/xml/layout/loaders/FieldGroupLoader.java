@@ -27,6 +27,7 @@ import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.xml.DeclarativeFieldGenerator;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -49,12 +50,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
@@ -553,10 +559,8 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
         if (validatorElements != null) {
             if (!validatorElements.isEmpty()) {
                 for (Element validatorElement : validatorElements) {
-                    Consumer<?> validator = loadValidator(validatorElement);
-                    if (validator != null) {
-                        field.addValidator(validator);
-                    }
+                    Consumer<?> validator = ComponentLoaderHelper.loadValidator(validatorElement, context, getHotDeployManager());
+                    field.addValidator(validator);
                 }
             }
         } else {
@@ -575,9 +579,9 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
                     MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
                     Consumer<?> validator = null;
                     if (descriptor == null) {
-                        validator = getDefaultValidator(metaProperty);
+                        validator = ComponentLoaderHelper.getDefaultValidator(metaProperty, getMessages());
                     } else if (!"timeField".equals(descriptor.attributeValue("field"))) {
-                        validator = getDefaultValidator(metaProperty); //In this case we no need to use validator
+                        validator = ComponentLoaderHelper.getDefaultValidator(metaProperty, getMessages()); //In this case we no need to use validator
                     }
 
                     if (validator != null) {

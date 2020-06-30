@@ -18,9 +18,20 @@ package com.haulmont.cuba.gui.xml.data;
 
 import com.google.common.collect.ImmutableList;
 import com.haulmont.cuba.gui.components.HasSettings;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.HotDeployManager;
+import com.haulmont.cuba.gui.components.validators.DateValidator;
+import com.haulmont.cuba.gui.components.validators.DoubleValidator;
+import com.haulmont.cuba.gui.components.validators.IntegerValidator;
+import com.haulmont.cuba.gui.components.validators.LongValidator;
+import com.haulmont.cuba.gui.components.validators.ScriptValidator;
+import io.jmix.core.HotDeployManager;
+import io.jmix.core.Messages;
+import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.DataGrid;
@@ -32,7 +43,10 @@ import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public final class ComponentLoaderHelper {
 
@@ -125,5 +139,118 @@ public final class ComponentLoaderHelper {
         }
 
         return (DataGrid.Renderer) beanLocator.getPrototype(rendererClass);
+    }
+
+    public static void loadTableValidators(io.jmix.ui.component.Table component, Element element, ComponentLoader.Context context,
+                                           HotDeployManager hotDeployManager) {
+        List<Element> validatorElements = element.elements("validator");
+
+        for (Element validatorElement : validatorElements) {
+            Consumer<?> validator = loadValidator(validatorElement, context, hotDeployManager);
+            component.addValidator(validator);
+        }
+    }
+
+    public static void loadTableColumnValidators(io.jmix.ui.component.Table component, io.jmix.ui.component.Table.Column column,
+                                                 ComponentLoader.Context context, HotDeployManager hotDeployManager, Messages messages) {
+        List<Element> validatorElements = column.getXmlDescriptor().elements("validator");
+
+        if (!validatorElements.isEmpty()) {
+            for (Element validatorElement : validatorElements) {
+                Consumer<?> validator = loadValidator(validatorElement, context, hotDeployManager);
+                component.addValidator(column, validator);
+            }
+        } else if (column.isEditable()) {
+            if (!(column.getId() instanceof MetaPropertyPath)) {
+                throw new GuiDevelopmentException(String.format("Column '%s' has editable=true, but there is no " +
+                        "property of an entity with this id", column.getId()), context);
+            }
+
+            MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
+            Consumer<?> validator = getDefaultValidator(propertyPath.getMetaProperty(), messages);
+            if (validator != null) {
+                component.addValidator(column, validator);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void loadValidators(Field component, Element element, ComponentLoader.Context context,
+                                      HotDeployManager hotDeployManager, Messages messages) {
+        List<Element> validatorElements = element.elements("validator");
+
+        if (!validatorElements.isEmpty()) {
+            for (Element validatorElement : validatorElements) {
+                Consumer<?> validator = loadValidator(validatorElement, context, hotDeployManager);
+                component.addValidator(validator);
+            }
+        } else if (component.getDatasource() != null) {
+            MetaProperty property = component.getMetaProperty();
+            if (property != null) {
+                Consumer<?> validator = ComponentLoaderHelper.getDefaultValidator(property, messages);
+                if (validator != null) {
+                    component.addValidator(validator);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Consumer<?> loadValidator(Element validatorElement, ComponentLoader.Context context, HotDeployManager hotDeployManager) {
+        String className = validatorElement.attributeValue("class");
+        String scriptPath = validatorElement.attributeValue("script");
+        String script = validatorElement.getText();
+
+        Consumer<?> validator = null;
+
+        if (StringUtils.isNotBlank(scriptPath) || StringUtils.isNotBlank(script)) {
+            validator = new ScriptValidator(validatorElement, context.getMessagesPack());
+        } else {
+            Class aClass = hotDeployManager.findClass(className);
+            if (aClass == null)
+                throw new GuiDevelopmentException(String.format("Class %s is not found", className), context);
+            if (!StringUtils.isBlank(context.getMessagesPack()))
+                try {
+                    validator = (Consumer<?>) ReflectionHelper.newInstance(aClass, validatorElement, context.getMessagesPack());
+                } catch (NoSuchMethodException e) {
+                    //
+                }
+            if (validator == null) {
+                try {
+                    validator = (Consumer<?>) ReflectionHelper.newInstance(aClass, validatorElement);
+                } catch (NoSuchMethodException e) {
+                    try {
+                        validator = (Consumer<?>) ReflectionHelper.newInstance(aClass);
+                    } catch (NoSuchMethodException e1) {
+                        // todo log warn
+                    }
+                }
+            }
+            if (validator == null) {
+                throw new GuiDevelopmentException(
+                        String.format("Validator class %s has no supported constructors", aClass), context);
+            }
+        }
+        return validator;
+    }
+
+    public static Consumer<?> getDefaultValidator(MetaProperty property, Messages messages) {
+        Consumer<?> validator = null;
+        if (property.getRange().isDatatype()) {
+            Class type = property.getRange().asDatatype().getJavaClass();
+            if (type.equals(Integer.class)) {
+                validator = new IntegerValidator(messages.getMessage("validation.invalidNumber"));
+
+            } else if (type.equals(Long.class)) {
+                validator = new LongValidator(messages.getMessage("validation.invalidNumber"));
+
+            } else if (type.equals(Double.class) || type.equals(BigDecimal.class)) {
+                validator = new DoubleValidator(messages.getMessage("validation.invalidNumber"));
+
+            } else if (type.equals(java.sql.Date.class)) {
+                validator = new DateValidator(messages.getMessage("validation.invalidDate"));
+            }
+        }
+        return validator;
     }
 }

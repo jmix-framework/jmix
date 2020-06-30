@@ -17,12 +17,22 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.OptionsField;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.ui.xml.layout.loader.TwinColumnLoader;
 import org.dom4j.Element;
 
 public class CubaTwinColumnLoader extends TwinColumnLoader {
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override

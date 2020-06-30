@@ -18,7 +18,6 @@ package com.haulmont.cuba.gui.components;
 
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Field;
 import io.jmix.ui.component.HasHtmlCaption;
 import io.jmix.ui.component.HasHtmlDescription;
 import io.jmix.ui.component.HasHtmlSanitizer;

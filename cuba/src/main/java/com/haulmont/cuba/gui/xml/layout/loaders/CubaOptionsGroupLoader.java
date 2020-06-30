@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.OptionsGroup;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.ui.xml.layout.loader.AbstractOptionsBaseLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,8 @@ public class CubaOptionsGroupLoader extends AbstractOptionsBaseLoader<OptionsGro
 
         loadOptionsEnum(resultComponent, element);
         loadTabIndex(resultComponent, element);
+
+        ComponentLoaderHelper.loadValidators(resultComponent, element, context, getHotDeployManager(), getMessages());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

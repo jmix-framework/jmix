@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.components.PickerField;
@@ -44,11 +45,13 @@ public class CubaLookupPickerFieldLoader extends EntityComboBoxLoader {
         return (LookupPickerField) super.getResultComponent();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
         super.loadComponent();
 
         loadNewOptionAllowed(getResultComponent(), element);
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
     }
 
     protected void loadNewOptionAllowed(LookupPickerField lookupPickerField, Element element) {

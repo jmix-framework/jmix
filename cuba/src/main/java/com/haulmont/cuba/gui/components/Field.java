@@ -20,10 +20,13 @@ import com.haulmont.cuba.gui.components.data.value.DatasourceValueSource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.component.Validatable;
+import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -96,6 +99,27 @@ public interface Field<V> extends io.jmix.ui.component.Field<V>, DatasourceCompo
             this.setValueSource(new DatasourceValueSource(datasource, property));
         } else {
             this.setValueSource(null);
+        }
+    }
+
+    /**
+     * Field validator.<br>
+     * Validators are invoked when {@link Validatable#validate()} is called.
+     * Editor screen calls {@code validate()} on commit.
+     *
+     * @deprecated Use typed {@link Consumer} instead.
+     */
+    @Deprecated
+    interface Validator<T> extends Consumer<T> {
+        /**
+         * @param value field value to validate
+         * @throws ValidationException this exception must be thrown by the validator if the value is not valid
+         */
+        void validate(@Nullable Object value) throws ValidationException;
+
+        @Override
+        default void accept(T t) {
+            validate(t);
         }
     }
 }

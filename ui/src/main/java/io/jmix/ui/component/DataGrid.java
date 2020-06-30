@@ -1379,6 +1379,8 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, HasButtons
      * A renderer for presenting simple plain-text string values.
      */
     interface TextRenderer extends Renderer, HasNullRepresentation {
+
+        String NAME = "ui_TextRenderer";
     }
 
     /**
@@ -1386,24 +1388,33 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, HasButtons
      */
     interface ClickableTextRenderer<T extends Entity>
             extends Renderer, HasNullRepresentation, HasRendererClickListener<T> {
+
+        String NAME = "ui_ClickableTextRenderer";
     }
 
     /**
      * A renderer for presenting HTML content.
      */
     interface HtmlRenderer extends Renderer, HasNullRepresentation {
+
+        String NAME = "ui_HtmlRenderer";
     }
 
     /**
      * A renderer that represents a double values as a graphical progress bar.
      */
     interface ProgressBarRenderer extends Renderer {
+
+        String NAME = "ui_ProgressBarRenderer";
     }
 
     /**
      * A renderer for presenting date values.
      */
     interface DateRenderer extends Renderer, HasNullRepresentation, HasLocale, HasFormatString {
+
+        String NAME = "ui_DateRenderer";
+
         /**
          * {@inheritDoc}
          *
@@ -1437,18 +1448,25 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, HasButtons
      * A renderer for presenting LocalDate values.
      */
     interface LocalDateRenderer extends Renderer, HasNullRepresentation, HasLocale, HasDateTimeFormatter {
+
+        String NAME = "ui_LocalDateRenderer";
     }
 
     /**
      * A renderer for presenting LocalDateTime values.
      */
     interface LocalDateTimeRenderer extends Renderer, HasNullRepresentation, HasLocale, HasDateTimeFormatter {
+
+        String NAME = "ui_LocalDateTimeRenderer";
     }
 
     /**
      * A renderer for presenting number values.
      */
     interface NumberRenderer extends Renderer, HasNullRepresentation, HasLocale, HasFormatString {
+
+        String NAME = "ui_NumberRenderer";
+
         /**
          * {@inheritDoc}
          *
@@ -1485,6 +1503,8 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, HasButtons
      */
     interface ButtonRenderer<T extends Entity>
             extends Renderer, HasNullRepresentation, HasRendererClickListener<T> {
+
+        String NAME = "ui_ButtonRenderer";
     }
 
     /**
@@ -1492,33 +1512,33 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, HasButtons
      * is used as the image location. Location can be a theme resource or URL.
      */
     interface ImageRenderer<T extends Entity> extends Renderer, HasRendererClickListener<T> {
+
+        String NAME = "ui_ImageRenderer";
     }
 
     /**
      * A renderer that represents a boolean values as a graphical check box icons.
      */
     interface CheckBoxRenderer extends Renderer {
+
+        String NAME = "ui_CheckBoxRenderer";
     }
 
     /**
      * A renderer for UI components.
      */
     interface ComponentRenderer extends Renderer {
+
+        String NAME = "ui_ComponentRenderer";
     }
 
     /**
      * A renderer that represents {@link JmixIcon}.
      */
     interface IconRenderer<T extends Entity> extends Renderer {
-    }
 
-    /**
-     * Creates renderer implementation by its type.
-     *
-     * @param type renderer type
-     * @return renderer instance with given type
-     */
-    <T extends Renderer> T createRenderer(Class<T> type);
+        String NAME = "ui_IconRenderer";
+    }
 
     /**
      * Interface that implements conversion between a model and a presentation type.

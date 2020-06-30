@@ -18,11 +18,14 @@ package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -32,6 +35,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * A renderer for presenting number values.
  */
+@Component(DataGrid.NumberRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, Number> implements DataGrid.NumberRenderer {
 
     private Locale locale;
@@ -40,7 +45,6 @@ public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Enti
 
     public WebNumberRenderer() {
         super("");
-        locale = AppBeans.get(CurrentAuthentication.class).getLocale();
     }
 
     public WebNumberRenderer(NumberFormat numberFormat) {
@@ -54,7 +58,7 @@ public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Enti
     }
 
     public WebNumberRenderer(String formatString) throws IllegalArgumentException {
-        this(formatString, AppBeans.get(CurrentAuthentication.class).getLocale());
+        this(formatString, null);
     }
 
     public WebNumberRenderer(String formatString, Locale locale) throws IllegalArgumentException {
@@ -66,6 +70,13 @@ public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Enti
 
         this.formatString = formatString;
         this.locale = locale;
+    }
+
+    @Autowired
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        if (locale == null) {
+            locale = currentAuthentication.getLocale();
+        }
     }
 
     @Override

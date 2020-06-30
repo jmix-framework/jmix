@@ -17,11 +17,14 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.LocalDateRenderer;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -32,6 +35,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * A renderer for presenting LocalDate values.
  */
+@Component(DataGrid.LocalDateRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebLocalDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, LocalDate> implements DataGrid.LocalDateRenderer {
 
     private Locale locale;
@@ -40,7 +45,6 @@ public class WebLocalDateRenderer extends WebAbstractDataGrid.AbstractRenderer<E
 
     public WebLocalDateRenderer() {
         super("");
-        locale = AppBeans.get(CurrentAuthentication.class).getLocale();
     }
 
     public WebLocalDateRenderer(String formatPattern) {
@@ -48,7 +52,7 @@ public class WebLocalDateRenderer extends WebAbstractDataGrid.AbstractRenderer<E
     }
 
     public WebLocalDateRenderer(String formatPattern, String nullRepresentation) {
-        this(formatPattern, AppBeans.get(CurrentAuthentication.class).getLocale(), nullRepresentation);
+        this(formatPattern, null, nullRepresentation);
     }
 
     public WebLocalDateRenderer(String formatPattern, Locale locale) {
@@ -70,6 +74,13 @@ public class WebLocalDateRenderer extends WebAbstractDataGrid.AbstractRenderer<E
         super(nullRepresentation);
 
         this.formatter = formatter;
+    }
+
+    @Autowired
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        if (locale == null) {
+            locale = currentAuthentication.getLocale();
+        }
     }
 
     @Override

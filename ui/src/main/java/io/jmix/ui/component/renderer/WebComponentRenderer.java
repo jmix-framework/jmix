@@ -23,10 +23,14 @@ import io.jmix.core.Entity;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 
 /**
  * A renderer for UI components.
  */
+@org.springframework.stereotype.Component(DataGrid.ComponentRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebComponentRenderer<T extends Entity> extends WebAbstractDataGrid.AbstractRenderer<T, com.vaadin.ui.Component>
         implements DataGrid.ComponentRenderer {
 

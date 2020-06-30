@@ -24,10 +24,15 @@ import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * A renderer for presenting HTML content.
  */
+@Component(DataGrid.HtmlRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, String> implements DataGrid.HtmlRenderer {
 
     protected HtmlSanitizer htmlSanitizer;

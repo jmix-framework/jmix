@@ -17,11 +17,14 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.DateRenderer;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Entity;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,6 +36,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * A renderer for presenting date values.
  */
+@Component(DataGrid.DateRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, Date> implements DataGrid.DateRenderer {
 
     private Locale locale;
@@ -41,7 +46,6 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
 
     public WebDateRenderer() {
         super("");
-        locale = AppBeans.get(CurrentAuthentication.class).getLocale();
     }
 
     public WebDateRenderer(String formatString) {
@@ -49,7 +53,7 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
     }
 
     public WebDateRenderer(String formatString, String nullRepresentation) {
-        this(formatString, AppBeans.get(CurrentAuthentication.class).getLocale(), nullRepresentation);
+        this(formatString, null, nullRepresentation);
     }
 
     public WebDateRenderer(String formatString, Locale locale) {
@@ -71,6 +75,13 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity
         super(nullRepresentation);
 
         this.dateFormat = dateFormat;
+    }
+
+    @Autowired
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        if (locale == null) {
+            locale = currentAuthentication.getLocale();
+        }
     }
 
     @Override

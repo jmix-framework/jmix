@@ -19,6 +19,9 @@ package io.jmix.ui.component.renderer;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.DataGrid;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
@@ -27,6 +30,8 @@ import java.util.function.Consumer;
  * corresponding property is used as the caption. Click listeners can be added
  * to the renderer, invoked when any of the rendered buttons is clicked.
  */
+@Component(DataGrid.ButtonRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebButtonRenderer<T extends Entity>
         extends WebAbstractClickableRenderer<T, String>
         implements DataGrid.ButtonRenderer<T> {

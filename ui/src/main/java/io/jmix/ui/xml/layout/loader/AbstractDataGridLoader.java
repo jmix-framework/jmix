@@ -66,8 +66,8 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             DataGrid.NumberRenderer.class
     );
 
-    protected static final Map<String, Class<?>> RENDERERS_MAP =
-            ImmutableMap.<String, Class<?>>builder()
+    protected static final Map<String, Class<? extends DataGrid.Renderer>> RENDERERS_MAP =
+            ImmutableMap.<String, Class<? extends DataGrid.Renderer>>builder()
                     .put("checkBoxRenderer", DataGrid.CheckBoxRenderer.class)
                     .put("componentRenderer", DataGrid.ComponentRenderer.class)
                     .put("dateRenderer", DataGrid.DateRenderer.class)
@@ -602,7 +602,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     protected DataGrid.Renderer loadRenderer(Element columnElement) {
         Element rendererElement;
 
-        for (Map.Entry<String, Class<?>> entry : RENDERERS_MAP.entrySet()) {
+        for (Map.Entry<String, Class<? extends DataGrid.Renderer>> entry : RENDERERS_MAP.entrySet()) {
             rendererElement = columnElement.element(entry.getKey());
             if (rendererElement != null) {
                 return loadRendererByClass(rendererElement, entry.getValue());
@@ -617,9 +617,8 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
-    protected DataGrid.Renderer loadRendererByClass(Element rendererElement, Class rendererClass) {
-        DataGrid.Renderer renderer = resultComponent.createRenderer(rendererClass);
+    protected DataGrid.Renderer loadRendererByClass(Element rendererElement, Class<? extends DataGrid.Renderer> rendererClass) {
+        DataGrid.Renderer renderer = beanLocator.getPrototype(rendererClass);
 
         if (renderer instanceof DataGrid.HasNullRepresentation) {
             loadNullRepresentation(rendererElement, (DataGrid.HasNullRepresentation) renderer);
@@ -659,7 +658,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
                     rendererType), context);
         }
 
-        return resultComponent.createRenderer(rendererClass);
+        return (DataGrid.Renderer) beanLocator.getPrototype(rendererClass);
     }
 
     protected void loadNullRepresentation(Element rendererElement, DataGrid.HasNullRepresentation renderer) {

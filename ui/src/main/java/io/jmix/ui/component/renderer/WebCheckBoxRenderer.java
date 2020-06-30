@@ -21,10 +21,15 @@ import io.jmix.core.Entity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.widget.renderer.JmixCheckBoxRenderer;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * A renderer that represents a boolean values as a graphical check box icons.
  */
+@Component(DataGrid.CheckBoxRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebCheckBoxRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, Boolean> implements DataGrid.CheckBoxRenderer {
 
     @Override

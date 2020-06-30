@@ -27,7 +27,12 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.widget.renderer.JmixIconRenderer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component(DataGrid.IconRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebIconRenderer<T extends Entity>
         extends WebAbstractDataGrid.AbstractRenderer<T, Resource> implements DataGrid.IconRenderer<T> {
 

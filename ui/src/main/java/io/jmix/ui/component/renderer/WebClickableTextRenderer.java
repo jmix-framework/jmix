@@ -20,12 +20,17 @@ import com.vaadin.ui.renderers.Renderer;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.widget.renderer.JmixClickableTextRenderer;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
 /**
  * A renderer for presenting simple plain-text string values as a link with call back handler.
  */
+@Component(DataGrid.ClickableTextRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebClickableTextRenderer<T extends Entity>
         extends WebAbstractClickableRenderer<T, String>
         implements DataGrid.ClickableTextRenderer<T> {

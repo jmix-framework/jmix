@@ -191,35 +191,12 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected com.vaadin.ui.components.grid.HeaderRow headerAggregationRow;
     protected com.vaadin.ui.components.grid.FooterRow footerAggregationRow;
 
-    protected static final Map<Class<? extends Renderer>, Class<? extends Renderer>> rendererClasses;
-
     protected boolean showIconsForPopupMenuActions;
 
     protected DataGridDataProvider<E> dataBinding;
 
     protected Map<E, Object> itemDatasources; // lazily initialized WeakHashMap;
     protected Consumer<EmptyStateClickEvent<E>> emptyStateClickEventHandler;
-
-    static {
-        ImmutableMap.Builder<Class<? extends Renderer>, Class<? extends Renderer>> builder =
-                new ImmutableMap.Builder<>();
-
-        builder.put(TextRenderer.class, WebTextRenderer.class);
-        builder.put(ClickableTextRenderer.class, WebClickableTextRenderer.class);
-        builder.put(HtmlRenderer.class, WebHtmlRenderer.class);
-        builder.put(ProgressBarRenderer.class, WebProgressBarRenderer.class);
-        builder.put(DateRenderer.class, WebDateRenderer.class);
-        builder.put(LocalDateRenderer.class, WebLocalDateRenderer.class);
-        builder.put(LocalDateTimeRenderer.class, WebLocalDateTimeRenderer.class);
-        builder.put(NumberRenderer.class, WebNumberRenderer.class);
-        builder.put(ButtonRenderer.class, WebButtonRenderer.class);
-        builder.put(ImageRenderer.class, WebImageRenderer.class);
-        builder.put(CheckBoxRenderer.class, WebCheckBoxRenderer.class);
-        builder.put(ComponentRenderer.class, WebComponentRenderer.class);
-        builder.put(IconRenderer.class, WebIconRenderer.class);
-
-        rendererClasses = builder.build();
-    }
 
     public WebAbstractDataGrid() {
         component = createComponent();
@@ -2504,50 +2481,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                             new DevelopmentException(
                                     "Renderer should be specified explicitly for generated column: " + column.getId()));
 
-            column.setRenderer(createRenderer(rendererType));
-        }
-    }
-
-    @Override
-    public <T extends Renderer> T createRenderer(Class<T> type) {
-        Class<? extends Renderer> rendererClass = rendererClasses.get(type);
-        if (rendererClass == null) {
-            throw new IllegalArgumentException(
-                    String.format("Can't find renderer class for '%s'", type.getTypeName()));
-        }
-
-        Constructor<? extends Renderer> constructor;
-        try {
-            constructor = rendererClass.getConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(String.format("Error creating the '%s' renderer instance",
-                    type.getTypeName()), e);
-        }
-        try {
-            Renderer instance = constructor.newInstance();
-            autowireContext(instance);
-            return type.cast(instance);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(String.format("Error creating the '%s' renderer instance",
-                    type.getTypeName()), e);
-        }
-    }
-
-    protected void autowireContext(Renderer instance) {
-        AutowireCapableBeanFactory autowireBeanFactory = applicationContext.getAutowireCapableBeanFactory();
-        autowireBeanFactory.autowireBean(instance);
-
-        if (instance instanceof ApplicationContextAware) {
-            ((ApplicationContextAware) instance).setApplicationContext(applicationContext);
-        }
-
-        if (instance instanceof InitializingBean) {
-            try {
-                ((InitializingBean) instance).afterPropertiesSet();
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to initialize Renderer - calling afterPropertiesSet for " +
-                        instance.getClass(), e);
-            }
+            column.setRenderer(beanLocator.getPrototype(rendererType));
         }
     }
 

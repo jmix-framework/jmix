@@ -20,6 +20,9 @@ import com.vaadin.ui.renderers.Renderer;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.widget.renderer.JmixImageRenderer;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
@@ -27,6 +30,8 @@ import java.util.function.Consumer;
  * A renderer for presenting images. The value of the corresponding property
  * is used as the image location. Location can be a theme resource or URL.
  */
+@Component(DataGrid.ImageRenderer.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebImageRenderer<T extends Entity>
         extends WebAbstractClickableRenderer<T, String>
         implements DataGrid.ImageRenderer<T> {

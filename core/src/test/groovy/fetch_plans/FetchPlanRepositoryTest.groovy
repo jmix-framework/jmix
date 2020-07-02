@@ -16,24 +16,23 @@
 
 package fetch_plans
 
-import test_support.addon1.TestAddon1Configuration
-import test_support.addon1.entity.TestAddon1Entity
-import test_support.AppContextTestExecutionListener
-import test_support.app.TestAppConfiguration
-import test_support.app.entity.Pet
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
-
-import org.springframework.beans.factory.annotation.Autowired
+import test_support.AppContextTestExecutionListener
+import test_support.addon1.TestAddon1Configuration
+import test_support.addon1.entity.TestAddon1Entity
+import test_support.app.TestAppConfiguration
+import test_support.app.entity.Pet
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(
-    value = AppContextTestExecutionListener,
-    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+        value = AppContextTestExecutionListener,
+        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
 )
 class FetchPlanRepositoryTest extends Specification {
 
@@ -70,10 +69,6 @@ class FetchPlanRepositoryTest extends Specification {
             "version",
             "deleteTs",
             "deletedBy",
-            "createTs",
-            "createdBy",
-            "updateTs",
-            "updatedBy",
         ]
 
         systemProperties.any { systemProperty -> fetchPlan.containsProperty(systemProperty) }

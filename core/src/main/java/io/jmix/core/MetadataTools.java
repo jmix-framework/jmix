@@ -17,7 +17,10 @@
 package io.jmix.core;
 
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.HasUuid;
+import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -67,8 +70,6 @@ public class MetadataTools {
     public static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(
             Entity.class,
             Versioned.class,
-            Creatable.class,
-            Updatable.class,
             SoftDelete.class,
             HasUuid.class
     );
@@ -308,7 +309,7 @@ public class MetadataTools {
     /**
      * Determine whether the given property is system-level. A property is considered system if it is defined not
      * in an entity class but in one of its base interfaces:
-     * {@link Entity}, {@link Creatable}, {@link Updatable}, {@link SoftDelete}, {@link Versioned}, {@link HasUuid}
+     * {@link Entity}, {@link SoftDelete}, {@link Versioned}, {@link HasUuid}
      */
     public boolean isSystem(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");

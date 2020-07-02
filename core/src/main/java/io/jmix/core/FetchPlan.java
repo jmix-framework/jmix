@@ -16,9 +16,7 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.SoftDelete;
-import io.jmix.core.entity.Updatable;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -346,8 +344,6 @@ public class FetchPlan implements Serializable {
         }
 
         addSystemPropertiesFrom(Versioned.class, entityClass, metaClass, metadataTools, result);
-        addSystemPropertiesFrom(Creatable.class, entityClass, metaClass, metadataTools, result);
-        addSystemPropertiesFrom(Updatable.class, entityClass, metaClass, metadataTools, result);
         addSystemPropertiesFrom(SoftDelete.class, entityClass, metaClass, metadataTools, result);
 
         return result;

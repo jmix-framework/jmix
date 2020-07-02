@@ -24,9 +24,9 @@ public interface JmixAuditable {
 
     void setCreatedBy(Object createdBy);
 
-    void setUpdatedDate(Object date);
+    void setLastModifiedDate(Object date);
 
-    void setUpdatedBy(Object updatedBy);
+    void setLastModifiedBy(Object updatedBy);
 
     @Nullable
     default Class<?> getCreatedDateClass() {
@@ -39,12 +39,12 @@ public interface JmixAuditable {
     }
 
     @Nullable
-    default Class<?> getUpdatedDateClass() {
+    default Class<?> getLastModifiedDateClass() {
         return null;
     }
 
     @Nullable
-    default Class<?> getUpdatedByClass() {
+    default Class<?> getLastModifiedByClass() {
         return null;
     }
 

@@ -226,11 +226,7 @@ public class FetchPlanBuilderTest {
         return view.containsProperty("id")
                 && view.containsProperty("version")
                 && view.containsProperty("deleteTs")
-                && view.containsProperty("deletedBy")
-                && view.containsProperty("createTs")
-                && view.containsProperty("createdBy")
-                && view.containsProperty("updateTs")
-                && view.containsProperty("updatedBy");
+                && view.containsProperty("deletedBy");
     }
 
 }

@@ -231,9 +231,11 @@ public class ViewTest {
             FetchPlan view = new FetchPlan(User.class)
                     .addProperty("name")
                     .addProperty("login")
+                    .addProperty("createTs")
                     .addProperty("group",
                             new FetchPlan(Group.class)
                                     .addProperty("name")
+                                    .addProperty("createTs")
                     ).setLoadPartialEntities(true);
 
             User user = em.find(User.class, userId, view);

@@ -15,11 +15,13 @@
  */
 package io.jmix.data.entity;
 
-import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.SoftDelete;
-import io.jmix.core.entity.Updatable;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.annotation.ModelObject;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -32,7 +34,7 @@ import java.util.Date;
  */
 @MappedSuperclass
 @ModelObject(name = "sys$StandardEntity")
-public abstract class StandardEntity extends BaseUuidEntity implements Versioned, Creatable, Updatable, SoftDelete {
+public abstract class StandardEntity extends BaseUuidEntity implements Versioned, SoftDelete {
 
     private static final long serialVersionUID = 5642226839555253331L;
 
@@ -40,15 +42,19 @@ public abstract class StandardEntity extends BaseUuidEntity implements Versioned
     @Column(name = "VERSION", nullable = false)
     protected Integer version;
 
+    @CreatedDate
     @Column(name = "CREATE_TS")
     protected Date createTs;
 
+    @CreatedBy
     @Column(name = "CREATED_BY", length = 50)
     protected String createdBy;
 
+    @LastModifiedDate
     @Column(name = "UPDATE_TS")
     protected Date updateTs;
 
+    @LastModifiedBy
     @Column(name = "UPDATED_BY", length = 50)
     protected String updatedBy;
 
@@ -68,42 +74,34 @@ public abstract class StandardEntity extends BaseUuidEntity implements Versioned
         this.version = version;
     }
 
-    @Override
     public Date getCreateTs() {
         return createTs;
     }
 
-    @Override
     public void setCreateTs(Date createTs) {
         this.createTs = createTs;
     }
 
-    @Override
     public String getCreatedBy() {
         return createdBy;
     }
 
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
-    @Override
     public Date getUpdateTs() {
         return updateTs;
     }
 
-    @Override
     public void setUpdateTs(Date updateTs) {
         this.updateTs = updateTs;
     }
 
-    @Override
     public String getUpdatedBy() {
         return updatedBy;
     }
 
-    @Override
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }

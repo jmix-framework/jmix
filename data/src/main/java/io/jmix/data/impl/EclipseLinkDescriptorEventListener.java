@@ -18,7 +18,9 @@ package io.jmix.data.impl;
 
 import io.jmix.core.Entity;
 import io.jmix.core.TimeSource;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.BaseUser;
+import io.jmix.core.entity.JmixAuditable;
+import io.jmix.core.entity.SoftDelete;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.PersistenceTools;
 import org.eclipse.persistence.descriptors.DescriptorEvent;
@@ -172,14 +174,6 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         Date ts = timeSource.currentTimestamp();
         BaseUser user = auditInfoProvider.getCurrentUser();
 
-        if (entity instanceof Creatable) {
-            ((Creatable) entity).setCreatedBy(auditInfoProvider.getCurrentUserUsername());
-            ((Creatable) entity).setCreateTs(ts);
-        }
-        if (entity instanceof Updatable) {
-            ((Updatable) entity).setUpdateTs(ts);
-        }
-
         if (entity.__getEntityEntry() instanceof JmixAuditable) {
             setCreateInfo((JmixAuditable) entity.__getEntityEntry(), ts, user);
             setUpdateInfo((JmixAuditable) entity.__getEntityEntry(), ts, user, true);
@@ -193,18 +187,12 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     @Override
     public void preUpdate(DescriptorEvent event) {
         Entity entity = (Entity) event.getObject();
-        if (!((entity instanceof SoftDelete) && justDeleted((SoftDelete) entity))) {
-            if (entity instanceof Updatable) {
-                Updatable updatable = (Updatable) event.getObject();
-                updatable.setUpdatedBy(auditInfoProvider.getCurrentUserUsername());
-                updatable.setUpdateTs(timeSource.currentTimestamp());
-            }
-            if (entity.__getEntityEntry() instanceof JmixAuditable) {
-                setUpdateInfo((JmixAuditable) entity.__getEntityEntry(),
-                        timeSource.currentTimestamp(),
-                        auditInfoProvider.getCurrentUser(),
-                        false);
-            }
+        if (!((entity instanceof SoftDelete) && justDeleted((SoftDelete) entity))
+                && entity.__getEntityEntry() instanceof JmixAuditable) {
+            setUpdateInfo((JmixAuditable) entity.__getEntityEntry(),
+                    timeSource.currentTimestamp(),
+                    auditInfoProvider.getCurrentUser(),
+                    false);
         }
     }
 
@@ -233,25 +221,25 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     }
 
     protected void setUpdateInfo(JmixAuditable auditable, Date ts, @Nullable BaseUser user, boolean dateOnly) {
-        if (auditable.getUpdatedDateClass() != null) {
-            Class<?> dateClass = auditable.getUpdatedDateClass();
+        if (auditable.getLastModifiedDateClass() != null) {
+            Class<?> dateClass = auditable.getLastModifiedDateClass();
             if (conversionService.canConvert(ts.getClass(), dateClass)) {
-                auditable.setUpdatedDate(conversionService.convert(ts, dateClass));
+                auditable.setLastModifiedDate(conversionService.convert(ts, dateClass));
             } else {
                 logger.error("Cannot find converter from java.util.Date to " + dateClass.getName());
             }
         }
 
-        if (auditable.getUpdatedByClass() != null && !dateOnly) {
+        if (auditable.getLastModifiedByClass() != null && !dateOnly) {
             if (user != null) {
-                Class<?> byClass = auditable.getUpdatedByClass();
+                Class<?> byClass = auditable.getLastModifiedByClass();
                 if (conversionService.canConvert(user.getClass(), byClass)) {
-                    auditable.setUpdatedBy(conversionService.convert(user, byClass));
+                    auditable.setLastModifiedBy(conversionService.convert(user, byClass));
                 } else {
                     logger.error("Cannot find converter from " + user.getClass().getName() + " to " + byClass.getName());
                 }
             } else {
-                auditable.setUpdatedBy(null);
+                auditable.setLastModifiedBy(null);
             }
         }
     }

@@ -16,13 +16,18 @@
 
 package io.jmix.uidata.entity;
 
-import io.jmix.core.entity.Creatable;
-import io.jmix.core.entity.Updatable;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.ui.presentation.model.TablePresentation;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -31,12 +36,13 @@ import java.util.Date;
 @Entity(name = "ui_TablePresentation")
 @Table(name = "UI_TABLE_PRESENTATION")
 @SystemLevel
-public class UiTablePresentation extends BaseUuidEntity implements Creatable, Updatable,
-        TablePresentation {
+public class UiTablePresentation extends BaseUuidEntity implements TablePresentation {
 
+    @CreatedDate
     @Column(name = "CREATE_TS")
     protected Date createTs;
 
+    @CreatedBy
     @Column(name = "CREATED_BY", length = 50)
     protected String createdBy;
 
@@ -55,51 +61,45 @@ public class UiTablePresentation extends BaseUuidEntity implements Creatable, Up
     @Column(name = "IS_AUTO_SAVE")
     private Boolean autoSave;
 
+    @LastModifiedDate
     @Column(name = "UPDATE_TS")
     protected Date updateTs;
 
+    @LastModifiedBy
     @Column(name = "UPDATED_BY", length = 50)
     protected String updatedBy;
 
     @Transient
     private Boolean isDefault;
 
-    @Override
     public Date getCreateTs() {
         return createTs;
     }
 
-    @Override
     public void setCreateTs(Date date) {
         this.createTs = date;
     }
 
-    @Override
     public String getCreatedBy() {
         return createdBy;
     }
 
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
-    @Override
     public Date getUpdateTs() {
         return updateTs;
     }
 
-    @Override
     public void setUpdateTs(Date updateTs) {
         this.updateTs = updateTs;
     }
 
-    @Override
     public String getUpdatedBy() {
         return updatedBy;
     }
 
-    @Override
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }

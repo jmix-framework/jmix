@@ -17,8 +17,7 @@
 package test_support
 
 import io.jmix.core.*
-import io.jmix.core.entity.Creatable
-import io.jmix.core.entity.Updatable
+import io.jmix.core.entity.JmixAuditable
 import io.jmix.core.entity.Versioned
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
@@ -95,7 +94,7 @@ class DataContextSpec extends Specification {
         TimeSource timeSource = AppBeans.get(TimeSource)
 
         T e = reserialize(entity)
-        entityStates.makeDetached((Entity)e)
+        entityStates.makeDetached((Entity) e)
 
         if (e instanceof Versioned) {
             Versioned versioned = (Versioned) e
@@ -103,20 +102,17 @@ class DataContextSpec extends Specification {
             versioned.version++
         }
 
-        if (e instanceof Creatable) {
-            Creatable creatable = (Creatable) e
-            creatable.setCreateTs(timeSource.currentTimestamp())
-            creatable.setCreatedBy("test_user")
-        }
+        if (e instanceof Entity && e.__getEntityEntry() instanceof JmixAuditable) {
+            JmixAuditable entityEntry = ((JmixAuditable) e.__getEntityEntry());
 
-        if (e instanceof Updatable) {
-            Updatable updatable = (Updatable) e
-            updatable.setUpdateTs(timeSource.currentTimestamp())
+            entityEntry.setCreatedDate(timeSource.currentTimestamp())
+            entityEntry.setCreatedBy("test_user")
+
+            entityEntry.setLastModifiedDate(timeSource.currentTimestamp())
             if (!entityStates.isNew(entity)) {
-                updatable.setUpdatedBy("test_user")
+                entityEntry.setLastModifiedBy("test_user")
             }
         }
-
         return e
     }
 

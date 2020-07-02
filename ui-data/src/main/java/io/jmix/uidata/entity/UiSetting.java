@@ -15,12 +15,16 @@
  */
 package io.jmix.uidata.entity;
 
-import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.uidata.UserSettingServiceImpl;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import java.util.Date;
 
 /**
@@ -31,13 +35,15 @@ import java.util.Date;
 @Entity(name = "ui_Setting")
 @Table(name = "UI_SETTING")
 @SystemLevel
-public class UiSetting extends BaseUuidEntity implements Creatable {
+public class UiSetting extends BaseUuidEntity {
 
     private static final long serialVersionUID = -4324101071593066529L;
 
+    @CreatedDate
     @Column(name = "CREATE_TS")
     private Date createTs;
 
+    @CreatedBy
     @Column(name = "CREATED_BY", length = 50)
     private String createdBy;
 
@@ -51,22 +57,18 @@ public class UiSetting extends BaseUuidEntity implements Creatable {
     @Column(name = "VALUE_")
     private String value;
 
-    @Override
     public Date getCreateTs() {
         return createTs;
     }
 
-    @Override
     public void setCreateTs(Date createTs) {
         this.createTs = createTs;
     }
 
-    @Override
     public String getCreatedBy() {
         return createdBy;
     }
 
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }

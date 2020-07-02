@@ -138,7 +138,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
         loggedEntityDl.load();
 
-        systemAttrsList = Arrays.asList("createTs", "createdBy", "updateTs", "updatedBy", "deleteTs", "deletedBy", "version", "id");
+        systemAttrsList = Arrays.asList("deleteTs", "deletedBy", "version", "id");
         Map<String, Object> changeTypeMap = new LinkedHashMap<>();
         changeTypeMap.put(messages.getMessage("createField"), "C");
         changeTypeMap.put(messages.getMessage("modifyField"), "M");

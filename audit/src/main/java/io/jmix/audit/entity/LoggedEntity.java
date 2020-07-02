@@ -17,10 +17,11 @@
 package io.jmix.audit.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.data.entity.BaseUuidEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,13 +36,15 @@ import java.util.Set;
 @Entity(name = "audit_LoggedEntity")
 @Table(name = "AUDIT_LOGGED_ENTITY")
 @SystemLevel
-public class LoggedEntity extends BaseUuidEntity implements Creatable {
+public class LoggedEntity extends BaseUuidEntity {
 
     private static final long serialVersionUID = 2189206984294705835L;
 
+    @CreatedDate
     @Column(name = "CREATE_TS")
     private Date createTs;
 
+    @CreatedBy
     @Column(name = "CREATED_BY", length = 50)
     private String createdBy;
 
@@ -58,22 +61,18 @@ public class LoggedEntity extends BaseUuidEntity implements Creatable {
     @OnDelete(DeletePolicy.CASCADE)
     private Set<LoggedAttribute> attributes;
 
-    @Override
     public Date getCreateTs() {
         return createTs;
     }
 
-    @Override
     public void setCreateTs(Date createTs) {
         this.createTs = createTs;
     }
 
-    @Override
     public String getCreatedBy() {
         return createdBy;
     }
 
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }

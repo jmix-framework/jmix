@@ -20,7 +20,6 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -29,6 +28,8 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.data.entity.ReferenceToEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
@@ -43,7 +44,7 @@ import java.util.Set;
 @Table(name = "AUDIT_ENTITY_LOG")
 @Listeners("audit_EntityLogItemDetachListener")
 @SystemLevel
-public class EntityLogItem extends BaseUuidEntity implements Creatable {
+public class EntityLogItem extends BaseUuidEntity {
 
     private static final long serialVersionUID = 5859030306889056606L;
 
@@ -79,9 +80,11 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
     }
 
     @Column(name = "CREATE_TS")
+    @CreatedDate
     private Date createTs;
 
     @Column(name = "CREATED_BY", length = 50)
+    @CreatedBy
     private String createdBy;
 
     @Column(name = "EVENT_TS")
@@ -119,22 +122,22 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
         entityRef = metadata.create(ReferenceToEntity.class);
     }
 
-    @Override
+
     public Date getCreateTs() {
         return createTs;
     }
 
-    @Override
+
     public void setCreateTs(Date createTs) {
         this.createTs = createTs;
     }
 
-    @Override
+
     public String getCreatedBy() {
         return createdBy;
     }
 
-    @Override
+
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }

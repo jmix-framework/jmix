@@ -16,9 +16,10 @@
 
 package io.jmix.audit.entity;
 
-import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.data.entity.BaseUuidEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -29,14 +30,16 @@ import java.util.Date;
 @Entity(name = "audit_LoggedAttribute")
 @Table(name = "AUDIT_LOGGED_ATTR")
 @SystemLevel
-public class LoggedAttribute extends BaseUuidEntity implements Creatable {
+public class LoggedAttribute extends BaseUuidEntity {
 
     private static final long serialVersionUID = -615000337312303671L;
 
     @Column(name = "CREATE_TS")
+    @CreatedDate
     private Date createTs;
 
     @Column(name = "CREATED_BY", length = 50)
+    @CreatedBy
     private String createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,22 +49,18 @@ public class LoggedAttribute extends BaseUuidEntity implements Creatable {
     @Column(name = "NAME")
     private String name;
 
-    @Override
     public Date getCreateTs() {
         return createTs;
     }
 
-    @Override
     public void setCreateTs(Date createTs) {
         this.createTs = createTs;
     }
 
-    @Override
     public String getCreatedBy() {
         return createdBy;
     }
 
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }

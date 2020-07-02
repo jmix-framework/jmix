@@ -16,11 +16,11 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.entity.Creatable;
-import io.jmix.core.entity.Updatable;
-import io.jmix.core.entity.annotation.SystemLevel;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.Creatable;
+import com.haulmont.cuba.core.entity.Updatable;
+import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.data.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

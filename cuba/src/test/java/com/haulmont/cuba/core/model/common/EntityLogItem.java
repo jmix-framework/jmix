@@ -16,16 +16,16 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.AppBeans;
-import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.entity.Creatable;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 
 import javax.annotation.PostConstruct;

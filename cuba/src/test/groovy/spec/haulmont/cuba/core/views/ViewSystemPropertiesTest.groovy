@@ -31,10 +31,6 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
         then:
 
         view.containsProperty('version')
-        view.containsProperty('createTs')
-        view.containsProperty('createdBy')
-        view.containsProperty('updateTs')
-        view.containsProperty('updatedBy')
         view.containsProperty('deleteTs')
         view.containsProperty('deletedBy')
     }
@@ -48,10 +44,6 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
         then:
 
         !view.containsProperty('version')
-        !view.containsProperty('createTs')
-        !view.containsProperty('createdBy')
-        !view.containsProperty('updateTs')
-        !view.containsProperty('updatedBy')
         !view.containsProperty('deleteTs')
         !view.containsProperty('deletedBy')
     }

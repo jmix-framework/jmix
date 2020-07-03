@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.global;
 
 import io.jmix.core.*;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ import java.util.function.Consumer;
 
 @Component(ViewBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+@Primary
 public class ViewBuilder extends FetchPlanBuilder {
 
     public static final String NAME = "cuba_ViewBuilder";

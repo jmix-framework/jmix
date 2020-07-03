@@ -19,10 +19,11 @@ package io.jmix.data.impl;
 import io.jmix.core.Entity;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.BaseUser;
-import io.jmix.core.entity.JmixAuditable;
+import io.jmix.core.entity.EntityEntryAuditable;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.PersistenceTools;
+import io.jmix.data.impl.converters.AuditConvertionService;
 import org.eclipse.persistence.descriptors.DescriptorEvent;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
 import org.eclipse.persistence.descriptors.DescriptorEventManager;
@@ -31,8 +32,6 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -62,8 +61,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     protected PersistenceSupport support;
 
     @Autowired
-    @Qualifier("jmix_auditConverter")
-    protected ConversionService conversionService;
+    protected AuditConvertionService conversionService;
 
     protected boolean justDeleted(SoftDelete entity) {
         return entity.isDeleted() && persistenceTools.getDirtyFields((Entity) entity).contains("deleteTs");
@@ -174,9 +172,9 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         Date ts = timeSource.currentTimestamp();
         BaseUser user = auditInfoProvider.getCurrentUser();
 
-        if (entity.__getEntityEntry() instanceof JmixAuditable) {
-            setCreateInfo((JmixAuditable) entity.__getEntityEntry(), ts, user);
-            setUpdateInfo((JmixAuditable) entity.__getEntityEntry(), ts, user, true);
+        if (entity.__getEntityEntry() instanceof EntityEntryAuditable) {
+            setCreateInfo((EntityEntryAuditable) entity.__getEntityEntry(), ts, user);
+            setUpdateInfo((EntityEntryAuditable) entity.__getEntityEntry(), ts, user, true);
         }
     }
 
@@ -188,15 +186,15 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     public void preUpdate(DescriptorEvent event) {
         Entity entity = (Entity) event.getObject();
         if (!((entity instanceof SoftDelete) && justDeleted((SoftDelete) entity))
-                && entity.__getEntityEntry() instanceof JmixAuditable) {
-            setUpdateInfo((JmixAuditable) entity.__getEntityEntry(),
+                && entity.__getEntityEntry() instanceof EntityEntryAuditable) {
+            setUpdateInfo((EntityEntryAuditable) entity.__getEntityEntry(),
                     timeSource.currentTimestamp(),
                     auditInfoProvider.getCurrentUser(),
                     false);
         }
     }
 
-    protected void setCreateInfo(JmixAuditable auditable, Date ts, @Nullable BaseUser user) {
+    protected void setCreateInfo(EntityEntryAuditable auditable, Date ts, @Nullable BaseUser user) {
         if (auditable.getCreatedDateClass() != null) {
             Class<?> dateClass = auditable.getCreatedDateClass();
             if (conversionService.canConvert(ts.getClass(), dateClass)) {
@@ -220,7 +218,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         }
     }
 
-    protected void setUpdateInfo(JmixAuditable auditable, Date ts, @Nullable BaseUser user, boolean dateOnly) {
+    protected void setUpdateInfo(EntityEntryAuditable auditable, Date ts, @Nullable BaseUser user, boolean dateOnly) {
         if (auditable.getLastModifiedDateClass() != null) {
             Class<?> dateClass = auditable.getLastModifiedDateClass();
             if (conversionService.canConvert(ts.getClass(), dateClass)) {

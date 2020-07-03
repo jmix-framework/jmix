@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package audition
+package auditing
 
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
-import io.jmix.core.entity.JmixAuditable
+import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.impl.CoreUser
 import io.jmix.core.security.impl.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
-import test_support.entity.audition.AuditableSubclass
-import test_support.entity.audition.CreatableSubclass
-import test_support.entity.audition.NotAuditableSubclass
+import test_support.entity.auditing.AuditableSubclass
+import test_support.entity.auditing.CreatableSubclass
+import test_support.entity.auditing.NotAuditableSubclass
 
-class AuditionTest extends DataSpec {
+class AuditingTest extends DataSpec {
 
     @Autowired
     DataManager dataManager
@@ -59,14 +59,14 @@ class AuditionTest extends DataSpec {
 
     def "entities enhanced properly"() {
 
-        expect: "audition should be applied only for entities with: 1. audit annotations  2. legacy interfaces"
-        !(dataManager.create(NotAuditableSubclass).__getEntityEntry() instanceof JmixAuditable)
+        expect: "auditing should be applied only for entities with: 1. audit annotations  2. legacy interfaces"
+        !(dataManager.create(NotAuditableSubclass).__getEntityEntry() instanceof EntityEntryAuditable)
 
-        dataManager.create(CreatableSubclass).__getEntityEntry() instanceof JmixAuditable
-        dataManager.create(AuditableSubclass).__getEntityEntry() instanceof JmixAuditable
+        dataManager.create(CreatableSubclass).__getEntityEntry() instanceof EntityEntryAuditable
+        dataManager.create(AuditableSubclass).__getEntityEntry() instanceof EntityEntryAuditable
     }
 
-    def "audition should work for inherited entities"() {
+    def "auditing should work for inherited entities"() {
         setup:
         authenticator.begin()
 
@@ -78,7 +78,7 @@ class AuditionTest extends DataSpec {
         creatableEntity = dataManager.save(creatableEntity)
         Date afterSave = timeSource.currentTimestamp()
 
-        JmixAuditable creatableEntityEntry = ((JmixAuditable) creatableEntity.__getEntityEntry())
+        EntityEntryAuditable creatableEntityEntry = ((EntityEntryAuditable) creatableEntity.__getEntityEntry())
 
         then:
         beforeOrEquals(beforeSave, creatableEntity.birthDate)
@@ -109,7 +109,7 @@ class AuditionTest extends DataSpec {
         auditableEntity = dataManager.save(auditableEntity)
         Date afterUpdate = timeSource.currentTimestamp()
 
-        JmixAuditable auditableEntityEntry = ((JmixAuditable) auditableEntity.__getEntityEntry())
+        EntityEntryAuditable auditableEntityEntry = ((EntityEntryAuditable) auditableEntity.__getEntityEntry())
 
         then:
 

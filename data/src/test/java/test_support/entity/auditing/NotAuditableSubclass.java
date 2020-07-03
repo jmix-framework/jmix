@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support.entity.audition;
+package test_support.entity.auditing;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.data.entity.BaseUuidEntity;

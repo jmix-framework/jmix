@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support.entity.audition;
+package test_support.entity.auditing;
 
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;

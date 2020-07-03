@@ -22,15 +22,10 @@ import io.jmix.core.EntitySystemStateSupport;
 import io.jmix.core.PersistentAttributesLoadChecker;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.impl.DataPersistentAttributesLoadChecker;
-import io.jmix.data.impl.converters.AuditConverters;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.convert.support.GenericConversionService;
-import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -50,17 +45,4 @@ public class DataConfiguration {
         return new DataEntitySystemStateSupport();
     }
 
-    @Bean
-    @Qualifier("jmix_auditConverter")
-    protected ConversionService conversionService() {//todo taimanov maybe another architecture: 1) immutable after creation 2) still easily extendable in apps
-        GenericConversionService service = new GenericConversionService();
-
-        service.addConverter(Jsr310Converters.DateToLocalDateTimeConverter.INSTANCE);
-        service.addConverter(AuditConverters.DateToLongConverter.INSTANCE);
-
-        service.addConverter(AuditConverters.UserToStringConverter.INSTANCE);
-
-
-        return service;
-    }
 }

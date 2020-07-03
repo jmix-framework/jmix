@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package audition
+package auditing
 
 import com.haulmont.cuba.core.model.LegacyAuditableEntity
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
-import io.jmix.core.entity.JmixAuditable
+import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.impl.CoreUser
@@ -27,7 +27,7 @@ import io.jmix.core.security.impl.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-class LegacyAuditionTest extends CoreTestSpecification {
+class LegacyAuditingTest extends CoreTestSpecification {
 
     @Autowired
     DataManager dataManager
@@ -55,12 +55,12 @@ class LegacyAuditionTest extends CoreTestSpecification {
         userRepository.removeUser(admin)
     }
 
-    def "audition should work for legacy entities"() {
+    def "auditing should work for legacy entities"() {
         setup:
         authenticator.begin()
 
         expect:
-        dataManager.create(LegacyAuditableEntity).__getEntityEntry() instanceof JmixAuditable
+        dataManager.create(LegacyAuditableEntity).__getEntityEntry() instanceof EntityEntryAuditable
 
         when:
 
@@ -79,7 +79,7 @@ class LegacyAuditionTest extends CoreTestSpecification {
         legacyAuditable = dataManager.save(legacyAuditable)
         Date afterUpdate = timeSource.currentTimestamp()
 
-        JmixAuditable auditableEntityEntry = ((JmixAuditable) legacyAuditable.__getEntityEntry())
+        EntityEntryAuditable auditableEntityEntry = ((EntityEntryAuditable) legacyAuditable.__getEntityEntry())
 
         then:
 

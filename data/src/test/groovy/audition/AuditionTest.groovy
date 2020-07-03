@@ -81,8 +81,8 @@ class AuditionTest extends DataSpec {
         JmixAuditable creatableEntityEntry = ((JmixAuditable) creatableEntity.__getEntityEntry())
 
         then:
-        beforeSave.before(creatableEntity.birthDate)
-        afterSave.after(creatableEntity.birthDate)
+        beforeOrEquals(beforeSave, creatableEntity.birthDate)
+        afterOrEquals(afterSave, creatableEntity.birthDate)
 
         currentAuthentication.user.username.equals(creatableEntity.creator)
 
@@ -113,11 +113,11 @@ class AuditionTest extends DataSpec {
 
         then:
 
-        beforeCreate.before(auditableEntity.birthDate)
-        afterCreate.after(auditableEntity.birthDate)
+        beforeOrEquals(beforeCreate, auditableEntity.birthDate)
+        afterOrEquals(afterCreate, auditableEntity.birthDate)
 
-        beforeUpdate.before(auditableEntity.touchDate)
-        afterUpdate.after(auditableEntity.touchDate)
+        beforeOrEquals(beforeUpdate, auditableEntity.touchDate)
+        afterOrEquals(afterUpdate, auditableEntity.touchDate)
 
         !currentAuthentication.user.username.equals(auditableEntity.creator)
         currentAuthentication.user.username.equals(auditableEntity.touchedBy)
@@ -130,6 +130,14 @@ class AuditionTest extends DataSpec {
 
         cleanup:
         authenticator.end()
+    }
+
+    static boolean beforeOrEquals(Date first, Date second) {
+        return first.before(second) || first.equals(second)
+    }
+
+    static boolean afterOrEquals(Date first, Date second) {
+        return first.after(second) || first.equals(second)
     }
 
 

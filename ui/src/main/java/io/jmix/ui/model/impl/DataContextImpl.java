@@ -31,7 +31,7 @@ import io.jmix.ui.model.DataContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.AnnotatedElement;
@@ -52,7 +52,23 @@ public class DataContextImpl implements DataContext {
 
     private static final Logger log = LoggerFactory.getLogger(DataContextImpl.class);
 
-    protected ApplicationContext applicationContext;
+    @Autowired
+    protected Metadata metadata;
+
+    @Autowired
+    protected MetadataTools metadataTools;
+
+    @Autowired
+    protected EntityStates entityStates;
+
+    @Autowired
+    protected DataManager dataManager;
+
+    @Autowired
+    protected EntitySystemStateSupport entitySystemStateSupport;
+
+    @Autowired
+    protected EntityReferencesNormalizer entityReferencesNormalizer;
 
     protected EventHub events = new EventHub();
 
@@ -73,34 +89,6 @@ public class DataContextImpl implements DataContext {
     protected Map<Entity, Map<String, EmbeddedPropertyChangeListener>> embeddedPropertyListeners = new WeakHashMap<>();
 
     protected Map<Entity, Entity> nullIdEntitiesMap = new /*Identity*/HashMap<>();
-
-    public DataContextImpl(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    protected Metadata getMetadata() {
-        return applicationContext.getBean(Metadata.NAME, Metadata.class);
-    }
-
-    protected MetadataTools getMetadataTools() {
-        return applicationContext.getBean(MetadataTools.NAME, MetadataTools.class);
-    }
-
-    protected EntityStates getEntityStates() {
-        return applicationContext.getBean(EntityStates.NAME, EntityStates.class);
-    }
-
-    protected DataManager getDataManager() {
-        return applicationContext.getBean(DataManager.NAME, DataManager.class);
-    }
-
-    protected EntitySystemStateSupport getEntitySystemStateSupport() {
-        return applicationContext.getBean(EntitySystemStateSupport.NAME, EntitySystemStateSupport.class);
-    }
-
-    protected EntityReferencesNormalizer getEntityReferencesNormalizer() {
-        return applicationContext.getBean(EntityReferencesNormalizer.NAME, EntityReferencesNormalizer.class);
-    }
 
     @Nullable
     @Override
@@ -222,7 +210,7 @@ public class DataContextImpl implements DataContext {
 
             managed.__getEntityEntry().addPropertyChangeListener(propertyChangeListener);
 
-            if (getEntityStates().isNew(managed)) {
+            if (entityStates.isNew(managed)) {
                 modifiedInstances.add(managed);
                 fireChangeListener(managed);
             }
@@ -256,14 +244,12 @@ public class DataContextImpl implements DataContext {
     }
 
     protected void mergeState(Entity srcEntity, Entity dstEntity, Map<Entity, Entity> mergedMap, boolean isRoot) {
-        EntityStates entityStates = getEntityStates();
-
         boolean srcNew = entityStates.isNew(srcEntity);
         boolean dstNew = entityStates.isNew(dstEntity);
 
         mergeSystemState(srcEntity, dstEntity, isRoot);
 
-        MetaClass metaClass = getMetadata().getClass(srcEntity.getClass());
+        MetaClass metaClass = metadata.getClass(srcEntity.getClass());
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
@@ -313,7 +299,7 @@ public class DataContextImpl implements DataContext {
                     if (!mergedMap.containsKey(srcRef)) {
                         Entity managedRef = internalMerge(srcRef, mergedMap, false);
                         setPropertyValue(dstEntity, property, managedRef, false);
-                        if (getMetadataTools().isEmbedded(property)) {
+                        if (metadataTools.isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
                             managedRef.__getEntityEntry().addPropertyChangeListener(listener);
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);
@@ -356,7 +342,7 @@ public class DataContextImpl implements DataContext {
     @SuppressWarnings("unchecked")
     protected void copySystemState(Entity srcEntity, Entity dstEntity) {
         EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
-        getEntitySystemStateSupport().copySystemState(srcEntity, dstEntity);
+        entitySystemStateSupport.copySystemState(srcEntity, dstEntity);
 
         if (dstEntity instanceof Versioned) {
             ((Versioned) dstEntity).setVersion(((Versioned) srcEntity).getVersion());
@@ -365,7 +351,7 @@ public class DataContextImpl implements DataContext {
 
     protected void mergeSystemState(Entity srcEntity, Entity dstEntity, boolean isRoot) {
         if (isRoot) {
-            getEntitySystemStateSupport().mergeSystemState(srcEntity, dstEntity);
+            entitySystemStateSupport.mergeSystemState(srcEntity, dstEntity);
         }
     }
 
@@ -452,7 +438,7 @@ public class DataContextImpl implements DataContext {
         checkNotNullArgument(entity, "entity is null");
 
         modifiedInstances.remove(entity);
-        if (!getEntityStates().isNew(entity) || parentContext != null) {
+        if (!entityStates.isNew(entity) || parentContext != null) {
             removedInstances.add(entity);
         }
         removeListeners(entity);
@@ -474,7 +460,7 @@ public class DataContextImpl implements DataContext {
         for (Map.Entry<Class<?>, Map<Object, Entity>> entry : content.entrySet()) {
             Class<?> entityClass = entry.getKey();
 
-            MetaClass metaClass = getMetadata().getClass(entityClass);
+            MetaClass metaClass = metadata.getClass(entityClass);
             for (MetaProperty metaProperty : metaClass.getProperties()) {
                 if (metaProperty.getRange().isClass()
                         && metaProperty.getRange().getCardinality().isMany()
@@ -482,7 +468,7 @@ public class DataContextImpl implements DataContext {
 
                     Map<Object, Entity> entityMap = entry.getValue();
                     for (Entity entity : entityMap.values()) {
-                        if (getEntityStates().isLoaded(entity, metaProperty.getName())) {
+                        if (entityStates.isLoaded(entity, metaProperty.getName())) {
                             Collection collection = EntityValues.getValue(entity, metaProperty.getName());
                             if (collection != null) {
                                 collection.remove(entityToRemove);
@@ -532,7 +518,7 @@ public class DataContextImpl implements DataContext {
 
     @Override
     public <T extends Entity> T create(Class<T> entityClass) {
-        T entity = getMetadata().create(entityClass);
+        T entity = metadata.create(entityClass);
         return merge(entity);
     }
 
@@ -648,14 +634,14 @@ public class DataContextImpl implements DataContext {
                 .saving(isolate(filterCommittedInstances(modifiedInstances)))
                 .removing(isolate(filterCommittedInstances(removedInstances)));
 
-        getEntityReferencesNormalizer().updateReferences(saveContext.getEntitiesToSave());
+        entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
 
         for (Entity entity : saveContext.getEntitiesToSave()) {
-            saveContext.getFetchPlans().put(entity, getEntityStates().getCurrentFetchPlan(entity));
+            saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
         }
 
         if (commitDelegate == null) {
-            return getDataManager().save(saveContext);
+            return dataManager.save(saveContext);
         } else {
             return commitDelegate.apply(saveContext);
         }
@@ -663,7 +649,7 @@ public class DataContextImpl implements DataContext {
 
     protected List<Entity> filterCommittedInstances(Set<Entity> instances) {
         return instances.stream()
-                .filter(entity -> !getMetadataTools().isEmbeddable(entity.getClass()))
+                .filter(entity -> !metadataTools.isEmbeddable(entity.getClass()))
                 .collect(Collectors.toList());
     }
 
@@ -696,7 +682,6 @@ public class DataContextImpl implements DataContext {
     }
 
     protected void cleanupContextAfterRemoveEntity(DataContextImpl context, Entity removedEntity) {
-        EntityStates entityStates = getEntityStates();
         if (entityStates.isNew(removedEntity)) {
             for (Entity modifiedInstance : new ArrayList<>(context.modifiedInstances)) {
                 if (entityStates.isNew(modifiedInstance) && entityHasReference(modifiedInstance, removedEntity)) {
@@ -707,8 +692,8 @@ public class DataContextImpl implements DataContext {
     }
 
     protected boolean entityHasReference(Entity entity, Entity refEntity) {
-        MetaClass metaClass = getMetadata().getClass(entity.getClass());
-        MetaClass refMetaClass = getMetadata().getClass(refEntity.getClass());
+        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass refMetaClass = metadata.getClass(refEntity.getClass());
 
         return metaClass.getProperties().stream()
                 .anyMatch(metaProperty -> metaProperty.getRange().isClass()
@@ -765,8 +750,8 @@ public class DataContextImpl implements DataContext {
         }
         visited.add(entity);
 
-        for (MetaProperty property : getMetadata().getClass(entity.getClass()).getProperties()) {
-            if (!property.getRange().isClass() || !getEntityStates().isLoaded(entity, property.getName()))
+        for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
+            if (!property.getRange().isClass() || !entityStates.isLoaded(entity, property.getName()))
                 continue;
             Object value = EntityValues.getValue(entity, property.getName());
             String prefix = StringUtils.repeat("  ", level);
@@ -795,7 +780,7 @@ public class DataContextImpl implements DataContext {
         @Override
         public void propertyChanged(EntityPropertyChangeEvent e) {
             // if id has been changed, put the entity to the content with the new id
-            MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(e.getItem().getClass());
+            MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(e.getItem().getClass());
             if (primaryKeyProperty != null
                     && e.getProperty().equals(primaryKeyProperty.getName())) {
                 Map<Object, Entity> entityMap = content.get(e.getItem().getClass());

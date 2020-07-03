@@ -16,14 +16,13 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.impl.keyvalue.KeyValueMetaProperty;
-import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.KeyValueCollectionContainer;
 import io.jmix.ui.model.KeyValueContainer;
-import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -34,8 +33,8 @@ public class KeyValueCollectionContainerImpl
 
     private String idName;
 
-    public KeyValueCollectionContainerImpl(ApplicationContext applicationContext) {
-        super(applicationContext, new KeyValueMetaClass());
+    public KeyValueCollectionContainerImpl() {
+        super(new KeyValueMetaClass());
     }
 
     @Override

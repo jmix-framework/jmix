@@ -17,18 +17,15 @@
 package io.jmix.ui.model.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
+import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
-import io.jmix.core.*;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstanceLoader;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -42,7 +39,13 @@ import java.util.function.Function;
  */
 public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
 
-    private final ApplicationContext applicationContext;
+
+    @Autowired
+    protected DataManager dataManager;
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    protected QueryStringProcessor queryStringProcessor;
 
     protected DataContext dataContext;
     protected InstanceContainer<E> container;
@@ -56,22 +59,6 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
     protected String fetchPlanName;
     protected Function<LoadContext<E>, E> delegate;
     protected EventHub events = new EventHub();
-
-    public InstanceLoaderImpl(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    protected DataManager getDataManager() {
-        return applicationContext.getBean(DataManager.NAME, DataManager.class);
-    }
-
-    protected FetchPlanRepository getFetchPlanRepository() {
-        return applicationContext.getBean(FetchPlanRepository.NAME, FetchPlanRepository.class);
-    }
-
-    protected QueryStringProcessor getQueryStringProcessor() {
-        return applicationContext.getBean(QueryStringProcessor.NAME, QueryStringProcessor.class);
-    }
 
     @Nullable
     @Override
@@ -101,7 +88,7 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
                 return;
             }
 
-            entity = getDataManager().load(loadContext);
+            entity = dataManager.load(loadContext);
 
             if (entity == null) {
                 throw new EntityAccessException(container.getEntityMetaClass(), entityId);
@@ -133,7 +120,7 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
         if (entityId != null) {
             loadContext.setId(entityId);
         } else {
-            String queryString = getQueryStringProcessor().process(this.query, entityClass);
+            String queryString = queryStringProcessor.process(this.query, entityClass);
             LoadContext.Query query = loadContext.setQueryString(queryString);
             query.setCondition(condition);
             query.setParameters(parameters);
@@ -149,7 +136,7 @@ public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
     protected FetchPlan resolveFetchPlan() {
         FetchPlan view = this.fetchPlan;
         if (view == null && fetchPlanName != null) {
-            view = getFetchPlanRepository().getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
+            view = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
         }
         if (view == null) {
             view = container.getFetchPlan();

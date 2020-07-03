@@ -16,21 +16,23 @@
 
 package io.jmix.ui.model.impl;
 
+import io.jmix.core.DevelopmentException;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntityPropertyChangeListener;
+import io.jmix.core.entity.HasInstanceMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.DevelopmentException;
-import io.jmix.core.FetchPlan;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.model.InstanceContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,8 +45,10 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
 
     private static final Logger log = LoggerFactory.getLogger(InstanceContainerImpl.class);
 
+    @Autowired
+    protected Metadata metadata;
+
     protected E item;
-    protected ApplicationContext applicationContext;
     protected MetaClass entityMetaClass;
     protected FetchPlan fetchPlan;
 
@@ -54,13 +58,8 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
 
     protected boolean listenersEnabled = true;
 
-    public InstanceContainerImpl(ApplicationContext applicationContext, MetaClass entityMetaClass) {
-        this.applicationContext = applicationContext;
+    public InstanceContainerImpl(MetaClass entityMetaClass) {
         this.entityMetaClass = entityMetaClass;
-    }
-
-    protected Metadata getMetadata() {
-        return applicationContext.getBean(Metadata.NAME, Metadata.class);
     }
 
     @Nullable
@@ -89,7 +88,7 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
 
         if (item != null) {
             MetaClass aClass = item instanceof HasInstanceMetaClass ?
-                    ((HasInstanceMetaClass) item).getInstanceMetaClass() : getMetadata().getClass(item);
+                    ((HasInstanceMetaClass) item).getInstanceMetaClass() : metadata.getClass(item);
             if (!aClass.equals(entityMetaClass) && !entityMetaClass.getDescendants().contains(aClass)) {
                 throw new DevelopmentException(String.format("Invalid item's metaClass '%s'", aClass),
                         ParamsMap.of("container", toString(), "metaClass", aClass));

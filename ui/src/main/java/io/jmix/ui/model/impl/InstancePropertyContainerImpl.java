@@ -16,11 +16,10 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.Entity;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstancePropertyContainer;
-import org.springframework.context.ApplicationContext;
 
 public class InstancePropertyContainerImpl<E extends Entity>
         extends InstanceContainerImpl<E> implements InstancePropertyContainer<E> {
@@ -28,9 +27,8 @@ public class InstancePropertyContainerImpl<E extends Entity>
     protected InstanceContainer master;
     protected String property;
 
-    public InstancePropertyContainerImpl(ApplicationContext applicationContext,
-                                         MetaClass metaClass, InstanceContainer master, String property) {
-        super(applicationContext, metaClass);
+    public InstancePropertyContainerImpl(MetaClass metaClass, InstanceContainer master, String property) {
+        super(metaClass);
         this.master = master;
         this.property = property;
     }

@@ -16,13 +16,12 @@
 
 package io.jmix.ui.model.impl;
 
+import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
-import io.jmix.core.*;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.*;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -34,7 +33,14 @@ import java.util.function.Function;
  */
 public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<E> {
 
-    private ApplicationContext applicationContext;
+    @Autowired
+    protected DataManager dataManager;
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    protected SorterFactory sorterFactory;
+    @Autowired
+    protected QueryStringProcessor queryStringProcessor;
 
     protected DataContext dataContext;
     protected CollectionContainer<E> container;
@@ -51,26 +57,6 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
     protected Sort sort;
     protected Function<LoadContext<E>, List<E>> delegate;
     protected EventHub events = new EventHub();
-
-    public CollectionLoaderImpl(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    protected FetchPlanRepository getFetchPlanRepository() {
-        return applicationContext.getBean(FetchPlanRepository.NAME, FetchPlanRepository.class);
-    }
-
-    protected DataManager getDataManager() {
-        return applicationContext.getBean(DataManager.NAME, DataManager.class);
-    }
-
-    protected SorterFactory getSorterFactory() {
-        return applicationContext.getBean(SorterFactory.NAME, SorterFactory.class);
-    }
-
-    protected QueryStringProcessor getQueryStringProcessor() {
-        return applicationContext.getBean(QueryStringProcessor.NAME, QueryStringProcessor.class);
-    }
 
     @Nullable
     @Override
@@ -98,7 +84,7 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
 
         List<E> list;
         if (delegate == null) {
-            list = getDataManager().loadList(loadContext);
+            list = dataManager.loadList(loadContext);
         } else {
             list = delegate.apply(loadContext);
         }
@@ -122,7 +108,7 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
 
         LoadContext<E> loadContext = new LoadContext<>(entityClass);
 
-        String queryString = getQueryStringProcessor().process(this.query, entityClass);
+        String queryString = queryStringProcessor.process(this.query, entityClass);
 
         LoadContext.Query query = loadContext.setQueryString(queryString);
 
@@ -147,7 +133,7 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
     protected FetchPlan resolveFetchPlan() {
         FetchPlan view = this.fetchPlan;
         if (view == null && fetchPlanName != null) {
-            view = getFetchPlanRepository().getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
+            view = fetchPlanRepository.getFetchPlan(container.getEntityMetaClass(), fetchPlanName);
         }
         if (view == null) {
             view = container.getFetchPlan();
@@ -177,7 +163,7 @@ public class CollectionLoaderImpl<E extends Entity> implements CollectionLoader<
         if (container instanceof HasLoader) {
             ((HasLoader) container).setLoader(this);
         }
-        container.setSorter(getSorterFactory().createCollectionContainerSorter(container, this));
+        container.setSorter(sorterFactory.createCollectionContainerSorter(container, this));
     }
 
     @Override

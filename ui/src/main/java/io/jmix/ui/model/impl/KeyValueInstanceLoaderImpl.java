@@ -16,19 +16,19 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.common.event.EventHub;
-import io.jmix.core.common.event.Subscription;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.DataManager;
 import io.jmix.core.Stores;
 import io.jmix.core.ValueLoadContext;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.HasLoader;
 import io.jmix.ui.model.KeyValueContainer;
 import io.jmix.ui.model.KeyValueInstanceLoader;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -40,7 +40,8 @@ import java.util.function.Function;
 
 public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
-    protected ApplicationContext applicationContext;
+    @Autowired
+    protected DataManager dataManager;
 
     protected DataContext dataContext;
     protected KeyValueContainer container;
@@ -52,14 +53,6 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, KeyValueEntity> delegate;
     protected EventHub events = new EventHub();
-
-    public KeyValueInstanceLoaderImpl(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    protected DataManager getDataManager() {
-        return applicationContext.getBean(DataManager.NAME, DataManager.class);
-    }
 
     @Nullable
     @Override
@@ -87,7 +80,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
 
         KeyValueEntity result = null;
         if (delegate == null) {
-            List<KeyValueEntity> list = getDataManager().loadValues(loadContext);
+            List<KeyValueEntity> list = dataManager.loadValues(loadContext);
             if (!list.isEmpty()) {
                 result = list.get(0);
             }

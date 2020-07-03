@@ -19,7 +19,8 @@ package io.jmix.ui.model.impl;
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.model.CollectionChangeType;
@@ -27,7 +28,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Sorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,18 +45,17 @@ public class CollectionContainerImpl<E extends Entity>
 
     private static final Logger log = LoggerFactory.getLogger(CollectionContainerImpl.class);
 
+    @Autowired
+    protected MetadataTools metadataTools;
+
     protected List<E> collection = new ArrayList<>();
 
     protected Map<IndexKey, Integer> idMap = new HashMap<>();
 
     protected Sorter sorter;
 
-    public CollectionContainerImpl(ApplicationContext applicationContext, MetaClass metaClass) {
-        super(applicationContext, metaClass);
-    }
-
-    protected MetadataTools getMetadataTools() {
-        return applicationContext.getBean(MetadataTools.NAME, MetadataTools.class);
+    public CollectionContainerImpl(MetaClass metaClass) {
+        super(metaClass);
     }
 
     @Override
@@ -216,7 +216,7 @@ public class CollectionContainerImpl<E extends Entity>
             return;
         }
         // if id has been changed, put the entity to the content with the new id
-        MetaProperty primaryKeyProperty = getMetadataTools().getPrimaryKeyProperty(e.getItem().getClass());
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(e.getItem().getClass());
         if (primaryKeyProperty != null && e.getProperty().equals(primaryKeyProperty.getName())) {
             // we cannot remove the old entry because its hashCode is based on the entity instance but now the same
             // instance has different hashCode based on id

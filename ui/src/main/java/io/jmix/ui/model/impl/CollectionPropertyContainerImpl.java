@@ -23,7 +23,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.InstanceContainer;
-import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -34,9 +33,8 @@ public class CollectionPropertyContainerImpl<E extends Entity>
     protected InstanceContainer master;
     protected String property;
 
-    public CollectionPropertyContainerImpl(ApplicationContext applicationContext,
-                                           MetaClass metaClass, InstanceContainer master, String property) {
-        super(applicationContext, metaClass);
+    public CollectionPropertyContainerImpl(MetaClass metaClass, InstanceContainer master, String property) {
+        super(metaClass);
         this.master = master;
         this.property = property;
     }

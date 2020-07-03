@@ -16,17 +16,17 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.common.event.EventHub;
-import io.jmix.core.common.event.Subscription;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.DataManager;
 import io.jmix.core.Sort;
 import io.jmix.core.Stores;
 import io.jmix.core.ValueLoadContext;
+import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.*;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -38,7 +38,10 @@ import java.util.function.Function;
  */
 public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
 
-    protected ApplicationContext applicationContext;
+    @Autowired
+    protected DataManager dataManager;
+    @Autowired
+    protected SorterFactory sorterFactory;
 
     protected DataContext dataContext;
     protected KeyValueCollectionContainer container;
@@ -53,18 +56,6 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, List<KeyValueEntity>> delegate;
     protected EventHub events = new EventHub();
-
-    public KeyValueCollectionLoaderImpl(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    protected DataManager getDataManager() {
-        return applicationContext.getBean(DataManager.NAME, DataManager.class);
-    }
-
-    protected SorterFactory getSorterFactory() {
-        return applicationContext.getBean(SorterFactory.NAME, SorterFactory.class);
-    }
 
     @Nullable
     @Override
@@ -92,7 +83,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
 
         List<KeyValueEntity> list;
         if (delegate == null) {
-            list = getDataManager().loadValues(loadContext);
+            list = dataManager.loadValues(loadContext);
         } else {
             list = delegate.apply(loadContext);
         }
@@ -156,7 +147,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
         if (container instanceof HasLoader) {
             ((HasLoader) container).setLoader(this);
         }
-        container.setSorter(getSorterFactory().createCollectionContainerSorter(container, this));
+        container.setSorter(sorterFactory.createCollectionContainerSorter(container, this));
     }
 
     @Override

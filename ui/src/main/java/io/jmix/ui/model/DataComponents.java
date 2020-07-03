@@ -20,23 +20,24 @@ import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
 import io.jmix.ui.model.impl.*;
-import io.jmix.core.security.EntityOp;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
  * Factory bean for data API components.
  */
-@Component("jmix_DataComponents")
-public class DataComponents implements ApplicationContextAware {
+@Component("ui_DataComponents")
+public class DataComponents {
+
+    @Autowired
+    protected AutowireCapableBeanFactory beanFactory;
 
     @Autowired
     protected Metadata metadata;
@@ -47,25 +48,35 @@ public class DataComponents implements ApplicationContextAware {
     @Autowired
     protected SorterFactory sorterFactory;
 
-    private ApplicationContext applicationContext;
+    protected void autowire(Object instance) {
+        beanFactory.autowireBean(instance);
 
-    @Override
-    public void setApplicationContext(@Nonnull ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        if (instance instanceof InitializingBean) {
+            try {
+                ((InitializingBean) instance).afterPropertiesSet();
+            } catch (Exception e) {
+                throw new RuntimeException(
+                        "Unable to initialize UI Component - calling afterPropertiesSet for " +
+                                instance.getClass(), e);
+            }
+        }
     }
-
     /**
      * Creates {@code DataContext}.
      */
     public DataContext createDataContext() {
-        return new DataContextImpl(applicationContext);
+        DataContextImpl dataContext = new DataContextImpl();
+        autowire(dataContext);
+        return dataContext;
     }
 
     /**
      * Creates {@code InstanceContainer}.
      */
     public <E extends Entity> InstanceContainer<E> createInstanceContainer(Class<E> entityClass) {
-        return new InstanceContainerImpl<>(applicationContext, metadata.getClass(entityClass));
+        InstanceContainerImpl<E> container = new InstanceContainerImpl<>(metadata.getClass(entityClass));
+        autowire(container);
+        return container;
     }
 
     /**
@@ -76,7 +87,8 @@ public class DataComponents implements ApplicationContextAware {
                                                                                    InstanceContainer<? extends Entity> masterContainer,
                                                                                    String property) {
         InstancePropertyContainerImpl<E> container = new InstancePropertyContainerImpl<>(
-                applicationContext, metadata.getClass(entityClass), masterContainer, property);
+                metadata.getClass(entityClass), masterContainer, property);
+        autowire(container);
 
         if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)
                 && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
@@ -99,8 +111,8 @@ public class DataComponents implements ApplicationContextAware {
      * Creates {@code CollectionContainer}.
      */
     public <E extends Entity> CollectionContainer<E> createCollectionContainer(Class<E> entityClass) {
-        CollectionContainerImpl<E> container = new CollectionContainerImpl<>(
-                applicationContext, metadata.getClass(entityClass));
+        CollectionContainerImpl<E> container = new CollectionContainerImpl<>(metadata.getClass(entityClass));
+        autowire(container);
         container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
         return container;
     }
@@ -113,7 +125,8 @@ public class DataComponents implements ApplicationContextAware {
                                                                                        InstanceContainer<? extends Entity> masterContainer,
                                                                                        String property) {
         CollectionPropertyContainerImpl<E> container = new CollectionPropertyContainerImpl<>(
-                applicationContext, metadata.getClass(entityClass), masterContainer, property);
+                metadata.getClass(entityClass), masterContainer, property);
+        autowire(container);
         container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
 
         if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)
@@ -137,21 +150,26 @@ public class DataComponents implements ApplicationContextAware {
      * Creates {@code KeyValueContainer}.
      */
     public KeyValueContainer createKeyValueContainer() {
-        return new KeyValueContainerImpl(applicationContext);
+        KeyValueContainerImpl container = new KeyValueContainerImpl();
+        autowire(container);
+        return container;
     }
 
     /**
      * Creates {@code KeyValueContainer} for the given MetaClass.
      */
     public KeyValueContainer createKeyValueContainer(MetaClass metaClass) {
-        return new KeyValueContainerImpl(applicationContext, metaClass);
+        KeyValueContainerImpl container = new KeyValueContainerImpl(metaClass);
+        autowire(container);
+        return container;
     }
 
     /**
      * Creates {@code KeyValueCollectionContainer}.
      */
     public KeyValueCollectionContainer createKeyValueCollectionContainer() {
-        KeyValueCollectionContainerImpl container = new KeyValueCollectionContainerImpl(applicationContext);
+        KeyValueCollectionContainerImpl container = new KeyValueCollectionContainerImpl();
+        autowire(container);
         container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
         return container;
     }
@@ -160,27 +178,35 @@ public class DataComponents implements ApplicationContextAware {
      * Creates {@code InstanceLoader}.
      */
     public <E extends Entity> InstanceLoader<E> createInstanceLoader() {
-        return new InstanceLoaderImpl<>(applicationContext);
+        InstanceLoaderImpl<E> loader = new InstanceLoaderImpl<>();
+        autowire(loader);
+        return loader;
     }
 
     /**
      * Creates {@code CollectionLoader}.
      */
     public <E extends Entity> CollectionLoader<E> createCollectionLoader() {
-        return new CollectionLoaderImpl<>(applicationContext);
+        CollectionLoaderImpl<E> loader = new CollectionLoaderImpl<>();
+        autowire(loader);
+        return loader;
     }
 
     /**
      * Creates {@code KeyValueCollectionLoader}.
      */
     public KeyValueCollectionLoader createKeyValueCollectionLoader() {
-        return new KeyValueCollectionLoaderImpl(applicationContext);
+        KeyValueCollectionLoaderImpl loader = new KeyValueCollectionLoaderImpl();
+        autowire(loader);
+        return loader;
     }
 
     /**
      * Creates {@code KeyValueInstanceLoader}.
      */
     public KeyValueInstanceLoader createKeyValueInstanceLoader() {
-        return new KeyValueInstanceLoaderImpl(applicationContext);
+        KeyValueInstanceLoaderImpl loader = new KeyValueInstanceLoaderImpl();
+        autowire(loader);
+        return loader;
     }
 }

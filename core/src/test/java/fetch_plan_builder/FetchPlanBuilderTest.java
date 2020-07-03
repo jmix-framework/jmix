@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package view_builder;
+package fetch_plan_builder;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.FetchPlan;

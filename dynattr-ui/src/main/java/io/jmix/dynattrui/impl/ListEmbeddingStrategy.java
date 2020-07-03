@@ -22,10 +22,10 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattrui.MsgBundleTools;
+import io.jmix.ui.component.formatter.Formatter;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.function.Function;
 
 public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
 
@@ -50,8 +50,8 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Function getColumnFormatter(AttributeDefinition attribute) {
+    @SuppressWarnings("rawtypes")
+    protected Formatter getColumnFormatter(AttributeDefinition attribute) {
         if (attribute.getDataType() == AttributeType.ENUMERATION) {
             if (!attribute.isCollection()) {
                 return value -> {

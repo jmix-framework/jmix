@@ -83,11 +83,11 @@ class LegacyAuditionTest extends CoreTestSpecification {
 
         then:
 
-        beforeCreate.before(legacyAuditable.createTs)
-        afterCreate.after(legacyAuditable.createTs)
+        beforeOrEquals(beforeCreate, legacyAuditable.createTs)
+        afterOrEquals(afterCreate, legacyAuditable.createTs)
 
-        beforeUpdate.before(legacyAuditable.updateTs)
-        afterUpdate.after(legacyAuditable.updateTs)
+        beforeOrEquals(beforeUpdate, legacyAuditable.updateTs)
+        afterOrEquals(afterUpdate, legacyAuditable.updateTs)
 
         !currentAuthentication.user.username.equals(legacyAuditable.createdBy)
         currentAuthentication.user.username.equals(legacyAuditable.updatedBy)
@@ -99,5 +99,13 @@ class LegacyAuditionTest extends CoreTestSpecification {
 
         cleanup:
         authenticator.end()
+    }
+
+    static boolean beforeOrEquals(Date first, Date second) {
+        return first.before(second) || first.equals(second)
+    }
+
+    static boolean afterOrEquals(Date first, Date second) {
+        return first.after(second) || first.equals(second)
     }
 }

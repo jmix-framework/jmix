@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.component;
+
+package io.jmix.ui.component.formatter;
 
 import java.util.function.Function;
 
 /**
- * Interface defining method for formatting a value into string.
- * <br> Used by various UI components.
+ * Marker interface to indicate that the implementing class can be used as a formatter.
  */
-@Deprecated
-public interface Formatter<T> extends Function<T, String> {
-    @Override
-    default String apply(T t) {
-        return format(t);
-    }
-
-    String format(T t);
+public interface Formatter<V> extends Function<V, String> {
 }

@@ -16,12 +16,14 @@
 
 package io.jmix.ui.component;
 
-import java.util.function.Function;
+import io.jmix.ui.component.formatter.Formatter;
 
 /**
  * Object having a formatter.
  */
 public interface HasFormatter<V> {
-    Function<V, String> getFormatter();
-    void setFormatter(Function<? super V, String> formatter);
+
+    Formatter<V> getFormatter();
+
+    void setFormatter(Formatter<? super V> formatter);
 }

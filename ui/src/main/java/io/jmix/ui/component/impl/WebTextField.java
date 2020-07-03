@@ -32,17 +32,17 @@ import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.data.ValueConversionException;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.widget.JmixTextField;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.emptyToNull;
@@ -52,7 +52,7 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
         implements TextField<V>, InitializingBean {
 
     protected Datatype<V> datatype;
-    protected Function<? super V, String> formatter;
+    protected Formatter<? super V> formatter;
     protected Locale locale;
 
     protected boolean trimming = true;
@@ -262,12 +262,12 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
 
     @SuppressWarnings("unchecked")
     @Override
-    public Function<V, String> getFormatter() {
-        return (Function<V, String>) formatter;
+    public Formatter<V> getFormatter() {
+        return (Formatter<V>) formatter;
     }
 
     @Override
-    public void setFormatter(Function<? super V, String> formatter) {
+    public void setFormatter(Formatter<? super V> formatter) {
         this.formatter = formatter;
     }
 

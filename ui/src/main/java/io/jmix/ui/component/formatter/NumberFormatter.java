@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component.formatter;
 
-import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -23,21 +23,37 @@ import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.security.CurrentAuthentication;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
-import java.util.function.Function;
 
 /**
  * Number formatter to be used in screen descriptors and controllers.
- * <br> If defined in XML together with {@code format} attribute, uses this format, otherwise formats by means of
+ * <p>
+ * If defined in XML together with {@code format} attribute, uses this format, otherwise formats by means of
  * {@link Datatype#format(Object, java.util.Locale)}.
+ * <p>
+ * Example usage:
+ * <pre>
+ *      &lt;formatter name=&quot;ui_NumberFormatter&quot; format=&quot;%f&quot;/&gt;
+ * </pre>
+ * Use {@link BeanLocator} when creating the formatter programmatically.
  */
-public class NumberFormatter implements Function<Number, String> {
+@Component(NumberFormatter.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class NumberFormatter implements Formatter<Number> {
+
+    public static final String NAME = "ui_NumberFormatter";
 
     private Element element;
 
-    protected CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    protected Messages messages;
 
     public NumberFormatter() {
     }
@@ -58,7 +74,7 @@ public class NumberFormatter implements Function<Number, String> {
             return datatype.format(value, currentAuthentication.getLocale());
         } else {
             if (pattern.startsWith("msg://")) {
-                pattern = messages.getMessage(pattern.substring(6, pattern.length()));
+                pattern = messages.getMessage(pattern.substring(6));
             }
             FormatStrings formatStrings = Datatypes.getFormatStrings(currentAuthentication.getLocale());
             if (formatStrings == null)

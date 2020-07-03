@@ -16,9 +16,6 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.AppBeans;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
@@ -30,6 +27,7 @@ import io.jmix.ui.component.columnmanager.GroupColumnManager;
 import io.jmix.ui.component.compatibility.TableCellClickListenerWrapper;
 import io.jmix.ui.component.compatibility.TableColumnCollapseListenerWrapper;
 import io.jmix.ui.component.data.TableItems;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.model.InstanceContainer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -833,7 +831,7 @@ public interface Table<E extends JmixEntity>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class Column<T extends JmixEntity> implements HasXmlDescriptor, HasCaption, HasHtmlCaption, HasFormatter<Object> {
+    class Column<T extends JmixEntity> implements HasXmlDescriptor, HasCaption, HasHtmlCaption, HasFormatter {
 
         private static final Logger log = LoggerFactory.getLogger(Table.class);
 
@@ -842,7 +840,7 @@ public interface Table<E extends JmixEntity>
         protected String description;
         protected String valueDescription;
         protected boolean editable;
-        protected Function<? super Object, String> formatter;
+        protected Formatter formatter;
         protected Integer width;
         protected boolean collapsed;
         protected boolean groupAllowed = true;
@@ -884,27 +882,6 @@ public interface Table<E extends JmixEntity>
         public Column(String id, String caption) {
             this.id = id;
             this.caption = caption;
-        }
-
-        @Deprecated
-        public Column(Object id, String caption) {
-            this.id = id;
-            this.caption = caption;
-        }
-
-        // todo provide Table instance method as replacement
-        @Deprecated
-        public Column(Class<T> entityClass, String propertyPath) {
-            MetaClass metaClass = AppBeans.get(Metadata.class).getClass(entityClass);
-            MetaPropertyPath mpp = metaClass.getPropertyPath(propertyPath);
-
-            if (mpp == null) {
-                throw new IllegalArgumentException(String.format("Unable to find %s in %s", propertyPath, entityClass));
-            }
-
-            this.id = mpp;
-            this.caption = AppBeans.get(MessageTools.class).getPropertyCaption(metaClass, propertyPath);
-            this.type = mpp.getRangeJavaClass();
         }
 
         public Object getId() {
@@ -1031,12 +1008,12 @@ public interface Table<E extends JmixEntity>
         }
 
         @Override
-        public Function<Object, String> getFormatter() {
+        public Formatter getFormatter() {
             return formatter;
         }
 
         @Override
-        public void setFormatter(Function<? super Object, String> formatter) {
+        public void setFormatter(Formatter formatter) {
             this.formatter = formatter;
         }
 

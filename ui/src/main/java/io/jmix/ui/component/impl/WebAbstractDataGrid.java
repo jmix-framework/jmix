@@ -66,6 +66,7 @@ import io.jmix.ui.component.datagrid.DataGridDataProvider;
 import io.jmix.ui.component.datagrid.DataGridItemsEventsDelegate;
 import io.jmix.ui.component.datagrid.SortableDataGridDataProvider;
 import io.jmix.ui.component.formatter.CollectionFormatter;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.renderer.*;
 import io.jmix.ui.component.valueprovider.*;
 import io.jmix.ui.icon.IconResolver;
@@ -752,7 +753,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected ValueProvider getColumnPresentationValueProvider(Column<E> column) {
         Function presentationProvider = column.getPresentationProvider();
         Converter converter = column.getConverter();
-        Function<?, String> formatter = column.getFormatter();
+        Formatter<?> formatter = column.getFormatter();
         Renderer renderer = column.getRenderer();
         // The following priority is used to determine a value provider:
         // a presentation provider > a converter > a formatter > a renderer's presentation provider >
@@ -784,7 +785,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             return new FormatterBasedValueProvider<>(column.getFormatter());
         } else if (metaProperty != null) {
             if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
-                return new FormatterBasedValueProvider<>(new CollectionFormatter(metadataTools));
+                return new FormatterBasedValueProvider<>(beanLocator.getPrototype(CollectionFormatter.class));
             }
             if (metaProperty.getJavaType() == Boolean.class) {
                 return new YesNoIconPresentationValueProvider();
@@ -3233,7 +3234,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         protected boolean resizable;
         protected boolean editable;
         protected boolean generated;
-        protected Function<?, String> formatter;
+        protected Formatter formatter;
         protected AggregationInfo aggregation;
         protected String valueDescription;
 
@@ -3518,12 +3519,12 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         }
 
         @Override
-        public Function getFormatter() {
+        public Formatter getFormatter() {
             return formatter;
         }
 
         @Override
-        public void setFormatter(Function formatter) {
+        public void setFormatter(Formatter formatter) {
             this.formatter = formatter;
             updateRendererInternal();
         }

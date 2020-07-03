@@ -56,6 +56,7 @@ import io.jmix.ui.component.data.aggregation.Aggregations;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
 import io.jmix.ui.component.data.meta.EntityTableItems;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.component.table.*;
 import io.jmix.ui.icon.IconResolver;
@@ -1144,10 +1145,10 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         if (column != null && column.getValueProvider() != null) {
             E item = tableItems.getItem(rowId);
             Object generatedValue = column.getValueProvider().apply(item);
-            Function<Object, String> formatter = column.getFormatter();
+            Formatter formatter = column.getFormatter();
 
             if (formatter != null) {
-                return column.getFormatter().apply(generatedValue);
+                return (String) formatter.apply(generatedValue);
             }
 
             return metadataTools.format(generatedValue);
@@ -1169,7 +1170,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
             if (column != null) {
                 if (column.getFormatter() != null) {
-                    return column.getFormatter().apply(cellValue);
+                    return (String) column.getFormatter().apply(cellValue);
                 } else if (column.getXmlDescriptor() != null) {
                     // vaadin8 move to Column
                     String captionProperty = column.getXmlDescriptor().attributeValue("captionProperty");

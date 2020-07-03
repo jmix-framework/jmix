@@ -32,6 +32,7 @@ import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.datagrid.EmptyDataGridItems;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -46,7 +47,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -770,8 +770,8 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
             loadValueDescription(column, aggregationElement);
 
-            Function formatter = loadFormatter(aggregationElement);
-            aggregation.setFormatter(formatter == null ? column.getDescriptionProvider() : formatter);
+            Formatter formatter = loadFormatter(aggregationElement);
+            aggregation.setFormatter(formatter == null ? (Formatter<Object>) column.getDescriptionProvider() : formatter);
             column.setAggregation(aggregation);
 
             loadStrategyClass(aggregation, aggregationElement);

@@ -17,14 +17,13 @@
 package io.jmix.ui.component.valueprovider;
 
 import com.vaadin.data.ValueProvider;
-
-import java.util.function.Function;
+import io.jmix.ui.component.formatter.Formatter;
 
 public class FormatterBasedValueProvider<T> implements ValueProvider<T, String> {
 
-    protected Function<? super T, String> formatter;
+    protected Formatter<? super T> formatter;
 
-    public FormatterBasedValueProvider(Function<? super T, String> formatter) {
+    public FormatterBasedValueProvider(Formatter<? super T> formatter) {
         this.formatter = formatter;
     }
 
@@ -34,7 +33,7 @@ public class FormatterBasedValueProvider<T> implements ValueProvider<T, String> 
     }
 
     @SuppressWarnings("unchecked")
-    public Function<T, String> getFormatter() {
-        return (Function<T, String>) formatter;
+    public Formatter<T> getFormatter() {
+        return (Formatter<T>) formatter;
     }
 }

@@ -1246,6 +1246,7 @@
         <xs:attribute name="format" type="xs:string"/>
         <xs:attribute name="type" type="xs:string"/>
         <xs:attribute name="useUserTimezone" type="xs:boolean"/>
+        <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="rendererType">

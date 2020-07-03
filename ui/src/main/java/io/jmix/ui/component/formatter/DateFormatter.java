@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component.formatter;
 
-import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatypes;
@@ -23,31 +23,44 @@ import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.function.Function;
 
 /**
  * {@link Date} formatter to be used in screen descriptors.
- * <br> Either {@code format} or {@code type} attributes should be defined in the {@code formatter} element.
+ * <p>
+ * Either {@code format} or {@code type} attributes should be defined in the {@code formatter} element.
  * <ul>
- *     <li> {@code format} - format string for {@code SimpleDateFormat}</li>
+ *     <li> {@code format} - format string for {@code SimpleDateFormat};</li>
  *     <li> {@code type} - {@code DATE} or {@code DATETIME} - if specified, the value will be formatted
- *     by means of {@code DateDatatype} or {@code DateTimeDatatype} respectively.</li>
+ *     by means of {@code DateDatatype} or {@code DateTimeDatatype} respectively;</li>
+ *     <li> {@code useUserTimezone} - {@code true} to show the current user’s timezone.</li>
  * </ul>
- * <br> Example usage:
+ * <p>
+ * Example usage:
  * <pre>
- * &lt;formatter class=&quot;com.haulmont.cuba.web.components.formatters.DateFormatter&quot; format=&quot;msg://dateFormat&quot;
+ *      &lt;formatter name=&quot;ui_DateFormatter&quot; format=&quot;yyyy-MM-dd HH:mm:ss&quot;/&gt;
  * </pre>
+ * Use {@link BeanLocator} when creating the formatter programmatically.
  */
-public class DateFormatter implements Function<Date, String> {
+@Component(DateFormatter.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class DateFormatter implements Formatter<Date> {
+
+    public static final String NAME = "ui_DateFormatter";
 
     private Element element;
 
-    protected CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
+    @Autowired
+    protected Messages messages;
 
     public DateFormatter(Element element) {
         this.element = element;
@@ -83,7 +96,7 @@ public class DateFormatter implements Function<Date, String> {
             return value.toString();
         } else {
             if (format.startsWith("msg://")) {
-                format = messages.getMessage(format.substring(6, format.length()));
+                format = messages.getMessage(format.substring(6));
             }
             DateFormat df = new SimpleDateFormat(format);
 

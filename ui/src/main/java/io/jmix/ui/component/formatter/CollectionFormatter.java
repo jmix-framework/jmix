@@ -16,20 +16,36 @@
 
 package io.jmix.ui.component.formatter;
 
+import io.jmix.core.BeanLocator;
 import io.jmix.core.MetadataTools;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class CollectionFormatter implements Function<Collection, String> {
+/**
+ * Collection formatter to be used in screen descriptors and controllers.
+ * <p>
+ * This formatter formats collection into a string where the elements of the collection are separated by commas.
+ * <p>
+ * Example usage:
+ * <pre>
+ *      &lt;formatter name=&quot;ui_CollectionFormatter&quot;/&gt;
+ * </pre>
+ * Use {@link BeanLocator} when creating the formatter programmatically.
+ */
+@Component(CollectionFormatter.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class CollectionFormatter implements Formatter<Collection> {
 
+    public static final String NAME = "ui_CollectionFormatter";
+
+    @Autowired
     protected MetadataTools metadataTools;
-
-    public CollectionFormatter(MetadataTools metadataTools) {
-        this.metadataTools = metadataTools;
-    }
 
     @Override
     public String apply(Collection value) {

@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.ValueSourceProvider;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.InstanceContainer;
 
@@ -2875,17 +2876,17 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          */
         @Deprecated
         @Override
-        Function getFormatter();
+        Formatter getFormatter();
 
         /**
          * If either {@link Function presentation provider} or {@link Converter}
-         * are set they take precedence over {@link Function formatter}.
+         * are set they take precedence over {@link Formatter formatter}.
          *
          * @deprecated use {@link #getPresentationProvider()} instead
          */
         @Deprecated
         @Override
-        void setFormatter(Function formatter);
+        void setFormatter(Formatter formatter);
 
         /**
          * Returns the converter instance used by this column.

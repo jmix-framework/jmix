@@ -35,6 +35,9 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
+import io.jmix.ui.component.formatter.Formatter;
+import io.jmix.ui.component.validator.*;
+import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
@@ -57,14 +60,16 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
@@ -804,13 +809,24 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return loadDeclarativeActionDefault(actionsHolder, element);
     }
 
-    protected Function<?, String> loadFormatter(Element element) {
+    @Nullable
+    protected Formatter<?> loadFormatter(Element element) {
         Element formatterElement = element.element("formatter");
         if (formatterElement != null) {
+            String name = formatterElement.attributeValue("name");
+
+            if (StringUtils.isNotEmpty(name)) {
+                try {
+                    return (Formatter<?>) beanLocator.getPrototype(name, formatterElement);
+                } catch (BeanCreationException e) {
+                    return (Formatter<?>) beanLocator.getPrototype(name);
+                }
+            }
+
             String className = formatterElement.attributeValue("class");
 
             if (StringUtils.isEmpty(className)) {
-                throw new GuiDevelopmentException("Formatter's attribute 'class' is not specified", context);
+                throw new GuiDevelopmentException("Formatter's attributes 'name' and 'class' are not specified", context);
             }
 
             Class<?> aClass = getHotDeployManager().findClass(className);
@@ -819,22 +835,9 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             }
 
             try {
-                Constructor<?> constructor = aClass.getConstructor(Element.class);
-                try {
-                    //noinspection unchecked
-                    return (Function<?, String>) constructor.newInstance(formatterElement);
-                } catch (Throwable e) {
-                    throw new GuiDevelopmentException(
-                            String.format("Unable to instantiate class %s: %s", className, e.toString()), context);
-                }
-            } catch (NoSuchMethodException e) {
-                try {
-                    //noinspection unchecked
-                    return (Function<?, String>) aClass.getDeclaredConstructor().newInstance();
-                } catch (Exception e1) {
-                    throw new GuiDevelopmentException(
-                            String.format("Unable to instantiate class %s: %s", className, e1.toString()), context);
-                }
+                return (Formatter<?>) beanLocator.getPrototype(aClass, formatterElement);
+            } catch (BeanCreationException e) {
+                return (Formatter<?>) beanLocator.getPrototype(aClass);
             }
         } else {
             return null;

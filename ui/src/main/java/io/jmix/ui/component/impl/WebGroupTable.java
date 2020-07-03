@@ -540,7 +540,7 @@ public class WebGroupTable<E extends JmixEntity> extends WebAbstractTable<JmixGr
         Table.Column<E> column = columns.get(propertyPath);
         if (column != null) {
             if (column.getFormatter() != null) {
-                return column.getFormatter().apply(value);
+                return (String) column.getFormatter().apply(value);
             } else if (column.getXmlDescriptor() != null) {
                 String captionProperty = column.getXmlDescriptor().attributeValue("captionProperty"); // vaadin8 move to Column
                 if (StringUtils.isNotEmpty(captionProperty)) {

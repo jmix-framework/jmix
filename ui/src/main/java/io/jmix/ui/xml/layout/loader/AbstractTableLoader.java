@@ -34,6 +34,7 @@ import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.component.data.table.EmptyTableItems;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -51,6 +52,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -571,7 +573,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                 column.setValueDescription(loadResourceString(valueDescription));
             }
 
-            Function formatter = loadFormatter(aggregationElement);
+            Formatter formatter = loadFormatter(aggregationElement);
             aggregation.setFormatter(formatter == null ? column.getFormatter() : formatter);
             column.setAggregation(aggregation);
 

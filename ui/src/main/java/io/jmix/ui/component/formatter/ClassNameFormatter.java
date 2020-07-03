@@ -15,29 +15,45 @@
  */
 package io.jmix.ui.component.formatter;
 
-import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.util.function.Function;
+/**
+ * Class name formatter to be used in screen descriptors and controllers.
+ * <p>
+ * The formatter formats the string that contains the class path, where the packages are separated by dots,
+ * into a string that is the class name.
+ * <p>
+ * Example usage:
+ * <pre>
+ *      &lt;formatter name=&quot;ui_ClassNameFormatter&quot;/&gt;
+ * </pre>
+ * Use {@link BeanLocator} when creating the formatter programmatically.
+ */
+@Component(ClassNameFormatter.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class ClassNameFormatter implements Formatter<String> {
 
-public class ClassNameFormatter implements Function<Object, String> {
+    public static final String NAME = "ui_ClassNameFormatter";
 
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    @Autowired
+    protected Messages messages;
 
     @Override
-    public String apply(Object value) {
+    public String apply(String value) {
         if (value == null) {
             return null;
         }
-        if (value instanceof String) {
-            String str = (String) value;
-            final int i = str.lastIndexOf(".");
-            if (i < 0) {
-                return str;
-            } else {
-                return messages.getMessage(str.substring(0, i), str.substring(i + 1, str.length()));
-            }
+
+        int i = value.lastIndexOf(".");
+        if (i < 0) {
+            return value;
+        } else {
+            return messages.getMessage(value.substring(0, i), value.substring(i + 1));
         }
-        return null;
     }
 }

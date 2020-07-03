@@ -17,8 +17,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.aggregation.AggregationStrategy;
-
-import java.util.function.Function;
+import io.jmix.ui.component.formatter.Formatter;
 
 public class AggregationInfo {
 
@@ -37,7 +36,7 @@ public class AggregationInfo {
 
     private MetaPropertyPath propertyPath;
     private Type type;
-    private Function<Object, String> formatter;
+    private Formatter<Object> formatter;
     private AggregationStrategy strategy;
     protected boolean editable = false;
 
@@ -57,11 +56,11 @@ public class AggregationInfo {
         this.type = type;
     }
 
-    public Function<Object, String> getFormatter() {
+    public Formatter<Object> getFormatter() {
         return formatter;
     }
 
-    public void setFormatter(Function<Object, String> formatter) {
+    public void setFormatter(Formatter<Object> formatter) {
         this.formatter = formatter;
     }
 

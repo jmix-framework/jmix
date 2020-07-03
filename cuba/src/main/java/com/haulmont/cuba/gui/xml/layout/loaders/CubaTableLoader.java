@@ -21,9 +21,14 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
+import io.jmix.ui.component.formatter.Formatter;
 import org.dom4j.Element;
 
 import java.util.List;
+
+import java.lang.reflect.Constructor;
+import java.util.function.Function;
+import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
 public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
@@ -34,6 +39,12 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
 
         ComponentLoaderHelper.loadSettingsEnabled((Table) resultComponent, element);
         ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getHotDeployManager());
+    }
+
+    @Override
+    @Nullable
+    protected Formatter<?> loadFormatter(Element element) {
+        return ComponentLoaderHelper.loadFormatter(element, getHotDeployManager(), getContext());
     }
 
     @Override

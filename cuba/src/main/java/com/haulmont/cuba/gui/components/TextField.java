@@ -18,6 +18,8 @@ package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
 
+import java.util.function.Function;
+
 /**
  * Component compatible with {@link Datasource}.
  *
@@ -26,4 +28,9 @@ import com.haulmont.cuba.gui.data.Datasource;
  */
 @Deprecated
 public interface TextField<V> extends TextInputField<V>, io.jmix.ui.component.TextField<V> {
+
+    @Deprecated
+    default void setFormatter(Function<? super V, String> formatter) {
+        setFormatter(formatter::apply);
+    }
 }

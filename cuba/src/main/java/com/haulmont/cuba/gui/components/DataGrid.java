@@ -23,6 +23,9 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.DataGridItems;
+import io.jmix.ui.component.formatter.Formatter;
+
+import java.util.function.Function;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -168,6 +171,15 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
          * @return generated column type
          */
         Class getGeneratedType();
+
+        /**
+         * @deprecated use {@link #setFormatter(Formatter)} instead
+         */
+        @Deprecated
+        @SuppressWarnings({"rawtypes"})
+        default void setFormatter(Function formatter) {
+            setFormatter(value -> (String) formatter.apply(value));
+        }
     }
 
     /**

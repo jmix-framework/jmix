@@ -41,6 +41,7 @@ import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -59,7 +60,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
@@ -460,7 +460,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
         field.setXmlDescriptor(element);
 
-        Function formatter = loadFormatter(element);
+        Formatter formatter = loadFormatter(element);
         if (formatter != null) {
             field.setFormatter(formatter);
         }

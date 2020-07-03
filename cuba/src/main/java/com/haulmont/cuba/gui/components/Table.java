@@ -21,7 +21,13 @@ import com.haulmont.cuba.gui.components.data.table.SortableDatasourceTableItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.AppBeans;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.TableItems;
+
+import java.util.function.Function;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -65,5 +71,44 @@ public interface Table<E extends JmixEntity> extends ListComponent<E>, io.jmix.u
         return tableItems instanceof DatasourceTableItems
                 ? ((DatasourceTableItems) tableItems).getDatasource()
                 : null;
+    }
+
+    class Column<T extends JmixEntity> extends io.jmix.ui.component.Table.Column {
+
+        public Column(Object id) {
+            super(id);
+        }
+
+        public Column(String id) {
+            super(id);
+        }
+
+        public Column(MetaPropertyPath propertyPath, String caption) {
+            super(propertyPath, caption);
+        }
+
+        public Column(String id, String caption) {
+            super(id, caption);
+        }
+
+        @Deprecated
+        public Column(Object id, String caption) {
+            super((String) id, caption);
+        }
+
+        // todo provide Table instance method as replacement
+        @Deprecated
+        public Column(Class entityClass, String propertyPath) {
+            super(
+                    AppBeans.get(Metadata.class).getClass(entityClass).getPropertyPath(propertyPath),
+                    AppBeans.get(MessageTools.class).getPropertyCaption(AppBeans.get(Metadata.class).getClass(entityClass), propertyPath)
+            );
+        }
+
+        @Deprecated
+        @SuppressWarnings("unchecked")
+        public void setFormatter(Function formatter) {
+            super.setFormatter(value -> (String) formatter.apply(value));
+        }
     }
 }

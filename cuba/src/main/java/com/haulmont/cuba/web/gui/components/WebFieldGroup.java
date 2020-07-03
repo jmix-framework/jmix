@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.security.UiPermissionDescriptor;
@@ -44,7 +45,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -514,7 +514,7 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
 
                 FieldGroupFieldFactory.GeneratedField generatedField = fieldFactory.createField(fc);
                 Component fieldComponent = generatedField.getComponent();
-                
+
                 fci.assignComponent(fieldComponent);
                 fci.setAttachMode(generatedField.getAttachMode());
 
@@ -840,7 +840,7 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
         protected String targetContextHelpText;
         protected Boolean targetContextHelpTextHtmlEnabled;
         protected String targetInputPrompt;
-        protected Function targetFormatter;
+        protected Formatter targetFormatter;
         protected boolean isTargetCustom;
 
         protected List<Consumer> targetValidators = new ArrayList<>(0);
@@ -1295,7 +1295,7 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
         }
 
         @Override
-        public Function getFormatter() {
+        public Formatter getFormatter() {
             if (component instanceof HasFormatter) {
                 return ((HasFormatter) component).getFormatter();
             }
@@ -1303,7 +1303,7 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
         }
 
         @Override
-        public void setFormatter(Function formatter) {
+        public void setFormatter(Formatter formatter) {
             if (component instanceof HasFormatter) {
                 ((HasFormatter) component).setFormatter(formatter);
             } else {
@@ -1485,11 +1485,11 @@ public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implemen
             this.targetInputPrompt = targetInputPrompt;
         }
 
-        public Function getTargetFormatter() {
+        public Formatter getTargetFormatter() {
             return targetFormatter;
         }
 
-        public void setTargetFormatter(Function targetFormatter) {
+        public void setTargetFormatter(Formatter targetFormatter) {
             this.targetFormatter = targetFormatter;
         }
 

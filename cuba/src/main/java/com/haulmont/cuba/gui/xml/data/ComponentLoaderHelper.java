@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.PickerField;
+import io.jmix.core.HotDeployManager;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.HotDeployManager;
 import com.haulmont.cuba.gui.components.validators.DateValidator;
@@ -34,6 +35,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
@@ -41,6 +43,8 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.math.BigDecimal;
@@ -252,5 +256,41 @@ public final class ComponentLoaderHelper {
             }
         }
         return validator;
+    }
+
+    @Nullable
+    public static Formatter<?> loadFormatter(Element element, HotDeployManager hotDeployManager, ComponentLoader.Context context) {
+        Element formatterElement = element.element("formatter");
+        if (formatterElement != null) {
+            String className = formatterElement.attributeValue("class");
+
+            if (StringUtils.isEmpty(className)) {
+                throw new GuiDevelopmentException("Formatter's attribute 'class' is not specified", context);
+            }
+
+            Class<?> aClass = hotDeployManager.findClass(className);
+            if (aClass == null) {
+                throw new GuiDevelopmentException(String.format("Class %s is not found", className), context);
+            }
+
+            try {
+                Constructor<?> constructor = aClass.getConstructor(Element.class);
+                try {
+                    return (Formatter<?>) constructor.newInstance(formatterElement);
+                } catch (Throwable e) {
+                    throw new GuiDevelopmentException(
+                            String.format("Unable to instantiate class %s: %s", className, e.toString()), context);
+                }
+            } catch (NoSuchMethodException e) {
+                try {
+                    return (Formatter<?>) aClass.getDeclaredConstructor().newInstance();
+                } catch (Exception e1) {
+                    throw new GuiDevelopmentException(
+                            String.format("Unable to instantiate class %s: %s", className, e1.toString()), context);
+                }
+            }
+        } else {
+            return null;
+        }
     }
 }

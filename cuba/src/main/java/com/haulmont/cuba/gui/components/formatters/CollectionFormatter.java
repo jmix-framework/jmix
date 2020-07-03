@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.gui.components;
+package com.haulmont.cuba.gui.components.formatters;
 
-import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.AppBeans;
+import io.jmix.core.MetadataTools;
 
-import java.util.function.Function;
+import java.util.Collection;
 
 /**
- * Component compatible with {@link Datasource}.
- *
- * @param <V> tpe of value
- * @deprecated Use {@link io.jmix.ui.component.Label} instead
+ * @deprecated Use {@link io.jmix.ui.component.formatter.CollectionFormatter} instead
  */
 @Deprecated
-public interface Label<V> extends DatasourceComponent<V>, io.jmix.ui.component.Label<V> {
+public class CollectionFormatter extends io.jmix.ui.component.formatter.CollectionFormatter {
 
-    @Deprecated
-    default void setFormatter(Function<? super V, String> formatter) {
-        setFormatter(formatter::apply);
+    @Override
+    public String apply(Collection value) {
+        metadataTools = AppBeans.get(MetadataTools.class);
+        return super.apply(value);
     }
 }

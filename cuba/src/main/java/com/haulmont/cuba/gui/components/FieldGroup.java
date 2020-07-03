@@ -18,11 +18,13 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.formatter.Formatter;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Multi-column form component.
@@ -517,6 +519,15 @@ public interface FieldGroup extends Component, Component.BelongToFrame, Componen
          * @param handler the handler to set
          */
         void setContextHelpIconClickHandler(Consumer<ContextHelpIconClickEvent> handler);
+
+        /**
+         * @deprecated use {@link #setFormatter(Formatter)} instead
+         */
+        @Deprecated
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        default void setFormatter(Function formatter) {
+            setFormatter(value -> (String) formatter.apply(value));
+        }
     }
 
     /**

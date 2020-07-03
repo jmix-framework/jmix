@@ -25,6 +25,7 @@ import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.xml.layout.loader.TreeDataGridLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -89,6 +90,12 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
             return beanLocator.get(Scripting.class).loadClassNN(colGenType);
         }
         return null;
+    }
+
+    @Override
+    @Nullable
+    protected Formatter<?> loadFormatter(Element element) {
+        return ComponentLoaderHelper.loadFormatter(element, getHotDeployManager(), getContext());
     }
 
     @Nullable

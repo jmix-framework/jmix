@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.haulmont.cuba.gui.components;
-
-import com.haulmont.cuba.gui.data.Datasource;
 
 import java.util.function.Function;
 
 /**
- * Component compatible with {@link Datasource}.
+ * Interface defining method for formatting a value into string.
+ * <br> Used by various UI components.
  *
- * @param <V> tpe of value
- * @deprecated Use {@link io.jmix.ui.component.Label} instead
+ * @deprecated use {@link io.jmix.ui.component.formatter.Formatter}
  */
 @Deprecated
-public interface Label<V> extends DatasourceComponent<V>, io.jmix.ui.component.Label<V> {
-
-    @Deprecated
-    default void setFormatter(Function<? super V, String> formatter) {
-        setFormatter(formatter::apply);
+public interface Formatter<T> extends Function<T, String> {
+    @Override
+    default String apply(T t) {
+        return format(t);
     }
+
+    String format(T t);
 }

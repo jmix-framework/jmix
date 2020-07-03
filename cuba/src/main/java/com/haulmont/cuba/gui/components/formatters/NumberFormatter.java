@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.gui.components;
+package com.haulmont.cuba.gui.components.formatters;
 
-import com.haulmont.cuba.gui.data.Datasource;
-
-import java.util.function.Function;
+import io.jmix.core.AppBeans;
+import io.jmix.core.Messages;
+import io.jmix.core.security.CurrentAuthentication;
 
 /**
- * Component compatible with {@link Datasource}.
- *
- * @param <V> tpe of value
- * @deprecated Use {@link io.jmix.ui.component.Label} instead
+ * @deprecated Use {@link io.jmix.ui.component.formatter.NumberFormatter} instead
  */
 @Deprecated
-public interface Label<V> extends DatasourceComponent<V>, io.jmix.ui.component.Label<V> {
+public class NumberFormatter extends io.jmix.ui.component.formatter.NumberFormatter {
 
-    @Deprecated
-    default void setFormatter(Function<? super V, String> formatter) {
-        setFormatter(formatter::apply);
+    @Override
+    public String apply(Number value) {
+        messages = AppBeans.get(Messages.class);
+        currentAuthentication = AppBeans.get(CurrentAuthentication.class);
+        return super.apply(value);
     }
 }

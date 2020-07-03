@@ -18,7 +18,7 @@ package io.jmix.core.entity;
 
 import javax.annotation.Nullable;
 
-public interface JmixAuditable {
+public interface EntityEntryAuditable {
 
     void setCreatedDate(Object date);
 

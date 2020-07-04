@@ -17,7 +17,7 @@
 package test_support.app.entity.generated_id;
 
 import io.jmix.core.entity.Versioned;
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
@@ -29,7 +29,7 @@ public class GBar implements io.jmix.core.Entity, Versioned {
 
     @Id
     @Column(name = "UUID")
-    @JmixGeneratedId
+    @JmixGeneratedValue
     private UUID uuid;
 
     @Version

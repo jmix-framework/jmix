@@ -24,15 +24,15 @@ import java.lang.annotation.Target;
 /**
  * Indicates an entity attribute that must be assigned by the framework right after creating an entity instance.
  * <p>
- * Only one field of a class can have this annotation.
+ * The annotated attribute must be of {@code Long}, {@code Integer} or {@code UUID} type.
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation
-public @interface JmixGeneratedId {
+public @interface JmixGeneratedValue {
 
     /**
-     * Defines an existing database sequence name to use for id generation.
+     * Defines an existing database sequence name to use for number generation.
      */
     String sequenceName() default "";
 

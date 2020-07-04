@@ -18,7 +18,7 @@ package test_support.app.entity.generated_id;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.Versioned;
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
@@ -29,7 +29,7 @@ import java.util.UUID;
 public class GFoo implements io.jmix.core.Entity, Versioned {
 
     @Id
-    @JmixGeneratedId
+    @JmixGeneratedValue
     @Column(name = "UUID")
     private UUID uuid = UuidProvider.createUuid();
 

@@ -18,7 +18,7 @@ package test_support.app.entity.nullable_and_generated_id;
 
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.Versioned;
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
@@ -33,7 +33,7 @@ public class NGFoo implements io.jmix.core.Entity, Versioned {
     @Column(name = "ID", nullable = false)
     protected Long id;
 
-    @JmixGeneratedId
+    @JmixGeneratedValue
     @Column(name = "UUID")
     private UUID uuid = UuidProvider.createUuid();
 

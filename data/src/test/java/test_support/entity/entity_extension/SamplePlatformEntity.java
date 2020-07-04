@@ -16,7 +16,7 @@
 
 package test_support.entity.entity_extension;
 
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +30,7 @@ public class SamplePlatformEntity implements io.jmix.core.Entity {
 
     @Id
     @Column(name = "ID")
-    @JmixGeneratedId
+    @JmixGeneratedValue
     protected UUID id;
 
     @Column(name = "NAME")

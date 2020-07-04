@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Or
         }
 
         metaClass.getProperties().stream()
-                .filter(property -> property.getAnnotations().get(JmixGeneratedId.class.getName()) != null && isNumberType(property))
+                .filter(property -> property.getAnnotations().get(JmixGeneratedValue.class.getName()) != null && isNumberType(property))
                 .findFirst()
                 .ifPresent(property -> {
                     if (EntityValues.getValue(entity, property.getName()) == null) {

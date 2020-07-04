@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.number_id_generation.TestIntegerIdEntity
 import test_support.entity.number_id_generation.TestLongIdEntity
+import test_support.entity.number_id_generation.TestLongIdWithUuidEntity
 
 class GeneratedNumberIdEntityInitializerTest extends DataSpec {
 
@@ -44,5 +45,15 @@ class GeneratedNumberIdEntityInitializerTest extends DataSpec {
         then:
         entity.getId() != null
         EntityValues.getGeneratedId(entity) == entity.getId()
+    }
+
+    def "generate long id and uuid"() {
+        when:
+        def entity = metadata.create(TestLongIdWithUuidEntity)
+
+        then:
+        entity.getId() != null
+        EntityValues.getGeneratedId(entity) == entity.getId()
+        entity.getUuid() != null
     }
 }

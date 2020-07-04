@@ -16,7 +16,7 @@
 package io.jmix.data.entity;
 
 import io.jmix.core.Entity;
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
@@ -34,7 +34,7 @@ public abstract class BaseLongIdEntity implements Entity {
 
     @Id
     @Column(name = "ID")
-    @JmixGeneratedId
+    @JmixGeneratedValue
     protected Long id;
 
     public Long getId() {

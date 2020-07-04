@@ -20,7 +20,7 @@ package io.jmix.data.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.DataProperties;
@@ -106,10 +106,10 @@ public class NumberIdCache {
         final String sequenceName;
         if (metaClass != null) {
             Optional<MetaProperty> generatedIdPropertyOpt = metaClass.getProperties().stream()
-                    .filter(property -> property.getAnnotatedElement().isAnnotationPresent(JmixGeneratedId.class))
+                    .filter(property -> property.getAnnotatedElement().isAnnotationPresent(JmixGeneratedValue.class))
                     .findFirst();
             if (generatedIdPropertyOpt.isPresent()) {
-                Map<String, Object> attributes = metadataTools.getMetaAnnotationAttributes(generatedIdPropertyOpt.get().getAnnotations(), JmixGeneratedId.class);
+                Map<String, Object> attributes = metadataTools.getMetaAnnotationAttributes(generatedIdPropertyOpt.get().getAnnotations(), JmixGeneratedValue.class);
                 sequenceName = Strings.emptyToNull((String) attributes.get("sequenceName"));
                 cached = sequenceName == null || Boolean.TRUE.equals(attributes.get("sequenceCache"));
             } else {

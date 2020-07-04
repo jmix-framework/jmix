@@ -17,7 +17,7 @@
 package test_support.entity.entity_extension;
 
 
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.*;
@@ -30,7 +30,7 @@ public class Db1Bar implements io.jmix.core.Entity {
 
     @Id
     @Column(name = "ID")
-    @JmixGeneratedId
+    @JmixGeneratedValue
     protected UUID id;
 
     @Column(name = "NAME")

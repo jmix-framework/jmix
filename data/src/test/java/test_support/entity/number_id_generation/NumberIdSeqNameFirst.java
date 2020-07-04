@@ -17,7 +17,7 @@
 package test_support.entity.number_id_generation;
 
 
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,7 +30,7 @@ public class NumberIdSeqNameFirst implements io.jmix.core.Entity {
 
     @Id
     @Column(name = "ID")
-    @JmixGeneratedId(sequenceName = "seq_number_id_name")
+    @JmixGeneratedValue(sequenceName = "seq_number_id_name")
     protected Long id;
 
     @Column(name = "NAME")

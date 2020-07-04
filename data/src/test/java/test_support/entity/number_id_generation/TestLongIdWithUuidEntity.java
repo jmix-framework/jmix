@@ -14,54 +14,33 @@
  * limitations under the License.
  */
 
-package test_support.entity.equality;
+package test_support.entity.number_id_generation;
 
-import io.jmix.core.UuidProvider;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.UUID;
 
-@Table(name = "TEST_NGFOO")
-@Entity(name = "test_NGFoo")
-public class NGFoo implements io.jmix.core.Entity, Versioned {
+@Table(name = "TEST_LONG_ID_WITH_UUID_ENTITY")
+@Entity(name = "test_TestLongIdWithUuidEntity")
+public class TestLongIdWithUuidEntity implements io.jmix.core.Entity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
+    @JmixGeneratedValue
     protected Long id;
 
-    @JmixGeneratedValue
     @Column(name = "UUID")
-    private UUID uuid = UuidProvider.createUuid();
-
-    @Version
-    @Column(name = "VERSION", nullable = false)
-    private Integer version;
+    @JmixGeneratedValue
+    protected UUID uuid;
 
     @Column(name = "NAME")
     @InstanceName
     private String name;
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    @Override
-    public Integer getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
 
     public void setId(Long id) {
         this.id = id;
@@ -69,6 +48,14 @@ public class NGFoo implements io.jmix.core.Entity, Versioned {
 
     public Long getId() {
         return id;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public String getName() {

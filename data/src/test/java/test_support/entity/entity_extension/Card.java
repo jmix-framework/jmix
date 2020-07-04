@@ -15,7 +15,7 @@
  */
 package test_support.entity.entity_extension;
 
-import io.jmix.core.entity.annotation.JmixGeneratedId;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
@@ -30,7 +30,7 @@ public class Card implements io.jmix.core.Entity {
 
     @Id
     @Column(name = "ID")
-    @JmixGeneratedId
+    @JmixGeneratedValue
     protected UUID id;
 
     @Version

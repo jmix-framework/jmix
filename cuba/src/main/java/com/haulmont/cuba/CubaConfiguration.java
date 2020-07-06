@@ -23,6 +23,7 @@ import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
+import com.haulmont.cuba.web.sys.CubaAppUIBeanProvider;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
@@ -32,6 +33,7 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
+import io.jmix.ui.AppUIBeanProvider;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.menu.MenuItemCommands;
@@ -71,6 +73,11 @@ public class CubaConfiguration {
     @Autowired
     protected void setUiControllerReflectionInspector(UiControllerReflectionInspector uiControllerReflectionInspector) {
         this.uiControllerReflectionInspector = uiControllerReflectionInspector;
+    }
+
+    @Bean(AppUIBeanProvider.NAME)
+    protected AppUIBeanProvider getAppUIBeansProvider() {
+        return new CubaAppUIBeanProvider();
     }
 
     @Bean(Messages.NAME)

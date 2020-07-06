@@ -21,8 +21,8 @@ import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.ui.AppUI;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.compatibility.LegacyDependencyResolver;
 import org.springframework.stereotype.Component;
 
@@ -47,10 +47,8 @@ public class CubaLegacyDependencyResolver implements LegacyDependencyResolver {
         } else if (DataSupplier.class.isAssignableFrom(type)) {
             return ((LegacyFrame) frameOwner).getDsContext().getDataSupplier();
         } else if (WindowManager.class.isAssignableFrom(type)) {
-            // TODO: legacy-ui
-            return new CubaScreens(AppUI.getCurrent());
+            return UiControllerUtils.getScreenContext(frameOwner).getScreens();
         }
-
         return null;
     }
 }

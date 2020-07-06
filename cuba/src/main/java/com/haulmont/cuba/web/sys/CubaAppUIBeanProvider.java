@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,28 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.haulmont.cuba.web.sys;
 
-import com.haulmont.cuba.gui.WindowManager;
-import com.haulmont.cuba.gui.WindowManagerProvider;
-import io.jmix.core.BeanLocator;
 import io.jmix.ui.AppUI;
-import org.springframework.stereotype.Component;
+import io.jmix.ui.AppUIBeanProvider;
+import io.jmix.ui.Screens;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-@Deprecated
-@Component(WindowManagerProvider.NAME)
-public class WebWindowManagerProvider implements WindowManagerProvider {
-    @Autowired
-    protected BeanLocator beanLocator;
-
+public class CubaAppUIBeanProvider implements AppUIBeanProvider {
     @Override
-    public WindowManager get() {
-        AppUI ui = AppUI.getCurrent();
-        return (WindowManager) ui.getScreens();
+    public Screens createScreens(AppUI appUI) {
+        return new CubaScreens(appUI);
     }
 }

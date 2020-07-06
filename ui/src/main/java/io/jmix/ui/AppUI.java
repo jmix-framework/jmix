@@ -98,6 +98,8 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
 
     @Autowired
     protected BeanLocator beanLocator;
+    @Autowired
+    protected AppUIBeanProvider appUIBeanProvider;
 
     protected TestIdManager testIdManager = new TestIdManager();
 
@@ -302,7 +304,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         autowireContext(fragments, applicationContext);
         setFragments(fragments);
 
-        Screens screens = new WebScreens(this);
+        Screens screens = appUIBeanProvider.createScreens(this);
         autowireContext(screens, applicationContext);
         setScreens(screens);
 

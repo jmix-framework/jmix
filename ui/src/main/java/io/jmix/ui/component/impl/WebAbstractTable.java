@@ -347,7 +347,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setSelected(E item) {
+    public void setSelected(@Nullable E item) {
         if (item == null) {
             component.setValue(null);
         } else {
@@ -541,9 +541,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
     @Override
     public void removeColumn(Table.Column column) {
-        if (column == null) {
-            return;
-        }
+        Preconditions.checkNotNullArgument(column);
 
         component.removeContainerProperty(column.getId());
         columns.remove(column.getId());
@@ -717,7 +715,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
             }
 
             Column column = getColumn(propertyId.toString());
-            if (BooleanUtils.isTrue(column.isEditable())) {
+            if (column != null && BooleanUtils.isTrue(column.isEditable())) {
                 com.vaadin.v7.ui.Table.ColumnGenerator generator = component.getColumnGenerator(column.getId());
                 if (generator != null) {
                     if (generator instanceof SystemTableColumnGenerator) {
@@ -1802,7 +1800,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
 
         AppUI ui = AppUI.getCurrent();
@@ -1812,7 +1810,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         super.setId(id);
 
         AppUI ui = AppUI.getCurrent();
@@ -1921,7 +1919,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         for (String internalStyle : internalStyles) {
@@ -2021,6 +2019,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         component.setColumnWidth(ROW_HEADER_PROPERTY_ID, width);
     }
 
+    @Nullable
     @Override
     public Action getEnterPressAction() {
         return enterPressAction;
@@ -2031,6 +2030,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         enterPressAction = action;
     }
 
+    @Nullable
     @Override
     public Action getItemClickAction() {
         return itemClickAction;
@@ -2151,6 +2151,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         component.addGeneratedColumn(
                 generatedColumnId,
                 new CustomColumnGenerator(generator, associatedRuntimeColumn) {
+                    @Nullable
                     @Override
                     public Object generateCell(com.vaadin.v7.ui.Table source, Object itemId, Object columnId) {
                         EntityTableItems<E> entityTableSource = (EntityTableItems<E>) getItems();
@@ -2259,7 +2260,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setColumnCaption(String columnId, String caption) {
+    public void setColumnCaption(String columnId, @Nullable String caption) {
         Column column = getColumn(columnId);
         if (column == null) {
             throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
@@ -2269,7 +2270,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setColumnCaption(Column column, String caption) {
+    public void setColumnCaption(Column column, @Nullable String caption) {
         checkNotNullArgument(column, "column must be non null");
 
         if (!Objects.equals(column.getCaption(), caption)) {
@@ -2279,7 +2280,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setColumnDescription(String columnId, String description) {
+    public void setColumnDescription(String columnId, @Nullable String description) {
         Column column = getColumn(columnId);
         if (column == null) {
             throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
@@ -2289,7 +2290,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setColumnDescription(Column column, String description) {
+    public void setColumnDescription(Column column, @Nullable String description) {
         checkNotNullArgument(column, "column must be non null");
 
         if (!Objects.equals(column.getDescription(), description)) {
@@ -2526,7 +2527,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         return results;
     }
 
-    protected String getFormattedValue(Column<E> column, Object value) {
+    protected String getFormattedValue(Column<E> column, @Nullable Object value) {
         String cellText;
         if (value == null) {
             cellText = "";
@@ -2648,6 +2649,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         }
     }
 
+    @Nullable
     @Override
     public TablePresentations getPresentations() {
         if (isUsePresentations()) {
@@ -2661,7 +2663,9 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     public void applyPresentation(Object id) {
         if (isUsePresentations() && presentations != null) {
             TablePresentation p = presentations.getPresentation(id);
-            applyPresentation(p);
+            if (p != null) {
+                applyPresentation(p);
+            }
         } else {
             throw new UnsupportedOperationException("Component doesn't use presentations");
         }
@@ -2971,11 +2975,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                         null : column.getXmlDescriptor().attributeValue("link");
 
                 if (propertyPath.getRange().isClass()) {
-                    if (StringUtils.isNotEmpty(isLink) && Boolean.valueOf(isLink)) {
+                    if (StringUtils.isNotEmpty(isLink) && Boolean.parseBoolean(isLink)) {
                         style = "c-table-cell-link";
                     }
                 } else if (propertyPath.getRange().isDatatype()) {
-                    if (StringUtils.isNotEmpty(isLink) && Boolean.valueOf(isLink)) {
+                    if (StringUtils.isNotEmpty(isLink) && Boolean.parseBoolean(isLink)) {
                         style = "c-table-cell-link";
                     } else if (column.getMaxTextLength() != null) {
                         style = generateClickableCellStyles(itemId, column, propertyPath);
@@ -3000,6 +3004,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         return style;
     }
 
+    @Nullable
     protected String generateClickableCellStyles(Object itemId, Column column, MetaPropertyPath propertyPath) {
         EntityTableItems<E> entityTableSource = (EntityTableItems<E>) getItems();
         if (entityTableSource == null) {
@@ -3025,7 +3030,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setAggregationDistributionProvider(AggregationDistributionProvider<E> distributionProvider) {
+    public void setAggregationDistributionProvider(@Nullable AggregationDistributionProvider<E> distributionProvider) {
         this.distributionProvider = distributionProvider;
 
         component.setAggregationDistributionProvider(this::distributeAggregation);
@@ -3057,6 +3062,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         return true;
     }
 
+    @Nullable
     @Override
     public AggregationDistributionProvider<E> getAggregationDistributionProvider() {
         return distributionProvider;
@@ -3098,6 +3104,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected class StyleGeneratorAdapter implements com.vaadin.v7.ui.Table.CellStyleGenerator {
         protected boolean exceptionHandled = false;
 
+        @Nullable
         @Override
         public String getStyle(com.vaadin.v7.ui.Table source, Object itemId, Object propertyId) {
             if (exceptionHandled) {
@@ -3119,7 +3126,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Nullable
-    protected Object getValueExIgnoreUnfetched(JmixEntity instance, String[] properties) {
+    protected Object getValueExIgnoreUnfetched(@Nullable JmixEntity instance, String[] properties) {
         Object currentValue = null;
         JmixEntity currentInstance = instance;
         for (String property : properties) {
@@ -3166,34 +3173,37 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Override
-    public void setEmptyStateMessage(String message) {
+    public void setEmptyStateMessage(@Nullable String message) {
         component.setEmptyStateMessage(message);
 
         showEmptyStateIfPossible();
     }
 
+    @Nullable
     @Override
     public String getEmptyStateMessage() {
         return component.getEmptyStateMessage();
     }
 
     @Override
-    public void setEmptyStateLinkMessage(String linkMessage) {
+    public void setEmptyStateLinkMessage(@Nullable String linkMessage) {
         component.setEmptyStateLinkMessage(linkMessage);
 
         showEmptyStateIfPossible();
     }
 
+    @Nullable
     @Override
     public String getEmptyStateLinkMessage() {
         return component.getEmptyStateLinkMessage();
     }
 
     @Override
-    public void setEmptyStateLinkClickHandler(Consumer<EmptyStateClickEvent<E>> handler) {
+    public void setEmptyStateLinkClickHandler(@Nullable Consumer<EmptyStateClickEvent<E>> handler) {
         this.emptyStateClickLinkHandler = handler;
     }
 
+    @Nullable
     @Override
     public Consumer<EmptyStateClickEvent<E>> getEmptyStateLinkClickHandler() {
         return emptyStateClickLinkHandler;
@@ -3304,6 +3314,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
             this.itemDescriptionProvider = itemDescriptionProvider;
         }
 
+        @Nullable
         @Override
         public String generateDescription(Component source, Object itemId, Object propertyId) {
 

@@ -19,6 +19,7 @@ import io.jmix.ui.AppUI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -57,7 +58,7 @@ public final class ControllerUtils {
         }
     }
 
-    public static String getWebControllerURL(String mapping) {
+    public static String getWebControllerURL(@Nullable String mapping) {
         if (mapping == null) throw new IllegalArgumentException("Mapping cannot be null");
         String baseUrl = getLocationWithoutParams();
 

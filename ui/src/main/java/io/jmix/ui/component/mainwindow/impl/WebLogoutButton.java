@@ -22,6 +22,8 @@ import io.jmix.ui.component.mainwindow.LogoutButton;
 import io.jmix.ui.widget.JmixButton;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+
 public class WebLogoutButton extends WebAbstractComponent<JmixButton> implements LogoutButton {
 
     public static final String LOGOUT_BUTTON_STYLENAME = "c-logout-button";
@@ -41,7 +43,7 @@ public class WebLogoutButton extends WebAbstractComponent<JmixButton> implements
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         component.addStyleName(LOGOUT_BUTTON_STYLENAME);

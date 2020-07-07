@@ -34,10 +34,11 @@ public interface Facet {
      * @param id id
      */
     @StudioProperty(type = PropertyType.COMPONENT_ID)
-    void setId(String id);
+    void setId(@Nullable String id);
     /**
      * @return ID as defined in {@code id} attribute
      */
+    @Nullable
     String getId();
 
     /**

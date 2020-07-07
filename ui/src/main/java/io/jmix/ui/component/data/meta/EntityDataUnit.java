@@ -19,9 +19,12 @@ package io.jmix.ui.component.data.meta;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.DataUnit;
 
+import javax.annotation.Nullable;
+
 public interface EntityDataUnit extends DataUnit {
     /**
      * @return {@link MetaClass} of an entity contained in the source
      */
+    @Nullable
     MetaClass getEntityMetaClass();
 }

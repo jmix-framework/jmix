@@ -65,7 +65,7 @@ public interface TreeItems<T> extends DataUnit {
      * @param item the item to obtain children or {@code null} to get root items
      * @return children of the given item
      */
-    Stream<T> getChildren(T item);
+    Stream<T> getChildren(@Nullable T item);
 
     /**
      * @param item the item to check
@@ -120,7 +120,7 @@ public interface TreeItems<T> extends DataUnit {
         private final Object prevValue;
         private final Object value;
 
-        public ValueChangeEvent(TreeItems<T> source, T item, String property, Object prevValue, Object value) {
+        public ValueChangeEvent(TreeItems<T> source, T item, String property, @Nullable Object prevValue, @Nullable Object value) {
             super(source);
             this.item = item;
             this.property = property;
@@ -151,6 +151,7 @@ public interface TreeItems<T> extends DataUnit {
         /**
          * @return a previous value of the item property
          */
+        @Nullable
         public Object getPrevValue() {
             return prevValue;
         }
@@ -158,6 +159,7 @@ public interface TreeItems<T> extends DataUnit {
         /**
          * @return a new value of the item property
          */
+        @Nullable
         public Object getValue() {
             return value;
         }
@@ -188,7 +190,7 @@ public interface TreeItems<T> extends DataUnit {
     class SelectedItemChangeEvent<T> extends EventObject {
         protected final T selectedItem;
 
-        public SelectedItemChangeEvent(TreeItems<T> source, T selectedItem) {
+        public SelectedItemChangeEvent(TreeItems<T> source, @Nullable T selectedItem) {
             super(source);
             this.selectedItem = selectedItem;
         }
@@ -202,6 +204,7 @@ public interface TreeItems<T> extends DataUnit {
         /**
          * @return a new selected item
          */
+        @Nullable
         public T getSelectedItem() {
             return selectedItem;
         }

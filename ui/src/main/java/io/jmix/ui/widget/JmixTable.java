@@ -305,13 +305,14 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
         return getState(false).multiLineCells;
     }
 
+    @Nullable
     @Override
     public CellValueFormatter getCustomCellValueFormatter() {
         return customCellValueFormatter;
     }
 
     @Override
-    public void setCustomCellValueFormatter(CellValueFormatter customCellValueFormatter) {
+    public void setCustomCellValueFormatter(@Nullable CellValueFormatter customCellValueFormatter) {
         this.customCellValueFormatter = customCellValueFormatter;
     }
 
@@ -1020,20 +1021,22 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
     }
 
     @Override
-    public void setEmptyStateMessage(String message) {
+    public void setEmptyStateMessage(@Nullable String message) {
         getState().emptyStateMessage = message;
     }
 
+    @Nullable
     @Override
     public String getEmptyStateMessage() {
         return getState(false).emptyStateMessage;
     }
 
     @Override
-    public void setEmptyStateLinkMessage(String linkMessage) {
+    public void setEmptyStateLinkMessage(@Nullable String linkMessage) {
         getState().emptyStateLinkMessage = linkMessage;
     }
 
+    @Nullable
     @Override
     public String getEmptyStateLinkMessage() {
         return getState(false).emptyStateLinkMessage;

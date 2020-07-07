@@ -116,10 +116,11 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
     }
 
     @Override
-    public void setConversionErrorMessage(String conversionErrorMessage) {
+    public void setConversionErrorMessage(@Nullable String conversionErrorMessage) {
         this.conversionErrorMessage = conversionErrorMessage;
     }
 
+    @Nullable
     @Override
     public String getConversionErrorMessage() {
         return conversionErrorMessage;
@@ -232,6 +233,7 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
         component.setWordWrap(wordWrap);
     }
 
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         return datatype;

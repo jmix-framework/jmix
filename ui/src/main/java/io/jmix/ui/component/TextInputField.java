@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -126,11 +127,12 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
          *
          * @param htmlName name
          */
-        void setHtmlName(String htmlName);
+        void setHtmlName(@Nullable String htmlName);
 
         /**
          * @return a value of "name" HTML attribute
          */
+        @Nullable
         String getHtmlName();
     }
 

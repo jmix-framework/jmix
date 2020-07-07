@@ -229,7 +229,8 @@ public class EditorBuilderProcessor {
         return editedEntity;
     }
 
-    protected <E extends JmixEntity> E initEntity(EditorBuilder<E> builder, CollectionContainer<E> container) {
+    @Nullable
+    protected <E extends JmixEntity> E initEntity(EditorBuilder<E> builder, @Nullable CollectionContainer<E> container) {
         E entity;
 
         boolean oneToOneComposition = false;
@@ -276,7 +277,7 @@ public class EditorBuilderProcessor {
                 && metaPropertyPath.getMetaProperty().getType() == MetaProperty.Type.COMPOSITION;
     }
 
-    protected <E extends JmixEntity> Screen createScreen(EditorBuilder<E> builder, Screens screens, E entity) {
+    protected <E extends JmixEntity> Screen createScreen(EditorBuilder<E> builder, Screens screens, @Nullable E entity) {
         Screen screen;
 
         if (builder instanceof EditorClassBuilder) {
@@ -289,11 +290,11 @@ public class EditorBuilderProcessor {
 
             screen = screens.create(screenClass, builder.getLaunchMode(), builder.getOptions());
         } else {
-            String editorScreenId;
+            String editorScreenId = null;
 
             if (builder.getScreenId() != null) {
                 editorScreenId = builder.getScreenId();
-            } else {
+            } else if (entity != null) {
                 editorScreenId = windowConfig.getEditorScreen(entity).getId();
             }
 
@@ -344,7 +345,7 @@ public class EditorBuilderProcessor {
     }
 
     @Nullable
-    protected DataContext setupParentDataContext(FrameOwner origin, Screen screen, InstanceContainer container,
+    protected DataContext setupParentDataContext(FrameOwner origin, Screen screen, @Nullable InstanceContainer container,
                                                  @Nullable DataContext parentContext) {
         DataContext dataContext = parentContext;
         if (dataContext == null && container instanceof Nested) {

@@ -15,6 +15,8 @@
  */
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * A container component with freely designed layout and style. The layout consists of items with textually represented
  * locations. Each item contains one sub-component, which can be any component, such as a layout. The adapter and theme
@@ -29,20 +31,22 @@ public interface HtmlBoxLayout extends ComponentContainer, Component.BelongToFra
     /**
      * Return filename of the related HTML template.
      */
+    @Nullable
     String getTemplateName();
 
     /**
      * Set filename of the related HTML template inside theme/layouts directory.
      */
-    void setTemplateName(String templateName);
+    void setTemplateName(@Nullable String templateName);
 
     /**
      * @return the contents of the template
      */
+    @Nullable
     String getTemplateContents();
 
     /**
      * Set the contents of the template used to draw the custom layout.
      */
-    void setTemplateContents(String templateContents);
+    void setTemplateContents(@Nullable String templateContents);
 }

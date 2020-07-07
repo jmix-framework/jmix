@@ -19,6 +19,8 @@ package io.jmix.ui.widget;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.components.colorpicker.ColorPickerSelect;
 
+import javax.annotation.Nullable;
+
 public class JmixColorPickerSelect extends ColorPickerSelect {
 
     protected String allCaption;
@@ -48,22 +50,22 @@ public class JmixColorPickerSelect extends ColorPickerSelect {
         return component;
     }
 
-    public void setAllCaption(String allCaption) {
+    public void setAllCaption(@Nullable String allCaption) {
         this.allCaption = allCaption;
         updateSelectedItemCaption();
     }
 
-    public void setRedCaption(String redCaption) {
+    public void setRedCaption(@Nullable String redCaption) {
         this.redCaption = redCaption;
         updateSelectedItemCaption();
     }
 
-    public void setGreenCaption(String greenCaption) {
+    public void setGreenCaption(@Nullable String greenCaption) {
         this.greenCaption = greenCaption;
         updateSelectedItemCaption();
     }
 
-    public void setBlueCaption(String blueCaption) {
+    public void setBlueCaption(@Nullable String blueCaption) {
         this.blueCaption = blueCaption;
         updateSelectedItemCaption();
     }

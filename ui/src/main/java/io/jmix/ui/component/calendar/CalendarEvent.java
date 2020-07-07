@@ -18,27 +18,33 @@ package io.jmix.ui.component.calendar;
 
 import io.jmix.core.common.event.Subscription;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
 public interface CalendarEvent<V> extends Serializable {
+    @Nullable
     V getStart();
 
     void setStart(V start);
 
+    @Nullable
     V getEnd();
 
     void setEnd(V end);
 
+    @Nullable
     String getCaption();
 
     void setCaption(String caption);
 
     void setDescription(String description);
 
+    @Nullable
     String getDescription();
 
+    @Nullable
     String getStyleName();
 
     void setStyleName(String styleName);

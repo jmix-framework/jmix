@@ -53,16 +53,17 @@ public class ListEntityOptions<E extends JmixEntity> extends ListOptions<E> impl
     }
 
     @Override
-    public void setSelectedItem(E item) {
+    public void setSelectedItem(@Nullable E item) {
         this.selectedItem = item;
     }
 
+    @Nullable
     public E getSelectedItem() {
         return selectedItem;
     }
 
     @Override
-    public boolean containsItem(E item) {
+    public boolean containsItem(@Nullable E item) {
         return getItemsCollection().contains(item);
     }
 
@@ -83,6 +84,7 @@ public class ListEntityOptions<E extends JmixEntity> extends ListOptions<E> impl
         return VoidSubscription.INSTANCE;
     }
 
+    @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
         Metadata metadata = AppBeans.get(Metadata.NAME);

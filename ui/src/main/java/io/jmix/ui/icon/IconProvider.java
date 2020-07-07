@@ -18,6 +18,8 @@ package io.jmix.ui.icon;
 
 import com.vaadin.server.Resource;
 
+import javax.annotation.Nullable;
+
 /**
  * Marker interface for beans that can provide {@link Resource} by some icon path.
  * <p>
@@ -48,5 +50,5 @@ public interface IconProvider {
      * @return true if icon provider can return an instance of {@link Resource} by the given {@code iconPath}
      * or false otherwise
      */
-    boolean canProvide(String iconPath);
+    boolean canProvide(@Nullable String iconPath);
 }

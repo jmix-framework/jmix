@@ -18,7 +18,10 @@ package io.jmix.ui.widget;
 
 import com.vaadin.ui.Layout;
 
+import javax.annotation.Nullable;
+
 public interface TabWindowContainer extends Layout {
+    @Nullable
     WindowBreadCrumbs getBreadCrumbs();
 
     void setBreadCrumbs(WindowBreadCrumbs breadCrumbs);

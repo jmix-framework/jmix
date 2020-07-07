@@ -21,6 +21,8 @@ import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TreeTable;
 
+import javax.annotation.Nullable;
+
 /**
  * Class provides methods for {@link Table.Column} manipulation.
  *
@@ -36,7 +38,7 @@ public interface ColumnManager {
      * @param columnId column id
      * @param caption  column caption
      */
-    void setColumnCaption(String columnId, String caption);
+    void setColumnCaption(String columnId, @Nullable String caption);
 
     /**
      * Assign caption for column in runtime.
@@ -44,7 +46,7 @@ public interface ColumnManager {
      * @param column  column instance
      * @param caption column caption
      */
-    void setColumnCaption(Table.Column column, String caption);
+    void setColumnCaption(Table.Column column, @Nullable String caption);
 
     /**
      * Assign description for column in runtime.
@@ -52,7 +54,7 @@ public interface ColumnManager {
      * @param columnId    column id
      * @param description column description
      */
-    void setColumnDescription(String columnId, String description);
+    void setColumnDescription(String columnId, @Nullable String description);
 
     /**
      * Assign description for column in runtime.
@@ -60,7 +62,7 @@ public interface ColumnManager {
      * @param column      column instance
      * @param description column description
      */
-    void setColumnDescription(Table.Column column, String description);
+    void setColumnDescription(Table.Column column, @Nullable String description);
 
     /**
      * Sets text alignment for a column in runtime.

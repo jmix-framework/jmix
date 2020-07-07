@@ -28,6 +28,7 @@ import io.jmix.ui.component.inputdialog.InputDialogAction;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.screen.FrameOwner;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -482,6 +483,7 @@ public interface Dialogs {
         /**
          * @return caption text
          */
+        @Nullable
         String getCaption();
     }
 

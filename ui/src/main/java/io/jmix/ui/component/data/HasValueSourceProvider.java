@@ -16,12 +16,15 @@
 
 package io.jmix.ui.component.data;
 
+import javax.annotation.Nullable;
+
 /**
  * An object having a ValueSourceProvider.
  */
 public interface HasValueSourceProvider {
 
+    @Nullable
     ValueSourceProvider getValueSourceProvider();
 
-    void setValueSourceProvider(ValueSourceProvider provider);
+    void setValueSourceProvider(@Nullable ValueSourceProvider provider);
 }

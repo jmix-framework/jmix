@@ -21,6 +21,7 @@ import com.vaadin.spring.internal.UIScopeImpl;
 import com.vaadin.spring.internal.VaadinSessionScope;
 import com.vaadin.spring.server.SpringVaadinServlet;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,7 @@ public class JmixVaadinServlet extends SpringVaadinServlet {
         });
     }
 
+    @Nullable
     @Override
     protected String getStaticFilePath(HttpServletRequest request) {
         String pathInfo = request.getPathInfo();

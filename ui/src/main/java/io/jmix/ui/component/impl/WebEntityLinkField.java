@@ -145,6 +145,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         });
     }
 
+    @Nullable
     @Override
     public MetaClass getMetaClass() {
         MetaProperty metaProperty = getMetaPropertyForEditedValue();
@@ -155,7 +156,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     }
 
     @Override
-    public void setMetaClass(MetaClass metaClass) {
+    public void setMetaClass(@Nullable MetaClass metaClass) {
         ValueSource<V> valueSource = getValueSource();
 
         if (valueSource instanceof EntityValueSource) {
@@ -164,6 +165,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         this.metaClass = metaClass;
     }
 
+    @Nullable
     @Override
     public ListComponent getOwner() {
         return owner;
@@ -218,13 +220,14 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         this.screen = screen;
     }
 
+    @Nullable
     @Override
     public EntityLinkClickHandler getCustomClickHandler() {
         return clickHandler;
     }
 
     @Override
-    public void setCustomClickHandler(EntityLinkClickHandler clickHandler) {
+    public void setCustomClickHandler(@Nullable EntityLinkClickHandler clickHandler) {
         this.clickHandler = clickHandler;
     }
 
@@ -249,13 +252,14 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         this.screenOpenMode = openMode;
     }
 
+    @Nullable
     @Override
     public Map<String, Object> getScreenParams() {
         return screenParams;
     }
 
     @Override
-    public void setScreenParams(Map<String, Object> screenParams) {
+    public void setScreenParams(@Nullable Map<String, Object> screenParams) {
         this.screenParams = screenParams;
     }
 
@@ -369,7 +373,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         screenEditor.show();
     }
 
-    protected void fireEditorCloseEvent(EditorScreen editorScreen, String closeActionId) {
+    protected void fireEditorCloseEvent(@Nullable EditorScreen editorScreen, String closeActionId) {
         publish(EditorCloseEvent.class,
                 new EditorCloseEvent<>(this, editorScreen, closeActionId));
     }

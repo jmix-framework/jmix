@@ -18,6 +18,8 @@ package io.jmix.ui.component;
 
 import com.google.common.base.Strings;
 
+import javax.annotation.Nullable;
+
 public enum SizeUnit {
     /**
      * Unit code representing pixels.
@@ -44,7 +46,7 @@ public enum SizeUnit {
         return symbol;
     }
 
-    public static SizeUnit getUnitFromSymbol(String symbol) {
+    public static SizeUnit getUnitFromSymbol(@Nullable String symbol) {
         if (Strings.isNullOrEmpty(symbol)) {
             return SizeUnit.PIXELS; // Defaults to pixels
         }

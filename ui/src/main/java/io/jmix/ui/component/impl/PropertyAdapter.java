@@ -16,12 +16,13 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.v7.data.Property;
+import io.jmix.core.common.util.Preconditions;
 
 public abstract class PropertyAdapter implements Property, Property.ValueChangeNotifier {
     protected final Property itemProperty;
 
     public PropertyAdapter(Property itemProperty) {
-        if (itemProperty == null) throw new IllegalStateException("Property is null");
+        Preconditions.checkNotNullArgument("Property is null");
         this.itemProperty = itemProperty;
     }
 

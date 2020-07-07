@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 
 /**
@@ -64,8 +65,9 @@ public class NumberFormatter implements Formatter<Number> {
         this.format = format;
     }
 
+    @Nullable
     @Override
-    public String apply(Number value) {
+    public String apply(@Nullable Number value) {
         if (value == null) {
             return null;
         }

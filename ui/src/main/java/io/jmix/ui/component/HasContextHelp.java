@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -26,6 +27,7 @@ public interface HasContextHelp {
     /**
      * @return context help text
      */
+    @Nullable
     String getContextHelpText();
 
     /**
@@ -33,7 +35,7 @@ public interface HasContextHelp {
      *
      * @param contextHelpText context help text to be set
      */
-    void setContextHelpText(String contextHelpText);
+    void setContextHelpText(@Nullable String contextHelpText);
 
     /**
      * @return true if field accepts context help text in HTML format, false otherwise
@@ -50,6 +52,7 @@ public interface HasContextHelp {
     /**
      * @return a context help icon click handler
      */
+    @Nullable
     Consumer<ContextHelpIconClickEvent> getContextHelpIconClickHandler();
 
     /**
@@ -60,7 +63,7 @@ public interface HasContextHelp {
      *
      * @param handler the handler to set
      */
-    void setContextHelpIconClickHandler(Consumer<ContextHelpIconClickEvent> handler);
+    void setContextHelpIconClickHandler(@Nullable Consumer<ContextHelpIconClickEvent> handler);
 
     /**
      * Describes context help icon click event.

@@ -208,11 +208,13 @@ public interface Action {
      * Interface defining constraintOperationType and constraintCode options.
      */
     interface HasSecurityConstraint {
-        void setConstraintOperationType(ConstraintOperationType constraintOperationType);
+        void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType);
+        @Nullable
         ConstraintOperationType getConstraintOperationType();
 
+        @Nullable
         String getConstraintCode();
-        void setConstraintCode(String constraintCode);
+        void setConstraintCode(@Nullable String constraintCode);
     }
 
     /**

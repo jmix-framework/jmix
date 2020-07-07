@@ -146,7 +146,7 @@ public class WebPasswordField extends WebV8AbstractField<JmixPasswordField, Stri
     }
 
     @Override
-    public void setCapsLockIndicator(CapsLockIndicator capsLockIndicator) {
+    public void setCapsLockIndicator(@Nullable CapsLockIndicator capsLockIndicator) {
         this.capsLockIndicator = capsLockIndicator;
 
         if (capsLockIndicator != null) {
@@ -156,6 +156,7 @@ public class WebPasswordField extends WebV8AbstractField<JmixPasswordField, Stri
         }
     }
 
+    @Nullable
     @Override
     public CapsLockIndicator getCapsLockIndicator() {
         return capsLockIndicator;
@@ -173,10 +174,11 @@ public class WebPasswordField extends WebV8AbstractField<JmixPasswordField, Stri
     }
 
     @Override
-    public void setHtmlName(String htmlName) {
+    public void setHtmlName(@Nullable String htmlName) {
         component.setHtmlName(htmlName);
     }
 
+    @Nullable
     @Override
     public String getHtmlName() {
         return component.getHtmlName();

@@ -107,6 +107,7 @@ public class EmptyDataGridItems<E extends JmixEntity>
         return VoidSubscription.INSTANCE;
     }
 
+    @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
         return metaClass;

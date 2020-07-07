@@ -21,6 +21,7 @@ import com.vaadin.v7.data.Item;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.widget.data.TableSortableContainer;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 @SuppressWarnings("deprecation")
@@ -44,33 +45,37 @@ public class SortableDataContainer<I> extends TableDataContainer<I> implements C
         return properties;
     }
 
+    @Nullable
     @Override
-    public Object nextItemId(Object itemId) {
+    public Object nextItemId(@Nullable Object itemId) {
         return getSortableTableSource().nextItemId(itemId);
     }
 
+    @Nullable
     @Override
-    public Object prevItemId(Object itemId) {
+    public Object prevItemId(@Nullable Object itemId) {
         return getSortableTableSource().prevItemId(itemId);
     }
 
+    @Nullable
     @Override
     public Object firstItemId() {
         return getSortableTableSource().firstItemId();
     }
 
+    @Nullable
     @Override
     public Object lastItemId() {
         return getSortableTableSource().lastItemId();
     }
 
     @Override
-    public boolean isFirstId(Object itemId) {
+    public boolean isFirstId(@Nullable Object itemId) {
         return getSortableTableSource().isFirstId(itemId);
     }
 
     @Override
-    public boolean isLastId(Object itemId) {
+    public boolean isLastId(@Nullable Object itemId) {
         return getSortableTableSource().isLastId(itemId);
     }
 

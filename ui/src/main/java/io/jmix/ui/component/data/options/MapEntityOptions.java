@@ -50,16 +50,17 @@ public class MapEntityOptions<E extends JmixEntity> extends MapOptions<E> implem
     }
 
     @Override
-    public void setSelectedItem(E item) {
+    public void setSelectedItem(@Nullable E item) {
         this.selectedItem = item;
     }
 
+    @Nullable
     public E getSelectedItem() {
         return selectedItem;
     }
 
     @Override
-    public boolean containsItem(E item) {
+    public boolean containsItem(@Nullable E item) {
         return getItemsCollection().containsValue(item);
     }
 
@@ -80,6 +81,7 @@ public class MapEntityOptions<E extends JmixEntity> extends MapOptions<E> implem
         return VoidSubscription.INSTANCE;
     }
 
+    @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
         Metadata metadata = AppBeans.get(Metadata.NAME);

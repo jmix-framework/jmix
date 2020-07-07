@@ -21,6 +21,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.Options;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -30,12 +31,12 @@ public interface EntityOptions<E extends JmixEntity> extends Options<E>, EntityD
      *
      * @param item the item to set
      */
-    void setSelectedItem(E item);
+    void setSelectedItem(@Nullable E item);
 
     /**
      * @return true if the underlying collection contains an item with the specified ID
      */
-    boolean containsItem(E item);
+    boolean containsItem(@Nullable E item);
 
     /**
      * Update an item in the collection if it is already there.

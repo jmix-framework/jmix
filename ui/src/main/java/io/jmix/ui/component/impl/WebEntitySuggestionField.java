@@ -95,7 +95,7 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         this.locale = currentAuthentication.getLocale();
     }
 
-    protected String convertToTextView(V value) {
+    protected String convertToTextView(@Nullable V value) {
         if (value == null) {
             return "";
         }
@@ -224,13 +224,14 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         getComponent().setAsyncSearchDelayMs(asyncSearchDelayMs);
     }
 
+    @Nullable
     @Override
     public SearchExecutor getSearchExecutor() {
         return searchExecutor;
     }
 
     @Override
-    public void setSearchExecutor(SearchExecutor searchExecutor) {
+    public void setSearchExecutor(@Nullable SearchExecutor searchExecutor) {
         this.searchExecutor = searchExecutor;
     }
 
@@ -340,7 +341,7 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         getComponent().setPopupStyleName(name);
@@ -361,7 +362,7 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
     }
 
     @Override
-    protected void checkValueType(V value) {
+    protected void checkValueType(@Nullable V value) {
         // do not check
     }
 }

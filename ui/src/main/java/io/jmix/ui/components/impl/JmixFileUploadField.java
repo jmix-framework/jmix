@@ -342,7 +342,7 @@ public class JmixFileUploadField extends CustomField<String> {
         uploadButton.setCancelButtonCaption(cancelButtonCaption);
     }
 
-    public void setDropZonePrompt(String dropZonePrompt) {
+    public void setDropZonePrompt(@Nullable String dropZonePrompt) {
         uploadButton.setDropZonePrompt(dropZonePrompt);
     }
 
@@ -378,19 +378,19 @@ public class JmixFileUploadField extends CustomField<String> {
         uploadButton.addFileExtensionNotAllowedListener(listener);
     }
 
-    public void setAccept(String accept) {
+    public void setAccept(@Nullable String accept) {
         uploadButton.setAccept(accept);
     }
 
-    public void setDropZone(Component component) {
+    public void setDropZone(@Nullable Component component) {
         uploadButton.setDropZone(component);
     }
 
-    public void setPasteZone(Component component) {
+    public void setPasteZone(@Nullable Component component) {
         uploadButton.setPasteZone(component);
     }
 
-    public void setPermittedExtensions(Set<String> permittedExtensions) {
+    public void setPermittedExtensions(@Nullable Set<String> permittedExtensions) {
         uploadButton.setPermittedExtensions(permittedExtensions);
     }
 }

@@ -18,6 +18,7 @@ package io.jmix.ui.settings.component;
 
 import io.jmix.ui.component.DataGrid;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
 
@@ -30,16 +31,18 @@ public class DataGridSettings implements ComponentSettings {
 
     protected List<ColumnSettings> columns;
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 
+    @Nullable
     public String getSortColumnId() {
         return sortColumnId;
     }
@@ -48,6 +51,7 @@ public class DataGridSettings implements ComponentSettings {
         this.sortColumnId = sortColumnId;
     }
 
+    @Nullable
     public DataGrid.SortDirection getSortDirection() {
         return sortDirection;
     }
@@ -56,6 +60,7 @@ public class DataGridSettings implements ComponentSettings {
         this.sortDirection = sortDirection;
     }
 
+    @Nullable
     public List<ColumnSettings> getColumns() {
         return columns;
     }
@@ -78,6 +83,7 @@ public class DataGridSettings implements ComponentSettings {
             this.id = id;
         }
 
+        @Nullable
         public Double getWidth() {
             return width;
         }
@@ -86,6 +92,7 @@ public class DataGridSettings implements ComponentSettings {
             this.width = width;
         }
 
+        @Nullable
         public Boolean getCollapsed() {
             return collapsed;
         }

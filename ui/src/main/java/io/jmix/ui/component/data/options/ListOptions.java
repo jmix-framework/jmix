@@ -24,6 +24,7 @@ import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.Options;
 import org.apache.commons.collections4.CollectionUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -46,7 +47,7 @@ public class ListOptions<I> implements Options<I> {
     }
 
     @SafeVarargs
-    public static <V> ListOptions<V> of(V v, V... vs) {
+    public static <V> ListOptions<V> of(V v, @Nullable V... vs) {
         List<V> options = new ArrayList<>();
         options.add(v);
 

@@ -40,6 +40,8 @@ import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -219,11 +221,15 @@ public class RemoveOperation {
             }
             dataManager.save(saveContext);
             for (JmixEntity entity : entitiesToRemove) {
-                screenData.getDataContext().evict(entity);
+                if (screenData.getDataContext() != null) {
+                    screenData.getDataContext().evict(entity);
+                }
             }
         } else {
             for (JmixEntity entity : entitiesToRemove) {
-                screenData.getDataContext().remove(entity);
+                if (screenData.getDataContext() != null) {
+                    screenData.getDataContext().remove(entity);
+                }
             }
         }
     }
@@ -395,22 +401,27 @@ public class RemoveOperation {
             return this;
         }
 
+        @Nullable
         public ListComponent<E> getListComponent() {
             return listComponent;
         }
 
+        @Nullable
         public CollectionContainer<E> getContainer() {
             return container;
         }
 
+        @Nullable
         public List<E> getItems() {
             return items;
         }
 
+        @Nullable
         public String getConfirmationTitle() {
             return confirmationTitle;
         }
 
+        @Nullable
         public String getConfirmationMessage() {
             return confirmationMessage;
         }
@@ -431,14 +442,17 @@ public class RemoveOperation {
             return operation;
         }
 
+        @Nullable
         public Consumer<BeforeActionPerformedEvent<E>> getBeforeActionPerformedHandler() {
             return beforeActionPerformedHandler;
         }
 
+        @Nullable
         public Consumer<AfterActionPerformedEvent<E>> getAfterActionPerformedHandler() {
             return afterActionPerformedHandler;
         }
 
+        @Nullable
         public Consumer<ActionCancelledEvent<E>> getActionCancelledHandler() {
             return actionCancelledHandler;
         }

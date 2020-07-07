@@ -177,7 +177,8 @@ public abstract class WebAbstractSelectList<V, I, T extends JmixAbstractListSele
         return metadataTools.format(item);
     }
 
-    protected String generateItemCaption(I item) {
+    @Nullable
+    protected String generateItemCaption(@Nullable I item) {
         if (item == null) {
             return null;
         }

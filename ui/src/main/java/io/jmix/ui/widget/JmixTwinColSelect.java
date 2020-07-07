@@ -21,6 +21,8 @@ import com.vaadin.data.provider.DataGenerator;
 import com.vaadin.ui.TwinColSelect;
 import elemental.json.JsonObject;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("serial")
 public class JmixTwinColSelect<V> extends TwinColSelect<V> {
 
@@ -30,7 +32,7 @@ public class JmixTwinColSelect<V> extends TwinColSelect<V> {
         addDataGenerator(createDataGenerator());
     }
 
-    public void setOptionStyleProvider(JmixOptionStyleProvider<V> styleProvider) {
+    public void setOptionStyleProvider(@Nullable JmixOptionStyleProvider<V> styleProvider) {
         this.styleProvider = styleProvider;
         refreshDataItems();
     }

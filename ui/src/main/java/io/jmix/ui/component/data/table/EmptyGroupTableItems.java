@@ -33,7 +33,7 @@ public class EmptyGroupTableItems<E extends JmixEntity> extends EmptyTableItems<
     }
 
     @Override
-    public void groupBy(Object[] properties) {
+    public void groupBy(@Nullable Object[] properties) {
         // do nothing
     }
 
@@ -135,12 +135,12 @@ public class EmptyGroupTableItems<E extends JmixEntity> extends EmptyTableItems<
     }
 
     @Override
-    public boolean isFirstId(Object itemId) {
+    public boolean isFirstId(@Nullable Object itemId) {
         return false;
     }
 
     @Override
-    public boolean isLastId(Object itemId) {
+    public boolean isLastId(@Nullable Object itemId) {
         return false;
     }
 

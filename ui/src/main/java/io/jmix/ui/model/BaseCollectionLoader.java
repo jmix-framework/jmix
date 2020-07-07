@@ -18,6 +18,8 @@ package io.jmix.ui.model;
 
 import io.jmix.core.Sort;
 
+import javax.annotation.Nullable;
+
 /**
  * Root interface of collection loaders.
  *
@@ -56,10 +58,11 @@ public interface BaseCollectionLoader extends DataLoader {
     /**
      * Returns the sort object which is used when loading.
      */
+    @Nullable
     Sort getSort();
 
     /**
      * Sets the sort object which is used when loading.
      */
-    void setSort(Sort sort);
+    void setSort(@Nullable Sort sort);
 }

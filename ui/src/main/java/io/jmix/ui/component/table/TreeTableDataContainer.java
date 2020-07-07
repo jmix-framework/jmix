@@ -19,6 +19,7 @@ package io.jmix.ui.component.table;
 import io.jmix.ui.component.data.TreeTableItems;
 import io.jmix.ui.widget.data.TreeTableContainer;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class TreeTableDataContainer<I> extends SortableDataContainer<I> implements TreeTableContainer {
@@ -50,6 +51,7 @@ public class TreeTableDataContainer<I> extends SortableDataContainer<I> implemen
         return (TreeTableItems<Object>) tableItems;
     }
 
+    @Nullable
     @Override
     public Object getParent(Object itemId) {
         return getTreeTableSource().getParent(itemId);

@@ -23,6 +23,8 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.components.colorpicker.ColorPickerPopup;
 
+import javax.annotation.Nullable;
+
 public class JmixColorPickerPopup extends ColorPickerPopup {
 
     public JmixColorPickerPopup(Color initialColor) {
@@ -37,31 +39,31 @@ public class JmixColorPickerPopup extends ColorPickerPopup {
         return historyOuterContainer;
     }
 
-    public void setConfirmButtonCaption(String caption) {
+    public void setConfirmButtonCaption(@Nullable String caption) {
         ok.setCaption(caption);
     }
 
-    public void setCancelButtonCaption(String caption) {
+    public void setCancelButtonCaption(@Nullable String caption) {
         cancel.setCaption(caption);
     }
 
-    public void setSwatchesTabCaption(String caption) {
+    public void setSwatchesTabCaption(@Nullable String caption) {
         ((TabSheet) swatchesTab.getParent()).getTab(swatchesTab).setCaption(caption);
     }
 
-    public void setLookupAllCaption(String caption) {
+    public void setLookupAllCaption(@Nullable String caption) {
         ((JmixColorPickerSelect) colorSelect).setAllCaption(caption);
     }
 
-    public void setLookupRedCaption(String caption) {
+    public void setLookupRedCaption(@Nullable String caption) {
         ((JmixColorPickerSelect) colorSelect).setRedCaption(caption);
     }
 
-    public void setLookupGreenCaption(String caption) {
+    public void setLookupGreenCaption(@Nullable String caption) {
         ((JmixColorPickerSelect) colorSelect).setGreenCaption(caption);
     }
 
-    public void setLookupBlueCaption(String caption) {
+    public void setLookupBlueCaption(@Nullable String caption) {
         ((JmixColorPickerSelect) colorSelect).setBlueCaption(caption);
     }
 

@@ -81,10 +81,11 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
     }
 
     @Override
-    public void setRequiredMessage(String msg) {
+    public void setRequiredMessage(@Nullable String msg) {
         ((AbstractComponent) component).setRequiredError(msg);
     }
 
+    @Nullable
     @Override
     public String getRequiredMessage() {
         return ((AbstractComponent) component).getRequiredError();
@@ -218,7 +219,7 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
         triggerValidators(value);
     }
 
-    protected void triggerValidators(V value) throws ValidationFailedException {
+    protected void triggerValidators(@Nullable V value) throws ValidationFailedException {
         if (validators != null) {
             try {
                 for (Consumer<V> validator : validators) {
@@ -232,12 +233,12 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
         }
     }
 
-    protected boolean isEmpty(Object value) {
+    protected boolean isEmpty(@Nullable Object value) {
         return value == null;
     }
 
     @Nullable
-    protected String getDatatypeConversionErrorMsg(Datatype<V> datatype) {
+    protected String getDatatypeConversionErrorMsg(@Nullable Datatype<V> datatype) {
         if (datatype == null) {
             return null;
         }

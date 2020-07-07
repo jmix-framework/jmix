@@ -213,7 +213,7 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
     }
 
     @Override
-    public void setEntityPicker(EntityPicker entityPicker) {
+    public void setEntityPicker(@Nullable EntityPicker entityPicker) {
         this.entityPicker = entityPicker;
     }
 
@@ -258,10 +258,15 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         setShortcut(properties.getPickerLookupShortcut());
-        setDescription(messages.getMessage("entityPicker.action.lookup.tooltip")
-                + " (" + getShortcutCombination().format() + ")");
+
+        if (getShortcutCombination() != null) {
+            setDescription(messages.getMessage("entityPicker.action.lookup.tooltip")
+                    + " (" + getShortcutCombination().format() + ")");
+        } else {
+            setDescription(messages.getMessage("entityPicker.action.lookup.tooltip"));
+        }
     }
 
     @Override

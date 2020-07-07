@@ -20,6 +20,8 @@ import io.jmix.ui.component.LinkButton;
 import com.vaadin.ui.themes.ValoTheme;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+
 public class WebLinkButton extends WebButton implements LinkButton {
 
     public WebLinkButton() {
@@ -27,7 +29,7 @@ public class WebLinkButton extends WebButton implements LinkButton {
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
         component.addStyleName(ValoTheme.BUTTON_LINK);
     }

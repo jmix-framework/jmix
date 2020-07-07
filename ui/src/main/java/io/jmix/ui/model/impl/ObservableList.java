@@ -20,6 +20,7 @@ import com.google.common.collect.ForwardingList;
 import io.jmix.core.JmixEntity;
 import io.jmix.ui.model.CollectionChangeType;
 
+import javax.annotation.Nullable;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.*;
@@ -72,13 +73,13 @@ public class ObservableList<T> extends ForwardingList<T> implements Serializable
         fireCollectionChanged(CollectionChangeType.REFRESH, Collections.emptyList());
     }
 
-    protected void doOnAddItem(T item) {
+    protected void doOnAddItem(@Nullable T item) {
         if (item != null && onAddItem != null) {
             onAddItem.accept(item);
         }
     }
 
-    protected void doOnRemoveItem(T item) {
+    protected void doOnRemoveItem(@Nullable T item) {
         if (item != null && onRemoveItem != null) {
             onRemoveItem.accept(item);
         }

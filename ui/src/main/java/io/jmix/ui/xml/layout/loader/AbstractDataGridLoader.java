@@ -172,7 +172,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         if (columnsElement != null) {
             FetchPlan fetchPlan = holder.getFetchPlan();
             if (fetchPlan == null) {
-                getViewRepository().getFetchPlan(holder.getMetaClass(), FetchPlan.LOCAL);
+                fetchPlan = getViewRepository().getFetchPlan(holder.getMetaClass(), FetchPlan.LOCAL);
             }
 
             loadColumns(resultComponent, columnsElement, holder.getMetaClass(), fetchPlan);
@@ -679,7 +679,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         }
     }
 
-    protected Collection<String> getAppliedProperties(Element columnsElement, FetchPlan fetchPlan, MetaClass metaClass) {
+    protected Collection<String> getAppliedProperties(Element columnsElement, @Nullable FetchPlan fetchPlan, MetaClass metaClass) {
         String exclude = columnsElement.attributeValue("exclude");
         List<String> excludes = StringUtils.isEmpty(exclude) ? Collections.emptyList() :
                 Splitter.on(",").omitEmptyStrings().trimResults().splitToList(exclude);
@@ -828,6 +828,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         public DataGridDataHolder() {
         }
 
+        @Nullable
         public MetaClass getMetaClass() {
             return metaClass;
         }
@@ -836,6 +837,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             this.metaClass = metaClass;
         }
 
+        @Nullable
         public CollectionContainer getContainer() {
             return container;
         }
@@ -844,6 +846,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             this.container = container;
         }
 
+        @Nullable
         public DataLoader getDataLoader() {
             return dataLoader;
         }
@@ -852,6 +855,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             this.dataLoader = dataLoader;
         }
 
+        @Nullable
         public FetchPlan getFetchPlan() {
             return fetchPlan;
         }

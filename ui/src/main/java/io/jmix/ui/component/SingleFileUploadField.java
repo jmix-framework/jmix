@@ -246,11 +246,12 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
      *
      * @param contentProvider content provider
      */
-    void setContentProvider(Supplier<InputStream> contentProvider);
+    void setContentProvider(@Nullable Supplier<InputStream> contentProvider);
 
     /**
      * @return FileContentProvider which can be used to read data from field
      */
+    @Nullable
     Supplier<InputStream> getContentProvider();
 
     /**

@@ -16,6 +16,7 @@
 
 package io.jmix.ui.screen;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class MapScreenOptions implements ScreenOptions {
 
     private final Map<String, Object> params;
 
-    public MapScreenOptions(Map<String, Object> params) {
+    public MapScreenOptions(@Nullable Map<String, Object> params) {
         this.params = params;
     }
 

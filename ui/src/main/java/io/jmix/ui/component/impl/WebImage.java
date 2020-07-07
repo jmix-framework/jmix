@@ -125,7 +125,8 @@ public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements I
     }
 
     @SuppressWarnings("unchecked")
-    protected Resource createImageResource(final Object resourceObject) {
+    @Nullable
+    protected Resource createImageResource(@Nullable final Object resourceObject) {
         if (resourceObject == null) {
             return null;
         }

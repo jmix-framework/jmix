@@ -20,6 +20,8 @@ import io.jmix.ui.component.ResourceView.HasStreamSettings;
 import com.vaadin.server.DownloadStream;
 import com.vaadin.server.StreamResource;
 
+import javax.annotation.Nullable;
+
 public abstract class WebAbstractStreamSettingsResource extends WebAbstractResource implements HasStreamSettings {
 
     protected long cacheTime = DownloadStream.DEFAULT_CACHETIME;
@@ -63,6 +65,7 @@ public abstract class WebAbstractStreamSettingsResource extends WebAbstractResou
         }
     }
 
+    @Nullable
     @Override
     public String getFileName() {
         return fileName;

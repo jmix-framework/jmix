@@ -149,7 +149,7 @@ public class FrameContextImpl implements FrameContext {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setValue(String property, Object value) {
+    public void setValue(String property, @Nullable Object value) {
         final Component component = frame.getComponent(property);
         if (component instanceof HasValue) {
             ((HasValue) component).setValue(value);

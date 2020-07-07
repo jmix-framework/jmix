@@ -383,6 +383,7 @@ public abstract class App {
         return exceptionHandlers;
     }
 
+    @Nullable
     public String getCookieValue(String name) {
         return cookies.getCookieValue(name);
     }

@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * Component shows if CapsLock key is enabled when user inputs password.
  */
@@ -27,11 +29,12 @@ public interface CapsLockIndicator extends Component {
      *
      * @param capsLockOnMessage text message
      */
-    void setCapsLockOnMessage(String capsLockOnMessage);
+    void setCapsLockOnMessage(@Nullable String capsLockOnMessage);
 
     /**
      * @return message that is shown when caps lock key is active
      */
+    @Nullable
     String getCapsLockOnMessage();
 
     /**
@@ -39,10 +42,11 @@ public interface CapsLockIndicator extends Component {
      *
      * @param capsLockOffMessage text message
      */
-    void setCapsLockOffMessage(String capsLockOffMessage);
+    void setCapsLockOffMessage(@Nullable String capsLockOffMessage);
 
     /**
      * @return message that is shown when caps lock key is not active
      */
+    @Nullable
     String getCapsLockOffMessage();
 }

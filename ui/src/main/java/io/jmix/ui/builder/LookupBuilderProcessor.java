@@ -324,7 +324,7 @@ public class LookupBuilderProcessor {
     @Nullable
     protected <E extends JmixEntity> FetchPlan getFetchPlanForCollectionContainer(CollectionContainer<E> collectionDc,
                                                                                   boolean initializeMasterReference,
-                                                                                  MetaProperty inverseMetaProperty) {
+                                                                                  @Nullable MetaProperty inverseMetaProperty) {
         FetchPlan fetchPlan = null;
         if (collectionDc instanceof Nested) {
             InstanceContainer masterDc = ((Nested) collectionDc).getMaster();

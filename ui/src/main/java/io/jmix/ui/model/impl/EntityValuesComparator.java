@@ -18,6 +18,7 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.core.JmixEntity;
 
+import javax.annotation.Nullable;
 import java.util.Comparator;
 
 /**
@@ -44,7 +45,8 @@ public class EntityValuesComparator<T> extends AbstractComparator<T> {
         return __compare(transformValue(o1), transformValue(o2));
     }
 
-    protected Object transformValue(T value) {
+    @Nullable
+    protected Object transformValue(@Nullable T value) {
         Object newValue = value;
         if (!(value == null || value instanceof Comparable || value instanceof JmixEntity)) {
             newValue = value.toString();

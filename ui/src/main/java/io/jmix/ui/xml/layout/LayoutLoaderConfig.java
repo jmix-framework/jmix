@@ -88,6 +88,7 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
         return null;
     }
 
+    @Nullable
     public Class<? extends ComponentLoader> getLoader(String name) {
         return loaders.get(name);
     }

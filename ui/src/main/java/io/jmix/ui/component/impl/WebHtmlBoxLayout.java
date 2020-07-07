@@ -35,23 +35,25 @@ public class WebHtmlBoxLayout extends WebAbstractComponent<JmixCustomLayout> imp
         component = new JmixCustomLayout();
     }
 
+    @Nullable
     @Override
     public String getTemplateName() {
         return component.getTemplateName();
     }
 
     @Override
-    public void setTemplateName(String templateName) {
+    public void setTemplateName(@Nullable String templateName) {
         component.setTemplateName(templateName);
     }
 
+    @Nullable
     @Override
     public String getTemplateContents() {
         return component.getTemplateContents();
     }
 
     @Override
-    public void setTemplateContents(String templateContents) {
+    public void setTemplateContents(@Nullable String templateContents) {
         component.setTemplateContents(sanitize(templateContents));
     }
 

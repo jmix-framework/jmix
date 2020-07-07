@@ -48,8 +48,10 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
      *
      * @return File Id.
      */
+    @Nullable
     UUID getFileId();
 
+    @Nullable
     String getFileName();
 
     /**
@@ -70,7 +72,8 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
      */
     FileStoragePutMode getMode();
 
-    void setFileStorageName(String fileStorageName);
+    void setFileStorageName(@Nullable String fileStorageName);
 
+    @Nullable
     String getFileStorageName();
 }

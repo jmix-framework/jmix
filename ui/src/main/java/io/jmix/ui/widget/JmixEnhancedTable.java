@@ -230,7 +230,8 @@ public interface JmixEnhancedTable extends AggregationContainer {
         BOTTOM
     }
 
-    void setCustomCellValueFormatter(CellValueFormatter cellValueFormatter);
+    void setCustomCellValueFormatter(@Nullable CellValueFormatter cellValueFormatter);
+    @Nullable
     CellValueFormatter getCustomCellValueFormatter();
 
     /**
@@ -256,10 +257,12 @@ public interface JmixEnhancedTable extends AggregationContainer {
 
     void setShowEmptyState(boolean show);
 
-    void setEmptyStateMessage(String message);
+    void setEmptyStateMessage(@Nullable String message);
+    @Nullable
     String getEmptyStateMessage();
 
-    void setEmptyStateLinkMessage(String linkMessage);
+    void setEmptyStateLinkMessage(@Nullable String linkMessage);
+    @Nullable
     String getEmptyStateLinkMessage();
 
     void setEmptyStateLinkClickHandler(Runnable handler);

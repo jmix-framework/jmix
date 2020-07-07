@@ -87,12 +87,12 @@ public class EmptyTreeTableItems<E extends JmixEntity> extends EmptyTableItems<E
     }
 
     @Override
-    public boolean isFirstId(Object itemId) {
+    public boolean isFirstId(@Nullable Object itemId) {
         return false;
     }
 
     @Override
-    public boolean isLastId(Object itemId) {
+    public boolean isLastId(@Nullable Object itemId) {
         return false;
     }
 

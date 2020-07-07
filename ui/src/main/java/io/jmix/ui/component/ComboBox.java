@@ -80,6 +80,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
     /**
      * @return current handler
      */
+    @Nullable
     Consumer<String> getNewOptionHandler();
 
     /**
@@ -87,7 +88,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      *
      * @param newOptionHandler handler instance
      */
-    void setNewOptionHandler(Consumer<String> newOptionHandler);
+    void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler);
 
     /**
      * @return the page length of the suggestion popup.
@@ -142,11 +143,12 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      *
      * @param filterPredicate items filter predicate
      */
-    void setFilterPredicate(FilterPredicate filterPredicate);
+    void setFilterPredicate(@Nullable FilterPredicate filterPredicate);
 
     /**
      * @return items filter predicate
      */
+    @Nullable
     FilterPredicate getFilterPredicate();
 
     /**
@@ -155,6 +157,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      *
      * @return explicitly set popup width as size string or null if not set
      */
+    @Nullable
     String getPopupWidth();
 
     /**
@@ -168,7 +171,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      *
      * @param width the width
      */
-    void setPopupWidth(String width);
+    void setPopupWidth(@Nullable String width);
 
     /**
      * A predicate that tests whether an item with the given caption matches to the given search string.

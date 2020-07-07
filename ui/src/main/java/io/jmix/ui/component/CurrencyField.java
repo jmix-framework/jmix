@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 
 /**
@@ -43,11 +44,12 @@ public interface CurrencyField<V extends Number> extends Field<V>, HasDatatype<V
      *
      * @param currency currency ($, EUR, etc)
      */
-    void setCurrency(String currency);
+    void setCurrency(@Nullable String currency);
 
     /**
      * @return current currency
      */
+    @Nullable
     String getCurrency();
 
     /**

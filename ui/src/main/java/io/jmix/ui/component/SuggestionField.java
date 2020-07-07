@@ -19,6 +19,7 @@ package io.jmix.ui.component;
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.util.Preconditions;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +114,7 @@ public interface SuggestionField<V> extends Field<V>, Component.Focusable, HasIn
     /**
      * @return {@link SearchExecutor} which performs search
      */
+    @Nullable
     SearchExecutor getSearchExecutor();
 
     /**
@@ -121,7 +123,7 @@ public interface SuggestionField<V> extends Field<V>, Component.Focusable, HasIn
      * @param searchExecutor SearchExecutor instance
      */
     // Use raw type until #391 will be fixed
-    void setSearchExecutor(SearchExecutor searchExecutor);
+    void setSearchExecutor(@Nullable SearchExecutor searchExecutor);
 
     /**
      * @return {@link EnterActionHandler} which handles ENTER key pressing

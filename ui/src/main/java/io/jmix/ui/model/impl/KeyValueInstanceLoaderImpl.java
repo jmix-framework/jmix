@@ -145,6 +145,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
         this.query = query;
     }
 
+    @Nullable
     @Override
     public Condition getCondition() {
         return condition;

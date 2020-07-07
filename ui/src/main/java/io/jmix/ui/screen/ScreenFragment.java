@@ -27,6 +27,8 @@ import io.jmix.ui.model.ScreenData;
 import org.springframework.context.ApplicationListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
@@ -68,11 +70,12 @@ public abstract class ScreenFragment implements FrameOwner {
         return beanLocator;
     }
 
+    @Nullable
     protected Map<Class<?>, Object> getExtensions() {
         return extensions;
     }
 
-    protected void setExtensions(Map<Class<?>, Object> extensions) {
+    protected void setExtensions(@Nullable Map<Class<?>, Object> extensions) {
         this.extensions = extensions;
     }
 
@@ -125,10 +128,11 @@ public abstract class ScreenFragment implements FrameOwner {
      *
      * @param id screen id
      */
-    protected void setId(String id) {
+    protected void setId(@Nullable String id) {
         this.id = id;
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -154,11 +158,12 @@ public abstract class ScreenFragment implements FrameOwner {
         this.screenData = data;
     }
 
+    @Nullable
     protected List<ApplicationListener> getUiEventListeners() {
         return uiEventListeners;
     }
 
-    protected void setUiEventListeners(List<ApplicationListener> listeners) {
+    protected void setUiEventListeners(@Nullable List<ApplicationListener> listeners) {
         this.uiEventListeners = listeners;
 
         if (listeners != null && !listeners.isEmpty()) {

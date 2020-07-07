@@ -1037,10 +1037,11 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     }
 
     @Override
-    public void setCustomCellValueFormatter(CellValueFormatter cellValueFormatter) {
+    public void setCustomCellValueFormatter(@Nullable CellValueFormatter cellValueFormatter) {
         this.customCellValueFormatter = cellValueFormatter;
     }
 
+    @Nullable
     @Override
     public CellValueFormatter getCustomCellValueFormatter() {
         return customCellValueFormatter;
@@ -1120,13 +1121,14 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
         }
     }
 
+    @Nullable
     @Override
     public String getEmptyStateMessage() {
         return getState(false).emptyStateMessage;
     }
 
     @Override
-    public void setEmptyStateMessage(String message) {
+    public void setEmptyStateMessage(@Nullable String message) {
         getState().emptyStateMessage = message;
     }
 

@@ -222,26 +222,28 @@ public class WebFileMultiUploadField extends WebAbstractComponent<JmixFileUpload
         }
     }
 
+    @Nullable
     @Override
     public String getAccept() {
         return accept;
     }
 
     @Override
-    public void setAccept(String accept) {
+    public void setAccept(@Nullable String accept) {
         if (!Objects.equals(accept, getAccept())) {
             this.accept = accept;
             component.setAccept(convertToMIME(accept));
         }
     }
 
+    @Nullable
     @Override
     public DropZone getDropZone() {
         return dropZone;
     }
 
     @Override
-    public void setDropZone(DropZone dropZone) {
+    public void setDropZone(@Nullable DropZone dropZone) {
         this.dropZone = dropZone;
 
         if (dropZone == null) {
@@ -257,13 +259,14 @@ public class WebFileMultiUploadField extends WebAbstractComponent<JmixFileUpload
         }
     }
 
+    @Nullable
     @Override
     public ComponentContainer getPasteZone() {
         return pasteZone;
     }
 
     @Override
-    public void setPasteZone(ComponentContainer pasteZone) {
+    public void setPasteZone(@Nullable ComponentContainer pasteZone) {
         this.pasteZone = pasteZone;
 
         if (pasteZone == null) {
@@ -274,13 +277,14 @@ public class WebFileMultiUploadField extends WebAbstractComponent<JmixFileUpload
         }
     }
 
+    @Nullable
     @Override
     public String getDropZonePrompt() {
         return dropZonePrompt;
     }
 
     @Override
-    public void setDropZonePrompt(String dropZonePrompt) {
+    public void setDropZonePrompt(@Nullable String dropZonePrompt) {
         this.dropZonePrompt = dropZonePrompt;
 
         component.setDropZonePrompt(dropZonePrompt);
@@ -318,13 +322,14 @@ public class WebFileMultiUploadField extends WebAbstractComponent<JmixFileUpload
         this.component.setFileSizeLimit(fileSizeLimit);
     }
 
+    @Nullable
     @Override
     public Set<String> getPermittedExtensions() {
         return permittedExtensions;
     }
 
     @Override
-    public void setPermittedExtensions(Set<String> permittedExtensions) {
+    public void setPermittedExtensions(@Nullable Set<String> permittedExtensions) {
         if (permittedExtensions != null) {
             this.permittedExtensions = permittedExtensions.stream()
                     .map(String::toLowerCase)

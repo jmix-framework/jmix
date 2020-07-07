@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.screen.OpenMode;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -51,6 +52,7 @@ public interface AppWorkArea extends Component.BelongToFrame {
 
     void switchTo(State state);
 
+    @Nullable
     VBoxLayout getInitialLayout();
     void setInitialLayout(VBoxLayout initialLayout);
 

@@ -121,6 +121,7 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEn
         this.locale = locale;
     }
 
+    @Nullable
     @Override
     public String getFormatString() {
         return formatString;
@@ -133,6 +134,7 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEn
         this.dateFormat = null;
     }
 
+    @Nullable
     @Override
     public DateFormat getDateFormat() {
         return dateFormat;

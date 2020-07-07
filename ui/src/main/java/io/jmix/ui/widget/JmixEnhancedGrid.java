@@ -21,6 +21,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.components.grid.GridSelectionModel;
 import io.jmix.ui.widget.grid.JmixEditorField;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -49,11 +50,13 @@ public interface JmixEnhancedGrid<T> {
 
     void setShowEmptyState(boolean show);
 
+    @Nullable
     String getEmptyStateMessage();
-    void setEmptyStateMessage(String message);
+    void setEmptyStateMessage(@Nullable String message);
 
+    @Nullable
     String getEmptyStateLinkMessage();
-    void setEmptyStateLinkMessage(String linkMessage);
+    void setEmptyStateLinkMessage(@Nullable String linkMessage);
 
     void setEmptyStateLinkClickHandler(Runnable handler);
 

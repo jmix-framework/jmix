@@ -219,15 +219,20 @@ public class OpenAction<E extends JmixEntity> extends BaseAction implements Enti
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         setShortcut(properties.getPickerOpenShortcut());
-        setDescription(messages.getMessage("entityPicker.action.open.tooltip")
-                + " (" + getShortcutCombination().format() + ")");
+
+        if (getShortcutCombination() != null) {
+            setDescription(messages.getMessage("entityPicker.action.open.tooltip")
+                    + " (" + getShortcutCombination().format() + ")");
+        } else {
+            setDescription(messages.getMessage("entityPicker.action.open.tooltip"));
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setEntityPicker(EntityPicker entityPicker) {
+    public void setEntityPicker(@Nullable EntityPicker entityPicker) {
         this.entityPicker = entityPicker;
     }
 

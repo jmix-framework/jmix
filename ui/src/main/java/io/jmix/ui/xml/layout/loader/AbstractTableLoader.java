@@ -563,7 +563,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
             String aggregationEditable = aggregationElement.attributeValue("editable");
             if (StringUtils.isNotEmpty(aggregationEditable)) {
-                aggregation.setEditable(Boolean.valueOf(aggregationEditable));
+                aggregation.setEditable(Boolean.parseBoolean(aggregationEditable));
             }
 
             String valueDescription = aggregationElement.attributeValue("valueDescription");
@@ -723,6 +723,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         public TableDataHolder() {
         }
 
+        @Nullable
         public MetaClass getMetaClass() {
             return metaClass;
         }
@@ -731,6 +732,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             this.metaClass = metaClass;
         }
 
+        @Nullable
         public CollectionContainer getContainer() {
             return container;
         }
@@ -739,6 +741,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             this.container = container;
         }
 
+        @Nullable
         public DataLoader getDataLoader() {
             return dataLoader;
         }
@@ -747,6 +750,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             this.dataLoader = dataLoader;
         }
 
+        @Nullable
         public FetchPlan getFetchPlan() {
             return fetchPlan;
         }

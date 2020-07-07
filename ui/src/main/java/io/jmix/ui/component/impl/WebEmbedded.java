@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
     }
 
     @Override
-    public void setSource(URL src) {
+    public void setSource(@Nullable URL src) {
         if (src != null) {
             resource = new ExternalResource(src);
             component.setSource(resource);
@@ -64,7 +65,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
     }
 
     @Override
-    public void setSource(String src) {
+    public void setSource(@Nullable String src) {
         if (src != null) {
             if (src.startsWith("http") || src.startsWith("https")) {
                 try {
@@ -97,7 +98,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
     }
 
     @Override
-    public void setSource(String fileName, final InputStream src) {
+    public void setSource(String fileName, @Nullable final InputStream src) {
         if (src != null) {
             resource = new StreamResource((StreamResource.StreamSource) () -> {
                 try {
@@ -115,7 +116,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
     }
 
     @Override
-    public void setSource(String fileName, final DownloadDataProvider dataProvider) {
+    public void setSource(String fileName, @Nullable final DownloadDataProvider dataProvider) {
         if (dataProvider != null) {
             resource = new StreamResource(
                     dataProvider::provide,
@@ -128,7 +129,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
     }
 
     @Override
-    public void setRelativeSource(String src) {
+    public void setRelativeSource(@Nullable String src) {
         if (src != null) {
             try {
                 URL context = new URL(ControllerUtils.getLocationWithoutParams());

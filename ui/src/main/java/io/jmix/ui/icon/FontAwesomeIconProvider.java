@@ -48,6 +48,7 @@ public class FontAwesomeIconProvider implements IconProvider {
 
     protected static final LoadingCache<String, Resource> iconsCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<String, Resource>() {
+                @Nullable
                 @Override
                 public Resource load(@Nonnull String iconPath) {
                     return getIconNonCached(iconPath);
@@ -82,7 +83,7 @@ public class FontAwesomeIconProvider implements IconProvider {
     }
 
     @Override
-    public boolean canProvide(String iconPath) {
+    public boolean canProvide(@Nullable String iconPath) {
         if (iconPath == null || iconPath.isEmpty() || !isFontIconsEnabled()) {
             return false;
         }

@@ -438,16 +438,16 @@ public class ScreenDataXmlLoader {
     protected void loadSoftDeletion(Element element, DataLoader loader) {
         String softDeletionVal = element.attributeValue("softDeletion");
         if (!Strings.isNullOrEmpty(softDeletionVal))
-            loader.setSoftDeletion(Boolean.valueOf(softDeletionVal));
+            loader.setSoftDeletion(Boolean.parseBoolean(softDeletionVal));
     }
 
     protected void loadDynamicAttributes(Element element, DataLoader loader) {
         String dynamicAttributes = element.attributeValue("dynamicAttributes");
         if (!Strings.isNullOrEmpty(dynamicAttributes)) {
             if (loader instanceof InstanceLoader) {
-                ((InstanceLoader) loader).setLoadDynamicAttributes(Boolean.valueOf(dynamicAttributes));
+                ((InstanceLoader) loader).setLoadDynamicAttributes(Boolean.parseBoolean(dynamicAttributes));
             } else if (loader instanceof CollectionLoader) {
-                ((CollectionLoader) loader).setLoadDynamicAttributes(Boolean.valueOf(dynamicAttributes));
+                ((CollectionLoader) loader).setLoadDynamicAttributes(Boolean.parseBoolean(dynamicAttributes));
             }
         }
     }

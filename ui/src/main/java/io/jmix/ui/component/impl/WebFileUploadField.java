@@ -74,13 +74,14 @@ public class WebFileUploadField extends WebAbstractSingleFileUploadField<byte[]>
                 : fileName;
     }
 
+    @Nullable
     @Override
     public String getFileName() {
         return super.getFileName();
     }
 
     @Override
-    public void setFileName(String filename) {
+    public void setFileName(@Nullable String filename) {
         this.fileName = filename;
         setValueToPresentation(convertToPresentation(getValue()));
     }

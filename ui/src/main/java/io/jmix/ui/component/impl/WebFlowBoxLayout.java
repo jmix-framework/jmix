@@ -20,6 +20,8 @@ import io.jmix.ui.component.FlowBoxLayout;
 import io.jmix.ui.widget.JmixFlowLayout;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+
 public class WebFlowBoxLayout extends WebAbstractOrderedLayout<JmixFlowLayout> implements FlowBoxLayout {
 
     protected static final String FLOWLAYOUT_STYLENAME = "c-flowlayout";
@@ -29,7 +31,7 @@ public class WebFlowBoxLayout extends WebAbstractOrderedLayout<JmixFlowLayout> i
     }
 
     @Override
-    public void setStyleName(String styleName) {
+    public void setStyleName(@Nullable String styleName) {
         super.setStyleName(styleName);
 
         component.addStyleName(FLOWLAYOUT_STYLENAME);

@@ -13,10 +13,13 @@
  */
 package io.jmix.ui.widget.addon.dragdroplayouts.interfaces;
 
+import javax.annotation.Nullable;
+
 /**
  * Container that has {@link DragCaptionProvider}.
  */
 public interface HasDragCaptionProvider {
-    void setDragCaptionProvider(DragCaptionProvider provider);
+    void setDragCaptionProvider(@Nullable DragCaptionProvider provider);
+    @Nullable
     DragCaptionProvider getDragCaptionProvider();
 }

@@ -16,22 +16,26 @@
 
 package io.jmix.ui.settings.component;
 
+import javax.annotation.Nullable;
+
 public class GroupBoxSettings implements ComponentSettings {
 
     protected String id;
 
     protected Boolean expanded;
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 
+    @Nullable
     public Boolean getExpanded() {
         return expanded;
     }

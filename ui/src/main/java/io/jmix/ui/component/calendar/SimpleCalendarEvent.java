@@ -19,6 +19,7 @@ package io.jmix.ui.component.calendar;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class SimpleCalendarEvent<V> implements CalendarEvent<V> {
@@ -36,6 +37,7 @@ public class SimpleCalendarEvent<V> implements CalendarEvent<V> {
         events.publish(EventChangeEvent.class, new EventChangeEvent(this));
     }
 
+    @Nullable
     @Override
     public V getStart() {
         return start;
@@ -47,6 +49,7 @@ public class SimpleCalendarEvent<V> implements CalendarEvent<V> {
         fireDataChanged();
     }
 
+    @Nullable
     @Override
     public V getEnd() {
         return end;
@@ -58,6 +61,7 @@ public class SimpleCalendarEvent<V> implements CalendarEvent<V> {
         fireDataChanged();
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption;
@@ -75,11 +79,13 @@ public class SimpleCalendarEvent<V> implements CalendarEvent<V> {
         fireDataChanged();
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return description;
     }
 
+    @Nullable
     @Override
     public String getStyleName() {
         return styleName;

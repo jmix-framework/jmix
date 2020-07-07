@@ -57,10 +57,11 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      *
      * @param popupContent popup component.
      */
-    void setPopupContent(Component popupContent);
+    void setPopupContent(@Nullable Component popupContent);
     /**
      * @return popup content component.
      */
+    @Nullable
     Component getPopupContent();
 
     /**
@@ -122,11 +123,12 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
      *
      * @param position the popup position
      */
-    void setPopupPosition(PopupPosition position);
+    void setPopupPosition(@Nullable PopupPosition position);
 
     /**
      * return {@code PopupPosition} or {@code null} if position is set via {@link #setPopupPosition(PopupPosition)}
      */
+    @Nullable
     PopupPosition getPopupPosition();
 
     /**

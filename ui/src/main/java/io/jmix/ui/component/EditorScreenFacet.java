@@ -23,6 +23,7 @@ import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.Screen;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -76,11 +77,12 @@ public interface EditorScreenFacet<E extends JmixEntity, S extends Screen & Edit
      *
      * @param entityProvider entity provider
      */
-    void setEntityProvider(Supplier<E> entityProvider);
+    void setEntityProvider(@Nullable Supplier<E> entityProvider);
 
     /**
      * @return entity provider
      */
+    @Nullable
     Supplier<E> getEntityProvider();
 
     /**
@@ -88,11 +90,12 @@ public interface EditorScreenFacet<E extends JmixEntity, S extends Screen & Edit
      * <p>
      * The initializer is invoked only when {@link EditMode} is {@code CREATE}.
      */
-    void setInitializer(Consumer<E> initializer);
+    void setInitializer(@Nullable Consumer<E> initializer);
 
     /**
      * @return entity initializer
      */
+    @Nullable
     Consumer<E> getInitializer();
 
     /**
@@ -100,11 +103,12 @@ public interface EditorScreenFacet<E extends JmixEntity, S extends Screen & Edit
      * <p>
      * The screen will commit data to the parent context instead of directly to {@code DataManager}.
      */
-    void setParentDataContextProvider(Supplier<DataContext> parentDataContextProvider);
+    void setParentDataContextProvider(@Nullable Supplier<DataContext> parentDataContextProvider);
 
     /**
      * @return parent DataContext provider
      */
+    @Nullable
     Supplier<DataContext> getParentDataContextProvider();
 
     /**

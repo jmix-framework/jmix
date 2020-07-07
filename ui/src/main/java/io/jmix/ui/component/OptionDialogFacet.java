@@ -105,6 +105,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
     /**
      * @return dialog style name
      */
+    @Nullable
     String getStyleName();
 
     /**
@@ -113,7 +114,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      * @param width width
      */
     @StudioProperty
-    void setWidth(String width);
+    void setWidth(@Nullable String width);
 
     /**
      * @return dialog width
@@ -131,7 +132,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      * @param height height
      */
     @StudioProperty
-    void setHeight(String height);
+    void setHeight(@Nullable String height);
 
     /**
      * @return dialog height
@@ -146,6 +147,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
     /**
      * @return id of action that triggers dialog
      */
+    @Nullable
     String getActionTarget();
 
     /**
@@ -155,11 +157,12 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      * @param actionId action id
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setActionTarget(String actionId);
+    void setActionTarget(@Nullable String actionId);
 
     /**
      * @return id of button that triggers dialog
      */
+    @Nullable
     String getButtonTarget();
 
     /**
@@ -169,7 +172,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      * @param buttonId button id
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setButtonTarget(String buttonId);
+    void setButtonTarget(@Nullable String buttonId);
 
     /**
      * Sets whether html sanitizer is enabled or not for dialog content.

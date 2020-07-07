@@ -47,30 +47,33 @@ public class WebEditorScreenFacet<E extends JmixEntity, S extends Screen & Edito
     protected boolean addFirst = false;
 
     @Override
-    public void setEntityProvider(Supplier<E> entityProvider) {
+    public void setEntityProvider(@Nullable Supplier<E> entityProvider) {
         this.entityProvider = entityProvider;
     }
 
+    @Nullable
     @Override
     public Supplier<E> getEntityProvider() {
         return entityProvider;
     }
 
     @Override
-    public void setInitializer(Consumer<E> initializer) {
+    public void setInitializer(@Nullable Consumer<E> initializer) {
         this.initializer = initializer;
     }
 
+    @Nullable
     @Override
     public Consumer<E> getInitializer() {
         return initializer;
     }
 
     @Override
-    public void setParentDataContextProvider(Supplier<DataContext> parentDataContextProvider) {
+    public void setParentDataContextProvider(@Nullable Supplier<DataContext> parentDataContextProvider) {
         this.parentDataContextProvider = parentDataContextProvider;
     }
 
+    @Nullable
     @Override
     public Supplier<DataContext> getParentDataContextProvider() {
         return parentDataContextProvider;

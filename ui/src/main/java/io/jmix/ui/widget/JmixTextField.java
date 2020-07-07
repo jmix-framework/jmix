@@ -26,6 +26,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.LegacyComponent;
 import com.vaadin.ui.TextField;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
@@ -116,13 +117,14 @@ public class JmixTextField extends TextField implements Action.Container, Legacy
         }
     }
 
-    public void setHtmlName(String htmlName) {
+    public void setHtmlName(@Nullable String htmlName) {
         String oldHtmlName = getState(false).htmlName;
         if (!Objects.equals(htmlName, oldHtmlName)) {
             getState().htmlName = htmlName;
         }
     }
 
+    @Nullable
     public String getHtmlName() {
         return getState(false).htmlName;
     }

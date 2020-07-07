@@ -138,7 +138,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
     }
 
     @Override
-    public void setMenuWidth(String width) {
+    public void setMenuWidth(@Nullable String width) {
         vPopupComponent.setWidth(width);
     }
 
@@ -206,7 +206,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
     }
 
     @Override
-    public void setPopupContent(Component popupContent) {
+    public void setPopupContent(@Nullable Component popupContent) {
         this.popupComponent = popupContent;
 
         if (popupContent != null) {
@@ -217,6 +217,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
         this.component.setContent(vPopupComponent);
     }
 
+    @Nullable
     @Override
     public Component getPopupContent() {
         return popupComponent;
@@ -358,7 +359,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
 
         AppUI ui = AppUI.getCurrent();

@@ -53,20 +53,22 @@ public class WebNotificationFacet extends WebAbstractFacet implements Notificati
     protected boolean htmlSanitizerEnabled;
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         this.caption = caption;
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption;
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return description;
@@ -107,6 +109,7 @@ public class WebNotificationFacet extends WebAbstractFacet implements Notificati
         this.styleName = styleName;
     }
 
+    @Nullable
     @Override
     public String getStyleName() {
         return styleName;
@@ -128,42 +131,46 @@ public class WebNotificationFacet extends WebAbstractFacet implements Notificati
     }
 
     @Override
-    public void setCaptionProvider(Supplier<String> captionProvider) {
+    public void setCaptionProvider(@Nullable Supplier<String> captionProvider) {
         this.captionProvider = captionProvider;
     }
 
+    @Nullable
     @Override
     public Supplier<String> getCaptionProvider() {
         return captionProvider;
     }
 
     @Override
-    public void setDescriptionProvider(Supplier<String> descriptionProvider) {
+    public void setDescriptionProvider(@Nullable Supplier<String> descriptionProvider) {
         this.descriptionProvider = descriptionProvider;
     }
 
+    @Nullable
     @Override
     public Supplier<String> getDescriptionProvider() {
         return descriptionProvider;
     }
 
+    @Nullable
     @Override
     public String getActionTarget() {
         return actionId;
     }
 
     @Override
-    public void setActionTarget(String actionId) {
+    public void setActionTarget(@Nullable String actionId) {
         this.actionId = actionId;
     }
 
+    @Nullable
     @Override
     public String getButtonTarget() {
         return buttonId;
     }
 
     @Override
-    public void setButtonTarget(String buttonId) {
+    public void setButtonTarget(@Nullable String buttonId) {
         this.buttonId = buttonId;
     }
 

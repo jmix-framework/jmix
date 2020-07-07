@@ -24,6 +24,7 @@ import com.vaadin.ui.AbstractComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -130,7 +131,7 @@ public class JmixTimer extends AbstractExtension implements JmixTimerServerRpc {
         getState().listeners = actionListeners.size() > 0 || (stopListeners != null && stopListeners.size() > 0);
     }
 
-    public void setTimerId(String id) {
+    public void setTimerId(@Nullable String id) {
         getState().timerId = id;
     }
 

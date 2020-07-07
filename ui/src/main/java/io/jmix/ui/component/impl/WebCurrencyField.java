@@ -134,10 +134,11 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
     }
 
     @Override
-    public void setConversionErrorMessage(String conversionErrorMessage) {
+    public void setConversionErrorMessage(@Nullable String conversionErrorMessage) {
         this.conversionErrorMessage = conversionErrorMessage;
     }
 
+    @Nullable
     @Override
     public String getConversionErrorMessage() {
         return conversionErrorMessage;
@@ -171,10 +172,11 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
     }
 
     @Override
-    public void setCurrency(String currency) {
+    public void setCurrency(@Nullable String currency) {
         component.setCurrency(currency);
     }
 
+    @Nullable
     @Override
     public String getCurrency() {
         return component.getCurrency();
@@ -247,6 +249,7 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
         this.datatype = datatype;
     }
 
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         return datatype;

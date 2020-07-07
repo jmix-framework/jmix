@@ -15,8 +15,10 @@ package io.jmix.ui.widget.addon.dragdroplayouts.interfaces;
 
 import com.vaadin.ui.Component;
 
+import javax.annotation.Nullable;
+
 public interface DragImageProvider {
 
+    @Nullable
     Component getDragImage(Component component);
-
 }

@@ -117,13 +117,14 @@ public class WebSourceCodeEditor extends WebV8AbstractField<JmixSourceCodeEditor
         component.resetEditHistory();
     }
 
+    @Nullable
     @Override
     public Suggester getSuggester() {
         return suggester;
     }
 
     @Override
-    public void setSuggester(Suggester suggester) {
+    public void setSuggester(@Nullable Suggester suggester) {
         this.suggester = suggester;
 
         if (suggester != null && suggestionExtension == null) {

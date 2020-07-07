@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.calendar.EntityCalendarEventProvider;
 import org.apache.commons.lang3.BooleanUtils;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEvent<V> {
@@ -49,6 +50,7 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
         return entity;
     }
 
+    @Nullable
     @Override
     public V getStart() {
         if (provider.getStartDateProperty() != null) {
@@ -60,9 +62,12 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
 
     @Override
     public void setStart(V start) {
-        EntityValues.setValue(entity, provider.getStartDateProperty(), start);
+        if (provider.getStartDateProperty() != null) {
+            EntityValues.setValue(entity, provider.getStartDateProperty(), start);
+        }
     }
 
+    @Nullable
     @Override
     public V getEnd() {
         if (provider.getEndDateProperty() != null) {
@@ -74,9 +79,12 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
 
     @Override
     public void setEnd(V end) {
-        EntityValues.setValue(entity, provider.getEndDateProperty(), end);
+        if (provider.getEndDateProperty() != null) {
+            EntityValues.setValue(entity, provider.getEndDateProperty(), end);
+        }
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         if (provider.getCaptionProperty() != null) {
@@ -88,14 +96,19 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
 
     @Override
     public void setCaption(String caption) {
-        EntityValues.setValue(entity, provider.getCaptionProperty(), caption);
+        if (provider.getCaptionProperty() != null) {
+            EntityValues.setValue(entity, provider.getCaptionProperty(), caption);
+        }
     }
 
     @Override
     public void setDescription(String description) {
-        EntityValues.setValue(entity, provider.getDescriptionProperty(), description);
+        if (provider.getDescriptionProperty() != null) {
+            EntityValues.setValue(entity, provider.getDescriptionProperty(), description);
+        }
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         if (provider.getDescriptionProperty() != null) {
@@ -105,6 +118,7 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
         }
     }
 
+    @Nullable
     @Override
     public String getStyleName() {
         if (provider.getStyleNameProperty() != null) {
@@ -116,7 +130,9 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
 
     @Override
     public void setStyleName(String styleName) {
-        EntityValues.setValue(entity, provider.getStyleNameProperty(), styleName);
+        if (provider.getStyleNameProperty() != null) {
+            EntityValues.setValue(entity, provider.getStyleNameProperty(), styleName);
+        }
     }
 
     @Override
@@ -130,7 +146,9 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
 
     @Override
     public void setAllDay(boolean isAllDay) {
-        EntityValues.setValue(entity, provider.getIsAllDayProperty(), isAllDay);
+        if (provider.getIsAllDayProperty() != null) {
+            EntityValues.setValue(entity, provider.getIsAllDayProperty(), isAllDay);
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

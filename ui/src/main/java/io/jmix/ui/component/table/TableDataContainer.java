@@ -27,6 +27,7 @@ import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.StaticItemSetChangeEvent;
 import io.jmix.ui.component.data.TableItems;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
@@ -103,12 +104,14 @@ public class TableDataContainer<I> implements Container, ItemSetChangeNotifier {
         resetCachedItems();
     }
 
+    @Nullable
     @Override
     public Item getItem(Object itemId) {
         Object dataItem = tableItems.getItem(itemId);
         return dataItem == null ? null : getItemWrapper(dataItem, itemId);
     }
 
+    @Nullable
     public I getInternalItem(Object itemId) {
         return tableItems.getItem(itemId);
     }
@@ -180,6 +183,7 @@ public class TableDataContainer<I> implements Container, ItemSetChangeNotifier {
         return tableItems.getItemIds();
     }
 
+    @Nullable
     @Override
     public Property getContainerProperty(Object itemId, Object propertyId) {
         final Item item = getItem(itemId);

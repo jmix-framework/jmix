@@ -31,6 +31,7 @@ import io.jmix.ui.widget.grid.JmixEditorField;
 import io.jmix.ui.widget.grid.JmixEditorImpl;
 import io.jmix.ui.widget.grid.JmixGridColumn;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -137,7 +138,7 @@ public class JmixTreeGrid<T> extends TreeGrid<T> implements JmixEnhancedGrid<T> 
         return ((EnhancedHierarchicalDataProvider<T>) dataProvider).getLevel(item);
     }
 
-    public void expandItemWithParents(T item) {
+    public void expandItemWithParents(@Nullable T item) {
         List<T> itemsToExpand = new ArrayList<>();
 
         T current = item;
@@ -166,23 +167,25 @@ public class JmixTreeGrid<T> extends TreeGrid<T> implements JmixEnhancedGrid<T> 
         }
     }
 
+    @Nullable
     @Override
     public String getEmptyStateMessage() {
         return getState(false).emptyStateMessage;
     }
 
     @Override
-    public void setEmptyStateMessage(String message) {
+    public void setEmptyStateMessage(@Nullable String message) {
         getState().emptyStateMessage = message;
     }
 
+    @Nullable
     @Override
     public String getEmptyStateLinkMessage() {
         return getState(false).emptyStateLinkMessage;
     }
 
     @Override
-    public void setEmptyStateLinkMessage(String linkMessage) {
+    public void setEmptyStateLinkMessage(@Nullable String linkMessage) {
         getState().emptyStateLinkMessage = linkMessage;
     }
 

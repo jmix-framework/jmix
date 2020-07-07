@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.autocomplete.impl;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,7 +34,7 @@ public class HintResponse {
         options = Collections.emptyList();
     }
 
-    public HintResponse(List<Option> options, String lastWord) {
+    public HintResponse(@Nullable List<Option> options, @Nullable String lastWord) {
         this.lastWord = lastWord;
         this.options = (options == null) ? Collections.<Option>emptyList() : options;
         errorMessage = null;
@@ -59,6 +60,7 @@ public class HintResponse {
         return Collections.unmodifiableList(options);
     }
 
+    @Nullable
     public String getErrorMessage() {
         return errorMessage;
     }
@@ -67,6 +69,7 @@ public class HintResponse {
         return Collections.unmodifiableList(causeErrorMessage);
     }
 
+    @Nullable
     public String getLastWord() {
         return lastWord;
     }

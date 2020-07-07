@@ -157,7 +157,7 @@ public class InstanceContainerImpl<E extends JmixEntity> implements InstanceCont
         this.loader = loader;
     }
 
-    protected void fireItemChanged(E prevItem) {
+    protected void fireItemChanged(@Nullable E prevItem) {
         if (!listenersEnabled) {
             return;
         }

@@ -65,7 +65,7 @@ public class ContainerGroupTableItems<E extends JmixEntity>
     }
 
     @Override
-    public void groupBy(Object[] properties) {
+    public void groupBy(@Nullable Object[] properties) {
         if (isGrouping) {
             return;
         }
@@ -139,6 +139,7 @@ public class ContainerGroupTableItems<E extends JmixEntity>
         return groupInfo;
     }
 
+    @Nullable
     protected Object getValueByProperty(E item, MetaPropertyPath property) {
         Preconditions.checkNotNullArgument(item);
 
@@ -327,6 +328,6 @@ public class ContainerGroupTableItems<E extends JmixEntity>
 
     @Override
     public boolean containsGroup(GroupInfo groupId) {
-        return hasGroups() && parents.keySet().contains(groupId);
+        return hasGroups() && parents.containsKey(groupId);
     }
 }

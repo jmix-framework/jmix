@@ -17,6 +17,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -52,6 +53,7 @@ public interface Button extends Component, Component.HasCaption, Component.Belon
     /**
      * @return action's shortcut
      */
+    @Nullable
     KeyCombination getShortcutCombination();
 
     /**
@@ -59,14 +61,14 @@ public interface Button extends Component, Component.HasCaption, Component.Belon
      *
      * @param shortcut key combination
      */
-    void setShortcutCombination(KeyCombination shortcut);
+    void setShortcutCombination(@Nullable KeyCombination shortcut);
 
     /**
      * Sets shortcut from string representation.
      *
      * @param shortcut string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
      */
-    void setShortcut(String shortcut);
+    void setShortcut(@Nullable String shortcut);
 
     Subscription addClickListener(Consumer<ClickEvent> listener);
 

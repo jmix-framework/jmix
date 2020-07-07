@@ -141,6 +141,7 @@ public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, S
         return component.getValue();
     }
 
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         return datatype;

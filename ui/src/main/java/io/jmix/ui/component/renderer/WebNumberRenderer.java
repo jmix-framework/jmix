@@ -117,6 +117,7 @@ public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Jmix
         this.locale = locale;
     }
 
+    @Nullable
     @Override
     public NumberFormat getNumberFormat() {
         return numberFormat;
@@ -129,6 +130,7 @@ public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Jmix
         this.formatString = null;
     }
 
+    @Nullable
     @Override
     public String getFormatString() {
         return formatString;

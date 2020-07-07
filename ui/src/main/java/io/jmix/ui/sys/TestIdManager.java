@@ -16,6 +16,7 @@
 
 package io.jmix.ui.sys;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ public class TestIdManager {
     protected static final String PREFIX = "id_";
     protected static final String DIVIDER = "&";
 
+    @Nullable
     public String getTestId(String baseId) {
         String id = normalize(baseId);
 
@@ -54,6 +56,7 @@ public class TestIdManager {
         return id;
     }
 
+    @Nullable
     public String reserveId(String id) {
         String normalizedId = normalize(id);
         if (!ids.containsKey(normalizedId)) {
@@ -63,7 +66,8 @@ public class TestIdManager {
         return normalizedId;
     }
 
-    public String normalize(String id) {
+    @Nullable
+    public String normalize(@Nullable String id) {
         if (id != null) {
             Matcher matcher = PERMITTED_CHARACTERS.matcher(id);
             StringBuilder sb = new StringBuilder();

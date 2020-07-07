@@ -26,7 +26,7 @@ public interface GroupTableItems<I> extends TableItems.Sortable<I> {
     /**
      * Perform grouping by the list of properties
      */
-    void groupBy(Object[] properties);
+    void groupBy(@Nullable Object[] properties);
 
     /**
      * @return the list of root groups

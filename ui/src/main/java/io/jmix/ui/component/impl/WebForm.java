@@ -74,7 +74,7 @@ public class WebForm extends WebAbstractComponent<JmixFormLayout> implements For
     protected boolean editable = true;
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
 
         AppUI ui = AppUI.getCurrent();
@@ -235,7 +235,7 @@ public class WebForm extends WebAbstractComponent<JmixFormLayout> implements For
         component.setParent(this);
     }
 
-    protected void assignDebugId(com.vaadin.ui.Component composition, String id) {
+    protected void assignDebugId(@Nullable com.vaadin.ui.Component composition, String id) {
         AppUI ui = AppUI.getCurrent();
         if (ui == null) {
             return;
@@ -580,13 +580,14 @@ public class WebForm extends WebAbstractComponent<JmixFormLayout> implements For
         return component.getColumnExpandRatio(column);
     }
 
+    @Nullable
     @Override
     public ValueSourceProvider getValueSourceProvider() {
         return valueSourceProvider;
     }
 
     @Override
-    public void setValueSourceProvider(ValueSourceProvider provider) {
+    public void setValueSourceProvider(@Nullable ValueSourceProvider provider) {
         if (this.valueSourceProvider != null) {
             throw new UnsupportedOperationException("Changing value source provider is not supported " +
                     "by the Form component");
@@ -618,8 +619,7 @@ public class WebForm extends WebAbstractComponent<JmixFormLayout> implements For
             }
         } else {
             String actionHolderComponentId = permissionDescriptor.getActionHolderComponentId();
-            Component component = getComponent(actionHolderComponentId);
-            if (!(component instanceof SecuredActionsHolder)) {
+            if (actionHolderComponentId == null || !(getComponent(actionHolderComponentId) instanceof SecuredActionsHolder)) {
                 log.info("Couldn't find suitable component {} in window {} for UI security rule",
                         actionHolderComponentId, screenId);
                 return;

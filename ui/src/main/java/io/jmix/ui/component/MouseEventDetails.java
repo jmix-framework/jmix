@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
@@ -46,11 +47,12 @@ public class MouseEventDetails implements Serializable {
     public MouseEventDetails() {
     }
 
+    @Nullable
     public MouseButton getButton() {
         return button;
     }
 
-    public void setButton(MouseButton button) {
+    public void setButton(@Nullable MouseButton button) {
         this.button = button;
     }
 

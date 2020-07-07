@@ -38,11 +38,12 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
     boolean isRequired();
     void setRequired(boolean required);
 
+    @Nullable
     String getRequiredMessage();
     /**
      * A message that will be displayed to user if the field is required but has null value
      */
-    void setRequiredMessage(String msg);
+    void setRequiredMessage(@Nullable String msg);
 
     /**
      * Add validator instance.

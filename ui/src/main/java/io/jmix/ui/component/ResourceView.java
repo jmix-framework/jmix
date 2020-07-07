@@ -58,7 +58,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
      *
      * @param alternateText a short, human-readable description of this component's content
      */
-    void setAlternateText(String alternateText);
+    void setAlternateText(@Nullable String alternateText);
 
     /**
      * Gets this component's alternate text that can be presented instead of the component's normal content for
@@ -66,6 +66,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
      *
      * @return alternate text
      */
+    @Nullable
     String getAlternateText();
 
     /**
@@ -172,6 +173,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
         /**
          * @return resource file name
          */
+        @Nullable
         String getFileName();
     }
 }

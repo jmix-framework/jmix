@@ -185,10 +185,11 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
     }
 
     @Override
-    public void setConversionErrorMessage(String conversionErrorMessage) {
+    public void setConversionErrorMessage(@Nullable String conversionErrorMessage) {
         this.conversionErrorMessage = conversionErrorMessage;
     }
 
+    @Nullable
     @Override
     public String getConversionErrorMessage() {
         return conversionErrorMessage;
@@ -238,6 +239,7 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
                 : TextField.super.isEmpty();
     }
 
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         return datatype;
@@ -429,10 +431,11 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
     }
 
     @Override
-    public void setHtmlName(String htmlName) {
+    public void setHtmlName(@Nullable String htmlName) {
         component.setHtmlName(htmlName);
     }
 
+    @Nullable
     @Override
     public String getHtmlName() {
         return component.getHtmlName();

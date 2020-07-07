@@ -23,6 +23,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
@@ -45,12 +46,12 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
         this.asc = asc;
     }
 
-    protected int __compare(Object o1, Object o2) {
+    protected int __compare(@Nullable Object o1, @Nullable Object o2) {
         int c = compareAsc(o1, o2);
         return asc ? c : -c;
     }
 
-    protected int compareAsc(Object o1, Object o2) {
+    protected int compareAsc(@Nullable Object o1, @Nullable Object o2) {
         int c;
         if (o1 instanceof String && o2 instanceof String) {
             c = ((String) o1).compareToIgnoreCase((String) o2);

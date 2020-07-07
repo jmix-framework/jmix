@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * Sets DOM and CSS attributes to UI component widgets.
  *
@@ -58,6 +60,7 @@ public interface HtmlAttributes {
      * @return previously assigned DOM attribute value
      * @see #getDomAttribute(Component, String, String)
      */
+    @Nullable
     String getDomAttribute(Component component, String attributeName);
 
     /**
@@ -70,6 +73,7 @@ public interface HtmlAttributes {
      * @return previously assigned DOM attribute value
      * @see #getDomAttribute(Component, String)
      */
+    @Nullable
     String getDomAttribute(Component component, String querySelector, String attributeName);
 
     /**
@@ -126,6 +130,7 @@ public interface HtmlAttributes {
      * @return previously assigned CSS property value
      * @see #getCssProperty(Component, String, String)
      */
+    @Nullable
     String getCssProperty(Component component, String propertyName);
 
     /**
@@ -138,6 +143,7 @@ public interface HtmlAttributes {
      * @return previously assigned CSS property value
      * @see #getCssProperty(Component, String)
      */
+    @Nullable
     String getCssProperty(Component component, String querySelector, String propertyName);
 
     /**

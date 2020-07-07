@@ -99,7 +99,8 @@ public class JmixTimeField extends AbstractField<LocalTime> {
         getState().text = formatValue(value);
     }
 
-    protected LocalTime applyResolutionToValue(LocalTime value) {
+    @Nullable
+    protected LocalTime applyResolutionToValue(@Nullable LocalTime value) {
         if (value == null) {
             return null;
         }
@@ -127,6 +128,7 @@ public class JmixTimeField extends AbstractField<LocalTime> {
         return result;
     }
 
+    @Nullable
     @Override
     public LocalTime getValue() {
         return this.value;

@@ -26,6 +26,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.*;
 import com.vaadin.util.ReflectTools;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -162,6 +163,7 @@ public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements 
         updateIcon(value);
     }
 
+    @Nullable
     @Override
     public T getValue() {
         return internalValue;
@@ -360,7 +362,7 @@ public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements 
         protected final String text;
         protected final V prevValue;
 
-        public FieldValueChangeEvent(JmixPickerField<V> source, String text, V prevValue) {
+        public FieldValueChangeEvent(JmixPickerField<V> source, String text, @Nullable V prevValue) {
             super(source);
             this.text = text;
             this.prevValue = prevValue;
@@ -376,6 +378,7 @@ public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements 
             return text;
         }
 
+        @Nullable
         public V getPrevValue() {
             return prevValue;
         }

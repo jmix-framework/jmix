@@ -94,7 +94,7 @@ public class ParameterInfo implements Serializable {
         return javaClass;
     }
 
-    public void setJavaClass(Class javaClass) {
+    public void setJavaClass(@Nullable Class javaClass) {
         this.javaClass = javaClass;
     }
 
@@ -103,15 +103,16 @@ public class ParameterInfo implements Serializable {
         return conditionName;
     }
 
-    public void setConditionName(String conditionName) {
+    public void setConditionName(@Nullable String conditionName) {
         this.conditionName = conditionName;
     }
 
+    @Nullable
     public String getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(@Nullable String value) {
         this.value = value;
     }
 

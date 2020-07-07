@@ -30,7 +30,7 @@ public class WebLink extends WebAbstractComponent<JmixLink> implements Link {
     }
 
     @Override
-    public void setUrl(@Nullable String url) {
+    public void setUrl(String url) {
         component.setResource(new ExternalResource(url));
     }
 
@@ -38,8 +38,9 @@ public class WebLink extends WebAbstractComponent<JmixLink> implements Link {
     @Override
     public String getUrl() {
         Resource resource = component.getResource();
-        if (resource instanceof ExternalResource)
+        if (resource instanceof ExternalResource) {
             return ((ExternalResource) resource).getURL();
+        }
 
         return null;
     }

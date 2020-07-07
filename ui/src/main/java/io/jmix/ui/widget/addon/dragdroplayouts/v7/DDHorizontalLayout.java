@@ -310,11 +310,12 @@ public class DDHorizontalLayout extends HorizontalLayout
     }
 
     @Override
-    public void setDragImageProvider(DragImageProvider provider) {
+    public void setDragImageProvider(@Nullable DragImageProvider provider) {
         this.dragImageProvider = provider;
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public DragImageProvider getDragImageProvider() {
         return this.dragImageProvider;

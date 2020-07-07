@@ -30,6 +30,8 @@ import org.springframework.util.NumberUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 public class WebSlider<V extends Number> extends WebV8AbstractField<JmixSlider<V>, V, V> implements Slider<V> {
 
     protected Datatype<V> datatype;
@@ -107,6 +109,7 @@ public class WebSlider<V extends Number> extends WebV8AbstractField<JmixSlider<V
         component.setOrientation(WebWrapperUtils.toVaadinSliderOrientation(orientation));
     }
 
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         if (datatype == null) {
@@ -152,17 +155,13 @@ public class WebSlider<V extends Number> extends WebV8AbstractField<JmixSlider<V
 
     @SuppressWarnings("unchecked")
     protected V convertFromDouble(Double componentValue) throws ConversionException {
-        if (componentValue == null) {
-            return null;
-        }
-
         Datatype<V> datatype = getDatatype();
-        return (V) NumberUtils.convertNumberToTargetClass(componentValue, datatype.getJavaClass());
+        return datatype != null
+                ? (V) NumberUtils.convertNumberToTargetClass(componentValue, datatype.getJavaClass())
+                : (V) componentValue;
     }
 
     protected Double convertToDouble(V value) {
-        return value != null
-                ? value.doubleValue()
-                : null;
+        return value.doubleValue();
     }
 }

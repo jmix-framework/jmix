@@ -42,11 +42,12 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param options field options
      */
-    void setOptions(Options<V> options);
+    void setOptions(@Nullable Options<V> options);
 
     /**
      * @return field options
      */
+    @Nullable
     Options<V> getOptions();
 
     /**
@@ -66,11 +67,12 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param optionsCaptionProvider caption provider for options
      */
-    void setLookupFieldOptionsCaptionProvider(Function<? super V, String> optionsCaptionProvider);
+    void setLookupFieldOptionsCaptionProvider(@Nullable Function<? super V, String> optionsCaptionProvider);
 
     /**
      * @return caption provider for LookupField options
      */
+    @Nullable
     Function<? super V, String> getLookupFieldOptionsCaptionProvider();
 
     /**
@@ -78,6 +80,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @deprecated use {@link TokenList#getLookupFieldOptionsCaptionProvider()}
      */
+    @Nullable
     @Deprecated
     CaptionMode getOptionsCaptionMode();
 
@@ -89,7 +92,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * @deprecated use {@link TokenList#setLookupFieldOptionsCaptionProvider(Function)} instead
      */
     @Deprecated
-    void setOptionsCaptionMode(CaptionMode optionsCaptionMode);
+    void setOptionsCaptionMode(@Nullable CaptionMode optionsCaptionMode);
 
     /**
      * @return a property that is used for LookupField option captions generation
@@ -186,17 +189,19 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param lookupProvider lookup screen provider
      */
-    void setLookupProvider(Supplier<Screen> lookupProvider);
+    void setLookupProvider(@Nullable Supplier<Screen> lookupProvider);
 
     /**
      * @return lookup screen provider
      */
+    @Nullable
     Supplier<Screen> getLookupProvider();
 
     /**
      * @return lookup screen alias
      */
     @Deprecated
+    @Nullable
     String getLookupScreen();
 
     /**
@@ -207,7 +212,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated
-    void setLookupScreen(String lookupScreen);
+    void setLookupScreen(@Nullable String lookupScreen);
 
     /**
      * Sets params that will be passed to lookup screen.
@@ -217,7 +222,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated
-    void setLookupScreenParams(Map<String, Object> params);
+    void setLookupScreenParams(@Nullable Map<String, Object> params);
 
     /**
      * @return params that will be passed to lookup screen
@@ -311,6 +316,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
     /**
      * @return "Add" button caption
      */
+    @Nullable
     String getAddButtonCaption();
 
     /**
@@ -318,11 +324,12 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param caption caption
      */
-    void setAddButtonCaption(String caption);
+    void setAddButtonCaption(@Nullable String caption);
 
     /**
      * @return "Add" button icon
      */
+    @Nullable
     String getAddButtonIcon();
 
     /**
@@ -330,11 +337,12 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param icon icon
      */
-    void setAddButtonIcon(String icon);
+    void setAddButtonIcon(@Nullable String icon);
 
     /**
      * @return "Clear" button caption
      */
+    @Nullable
     String getClearButtonCaption();
 
     /**
@@ -342,11 +350,12 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param caption caption
      */
-    void setClearButtonCaption(String caption);
+    void setClearButtonCaption(@Nullable String caption);
 
     /**
      * @return "Clear" button icon
      */
+    @Nullable
     String getClearButtonIcon();
 
     /**
@@ -354,11 +363,12 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param icon icon
      */
-    void setClearButtonIcon(String icon);
+    void setClearButtonIcon(@Nullable String icon);
 
     /**
      * @return selected items change handler
      */
+    @Nullable
     ItemChangeHandler getItemChangeHandler();
 
     /**
@@ -366,11 +376,12 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param handler items change handler
      */
-    void setItemChangeHandler(ItemChangeHandler handler);
+    void setItemChangeHandler(@Nullable ItemChangeHandler handler);
 
     /**
      * @return selected tokens click listener
      */
+    @Nullable
     ItemClickListener getItemClickListener();
 
     /**
@@ -378,13 +389,14 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param itemClickListener items click listener
      */
-    void setItemClickListener(ItemClickListener itemClickListener);
+    void setItemClickListener(@Nullable ItemClickListener itemClickListener);
 
     /**
      * @return handler that is invoked after lookup screen closing
      *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
+    @Nullable
     @Deprecated
     AfterLookupCloseHandler getAfterLookupCloseHandler();
 
@@ -396,13 +408,14 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated
-    void setAfterLookupCloseHandler(AfterLookupCloseHandler handler);
+    void setAfterLookupCloseHandler(@Nullable AfterLookupCloseHandler handler);
 
     /**
      * @return handler that is invoked when an item is selected in lookup screen
      *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
+    @Nullable
     @Deprecated
     AfterLookupSelectionHandler getAfterLookupSelectionHandler();
 
@@ -414,17 +427,19 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated
-    void setAfterLookupSelectionHandler(AfterLookupSelectionHandler handler);
+    void setAfterLookupSelectionHandler(@Nullable AfterLookupSelectionHandler handler);
 
     @Deprecated
-    void setTokenStyleGenerator(Function<Object, String> tokenStyleGenerator);
+    void setTokenStyleGenerator(@Nullable Function<Object, String> tokenStyleGenerator);
 
+    @Nullable
     @Deprecated
     Function<Object, String> getTokenStyleGenerator();
 
     /**
      * @return input prompt of LookupPickerField
      */
+    @Nullable
     String getLookupInputPrompt();
 
     /**
@@ -433,7 +448,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      *
      * @param inputPrompt input prompt
      */
-    void setLookupInputPrompt(String inputPrompt);
+    void setLookupInputPrompt(@Nullable String inputPrompt);
 
     /**
      * Enables to generate stylenames for tokens.

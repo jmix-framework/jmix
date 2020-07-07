@@ -18,6 +18,7 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.ui.model.*;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class ScreenDataImpl implements ScreenData {
 
     protected LoadBeforeShowStrategy loadBeforeShowStrategy = new AnnotationBasedLoaderBeforeShow();
 
+    @Nullable
     @Override
     public DataContext getDataContext() {
         return dataContext;

@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -146,6 +147,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @return comma separated types of files
      */
+    @Nullable
     String getAccept();
 
     /**
@@ -154,7 +156,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param accept comma separated types of files
      */
-    void setAccept(String accept);
+    void setAccept(@Nullable String accept);
 
     /**
      * Set white list of file extensions. Each extension should start with dot symbol, e.g. ".png".
@@ -166,18 +168,20 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param permittedExtensions permitted extensions.
      */
-    void setPermittedExtensions(Set<String> permittedExtensions);
+    void setPermittedExtensions(@Nullable Set<String> permittedExtensions);
 
     /**
      * Return white list of file extensions.
      *
      * @return set of file extensions.
      */
+    @Nullable
     Set<String> getPermittedExtensions();
 
     /**
      * @return current drop zone
      */
+    @Nullable
     DropZone getDropZone();
 
     /**
@@ -186,7 +190,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param dropZone drop zone descriptor
      */
-    void setDropZone(DropZone dropZone);
+    void setDropZone(@Nullable DropZone dropZone);
 
     /**
      * Set paste zone reference to this upload component. PasteZone handles paste shortcut when a text input field
@@ -196,16 +200,18 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param pasteZone paste zone container
      */
-    void setPasteZone(ComponentContainer pasteZone);
+    void setPasteZone(@Nullable ComponentContainer pasteZone);
 
     /**
      * @return current paste zone container
      */
+    @Nullable
     ComponentContainer getPasteZone();
 
     /**
      * @return current drop zone prompt
      */
+    @Nullable
     String getDropZonePrompt();
 
     /**
@@ -213,7 +219,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param dropZonePrompt drop zone prompt
      */
-    void setDropZonePrompt(String dropZonePrompt);
+    void setDropZonePrompt(@Nullable String dropZonePrompt);
 
     /**
      * Drop zone descriptor. BoxLayout or Window can be used as drop zone for an upload component.

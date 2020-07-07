@@ -22,6 +22,7 @@ import io.jmix.core.ValueLoadContext;
 import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
@@ -57,7 +58,7 @@ public interface KeyValueCollectionLoader extends BaseCollectionLoader {
     /**
      * Sets the data store name. By default, the main data store is used.
      */
-    void setStoreName(String name);
+    void setStoreName(@Nullable String name);
 
     /**
      * Returns a function which will be used to load data instead of standard implementation.

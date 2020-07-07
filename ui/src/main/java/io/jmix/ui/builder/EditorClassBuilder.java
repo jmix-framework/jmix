@@ -27,6 +27,7 @@ import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -126,7 +127,7 @@ public class EditorClassBuilder<E extends JmixEntity, S extends Screen & EditorS
     }
 
     @Override
-    public EditorClassBuilder<E, S> withTransformation(Function<E, E> transformation) {
+    public EditorClassBuilder<E, S> withTransformation(@Nullable Function<E, E> transformation) {
         super.withTransformation(transformation);
         return this;
     }
@@ -140,6 +141,7 @@ public class EditorClassBuilder<E extends JmixEntity, S extends Screen & EditorS
     /**
      * Returns editor screen class.
      */
+    @Nullable
     public Class<S> getScreenClass() {
         return screenClass;
     }
@@ -147,6 +149,7 @@ public class EditorClassBuilder<E extends JmixEntity, S extends Screen & EditorS
     /**
      * Returns screen close listener.
      */
+    @Nullable
     public Consumer<AfterScreenCloseEvent<S>> getCloseListener() {
         return closeListener;
     }

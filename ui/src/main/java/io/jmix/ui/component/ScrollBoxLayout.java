@@ -15,6 +15,8 @@
  */
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * Component container that shows scrollbars if its content does not fit the viewport.
  */
@@ -33,7 +35,7 @@ public interface ScrollBoxLayout
      *
      * @param width width
      */
-    void setContentWidth(String width);
+    void setContentWidth(@Nullable String width);
     /**
      * @return content width value
      */
@@ -48,7 +50,7 @@ public interface ScrollBoxLayout
      *
      * @param height height
      */
-    void setContentHeight(String height);
+    void setContentHeight(@Nullable String height);
     /**
      * @return content height value
      */
@@ -67,6 +69,7 @@ public interface ScrollBoxLayout
     /**
      * @return minimal content width
      */
+    @Nullable
     String getContentMinWidth();
 
     /**
@@ -78,6 +81,7 @@ public interface ScrollBoxLayout
     /**
      * @return maximum content width
      */
+    @Nullable
     String getContentMaxWidth();
 
     /**
@@ -89,6 +93,7 @@ public interface ScrollBoxLayout
     /**
      * @return minimum content width
      */
+    @Nullable
     String getContentMinHeight();
 
     /**
@@ -100,6 +105,7 @@ public interface ScrollBoxLayout
     /**
      * @return maximum content width
      */
+    @Nullable
     String getContentMaxHeight();
 
     /**

@@ -19,6 +19,7 @@ package io.jmix.ui.model.impl;
 import com.google.common.collect.ForwardingListIterator;
 import io.jmix.ui.model.CollectionChangeType;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ListIterator;
@@ -70,7 +71,7 @@ class ObservableListIterator<T> extends ForwardingListIterator<T> {
         throw new UnsupportedOperationException("ObservableListIterator does not support 'remove' operation");
     }
 
-    protected void doOnAddItem(T item) {
+    protected void doOnAddItem(@Nullable T item) {
         if (item != null && onAddItem != null) {
             onAddItem.accept(item);
         }

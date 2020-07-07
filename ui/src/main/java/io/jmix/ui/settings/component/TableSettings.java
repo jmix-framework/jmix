@@ -36,14 +36,16 @@ public class TableSettings implements ComponentSettings, ComponentSettings.HasSe
     public TableSettings() {
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 
+    @Nullable
     public Boolean getTextSelection() {
         return textSelection;
     }
@@ -79,6 +81,7 @@ public class TableSettings implements ComponentSettings, ComponentSettings.HasSe
         this.presentationId = presentationId;
     }
 
+    @Nullable
     public List<ColumnSettings> getColumns() {
         return columns;
     }
@@ -101,6 +104,7 @@ public class TableSettings implements ComponentSettings, ComponentSettings.HasSe
             this.id = id;
         }
 
+        @Nullable
         public Integer getWidth() {
             return width;
         }
@@ -109,6 +113,7 @@ public class TableSettings implements ComponentSettings, ComponentSettings.HasSe
             this.width = width;
         }
 
+        @Nullable
         public Boolean getVisible() {
             return visible;
         }

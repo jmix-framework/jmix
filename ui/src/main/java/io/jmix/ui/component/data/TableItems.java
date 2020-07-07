@@ -134,7 +134,7 @@ public interface TableItems<I> extends DataUnit {
          * @param itemId item id
          * @return <code>true</code> if the item is first visible item, <code>false</code> if not
          */
-        boolean isFirstId(Object itemId);
+        boolean isFirstId(@Nullable Object itemId);
 
         /**
          * Tests if the item corresponding to the given item ID is the last item.
@@ -142,7 +142,7 @@ public interface TableItems<I> extends DataUnit {
          * @param itemId item id
          * @return <code>true</code> if the item is last visible item in the, <code>false</code> if not
          */
-        boolean isLastId(Object itemId);
+        boolean isLastId(@Nullable Object itemId);
     }
 
     /**

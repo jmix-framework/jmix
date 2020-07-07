@@ -25,6 +25,7 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
 
+import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public class DataGridDataProvider<T> extends AbstractDataProvider<T, SerializablePredicate<T>> {
@@ -78,6 +79,7 @@ public class DataGridDataProvider<T> extends AbstractDataProvider<T, Serializabl
         return dataGridItems;
     }
 
+    @Nullable
     @Override
     public Object getId(T item) {
         return dataGridItems.getItemId(item);

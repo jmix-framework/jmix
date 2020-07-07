@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @org.springframework.stereotype.Component(PresentationEditor.NAME)
@@ -132,7 +133,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
 
         defaultField = new CheckBox();
         defaultField.setCaption(messages.getMessage("PresentationsEditor.default"));
-        defaultField.setValue(EntityValues.<UUID>getId(presentation).equals(component.getDefaultPresentationId()));
+        defaultField.setValue(Objects.equals(EntityValues.<UUID>getId(presentation), (component.getDefaultPresentationId())));
         root.addComponent(defaultField);
 
         if (allowGlobalPresentations) {
@@ -171,7 +172,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         TablePresentations presentations = component.getPresentations();
 
         //check that name is empty
-        if (StringUtils.isEmpty(nameField.getValue())) {
+        if (StringUtils.isEmpty(nameField.getValue()) && AppUI.getCurrent() != null) {
             AppUI.getCurrent().getNotifications()
                     .create(Notifications.NotificationType.HUMANIZED)
                     .withCaption(messages.getMessage("PresentationsEditor.error"))
@@ -182,7 +183,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
 
         //check that name is unique
         final TablePresentation pres = presentations.getPresentationByName(nameField.getValue());
-        if (pres != null && !pres.equals(presentation)) {
+        if (pres != null && !pres.equals(presentation) && AppUI.getCurrent() != null) {
             AppUI.getCurrent().getNotifications()
                     .create(Notifications.NotificationType.HUMANIZED)
                     .withCaption(messages.getMessage("PresentationsEditor.error"))

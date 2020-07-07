@@ -18,6 +18,7 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.ui.component.HasContextHelp;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -26,6 +27,7 @@ import java.util.function.Consumer;
  */
 public interface CompositeWithContextHelp extends HasContextHelp {
 
+    @Nullable
     @Override
     default String getContextHelpText() {
         HasContextHelp hasContextHelp = (HasContextHelp) ((CompositeComponent) this).getComposition();
@@ -33,7 +35,7 @@ public interface CompositeWithContextHelp extends HasContextHelp {
     }
 
     @Override
-    default void setContextHelpText(String contextHelpText) {
+    default void setContextHelpText(@Nullable String contextHelpText) {
         HasContextHelp hasContextHelp = (HasContextHelp) ((CompositeComponent) this).getComposition();
         hasContextHelp.setContextHelpText(contextHelpText);
     }
@@ -50,6 +52,7 @@ public interface CompositeWithContextHelp extends HasContextHelp {
         hasContextHelp.setContextHelpTextHtmlEnabled(enabled);
     }
 
+    @Nullable
     @Override
     default Consumer<ContextHelpIconClickEvent> getContextHelpIconClickHandler() {
         HasContextHelp hasContextHelp = (HasContextHelp) ((CompositeComponent) this).getComposition();
@@ -57,7 +60,7 @@ public interface CompositeWithContextHelp extends HasContextHelp {
     }
 
     @Override
-    default void setContextHelpIconClickHandler(Consumer<ContextHelpIconClickEvent> handler) {
+    default void setContextHelpIconClickHandler(@Nullable Consumer<ContextHelpIconClickEvent> handler) {
         HasContextHelp hasContextHelp = (HasContextHelp) ((CompositeComponent) this).getComposition();
         hasContextHelp.setContextHelpIconClickHandler(handler);
     }

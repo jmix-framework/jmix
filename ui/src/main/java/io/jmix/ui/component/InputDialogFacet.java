@@ -66,7 +66,7 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * @param width width
      */
     @StudioProperty
-    void setWidth(String width);
+    void setWidth(@Nullable String width);
 
     /**
      * @return dialog width
@@ -84,7 +84,7 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * @param height height
      */
     @StudioProperty
-    void setHeight(String height);
+    void setHeight(@Nullable String height);
 
     /**
      * @return dialog height
@@ -103,11 +103,12 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * @param actionId action id
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setActionTarget(String actionId);
+    void setActionTarget(@Nullable String actionId);
 
     /**
      * @return id of action that triggers dialog
      */
+    @Nullable
     String getActionTarget();
 
     /**
@@ -117,11 +118,12 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * @param buttonId button id
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setButtonTarget(String buttonId);
+    void setButtonTarget(@Nullable String buttonId);
 
     /**
      * @return id of button that triggers dialog
      */
+    @Nullable
     String getButtonTarget();
 
     /**

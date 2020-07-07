@@ -20,6 +20,7 @@ import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class JmixColorPickerWrapper extends CustomField<Color> {
@@ -172,114 +173,128 @@ public class JmixColorPickerWrapper extends CustomField<Color> {
         return field.getHSVVisibility();
     }
 
-    public void setPopupCaption(String popupCaption) {
+    public void setPopupCaption(@Nullable String popupCaption) {
         field.setWindowCaption(popupCaption);
     }
 
+    @Nullable
     public String getPopupCaption() {
         return field.getWindowCaption();
     }
 
-    public void setConfirmButtonCaption(String caption) {
+    public void setConfirmButtonCaption(@Nullable String caption) {
         field.setConfirmButtonCaption(caption);
     }
 
+    @Nullable
     public String getConfirmButtonCaption() {
         return field.getConfirmButtonCaption();
     }
 
-    public void setCancelButtonCaption(String caption) {
+    public void setCancelButtonCaption(@Nullable String caption) {
         field.setCancelButtonCaption(caption);
     }
 
+    @Nullable
     public String getCancelButtonCaption() {
         return field.getCancelButtonCaption();
     }
 
-    public void setSwatchesTabCaption(String caption) {
+    public void setSwatchesTabCaption(@Nullable String caption) {
         field.setSwatchesTabCaption(caption);
     }
 
+    @Nullable
     public String getSwatchesTabCaption() {
         return field.getSwatchesTabCaption();
     }
 
-    public void setLookupAllCaption(String lookupAllCaption) {
+    public void setLookupAllCaption(@Nullable String lookupAllCaption) {
         field.setLookupAllCaption(lookupAllCaption);
     }
 
+    @Nullable
     public String getLookupAllCaption() {
         return field.getLookupAllCaption();
     }
 
-    public void setLookupRedCaption(String lookupRedCaption) {
+    public void setLookupRedCaption(@Nullable String lookupRedCaption) {
         field.setLookupRedCaption(lookupRedCaption);
     }
 
+    @Nullable
     public String getLookupRedCaption() {
         return field.getLookupRedCaption();
     }
 
-    public void setLookupGreenCaption(String lookupGreenCaption) {
+    public void setLookupGreenCaption(@Nullable String lookupGreenCaption) {
         field.setLookupGreenCaption(lookupGreenCaption);
     }
 
+    @Nullable
     public String getLookupGreenCaption() {
         return field.getLookupGreenCaption();
     }
 
-    public void setLookupBlueCaption(String lookupBlueCaption) {
+    public void setLookupBlueCaption(@Nullable String lookupBlueCaption) {
         field.setLookupBlueCaption(lookupBlueCaption);
     }
 
+    @Nullable
     public String getLookupBlueCaption() {
         return field.getLookupBlueCaption();
     }
 
-    public void setRedSliderCaption(String redSliderCaption) {
+    public void setRedSliderCaption(@Nullable String redSliderCaption) {
         field.setRedSliderCaption(redSliderCaption);
     }
 
+    @Nullable
     public String getRedSliderCaption() {
         return field.getRedSliderCaption();
     }
 
-    public void setGreenSliderCaption(String greenSliderCaption) {
+    public void setGreenSliderCaption(@Nullable String greenSliderCaption) {
         field.setGreenSliderCaption(greenSliderCaption);
     }
 
+    @Nullable
     public String getGreenSliderCaption() {
         return field.getGreenSliderCaption();
     }
 
-    public void setBlueSliderCaption(String blueSliderCaption) {
+    public void setBlueSliderCaption(@Nullable String blueSliderCaption) {
         field.setBlueSliderCaption(blueSliderCaption);
     }
 
+    @Nullable
     public String getBlueSliderCaption() {
         return field.getBlueSliderCaption();
     }
 
-    public void setHueSliderCaption(String hueSliderCaption) {
+    public void setHueSliderCaption(@Nullable String hueSliderCaption) {
         field.setHueSliderCaption(hueSliderCaption);
     }
 
+    @Nullable
     public String getHueSliderCaption() {
         return field.getHueSliderCaption();
     }
 
-    public void setSaturationSliderCaption(String saturationSliderCaption) {
+    public void setSaturationSliderCaption(@Nullable String saturationSliderCaption) {
         field.setSaturationSliderCaption(saturationSliderCaption);
     }
 
+    @Nullable
     public String getSaturationSliderCaption() {
         return field.getSaturationSliderCaption();
     }
 
-    public void setValueSliderCaption(String valueSliderCaption) {
+    public void setValueSliderCaption(@Nullable String valueSliderCaption) {
         field.setValueSliderCaption(valueSliderCaption);
     }
 
+    @Nullable
     public String getValueSliderCaption() {
         return field.getValueSliderCaption();
     }

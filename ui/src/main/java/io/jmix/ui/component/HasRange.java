@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 public interface HasRange<V> {
     /**
      * Set start of range. If the value is set before this
@@ -23,13 +25,14 @@ public interface HasRange<V> {
      *
      * @param rangeStart allowed start of range
      */
-    void setRangeStart(V rangeStart);
+    void setRangeStart(@Nullable V rangeStart);
 
     /**
      * Return start of range for a certain resolution.
      *
      * @return start of allowed range
      */
+    @Nullable
     V getRangeStart();
 
     /**
@@ -38,12 +41,13 @@ public interface HasRange<V> {
      *
      * @param rangeEnd end of allowed range
      */
-    void setRangeEnd(V rangeEnd);
+    void setRangeEnd(@Nullable V rangeEnd);
 
     /**
      * Return end of range for a certain resolution.
      *
      * @return end of allowed range
      */
+    @Nullable
     V getRangeEnd();
 }

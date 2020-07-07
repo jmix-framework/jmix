@@ -565,6 +565,7 @@ public class WebScreens implements Screens {
         }
     }
 
+    @Nullable
     protected Screen getAnyCurrentScreen() {
         Iterator<Screen> dialogsIterator = getOpenedScreens().getDialogScreens().iterator();
         if (dialogsIterator.hasNext()) {
@@ -1368,6 +1369,7 @@ public class WebScreens implements Screens {
     protected static class TabWindowContainerImpl extends CssLayout implements TabWindowContainer {
         protected WindowBreadCrumbs breadCrumbs;
 
+        @Nullable
         @Override
         public WindowBreadCrumbs getBreadCrumbs() {
             return breadCrumbs;

@@ -21,6 +21,8 @@ import io.jmix.ui.component.HtmlAttributes;
 import io.jmix.ui.widget.HtmlAttributesExtension;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.widget.client.html.HtmlAttributesExtensionState.DEFAULT_SELECTOR;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
@@ -43,11 +45,13 @@ public class HtmlAttributesImpl implements HtmlAttributes {
                 .setDomAttribute(querySelector, attributeName, value);
     }
 
+    @Nullable
     @Override
     public String getDomAttribute(Component component, String attributeName) {
         return getDomAttribute(component, DEFAULT_SELECTOR, attributeName);
     }
 
+    @Nullable
     @Override
     public String getDomAttribute(Component component, String querySelector, String attributeName) {
         checkNotNullArgument(component);
@@ -91,11 +95,13 @@ public class HtmlAttributesImpl implements HtmlAttributes {
                 .setCssProperty(querySelector, propertyName, value);
     }
 
+    @Nullable
     @Override
     public String getCssProperty(Component component, String propertyName) {
         return getCssProperty(component, DEFAULT_SELECTOR, propertyName);
     }
 
+    @Nullable
     @Override
     public String getCssProperty(Component component, String querySelector, String propertyName) {
         checkNotNullArgument(component);

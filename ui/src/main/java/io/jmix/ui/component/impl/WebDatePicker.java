@@ -136,24 +136,26 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
         return dateTimeTransformations.transformFromZDT(zonedDateTime, javaType);
     }
 
+    @Nullable
     @Override
     public V getRangeStart() {
         return rangeStart;
     }
 
     @Override
-    public void setRangeStart(V value) {
+    public void setRangeStart(@Nullable V value) {
         this.rangeStart = value;
         component.setRangeStart(value == null ? null : convertToLocalDateTime(rangeStart).toLocalDate());
     }
 
+    @Nullable
     @Override
     public V getRangeEnd() {
         return rangeEnd;
     }
 
     @Override
-    public void setRangeEnd(V value) {
+    public void setRangeEnd(@Nullable V value) {
         this.rangeEnd = value;
         component.setRangeEnd(value == null ? null : convertToLocalDateTime(rangeEnd).toLocalDate());
     }
@@ -173,6 +175,7 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
         component.setTabIndex(tabIndex);
     }
 
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         return datatype;

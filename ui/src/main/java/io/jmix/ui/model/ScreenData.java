@@ -16,6 +16,7 @@
 
 package io.jmix.ui.model;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -26,6 +27,7 @@ public interface ScreenData {
     /**
      * Returns screen's {@code DataContext}.
      */
+    @Nullable
     DataContext getDataContext();
 
     /**

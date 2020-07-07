@@ -33,6 +33,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.LegacyComponent;
 import com.vaadin.v7.ui.VerticalLayout;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -274,11 +275,12 @@ public class DDVerticalLayout extends VerticalLayout
     }
 
     @Override
-    public void setDragImageProvider(DragImageProvider provider) {
+    public void setDragImageProvider(@Nullable DragImageProvider provider) {
         this.dragImageProvider = provider;
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public DragImageProvider getDragImageProvider() {
         return this.dragImageProvider;

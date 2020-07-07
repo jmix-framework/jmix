@@ -21,6 +21,7 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import io.jmix.core.Messages;
 import io.jmix.core.security.Security;
+import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.impl.WebAbstractComponent;
@@ -34,6 +35,8 @@ import io.jmix.ui.widget.JmixMenuBar;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
@@ -83,12 +86,12 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
     }
 
     @Override
-    public void setLoginHandler(Consumer<LoginHandlerContext> loginHandler) {
+    public void setLoginHandler(@Nullable Consumer<LoginHandlerContext> loginHandler) {
         this.loginHandler = loginHandler;
     }
 
     @Override
-    public void setLogoutHandler(Consumer<LogoutHandlerContext> logoutHandler) {
+    public void setLogoutHandler(@Nullable Consumer<LogoutHandlerContext> logoutHandler) {
         this.logoutHandler = logoutHandler;
     }
 
@@ -121,6 +124,7 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
                 getIconResource(JmixIcon.SIGN_OUT), item -> logout());
     }
 
+    @Nullable
     protected Resource getIconResource(Icons.Icon icon) {
         return iconResolver.getIconResource(icons.get(icon));
     }
@@ -163,14 +167,16 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
     }
 
     protected void openSettings() {
-        Screen settingsScreen = AppUI.getCurrent().getScreens()
-                .create("settings", OpenMode.NEW_TAB);
+        if (AppUI.getCurrent() != null) {
+            Screen settingsScreen = AppUI.getCurrent().getScreens()
+                    .create("settings", OpenMode.NEW_TAB);
 
-        settingsScreen.show();
+            settingsScreen.show();
+        }
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         component.addStyleName(USERACTIONS_BUTTON_STYLENAME);

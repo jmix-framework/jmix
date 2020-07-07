@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * A field that is used to enter secret text information like passwords. The entered text is not displayed on the screen.
  */
@@ -43,10 +45,11 @@ public interface PasswordField
      *
      * @param capsLockIndicator capsLockIndicator component
      */
-    void setCapsLockIndicator(CapsLockIndicator capsLockIndicator);
+    void setCapsLockIndicator(@Nullable CapsLockIndicator capsLockIndicator);
 
     /**
      * @return capsLockIndicator component
      */
+    @Nullable
     CapsLockIndicator getCapsLockIndicator();
 }

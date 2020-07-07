@@ -27,6 +27,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,8 +86,9 @@ public class DateFormatter implements Formatter<Date> {
         this.useUserTimezone = useUserTimezone;
     }
 
+    @Nullable
     @Override
-    public String apply(Date value) {
+    public String apply(@Nullable Date value) {
         if (value == null) {
             return null;
         }

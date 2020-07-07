@@ -21,6 +21,8 @@ import com.vaadin.ui.ColorPicker;
 import com.vaadin.ui.Component;
 import io.jmix.ui.widget.client.colorpicker.JmixColorPickerState;
 
+import javax.annotation.Nullable;
+
 public class JmixColorPicker extends ColorPicker implements Component.Focusable {
 
     protected String confirmButtonCaption;
@@ -83,154 +85,168 @@ public class JmixColorPicker extends ColorPicker implements Component.Focusable 
         super.setValue(color);
     }
 
-    public void setWindowCaption(String windowCaption) {
+    public void setWindowCaption(@Nullable String windowCaption) {
         this.popupCaption = windowCaption;
         if (window != null) {
             window.setCaption(windowCaption);
         }
     }
 
+    @Nullable
     public String getWindowCaption() {
         return this.popupCaption;
     }
 
-    public void setConfirmButtonCaption(String confirmButtonCaption) {
+    public void setConfirmButtonCaption(@Nullable String confirmButtonCaption) {
         this.confirmButtonCaption = confirmButtonCaption;
         if (window != null) {
             ((JmixColorPickerPopup) window).setConfirmButtonCaption(confirmButtonCaption);
         }
     }
 
+    @Nullable
     public String getConfirmButtonCaption() {
         return this.confirmButtonCaption;
     }
 
-    public void setCancelButtonCaption(String cancelButtonCaption) {
+    public void setCancelButtonCaption(@Nullable String cancelButtonCaption) {
         this.cancelButtonCaption = cancelButtonCaption;
         if (window != null) {
             ((JmixColorPickerPopup) window).setCancelButtonCaption(cancelButtonCaption);
         }
     }
 
+    @Nullable
     public String getCancelButtonCaption() {
         return this.cancelButtonCaption;
     }
 
-    public void setSwatchesTabCaption(String swatchesTabCaption) {
+    public void setSwatchesTabCaption(@Nullable String swatchesTabCaption) {
         this.swatchesTabCaption = swatchesTabCaption;
         if (window != null) {
             ((JmixColorPickerPopup) window).setSwatchesTabCaption(swatchesTabCaption);
         }
     }
 
+    @Nullable
     public String getSwatchesTabCaption() {
         return this.swatchesTabCaption;
     }
 
-    public void setLookupAllCaption(String lookupAllCaption) {
+    public void setLookupAllCaption(@Nullable String lookupAllCaption) {
         this.lookupAllCaption = lookupAllCaption;
         if (window != null) {
             ((JmixColorPickerPopup) window).setLookupAllCaption(lookupAllCaption);
         }
     }
 
+    @Nullable
     public String getLookupAllCaption() {
         return this.lookupAllCaption;
     }
 
-    public void setLookupRedCaption(String lookupRedCaption) {
+    public void setLookupRedCaption(@Nullable String lookupRedCaption) {
         this.lookupRedCaption = lookupRedCaption;
         if (window != null) {
             ((JmixColorPickerPopup) window).setLookupRedCaption(lookupRedCaption);
         }
     }
 
+    @Nullable
     public String getLookupRedCaption() {
         return this.lookupRedCaption;
     }
 
-    public void setLookupGreenCaption(String lookupGreenCaption) {
+    public void setLookupGreenCaption(@Nullable String lookupGreenCaption) {
         this.lookupGreenCaption = lookupGreenCaption;
         if (window != null) {
             ((JmixColorPickerPopup) window).setLookupGreenCaption(lookupGreenCaption);
         }
     }
 
+    @Nullable
     public String getLookupGreenCaption() {
         return this.lookupGreenCaption;
     }
 
-    public void setLookupBlueCaption(String lookupBlueCaption) {
+    public void setLookupBlueCaption(@Nullable String lookupBlueCaption) {
         this.lookupBlueCaption = lookupBlueCaption;
         if (window != null) {
             ((JmixColorPickerPopup) window).setLookupBlueCaption(lookupBlueCaption);
         }
     }
 
+    @Nullable
     public String getLookupBlueCaption() {
         return this.lookupBlueCaption;
     }
 
+    @Nullable
     public String getBlueSliderCaption() {
         return blueSliderCaption;
     }
 
-    public void setBlueSliderCaption(String blueSliderCaption) {
+    public void setBlueSliderCaption(@Nullable String blueSliderCaption) {
         this.blueSliderCaption = blueSliderCaption;
         if (window != null) {
             window.setBlueSliderCaption(blueSliderCaption);
         }
     }
 
+    @Nullable
     public String getGreenSliderCaption() {
         return greenSliderCaption;
     }
 
-    public void setGreenSliderCaption(String greenSliderCaption) {
+    public void setGreenSliderCaption(@Nullable String greenSliderCaption) {
         this.greenSliderCaption = greenSliderCaption;
         if (window != null) {
             window.setGreenSliderCaption(greenSliderCaption);
         }
     }
 
+    @Nullable
     public String getRedSliderCaption() {
         return redSliderCaption;
     }
 
-    public void setRedSliderCaption(String redSliderCaption) {
+    public void setRedSliderCaption(@Nullable String redSliderCaption) {
         this.redSliderCaption = redSliderCaption;
         if (window != null) {
             window.setRedSliderCaption(redSliderCaption);
         }
     }
 
+    @Nullable
     public String getHueSliderCaption() {
         return hueSliderCaption;
     }
 
-    public void setHueSliderCaption(String hueSliderCaption) {
+    public void setHueSliderCaption(@Nullable String hueSliderCaption) {
         this.hueSliderCaption = hueSliderCaption;
         if (window != null) {
             window.setHueSliderCaption(hueSliderCaption);
         }
     }
 
+    @Nullable
     public String getSaturationSliderCaption() {
         return saturationSliderCaption;
     }
 
-    public void setSaturationSliderCaption(String saturationSliderCaption) {
+    public void setSaturationSliderCaption(@Nullable String saturationSliderCaption) {
         this.saturationSliderCaption = saturationSliderCaption;
         if (window != null) {
             window.setSaturationSliderCaption(saturationSliderCaption);
         }
     }
 
+    @Nullable
     public String getValueSliderCaption() {
         return valueSliderCaption;
     }
 
-    public void setValueSliderCaption(String valueSliderCaption) {
+    public void setValueSliderCaption(@Nullable String valueSliderCaption) {
         this.valueSliderCaption = valueSliderCaption;
         if (window != null) {
             window.setValueSliderCaption(valueSliderCaption);

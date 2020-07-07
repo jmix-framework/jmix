@@ -68,8 +68,9 @@ public interface SourceCodeEditor extends Field<String>, Component.Focusable {
     HighlightMode getMode();
     void setMode(HighlightMode mode);
 
+    @Nullable
     Suggester getSuggester();
-    void setSuggester(Suggester suggester);
+    void setSuggester(@Nullable Suggester suggester);
 
     AutoCompleteSupport getAutoCompleteSupport();
 

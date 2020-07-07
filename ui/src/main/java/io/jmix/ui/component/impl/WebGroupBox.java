@@ -173,6 +173,7 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
         return ((AbstractOrderedLayout) component.getContent());
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         Preconditions.checkNotNullArgument(id);
@@ -314,7 +315,7 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         component.addStyleName(GROUPBOX_PANEL_STYLENAME);

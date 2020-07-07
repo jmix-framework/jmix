@@ -98,6 +98,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         throw new UnsupportedOperationException();
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         Preconditions.checkNotNullArgument(id);
@@ -259,13 +260,14 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         public void setDetachable(boolean detachable) {
         }
 
+        @Nullable
         @Override
         public TabCloseHandler getCloseHandler() {
             return closeHandler;
         }
 
         @Override
-        public void setCloseHandler(TabCloseHandler tabCloseHandler) {
+        public void setCloseHandler(@Nullable TabCloseHandler tabCloseHandler) {
             this.closeHandler = tabCloseHandler;
         }
 
@@ -298,7 +300,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         }
 
         @Override
-        public void setIconFromSet(Icons.Icon icon) {
+        public void setIconFromSet(@Nullable Icons.Icon icon) {
             String iconPath = icons // todo replace
                     .get(icon);
             setIcon(iconPath);
@@ -338,11 +340,11 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
             tab.setCaption(name);
         }
 
-        if (getDebugId() != null) {
+        if (AppUI.getCurrent() != null && getDebugId() != null) {
             this.component.setTestId(tabControl,
                     AppUI.getCurrent().getTestIdManager().getTestId(getDebugId() + "." + name));
         }
-        if (AppUI.getCurrent().isTestMode()) {
+        if (AppUI.getCurrent() != null && AppUI.getCurrent().isTestMode()) {
             this.component.setJTestId(tabControl, name);
         }
 
@@ -361,11 +363,11 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
 
         String debugId = getDebugId();
-        if (debugId != null) {
+        if (debugId != null && AppUI.getCurrent() != null) {
             TestIdManager testIdManager = AppUI.getCurrent().getTestIdManager();
 
             for (Map.Entry<com.vaadin.ui.Component, ComponentDescriptor> tabEntry : tabMapping.entrySet()) {
@@ -405,11 +407,11 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
             postInitTaskAdded = true;
         }
 
-        if (getDebugId() != null) {
+        if (AppUI.getCurrent() != null && getDebugId() != null) {
             this.component.setTestId(tabControl,
                     AppUI.getCurrent().getTestIdManager().getTestId(getDebugId() + "." + name));
         }
-        if (AppUI.getCurrent().isTestMode()) {
+        if (AppUI.getCurrent() != null && AppUI.getCurrent().isTestMode()) {
             this.component.setJTestId(tabControl, name);
         }
 
@@ -505,6 +507,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         this.component.setSelectedTab(vTabContent);
     }
 
+    @Nullable
     @Override
     public TabSheet.Tab getTab(String name) {
         return tabs.get(name);
@@ -657,7 +660,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
             }
         }
 
-        protected void applySettings(Window window) {
+        protected void applySettings(@Nullable Window window) {
             if (window != null && userSettingsTools != null) {
                 userSettingsTools.applyLazyTabSettings(window, WebTabSheet.this, tabContent);
             }

@@ -135,13 +135,14 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
         wrapper.setEditable(editable);
     }
 
+    @Nullable
     @Override
     public String getRequiredMessage() {
         return wrapper.getRequiredError();
     }
 
     @Override
-    public void setRequiredMessage(String msg) {
+    public void setRequiredMessage(@Nullable String msg) {
         wrapper.setRequiredError(msg);
     }
 

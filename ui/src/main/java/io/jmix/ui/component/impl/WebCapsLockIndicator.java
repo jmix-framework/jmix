@@ -19,6 +19,8 @@ package io.jmix.ui.component.impl;
 import io.jmix.ui.component.CapsLockIndicator;
 import io.jmix.ui.widget.JmixCapsLockIndicator;
 
+import javax.annotation.Nullable;
+
 public class WebCapsLockIndicator extends WebAbstractComponent<JmixCapsLockIndicator> implements CapsLockIndicator {
 
     public WebCapsLockIndicator() {
@@ -26,20 +28,22 @@ public class WebCapsLockIndicator extends WebAbstractComponent<JmixCapsLockIndic
     }
 
     @Override
-    public void setCapsLockOnMessage(String capsLockOnMessage) {
+    public void setCapsLockOnMessage(@Nullable String capsLockOnMessage) {
         component.setCapsLockOnMessage(capsLockOnMessage);
     }
 
+    @Nullable
     @Override
     public String getCapsLockOnMessage() {
         return component.getCapsLockOnMessage();
     }
 
     @Override
-    public void setCapsLockOffMessage(String capsLockOffMessage) {
+    public void setCapsLockOffMessage(@Nullable String capsLockOffMessage) {
         component.setCapsLockOffMessage(capsLockOffMessage);
     }
 
+    @Nullable
     @Override
     public String getCapsLockOffMessage() {
         return component.getCapsLockOffMessage();

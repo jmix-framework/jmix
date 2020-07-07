@@ -88,7 +88,8 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         this.iconResolver = iconResolver;
     }
 
-    protected String generateItemCaption(V item) {
+    @Nullable
+    protected String generateItemCaption(@Nullable V item) {
         if (item == null) {
             return null;
         }
@@ -221,7 +222,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionDescriptionProvider(Function<? super V, String> optionDescriptionProvider) {
+    public void setOptionDescriptionProvider(@Nullable Function<? super V, String> optionDescriptionProvider) {
         if (this.optionDescriptionProvider != optionDescriptionProvider) {
             this.optionDescriptionProvider = optionDescriptionProvider;
 
@@ -233,6 +234,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionDescriptionProvider() {
         return optionDescriptionProvider;
@@ -256,7 +258,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionIconProvider(Function<? super V, String> optionIconProvider) {
+    public void setOptionIconProvider(@Nullable Function<? super V, String> optionIconProvider) {
         if (this.optionIconProvider != optionIconProvider) {
             this.optionIconProvider = optionIconProvider;
 
@@ -268,6 +270,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionIconProvider() {
         return optionIconProvider;

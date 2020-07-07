@@ -226,7 +226,7 @@ public class KeyCombination {
             return code;
         }
 
-        public static int[] codes(Modifier... modifiers) {
+        public static int[] codes(@Nullable Modifier... modifiers) {
             if (modifiers == null) {
                 return new int[0];
             }
@@ -238,7 +238,8 @@ public class KeyCombination {
         }
     }
 
-    public static int[] getShortcutModifiers(KeyCombination.Modifier[] modifiers) {
+    @Nullable
+    public static int[] getShortcutModifiers(@Nullable KeyCombination.Modifier[] modifiers) {
         if (modifiers == null) {
             return null;
         }

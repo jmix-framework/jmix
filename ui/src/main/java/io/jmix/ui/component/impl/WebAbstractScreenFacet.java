@@ -65,20 +65,22 @@ public abstract class WebAbstractScreenFacet<S extends Screen> extends WebAbstra
     }
 
     @Override
-    public void setScreenId(String screenId) {
+    public void setScreenId(@Nullable String screenId) {
         this.screenId = screenId;
     }
 
+    @Nullable
     @Override
     public String getScreenId() {
         return screenId;
     }
 
     @Override
-    public void setScreenClass(Class<S> screenClass) {
+    public void setScreenClass(@Nullable Class<S> screenClass) {
         this.screenClass = screenClass;
     }
 
+    @Nullable
     @Override
     public Class<S> getScreenClass() {
         return screenClass;
@@ -95,10 +97,11 @@ public abstract class WebAbstractScreenFacet<S extends Screen> extends WebAbstra
     }
 
     @Override
-    public void setOptionsProvider(Supplier<ScreenOptions> optionsProvider) {
+    public void setOptionsProvider(@Nullable Supplier<ScreenOptions> optionsProvider) {
         this.optionsProvider = optionsProvider;
     }
 
+    @Nullable
     @Override
     public Supplier<ScreenOptions> getOptionsProvider() {
         return optionsProvider;
@@ -109,28 +112,31 @@ public abstract class WebAbstractScreenFacet<S extends Screen> extends WebAbstra
         this.properties = properties;
     }
 
+    @Nullable
     @Override
     public Collection<UiControllerProperty> getProperties() {
         return properties;
     }
 
+    @Nullable
     @Override
     public String getActionTarget() {
         return actionId;
     }
 
     @Override
-    public void setActionTarget(String actionId) {
+    public void setActionTarget(@Nullable String actionId) {
         this.actionId = actionId;
     }
 
+    @Nullable
     @Override
     public String getButtonTarget() {
         return buttonId;
     }
 
     @Override
-    public void setButtonTarget(String buttonId) {
+    public void setButtonTarget(@Nullable String buttonId) {
         this.buttonId = buttonId;
     }
 

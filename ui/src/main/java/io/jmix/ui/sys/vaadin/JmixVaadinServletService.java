@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -209,6 +210,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
             return super.handleRequest(session, request, response);
         }
 
+        @Nullable
         @Override
         protected String getMainDivAdditionalClassName(BootstrapContext context) {
             VaadinRequest request = context.getRequest();

@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 public interface ColorPicker extends Field<String>, Component.Focusable {
 
     String NAME = "colorPicker";
@@ -25,12 +27,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param popupCaption caption text.
      */
-    void setPopupCaption(String popupCaption);
+    void setPopupCaption(@Nullable String popupCaption);
     /**
      * Return caption of the popup window.
      *
      * @return caption text.
      */
+    @Nullable
     String getPopupCaption();
 
     /**
@@ -38,12 +41,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param confirmButtonCaption caption text.
      */
-    void setConfirmButtonCaption(String confirmButtonCaption);
+    void setConfirmButtonCaption(@Nullable String confirmButtonCaption);
     /**
      * Return caption of the confirm button.
      *
      * @return caption text.
      */
+    @Nullable
     String getConfirmButtonCaption();
 
     /**
@@ -51,12 +55,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param cancelButtonCaption caption text.
      */
-    void setCancelButtonCaption(String cancelButtonCaption);
+    void setCancelButtonCaption(@Nullable String cancelButtonCaption);
     /**
      * Return caption of the cancel button.
      *
      * @return caption text.
      */
+    @Nullable
     String getCancelButtonCaption();
 
     /**
@@ -64,12 +69,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param swatchesTabCaption caption text.
      */
-    void setSwatchesTabCaption(String swatchesTabCaption);
+    void setSwatchesTabCaption(@Nullable String swatchesTabCaption);
     /**
      * Return caption of the swatches tab.
      *
      * @return caption text.
      */
+    @Nullable
     String getSwatchesTabCaption();
 
     /**
@@ -77,12 +83,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param lookupAllCaption caption text.
      */
-    void setLookupAllCaption(String lookupAllCaption);
+    void setLookupAllCaption(@Nullable String lookupAllCaption);
     /**
      * Return caption of the all colors in lookup.
      *
      * @return caption text.
      */
+    @Nullable
     String getLookupAllCaption();
 
     /**
@@ -90,12 +97,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param lookupRedCaption caption text.
      */
-    void setLookupRedCaption(String lookupRedCaption);
+    void setLookupRedCaption(@Nullable String lookupRedCaption);
     /**
      * Return caption of the red colors in lookup.
      *
      * @return caption text.
      */
+    @Nullable
     String getLookupRedCaption();
 
     /**
@@ -103,12 +111,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param lookupGreenCaption caption text.
      */
-    void setLookupGreenCaption(String lookupGreenCaption);
+    void setLookupGreenCaption(@Nullable String lookupGreenCaption);
     /**
      * Return caption of the green colors in lookup.
      *
      * @return caption text.
      */
+    @Nullable
     String getLookupGreenCaption();
 
     /**
@@ -116,12 +125,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param lookupBlueCaption caption text.
      */
-    void setLookupBlueCaption(String lookupBlueCaption);
+    void setLookupBlueCaption(@Nullable String lookupBlueCaption);
     /**
      * Return caption of the blue colors in lookup.
      *
      * @return caption text.
      */
+    @Nullable
     String getLookupBlueCaption();
 
     /**
@@ -129,12 +139,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param redSliderCaption caption text.
      */
-    void setRedSliderCaption(String redSliderCaption);
+    void setRedSliderCaption(@Nullable String redSliderCaption);
     /**
      * Return caption of the slider for red color.
      *
      * @return caption text.
      */
+    @Nullable
     String getRedSliderCaption();
 
     /**
@@ -142,12 +153,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param greenSliderCaption caption text.
      */
-    void setGreenSliderCaption(String greenSliderCaption);
+    void setGreenSliderCaption(@Nullable String greenSliderCaption);
     /**
      * Return caption of the slider for green color.
      *
      * @return caption text.
      */
+    @Nullable
     String getGreenSliderCaption();
 
     /**
@@ -155,12 +167,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param blueSliderCaption caption text.
      */
-    void setBlueSliderCaption(String blueSliderCaption);
+    void setBlueSliderCaption(@Nullable String blueSliderCaption);
     /**
      * Return caption of the slider for blue color.
      *
      * @return caption text.
      */
+    @Nullable
     String getBlueSliderCaption();
 
     /**
@@ -168,12 +181,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param hueSliderCaption caption text.
      */
-    void setHueSliderCaption(String hueSliderCaption);
+    void setHueSliderCaption(@Nullable String hueSliderCaption);
     /**
      * Return caption of the slider for HUE.
      *
      * @return caption text.
      */
+    @Nullable
     String getHueSliderCaption();
 
     /**
@@ -181,12 +195,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param saturationSliderCaption caption text.
      */
-    void setSaturationSliderCaption(String saturationSliderCaption);
+    void setSaturationSliderCaption(@Nullable String saturationSliderCaption);
     /**
      * Return caption of the slider for saturation.
      *
      * @return caption text.
      */
+    @Nullable
     String getSaturationSliderCaption();
 
     /**
@@ -194,12 +209,13 @@ public interface ColorPicker extends Field<String>, Component.Focusable {
      *
      * @param valueSliderCaption caption text.
      */
-    void setValueSliderCaption(String valueSliderCaption);
+    void setValueSliderCaption(@Nullable String valueSliderCaption);
     /**
      * Return caption of the slider for value.
      *
      * @return caption text.
      */
+    @Nullable
     String getValueSliderCaption();
 
     /**

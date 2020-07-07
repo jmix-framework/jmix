@@ -85,6 +85,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     /**
      * @return previously set minimal CSS width or null
      */
+    @Nullable
     String getMinWidth();
 
     /**
@@ -96,6 +97,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     /**
      * @return previously set maximum CSS width or null
      */
+    @Nullable
     String getMaxWidth();
 
     /**
@@ -107,6 +109,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     /**
      * @return previously set minimum CSS height or null
      */
+    @Nullable
     String getMinHeight();
 
     /**
@@ -118,6 +121,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     /**
      * @return previously set maximum CSS height or null
      */
+    @Nullable
     String getMaxHeight();
 
     /**
@@ -190,11 +194,12 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      *
      * @param componentId component's ID in XML. If null, then first focusable component will be focused
      */
-    void setFocusComponent(String componentId);
+    void setFocusComponent(@Nullable String componentId);
 
     /**
      * @return an ID of the component which is set to be focused after the screen is opened
      */
+    @Nullable
     String getFocusComponent();
 
     /**

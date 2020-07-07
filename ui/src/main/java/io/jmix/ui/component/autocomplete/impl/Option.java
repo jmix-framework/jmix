@@ -16,13 +16,16 @@
 
 package io.jmix.ui.component.autocomplete.impl;
 
+import io.jmix.core.common.util.Preconditions;
+
+import javax.annotation.Nullable;
+
 public class Option {
     private String value;
     private String description;
 
-    public Option(String value, String description) {
-        if (value == null)
-            throw new NullPointerException("No value passed");
+    public Option(String value, @Nullable String description) {
+        Preconditions.checkNotNullArgument(value, "No value passed");
 
         this.value = value;
         this.description = description;
@@ -32,6 +35,7 @@ public class Option {
         return value;
     }
 
+    @Nullable
     public String getDescription() {
         return description;
     }

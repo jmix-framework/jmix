@@ -19,6 +19,8 @@ package io.jmix.ui.sys;
 import io.jmix.ui.navigation.RouteDefinition;
 import org.springframework.core.io.Resource;
 
+import javax.annotation.Nullable;
+
 public final class UiControllerDefinition {
 
     private final String id;
@@ -26,7 +28,7 @@ public final class UiControllerDefinition {
     private final Resource resource;
     private final RouteDefinition routeDefinition;
 
-    public UiControllerDefinition(String id, String controllerClass, Resource resource, RouteDefinition routeDefinition) {
+    public UiControllerDefinition(String id, String controllerClass, Resource resource, @Nullable RouteDefinition routeDefinition) {
         this.id = id;
         this.controllerClass = controllerClass;
         this.resource = resource;
@@ -48,6 +50,7 @@ public final class UiControllerDefinition {
         return controllerClass;
     }
 
+    @Nullable
     public RouteDefinition getRouteDefinition() {
         return routeDefinition;
     }

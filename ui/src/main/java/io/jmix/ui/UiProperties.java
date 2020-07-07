@@ -24,6 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.ui")
@@ -322,6 +323,7 @@ public class UiProperties {
         return theme;
     }
 
+    @Nullable
     public String getEmbeddedResourcesRoot() {
         return embeddedResourcesRoot;
     }

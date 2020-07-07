@@ -22,6 +22,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.ItemCaptionGenerator;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -159,7 +160,7 @@ public class JmixSearchSelectPickerField<T> extends JmixPickerField<T> {
         getFieldInternal().setPopupWidth(width);
     }
 
-    public void setFilterHandler(Consumer<String> filterHandler) {
+    public void setFilterHandler(@Nullable Consumer<String> filterHandler) {
         getFieldInternal().setFilterHandler(filter -> {
             if (filterHandler != null) {
                 filterHandler.accept(filter);
@@ -167,7 +168,7 @@ public class JmixSearchSelectPickerField<T> extends JmixPickerField<T> {
         });
     }
 
-    public void setOptionsStyleProvider(Function<T, String> styleProvider) {
+    public void setOptionsStyleProvider(@Nullable Function<T, String> styleProvider) {
         getFieldInternal().setStyleGenerator(item ->
                 styleProvider != null ?
                         styleProvider.apply(item) : "");

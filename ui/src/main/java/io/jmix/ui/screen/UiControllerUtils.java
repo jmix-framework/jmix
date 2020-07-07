@@ -24,6 +24,7 @@ import io.jmix.ui.component.Window;
 import io.jmix.ui.model.ScreenData;
 import org.springframework.context.ApplicationListener;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
@@ -111,6 +112,7 @@ public final class UiControllerUtils {
         }
     }
 
+    @Nullable
     public static List<ApplicationListener> getUiEventListeners(FrameOwner frameOwner) {
         if (frameOwner instanceof Screen) {
             return ((Screen) frameOwner).getUiEventListeners();

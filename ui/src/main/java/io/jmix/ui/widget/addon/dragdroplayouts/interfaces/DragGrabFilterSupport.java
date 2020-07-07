@@ -13,6 +13,8 @@
  */
 package io.jmix.ui.widget.addon.dragdroplayouts.interfaces;
 
+import javax.annotation.Nullable;
+
 /**
  * Container that has {@link DragGrabFilter}.
  */
@@ -20,10 +22,11 @@ public interface DragGrabFilterSupport {
     /**
      * @return Drag grab filter
      */
+    @Nullable
     DragGrabFilter getDragGrabFilter();
 
     /**
      * @param dragGrabFilter drag grab filter
      */
-    void setDragGrabFilter(DragGrabFilter dragGrabFilter);
+    void setDragGrabFilter(@Nullable DragGrabFilter dragGrabFilter);
 }

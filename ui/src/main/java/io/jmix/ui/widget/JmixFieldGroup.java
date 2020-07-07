@@ -18,6 +18,8 @@ package io.jmix.ui.widget;
 import io.jmix.ui.widget.client.fieldgroup.JmixFieldGroupState;
 import com.vaadin.ui.Layout;
 
+import javax.annotation.Nullable;
+
 public class JmixFieldGroup extends JmixGroupBox {
     public JmixFieldGroup() {
         setLayout(new JmixFormLayout());
@@ -49,7 +51,7 @@ public class JmixFieldGroup extends JmixGroupBox {
         return (JmixFormLayout) super.getContent();
     }
 
-    public void setLayout(Layout newLayout) {
+    public void setLayout(@Nullable Layout newLayout) {
         if (newLayout == null) {
             newLayout = new JmixFormLayout();
         }

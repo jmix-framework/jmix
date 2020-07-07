@@ -98,7 +98,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void setValueFromUser(V value) {
+    public void setValueFromUser(@Nullable V value) {
         checkValueType(value);
 
         setValueToPresentation(convertToPresentation(value));
@@ -210,7 +210,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Nullable
-    protected Resource generateOptionIcon(V item) {
+    protected Resource generateOptionIcon(@Nullable V item) {
         if (iconProvider == null) {
             return null;
         }
@@ -264,7 +264,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
         component.addButton(vButton, index);
         actionButtons.put(action, vButton);
 
-        if (StringUtils.isNotEmpty(getDebugId())) {
+        if (StringUtils.isNotEmpty(getDebugId()) && AppUI.getCurrent() != null) {
             TestIdManager testIdManager = AppUI.getCurrent().getTestIdManager();
             // Set debug id
             vButton.setId(testIdManager.getTestId(getDebugId() + "_" + action.getId()));
@@ -315,7 +315,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
         });
     }
 
-    protected void setPickerButtonIcon(JmixButton button, String icon) {
+    protected void setPickerButtonIcon(JmixButton button, @Nullable String icon) {
         if (!StringUtils.isEmpty(icon)) {
             Resource iconResource = getIconResource(icon);
             button.setIcon(iconResource);
@@ -345,9 +345,9 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
-        if (id != null) {
+        if (id != null && AppUI.getCurrent() != null) {
             String debugId = getDebugId();
 
             TestIdManager testIdManager = AppUI.getCurrent().getTestIdManager();

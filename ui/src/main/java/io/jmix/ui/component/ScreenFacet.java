@@ -27,6 +27,7 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.UiControllerProperty;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -55,11 +56,12 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      * @param screenId screen id
      */
     @StudioProperty(type = PropertyType.STRING)
-    void setScreenId(String screenId);
+    void setScreenId(@Nullable String screenId);
 
     /**
      * @return screen id
      */
+    @Nullable
     String getScreenId();
 
     /**
@@ -68,11 +70,12 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      * @param screenClass screen class
      */
     @StudioProperty(type = PropertyType.JAVA_CLASS_NAME)
-    void setScreenClass(Class<S> screenClass);
+    void setScreenClass(@Nullable Class<S> screenClass);
 
     /**
      * @return class of screen to open
      */
+    @Nullable
     Class<S> getScreenClass();
 
     /**
@@ -92,11 +95,12 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      *
      * @param optionsProvider screen options provider
      */
-    void setOptionsProvider(Supplier<ScreenOptions> optionsProvider);
+    void setOptionsProvider(@Nullable Supplier<ScreenOptions> optionsProvider);
 
     /**
      * @return {@link ScreenOptions} provider
      */
+    @Nullable
     Supplier<ScreenOptions> getOptionsProvider();
 
     /**
@@ -109,11 +113,13 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
     /**
      * @return properties that will be injected into opened screen via public setters.
      */
+    @Nullable
     Collection<UiControllerProperty> getProperties();
 
     /**
      * @return id of action that triggers screen
      */
+    @Nullable
     String getActionTarget();
 
     /**
@@ -122,11 +128,12 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      * @param actionId action id
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setActionTarget(String actionId);
+    void setActionTarget(@Nullable String actionId);
 
     /**
      * @return id of button that triggers screen
      */
+    @Nullable
     String getButtonTarget();
 
     /**
@@ -135,7 +142,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      * @param buttonId button id
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setButtonTarget(String buttonId);
+    void setButtonTarget(@Nullable String buttonId);
 
     /**
      * @return new screen instance

@@ -78,7 +78,7 @@ public class SizeWithUnit implements Serializable {
      *                    Use {@code null} for no default unit.
      * @return an object containing the parsed value and unit
      */
-    public static SizeWithUnit parseStringSize(String sizeString, @Nullable SizeUnit defaultUnit) {
+    public static SizeWithUnit parseStringSize(@Nullable String sizeString, @Nullable SizeUnit defaultUnit) {
         if (StringUtils.isEmpty(sizeString) || "auto".equalsIgnoreCase(sizeString)) {
             return new SizeWithUnit(-1, SizeUnit.PIXELS);
         }
@@ -115,7 +115,7 @@ public class SizeWithUnit implements Serializable {
      * @param size the string to be parsed
      * @return an object containing the parsed value and unit
      */
-    public static SizeWithUnit parseStringSize(String size) {
+    public static SizeWithUnit parseStringSize(@Nullable String size) {
         return parseStringSize(size, null);
     }
 }

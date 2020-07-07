@@ -88,7 +88,7 @@ public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, Lo
         component.setResolution(toVaadinTimeResolution(resolution));
     }
 
-
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         return datatype;

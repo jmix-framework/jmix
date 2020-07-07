@@ -16,6 +16,8 @@
 
 package io.jmix.ui.settings.component;
 
+import javax.annotation.Nullable;
+
 public class ResizableTextAreaSettings implements ComponentSettings {
 
     protected String id;
@@ -23,16 +25,18 @@ public class ResizableTextAreaSettings implements ComponentSettings {
     protected String width;
     protected String height;
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 
+    @Nullable
     public String getWidth() {
         return width;
     }
@@ -41,6 +45,7 @@ public class ResizableTextAreaSettings implements ComponentSettings {
         this.width = width;
     }
 
+    @Nullable
     public String getHeight() {
         return height;
     }

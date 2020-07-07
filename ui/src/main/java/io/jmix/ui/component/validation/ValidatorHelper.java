@@ -30,7 +30,7 @@ import java.util.Date;
 public final class ValidatorHelper {
 
     @Nullable
-    public static NumberConstraint getNumberConstraint(Number value) {
+    public static NumberConstraint getNumberConstraint(@Nullable Number value) {
         if (value == null) {
             return null;
         }
@@ -51,7 +51,7 @@ public final class ValidatorHelper {
     }
 
     @Nullable
-    public static <T> TimeValidator getTimeConstraint(TimeSource timeSource, T value) {
+    public static <T> TimeValidator getTimeConstraint(TimeSource timeSource, @Nullable T value) {
         if (value == null) {
             return null;
         }

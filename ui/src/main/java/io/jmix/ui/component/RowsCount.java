@@ -63,6 +63,7 @@ public interface RowsCount extends Component.BelongToFrame {
     /**
      * @return a component that displays data, usually a {@link Table}. Can be null.
      */
+    @Nullable
     RowsCountTarget getRowsCountTarget();
     void setRowsCountTarget(RowsCountTarget target);
 
@@ -72,12 +73,13 @@ public interface RowsCount extends Component.BelongToFrame {
     /**
      * @return delegate which is used to get the total number of rows when user clicks "total count" or "last page".
      */
+    @Nullable
     Function<DataLoadContext, Long> getTotalCountDelegate();
 
     /**
      * Sets delegate which is used to get the total number of rows when user clicks "total count" or "last page".
      */
-    void setTotalCountDelegate(Function<DataLoadContext, Long> delegate);
+    void setTotalCountDelegate(@Nullable Function<DataLoadContext, Long> delegate);
 
     /**
      * Event that is fired before refreshing the datasource when the user clicks next, previous, etc.

@@ -18,6 +18,8 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.UiComponents;
 
+import javax.annotation.Nullable;
+
 /**
  * UI component that represents a dialog window of application.
  */
@@ -33,7 +35,7 @@ public interface DialogWindow extends Window {
      *
      * @param dialogWidth width
      */
-    void setDialogWidth(String dialogWidth);
+    void setDialogWidth(@Nullable String dialogWidth);
     /**
      * @return dialog width
      */
@@ -48,7 +50,7 @@ public interface DialogWindow extends Window {
      *
      * @param dialogHeight height
      */
-    void setDialogHeight(String dialogHeight);
+    void setDialogHeight(@Nullable String dialogHeight);
     /**
      * @return height
      */
@@ -63,10 +65,11 @@ public interface DialogWindow extends Window {
      *
      * @param stylename style name
      */
-    void setDialogStylename(String stylename);
+    void setDialogStylename(@Nullable String stylename);
     /**
      * @return custom style name
      */
+    @Nullable
     String getDialogStylename();
 
     /**

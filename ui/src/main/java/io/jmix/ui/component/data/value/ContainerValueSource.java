@@ -129,6 +129,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
         }
     }
 
+    @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
         return container.getEntityMetaClass();

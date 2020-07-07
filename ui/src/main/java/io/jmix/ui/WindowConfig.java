@@ -302,6 +302,7 @@ public class WindowConfig {
         }
     }
 
+    @Nullable
     protected RouteDefinition loadRouteDefinition(Element screenElement) {
         String screenId = screenElement.attributeValue("id");
         String route = screenElement.attributeValue("route");

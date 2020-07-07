@@ -160,6 +160,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
         this.query = query;
     }
 
+    @Nullable
     @Override
     public Condition getCondition() {
         return condition;
@@ -208,13 +209,14 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
         this.maxResults = maxResults;
     }
 
+    @Nullable
     @Override
     public Sort getSort() {
         return sort;
     }
 
     @Override
-    public void setSort(Sort sort) {
+    public void setSort(@Nullable Sort sort) {
         if (sort == null || sort.getOrders().isEmpty()) {
             this.sort = null;
         } else {
@@ -258,7 +260,7 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     }
 
     @Override
-    public void setStoreName(String name) {
+    public void setStoreName(@Nullable String name) {
         storeName = name != null ? name : Stores.MAIN;
     }
 

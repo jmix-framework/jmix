@@ -214,13 +214,14 @@ public class WebButton extends WebAbstractComponent<JmixButton> implements Butto
         return component.isCaptionAsHtml();
     }
 
+    @Nullable
     @Override
     public KeyCombination getShortcutCombination() {
         return shortcut;
     }
 
     @Override
-    public void setShortcutCombination(KeyCombination shortcut) {
+    public void setShortcutCombination(@Nullable KeyCombination shortcut) {
         KeyCombination oldValue = this.shortcut;
         if (!Objects.equals(oldValue, shortcut)) {
             this.shortcut = shortcut;
@@ -237,7 +238,7 @@ public class WebButton extends WebAbstractComponent<JmixButton> implements Butto
     }
 
     @Override
-    public void setShortcut(String shortcut) {
+    public void setShortcut(@Nullable String shortcut) {
         if (shortcut != null) {
             setShortcutCombination(KeyCombination.create(shortcut));
         } else {

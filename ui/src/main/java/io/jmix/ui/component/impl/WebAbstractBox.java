@@ -129,6 +129,7 @@ public abstract class WebAbstractBox<T extends AbstractOrderedLayout>
         }
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         checkNotNullArgument(id);

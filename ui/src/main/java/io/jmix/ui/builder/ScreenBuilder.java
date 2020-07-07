@@ -23,6 +23,7 @@ import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -124,6 +125,7 @@ public class ScreenBuilder {
     /**
      * Returns screen id set by {@link #withScreenId(String)}.
      */
+    @Nullable
     public String getScreenId() {
         return screenId;
     }

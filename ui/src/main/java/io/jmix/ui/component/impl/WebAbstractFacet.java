@@ -54,13 +54,14 @@ public class WebAbstractFacet implements Facet {
         return false;
     }
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 

@@ -18,6 +18,7 @@ package io.jmix.ui.widget;
 
 import io.jmix.ui.widget.client.searchselect.JmixSearchSelectState;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class JmixSearchSelect<V> extends JmixComboBox<V> {
@@ -50,6 +51,7 @@ public class JmixSearchSelect<V> extends JmixComboBox<V> {
         return false;
     }
 
+    @Nullable
     @Override
     public NewItemProvider<V> getNewItemProvider() {
         return null;

@@ -18,9 +18,12 @@ package io.jmix.ui.widget;
 
 import com.vaadin.ui.Component;
 
+import javax.annotation.Nullable;
+
 public interface UploadComponent extends Component, Component.Focusable {
+    @Nullable
     String getAccept();
-    void setAccept(String accept);
+    void setAccept(@Nullable String accept);
 
     void setDescription(String description);
 }

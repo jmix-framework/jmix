@@ -79,7 +79,7 @@ public class InputDialogAction extends AbstractAction {
      * @param caption caption
      * @return current instance of action
      */
-    public InputDialogAction withCaption(String caption) {
+    public InputDialogAction withCaption(@Nullable String caption) {
         this.caption = caption;
         return this;
     }
@@ -90,7 +90,7 @@ public class InputDialogAction extends AbstractAction {
      * @param description description
      * @return current instance of action
      */
-    public InputDialogAction withDescription(String description) {
+    public InputDialogAction withDescription(@Nullable String description) {
         this.description = description;
         return this;
     }
@@ -101,7 +101,7 @@ public class InputDialogAction extends AbstractAction {
      * @param icon icon
      * @return current instance of action
      */
-    public InputDialogAction withIcon(String icon) {
+    public InputDialogAction withIcon(@Nullable String icon) {
         this.icon = icon;
         return this;
     }
@@ -123,7 +123,7 @@ public class InputDialogAction extends AbstractAction {
      * @param shortcut shortcut
      * @return current instance of action
      */
-    public InputDialogAction withShortcut(String shortcut) {
+    public InputDialogAction withShortcut(@Nullable String shortcut) {
         if (shortcut != null) {
             this.shortcut = KeyCombination.create(shortcut);
         }
@@ -179,7 +179,7 @@ public class InputDialogAction extends AbstractAction {
 
         protected InputDialog inputDialog;
 
-        public InputDialogActionPerformed(Action source, Component component, InputDialog inputDialog) {
+        public InputDialogActionPerformed(Action source, Component component, @Nullable InputDialog inputDialog) {
             super(source, component);
 
             this.inputDialog = inputDialog;
@@ -188,6 +188,7 @@ public class InputDialogAction extends AbstractAction {
         /**
          * @return opened input dialog
          */
+        @Nullable
         public InputDialog getInputDialog() {
             return inputDialog;
         }

@@ -159,6 +159,7 @@ public interface Frame
             return messageMode;
         }
 
+        @Nullable
         public Float getWidth() {
             return width;
         }
@@ -225,6 +226,7 @@ public interface Frame
             return instance;
         }
 
+        @Nullable
         public Boolean getModal() {
             return modal;
         }
@@ -246,6 +248,7 @@ public interface Frame
         /**
          * @return true if a window can be closed by click on outside window area
          */
+        @Nullable
         public Boolean getCloseOnClickOutside() {
             return closeOnClickOutside;
         }
@@ -275,6 +278,7 @@ public interface Frame
         /**
          * @return true if a window is maximized across the screen.
          */
+        @Nullable
         public Boolean getMaximized() {
             return maximized;
         }

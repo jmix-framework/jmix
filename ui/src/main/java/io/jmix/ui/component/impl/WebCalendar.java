@@ -37,6 +37,7 @@ import io.jmix.ui.widget.JmixCalendar;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.DayOfWeek;
@@ -145,6 +146,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         this.datatype = datatype;
     }
 
+    @Nonnull
     @Override
     public Datatype<V> getDatatype() {
         if (datatype == null) {
@@ -165,11 +167,11 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     protected MetaProperty getMetaProperty() {
         if (getEventProvider() instanceof EntityCalendarEventProvider) {
             EntityCalendarEventProvider eventProvider = (EntityCalendarEventProvider) getEventProvider();
-            String property = eventProvider.getStartDateProperty().isEmpty()
+            String property = eventProvider.getStartDateProperty() == null || eventProvider.getStartDateProperty().isEmpty()
                     ? eventProvider.getEndDateProperty()
                     : eventProvider.getStartDateProperty();
 
-            if (!property.isEmpty()) {
+            if (property != null && !property.isEmpty()) {
                 MetaClass metaClass = ((ContainerCalendarEventProvider) eventProvider).getContainer().getEntityMetaClass();
                 return metaClass.getProperty(property);
             }
@@ -177,7 +179,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         return null;
     }
 
-    protected void checkDatatypeMismatch(Datatype datatype) {
+    protected void checkDatatypeMismatch(@Nullable Datatype datatype) {
         MetaProperty metaProperty = getMetaProperty();
         if (datatype != null
                 && metaProperty != null
@@ -188,26 +190,29 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     }
 
     @Override
-    public void setStartDate(V date) {
+    public void setStartDate(@Nullable V date) {
         component.setStartDate(convertToPresentation(date));
     }
 
+    @Nullable
     @Override
     public V getStartDate() {
         return convertToModel(component.getStartDate());
     }
 
     @Override
-    public void setEndDate(V date) {
+    public void setEndDate(@Nullable V date) {
         component.setEndDate(convertToPresentation(date));
     }
 
+    @Nullable
     @Override
     public V getEndDate() {
         return convertToModel(component.getEndDate());
     }
 
-    protected Date convertToPresentation(V date) {
+    @Nullable
+    protected Date convertToPresentation(@Nullable V date) {
         if (date == null) {
             return null;
         }
@@ -220,7 +225,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     }
 
     @SuppressWarnings("unchecked")
-    protected V convertToModel(Date date) {
+    @Nullable
+    protected V convertToModel(@Nullable Date date) {
         if (date == null) {
             return null;
         }
@@ -314,7 +320,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     }
 
     @Override
-    public void setEventProvider(CalendarEventProvider calendarEventProvider) {
+    public void setEventProvider(@Nullable CalendarEventProvider calendarEventProvider) {
         if (this.calendarEventProvider instanceof EntityCalendarEventProvider) {
             ((EntityCalendarEventProvider) this.calendarEventProvider).unbind();
         }
@@ -445,7 +451,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     }
 
     @Nullable
-    protected Date calculateNewEnd(com.vaadin.v7.ui.components.calendar.event.CalendarEvent calendarEvent, Date newStart) {
+    protected Date calculateNewEnd(com.vaadin.v7.ui.components.calendar.event.CalendarEvent calendarEvent, @Nullable Date newStart) {
         Date start = calendarEvent.getStart();
         Date end = calendarEvent.getEnd();
         if (start != null
@@ -577,7 +583,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
         setNavigationButtonsStyle(navigationButtonsVisible);
     }

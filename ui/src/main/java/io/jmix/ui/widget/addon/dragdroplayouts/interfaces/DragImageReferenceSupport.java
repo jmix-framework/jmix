@@ -13,6 +13,8 @@
  */
 package io.jmix.ui.widget.addon.dragdroplayouts.interfaces;
 
+import javax.annotation.Nullable;
+
 public interface DragImageReferenceSupport {
 
     /**
@@ -24,12 +26,13 @@ public interface DragImageReferenceSupport {
      *            The image provider
      * 
      */
-    void setDragImageProvider(DragImageProvider provider);
+    void setDragImageProvider(@Nullable DragImageProvider provider);
 
     /**
      * Returns the drag image provider
      * 
      * @return the image provider
      */
+    @Nullable
     DragImageProvider getDragImageProvider();
 }

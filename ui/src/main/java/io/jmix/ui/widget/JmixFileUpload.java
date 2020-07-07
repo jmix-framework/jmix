@@ -30,6 +30,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -235,6 +236,7 @@ public class JmixFileUpload extends AbstractComponent
         }
     }
 
+    @Nullable
     @Override
     public String getAccept() {
         return getState(false).accept;
@@ -246,17 +248,18 @@ public class JmixFileUpload extends AbstractComponent
      * @param accept mime types, comma separated
      */
     @Override
-    public void setAccept(String accept) {
+    public void setAccept(@Nullable String accept) {
         if (!Objects.equals(accept, getAccept())) {
             getState().accept = accept;
         }
     }
 
+    @Nullable
     public Set<String> getPermittedExtensions() {
         return getState(false).permittedExtensions;
     }
 
-    public void setPermittedExtensions(Set<String> permittedExtensions) {
+    public void setPermittedExtensions(@Nullable Set<String> permittedExtensions) {
         getState().permittedExtensions = permittedExtensions;
     }
 
@@ -271,39 +274,43 @@ public class JmixFileUpload extends AbstractComponent
         getState().fileSizeLimit = fileSizeLimit;
     }
 
+    @Nullable
     public Receiver getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(Receiver receiver) {
+    public void setReceiver(@Nullable Receiver receiver) {
         this.receiver = receiver;
     }
 
+    @Nullable
     public Component getDropZone() {
         return (Component) getState(false).dropZone;
     }
 
-    public void setDropZone(Component component) {
+    public void setDropZone(@Nullable Component component) {
         if (getDropZone() != component) {
             getState().dropZone = component;
         }
     }
 
-    public void setPasteZone(Component component) {
+    public void setPasteZone(@Nullable Component component) {
         if (getPasteZone() != component) {
             getState().pasteZone = component;
         }
     }
 
+    @Nullable
     public Component getPasteZone() {
         return (Component) getState(false).pasteZone;
     }
 
+    @Nullable
     public String getDropZonePrompt() {
         return getState(false).dropZonePrompt;
     }
 
-    public void setDropZonePrompt(String dropZonePrompt) {
+    public void setDropZonePrompt(@Nullable String dropZonePrompt) {
         if (!Objects.equals(getDropZonePrompt(), dropZonePrompt)) {
             getState().dropZonePrompt = dropZonePrompt;
         }

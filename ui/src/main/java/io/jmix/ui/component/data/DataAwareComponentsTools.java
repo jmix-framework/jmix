@@ -38,6 +38,8 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.*;
 import java.time.*;
@@ -185,7 +187,7 @@ public class DataAwareComponentsTools {
      * @param datatype    datatype
      * @param valueSource component's value source
      */
-    public void checkValueSourceDatatypeMismatch(Datatype datatype, ValueSource valueSource) {
+    public void checkValueSourceDatatypeMismatch(@Nullable Datatype datatype, @Nullable ValueSource valueSource) {
         if (valueSource != null && datatype != null) {
             if (!valueSource.getType().equals(datatype.getJavaClass())) {
                 throw new IllegalArgumentException("ValueSource and Datatype have different types. ValueSource:"

@@ -64,6 +64,7 @@ public interface DataLoader {
     /**
      * Returns the root condition which is used together with the query when loading entities.
      */
+    @Nullable
     Condition getCondition();
 
     /**

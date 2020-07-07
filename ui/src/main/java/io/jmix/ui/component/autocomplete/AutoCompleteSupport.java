@@ -15,9 +15,12 @@
  */
 package io.jmix.ui.component.autocomplete;
 
+import javax.annotation.Nullable;
+
 public interface AutoCompleteSupport {
 
     int getCursorPosition();
 
+    @Nullable
     Object getValue();
 }

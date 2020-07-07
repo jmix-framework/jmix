@@ -15,12 +15,15 @@
  */
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * Component for uploading files from client to server.
  */
 public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
     String NAME = "fileUpload";
 
+    @Nullable
     String getFileName();
 
     /**
@@ -28,5 +31,5 @@ public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
      * <p>
      * By default: "attachment (file_size Kb)".
      */
-    void setFileName(String filename);
+    void setFileName(@Nullable String filename);
 }

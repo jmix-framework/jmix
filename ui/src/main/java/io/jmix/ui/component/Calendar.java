@@ -43,19 +43,21 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     /**
      * Set start date for the calendar range.
      */
-    void setStartDate(V date);
+    void setStartDate(@Nullable V date);
     /**
      * @return the start date for the calendar range.
      */
+    @Nullable
     V getStartDate();
 
     /**
      * Set end date for the calendar's range.
      */
-    void setEndDate(V date);
+    void setEndDate(@Nullable V date);
     /**
      * @return the last date for the calendar range.
      */
+    @Nullable
     V getEndDate();
 
     /**
@@ -139,7 +141,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * @param calendarEventProvider an event provider with events
      * @see ContainerCalendarEventProvider
      */
-    void setEventProvider(CalendarEventProvider calendarEventProvider);
+    void setEventProvider(@Nullable CalendarEventProvider calendarEventProvider);
     /**
      * @return calendar event provider.
      */
@@ -338,8 +340,8 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
             this.entity = entity;
         }
 
-        public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart, V newEnd,
-                                      @Nullable JmixEntity entity) {
+        public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, @Nullable V newStart,
+                                      @Nullable V newEnd, @Nullable JmixEntity entity) {
             super(calendar);
 
             this.calendarEvent = calendarEvent;
@@ -370,6 +372,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         /**
          * @return the event start date
          */
+        @Nullable
         public V getNewStart() {
             return newStart;
         }
@@ -377,6 +380,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         /**
          * @return the event end date
          */
+        @Nullable
         public V getNewEnd() {
             return newEnd;
         }
@@ -427,7 +431,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     class CalendarDateClickEvent<V> extends EventObject {
         protected V date;
 
-        public CalendarDateClickEvent(Calendar<V> calendar, V date) {
+        public CalendarDateClickEvent(Calendar<V> calendar, @Nullable V date) {
             super(calendar);
 
             this.date = date;
@@ -436,6 +440,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         /**
          * @return clicked date
          */
+        @Nullable
         public V getDate() {
             return date;
         }
@@ -540,8 +545,8 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         protected V newEnd;
         protected JmixEntity entity;
 
-        public CalendarEventResizeEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart,
-                                        V newEnd, @Nullable JmixEntity entity) {
+        public CalendarEventResizeEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, @Nullable V newStart,
+                                        @Nullable V newEnd, @Nullable JmixEntity entity) {
             super(calendar);
 
             this.calendarEvent = calendarEvent;
@@ -580,6 +585,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         /**
          * @return the event start date
          */
+        @Nullable
         public V getNewStart() {
             return newStart;
         }
@@ -587,6 +593,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         /**
          * @return the event end date
          */
+        @Nullable
         public V getNewEnd() {
             return newEnd;
         }
@@ -649,7 +656,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         protected V start;
         protected V end;
 
-        public CalendarRangeSelectEvent(Calendar<V> calendar, V start, V end) {
+        public CalendarRangeSelectEvent(Calendar<V> calendar, @Nullable V start, @Nullable V end) {
             super(calendar);
 
             this.start = start;
@@ -671,10 +678,12 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
             return getSource();
         }
 
+        @Nullable
         public V getStart() {
             return start;
         }
 
+        @Nullable
         public V getEnd() {
             return end;
         }
@@ -690,7 +699,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
 
         protected V date;
 
-        public CalendarDayClickEvent(Calendar<V> source, V date) {
+        public CalendarDayClickEvent(Calendar<V> source, @Nullable V date) {
             super(source);
 
             this.date = date;
@@ -708,6 +717,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
          *
          * @return date which user clicked on
          */
+        @Nullable
         public V getDate() {
             return date;
         }

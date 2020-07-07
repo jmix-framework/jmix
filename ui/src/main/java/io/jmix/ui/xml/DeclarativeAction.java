@@ -32,8 +32,8 @@ public class DeclarativeAction extends BaseAction {
     private Frame frame;
     private String methodName;
 
-    public DeclarativeAction(String id, String caption, String description, String icon, String enable, String visible,
-                             String methodName, @Nullable String shortcut, ActionsHolder holder) {
+    public DeclarativeAction(String id, String caption, String description, String icon, @Nullable String enable,
+                             @Nullable String visible, String methodName, @Nullable String shortcut, ActionsHolder holder) {
         super(id, shortcut);
         this.caption = caption;
         this.description = description;

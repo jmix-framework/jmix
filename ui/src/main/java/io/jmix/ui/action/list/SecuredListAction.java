@@ -25,6 +25,8 @@ import io.jmix.ui.component.ListComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 /**
  * Action that changes its {@code enabled} property depending on a selected item in a bound {@link ListComponent}.
  */
@@ -78,20 +80,22 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
     }
 
     @Override
-    public void setConstraintOperationType(ConstraintOperationType constraintOperationType) {
+    public void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType) {
         this.constraintOperationType = constraintOperationType;
     }
 
+    @Nullable
     @Override
     public ConstraintOperationType getConstraintOperationType() {
         return constraintOperationType;
     }
 
     @Override
-    public void setConstraintCode(String constraintCode) {
+    public void setConstraintCode(@Nullable String constraintCode) {
         this.constraintCode = constraintCode;
     }
 
+    @Nullable
     @Override
     public String getConstraintCode() {
         return constraintCode;

@@ -361,14 +361,15 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return getMessageTools().loadString(context.getMessagesPack(), caption);
     }
 
-    protected String loadThemeString(String value) {
+    @Nullable
+    protected String loadThemeString(@Nullable String value) {
         if (value != null && value.startsWith(ThemeConstants.PREFIX)) {
             value = getTheme().get(value.substring(ThemeConstants.PREFIX.length()));
         }
         return value;
     }
 
-    protected int loadThemeInt(String value) {
+    protected int loadThemeInt(@Nullable String value) {
         if (value != null && value.startsWith(ThemeConstants.PREFIX)) {
             value = getTheme().get(value.substring(ThemeConstants.PREFIX.length()));
         }
@@ -857,7 +858,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         }
     }
 
-    protected Optional<InstanceContainer> loadContainer(Element element, String property) {
+    protected Optional<InstanceContainer> loadContainer(Element element, @Nullable String property) {
         String containerId = element.attributeValue("dataContainer");
 
         // In case a component has only a property,

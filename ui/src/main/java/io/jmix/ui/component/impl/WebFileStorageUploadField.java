@@ -132,7 +132,7 @@ public class WebFileStorageUploadField<T> extends WebAbstractSingleFileUploadFie
         }
     }
 
-    protected void internalValueChanged(Object newValue) {
+    protected void internalValueChanged(@Nullable Object newValue) {
         fileName = newValue == null ? null : newValue.toString();
 
         if (!internalValueChangedOnUpload) {
@@ -179,6 +179,7 @@ public class WebFileStorageUploadField<T> extends WebAbstractSingleFileUploadFie
         return String.valueOf(fileStorage.getFileInfo(value));
     }
 
+    @Nullable
     @Override
     public String getFileName() {
         return super.getFileName();
@@ -187,6 +188,7 @@ public class WebFileStorageUploadField<T> extends WebAbstractSingleFileUploadFie
     /**
      * @return File id for uploaded file in {@link TemporaryStorage}
      */
+    @Nullable
     @Override
     public UUID getFileId() {
         return fileId;
@@ -243,10 +245,11 @@ public class WebFileStorageUploadField<T> extends WebAbstractSingleFileUploadFie
     }
 
     @Override
-    public void setFileStorageName(String fileStorageName) {
+    public void setFileStorageName(@Nullable String fileStorageName) {
         this.fileStorageName = fileStorageName;
     }
 
+    @Nullable
     @Override
     public String getFileStorageName() {
         return fileStorageName;

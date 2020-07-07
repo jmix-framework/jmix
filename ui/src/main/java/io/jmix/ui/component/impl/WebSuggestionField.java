@@ -314,6 +314,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         }
     }
 
+    @Nullable
     @Override
     public SearchExecutor getSearchExecutor() {
         return searchExecutor;
@@ -321,7 +322,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setSearchExecutor(SearchExecutor searchExecutor) {
+    public void setSearchExecutor(@Nullable SearchExecutor searchExecutor) {
         this.searchExecutor = searchExecutor;
     }
 
@@ -352,7 +353,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         component.setPopupStyleName(name);

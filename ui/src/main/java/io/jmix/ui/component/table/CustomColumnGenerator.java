@@ -32,6 +32,7 @@ public abstract class CustomColumnGenerator implements com.vaadin.v7.ui.Table.Co
         this.associatedRuntimeColumn = associatedRuntimeColumn;
     }
 
+    @Nullable
     public Table.Column getAssociatedRuntimeColumn() {
         return associatedRuntimeColumn;
     }

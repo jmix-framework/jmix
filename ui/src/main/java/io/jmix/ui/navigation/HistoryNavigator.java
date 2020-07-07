@@ -33,6 +33,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
@@ -173,6 +175,7 @@ public class HistoryNavigator {
         history.backward();
     }
 
+    @Nullable
     protected NavigationState findPreviousState(NavigationState requestedState) {
         if (urlChangeHandler.isRootState(requestedState)) {
             return requestedState;

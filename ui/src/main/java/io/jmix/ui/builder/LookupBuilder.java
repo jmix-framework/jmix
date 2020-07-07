@@ -189,6 +189,7 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Returns screen id set by {@link #withScreenId(String)}.
      */
+    @Nullable
     public String getScreenId() {
         return screenId;
     }
@@ -224,6 +225,7 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Returns selection handler set by {@link #withSelectHandler(Consumer)}.
      */
+    @Nullable
     public Consumer<Collection<E>> getSelectHandler() {
         return selectHandler;
     }
@@ -231,6 +233,7 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Returns selection validator set by {@link #withSelectValidator(Predicate)}.
      */
+    @Nullable
     public Predicate<LookupScreen.ValidationContext<E>> getSelectValidator() {
         return selectValidator;
     }
@@ -238,6 +241,7 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Returns the field component set by {@link #withField(HasValue)}.
      */
+    @Nullable
     public HasValue<E> getField() {
         return field;
     }
@@ -245,6 +249,7 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Returns container set by {@link #withContainer(CollectionContainer)}.
      */
+    @Nullable
     public CollectionContainer<E> getContainer() {
         return container;
     }
@@ -252,10 +257,12 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Returns list component set by {@link #withListComponent(ListComponent)}.
      */
+    @Nullable
     public ListComponent<E> getListComponent() {
         return listComponent;
     }
 
+    @Nullable
     public Function<Collection<E>, Collection<E>> getTransformation() {
         return transformation;
     }

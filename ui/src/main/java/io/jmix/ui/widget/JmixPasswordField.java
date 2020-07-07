@@ -20,6 +20,7 @@ import io.jmix.ui.widget.client.passwordfield.JmixPasswordFieldState;
 import com.vaadin.shared.Connector;
 import com.vaadin.ui.PasswordField;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class JmixPasswordField extends PasswordField {
@@ -48,17 +49,18 @@ public class JmixPasswordField extends PasswordField {
         }
     }
 
-    public void setCapsLockIndicator(Connector capsLockIndicator) {
+    public void setCapsLockIndicator(@Nullable Connector capsLockIndicator) {
         getState().capsLockIndicator = capsLockIndicator;
     }
 
-    public void setHtmlName(String htmlName) {
+    public void setHtmlName(@Nullable String htmlName) {
         String oldHtmlName = getState(false).htmlName;
         if (!Objects.equals(htmlName, oldHtmlName)) {
             getState().htmlName = htmlName;
         }
     }
 
+    @Nullable
     public String getHtmlName() {
         return getState(false).htmlName;
     }

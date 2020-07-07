@@ -32,6 +32,7 @@ import io.jmix.ui.widget.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -80,7 +81,7 @@ public class TablePresentationsLayout extends VerticalLayout {
 
         table.getPresentations().addListener(new PresentationsChangeListener() {
             @Override
-            public void currentPresentationChanged(io.jmix.ui.presentation.TablePresentations presentations, Object oldPresentationId) {
+            public void currentPresentationChanged(io.jmix.ui.presentation.TablePresentations presentations, @Nullable Object oldPresentationId) {
                 table.getPresentations().commit();
                 if (presentationsMenuMap != null) {
                     // simple change current item
@@ -110,7 +111,7 @@ public class TablePresentationsLayout extends VerticalLayout {
             }
 
             @Override
-            public void defaultPresentationChanged(io.jmix.ui.presentation.TablePresentations presentations, Object oldPresentationId) {
+            public void defaultPresentationChanged(io.jmix.ui.presentation.TablePresentations presentations, @Nullable Object oldPresentationId) {
                 if (presentationsMenuMap != null) {
                     if (oldPresentationId != null) {
                         if (oldPresentationId instanceof TablePresentation)
@@ -313,6 +314,7 @@ public class TablePresentationsLayout extends VerticalLayout {
         });
     }
 
+    @Nullable
     protected PresentationActionsBuilder getPresentationActionsBuilder() {
         if (presentationActionsBuilder == null)
             presentationActionsBuilder = beanLocator.getPrototype(PresentationActionsBuilder.NAME, table, settingsBinder);

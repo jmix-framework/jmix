@@ -189,6 +189,7 @@ public class CollectionContainerImpl<E extends JmixEntity>
         return events.subscribe(CollectionChangeEvent.class, (Consumer) listener);
     }
 
+    @Nullable
     @Override
     public Sorter getSorter() {
         return sorter;

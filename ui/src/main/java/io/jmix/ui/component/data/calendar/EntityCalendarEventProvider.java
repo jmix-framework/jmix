@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component.data.calendar;
 
+import javax.annotation.Nullable;
+
 /**
  * An event provider that contains entities.
  */
@@ -31,6 +33,7 @@ public interface EntityCalendarEventProvider {
     /**
      * @return the name of the property that represents start date of event
      */
+    @Nullable
     String getStartDateProperty();
 
     /**
@@ -43,6 +46,7 @@ public interface EntityCalendarEventProvider {
     /**
      * @return the name of the property that represents end date of event
      */
+    @Nullable
     String getEndDateProperty();
 
     /**
@@ -55,6 +59,7 @@ public interface EntityCalendarEventProvider {
     /**
      * @return the name of the property that represents caption of event
      */
+    @Nullable
     String getCaptionProperty();
 
     /**
@@ -67,6 +72,7 @@ public interface EntityCalendarEventProvider {
     /**
      * @return the name of the property that represents description of event
      */
+    @Nullable
     String getDescriptionProperty();
 
     /**
@@ -79,6 +85,7 @@ public interface EntityCalendarEventProvider {
     /**
      * @return the name of the property that represents style name of event
      */
+    @Nullable
     String getStyleNameProperty();
 
     /**
@@ -91,6 +98,7 @@ public interface EntityCalendarEventProvider {
     /**
      * @return {@code true} if this event is an all-day event, {@code false} otherwise
      */
+    @Nullable
     String getIsAllDayProperty();
 
     void unbind();

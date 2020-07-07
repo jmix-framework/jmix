@@ -16,6 +16,8 @@ package io.jmix.ui.widget.addon.dragdroplayouts.interfaces;
 import io.jmix.ui.widget.addon.dragdroplayouts.DragCaption;
 import com.vaadin.ui.Component;
 
+import javax.annotation.Nullable;
+
 /**
  * Interface that provides custom {@link DragCaption} for a child component. <br>
  * The drag caption will be shown instead of the component when the user drag a component in the layout. <br>
@@ -23,5 +25,6 @@ import com.vaadin.ui.Component;
  * It is the analogue of {@link DragImageProvider} but it does not require additional components for a dragged caption.
  */
 public interface DragCaptionProvider {
+    @Nullable
     DragCaption getDragCaption(Component component);
 }

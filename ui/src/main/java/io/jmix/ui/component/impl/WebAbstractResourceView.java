@@ -84,10 +84,11 @@ public abstract class WebAbstractResourceView<T extends AbstractEmbedded> extend
     }
 
     @Override
-    public void setAlternateText(String alternateText) {
+    public void setAlternateText(@Nullable String alternateText) {
         component.setAlternateText(alternateText);
     }
 
+    @Nullable
     @Override
     public String getAlternateText() {
         return component.getAlternateText();

@@ -16,6 +16,8 @@
 
 package io.jmix.ui.executor;
 
+import javax.annotation.Nullable;
+
 /**
  * Task handler for {@link BackgroundTask}.
  */
@@ -42,6 +44,7 @@ public interface BackgroundTaskHandler<V> {
      * @return task's result returned from {@link BackgroundTask#run(TaskLifeCycle)} method
      */
     @ExecutedOnUIThread
+    @Nullable
     V getResult();
 
     /**

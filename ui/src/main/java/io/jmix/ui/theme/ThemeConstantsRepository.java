@@ -27,6 +27,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -135,6 +137,7 @@ public class ThemeConstantsRepository {
         }
     }
 
+    @Nullable
     public ThemeConstants getConstants(String themeName) {
         checkInitialized();
 

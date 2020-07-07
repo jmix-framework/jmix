@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 /**
@@ -34,6 +35,7 @@ public interface BrowserFrame extends ResourceView {
     /**
      * @return value of the attribute sandbox
      */
+    @Nullable
     String getSandbox();
 
     /**
@@ -41,7 +43,7 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param value sandbox
      */
-    void setSandbox(String value);
+    void setSandbox(@Nullable String value);
 
     /**
      * Sets value of the attribute sandbox.
@@ -55,7 +57,7 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param sandboxSet EnumSet of {@link Sandbox}
      */
-    void setSandbox(EnumSet<Sandbox> sandboxSet);
+    void setSandbox(@Nullable EnumSet<Sandbox> sandboxSet);
 
     /**
      * Standard values of the attribute sandbox of iframe HTML element. The value of the attribute can either be
@@ -119,7 +121,7 @@ public interface BrowserFrame extends ResourceView {
          */
         DENY_ALL("");
 
-        private String value;
+        private final String value;
 
         Sandbox(String value) {
             this.value = value;
@@ -137,11 +139,12 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param value inline HTML code
      */
-    void setSrcdoc(String value);
+    void setSrcdoc(@Nullable String value);
 
     /**
      * @return value of the attribute srcdoc
      */
+    @Nullable
     String getSrcdoc();
 
     /**
@@ -149,7 +152,7 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param value allow
      */
-    void setAllow(String value);
+    void setAllow(@Nullable String value);
 
     /**
      * Sets value of the attribute allow. Specifies a feature policy for the iframe.
@@ -164,11 +167,12 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param allowSet EnumSet of {@link Allow}
      */
-    void setAllow(EnumSet<Allow> allowSet);
+    void setAllow(@Nullable EnumSet<Allow> allowSet);
 
     /**
      * @return value of the attribute allow
      */
+    @Nullable
     String getAllow();
 
     /**
@@ -216,7 +220,7 @@ public interface BrowserFrame extends ResourceView {
          */
         VR("vr");
 
-        private String value;
+        private final String value;
 
         Allow(String value) {
             this.value = value;
@@ -230,6 +234,7 @@ public interface BrowserFrame extends ResourceView {
     /**
      * @return value of the attribute referrerpolicy
      */
+    @Nullable
     String getReferrerPolicy();
 
     /**
@@ -238,7 +243,7 @@ public interface BrowserFrame extends ResourceView {
      *
      * @param value referrerpolicy
      */
-    void setReferrerPolicy(String value);
+    void setReferrerPolicy(@Nullable String value);
 
     /**
      * Sets value of the attribute referrerpolicy.
@@ -288,7 +293,7 @@ public interface BrowserFrame extends ResourceView {
          */
         UNSAFE_URL("unsafe-url");
 
-        private String value;
+        private final String value;
 
         ReferrerPolicy(String value) {
             this.value = value;

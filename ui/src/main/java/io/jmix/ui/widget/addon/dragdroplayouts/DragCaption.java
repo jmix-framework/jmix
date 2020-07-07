@@ -16,6 +16,8 @@ package io.jmix.ui.widget.addon.dragdroplayouts;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.ui.ContentMode;
 
+import javax.annotation.Nullable;
+
 /**
  * Drag caption definition: icon and caption.
  */
@@ -24,17 +26,18 @@ public class DragCaption {
     protected Resource icon;
     protected ContentMode contentMode = ContentMode.TEXT;
 
-    public DragCaption(String caption, Resource icon) {
+    public DragCaption(String caption, @Nullable Resource icon) {
         this.caption = caption;
         this.icon = icon;
     }
 
-    public DragCaption(String caption, Resource icon, ContentMode contentMode) {
+    public DragCaption(String caption, @Nullable Resource icon, ContentMode contentMode) {
         this.caption = caption;
         this.icon = icon;
         this.contentMode = contentMode;
     }
 
+    @Nullable
     public Resource getIcon() {
         return icon;
     }
@@ -43,7 +46,7 @@ public class DragCaption {
         return caption;
     }
 
-    public void setIcon(Resource icon) {
+    public void setIcon(@Nullable Resource icon) {
         this.icon = icon;
     }
 

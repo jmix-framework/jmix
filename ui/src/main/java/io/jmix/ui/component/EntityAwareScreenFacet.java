@@ -22,6 +22,8 @@ import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Nested;
 
+import javax.annotation.Nullable;
+
 /**
  * Interface for entity aware screen facets.
  *
@@ -37,11 +39,12 @@ public interface EntityAwareScreenFacet<E extends JmixEntity> {
      * @param entityClass entity class
      */
     @StudioProperty(type = PropertyType.JAVA_CLASS_NAME)
-    void setEntityClass(Class<E> entityClass);
+    void setEntityClass(@Nullable Class<E> entityClass);
 
     /**
      * @return entity class
      */
+    @Nullable
     Class<E> getEntityClass();
 
     /**
@@ -53,11 +56,12 @@ public interface EntityAwareScreenFacet<E extends JmixEntity> {
      * Usually, the list component is a {@code Table} or {@code DataGrid} displaying the list of entities.
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setListComponent(ListComponent<E> listComponent);
+    void setListComponent(@Nullable ListComponent<E> listComponent);
 
     /**
      * @return list component
      */
+    @Nullable
     ListComponent<E> getListComponent();
 
     /**
@@ -66,11 +70,12 @@ public interface EntityAwareScreenFacet<E extends JmixEntity> {
      * If the field is set, the framework sets the committed entity to the field after successful editor commit.
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setEntityPicker(EntityPicker<E> entityPicker);
+    void setEntityPicker(@Nullable EntityPicker<E> entityPicker);
 
     /**
      * @return {@link EntityPicker}
      */
+    @Nullable
     EntityPicker<E> getEntityPicker();
 
     /**
@@ -81,10 +86,11 @@ public interface EntityAwareScreenFacet<E extends JmixEntity> {
      * for editing compositions.
      */
     @StudioProperty(type = PropertyType.DATACONTAINER_REF)
-    void setContainer(CollectionContainer<E> container);
+    void setContainer(@Nullable CollectionContainer<E> container);
 
     /**
      * @return {@link CollectionContainer}
      */
+    @Nullable
     CollectionContainer<E> getContainer();
 }

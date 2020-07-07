@@ -183,7 +183,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     @Override
-    public void setDialogWidth(String dialogWidth) {
+    public void setDialogWidth(@Nullable String dialogWidth) {
         dialogWindow.setWidth(WebWrapperUtils.toVaadinSize(dialogWidth));
 
         if (dialogWindow.getWidth() < 0) {
@@ -204,7 +204,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     @Override
-    public void setDialogHeight(String dialogHeight) {
+    public void setDialogHeight(@Nullable String dialogHeight) {
         dialogWindow.setHeight(WebWrapperUtils.toVaadinSize(dialogHeight));
 
         if (dialogWindow.getHeight() < 0) {
@@ -225,10 +225,11 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     @Override
-    public void setDialogStylename(String stylename) {
+    public void setDialogStylename(@Nullable String stylename) {
         dialogWindow.setStyleName(stylename);
     }
 
+    @Nullable
     @Override
     public String getDialogStylename() {
         return dialogWindow.getStyleName();

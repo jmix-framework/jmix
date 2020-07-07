@@ -130,13 +130,14 @@ public class CompositeComponent<T extends Component>
         this.root = composition;
     }
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         if (!Objects.equals(this.id, id)) {
             if (frame != null) {
                 ((FrameImplementation) frame).unregisterComponent(this);
@@ -147,7 +148,7 @@ public class CompositeComponent<T extends Component>
             AppUI ui = AppUI.getCurrent();
             if (ui != null) {
                 if (root != null && ui.isTestMode()) {
-                    com.vaadin.ui.Component vComponent = root.unwrap(com.vaadin.ui.Component.class);
+                    com.vaadin.ui.Component vComponent = root.unwrapOrNull(com.vaadin.ui.Component.class);
                     if (vComponent != null) {
                         vComponent.setJTestId(id);
                     }
@@ -185,13 +186,14 @@ public class CompositeComponent<T extends Component>
         }
     }
 
+    @Nullable
     @Override
     public String getDebugId() {
         return ((HasDebugId) getComposition()).getDebugId();
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         ((HasDebugId) getComposition()).setDebugId(id);
     }
 
@@ -307,7 +309,7 @@ public class CompositeComponent<T extends Component>
     }
 
     @Override
-    public void setHeight(String height) {
+    public void setHeight(@Nullable String height) {
         getComposition().setHeight(height);
     }
 
@@ -322,7 +324,7 @@ public class CompositeComponent<T extends Component>
     }
 
     @Override
-    public void setWidth(String width) {
+    public void setWidth(@Nullable String width) {
         getComposition().setWidth(width);
     }
 
@@ -342,7 +344,7 @@ public class CompositeComponent<T extends Component>
     }
 
     @Override
-    public void setStyleName(String styleName) {
+    public void setStyleName(@Nullable String styleName) {
         getComposition().setStyleName(styleName);
     }
 

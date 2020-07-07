@@ -148,6 +148,7 @@ public interface Table<E extends JmixEntity>
      * If one of these actions is found and it is enabled, it is executed.
      */
     void setItemClickAction(Action action);
+    @Nullable
     Action getItemClickAction();
 
     /**
@@ -163,6 +164,7 @@ public interface Table<E extends JmixEntity>
      * If one of these actions is found and it is enabled, it is executed.
      */
     void setEnterPressAction(Action action);
+    @Nullable
     Action getEnterPressAction();
 
     List<Column> getNotCollapsedColumns();
@@ -278,11 +280,12 @@ public interface Table<E extends JmixEntity>
      *
      * @param message message that appears when Table is empty
      */
-    void setEmptyStateMessage(String message);
+    void setEmptyStateMessage(@Nullable String message);
 
     /**
      * @return message that should be appeared when Table is empty
      */
+    @Nullable
     String getEmptyStateMessage();
 
     /**
@@ -291,11 +294,12 @@ public interface Table<E extends JmixEntity>
      * @param linkMessage message that appears when Table is empty
      * @see #setEmptyStateLinkClickHandler(Consumer)
      */
-    void setEmptyStateLinkMessage(String linkMessage);
+    void setEmptyStateLinkMessage(@Nullable String linkMessage);
 
     /**
      * @return link message that should be appeared when Table is empty
      */
+    @Nullable
     String getEmptyStateLinkMessage();
 
     /**
@@ -304,11 +308,12 @@ public interface Table<E extends JmixEntity>
      * @param handler handler to set
      * @see #setEmptyStateLinkMessage(String)
      */
-    void setEmptyStateLinkClickHandler(Consumer<EmptyStateClickEvent<E>> handler);
+    void setEmptyStateLinkClickHandler(@Nullable Consumer<EmptyStateClickEvent<E>> handler);
 
     /**
      * @return click handler for link message
      */
+    @Nullable
     Consumer<EmptyStateClickEvent<E>> getEmptyStateLinkClickHandler();
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -671,7 +676,7 @@ public interface Table<E extends JmixEntity>
         protected final T item;
         protected final String columnId;
 
-        public CellClickEvent(Table<T> source, T item, String columnId) {
+        public CellClickEvent(Table<T> source, @Nullable T item, String columnId) {
             super(source);
             this.item = item;
             this.columnId = columnId;
@@ -683,6 +688,7 @@ public interface Table<E extends JmixEntity>
             return (Table<T>) super.getSource();
         }
 
+        @Nullable
         public T getItem() {
             return item;
         }
@@ -698,11 +704,12 @@ public interface Table<E extends JmixEntity>
      *
      * @param distributionProvider distribution provider
      */
-    void setAggregationDistributionProvider(AggregationDistributionProvider<E> distributionProvider);
+    void setAggregationDistributionProvider(@Nullable AggregationDistributionProvider<E> distributionProvider);
 
     /**
      * @return aggregation distribution provider
      */
+    @Nullable
     AggregationDistributionProvider<E> getAggregationDistributionProvider();
 
     /**
@@ -1021,22 +1028,24 @@ public interface Table<E extends JmixEntity>
             this.formatter = formatter;
         }
 
+        @Nullable
         public ColumnAlignment getAlignment() {
             return alignment;
         }
 
-        public void setAlignment(ColumnAlignment alignment) {
+        public void setAlignment(@Nullable ColumnAlignment alignment) {
             this.alignment = alignment;
             if (alignment != null && owner != null) {
                 ((ColumnManager) owner).setColumnAlignment(this, alignment);
             }
         }
 
+        @Nullable
         public Integer getWidth() {
             return width;
         }
 
-        public void setWidth(Integer width) {
+        public void setWidth(@Nullable Integer width) {
             this.width = width;
             if (width != null && owner != null) {
                 ((ColumnManager) owner).setColumnWidth(this, width);
@@ -1076,6 +1085,7 @@ public interface Table<E extends JmixEntity>
             }
         }
 
+        @Nullable
         public AggregationInfo getAggregation() {
             return aggregation;
         }
@@ -1087,6 +1097,7 @@ public interface Table<E extends JmixEntity>
             }
         }
 
+        @Nullable
         public Integer getMaxTextLength() {
             return maxTextLength;
         }
@@ -1178,7 +1189,7 @@ public interface Table<E extends JmixEntity>
          *
          * @param ratio ratio
          */
-        public void setExpandRatio(Float ratio) {
+        public void setExpandRatio(@Nullable Float ratio) {
             this.expandRatio = ratio;
             if (ratio != null && owner != null) {
                 ((ColumnManager) owner).setColumnExpandRatio(this, ratio);
@@ -1188,6 +1199,7 @@ public interface Table<E extends JmixEntity>
         /**
          * @return expand ratio for the column
          */
+        @Nullable
         public Float getExpandRatio() {
             return expandRatio;
         }
@@ -1307,13 +1319,14 @@ public interface Table<E extends JmixEntity>
             return text;
         }
 
+        @Nullable
         @Override
         public String getId() {
             return text;
         }
 
         @Override
-        public void setId(String id) {
+        public void setId(@Nullable String id) {
             throw new UnsupportedOperationException();
         }
 
@@ -1378,7 +1391,7 @@ public interface Table<E extends JmixEntity>
         }
 
         @Override
-        public void setHeight(String height) {
+        public void setHeight(@Nullable String height) {
             throw new UnsupportedOperationException();
         }
 
@@ -1393,7 +1406,7 @@ public interface Table<E extends JmixEntity>
         }
 
         @Override
-        public void setWidth(String width) {
+        public void setWidth(@Nullable String width) {
             throw new UnsupportedOperationException();
         }
 
@@ -1413,7 +1426,7 @@ public interface Table<E extends JmixEntity>
         }
 
         @Override
-        public void setStyleName(String styleName) {
+        public void setStyleName(@Nullable String styleName) {
             throw new UnsupportedOperationException();
         }
 

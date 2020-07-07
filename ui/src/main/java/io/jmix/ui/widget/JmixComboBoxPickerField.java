@@ -152,19 +152,21 @@ public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
         getFieldInternal().setItemCaptionGenerator(itemCaptionGenerator);
     }
 
+    @Nullable
     public String getPopupWidth() {
         return getFieldInternal().getPopupWidth();
     }
 
-    public void setPopupWidth(String width) {
+    public void setPopupWidth(@Nullable String width) {
         getFieldInternal().setPopupWidth(width);
     }
 
+    @Nullable
     public ComboBox.NewItemHandler getNewItemHandler() {
         return getFieldInternal().getNewItemHandler();
     }
 
-    public void setNewItemHandler(ComboBox.NewItemHandler newItemHandler) {
+    public void setNewItemHandler(@Nullable ComboBox.NewItemHandler newItemHandler) {
         getFieldInternal().setNewItemHandler(newItemHandler);
     }
 

@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.NotImplementedException;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -41,6 +42,7 @@ public abstract class AbstractValidator<T> implements Consumer<T> {
     /**
      * @return custom error message
      */
+    @Nullable
     public String getMessage() {
         return message;
     }
@@ -52,7 +54,7 @@ public abstract class AbstractValidator<T> implements Consumer<T> {
      *
      * @param message error message
      */
-    public void setMessage(String message) {
+    public void setMessage(@Nullable String message) {
         this.message = message;
     }
 
@@ -61,7 +63,7 @@ public abstract class AbstractValidator<T> implements Consumer<T> {
      * @param values       values map
      * @return message with inserted values
      */
-    protected String getTemplateErrorMessage(String errorMessage, Map<String, Object> values) {
+    protected String getTemplateErrorMessage(@Nullable String errorMessage, Map<String, Object> values) {
 // todo VM
         throw new NotImplementedException("");
 

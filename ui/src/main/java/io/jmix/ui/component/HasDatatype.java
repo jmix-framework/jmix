@@ -18,6 +18,8 @@ package io.jmix.ui.component;
 
 import io.jmix.core.metamodel.datatype.Datatype;
 
+import javax.annotation.Nullable;
+
 public interface HasDatatype<V> {
     /**
      * Sets the given <code>datatype</code> to the component. Its value will be formatted according to this
@@ -30,5 +32,6 @@ public interface HasDatatype<V> {
     /**
      * @return a datatype that is used by this component
      */
+    @Nullable
     Datatype<V> getDatatype();
 }

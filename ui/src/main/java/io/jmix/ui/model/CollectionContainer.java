@@ -83,6 +83,7 @@ public interface CollectionContainer<E extends JmixEntity> extends InstanceConta
     /**
      * Returns sorter object currently set for the container.
      */
+    @Nullable
     Sorter getSorter();
 
     /**

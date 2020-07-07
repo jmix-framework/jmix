@@ -270,13 +270,14 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     @Override
     public void setAutomaticPopupOnFocus(boolean popup) {}
 
+    @Nullable
     @Override
     public Consumer<String> getNewOptionHandler() {
         return newOptionHandler;
     }
 
     @Override
-    public void setNewOptionHandler(Consumer<String> newOptionHandler) {
+    public void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler) {
         this.newOptionHandler = newOptionHandler;
 
         if (newOptionHandler != null
@@ -452,22 +453,24 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     }
 
     @Override
-    public void setFilterPredicate(FilterPredicate filterPredicate) {
+    public void setFilterPredicate(@Nullable FilterPredicate filterPredicate) {
         this.filterPredicate = filterPredicate;
     }
 
+    @Nullable
     @Override
     public FilterPredicate getFilterPredicate() {
         return filterPredicate;
     }
 
+    @Nullable
     @Override
     public String getPopupWidth() {
         return component.getPopupWidth();
     }
 
     @Override
-    public void setPopupWidth(String width) {
+    public void setPopupWidth(@Nullable String width) {
         component.setPopupWidth(width);
     }
 

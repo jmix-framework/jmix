@@ -582,7 +582,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         }
     }
 
-    protected void processRequest(NavigationState navigationState) {
+    protected void processRequest(@Nullable NavigationState navigationState) {
         if (UrlHandlingMode.URL_ROUTES != uiProperties.getUrlHandlingMode()
                 || navigationState == null) {
             return;
@@ -685,6 +685,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         return uiEventsMulticaster;
     }
 
+    @Nullable
     public Resource createVersionedResource(String value) {
         return iconResolver.getIconResource(value);
     }

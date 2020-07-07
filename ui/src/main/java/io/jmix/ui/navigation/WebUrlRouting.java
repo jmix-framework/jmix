@@ -280,6 +280,7 @@ public class WebUrlRouting implements UrlRouting {
         return params;
     }
 
+    @Nullable
     protected String getParentPrefix(Screen screen) {
         String parentPrefix = null;
 
@@ -319,7 +320,8 @@ public class WebUrlRouting implements UrlRouting {
                 : "";
     }
 
-    protected RouteDefinition getRouteDef(Screen screen) {
+    @Nullable
+    protected RouteDefinition getRouteDef(@Nullable Screen screen) {
         return screen == null
                 ? null
                 : getScreenContext(screen).getWindowInfo().getRouteDefinition();
@@ -333,7 +335,7 @@ public class WebUrlRouting implements UrlRouting {
                 : NavigationState.EMPTY.getStateMark();
     }
 
-    protected boolean externalNavigation(NavigationState currentState, NavigationState newState) {
+    protected boolean externalNavigation(@Nullable NavigationState currentState, NavigationState newState) {
         if (currentState == null) {
             return false;
         }

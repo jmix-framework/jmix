@@ -19,6 +19,7 @@ package io.jmix.ui.component.data;
 import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.AggregationInfo;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public interface AggregatableDataGridItems<E extends JmixEntity> extends DataGri
      * @param itemIds          collection of item ids
      * @return map with aggregation info and formatted string values
      */
-    Map<AggregationInfo, String> aggregate(AggregationInfo[] aggregationInfos, Collection<?> itemIds);
+    Map<AggregationInfo, String> aggregate(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds);
 
     /**
      * Perform aggregation and return map with aggregation info and aggregation column type, i.e. if aggregation was
@@ -41,5 +42,5 @@ public interface AggregatableDataGridItems<E extends JmixEntity> extends DataGri
      * @param itemIds          collection of item ids
      * @return map with aggregation info and aggregation column type
      */
-    Map<AggregationInfo, Object> aggregateValues(AggregationInfo[] aggregationInfos, Collection<?> itemIds);
+    Map<AggregationInfo, Object> aggregateValues(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds);
 }

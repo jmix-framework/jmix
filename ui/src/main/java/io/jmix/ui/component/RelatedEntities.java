@@ -34,6 +34,7 @@ public interface RelatedEntities extends Component, Component.HasCaption, Compon
     void addPropertyOption(String property, @Nullable String screen, @Nullable String caption, @Nullable String filterCaption);
     void removePropertyOption(String property);
 
+    @Nullable
     ListComponent getListComponent();
-    void setListComponent(ListComponent listComponent);
+    void setListComponent(@Nullable ListComponent listComponent);
 }

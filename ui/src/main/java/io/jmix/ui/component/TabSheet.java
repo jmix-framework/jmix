@@ -105,6 +105,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
      * @param name tab id
      * @return tab instance
      */
+    @Nullable
     Tab getTab(String name);
 
     /**
@@ -185,7 +186,8 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
          * Set a handler that can override the close behavior if {@link #isClosable()} is true.
          * Default action just removes the tab.
          */
-        void setCloseHandler(TabCloseHandler tabCloseHandler);
+        void setCloseHandler(@Nullable TabCloseHandler tabCloseHandler);
+        @Nullable
         TabCloseHandler getCloseHandler();
 
         /**

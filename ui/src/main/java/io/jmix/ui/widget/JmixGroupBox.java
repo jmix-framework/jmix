@@ -25,6 +25,7 @@ import com.vaadin.ui.Layout;
 import com.vaadin.ui.Panel;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 
 public class JmixGroupBox extends Panel implements ComponentContainer {
@@ -83,7 +84,7 @@ public class JmixGroupBox extends Panel implements ComponentContainer {
     public void setContent(Component content) {
         super.setContent(content);
 
-        if (content != null) {
+        if (getContent() != null) {
             if (getHeight() < 0) {
                 getContent().setHeight(-1, Unit.PIXELS);
             } else {
@@ -107,7 +108,7 @@ public class JmixGroupBox extends Panel implements ComponentContainer {
     }
 
     public void setExpanded(boolean expanded, boolean invokedByUser) {
-        if (expanded != getState(false).expanded) {
+        if (expanded != getState(false).expanded && getContent() != null) {
             getContent().setVisible(expanded);
             markAsDirtyRecursive();
         }
@@ -135,6 +136,7 @@ public class JmixGroupBox extends Panel implements ComponentContainer {
         this.expandChangeHandler = expandChangeHandler;
     }
 
+    @Nullable
     @Override
     public ComponentContainer getContent() {
         return (ComponentContainer) super.getContent();
@@ -142,27 +144,37 @@ public class JmixGroupBox extends Panel implements ComponentContainer {
 
     @Override
     public void addComponent(Component c) {
-        getContent().addComponent(c);
+        if (getContent() != null) {
+            getContent().addComponent(c);
+        }
     }
 
     @Override
     public void addComponents(Component... components) {
-        getContent().addComponents(components);
+        if (getContent() != null) {
+            getContent().addComponents(components);
+        }
     }
 
     @Override
     public void removeComponent(Component c) {
-        getContent().addComponent(c);
+        if (getContent() != null) {
+            getContent().addComponent(c);
+        }
     }
 
     @Override
     public void removeAllComponents() {
-        getContent().removeAllComponents();
+        if (getContent() != null) {
+            getContent().removeAllComponents();
+        }
     }
 
     @Override
     public void replaceComponent(Component oldComponent, Component newComponent) {
-        getContent().replaceComponent(oldComponent, newComponent);
+        if (getContent() != null) {
+            getContent().replaceComponent(oldComponent, newComponent);
+        }
     }
 
     @Override
@@ -172,7 +184,9 @@ public class JmixGroupBox extends Panel implements ComponentContainer {
 
     @Override
     public void moveComponentsFrom(ComponentContainer source) {
-        getContent().moveComponentsFrom(source);
+        if (getContent() != null) {
+            getContent().moveComponentsFrom(source);
+        }
     }
 
     @Override

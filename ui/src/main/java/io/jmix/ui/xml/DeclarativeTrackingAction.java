@@ -43,8 +43,8 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
     protected ConstraintOperationType constraintOperationType;
     protected String constraintCode;
 
-    public DeclarativeTrackingAction(String id, String caption, String description, String icon, String enable, String visible,
-                                     String methodName, @Nullable String shortcut, ActionsHolder holder) {
+    public DeclarativeTrackingAction(String id, String caption, String description, String icon, @Nullable String enable,
+                                     @Nullable String visible, String methodName, @Nullable String shortcut, ActionsHolder holder) {
         super(id, shortcut);
         this.caption = caption;
         this.description = description;
@@ -137,23 +137,25 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
         return super.isPermitted();
     }
 
+    @Nullable
     @Override
     public ConstraintOperationType getConstraintOperationType() {
         return constraintOperationType;
     }
 
     @Override
-    public void setConstraintOperationType(ConstraintOperationType constraintOperationType) {
+    public void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType) {
         this.constraintOperationType = constraintOperationType;
     }
 
+    @Nullable
     @Override
     public String getConstraintCode() {
         return constraintCode;
     }
 
     @Override
-    public void setConstraintCode(String constraintCode) {
+    public void setConstraintCode(@Nullable String constraintCode) {
         this.constraintCode = constraintCode;
     }
 }

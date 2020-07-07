@@ -23,6 +23,8 @@ import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
+
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @org.springframework.stereotype.Component(ClipboardTriggerFacetProvider.NAME)
@@ -66,7 +68,8 @@ public class ClipboardTriggerFacetProvider implements FacetProvider<ClipboardTri
         protected final ClipboardTrigger facet;
         protected final ComponentLoader.ComponentContext context;
 
-        public ClipboardRefsInitTask(ClipboardTrigger facet, ComponentLoader.ComponentContext context, String button, String input) {
+        public ClipboardRefsInitTask(ClipboardTrigger facet, ComponentLoader.ComponentContext context,
+                                     @Nullable String button, @Nullable String input) {
             this.button = button;
             this.input = input;
             this.facet = facet;

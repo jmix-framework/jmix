@@ -321,6 +321,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * assigned by {@link #setItemClickAction(Action)}
      * @see #setItemClickAction(Action)
      */
+    @Nullable
     Action getItemClickAction();
 
     /**
@@ -338,12 +339,13 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      *
      * @param action an action to be executed on double click on a DataGrid row
      */
-    void setItemClickAction(Action action);
+    void setItemClickAction(@Nullable Action action);
 
     /**
      * @return an action to be executed on Enter key press, assigned by {@link #setEnterPressAction(Action)}
      * @see #setEnterPressAction(Action)
      */
+    @Nullable
     Action getEnterPressAction();
 
     /**
@@ -363,7 +365,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param action an action to be executed on Enter key press
      * @see #setItemClickAction(Action)
      */
-    void setEnterPressAction(Action action);
+    void setEnterPressAction(@Nullable Action action);
 
     /**
      * Gets the number of frozen columns in this DataGrid. 0 means that no data
@@ -615,6 +617,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @return an item Id
          * @deprecated use {@link #getItem()} instead
          */
+        @Nullable
         @Deprecated
         public Object getItemId() {
             return EntityValues.getId(item);
@@ -1025,6 +1028,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @deprecated use {@link Column#getDescriptionProvider()} instead
      */
     @Deprecated
+    @Nullable
     CellDescriptionProvider<E> getCellDescriptionProvider();
 
     /**
@@ -1038,7 +1042,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @deprecated use {@link Column#setDescriptionProvider(Function)} instead
      */
     @Deprecated
-    void setCellDescriptionProvider(CellDescriptionProvider<? super E> provider);
+    void setCellDescriptionProvider(@Nullable CellDescriptionProvider<? super E> provider);
 
     /**
      * A callback interface for generating optional descriptions (tooltips) for
@@ -1058,6 +1062,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      *
      * @return the description provider or {@code} null if no provider is set
      */
+    @Nullable
     Function<E, String> getRowDescriptionProvider();
 
     /**
@@ -1072,7 +1077,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param provider the description provider to use or {@code null} to remove a
      *                 previously set provider if any
      */
-    void setRowDescriptionProvider(Function<? super E, String> provider);
+    void setRowDescriptionProvider(@Nullable Function<? super E, String> provider);
 
     /**
      * Sets the {@code RowDescriptionProvider} instance for generating
@@ -1085,7 +1090,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      *                    previously set provider if any
      * @param contentMode the content mode for row tooltips
      */
-    void setRowDescriptionProvider(Function<? super E, String> provider, ContentMode contentMode);
+    void setRowDescriptionProvider(@Nullable Function<? super E, String> provider, ContentMode contentMode);
 
     /**
      * The root class from which all DataGrid event state objects shall be derived.
@@ -1127,6 +1132,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param columnId the column id for which to return column generator
      * @return the column generator for given column id
      */
+    @Nullable
     Function<ColumnGeneratorEvent<E>, ?> getColumnGenerator(String columnId);
 
     /**
@@ -1280,6 +1286,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return the pattern describing the date format
          */
+        @Nullable
         String getFormatPattern();
 
         /**
@@ -1293,6 +1300,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return the instance of {@link DateTimeFormatter} which is used to present dates
          */
+        @Nullable
         DateTimeFormatter getFormatter();
 
         /**
@@ -1308,6 +1316,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return the format string describing the value format
          */
+        @Nullable
         String getFormatString();
 
         /**
@@ -1421,6 +1430,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @return the format string describing the date and time format
          */
+        @Nullable
         @Override
         String getFormatString();
 
@@ -1437,6 +1447,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return the instance of {@link DateFormat} which is used to present dates
          */
+        @Nullable
         DateFormat getDateFormat();
 
         /**
@@ -1473,6 +1484,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @return the format string describing the number format
          */
+        @Nullable
         @Override
         String getFormatString();
 
@@ -1489,6 +1501,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return the instance of {@link NumberFormat} which is used to present numbers
          */
+        @Nullable
         NumberFormat getNumberFormat();
 
         /**
@@ -2203,6 +2216,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @return the style name or null if no style name has been set
          */
+        @Nullable
         String getStyleName();
 
         /**
@@ -2211,7 +2225,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param styleName the style name to set or
          *                  null to not use any style name
          */
-        void setStyleName(String styleName);
+        void setStyleName(@Nullable String styleName);
 
         /**
          * Merges columns cells in a row.
@@ -2230,6 +2244,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * merged cell for merged properties,
          * null if not found
          */
+        @Nullable
         T getCell(String columnId);
     }
 
@@ -2243,6 +2258,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @return the style name or null if no style name has been set
          */
+        @Nullable
         String getStyleName();
 
         /**
@@ -2250,7 +2266,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @param styleName the style name to set or null to not use any style name
          */
-        void setStyleName(String styleName);
+        void setStyleName(@Nullable String styleName);
 
         /**
          * Returns the type of content stored in this cell.
@@ -2278,6 +2294,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @return the html
          */
+        @Nullable
         String getHtml();
 
         /**
@@ -2292,6 +2309,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @return the plain text caption
          */
+        @Nullable
         String getText();
 
         /**
@@ -2348,6 +2366,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param index 0 based index for row. Counted from top to bottom
      * @return header row at given index
      */
+    @Nullable
     HeaderRow getHeaderRow(int index);
 
     /**
@@ -2395,7 +2414,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @see #appendHeaderRow()
      * @see #prependHeaderRow()
      */
-    void removeHeaderRow(HeaderRow headerRow);
+    void removeHeaderRow(@Nullable HeaderRow headerRow);
 
     /**
      * Removes the row at the given position from the header section.
@@ -2415,6 +2434,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      *
      * @return the default row or null if no default row set
      */
+    @Nullable
     HeaderRow getDefaultHeaderRow();
 
     /**
@@ -2451,6 +2471,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param index 0 based index for row. Counted from top to bottom
      * @return footer row at given index
      */
+    @Nullable
     FooterRow getFooterRow(int index);
 
     /**
@@ -2498,7 +2519,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @see #appendFooterRow()
      * @see #prependFooterRow()
      */
-    void removeFooterRow(FooterRow footerRow);
+    void removeFooterRow(@Nullable FooterRow footerRow);
 
     /**
      * Removes the row at the given position from the footer section.
@@ -2563,11 +2584,12 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      *
      * @param message message that appears when DataGrid is empty
      */
-    void setEmptyStateMessage(String message);
+    void setEmptyStateMessage(@Nullable String message);
 
     /**
      * @return message that should be appeared when DataGrid is empty
      */
+    @Nullable
     String getEmptyStateMessage();
 
     /**
@@ -2576,11 +2598,12 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param linkMessage message that appears when DataGrid is empty
      * @see #setEmptyStateLinkClickHandler(Consumer)
      */
-    void setEmptyStateLinkMessage(String linkMessage);
+    void setEmptyStateLinkMessage(@Nullable String linkMessage);
 
     /**
      * @return link message that should be appeared when DataGrid is empty
      */
+    @Nullable
     String getEmptyStateLinkMessage();
 
     /**
@@ -2589,11 +2612,12 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param handler handler to set
      * @see #setEmptyStateLinkMessage(String)
      */
-    void setEmptyStateLinkClickHandler(Consumer<EmptyStateClickEvent<E>> handler);
+    void setEmptyStateLinkClickHandler(@Nullable Consumer<EmptyStateClickEvent<E>> handler);
 
     /**
      * @return click handler for link message
      */
+    @Nullable
     Consumer<EmptyStateClickEvent<E>> getEmptyStateLinkClickHandler();
 
     /**
@@ -2616,6 +2640,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return the caption of the header
          */
+        @Nullable
         String getCaption();
 
         /**
@@ -2630,6 +2655,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return the caption for the hiding toggle for this column
          */
+        @Nullable
         String getCollapsingToggleCaption();
 
         /**
@@ -2645,7 +2671,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @param collapsingToggleCaption the text to show in the column hiding toggle
          */
-        void setCollapsingToggleCaption(String collapsingToggleCaption);
+        void setCollapsingToggleCaption(@Nullable String collapsingToggleCaption);
 
         /**
          * @return the width in pixels of the column
@@ -2872,6 +2898,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return a function to get presentations from the value of this column
          */
+        @Nullable
         Function getPresentationProvider();
 
         /**
@@ -2898,6 +2925,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @return the converter
          * @deprecated use {@link #getPresentationProvider()} instead
          */
+        @Nullable
         @Deprecated
         Converter<?, ?> getConverter();
 
@@ -2913,7 +2941,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @deprecated use {@link #setRenderer(Renderer, Function)} instead
          */
         @Deprecated
-        void setConverter(Converter<?, ?> converter);
+        void setConverter(@Nullable Converter<?, ?> converter);
 
         /**
          * Returns whether the properties corresponding to this column should be
@@ -2946,6 +2974,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @return field generator that generates component for
          * this column in {@link DataGrid} editor.
          */
+        @Nullable
         @Deprecated
         ColumnEditorFieldGenerator getEditorFieldGenerator();
 
@@ -2968,11 +2997,12 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param generator field generator that generates a component
          *                  for this column in {@link DataGrid} editor.
          */
-        void setEditFieldGenerator(Function<EditorFieldGenerationContext<E>, Field<?>> generator);
+        void setEditFieldGenerator(@Nullable Function<EditorFieldGenerationContext<E>, Field<?>> generator);
 
         /**
          * @return the style provider that is used for generating styles for cells
          */
+        @Nullable
         Function<E, String> getStyleProvider();
 
         /**
@@ -2980,12 +3010,13 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @param styleProvider a style provider to set
          */
-        void setStyleProvider(Function<? super E, String> styleProvider);
+        void setStyleProvider(@Nullable Function<? super E, String> styleProvider);
 
         /**
          * @return the description provider that is used for generating
          * descriptions for cells in this column
          */
+        @Nullable
         Function<E, String> getDescriptionProvider();
 
         /**
@@ -2999,7 +3030,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param descriptionProvider a description provider to set,
          *                            or {@code null} to remove a previously set generator
          */
-        void setDescriptionProvider(Function<? super E, String> descriptionProvider);
+        void setDescriptionProvider(@Nullable Function<? super E, String> descriptionProvider);
 
         /**
          * Sets the description provider that is used for generating
@@ -3032,7 +3063,9 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param columnGenerator column generator instance
          */
         default void setColumnGenerator(Function<ColumnGeneratorEvent<E>, ?> columnGenerator) {
-            getOwner().addGeneratedColumn(getId(), columnGenerator);
+            if (getOwner() != null) {
+                getOwner().addGeneratedColumn(getId(), columnGenerator);
+            }
         }
 
         /**
@@ -3054,6 +3087,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @return value description for aggregation row cells
          * @see DataGrid#setAggregatable(boolean)
          */
+        @Nullable
         String getValueDescription();
 
         /**
@@ -3062,7 +3096,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param valueDescription value description
          * @see DataGrid#setAggregatable(boolean)
          */
-        void setValueDescription(String valueDescription);
+        void setValueDescription(@Nullable String valueDescription);
     }
 
     /**

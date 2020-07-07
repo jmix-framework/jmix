@@ -28,6 +28,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
@@ -91,7 +92,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
 
         // set value to Vaadin component as it removes value after setItems
         Collection<V> optionValues = getValue();
-        if (CollectionUtils.isNotEmpty(optionValues)) {
+        if (CollectionUtils.isNotEmpty(optionValues) && getOptions() != null) {
             List<V> items = getOptions().getOptions().collect(Collectors.toList());
 
             Set<V> values = new HashSet<>();
@@ -118,7 +119,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     @Override
     protected Collection<V> convertToModel(@Nullable Set<V> componentRawValue) throws ConversionException {
         Stream<V> items;
-        if (optionsBinding == null) {
+        if (optionsBinding == null || componentRawValue == null) {
             items = Stream.empty();
         } else {
             Stream<V> options = optionsBinding.getSource().getOptions();
@@ -209,7 +210,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     }
 
     @Override
-    public void setOptionStyleProvider(OptionStyleProvider<V> optionStyleProvider) {
+    public void setOptionStyleProvider(@Nullable OptionStyleProvider<V> optionStyleProvider) {
         this.optionStyleProvider = optionStyleProvider;
 
         if (optionStyleProvider != null) {
@@ -219,6 +220,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
         }
     }
 
+    @Nullable
     @Override
     public OptionStyleProvider<V> getOptionStyleProvider() {
         return optionStyleProvider;
@@ -245,20 +247,22 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     }
 
     @Override
-    public void setLeftColumnCaption(String leftColumnCaption) {
+    public void setLeftColumnCaption(@Nullable String leftColumnCaption) {
         component.setLeftColumnCaption(leftColumnCaption);
     }
 
+    @Nullable
     @Override
     public String getLeftColumnCaption() {
         return component.getLeftColumnCaption();
     }
 
     @Override
-    public void setRightColumnCaption(String rightColumnCaption) {
+    public void setRightColumnCaption(@Nullable String rightColumnCaption) {
         component.setRightColumnCaption(rightColumnCaption);
     }
 
+    @Nullable
     @Override
     public String getRightColumnCaption() {
         return component.getRightColumnCaption();

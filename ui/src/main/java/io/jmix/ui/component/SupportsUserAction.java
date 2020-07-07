@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 public interface SupportsUserAction<V> {
     /**
      * Sets the value of this component as if the user had set it.
@@ -23,5 +25,5 @@ public interface SupportsUserAction<V> {
      *
      * @param value the new value
      */
-    void setValueFromUser(V value);
+    void setValueFromUser(@Nullable V value);
 }

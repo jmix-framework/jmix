@@ -21,6 +21,8 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
+import javax.annotation.Nullable;
+
 public class EntityValueProvider<E extends JmixEntity, T> implements ValueProvider<E, T> {
 
     protected MetaPropertyPath propertyPath;
@@ -33,6 +35,7 @@ public class EntityValueProvider<E extends JmixEntity, T> implements ValueProvid
         return propertyPath;
     }
 
+    @Nullable
     @Override
     public T apply(E entity) {
         return propertyPath != null

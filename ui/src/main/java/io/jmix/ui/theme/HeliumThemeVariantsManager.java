@@ -155,6 +155,7 @@ public class HeliumThemeVariantsManager {
         cookies.addCookie(getFullCookieName(name), value);
     }
 
+    @Nullable
     protected String getCookieValue(String name) {
         return cookies.getCookieValue(getFullCookieName(name));
     }

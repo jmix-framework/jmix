@@ -103,7 +103,7 @@ public class ComponentGenerationContext {
      * @param valueSource a value source to set
      * @return this object
      */
-    public ComponentGenerationContext setValueSource(ValueSource valueSource) {
+    public ComponentGenerationContext setValueSource(@Nullable ValueSource valueSource) {
         this.valueSource = valueSource;
         return this;
     }
@@ -122,7 +122,7 @@ public class ComponentGenerationContext {
      * @param options an options object that can be used as optional to create the component
      * @return this object
      */
-    public ComponentGenerationContext setOptions(Options options) {
+    public ComponentGenerationContext setOptions(@Nullable Options options) {
         this.options = options;
         return this;
     }
@@ -141,7 +141,7 @@ public class ComponentGenerationContext {
      * @param xmlDescriptor an XML descriptor which contains additional information
      * @return this object
      */
-    public ComponentGenerationContext setXmlDescriptor(Element xmlDescriptor) {
+    public ComponentGenerationContext setXmlDescriptor(@Nullable Element xmlDescriptor) {
         this.xmlDescriptor = xmlDescriptor;
         return this;
     }
@@ -160,7 +160,7 @@ public class ComponentGenerationContext {
      * @param componentClass a component class for which a component is created
      * @return this object
      */
-    public ComponentGenerationContext setComponentClass(Class componentClass) {
+    public ComponentGenerationContext setComponentClass(@Nullable Class componentClass) {
         this.componentClass = componentClass;
         return this;
     }

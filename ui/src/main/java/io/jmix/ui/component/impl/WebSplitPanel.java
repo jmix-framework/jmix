@@ -137,6 +137,7 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
         }
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         checkNotNullArgument(id);

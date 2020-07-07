@@ -22,6 +22,7 @@ import io.jmix.ui.component.ClipboardTrigger;
 import io.jmix.ui.component.TextInputField;
 import io.jmix.ui.widget.JmixCopyButtonExtension;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.widget.JmixCopyButtonExtension.browserSupportCopy;
@@ -34,19 +35,20 @@ public class WebClipboardTrigger extends WebAbstractFacet implements ClipboardTr
     protected Button button;
 
     @Override
-    public void setInput(TextInputField<?> input) {
+    public void setInput(@Nullable TextInputField<?> input) {
         this.input = input;
 
         checkInitialized();
     }
 
+    @Nullable
     @Override
     public TextInputField<?> getInput() {
         return input;
     }
 
     @Override
-    public void setButton(Button button) {
+    public void setButton(@Nullable Button button) {
         if (this.button != null) {
             disableExtension(this.button);
         }
@@ -56,6 +58,7 @@ public class WebClipboardTrigger extends WebAbstractFacet implements ClipboardTr
         checkInitialized();
     }
 
+    @Nullable
     @Override
     public Button getButton() {
         return button;

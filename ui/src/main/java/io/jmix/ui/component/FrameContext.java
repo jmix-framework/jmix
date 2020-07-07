@@ -66,7 +66,7 @@ public interface FrameContext {
      * @param value    value to set
      * @throws UnsupportedOperationException if the component not found or is not a {@link HasValue}
      */
-    void setValue(String property, Object value);
+    void setValue(String property, @Nullable Object value);
 
     /**
      * Add the value listener to the specified component

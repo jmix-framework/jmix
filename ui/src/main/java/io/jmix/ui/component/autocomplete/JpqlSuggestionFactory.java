@@ -35,7 +35,8 @@ public class JpqlSuggestionFactory {
     @Autowired
     protected DomainModelWithCaptionsBuilder domainModelWithCaptionsBuilder;
 
-    protected Suggestion produce(AutoCompleteSupport sender, String value, String description, int senderCursorPosition, int prefixLength) {
+    protected Suggestion produce(AutoCompleteSupport sender, String value, @Nullable String description,
+                                 int senderCursorPosition, int prefixLength) {
         String valueSuffix = value.substring(prefixLength);
         String displayedValue;
         if (description == null) {

@@ -20,6 +20,7 @@ import io.jmix.ui.component.ButtonsPanel;
 import io.jmix.ui.component.VisibilityChangeNotifier;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class WebButtonsPanel extends WebFlowBoxLayout implements ButtonsPanel, VisibilityChangeNotifier {
@@ -35,7 +36,7 @@ public class WebButtonsPanel extends WebFlowBoxLayout implements ButtonsPanel, V
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         component.addStyleName(BUTTONS_PANEL_STYLENAME);

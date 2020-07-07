@@ -58,7 +58,7 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
         Object value = EntityValues.getValueEx(item, columnId);
         String stringValue = metadataTools.format(value, metaProperty);
 
-        if (column.getMaxTextLength() != null) {
+        if (column != null && column.getMaxTextLength() != null) {
             boolean isMultiLineCell = StringUtils.contains(stringValue, "\n");
             if (stringValue == null || (stringValue.length() <= column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP
                     && !isMultiLineCell)) {

@@ -58,9 +58,10 @@ public interface Component {
 
     /** Component ID as defined in {@code id} attribute */
     @StudioProperty(type = PropertyType.COMPONENT_ID)
+    @Nullable
     String getId();
     /** Set component ID */
-    void setId(String id);
+    void setId(@Nullable String id);
 
     /**
      * @return parent of component.
@@ -157,7 +158,7 @@ public interface Component {
 
     /** Set component height in {@link #getHeightSizeUnit()} */
     @StudioProperty(type = PropertyType.SIZE, defaultValue = "-1px")
-    void setHeight(String height);
+    void setHeight(@Nullable String height);
 
     /** Set component height to {@link #AUTO_SIZE} */
     default void setHeightAuto() {
@@ -181,7 +182,7 @@ public interface Component {
 
     /** Set component width in {@link #getWidthSizeUnit()}} */
     @StudioProperty(type = PropertyType.SIZE, defaultValue = "-1px")
-    void setWidth(String width);
+    void setWidth(@Nullable String width);
 
     /** Set component width to {@link #AUTO_SIZE} */
     default void setWidthAuto() {
@@ -226,7 +227,7 @@ public interface Component {
      * @param styleName one or more style names separated by space.
      * */
     @StudioProperty(name = "stylename", type = PropertyType.CSS_CLASSNAME_LIST)
-    void setStyleName(String styleName);
+    void setStyleName(@Nullable String styleName);
 
     /**
      * Adds one or more style names to this component. Multiple styles can be
@@ -489,6 +490,6 @@ public interface Component {
         /**
          * Set an icon from an icon set.
          */
-        void setIconFromSet(Icons.Icon icon);
+        void setIconFromSet(@Nullable Icons.Icon icon);
     }
 }

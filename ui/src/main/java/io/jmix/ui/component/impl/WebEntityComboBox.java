@@ -200,13 +200,14 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
         return false;
     }
 
+    @Nullable
     @Override
     public Consumer<String> getNewOptionHandler() {
         return newOptionHandler;
     }
 
     @Override
-    public void setNewOptionHandler(Consumer<String> newOptionHandler) {
+    public void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler) {
         this.newOptionHandler = newOptionHandler;
 
         if (newOptionHandler != null
@@ -262,7 +263,7 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
         return optionIconProvider;
     }
 
-    protected Resource generateOptionIcon(V item) {
+    protected Resource generateOptionIcon(@Nullable V item) {
         String resourceId;
         try {
             resourceId = optionIconProvider.apply(item);
@@ -312,22 +313,24 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
     }
 
     @Override
-    public void setFilterPredicate(FilterPredicate filterPredicate) {
+    public void setFilterPredicate(@Nullable FilterPredicate filterPredicate) {
         this.filterPredicate = filterPredicate;
     }
 
+    @Nullable
     @Override
     public FilterPredicate getFilterPredicate() {
         return filterPredicate;
     }
 
+    @Nullable
     @Override
     public String getPopupWidth() {
         return getComponent().getPopupWidth();
     }
 
     @Override
-    public void setPopupWidth(String width) {
+    public void setPopupWidth(@Nullable String width) {
         getComponent().setPopupWidth(width);
     }
 
@@ -436,7 +439,7 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
     }
 
     @Override
-    protected void checkValueType(V value) {
+    protected void checkValueType(@Nullable V value) {
         // do not check
     }
 

@@ -25,6 +25,7 @@ import io.jmix.ui.widget.JmixButton;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -53,7 +54,7 @@ public class WebNewWindowButton extends WebAbstractComponent<JmixButton> impleme
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         component.addStyleName(NEW_WINDOW_BUTTON_STYLENAME);

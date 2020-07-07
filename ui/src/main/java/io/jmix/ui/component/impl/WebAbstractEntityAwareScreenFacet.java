@@ -23,6 +23,8 @@ import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.Screen;
 
+import javax.annotation.Nullable;
+
 public abstract class WebAbstractEntityAwareScreenFacet<E extends JmixEntity, S extends Screen>
         extends WebAbstractScreenFacet<S>
         implements EntityAwareScreenFacet<E> {
@@ -34,40 +36,44 @@ public abstract class WebAbstractEntityAwareScreenFacet<E extends JmixEntity, S 
     protected CollectionContainer<E> container;
 
     @Override
-    public void setEntityClass(Class<E> entityClass) {
+    public void setEntityClass(@Nullable Class<E> entityClass) {
         this.entityClass = entityClass;
     }
 
+    @Nullable
     @Override
     public Class<E> getEntityClass() {
         return entityClass;
     }
 
     @Override
-    public void setListComponent(ListComponent<E> listComponent) {
+    public void setListComponent(@Nullable ListComponent<E> listComponent) {
         this.listComponent = listComponent;
     }
 
+    @Nullable
     @Override
     public ListComponent<E> getListComponent() {
         return listComponent;
     }
 
     @Override
-    public void setEntityPicker(EntityPicker<E> entityPicker) {
+    public void setEntityPicker(@Nullable EntityPicker<E> entityPicker) {
         this.entityPicker = entityPicker;
     }
 
+    @Nullable
     @Override
     public EntityPicker<E> getEntityPicker() {
         return entityPicker;
     }
 
     @Override
-    public void setContainer(CollectionContainer<E> container) {
+    public void setContainer(@Nullable CollectionContainer<E> container) {
         this.container = container;
     }
 
+    @Nullable
     @Override
     public CollectionContainer<E> getContainer() {
         return container;

@@ -51,20 +51,22 @@ public class WebLookupScreenFacet<E extends JmixEntity, S extends Screen & Looku
     }
 
     @Override
-    public void setSelectValidator(Predicate<LookupScreen.ValidationContext<E>> selectValidator) {
+    public void setSelectValidator(@Nullable Predicate<LookupScreen.ValidationContext<E>> selectValidator) {
         this.selectValidator = selectValidator;
     }
 
+    @Nullable
     @Override
     public Predicate<LookupScreen.ValidationContext<E>> getSelectValidator() {
         return selectValidator;
     }
 
     @Override
-    public void setTransformation(Function<Collection<E>, Collection<E>> transformation) {
+    public void setTransformation(@Nullable Function<Collection<E>, Collection<E>> transformation) {
         this.transformation = transformation;
     }
 
+    @Nullable
     @Override
     public Function<Collection<E>, Collection<E>> getTransformation() {
         return transformation;

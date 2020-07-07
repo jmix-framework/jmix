@@ -181,13 +181,14 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
         unsubscribe(SingleFileUploadField.FileUploadSucceedEvent.class, listener);
     }
 
+    @Nullable
     @Override
     public String getAccept() {
         return accept;
     }
 
     @Override
-    public void setAccept(String accept) {
+    public void setAccept(@Nullable String accept) {
         if (!Objects.equals(accept, getAccept())) {
             this.accept = accept;
             component.setAccept(convertToMIME(accept));
@@ -195,7 +196,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     }
 
     @Override
-    public void setDropZone(DropZone dropZone) {
+    public void setDropZone(@Nullable DropZone dropZone) {
         this.dropZone = dropZone;
 
         if (dropZone == null) {
@@ -212,14 +213,14 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     }
 
     @Override
-    public void setPasteZone(ComponentContainer pasteZone) {
+    public void setPasteZone(@Nullable ComponentContainer pasteZone) {
         this.pasteZone = pasteZone;
 
         component.setPasteZone(pasteZone != null ? pasteZone.unwrapComposition(Component.class) : null);
     }
 
     @Override
-    public void setDropZonePrompt(String dropZonePrompt) {
+    public void setDropZonePrompt(@Nullable String dropZonePrompt) {
         this.dropZonePrompt = dropZonePrompt;
 
         component.setDropZonePrompt(dropZonePrompt);
@@ -240,6 +241,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
         }
     }
 
+    @Nullable
     @Override
     public Set<String> getPermittedExtensions() {
         return permittedExtensions;
@@ -267,16 +269,19 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     protected void internalValueChanged(Object newValue) {
     }
 
+    @Nullable
     @Override
     public DropZone getDropZone() {
         return dropZone;
     }
 
+    @Nullable
     @Override
     public ComponentContainer getPasteZone() {
         return pasteZone;
     }
 
+    @Nullable
     @Override
     public String getDropZonePrompt() {
         return dropZonePrompt;
@@ -313,10 +318,11 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     }
 
     @Override
-    public void setContentProvider(Supplier<InputStream> contentProvider) {
+    public void setContentProvider(@Nullable Supplier<InputStream> contentProvider) {
         this.contentProvider = contentProvider;
     }
 
+    @Nullable
     @Override
     public Supplier<InputStream> getContentProvider() {
         return contentProvider;
@@ -373,7 +379,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     }
 
     @Override
-    public void setPermittedExtensions(Set<String> permittedExtensions) {
+    public void setPermittedExtensions(@Nullable Set<String> permittedExtensions) {
         if (permittedExtensions != null) {
             this.permittedExtensions = permittedExtensions.stream()
                     .map(String::toLowerCase)

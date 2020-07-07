@@ -40,7 +40,7 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 
             String escapeValueForLike = queryElement.attributeValue("escapeValueForLike");
             if (StringUtils.isNotEmpty(escapeValueForLike)) {
-                escapeValue = Boolean.valueOf(escapeValueForLike);
+                escapeValue = Boolean.parseBoolean(escapeValueForLike);
             } else {
                 escapeValue = false;
             }

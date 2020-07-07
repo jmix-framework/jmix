@@ -27,6 +27,7 @@ import io.jmix.ui.widget.JmixTextField;
 import io.jmix.ui.widget.CurrencyLabelPosition;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class JmixCurrencyField extends CustomField<String> {
@@ -122,11 +123,12 @@ public class JmixCurrencyField extends CustomField<String> {
         updateCurrencyLabelVisibility();
     }
 
+    @Nullable
     public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
+    public void setCurrency(@Nullable String currency) {
         this.currency = currency;
         currencyLabel.setValue(currency);
 

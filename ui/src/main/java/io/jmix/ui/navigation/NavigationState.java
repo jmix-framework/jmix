@@ -20,6 +20,7 @@ import io.jmix.core.common.util.URLEncodeUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -56,7 +57,7 @@ public class NavigationState {
     protected final String nestedRoute;
     protected final Map<String, String> params;
 
-    public NavigationState(String root, String stateMark, String nestedRoute, Map<String, String> params) {
+    public NavigationState(String root, String stateMark, String nestedRoute, @Nullable Map<String, String> params) {
         this.root = root;
         this.stateMark = stateMark;
         this.nestedRoute = nestedRoute;
@@ -75,6 +76,7 @@ public class NavigationState {
         return nestedRoute;
     }
 
+    @Nullable
     public Map<String, String> getParams() {
         return params;
     }

@@ -119,7 +119,7 @@ public class AceDoc implements Serializable {
 	}
 
     public boolean textEquals(@Nullable String a, @Nullable String b) {
-        return a == null ? b == null : a.equals(b);
+        return Objects.equals(a, b);
     }
 
 	public AceDoc withText(String newText) {

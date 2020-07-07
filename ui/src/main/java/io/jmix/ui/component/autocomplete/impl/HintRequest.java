@@ -18,6 +18,7 @@ package io.jmix.ui.component.autocomplete.impl;
 
 import io.jmix.core.impl.jpql.InferredType;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 public class HintRequest {
@@ -44,11 +45,12 @@ public class HintRequest {
         this.query = query;
     }
 
+    @Nullable
     public Set<InferredType> getExpectedTypes() {
         return expectedTypes;
     }
 
-    public void setExpectedTypes(Set<InferredType> expectedTypes) {
+    public void setExpectedTypes(@Nullable Set<InferredType> expectedTypes) {
         this.expectedTypes = expectedTypes;
     }
 }

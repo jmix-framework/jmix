@@ -290,7 +290,7 @@ public class WebGroupTable<E extends JmixEntity> extends WebAbstractTable<JmixGr
         groupBy(new Object[]{});
     }
 
-    protected boolean uselessGrouping(Object[] newGroupProperties) {
+    protected boolean uselessGrouping(@Nullable Object[] newGroupProperties) {
         return (newGroupProperties == null || newGroupProperties.length == 0) &&
                 component.getGroupProperties().isEmpty();
     }
@@ -465,7 +465,7 @@ public class WebGroupTable<E extends JmixEntity> extends WebAbstractTable<JmixGr
     }
 
     @Override
-    public void setAggregationDistributionProvider(AggregationDistributionProvider<E> distributionProvider) {
+    public void setAggregationDistributionProvider(@Nullable AggregationDistributionProvider<E> distributionProvider) {
         this.distributionProvider = distributionProvider;
 
         component.setAggregationDistributionProvider(this::distributeGroupAggregation);

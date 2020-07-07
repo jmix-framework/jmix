@@ -21,6 +21,7 @@ import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -73,6 +74,7 @@ public class ScreenClassBuilder<S extends Screen> extends ScreenBuilder {
     /**
      * Returns screen class.
      */
+    @Nullable
     public Class<S> getScreenClass() {
         return screenClass;
     }
@@ -80,6 +82,7 @@ public class ScreenClassBuilder<S extends Screen> extends ScreenBuilder {
     /**
      * Returns screen close listener.
      */
+    @Nullable
     public Consumer<AfterScreenCloseEvent<S>> getCloseListener() {
         return closeListener;
     }

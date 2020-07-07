@@ -61,11 +61,12 @@ public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
     /**
      * Sets select validator for the lookup screen.
      */
-    void setSelectValidator(Predicate<LookupScreen.ValidationContext<E>> selectValidator);
+    void setSelectValidator(@Nullable Predicate<LookupScreen.ValidationContext<E>> selectValidator);
 
     /**
      * @return lookup screen select validator
      */
+    @Nullable
     Predicate<LookupScreen.ValidationContext<E>> getSelectValidator();
 
     /**
@@ -73,10 +74,11 @@ public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
      * <p>
      * Applied only if either field or container or listComponent is assigned.
      */
-    void setTransformation(Function<Collection<E>, Collection<E>> transformation);
+    void setTransformation(@Nullable Function<Collection<E>, Collection<E>> transformation);
 
     /**
      * @return selected entities transformation
      */
+    @Nullable
     Function<Collection<E>, Collection<E>> getTransformation();
 }

@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -55,7 +56,7 @@ public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
         }
     }
 
-    protected String valueToString(Class javaClass, String value, Op operator) {
+    protected String valueToString(Class javaClass, @Nullable String value, Op operator) {
         if (value == null) {
             return "null";
         } else if (operator == Op.IN || operator == Op.NOT_IN) {

@@ -29,6 +29,8 @@ import io.jmix.ui.screen.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.ui.screen.UiControllerUtils.addAfterDetachListener;
 
@@ -144,6 +146,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
      *;
      * @return Task result
      */
+    @Nullable
     @Override
     public final V getResult() {
         checkState(started, "Task is not running");

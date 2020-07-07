@@ -76,8 +76,13 @@ public class ClearAction extends BaseAction implements EntityPicker.EntityPicker
     @Override
     public void afterPropertiesSet() {
         setShortcut(properties.getPickerClearShortcut());
-        setDescription(messages.getMessage("entityPicker.action.clear.tooltip")
-                + " (" + getShortcutCombination().format() + ")");
+
+        if (getShortcutCombination() != null) {
+            setDescription(messages.getMessage("entityPicker.action.clear.tooltip")
+                    + " (" + getShortcutCombination().format() + ")");
+        } else {
+            setDescription(messages.getMessage("entityPicker.action.clear.tooltip"));
+        }
     }
 
     @Override

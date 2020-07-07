@@ -76,14 +76,16 @@ public abstract class Screen implements FrameOwner {
         return eventHub;
     }
 
+    @Nullable
     protected Map<Class<?>, Object> getExtensions() {
         return extensions;
     }
 
-    protected void setExtensions(Map<Class<?>, Object> extensions) {
+    protected void setExtensions(@Nullable Map<Class<?>, Object> extensions) {
         this.extensions = extensions;
     }
 
+    @Nullable
     public String getId() {
         return id;
     }
@@ -93,7 +95,7 @@ public abstract class Screen implements FrameOwner {
      *
      * @param id screen id
      */
-    protected void setId(String id) {
+    protected void setId(@Nullable String id) {
         this.id = id;
     }
 
@@ -138,11 +140,12 @@ public abstract class Screen implements FrameOwner {
         this.window = window;
     }
 
+    @Nullable
     protected List<ApplicationListener> getUiEventListeners() {
         return uiEventListeners;
     }
 
-    protected void setUiEventListeners(List<ApplicationListener> listeners) {
+    protected void setUiEventListeners(@Nullable List<ApplicationListener> listeners) {
         this.uiEventListeners = listeners;
 
         if (listeners != null && !listeners.isEmpty()) {

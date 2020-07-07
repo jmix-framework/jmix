@@ -22,6 +22,7 @@ import io.jmix.core.common.util.Preconditions;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.io.File;
 
 import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
@@ -46,7 +47,7 @@ public class FileIconProvider implements IconProvider {
     }
 
     @Override
-    public boolean canProvide(String iconPath) {
+    public boolean canProvide(@Nullable String iconPath) {
         return iconPath != null && !iconPath.isEmpty() && iconPath.startsWith(FILE_PREFIX);
     }
 }

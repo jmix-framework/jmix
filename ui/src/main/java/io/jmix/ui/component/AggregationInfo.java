@@ -19,6 +19,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.formatter.Formatter;
 
+import javax.annotation.Nullable;
+
 public class AggregationInfo {
 
     public enum Type {
@@ -40,6 +42,7 @@ public class AggregationInfo {
     private AggregationStrategy strategy;
     protected boolean editable = false;
 
+    @Nullable
     public MetaPropertyPath getPropertyPath() {
         return propertyPath;
     }
@@ -48,6 +51,7 @@ public class AggregationInfo {
         this.propertyPath = propertyPath;
     }
 
+    @Nullable
     public Type getType() {
         return type;
     }
@@ -56,6 +60,7 @@ public class AggregationInfo {
         this.type = type;
     }
 
+    @Nullable
     public Formatter<Object> getFormatter() {
         return formatter;
     }
@@ -64,11 +69,12 @@ public class AggregationInfo {
         this.formatter = formatter;
     }
 
+    @Nullable
     public AggregationStrategy getStrategy() {
         return strategy;
     }
 
-    public void setStrategy(AggregationStrategy strategy) {
+    public void setStrategy(@Nullable AggregationStrategy strategy) {
         if (strategy != null) {
             setType(Type.CUSTOM);
         }

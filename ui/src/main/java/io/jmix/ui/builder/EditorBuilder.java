@@ -24,6 +24,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -102,7 +103,7 @@ public class EditorBuilder<E extends JmixEntity> {
      * @param entity new entity instance to be passed to the editor screen
      * @see #newEntity()
      */
-    public EditorBuilder<E> newEntity(E entity) {
+    public EditorBuilder<E> newEntity(@Nullable E entity) {
         this.newEntity = entity;
         this.mode = EditMode.CREATE;
         return this;
@@ -114,7 +115,7 @@ public class EditorBuilder<E extends JmixEntity> {
      * @param entity entity instance to be passed to the editor screen
      * @see #newEntity()
      */
-    public EditorBuilder<E> editEntity(E entity) {
+    public EditorBuilder<E> editEntity(@Nullable E entity) {
         this.editedEntity = entity;
         this.mode = EditMode.EDIT;
         return this;
@@ -152,7 +153,7 @@ public class EditorBuilder<E extends JmixEntity> {
      * @see #withField(HasValue)
      * @see #withListComponent(ListComponent)
      */
-    public EditorBuilder<E> withTransformation(Function<E, E> transformation) {
+    public EditorBuilder<E> withTransformation(@Nullable Function<E, E> transformation) {
         this.transformation = transformation;
         return this;
     }
@@ -192,7 +193,7 @@ public class EditorBuilder<E extends JmixEntity> {
      * Sets parent {@link DataContext} for the editor screen and returns the builder for chaining.
      * <p>The screen will commit data to the parent context instead of directly to {@code DataManager}.
      */
-    public EditorBuilder<E> withParentDataContext(DataContext parentDataContext) {
+    public EditorBuilder<E> withParentDataContext(@Nullable DataContext parentDataContext) {
         this.parentDataContext = parentDataContext;
         return this;
     }
@@ -248,6 +249,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns the field component set by {@link #withField(HasValue)}.
      */
+    @Nullable
     public HasValue<E> getField() {
         return field;
     }
@@ -255,6 +257,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns screen id set by {@link #withScreenId(String)}.
      */
+    @Nullable
     public String getScreenId() {
         return screenId;
     }
@@ -262,6 +265,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns parent data context set by {@link #withParentDataContext(DataContext)}.
      */
+    @Nullable
     public DataContext getParentDataContext() {
         return parentDataContext;
     }
@@ -276,6 +280,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns new entity set by {@link #newEntity(JmixEntity)}.
      */
+    @Nullable
     public E getNewEntity() {
         return newEntity;
     }
@@ -290,6 +295,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns container set by {@link #withContainer(CollectionContainer)}.
      */
+    @Nullable
     public CollectionContainer<E> getContainer() {
         return container;
     }
@@ -297,6 +303,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns initializer set by {@link #withInitializer(Consumer)}.
      */
+    @Nullable
     public Consumer<E> getInitializer() {
         return initializer;
     }
@@ -326,6 +333,7 @@ public class EditorBuilder<E extends JmixEntity> {
      * Returns if a new item will be added to the beginning or to the end of collection. Affects only standalone
      * containers, for nested containers new items are always added to the end.
      */
+    @Nullable
     public Boolean getAddFirst() {
         return addFirst;
     }
@@ -333,6 +341,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns list component set by {@link #withListComponent(ListComponent)}.
      */
+    @Nullable
     public ListComponent<E> getListComponent() {
         return listComponent;
     }
@@ -347,6 +356,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Returns edited entity transformation.
      */
+    @Nullable
     public Function<E, E> getTransformation() {
         return transformation;
     }

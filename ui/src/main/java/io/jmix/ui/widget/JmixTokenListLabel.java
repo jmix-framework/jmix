@@ -19,6 +19,7 @@ import io.jmix.ui.widget.client.tokenlistlabel.JmixTokenListLabelServerRpc;
 import io.jmix.ui.widget.client.tokenlistlabel.JmixTokenListLabelState;
 import com.vaadin.ui.CssLayout;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class JmixTokenListLabel extends CssLayout {
         }
     }
 
-    public void setClickListener(ClickListener clickListener) {
+    public void setClickListener(@Nullable ClickListener clickListener) {
         this.clickListener = clickListener;
         getState().canOpen = clickListener != null;
     }

@@ -19,6 +19,7 @@ package io.jmix.ui.component.impl;
 import io.jmix.ui.component.BrowserFrame;
 import io.jmix.ui.widget.JmixBrowserFrame;
 
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
@@ -32,12 +33,13 @@ public class WebBrowserFrame extends WebAbstractResourceView<JmixBrowserFrame> i
         return new JmixBrowserFrame();
     }
 
+    @Nullable
     public String getSandbox() {
         return component.getSandbox();
     }
 
     @Override
-    public void setSandbox(String value) {
+    public void setSandbox(@Nullable String value) {
         component.setSandbox(value);
     }
 
@@ -47,7 +49,7 @@ public class WebBrowserFrame extends WebAbstractResourceView<JmixBrowserFrame> i
     }
 
     @Override
-    public void setSandbox(EnumSet<Sandbox> sandboxSet) {
+    public void setSandbox(@Nullable EnumSet<Sandbox> sandboxSet) {
         if (sandboxSet != null) {
             component.setSandbox(sandboxSet.stream()
                     .map(Sandbox::getValue)
@@ -58,17 +60,18 @@ public class WebBrowserFrame extends WebAbstractResourceView<JmixBrowserFrame> i
     }
 
     @Override
-    public void setSrcdoc(String value) {
+    public void setSrcdoc(@Nullable String value) {
         component.setSrcdoc(value);
     }
 
+    @Nullable
     @Override
     public String getSrcdoc() {
         return component.getSrcdoc();
     }
 
     @Override
-    public void setAllow(String value) {
+    public void setAllow(@Nullable String value) {
         component.setAllow(value);
     }
 
@@ -78,7 +81,7 @@ public class WebBrowserFrame extends WebAbstractResourceView<JmixBrowserFrame> i
     }
 
     @Override
-    public void setAllow(EnumSet<Allow> allowSet) {
+    public void setAllow(@Nullable EnumSet<Allow> allowSet) {
         if (allowSet != null) {
             component.setAllow(allowSet.stream()
                     .map(Allow::getValue)
@@ -88,18 +91,20 @@ public class WebBrowserFrame extends WebAbstractResourceView<JmixBrowserFrame> i
         }
     }
 
+    @Nullable
     @Override
     public String getAllow() {
         return component.getAllow();
     }
 
+    @Nullable
     @Override
     public String getReferrerPolicy() {
         return component.getReferrerPolicy();
     }
 
     @Override
-    public void setReferrerPolicy(String value) {
+    public void setReferrerPolicy(@Nullable String value) {
         component.setReferrerPolicy(value);
     }
 

@@ -97,6 +97,7 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         throw new UnsupportedOperationException();
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         checkNotNullArgument(id);
@@ -251,10 +252,11 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         }
 
         @Override
-        public void setStyleName(String styleName) {
+        public void setStyleName(@Nullable String styleName) {
             getVaadinTab().setStyleName(styleName);
         }
 
+        @Nullable
         @Override
         public String getStyleName() {
             return getVaadinTab().getStyleName();
@@ -279,7 +281,7 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         }
 
         @Override
-        public void setIconFromSet(Icons.Icon icon) {
+        public void setIconFromSet(@Nullable Icons.Icon icon) {
             String iconPath = icons
                     .get(icon);
             setIcon(iconPath);
@@ -334,11 +336,11 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         tabMapping.put(tabComponent, new ComponentDescriptor(name, childComponent));
         com.vaadin.ui.Accordion.Tab tabControl = this.component.addTab(tabComponent);
 
-        if (getDebugId() != null) {
+        if (AppUI.getCurrent() != null && getDebugId() != null) {
             this.component.setTestId(tabControl,
                     AppUI.getCurrent().getTestIdManager().getTestId(getDebugId() + "." + name));
         }
-        if (AppUI.getCurrent().isTestMode()) {
+        if (AppUI.getCurrent() != null && AppUI.getCurrent().isTestMode()) {
             this.component.setJTestId(tabControl, name);
         }
 
@@ -357,7 +359,7 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
 
         String debugId = getDebugId();
@@ -402,11 +404,11 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
             postInitTaskAdded = true;
         }
 
-        if (getDebugId() != null) {
+        if (AppUI.getCurrent() != null && getDebugId() != null) {
             this.component.setTestId(tabControl,
                     AppUI.getCurrent().getTestIdManager().getTestId(getDebugId() + "." + name));
         }
-        if (AppUI.getCurrent().isTestMode()) {
+        if (AppUI.getCurrent() != null && AppUI.getCurrent().isTestMode()) {
             this.component.setJTestId(tabControl, name);
         }
 
@@ -462,6 +464,7 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         this.component.setSelectedTab(WebComponentsHelper.unwrap(tab.getComponent()));
     }
 
+    @Nullable
     @Override
     public Accordion.Tab getTab(String name) {
         return tabs.get(name);
@@ -603,7 +606,7 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
             }
         }
 
-        protected void applySettings(Window window) {
+        protected void applySettings(@Nullable Window window) {
             if (window != null && userSettingsTools != null) {
                 userSettingsTools.applyLazyTabSettings(window, WebAccordion.this, tabContent);
             }

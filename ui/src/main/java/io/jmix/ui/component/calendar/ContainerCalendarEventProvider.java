@@ -22,6 +22,8 @@ import io.jmix.core.JmixEntity;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.component.data.calendar.EntityCalendarEventProvider;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -127,6 +129,7 @@ public class ContainerCalendarEventProvider<E extends JmixEntity>
         this.startDateProperty = startDateProperty;
     }
 
+    @Nullable
     @Override
     public String getStartDateProperty() {
         return startDateProperty;
@@ -137,6 +140,7 @@ public class ContainerCalendarEventProvider<E extends JmixEntity>
         this.endDateProperty = endDateProperty;
     }
 
+    @Nullable
     @Override
     public String getEndDateProperty() {
         return endDateProperty;
@@ -147,6 +151,7 @@ public class ContainerCalendarEventProvider<E extends JmixEntity>
         this.captionProperty = captionProperty;
     }
 
+    @Nullable
     @Override
     public String getCaptionProperty() {
         return captionProperty;
@@ -157,6 +162,7 @@ public class ContainerCalendarEventProvider<E extends JmixEntity>
         this.descriptionProperty = descriptionProperty;
     }
 
+    @Nullable
     @Override
     public String getDescriptionProperty() {
         return descriptionProperty;
@@ -167,6 +173,7 @@ public class ContainerCalendarEventProvider<E extends JmixEntity>
         this.styleNameProperty = styleNameProperty;
     }
 
+    @Nullable
     @Override
     public String getStyleNameProperty() {
         return styleNameProperty;
@@ -177,6 +184,7 @@ public class ContainerCalendarEventProvider<E extends JmixEntity>
         this.allDayProperty = allDayProperty;
     }
 
+    @Nullable
     @Override
     public String getIsAllDayProperty() {
         return allDayProperty;

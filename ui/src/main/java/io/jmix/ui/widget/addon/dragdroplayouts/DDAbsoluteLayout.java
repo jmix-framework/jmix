@@ -29,6 +29,7 @@ import com.vaadin.ui.AbsoluteLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.LegacyComponent;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -82,10 +83,11 @@ public class DDAbsoluteLayout extends AbsoluteLayout
     }
 
     @Override
-    public void setDragCaptionProvider(DragCaptionProvider provider) {
+    public void setDragCaptionProvider(@Nullable DragCaptionProvider provider) {
         this.dragCaptionProvider = provider;
     }
 
+    @Nullable
     @Override
     public DragCaptionProvider getDragCaptionProvider() {
         return dragCaptionProvider;
@@ -198,23 +200,25 @@ public class DDAbsoluteLayout extends AbsoluteLayout
     }
 
     @Override
-    public void setDragImageProvider(DragImageProvider provider) {
+    public void setDragImageProvider(@Nullable DragImageProvider provider) {
         this.dragImageProvider = provider;
         markAsDirty();
     }
 
+    @Nullable
     @Override
     public DragImageProvider getDragImageProvider() {
         return this.dragImageProvider;
     }
 
+    @Nullable
     @Override
     public DragGrabFilter getDragGrabFilter() {
         return dragGrabFilter;
     }
 
     @Override
-    public void setDragGrabFilter(DragGrabFilter dragGrabFilter) {
+    public void setDragGrabFilter(@Nullable DragGrabFilter dragGrabFilter) {
         this.dragGrabFilter = dragGrabFilter;
     }
 }

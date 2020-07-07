@@ -118,6 +118,7 @@ public class LookupClassBuilder<E extends JmixEntity, S extends Screen & LookupS
     /**
      * Returns lookup screen class.
      */
+    @Nullable
     public Class<S> getScreenClass() {
         return screenClass;
     }
@@ -125,6 +126,7 @@ public class LookupClassBuilder<E extends JmixEntity, S extends Screen & LookupS
     /**
      * Returns screen close listener.
      */
+    @Nullable
     public Consumer<AfterScreenCloseEvent<S>> getCloseListener() {
         return closeListener;
     }

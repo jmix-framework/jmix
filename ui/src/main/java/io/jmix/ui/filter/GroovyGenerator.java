@@ -16,6 +16,7 @@
 
 package io.jmix.ui.filter;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -97,7 +98,7 @@ public class GroovyGenerator {
         throw new UnsupportedOperationException();
     }
 
-    protected String valueToString(Class javaClass, String value, Op operator) {
+    protected String valueToString(Class javaClass, @Nullable String value, Op operator) {
         if (value == null) {
             return "null";
         } else if (Number.class.isAssignableFrom(javaClass)

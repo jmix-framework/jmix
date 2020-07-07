@@ -27,6 +27,8 @@ import com.vaadin.ui.CustomField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+
 public class JmixResizableTextAreaWrapper extends CustomField {
 
     protected ResizeListener resizeListener = null;
@@ -114,6 +116,7 @@ public class JmixResizableTextAreaWrapper extends CustomField {
         // do nothing
     }
 
+    @Nullable
     @Override
     public Object getValue() {
         return null;

@@ -53,7 +53,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
     /**
      * Attention: this method is copied from the parent class: Table.setColumnOrder(Object[])
      */
-    public void setColumnOrder(Object[] columnOrder) {
+    public void setColumnOrder(@Nullable Object[] columnOrder) {
         if (columnOrder == null || !isColumnReorderingAllowed()) {
             return;
         }
@@ -177,7 +177,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
         cachedAggregatedValues.put(groupId, values);
     }
 
-    protected boolean isAggregatedValuesChanged(Object itemId) {
+    protected boolean isAggregatedValuesChanged(@Nullable Object itemId) {
         if (itemId == null) {
             return false;
         }
@@ -304,7 +304,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
         requestColumnReorderingAllowed = true;
     }
 
-    protected boolean hasGroupDisallowedProperties(Object[] newGroupProperties) {
+    protected boolean hasGroupDisallowedProperties(@Nullable Object[] newGroupProperties) {
         if (newGroupProperties == null) {
             return false;
         }
@@ -321,7 +321,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
         return false;
     }
 
-    protected boolean isGroupsChanged(Object[] newGroupProperties) {
+    protected boolean isGroupsChanged(@Nullable Object[] newGroupProperties) {
         Collection<?> oldGroupProperties = getGroupProperties();
         if (newGroupProperties == null && oldGroupProperties == null)
             return false;

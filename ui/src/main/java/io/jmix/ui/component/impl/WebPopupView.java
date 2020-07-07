@@ -60,7 +60,7 @@ public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements
     }
 
     @Override
-    public void setPopupContent(Component popupContent) {
+    public void setPopupContent(@Nullable Component popupContent) {
         if (this.popupContent != null) {
             if (this.popupContent instanceof BelongToFrame) {
                 ((BelongToFrame) this.popupContent).setFrame(null);
@@ -111,6 +111,7 @@ public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements
         }
     }
 
+    @Nullable
     @Override
     public Component getPopupContent() {
         return popupContent;
@@ -185,10 +186,11 @@ public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements
     }
 
     @Override
-    public void setPopupPosition(PopupPosition position) {
+    public void setPopupPosition(@Nullable PopupPosition position) {
         component.setPopupPosition(WebWrapperUtils.toVaadinPopupPosition(position));
     }
 
+    @Nullable
     @Override
     public PopupPosition getPopupPosition() {
         return WebWrapperUtils.fromVaadinPopupPosition(component.getPopupPosition());
@@ -233,7 +235,7 @@ public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
         setIconStyle();
     }

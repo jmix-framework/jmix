@@ -44,7 +44,7 @@ public class WindowInfo {
     private final RouteDefinition routeDefinition;
 
     protected WindowInfo(String id, @Nullable WindowAttributesProvider windowAttributesProvider,
-                         @Nullable Element descriptor, @Nullable String screenClassName, RouteDefinition routeDefinition) {
+                         @Nullable Element descriptor, @Nullable String screenClassName, @Nullable RouteDefinition routeDefinition) {
         this.id = id;
         this.windowAttributesProvider = windowAttributesProvider;
         this.descriptor = descriptor;
@@ -69,7 +69,7 @@ public class WindowInfo {
     }
 
     public WindowInfo(String id, WindowAttributesProvider windowAttributesProvider,
-                      String screenClassName, RouteDefinition routeDefinition) {
+                      String screenClassName, @Nullable RouteDefinition routeDefinition) {
         checkNotNullArgument(id);
         checkNotNullArgument(screenClassName);
 
@@ -156,6 +156,7 @@ public class WindowInfo {
     /**
      * @return route definition configured with {@link Route} annotation
      */
+    @Nullable
     public RouteDefinition getRouteDefinition() {
         return routeDefinition;
     }

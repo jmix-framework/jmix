@@ -22,6 +22,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 /**
  * Class name formatter to be used in screen descriptors and controllers.
  * <p>
@@ -39,8 +41,9 @@ public class ClassNameFormatter implements Formatter<String> {
     @Autowired
     protected Messages messages;
 
+    @Nullable
     @Override
-    public String apply(String value) {
+    public String apply(@Nullable String value) {
         if (value == null) {
             return null;
         }

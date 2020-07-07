@@ -70,7 +70,7 @@ public abstract class ShortcutsDelegate<T> {
         }
     }
 
-    public void removeAction(Action action) {
+    public void removeAction(@Nullable Action action) {
         if (action != null) {
             removeShortcut(action);
             // find and assign alternative

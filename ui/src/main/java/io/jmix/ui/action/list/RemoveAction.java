@@ -168,10 +168,6 @@ public class RemoveAction<E extends JmixEntity> extends SecuredListAction implem
 
     @Override
     protected boolean isPermitted() {
-        if (target == null || !(target.getItems() instanceof ContainerDataUnit)) {
-            return false;
-        }
-
         if (!checkRemovePermission()) {
             return false;
         }
@@ -180,6 +176,10 @@ public class RemoveAction<E extends JmixEntity> extends SecuredListAction implem
     }
 
     protected boolean checkRemovePermission() {
+        if (target == null || !(target.getItems() instanceof ContainerDataUnit)) {
+            return false;
+        }
+
         ContainerDataUnit<E> containerDataUnit = (ContainerDataUnit) target.getItems();
 
         MetaClass metaClass = containerDataUnit.getEntityMetaClass();
@@ -198,10 +198,7 @@ public class RemoveAction<E extends JmixEntity> extends SecuredListAction implem
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
-            boolean attrPermitted = security.isEntityAttrUpdatePermitted(masterMetaClass, metaProperty.getName());
-            if (!attrPermitted) {
-                return false;
-            }
+            return security.isEntityAttrUpdatePermitted(masterMetaClass, metaProperty.getName());
         }
 
         return true;

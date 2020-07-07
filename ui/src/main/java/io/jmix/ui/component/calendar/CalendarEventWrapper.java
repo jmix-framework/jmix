@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.calendar;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,7 @@ public class CalendarEventWrapper<V> implements com.vaadin.v7.ui.components.cale
         }
     }
 
+    @Nullable
     @Override
     public Date getStart() {
         return modelToPresentationConverter != null
@@ -53,6 +55,7 @@ public class CalendarEventWrapper<V> implements com.vaadin.v7.ui.components.cale
                 : (Date) calendarEvent.getStart();
     }
 
+    @Nullable
     @Override
     public Date getEnd() {
         return modelToPresentationConverter != null
@@ -60,16 +63,19 @@ public class CalendarEventWrapper<V> implements com.vaadin.v7.ui.components.cale
                 : (Date) calendarEvent.getEnd();
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return calendarEvent.getCaption();
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return calendarEvent.getDescription();
     }
 
+    @Nullable
     @Override
     public String getStyleName() {
         return calendarEvent.getStyleName();

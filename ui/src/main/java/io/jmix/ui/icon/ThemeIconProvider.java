@@ -21,6 +21,8 @@ import com.vaadin.server.ThemeResource;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
 
@@ -39,7 +41,7 @@ public class ThemeIconProvider implements IconProvider {
     }
 
     @Override
-    public boolean canProvide(String iconPath) {
+    public boolean canProvide(@Nullable String iconPath) {
         return iconPath != null && !iconPath.isEmpty() && iconPath.startsWith(THEME_PREFIX);
     }
 }

@@ -134,13 +134,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         }
     }
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         if (!Objects.equals(this.id, id)) {
             if (frame != null) {
                 ((FrameImplementation) frame).unregisterComponent(this);
@@ -243,13 +244,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         return getEventHub().subscribe(DetachEvent.class, listener);
     }
 
+    @Nullable
     @Override
     public String getDebugId() {
         return component.getId();
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         component.setId(id);
     }
 
@@ -259,7 +261,7 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         getComposition().setStyleName(name);
     }
 
@@ -383,16 +385,18 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     }
 
     @Override
-    public void setIconFromSet(Icons.Icon icon) {
+    public void setIconFromSet(@Nullable Icons.Icon icon) {
         String iconName = getIconName(icon);
         setIcon(iconName);
     }
 
+    @Nullable
     protected Resource getIconResource(String icon) {
         return beanLocator.get(IconResolver.class).getIconResource(icon);
     }
 
-    protected String getIconName(Icons.Icon icon) {
+    @Nullable
+    protected String getIconName(@Nullable Icons.Icon icon) {
         return beanLocator.get(Icons.class).get(icon);
     }
 
@@ -407,7 +411,7 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     }
 
     @Override
-    public void setHeight(String height) {
+    public void setHeight(@Nullable String height) {
         // do not try to parse string if constant passed
         if (Component.AUTO_SIZE.equals(height)) {
             getComposition().setHeight(-1, Sizeable.Unit.PIXELS);
@@ -429,7 +433,7 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     }
 
     @Override
-    public void setWidth(String width) {
+    public void setWidth(@Nullable String width) {
         // do not try to parse string if constant passed
         if (Component.AUTO_SIZE.equals(width)) {
             getComposition().setWidth(-1, Sizeable.Unit.PIXELS);
@@ -479,13 +483,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         this.element = element;
     }
 
+    @Nullable
     @Override
     public String getContextHelpText() {
         return ((AbstractComponent) getComposition()).getContextHelpText();
     }
 
     @Override
-    public void setContextHelpText(String contextHelpText) {
+    public void setContextHelpText(@Nullable String contextHelpText) {
         if (isContextHelpTextHtmlEnabled()) {
             contextHelpText = sanitize(contextHelpText);
         }
@@ -507,13 +512,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         }
     }
 
+    @Nullable
     @Override
     public Consumer<ContextHelpIconClickEvent> getContextHelpIconClickHandler() {
         return contextHelpIconClickHandler;
     }
 
     @Override
-    public void setContextHelpIconClickHandler(Consumer<ContextHelpIconClickEvent> handler) {
+    public void setContextHelpIconClickHandler(@Nullable Consumer<ContextHelpIconClickEvent> handler) {
         if (!Objects.equals(this.contextHelpIconClickHandler, handler)) {
             this.contextHelpIconClickHandler = handler;
 

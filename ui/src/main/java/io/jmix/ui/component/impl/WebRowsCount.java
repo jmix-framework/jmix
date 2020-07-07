@@ -160,6 +160,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         }
     }
 
+    @Nullable
     @Override
     public RowsCountTarget getRowsCountTarget() {
         return target;
@@ -213,13 +214,14 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         initButtonListeners();
     }
 
+    @Nullable
     @Override
     public Function<DataLoadContext, Long> getTotalCountDelegate() {
         return totalCountDelegate;
     }
 
     @Override
-    public void setTotalCountDelegate(Function<DataLoadContext, Long> countDelegate) {
+    public void setTotalCountDelegate(@Nullable Function<DataLoadContext, Long> countDelegate) {
         this.totalCountDelegate = countDelegate;
     }
 

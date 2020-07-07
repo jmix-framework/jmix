@@ -21,6 +21,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomField;
 import com.vaadin.v7.ui.themes.BaseTheme;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 public class JmixButtonField<V> extends CustomField<V> {
@@ -77,6 +78,6 @@ public class JmixButtonField<V> extends CustomField<V> {
     }
 
     public interface CaptionFormatter<V> {
-        String convertToPresentation(V value, Locale locale);
+        String convertToPresentation(@Nullable V value, @Nullable Locale locale);
     }
 }

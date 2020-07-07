@@ -85,7 +85,7 @@ public final class EditorTypeExtractor {
     }
 
     @Nullable
-    protected static Class<? extends JmixEntity> extractEntityTypeByClass(Class controllerClass) {
+    protected static Class<? extends JmixEntity> extractEntityTypeByClass(@Nullable Class controllerClass) {
         while (controllerClass != null
                 && !isAbstractEditor(controllerClass.getSuperclass())
                 && !isStandardEditor(controllerClass.getSuperclass())) {

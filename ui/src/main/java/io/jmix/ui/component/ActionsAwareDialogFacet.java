@@ -35,11 +35,12 @@ public interface ActionsAwareDialogFacet<T> {
      *
      * @param actions actions
      */
-    void setActions(Collection<DialogAction<T>> actions);
+    void setActions(@Nullable Collection<DialogAction<T>> actions);
 
     /**
      * @return dialog actions
      */
+    @Nullable
     Collection<DialogAction<T>> getActions();
 
     /**
@@ -108,6 +109,7 @@ public interface ActionsAwareDialogFacet<T> {
             return primary;
         }
 
+        @Nullable
         public Consumer<DialogActionPerformedEvent<T>> getActionHandler() {
             return actionHandler;
         }

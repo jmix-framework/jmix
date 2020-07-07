@@ -180,6 +180,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
         this.query = query;
     }
 
+    @Nullable
     @Override
     public Condition getCondition() {
         return condition;

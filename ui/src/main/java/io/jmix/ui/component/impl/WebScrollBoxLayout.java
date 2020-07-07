@@ -142,7 +142,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
     }
 
     @Override
-    public void setStyleName(String styleName) {
+    public void setStyleName(@Nullable String styleName) {
         super.setStyleName(styleName);
 
         component.addStyleName(SCROLLBOX_STYLENAME);
@@ -187,6 +187,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
         }
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         Preconditions.checkNotNullArgument(id);
@@ -248,7 +249,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
     }
 
     @Override
-    public void setContentWidth(String width) {
+    public void setContentWidth(@Nullable String width) {
         getContent().setWidth(width);
     }
 
@@ -263,7 +264,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
     }
 
     @Override
-    public void setContentHeight(String height) {
+    public void setContentHeight(@Nullable String height) {
         getContent().setHeight(height);
     }
 
@@ -283,6 +284,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
                 .setCssProperty(CSS.MIN_WIDTH, minWidth);
     }
 
+    @Nullable
     @Override
     public String getContentMinWidth() {
         return HtmlAttributesExtension.get(getContent())
@@ -295,6 +297,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
                 .setCssProperty(CSS.MAX_WIDTH, maxWidth);
     }
 
+    @Nullable
     @Override
     public String getContentMaxWidth() {
         return HtmlAttributesExtension.get(getContent())
@@ -307,6 +310,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
                 .setCssProperty(CSS.MIN_HEIGHT, minHeight);
     }
 
+    @Nullable
     @Override
     public String getContentMinHeight() {
         return HtmlAttributesExtension.get(getContent())
@@ -319,6 +323,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
                 .setCssProperty(CSS.MAX_HEIGHT, maxHeight);
     }
 
+    @Nullable
     @Override
     public String getContentMaxHeight() {
         return HtmlAttributesExtension.get(getContent())

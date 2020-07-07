@@ -84,7 +84,7 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
     protected void loadRefreshOptionsOnLookupClose(TokenList component, Element element) {
         String refreshOptionsOnLookupClose = element.attributeValue("refreshOptionsOnLookupClose");
         if (refreshOptionsOnLookupClose != null) {
-            component.setRefreshOptionsOnLookupClose(Boolean.valueOf(refreshOptionsOnLookupClose));
+            component.setRefreshOptionsOnLookupClose(Boolean.parseBoolean(refreshOptionsOnLookupClose));
         }
     }
 

@@ -24,6 +24,8 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.widget.JmixEnhancedTable;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+
 import static io.jmix.ui.component.impl.WebAbstractTable.MAX_TEXT_LENGTH_GAP;
 
 public class AbbreviatedColumnGenerator implements SystemTableColumnGenerator,
@@ -37,6 +39,7 @@ public class AbbreviatedColumnGenerator implements SystemTableColumnGenerator,
         this.metadataTools = metadataTools;
     }
 
+    @Nullable
     @Override
     public Object generateCell(com.vaadin.v7.ui.Table source, Object itemId, Object columnId) {
         Property property = source.getItem(itemId).getItemProperty(columnId);

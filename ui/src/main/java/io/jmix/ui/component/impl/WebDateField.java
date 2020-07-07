@@ -192,6 +192,7 @@ public class WebDateField<V extends Comparable<V>>
         }
     }
 
+    @Nullable
     @Override
     public Resolution getResolution() {
         return resolution;
@@ -217,6 +218,7 @@ public class WebDateField<V extends Comparable<V>>
         }
     }
 
+    @Nullable
     @Override
     public Datatype<V> getDatatype() {
         return datatype;
@@ -230,28 +232,30 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @Override
-    public void setRangeStart(V value) {
+    public void setRangeStart(@Nullable V value) {
         this.rangeStart = value;
         dateField.setRangeStart(value == null ? null : convertToLocalDateTime(value, zoneId).toLocalDate());
     }
 
+    @Nullable
     @Override
     public V getRangeStart() {
         return rangeStart;
     }
 
     @Override
-    public void setRangeEnd(V value) {
+    public void setRangeEnd(@Nullable V value) {
         this.rangeEnd = value;
         dateField.setRangeEnd(value == null ? null : convertToLocalDateTime(value, zoneId).toLocalDate());
     }
 
+    @Nullable
     @Override
     public V getRangeEnd() {
         return rangeEnd;
     }
 
-    protected boolean checkRange(V value, boolean handleError) {
+    protected boolean checkRange(@Nullable V value, boolean handleError) {
         if (updatingInstance) {
             return true;
         }
@@ -291,6 +295,7 @@ public class WebDateField<V extends Comparable<V>>
         setValueToPresentation(convertToLocalDateTime(value, zoneId));
     }
 
+    @Nullable
     @Override
     public String getDateFormat() {
         return dateTimeFormat;
@@ -315,16 +320,18 @@ public class WebDateField<V extends Comparable<V>>
         updateLayout();
     }
 
+    @Nullable
     @Override
     public TimeZone getTimeZone() {
         return getZoneId() != null ? TimeZone.getTimeZone(getZoneId()) : null;
     }
 
     @Override
-    public void setTimeZone(TimeZone timeZone) {
+    public void setTimeZone(@Nullable TimeZone timeZone) {
         setZoneId(timeZone == null ? null : timeZone.toZoneId());
     }
 
+    @Nullable
     @Override
     public ZoneId getZoneId() {
         return zoneId;
@@ -341,7 +348,7 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @Override
-    public void setZoneId(ZoneId zoneId) {
+    public void setZoneId(@Nullable ZoneId zoneId) {
         ZoneId prevZoneId = this.zoneId;
         V value = getValue();
         this.zoneId = zoneId;
@@ -492,10 +499,10 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
 
-        if (id != null) {
+        if (id != null && AppUI.getCurrent() != null) {
             TestIdManager testIdManager = AppUI.getCurrent().getTestIdManager();
             timeField.setId(testIdManager.getTestId(id + "_time"));
             dateField.setId(testIdManager.getTestId(id + "_date"));
@@ -628,13 +635,14 @@ public class WebDateField<V extends Comparable<V>>
                 : null;
     }
 
+    @Nullable
     @Override
     public String getRequiredMessage() {
         return dateField.getRequiredError();
     }
 
     @Override
-    public void setRequiredMessage(String msg) {
+    public void setRequiredMessage(@Nullable String msg) {
         dateField.setRequiredError(msg);
         timeField.setRequiredError(msg);
     }
@@ -729,7 +737,7 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @Override
-    protected void setValidationError(String errorMessage) {
+    protected void setValidationError(@Nullable String errorMessage) {
         if (errorMessage == null) {
             dateField.setComponentError(null);
             timeField.setComponentError(null);
@@ -747,6 +755,7 @@ public class WebDateField<V extends Comparable<V>>
         timeField.setTimeMode(toVaadinTimeMode(timeMode));
     }
 
+    @Nullable
     @Override
     public TimeField.TimeMode getTimeMode() {
         return fromVaadinTimeMode(timeField.getTimeMode());

@@ -116,10 +116,11 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
     }
 
     @Override
-    public void setRequiredMessage(String msg) {
+    public void setRequiredMessage(@Nullable String msg) {
         component.setRequiredError(msg);
     }
 
+    @Nullable
     @Override
     public String getRequiredMessage() {
         return component.getRequiredError();
@@ -228,7 +229,7 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
         return modelValue;
     }
 
-    protected boolean fieldValueEquals(V value, V oldValue) {
+    protected boolean fieldValueEquals(@Nullable V value, @Nullable V oldValue) {
         return EntityValues.propertyValueEquals(oldValue, value);
     }
 
@@ -322,7 +323,7 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
         return component.isModified();
     }
 
-    protected boolean isEmpty(Object value) {
+    protected boolean isEmpty(@Nullable Object value) {
         return value == null;
     }
 }

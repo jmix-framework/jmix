@@ -353,7 +353,7 @@ public class JmixTokenList<T extends JmixEntity> extends CustomField<Collection<
         }
     }
 
-    public void refreshClickListeners(TokenList.ItemClickListener listener) {
+    public void refreshClickListeners(@Nullable TokenList.ItemClickListener listener) {
         Collection<T> value;
 
         if (owner.getValueSource() != null) {
@@ -422,7 +422,7 @@ public class JmixTokenList<T extends JmixEntity> extends CustomField<Collection<
     }
 
     protected void setTokenStyle(JmixTokenListLabel label, @Nullable Object itemId) {
-        if (owner.tokenStyleGenerator != null) {
+        if (owner.getTokenStyleGenerator() != null) {
             String styleName = owner.getTokenStyleGenerator().apply(itemId);
             if (styleName != null && !styleName.isEmpty()) {
                 label.setStyleName(styleName);

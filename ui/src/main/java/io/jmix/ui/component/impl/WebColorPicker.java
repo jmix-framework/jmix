@@ -156,7 +156,7 @@ public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, C
         }
 
         if (modelValue.startsWith("#")) {
-            modelValue = modelValue.substring(1, modelValue.length());
+            modelValue = modelValue.substring(1);
         }
 
         try {
@@ -179,140 +179,154 @@ public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, C
     }
 
     @Override
-    public void setPopupCaption(String popupCaption) {
+    public void setPopupCaption(@Nullable String popupCaption) {
         component.setPopupCaption(popupCaption);
     }
 
+    @Nullable
     @Override
     public String getPopupCaption() {
         return component.getPopupCaption();
     }
 
     @Override
-    public void setConfirmButtonCaption(String caption) {
+    public void setConfirmButtonCaption(@Nullable String caption) {
         component.setConfirmButtonCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getConfirmButtonCaption() {
         return component.getConfirmButtonCaption();
     }
 
     @Override
-    public void setCancelButtonCaption(String caption) {
+    public void setCancelButtonCaption(@Nullable String caption) {
         component.setCancelButtonCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getCancelButtonCaption() {
         return component.getCancelButtonCaption();
     }
 
     @Override
-    public void setSwatchesTabCaption(String caption) {
+    public void setSwatchesTabCaption(@Nullable String caption) {
         component.setSwatchesTabCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getSwatchesTabCaption() {
         return component.getSwatchesTabCaption();
     }
 
     @Override
-    public void setLookupAllCaption(String caption) {
+    public void setLookupAllCaption(@Nullable String caption) {
         component.setLookupAllCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getLookupAllCaption() {
         return component.getLookupAllCaption();
     }
 
     @Override
-    public void setLookupRedCaption(String caption) {
+    public void setLookupRedCaption(@Nullable String caption) {
         component.setLookupRedCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getLookupRedCaption() {
         return component.getLookupRedCaption();
     }
 
     @Override
-    public void setLookupGreenCaption(String caption) {
+    public void setLookupGreenCaption(@Nullable String caption) {
         component.setLookupGreenCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getLookupGreenCaption() {
         return component.getLookupGreenCaption();
     }
 
     @Override
-    public void setLookupBlueCaption(String caption) {
+    public void setLookupBlueCaption(@Nullable String caption) {
         component.setLookupBlueCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getLookupBlueCaption() {
         return component.getLookupBlueCaption();
     }
 
     @Override
-    public void setRedSliderCaption(String caption) {
+    public void setRedSliderCaption(@Nullable String caption) {
         component.setRedSliderCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getRedSliderCaption() {
         return component.getRedSliderCaption();
     }
 
     @Override
-    public void setGreenSliderCaption(String caption) {
+    public void setGreenSliderCaption(@Nullable String caption) {
         component.setGreenSliderCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getGreenSliderCaption() {
         return component.getGreenSliderCaption();
     }
 
     @Override
-    public void setBlueSliderCaption(String caption) {
+    public void setBlueSliderCaption(@Nullable String caption) {
         component.setBlueSliderCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getBlueSliderCaption() {
         return component.getBlueSliderCaption();
     }
 
     @Override
-    public void setHueSliderCaption(String caption) {
+    public void setHueSliderCaption(@Nullable String caption) {
         component.setHueSliderCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getHueSliderCaption() {
         return component.getHueSliderCaption();
     }
 
     @Override
-    public void setSaturationSliderCaption(String caption) {
+    public void setSaturationSliderCaption(@Nullable String caption) {
         component.setSaturationSliderCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getSaturationSliderCaption() {
         return component.getSaturationSliderCaption();
     }
 
     @Override
-    public void setValueSliderCaption(String caption) {
+    public void setValueSliderCaption(@Nullable String caption) {
         component.setValueSliderCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getValueSliderCaption() {
         return component.getValueSliderCaption();

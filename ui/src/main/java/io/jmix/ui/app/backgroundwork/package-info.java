@@ -14,24 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.settings.component;
+@NonNullApi
+package io.jmix.ui.app.backgroundwork;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
-public class GroupTableSettings extends TableSettings {
-
-    protected List<String> groupProperties;
-
-    public GroupTableSettings() {
-    }
-
-    @Nullable
-    public List<String> getGroupProperties() {
-        return groupProperties;
-    }
-
-    public void setGroupProperties(List<String> groupProperties) {
-        this.groupProperties = groupProperties;
-    }
-}
+import org.springframework.lang.NonNullApi;

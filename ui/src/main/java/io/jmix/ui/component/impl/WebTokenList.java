@@ -248,7 +248,7 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public void setLookupFieldOptionsCaptionProvider(Function<? super V, String> optionsCaptionProvider) {
+    public void setLookupFieldOptionsCaptionProvider(@Nullable Function<? super V, String> optionsCaptionProvider) {
         entityComboBox.setOptionCaptionProvider(optionsCaptionProvider);
     }
 
@@ -268,13 +268,14 @@ public class WebTokenList<V extends JmixEntity>
         entityComboBox.setCaptionProperty(optionsCaptionProperty);
     }
 
+    @Nullable
     @Override
     public CaptionMode getOptionsCaptionMode() {
         return entityComboBox.getCaptionMode();
     }
 
     @Override
-    public void setOptionsCaptionMode(CaptionMode optionsCaptionMode) {
+    public void setOptionsCaptionMode(@Nullable CaptionMode optionsCaptionMode) {
         entityComboBox.setCaptionMode(optionsCaptionMode);
     }
 
@@ -289,7 +290,7 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public void setOptions(Options<V> options) {
+    public void setOptions(@Nullable Options<V> options) {
         if (options != null
                 && !(options instanceof EntityOptions)) {
             throw new IllegalArgumentException("TokenList supports only EntityOptions");
@@ -297,6 +298,7 @@ public class WebTokenList<V extends JmixEntity>
         entityComboBox.setOptions(options);
     }
 
+    @Nullable
     @Override
     public Options<V> getOptions() {
         return entityComboBox.getOptions();
@@ -373,7 +375,7 @@ public class WebTokenList<V extends JmixEntity>
         }
     }
 
-    protected Screen createLookupScreen(Runnable afterLookupSelect) {
+    protected Screen createLookupScreen(@Nullable Runnable afterLookupSelect) {
         Class<V> entityClass = getLookupEntityClass();
         OpenMode openMode = /*lookupOpenMode != null TODO: legacy-ui
                 ? lookupOpenMode.getOpenMode()
@@ -589,18 +591,19 @@ public class WebTokenList<V extends JmixEntity>
         return modelValue;
     }
 
+    @Nullable
     @Override
     public String getLookupScreen() {
         return lookupScreen;
     }
 
     @Override
-    public void setLookupScreen(String lookupScreen) {
+    public void setLookupScreen(@Nullable String lookupScreen) {
         this.lookupScreen = lookupScreen;
     }
 
     @Override
-    public void setLookupScreenParams(Map<String, Object> params) {
+    public void setLookupScreenParams(@Nullable Map<String, Object> params) {
         this.lookupScreenParams = params;
     }
 
@@ -620,84 +623,92 @@ public class WebTokenList<V extends JmixEntity>
         component.refreshComponent();
     }
 
+    @Nullable
     @Override
     public String getAddButtonCaption() {
         return addButton.getCaption();
     }
 
     @Override
-    public void setAddButtonCaption(String caption) {
+    public void setAddButtonCaption(@Nullable String caption) {
         addButton.setCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getAddButtonIcon() {
         return addButton.getIcon();
     }
 
     @Override
-    public void setAddButtonIcon(String icon) {
+    public void setAddButtonIcon(@Nullable String icon) {
         addButton.setIcon(icon);
     }
 
+    @Nullable
     @Override
     public String getClearButtonCaption() {
         return clearButton.getCaption();
     }
 
     @Override
-    public void setClearButtonCaption(String caption) {
+    public void setClearButtonCaption(@Nullable String caption) {
         clearButton.setCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getClearButtonIcon() {
         return clearButton.getIcon();
     }
 
     @Override
-    public void setClearButtonIcon(String icon) {
+    public void setClearButtonIcon(@Nullable String icon) {
         clearButton.setIcon(icon);
     }
 
+    @Nullable
     @Override
     public ItemChangeHandler getItemChangeHandler() {
         return itemChangeHandler;
     }
 
     @Override
-    public void setItemChangeHandler(ItemChangeHandler handler) {
+    public void setItemChangeHandler(@Nullable ItemChangeHandler handler) {
         this.itemChangeHandler = handler;
     }
 
+    @Nullable
     @Override
     public ItemClickListener getItemClickListener() {
         return itemClickListener;
     }
 
     @Override
-    public void setItemClickListener(ItemClickListener itemClickListener) {
+    public void setItemClickListener(@Nullable ItemClickListener itemClickListener) {
         this.itemClickListener = itemClickListener;
         this.component.refreshClickListeners(itemClickListener);
     }
 
+    @Nullable
     @Override
     public AfterLookupCloseHandler getAfterLookupCloseHandler() {
         return afterLookupCloseHandler;
     }
 
     @Override
-    public void setAfterLookupCloseHandler(AfterLookupCloseHandler afterLookupCloseHandler) {
+    public void setAfterLookupCloseHandler(@Nullable AfterLookupCloseHandler afterLookupCloseHandler) {
         this.afterLookupCloseHandler = afterLookupCloseHandler;
     }
 
+    @Nullable
     @Override
     public AfterLookupSelectionHandler getAfterLookupSelectionHandler() {
         return afterLookupSelectionHandler;
     }
 
     @Override
-    public void setAfterLookupSelectionHandler(AfterLookupSelectionHandler afterLookupSelectionHandler) {
+    public void setAfterLookupSelectionHandler(@Nullable AfterLookupSelectionHandler afterLookupSelectionHandler) {
         this.afterLookupSelectionHandler = afterLookupSelectionHandler;
     }
 
@@ -743,26 +754,28 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public void setTokenStyleGenerator(Function<Object, String> tokenStyleGenerator) {
+    public void setTokenStyleGenerator(@Nullable Function<Object, String> tokenStyleGenerator) {
         this.tokenStyleGenerator = tokenStyleGenerator;
     }
 
+    @Nullable
     @Override
     public Function<Object, String> getTokenStyleGenerator() {
         return tokenStyleGenerator;
     }
 
+    @Nullable
     @Override
     public String getLookupInputPrompt() {
         return entityComboBox.getInputPrompt();
     }
 
     @Override
-    public void setLookupInputPrompt(String inputPrompt) {
+    public void setLookupInputPrompt(@Nullable String inputPrompt) {
         this.entityComboBox.setInputPrompt(inputPrompt);
     }
 
-    protected String getInstanceCaption(V instance) {
+    protected String getInstanceCaption(@Nullable V instance) {
         if (instance == null) {
             return "";
         }
@@ -823,10 +836,11 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public void setLookupProvider(Supplier<Screen> lookupProvider) {
+    public void setLookupProvider(@Nullable Supplier<Screen> lookupProvider) {
         this.lookupProvider = lookupProvider;
     }
 
+    @Nullable
     @Override
     public Supplier<Screen> getLookupProvider() {
         return lookupProvider;

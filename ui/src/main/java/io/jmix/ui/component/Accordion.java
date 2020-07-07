@@ -62,6 +62,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
      * Get selected tab. May be null if the tabsheet does not contain tabs at all.
      * @deprecated use {@link #getSelectedTab()}
      */
+    @Nullable
     @Deprecated
     default Tab getTab() {
         return getSelectedTab();
@@ -108,6 +109,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
      * @param name tab id
      * @return tab instance
      */
+    @Nullable
     Tab getTab(String name);
 
     /**
@@ -153,7 +155,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
     class SelectedTabChangeEvent extends EventObject {
         private final Accordion.Tab selectedTab;
 
-        public SelectedTabChangeEvent(Accordion accordion, Accordion.Tab selectedTab) {
+        public SelectedTabChangeEvent(Accordion accordion, @Nullable Accordion.Tab selectedTab) {
             super(accordion);
             this.selectedTab = selectedTab;
         }
@@ -163,6 +165,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
             return (Accordion) super.getSource();
         }
 
+        @Nullable
         public Accordion.Tab getSelectedTab() {
             return selectedTab;
         }
@@ -208,7 +211,8 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
          * Set style for UI element that represents the tab header.
          * @param styleName style
          */
-        void setStyleName(String styleName);
+        void setStyleName(@Nullable String styleName);
+        @Nullable
         String getStyleName();
     }
 }

@@ -275,7 +275,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         component.addStyleName(VISIBLE_TAB);
     }
 
-    public void setSelectedTab(Tab tab) {
+    public void setSelectedTab(@Nullable Tab tab) {
         if (tab != null) {
             setSelected((Component) tab);
         }

@@ -18,6 +18,7 @@ package io.jmix.ui.widget;
 
 import io.jmix.ui.widget.client.browserframe.JmixBrowserFrameState;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class JmixBrowserFrame extends com.vaadin.ui.BrowserFrame {
@@ -32,42 +33,46 @@ public class JmixBrowserFrame extends com.vaadin.ui.BrowserFrame {
         return (JmixBrowserFrameState) super.getState(markAsDirty);
     }
 
-    public void setSandbox(String sandbox) {
+    public void setSandbox(@Nullable String sandbox) {
         if (!Objects.equals(sandbox, getState(false).sandbox)) {
             getState().sandbox = sandbox;
         }
     }
 
+    @Nullable
     public String getSandbox() {
         return getState(false).sandbox;
     }
 
-    public void setSrcdoc(String srcdoc) {
+    public void setSrcdoc(@Nullable String srcdoc) {
         if (!Objects.equals(srcdoc, getState(false).srcdoc)) {
             getState().srcdoc = srcdoc;
         }
     }
 
+    @Nullable
     public String getSrcdoc() {
         return getState(false).srcdoc;
     }
 
-    public void setAllow(String allow) {
+    public void setAllow(@Nullable String allow) {
         if (!Objects.equals(allow, getState(false).allow)) {
             getState().allow = allow;
         }
     }
 
+    @Nullable
     public String getAllow() {
         return getState(false).allow;
     }
 
-    public void setReferrerPolicy(String referrerpolicy) {
+    public void setReferrerPolicy(@Nullable String referrerpolicy) {
         if (!Objects.equals(referrerpolicy, getState(false).referrerpolicy)) {
             getState().referrerpolicy = referrerpolicy;
         }
     }
 
+    @Nullable
     public String getReferrerPolicy() {
         return getState(false).referrerpolicy;
     }

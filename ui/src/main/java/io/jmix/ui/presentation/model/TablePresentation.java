@@ -32,26 +32,30 @@ import javax.annotation.Nullable;
  */
 public interface TablePresentation extends JmixEntity {
 
+    @Nullable
     String getName();
 
-    void setName(String name);
+    void setName(@Nullable String name);
 
+    @Nullable
     String getSettings();
 
-    void setSettings(String settings);
+    void setSettings(@Nullable String settings);
 
     @Nullable
     String getUserLogin();
 
     void setUserLogin(@Nullable String userLogin);
 
+    @Nullable
     Boolean getDefault();
 
-    void setDefault(Boolean isDefault);
+    void setDefault(@Nullable Boolean isDefault);
 
+    @Nullable
     Boolean getAutoSave();
 
-    void setAutoSave(Boolean autoSave);
+    void setAutoSave(@Nullable Boolean autoSave);
 
     void setComponentId(String componentId);
 

@@ -397,10 +397,7 @@ public class UiControllerDependencyInjector {
                 return component;
             }
 
-            Facet facet = frame.getFacet(target);
-            if (facet != null) {
-                return facet;
-            }
+            return frame.getFacet(target);
         } else if (elements.length > 1) {
             String id = elements[elements.length - 1];
 
@@ -431,10 +428,7 @@ public class UiControllerDependencyInjector {
 
             Facet facet = frame.getFacet(pathPrefix(elements));
             if (facet instanceof HasSubParts) {
-                Object subPart = ((HasSubParts) facet).getSubPart(id);
-                if (subPart != null) {
-                    return subPart;
-                }
+                return ((HasSubParts) facet).getSubPart(id);
             }
         }
 
@@ -595,8 +589,7 @@ public class UiControllerDependencyInjector {
 
         } else if (Downloader.class.isAssignableFrom(type)) {
             // Injecting a Downloader
-            Downloader downloader = beanLocator.get(Downloader.NAME);
-            return downloader;
+            return beanLocator.<Downloader>get(Downloader.NAME);
 
         } else if (Logger.class == type && element instanceof Field) {
             // injecting logger

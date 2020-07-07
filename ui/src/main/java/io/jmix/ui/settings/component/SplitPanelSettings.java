@@ -16,6 +16,8 @@
 
 package io.jmix.ui.settings.component;
 
+import javax.annotation.Nullable;
+
 public class SplitPanelSettings implements ComponentSettings {
 
     protected String id;
@@ -23,16 +25,18 @@ public class SplitPanelSettings implements ComponentSettings {
     protected Float positionValue;
     protected String positionUnit;
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
     }
 
+    @Nullable
     public Float getPositionValue() {
         return positionValue;
     }
@@ -41,6 +45,7 @@ public class SplitPanelSettings implements ComponentSettings {
         this.positionValue = positionValue;
     }
 
+    @Nullable
     public String getPositionUnit() {
         return positionUnit;
     }

@@ -20,6 +20,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.ui.component.data.aggregation.impl.*;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ public class Aggregations {
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     public static <T> Aggregation<T> get(Class<T> clazz) {
         return getInstance().aggregationByDatatype.get(clazz);
     }

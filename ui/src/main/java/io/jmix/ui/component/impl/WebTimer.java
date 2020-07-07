@@ -31,6 +31,7 @@ import io.jmix.ui.widget.JmixTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class WebTimer extends WebAbstractFacet implements Timer {
@@ -100,13 +101,13 @@ public class WebTimer extends WebAbstractFacet implements Timer {
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         super.setId(id);
         timerImpl.setTimerId(id);
     }
 
     @Override
-    public void setOwner(Frame owner) {
+    public void setOwner(@Nullable Frame owner) {
         super.setOwner(owner);
 
         if (owner != null) {

@@ -25,6 +25,8 @@ import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.widget.JmixComboBox;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 import static com.vaadin.server.Sizeable.Unit;
@@ -184,14 +186,14 @@ public class WebUserIndicator extends WebAbstractComponent<CssLayout> implements
 //    }
 
     @Override
-    public void setWidth(String width) {
+    public void setWidth(@Nullable String width) {
         super.setWidth(width);
 
         adjustWidth();
     }
 
     @Override
-    public void setHeight(String height) {
+    public void setHeight(@Nullable String height) {
         super.setHeight(height);
 
         adjustHeight();

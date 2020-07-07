@@ -26,7 +26,7 @@ public interface Link extends Component, Component.HasCaption, Component.BelongT
 
     String NAME = "link";
 
-    void setUrl(@Nullable String url);
+    void setUrl(String url);
     @Nullable
     String getUrl();
 

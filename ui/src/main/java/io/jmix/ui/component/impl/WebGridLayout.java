@@ -190,6 +190,7 @@ public class WebGridLayout extends WebAbstractComponent<JmixGridLayout> implemen
         }
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         Preconditions.checkNotNullArgument(id);

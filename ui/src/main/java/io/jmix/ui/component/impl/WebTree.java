@@ -307,7 +307,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setDebugId(String id) {
+    public void setDebugId(@Nullable String id) {
         super.setDebugId(id);
 
         AppUI ui = AppUI.getCurrent();
@@ -321,7 +321,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         super.setId(id);
 
         AppUI ui = AppUI.getCurrent();
@@ -341,13 +341,14 @@ public class WebTree<E extends JmixEntity>
         return hierarchyProperty;
     }
 
+    @Nullable
     @Override
     public Action getItemClickAction() {
         return doubleClickAction;
     }
 
     @Override
-    public void setItemClickAction(Action action) {
+    public void setItemClickAction(@Nullable Action action) {
         if (doubleClickAction != null) {
             removeAction(doubleClickAction);
         }
@@ -386,7 +387,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setItemCaptionProvider(Function<? super E, String> itemCaptionProvider) {
+    public void setItemCaptionProvider(@Nullable Function<? super E, String> itemCaptionProvider) {
         if (this.itemCaptionProvider != itemCaptionProvider) {
             this.itemCaptionProvider = itemCaptionProvider;
 
@@ -394,6 +395,7 @@ public class WebTree<E extends JmixEntity>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super E, String> getItemCaptionProvider() {
         return itemCaptionProvider;
@@ -781,7 +783,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         super.setStyleName(name);
 
         for (String internalStyle : internalStyles) {
@@ -896,10 +898,11 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setEnterPressAction(Action action) {
+    public void setEnterPressAction(@Nullable Action action) {
         enterPressAction = action;
     }
 
+    @Nullable
     @Override
     public Action getEnterPressAction() {
         return enterPressAction;
@@ -956,12 +959,12 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setDescriptionProvider(Function<? super E, String> provider) {
+    public void setDescriptionProvider(@Nullable Function<? super E, String> provider) {
         this.setDescriptionProvider(provider, ContentMode.PREFORMATTED);
     }
 
     @Override
-    public void setDescriptionProvider(Function<? super E, String> provider, ContentMode contentMode) {
+    public void setDescriptionProvider(@Nullable Function<? super E, String> provider, ContentMode contentMode) {
         descriptionProvider = provider;
 
         if (provider != null) {
@@ -972,6 +975,7 @@ public class WebTree<E extends JmixEntity>
         }
     }
 
+    @Nullable
     protected String getRowDescription(E item) {
         String rowDescription = descriptionProvider.apply(item);
         return WebWrapperUtils.toContentMode(component.getContentMode()) == ContentMode.HTML
@@ -980,6 +984,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     @Override
     public Function<E, String> getDescriptionProvider() {
         return (Function<E, String>) descriptionProvider;

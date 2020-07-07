@@ -17,6 +17,7 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 
+import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -48,10 +49,12 @@ public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
         YEAR
     }
 
+    @Nullable
     Resolution getResolution();
 
     void setResolution(Resolution resolution);
 
+    @Nullable
     String getDateFormat();
 
     void setDateFormat(String dateFormat);
@@ -59,15 +62,17 @@ public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
     /**
      * Use {@link DateField#getZoneId()}
      */
+    @Nullable
     TimeZone getTimeZone();
 
     /**
      * Use {@link DateField#setZoneId(ZoneId)}
      */
-    void setTimeZone(TimeZone timeZone);
+    void setTimeZone(@Nullable TimeZone timeZone);
 
-    void setZoneId(ZoneId zoneId);
+    void setZoneId(@Nullable ZoneId zoneId);
 
+    @Nullable
     ZoneId getZoneId();
 
     /**
@@ -96,5 +101,6 @@ public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
     /**
      * @return {@link TimeField.TimeMode} that is used by component
      */
+    @Nullable
     TimeField.TimeMode getTimeMode();
 }

@@ -16,10 +16,13 @@
 
 package io.jmix.ui.settings.component;
 
+import javax.annotation.Nullable;
+
 public class TreeDataGridSettings extends DataGridSettings {
 
     protected String hierarchyColumn;
 
+    @Nullable
     public String getHierarchyColumn() {
         return hierarchyColumn;
     }

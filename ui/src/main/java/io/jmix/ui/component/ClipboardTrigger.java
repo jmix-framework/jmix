@@ -21,6 +21,7 @@ import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperty;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -42,10 +43,11 @@ public interface ClipboardTrigger extends Facet {
      * @param input input field
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setInput(TextInputField<?> input);
+    void setInput(@Nullable TextInputField<?> input);
     /**
      * @return input field
      */
+    @Nullable
     TextInputField<?> getInput();
 
     /**
@@ -54,10 +56,11 @@ public interface ClipboardTrigger extends Facet {
      * @param button button
      */
     @StudioProperty(type = PropertyType.COMPONENT_REF)
-    void setButton(Button button);
+    void setButton(@Nullable Button button);
     /**
      * @return button
      */
+    @Nullable
     Button getButton();
 
     /**

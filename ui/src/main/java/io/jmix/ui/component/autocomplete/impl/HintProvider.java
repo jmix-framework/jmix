@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.autocomplete.impl;
 
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.jpql.*;
 import io.jmix.core.impl.jpql.model.Attribute;
 import io.jmix.core.impl.jpql.model.JpqlEntityModel;
@@ -46,8 +47,8 @@ public class HintProvider {
     private DomainModel model;
 
     public HintProvider(DomainModel model) {
-        if (model == null)
-            throw new NullPointerException("No model passed");
+        Preconditions.checkNotNullArgument(model, "No model passed");
+
         this.model = model;
     }
 

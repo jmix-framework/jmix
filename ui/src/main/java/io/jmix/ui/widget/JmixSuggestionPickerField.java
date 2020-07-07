@@ -132,7 +132,7 @@ public class JmixSuggestionPickerField<T> extends JmixPickerField<T> {
     }
 
     // copied from com.vaadin.ui.AbstractComponent#setStyleName
-    public void setPopupStyleName(String styleName) {
+    public void setPopupStyleName(@Nullable String styleName) {
         getFieldInternal().setPopupStyleName(styleName);
     }
 

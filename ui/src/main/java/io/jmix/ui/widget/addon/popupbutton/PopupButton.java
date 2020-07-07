@@ -19,6 +19,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.*;
 import com.vaadin.util.ReflectTools;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -114,6 +115,7 @@ public class PopupButton extends Button implements SingleComponentContainer {
         setContent(component);
     }
 
+    @Nullable
     @Override
     public Component getContent() {
         return component;
@@ -139,7 +141,7 @@ public class PopupButton extends Button implements SingleComponentContainer {
      *
      * Default is {@link Alignment#BOTTOM_RIGHT}.
      */
-    public void setDirection(final Alignment direction) {
+    public void setDirection(@Nullable final Alignment direction) {
         if (direction == null) {
             throw new IllegalArgumentException("direction cannot be null");
         }

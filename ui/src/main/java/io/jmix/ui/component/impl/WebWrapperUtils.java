@@ -56,7 +56,8 @@ public final class WebWrapperUtils {
     private WebWrapperUtils() {
     }
 
-    public static CaptionMode toCaptionMode(AbstractSelect.ItemCaptionMode captionMode) {
+    @Nullable
+    public static CaptionMode toCaptionMode(@Nullable AbstractSelect.ItemCaptionMode captionMode) {
         if (captionMode == null) {
             return null;
         }
@@ -73,7 +74,8 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static AbstractSelect.ItemCaptionMode toVaadinCaptionMode(CaptionMode captionMode) {
+    @Nullable
+    public static AbstractSelect.ItemCaptionMode toVaadinCaptionMode(@Nullable CaptionMode captionMode) {
         if (captionMode == null) {
             return null;
         }
@@ -120,7 +122,8 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static FilteringMode toVaadinFilterMode(FilterMode filterMode) {
+    @Nullable
+    public static FilteringMode toVaadinFilterMode(@Nullable FilterMode filterMode) {
         if (filterMode == null) {
             return null;
         }
@@ -137,7 +140,8 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static FilterMode toFilterMode(FilteringMode filterMode) {
+    @Nullable
+    public static FilterMode toFilterMode(@Nullable FilteringMode filterMode) {
         if (filterMode == null) {
             return null;
         }
@@ -154,7 +158,8 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static com.vaadin.ui.Alignment toVaadinAlignment(Alignment alignment) {
+    @Nullable
+    public static com.vaadin.ui.Alignment toVaadinAlignment(@Nullable Alignment alignment) {
         if (alignment == null) {
             return null;
         }
@@ -184,9 +189,7 @@ public final class WebWrapperUtils {
     }
 
     public static TextInputField.TextChangeEventMode toTextChangeEventMode(ValueChangeMode mode) {
-        if (mode == null) {
-            return null;
-        }
+        checkNotNullArgument(mode);
 
         switch (mode) {
             case BLUR:
@@ -203,9 +206,7 @@ public final class WebWrapperUtils {
     }
 
     public static TextInputField.TextChangeEventMode toTextChangeEventMode(TextChangeEventMode mode) {
-        if (mode == null) {
-            return null;
-        }
+        checkNotNullArgument(mode);
 
         switch (mode) {
             case EAGER:
@@ -219,7 +220,8 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static ValueChangeMode toVaadinValueChangeEventMode(TextInputField.TextChangeEventMode mode) {
+    @Nullable
+    public static ValueChangeMode toVaadinValueChangeEventMode(@Nullable TextInputField.TextChangeEventMode mode) {
         if (mode == null) {
             return null;
         }
@@ -245,7 +247,8 @@ public final class WebWrapperUtils {
         return vMode;
     }
 
-    public static TextChangeEventMode toVaadinTextChangeEventMode(TextInputField.TextChangeEventMode mode) {
+    @Nullable
+    public static TextChangeEventMode toVaadinTextChangeEventMode(@Nullable TextInputField.TextChangeEventMode mode) {
         if (mode == null) {
             return null;
         }
@@ -304,7 +307,8 @@ public final class WebWrapperUtils {
         return mouseEventDetails;
     }
 
-    public static MouseEventDetails.MouseButton toMouseButton(com.vaadin.shared.MouseEventDetails.MouseButton mouseButton) {
+    @Nullable
+    public static MouseEventDetails.MouseButton toMouseButton(@Nullable com.vaadin.shared.MouseEventDetails.MouseButton mouseButton) {
         if (mouseButton == null) {
             return null;
         }
@@ -422,7 +426,8 @@ public final class WebWrapperUtils {
         }
     }
 
-    public static com.vaadin.v7.ui.Table.Align convertColumnAlignment(io.jmix.ui.component.Table.ColumnAlignment alignment) {
+    @Nullable
+    public static com.vaadin.v7.ui.Table.Align convertColumnAlignment(@Nullable io.jmix.ui.component.Table.ColumnAlignment alignment) {
         if (alignment == null) {
             return null;
         }
@@ -671,7 +676,7 @@ public final class WebWrapperUtils {
     }
 
     @Nullable
-    public static JavaScriptComponent.DependencyType toDependencyType(Dependency.Type type) {
+    public static JavaScriptComponent.DependencyType toDependencyType(@Nullable Dependency.Type type) {
         if (type == null) {
             return null;
         }
@@ -687,7 +692,7 @@ public final class WebWrapperUtils {
     }
 
     @Nullable
-    public static Dependency.Type toVaadinDependencyType(JavaScriptComponent.DependencyType type) {
+    public static Dependency.Type toVaadinDependencyType(@Nullable JavaScriptComponent.DependencyType type) {
         if (type == null) {
             return null;
         }
@@ -708,14 +713,15 @@ public final class WebWrapperUtils {
                 : size;
     }
 
-    public static String toVaadinSize(String size) {
+    @Nullable
+    public static String toVaadinSize(@Nullable String size) {
         return AUTO_SIZE.equalsIgnoreCase(size)
                 ? Component.AUTO_SIZE
                 : size;
     }
 
     @Nullable
-    public static PopupPosition toVaadinPopupPosition(PopupView.PopupPosition popupPosition) {
+    public static PopupPosition toVaadinPopupPosition(@Nullable PopupView.PopupPosition popupPosition) {
         if (popupPosition == null) {
             return null;
         }
@@ -729,7 +735,7 @@ public final class WebWrapperUtils {
     }
 
     @Nullable
-    public static PopupView.PopupPosition fromVaadinPopupPosition(PopupPosition popupPosition) {
+    public static PopupView.PopupPosition fromVaadinPopupPosition(@Nullable PopupPosition popupPosition) {
         if (popupPosition == null) {
             return null;
         }
@@ -742,23 +748,23 @@ public final class WebWrapperUtils {
         return null;
     }
 
-    @Nullable
     public static TimeMode toVaadinTimeMode(TimeField.TimeMode timeMode) {
         for (TimeMode mode : TimeMode.values()) {
             if (mode.name().equals(timeMode.name())) {
                 return mode;
             }
         }
-        return null;
+
+        throw new IllegalArgumentException("Can't be converted to TimeMode: " + timeMode.name());
     }
 
-    @Nullable
     public static TimeField.TimeMode fromVaadinTimeMode(TimeMode timeMode) {
         for (TimeField.TimeMode mode : TimeField.TimeMode.values()) {
             if (mode.name().equals(timeMode.name())) {
                 return mode;
             }
         }
-        return null;
+
+        throw new IllegalArgumentException("Can't be converted to TimeField.TimeMode: " + timeMode.name());
     }
 }

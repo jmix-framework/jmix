@@ -41,7 +41,7 @@ public interface CompositeWithIcon extends Component.HasIcon {
     }
 
     @Override
-    default void setIconFromSet(Icons.Icon icon) {
+    default void setIconFromSet(@Nullable Icons.Icon icon) {
         Component.HasIcon hasIcon = (Component.HasIcon) ((CompositeComponent) this).getComposition();
         hasIcon.setIconFromSet(icon);
     }

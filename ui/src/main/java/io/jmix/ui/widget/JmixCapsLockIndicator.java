@@ -20,6 +20,8 @@ import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 import io.jmix.ui.widget.client.capslockindicator.JmixCapsLockIndicatorState;
 
+import javax.annotation.Nullable;
+
 public class JmixCapsLockIndicator extends Label {
 
     public JmixCapsLockIndicator() {
@@ -41,18 +43,20 @@ public class JmixCapsLockIndicator extends Label {
         getState().text = "<span></span>";
     }
 
-    public void setCapsLockOnMessage(String capsLockOnMessage) {
+    public void setCapsLockOnMessage(@Nullable String capsLockOnMessage) {
         getState().capsLockOnMessage = capsLockOnMessage;
     }
 
+    @Nullable
     public String getCapsLockOnMessage() {
         return getState(false).capsLockOnMessage;
     }
 
-    public void setCapsLockOffMessage(String capsLockOffMessage) {
+    public void setCapsLockOffMessage(@Nullable String capsLockOffMessage) {
         getState().capsLockOffMessage = capsLockOffMessage;
     }
 
+    @Nullable
     public String getCapsLockOffMessage() {
         return getState(false).capsLockOffMessage;
     }

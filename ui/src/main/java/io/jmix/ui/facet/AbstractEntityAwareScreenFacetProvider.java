@@ -59,7 +59,7 @@ public abstract class AbstractEntityAwareScreenFacetProvider<T extends ScreenFac
             try {
                 Class clazz = ReflectionHelper.loadClass(entityClassFqn);
 
-                MetaClass entityClass = getMetadata().getClass(clazz);
+                MetaClass entityClass = getMetadata().findClass(clazz);
                 if (entityClass != null) {
                     facet.setEntityClass(((Class<? extends JmixEntity>) clazz));
                 } else {

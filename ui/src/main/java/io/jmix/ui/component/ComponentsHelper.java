@@ -266,7 +266,9 @@ public abstract class ComponentsHelper {
                 if (workArea.getState() == AppWorkArea.State.INITIAL_LAYOUT) {
                     VBoxLayout initialLayout = workArea.getInitialLayout();
 
-                    __walkComponents(initialLayout, visitor, path);
+                    if (initialLayout != null) {
+                        __walkComponents(initialLayout, visitor, path);
+                    }
                 }
             }
         }

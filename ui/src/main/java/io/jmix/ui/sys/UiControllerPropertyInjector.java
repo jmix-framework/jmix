@@ -149,6 +149,7 @@ public class UiControllerPropertyInjector {
         return value;
     }
 
+    @Nullable
     protected Object parsePrimitive(UiControllerProperty property, Class propType) {
         Object value = null;
         String stringProperty = ((String) property.getValue());

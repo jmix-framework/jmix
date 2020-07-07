@@ -13,12 +13,15 @@
  */
 package io.jmix.ui.widget.addon.aceeditor;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 /**
  * @author artamonov
  * @version $Id$
  */
 public class TextUtils {
-    public static boolean equals(String a, String b) {
-        return a == null ? b == null : a.equals(b);
+    public static boolean equals(@Nullable String a, @Nullable String b) {
+        return Objects.equals(a, b);
     }
 }

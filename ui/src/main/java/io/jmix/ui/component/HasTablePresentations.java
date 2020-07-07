@@ -32,6 +32,7 @@ public interface HasTablePresentations {
     void resetPresentation();
     void loadPresentations();
 
+    @Nullable
     TablePresentations getPresentations();
 
     void applyPresentation(Object id);

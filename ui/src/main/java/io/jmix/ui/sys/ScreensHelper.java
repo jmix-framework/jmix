@@ -418,8 +418,8 @@ public class ScreensHelper {
         }
         String editedEntityClassName = editedEntityDe.attributeValue("class");
         try {
-            MetaClass editedEntityMetaClass = metadata.getClass(ReflectionHelper.getClass(editedEntityClassName));
-            MetaClass entityMetaClass = metadata.getClass(entityClass);
+            MetaClass editedEntityMetaClass = metadata.findClass(ReflectionHelper.getClass(editedEntityClassName));
+            MetaClass entityMetaClass = metadata.findClass(entityClass);
             if (editedEntityMetaClass == null || entityMetaClass == null) {
                 return dataElementsIds;
             }
@@ -453,12 +453,12 @@ public class ScreensHelper {
         do {
             isAvailable = className.equals(entity.getName());
             entity = entity.getSuperclass();
-            process = metadata.getClass(entity) != null && metadataTools.isPersistent(entity);
+            process = metadata.findClass(entity) != null && metadataTools.isPersistent(entity);
         } while (process && !isAvailable);
         return isAvailable;
     }
 
-    protected boolean isEntityAvailableInDataElement(Class entityClass, Element dataContainer) {
+    protected boolean isEntityAvailableInDataElement(Class entityClass, @Nullable Element dataContainer) {
         if (dataContainer == null) {
             return false;
         }
@@ -638,7 +638,7 @@ public class ScreensHelper {
         return getDetailedScreenCaption(caption, windowInfo.getId());
     }
 
-    protected String getDetailedScreenCaption(String caption, String windowId) {
+    protected String getDetailedScreenCaption(@Nullable String caption, String windowId) {
         return StringUtils.isNotEmpty(caption) ? caption + " (" + windowId + ")" : windowId;
     }
 

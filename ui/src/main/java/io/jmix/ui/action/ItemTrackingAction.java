@@ -79,29 +79,29 @@ public class ItemTrackingAction extends ListAction implements Action.HasSecurity
             } else {
                 isPermitted = security.isPermitted(singleSelected, constraintOperationType);
             }
-            if (!isPermitted) {
-                return false;
-            }
+            return isPermitted;
         }
 
         return true;
     }
 
     @Override
-    public void setConstraintOperationType(ConstraintOperationType constraintOperationType) {
+    public void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType) {
         this.constraintOperationType = constraintOperationType;
     }
 
+    @Nullable
     @Override
     public ConstraintOperationType getConstraintOperationType() {
         return constraintOperationType;
     }
 
     @Override
-    public void setConstraintCode(String constraintCode) {
+    public void setConstraintCode(@Nullable String constraintCode) {
         this.constraintCode = constraintCode;
     }
 
+    @Nullable
     @Override
     public String getConstraintCode() {
         return constraintCode;

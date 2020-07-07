@@ -45,7 +45,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      *
      * @param width new menu width
      */
-    void setMenuWidth(String width);
+    void setMenuWidth(@Nullable String width);
     /**
      * @return menu width
      */

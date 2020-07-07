@@ -120,6 +120,7 @@ public class WebLocalDateRenderer extends WebAbstractDataGrid.AbstractRenderer<J
         this.locale = locale;
     }
 
+    @Nullable
     @Override
     public String getFormatPattern() {
         return formatPattern;
@@ -132,6 +133,7 @@ public class WebLocalDateRenderer extends WebAbstractDataGrid.AbstractRenderer<J
         this.formatter = null;
     }
 
+    @Nullable
     @Override
     public DateTimeFormatter getFormatter() {
         return formatter;

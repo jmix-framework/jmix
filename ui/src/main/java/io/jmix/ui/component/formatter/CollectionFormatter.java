@@ -24,6 +24,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -44,7 +45,7 @@ public class CollectionFormatter implements Formatter<Collection> {
     protected MetadataTools metadataTools;
 
     @Override
-    public String apply(Collection value) {
+    public String apply(@Nullable Collection value) {
         if (value == null) {
             return StringUtils.EMPTY;
         }

@@ -24,8 +24,10 @@ import java.util.EnumSet;
 
 public interface Aggregation<T> {
 
+    @Nullable
     T sum(Collection<T> items);
 
+    @Nullable
     T avg(Collection<T> items);
 
     @Nullable

@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
@@ -67,7 +68,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      * @deprecated use {@link #setOptionStyleProvider(OptionStyleProvider)} instead
      */
     @Deprecated
-    default void setStyleProvider(StyleProvider styleProvider) {
+    default void setStyleProvider(@Nullable StyleProvider styleProvider) {
         if (styleProvider == null) {
             setOptionStyleProvider(null);
         } else {
@@ -112,12 +113,13 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      *
      * @param leftColumnCaption
      */
-    void setLeftColumnCaption(String leftColumnCaption);
+    void setLeftColumnCaption(@Nullable String leftColumnCaption);
     /**
      * Return caption of the left column.
      *
      * @return caption text or null if not set.
      */
+    @Nullable
     String getLeftColumnCaption();
 
     /**
@@ -125,12 +127,13 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      *
      * @param rightColumnCaption
      */
-    void setRightColumnCaption(String rightColumnCaption);
+    void setRightColumnCaption(@Nullable String rightColumnCaption);
     /**
      * Return caption of the right column.
      *
      * @return caption text or null if not set.
      */
+    @Nullable
     String getRightColumnCaption();
 
     /**
@@ -138,11 +141,12 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      *
      * @param optionStyleProvider option style provider function
      */
-    void setOptionStyleProvider(OptionStyleProvider<V> optionStyleProvider);
+    void setOptionStyleProvider(@Nullable OptionStyleProvider<V> optionStyleProvider);
 
     /**
      * @return option style provider function
      */
+    @Nullable
     OptionStyleProvider<V> getOptionStyleProvider();
 
     /**
@@ -166,6 +170,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
          * @param selected is item selected
          * @return style name for the item
          */
+        @Nullable
         String getStyleName(V item, boolean selected);
     }
 }

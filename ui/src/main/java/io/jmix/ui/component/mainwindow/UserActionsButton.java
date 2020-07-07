@@ -18,6 +18,7 @@ package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -30,12 +31,12 @@ public interface UserActionsButton extends Component.BelongToFrame, Component.Ha
     /**
      * Sets the given {@code Consumer} as custom login action handler.
      */
-    void setLoginHandler(Consumer<LoginHandlerContext> loginHandler);
+    void setLoginHandler(@Nullable Consumer<LoginHandlerContext> loginHandler);
 
     /**
      * Sets the given {@code Consumer} as custom logout action handler.
      */
-    void setLogoutHandler(Consumer<LogoutHandlerContext> logoutHandler);
+    void setLogoutHandler(@Nullable Consumer<LogoutHandlerContext> logoutHandler);
 
     class LoginHandlerContext {
 

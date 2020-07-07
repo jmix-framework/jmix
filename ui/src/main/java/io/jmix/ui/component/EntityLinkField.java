@@ -96,9 +96,11 @@ public interface EntityLinkField<V> extends Field<V>, Component.Focusable {
     EntityLinkClickHandler getCustomClickHandler();
     void setCustomClickHandler(@Nullable EntityLinkClickHandler clickHandler);
 
+    @Nullable
     MetaClass getMetaClass();
-    void setMetaClass(MetaClass metaClass);
+    void setMetaClass(@Nullable MetaClass metaClass);
 
+    @Nullable
     ListComponent getOwner();
     void setOwner(ListComponent owner);
 
@@ -123,7 +125,7 @@ public interface EntityLinkField<V> extends Field<V>, Component.Focusable {
         protected EditorScreen screen;
         protected String actionId;
 
-        public EditorCloseEvent(EntityLinkField<V> source, EditorScreen screen, String actionId) {
+        public EditorCloseEvent(EntityLinkField<V> source, @Nullable EditorScreen screen, @Nullable String actionId) {
             super(source);
             
             this.screen = screen;

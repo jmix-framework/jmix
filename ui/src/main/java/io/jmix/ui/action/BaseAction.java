@@ -232,7 +232,7 @@ public class BaseAction extends AbstractAction implements Action.SecuredAction {
      * @param caption caption
      * @return current instance of action
      */
-    public BaseAction withCaption(String caption) {
+    public BaseAction withCaption(@Nullable String caption) {
         this.caption = caption;
         return this;
     }
@@ -243,7 +243,7 @@ public class BaseAction extends AbstractAction implements Action.SecuredAction {
      * @param description description
      * @return current instance of action
      */
-    public BaseAction withDescription(String description) {
+    public BaseAction withDescription(@Nullable String description) {
         this.description = description;
         return this;
     }

@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * Component annotated by this interface enables to configure custom error message
  * when conversion to specified datatype fails.
@@ -27,10 +29,11 @@ public interface HasConversionErrorMessage {
      *
      * @param conversionErrorMessage custom conversion error message
      */
-    void setConversionErrorMessage(String conversionErrorMessage);
+    void setConversionErrorMessage(@Nullable String conversionErrorMessage);
 
     /**
      * @return custom conversion error message
      */
+    @Nullable
     String getConversionErrorMessage();
 }

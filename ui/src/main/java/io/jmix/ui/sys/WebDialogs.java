@@ -192,6 +192,7 @@ public class WebDialogs implements Dialogs {
             return this;
         }
 
+        @Nullable
         @Override
         public String getCaption() {
             return window.getCaption();
@@ -678,6 +679,7 @@ public class WebDialogs implements Dialogs {
             return this;
         }
 
+        @Nullable
         @Override
         public String getCaption() {
             return caption;
@@ -833,6 +835,7 @@ public class WebDialogs implements Dialogs {
         }
 
         @Nullable
+        @Override
         public String getCaption() {
             return inputDialog.getDialogWindow().getCaption();
         }
@@ -902,6 +905,7 @@ public class WebDialogs implements Dialogs {
             return this;
         }
 
+        @Nullable
         @Override
         public String getCaption() {
             return backgroundWorkDialog.getWindow().getCaption();

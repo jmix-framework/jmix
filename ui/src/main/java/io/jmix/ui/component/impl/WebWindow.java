@@ -229,7 +229,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
     }
 
     @Override
-    public void setStyleName(String name) {
+    public void setStyleName(@Nullable String name) {
         getContainer().setStyleName(name);
 
         getContainer().addStyleName(C_WINDOW_LAYOUT);
@@ -326,6 +326,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
                 .setCssProperty(CSS.MIN_WIDTH, minWidth);
     }
 
+    @Nullable
     @Override
     public String getMinWidth() {
         return HtmlAttributesExtension.get(component)
@@ -338,6 +339,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
                 .setCssProperty(CSS.MAX_WIDTH, maxWidth);
     }
 
+    @Nullable
     @Override
     public String getMaxWidth() {
         return HtmlAttributesExtension.get(component)
@@ -350,6 +352,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
                 .setCssProperty(CSS.MIN_HEIGHT, minHeight);
     }
 
+    @Nullable
     @Override
     public String getMinHeight() {
         return HtmlAttributesExtension.get(component)
@@ -362,6 +365,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
                 .setCssProperty(CSS.MAX_HEIGHT, maxHeight);
     }
 
+    @Nullable
     @Override
     public String getMaxHeight() {
         return HtmlAttributesExtension.get(component)
@@ -577,7 +581,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
     }
 
     @Override
-    public void setFocusComponent(String componentId) {
+    public void setFocusComponent(@Nullable String componentId) {
         this.focusComponentId = componentId;
 
         if (componentId != null) {
@@ -736,13 +740,14 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         return ComponentsHelper.getComponents(this);
     }
 
+    @Nullable
     @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public void setId(String id) {
+    public void setId(@Nullable String id) {
         this.id = id;
 
         AppUI ui = AppUI.getCurrent();
@@ -815,7 +820,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
     }
 
     @Override
-    public void setHeight(String height) {
+    public void setHeight(@Nullable String height) {
         component.setHeight(height);
     }
 
@@ -830,7 +835,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
     }
 
     @Override
-    public void setWidth(String width) {
+    public void setWidth(@Nullable String width) {
         component.setWidth(width);
     }
 
@@ -839,6 +844,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         return WebWrapperUtils.toSizeUnit(component.getWidthUnits());
     }
 
+    @Nullable
     @Override
     public Component getOwnComponent(String id) {
         Component nestedComponent = allComponents.get(id);
@@ -967,7 +973,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
     }
 
     @Override
-    public void setIconFromSet(Icons.Icon icon) {
+    public void setIconFromSet(@Nullable Icons.Icon icon) {
         setIcon(icons.get(icon));
     }
 

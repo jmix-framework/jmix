@@ -111,6 +111,7 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
         return VoidSubscription.INSTANCE;
     }
 
+    @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
         return metaClass;
@@ -151,12 +152,12 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
     }
 
     @Override
-    public boolean isFirstId(Object itemId) {
+    public boolean isFirstId(@Nullable Object itemId) {
         return false;
     }
 
     @Override
-    public boolean isLastId(Object itemId) {
+    public boolean isLastId(@Nullable Object itemId) {
         return false;
     }
 

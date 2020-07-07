@@ -85,6 +85,7 @@ public class ContainerDataGridItems<E extends JmixEntity>
                 e.getItem(), e.getProperty(), e.getPrevValue(), e.getValue()));
     }
 
+    @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
         return container.getEntityMetaClass();
@@ -225,13 +226,13 @@ public class ContainerDataGridItems<E extends JmixEntity>
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<AggregationInfo, String> aggregate(AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
+    public Map<AggregationInfo, String> aggregate(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
         return aggregatableDelegate.aggregate(aggregationInfos, itemIds);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<AggregationInfo, Object> aggregateValues(AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
+    public Map<AggregationInfo, Object> aggregateValues(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
         return aggregatableDelegate.aggregateValues(aggregationInfos, itemIds);
     }
 
@@ -243,6 +244,7 @@ public class ContainerDataGridItems<E extends JmixEntity>
                 return container.getItem(itemId);
             }
 
+            @Nullable
             @Override
             public Object getItemValue(MetaPropertyPath property, Object itemId) {
                 return EntityValues.getValueEx(container.getItem(itemId), property);

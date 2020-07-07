@@ -16,6 +16,8 @@
 
 package io.jmix.ui.security;
 
+import javax.annotation.Nullable;
+
 /**
  * Stores id of subcomponent and UI permission value which will be applied to this subcomponent
  * or ids of subcomponent and its action and UI permission value which will be applied to subcomponent's action.
@@ -52,14 +54,17 @@ public class UiPermissionDescriptor {
         return screenId;
     }
 
+    @Nullable
     public String getSubComponentId() {
         return subComponentId;
     }
 
+    @Nullable
     public String getActionHolderComponentId() {
         return actionHolderComponentId;
     }
 
+    @Nullable
     public String getActionId() {
         return actionId;
     }

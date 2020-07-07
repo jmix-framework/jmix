@@ -124,7 +124,7 @@ public abstract class WebAbstractActionsHolderComponent<T extends com.vaadin.ui.
         }
     }
 
-    protected void setContextMenuButtonCaption(JmixButton button, String caption, KeyCombination shortcutCombination) {
+    protected void setContextMenuButtonCaption(JmixButton button, @Nullable String caption, @Nullable KeyCombination shortcutCombination) {
         if (!Strings.isNullOrEmpty(caption)
                 && shortcutCombination != null) {
             caption = caption + " (" + shortcutCombination.format() + ")";

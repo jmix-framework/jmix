@@ -25,6 +25,7 @@ import io.jmix.ui.component.calendar.CalendarEvent;
 import io.jmix.ui.component.calendar.CalendarEventProvider;
 import io.jmix.ui.component.calendar.EntityCalendarEvent;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -133,6 +134,7 @@ public class EntityCalendarEventProvider implements CalendarEventProvider,
         this.startDateProperty = startDateProperty;
     }
 
+    @Nullable
     @Override
     public String getStartDateProperty() {
         return startDateProperty;
@@ -143,6 +145,7 @@ public class EntityCalendarEventProvider implements CalendarEventProvider,
         this.endDateProperty = endDateProperty;
     }
 
+    @Nullable
     @Override
     public String getEndDateProperty() {
         return endDateProperty;
@@ -153,6 +156,7 @@ public class EntityCalendarEventProvider implements CalendarEventProvider,
         this.captionProperty = captionProperty;
     }
 
+    @Nullable
     @Override
     public String getCaptionProperty() {
         return captionProperty;
@@ -163,6 +167,7 @@ public class EntityCalendarEventProvider implements CalendarEventProvider,
         this.descriptionProperty = descriptionProperty;
     }
 
+    @Nullable
     @Override
     public String getDescriptionProperty() {
         return descriptionProperty;
@@ -173,6 +178,7 @@ public class EntityCalendarEventProvider implements CalendarEventProvider,
         this.styleNameProperty = styleNameProperty;
     }
 
+    @Nullable
     @Override
     public String getStyleNameProperty() {
         return styleNameProperty;
@@ -183,6 +189,7 @@ public class EntityCalendarEventProvider implements CalendarEventProvider,
         this.allDayProperty = allDayProperty;
     }
 
+    @Nullable
     @Override
     public String getIsAllDayProperty() {
         return allDayProperty;

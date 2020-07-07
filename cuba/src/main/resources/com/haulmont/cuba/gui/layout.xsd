@@ -3877,10 +3877,10 @@
                 <xs:element name="userActionsButton" type="userActionsButton"/>
                 <xs:element name="logoutButton" type="logoutButtonComponent"/>
                 <xs:element name="newWindowButton" type="newWindowButtonComponent"/>
-                <xs:element name="ftsField" type="ftsFieldComponent"/>
+<!--                <xs:element name="ftsField" type="ftsFieldComponent"/>-->
                 <xs:element name="userIndicator" type="userIndicatorComponent"/>
                 <xs:element name="timeZoneIndicator" type="timeZoneIndicatorComponent"/>
-                <xs:element name="foldersPane" type="foldersPaneComponent"/>
+<!--                <xs:element name="foldersPane" type="foldersPaneComponent"/>-->
                 <xs:element name="workArea" type="workAreaComponent"/>
                 <xs:element name="sideMenu" type="sideMenuComponent"/>
                 <xs:element name="menu" type="menuComponent"/>

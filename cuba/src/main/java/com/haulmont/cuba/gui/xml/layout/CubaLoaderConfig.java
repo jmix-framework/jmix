@@ -17,7 +17,10 @@
 package com.haulmont.cuba.gui.xml.layout;
 
 import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.FileMultiUploadField;
+import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.xml.layout.loaders.*;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.Calendar;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.CheckBoxGroup;
@@ -50,6 +53,7 @@ import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.xml.layout.BaseLoaderConfig;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;
+import io.jmix.ui.xml.layout.loader.ButtonLoader;
 import io.jmix.ui.xml.layout.loader.FileMultiUploadFieldLoader;
 import io.jmix.ui.xml.layout.loader.GridLayoutLoader;
 import org.dom4j.Element;
@@ -98,6 +102,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(Image.NAME, CubaImageLoader.class);
         loaders.put(SearchPickerField.NAME, CubaSearchPickerFieldLoader.class);
         loaders.put(SearchField.NAME, CubaSearchFieldLoader.class);
+        loaders.put(Button.NAME, CubaButtonLoader.class);
         loaders.put(CheckBox.NAME, CubaCheckBoxLoader.class);
         loaders.put(Label.NAME, CubaLabelLoader.class);
         loaders.put(CheckBoxGroup.NAME, CubaCheckBoxGroupLoader.class);

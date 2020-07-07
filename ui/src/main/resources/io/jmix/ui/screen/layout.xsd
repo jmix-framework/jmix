@@ -2333,7 +2333,6 @@
 
                 <xs:attribute name="action" type="xs:string"/>
                 <xs:attribute name="disableOnClick" type="xs:boolean"/>
-                <xs:attribute name="invoke" type="xs:string"/>
                 <xs:attribute name="shortcut" type="shortcut"/>
 
                 <xs:attribute name="stylename" type="buttonStylename"/>

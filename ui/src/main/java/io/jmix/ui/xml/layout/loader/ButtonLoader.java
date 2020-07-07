@@ -21,31 +21,6 @@ import org.dom4j.Element;
 
 public class ButtonLoader extends AbstractComponentLoader<Button> {
 
-    protected void loadInvoke(Button component, boolean enabled, boolean visible, Element element) {
-        if (!StringUtils.isBlank(element.attributeValue("action"))) {
-            return;
-        }
-
-        /*
-        final String methodName = element.attributeValue("invoke");
-        if (StringUtils.isBlank(methodName)) {
-            return;
-        }
-
-        String actionBaseId = component.getId();
-        if (StringUtils.isEmpty(actionBaseId)) {
-            actionBaseId = methodName;
-        }
-
-        DeclarativeAction action = new DeclarativeAction(actionBaseId + "_invoke",
-                component.getCaption(), component.getDescription(), component.getIcon(),
-                enabled, visible,
-                methodName,
-                component.getFrame()
-        );
-        component.setAction(action);*/
-    }
-
     @Override
     public void createComponent() {
         resultComponent = factory.create(Button.NAME);
@@ -57,8 +32,8 @@ public class ButtonLoader extends AbstractComponentLoader<Button> {
         assignXmlDescriptor(resultComponent, element);
         assignFrame(resultComponent);
 
-        boolean enabled = loadEnable(resultComponent, element);
-        boolean visible = loadVisible(resultComponent, element);
+        loadEnable(resultComponent, element);
+        loadVisible(resultComponent, element);
 
         loadStyleName(resultComponent, element);
 
@@ -76,7 +51,6 @@ public class ButtonLoader extends AbstractComponentLoader<Button> {
 
         loadTabIndex(resultComponent, element);
 
-        loadInvoke(resultComponent, enabled, visible, element);
         loadShortcut(resultComponent, element);
 
         loadFocusable(resultComponent, element);

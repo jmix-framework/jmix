@@ -46,7 +46,7 @@ public class FetchPlanBuilder {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    protected Class<? extends Entity> entityClass;
+    protected Class<? extends JmixEntity> entityClass;
     protected MetaClass metaClass;
     protected Set<String> properties = new LinkedHashSet<>();
     protected Map<String, FetchPlanBuilder> builders = new HashMap<>();
@@ -54,7 +54,7 @@ public class FetchPlanBuilder {
     protected Map<String, FetchMode> fetchModes = new HashMap<>();
     protected boolean systemProperties;
 
-    protected FetchPlanBuilder(Class<? extends Entity> entityClass) {
+    protected FetchPlanBuilder(Class<? extends JmixEntity> entityClass) {
         this.entityClass = entityClass;
     }
 
@@ -93,7 +93,7 @@ public class FetchPlanBuilder {
         properties.add(propName);
         if (metaProperty.getRange().isClass()) {
             if (!builders.containsKey(propName)) {
-                Class<Entity> refClass = metaProperty.getRange().asClass().getJavaClass();
+                Class<JmixEntity> refClass = metaProperty.getRange().asClass().getJavaClass();
                 builders.put(propName, beanLocator.getPrototype(FetchPlanBuilder.class, refClass));
             }
         }
@@ -109,7 +109,7 @@ public class FetchPlanBuilder {
 
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer) {
         properties.add(property);
-        Class<Entity> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
+        Class<JmixEntity> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
         FetchPlanBuilder builder = beanLocator.getPrototype(FetchPlanBuilder.class, refClass);
         consumer.accept(builder);
         builders.put(property, builder);

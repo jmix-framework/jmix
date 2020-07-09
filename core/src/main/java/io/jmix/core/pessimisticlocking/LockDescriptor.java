@@ -16,7 +16,7 @@
 
 package io.jmix.core.pessimisticlocking;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -28,7 +28,7 @@ import javax.persistence.Id;
  */
 @ModelObject(name = "sys_LockDescriptor")
 @SystemLevel
-public class LockDescriptor implements Entity {
+public class LockDescriptor implements JmixEntity {
 
     @Id
     @ModelProperty(mandatory = true)

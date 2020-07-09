@@ -16,7 +16,7 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
@@ -158,12 +158,12 @@ public interface Security {
     /**
      * Check if the operation type is permitted for the entity
      */
-    boolean isPermitted(Entity entity, ConstraintOperationType operationType);
+    boolean isPermitted(JmixEntity entity, ConstraintOperationType operationType);
 
     /**
      * Check the special constraint permission for the entity
      */
-    boolean isPermitted(Entity entity, String customCode);
+    boolean isPermitted(JmixEntity entity, String customCode);
 
     /**
      * Check if there are row-level constraints
@@ -181,5 +181,5 @@ public interface Security {
     boolean hasInMemoryConstraints(MetaClass metaClass, ConstraintOperationType... operationTypes);
 
     @Nullable
-    Object evaluateConstraintScript(Entity entity, String groovyScript);
+    Object evaluateConstraintScript(JmixEntity entity, String groovyScript);
 }

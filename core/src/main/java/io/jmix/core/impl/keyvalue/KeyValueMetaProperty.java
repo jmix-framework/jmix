@@ -18,7 +18,7 @@ package io.jmix.core.impl.keyvalue;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
@@ -56,7 +56,7 @@ public class KeyValueMetaProperty extends MetadataObjectImpl implements MetaProp
 
         Metadata metadata = AppBeans.get(Metadata.NAME);
         Session metadataSession = metadata.getSession();
-        if (Entity.class.isAssignableFrom(javaClass)) {
+        if (JmixEntity.class.isAssignableFrom(javaClass)) {
             range = new ClassRange(metadataSession.findClass(javaClass));
             this.type = Type.ASSOCIATION;
         } else if (EnumClass.class.isAssignableFrom(javaClass)) {

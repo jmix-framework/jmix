@@ -15,14 +15,14 @@
  */
 package io.jmix.core.metamodel.model.utils;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.PropertyPath;
 
 import javax.annotation.Nullable;
 
 /**
- * Utility class to work with {@link Entity}s.
+ * Utility class to work with {@link JmixEntity}s.
  */
 public final class InstanceUtils {
 
@@ -58,80 +58,80 @@ public final class InstanceUtils {
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, String)}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(JmixEntity, String)}.
      *
      * @param entity     instance
      * @param propertyPath attribute path
      * @return attribute value
-     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String)}
+     * @deprecated replaced by {@link EntityValues#getValueEx(JmixEntity, String)}
      */
     @Deprecated
-    public static <T> T getValueEx(Entity entity, String propertyPath) {
+    public static <T> T getValueEx(JmixEntity entity, String propertyPath) {
         return EntityValues.getValueEx(entity, propertyPath);
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, PropertyPath)}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(JmixEntity, PropertyPath)}.
      *
      * @param entity     entity
      * @param propertyPath attribute path
      * @return attribute value
-     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, PropertyPath)}
+     * @deprecated replaced by {@link EntityValues#getValueEx(JmixEntity, PropertyPath)}
      */
     @Deprecated
-    public static <T> T getValueEx(Entity entity, PropertyPath propertyPath) {
+    public static <T> T getValueEx(JmixEntity entity, PropertyPath propertyPath) {
         return EntityValues.getValueEx(entity, propertyPath);
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, String[])}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(JmixEntity, String[])}.
      *
      * @param entity   entity
      * @param properties path to the attribute
      * @return attribute value
-     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String[])}
+     * @deprecated replaced by {@link EntityValues#getValueEx(JmixEntity, String[])}
      */
     @Deprecated
-    public static <T> T getValueEx(Entity entity, String[] properties) {
+    public static <T> T getValueEx(JmixEntity entity, String[] properties) {
         return EntityValues.getValueEx(entity, properties);
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, String, Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(JmixEntity, String, Object)}.
      *
      * @param entity     entity
      * @param propertyPath path to the attribute
      * @param value        attribute value
-     * @deprecated replaced by {@link EntityValues#setValueEx(Entity, String, Object)}
+     * @deprecated replaced by {@link EntityValues#setValueEx(JmixEntity, String, Object)}
      */
     @Deprecated
-    public static void setValueEx(Entity entity, String propertyPath, Object value) {
+    public static void setValueEx(JmixEntity entity, String propertyPath, Object value) {
         EntityValues.setValueEx(entity, propertyPath, value);
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, PropertyPath, Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(JmixEntity, PropertyPath, Object)}.
      *
      * @param entity     entity
      * @param propertyPath path to the attribute
      * @param value        attribute value
-     * @deprecated replaced by {@link EntityValues#setValueEx(Entity, PropertyPath, Object)}
+     * @deprecated replaced by {@link EntityValues#setValueEx(JmixEntity, PropertyPath, Object)}
      */
     @Deprecated
-    public static void setValueEx(Entity entity, PropertyPath propertyPath, Object value) {
+    public static void setValueEx(JmixEntity entity, PropertyPath propertyPath, Object value) {
         EntityValues.setValueEx(entity, propertyPath, value);
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, String[], Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(JmixEntity, String[], Object)}.
      *
      * @param entity     entity
      * @param properties path to the attribute
      * @param value      attribute value
-     * @deprecated replaces by {@link EntityValues#setValueEx(Entity, String[], Object)}
+     * @deprecated replaces by {@link EntityValues#setValueEx(JmixEntity, String[], Object)}
      */
     @Deprecated
-    public static void setValueEx(Entity entity, String[] properties, Object value) {
+    public static void setValueEx(JmixEntity entity, String[] properties, Object value) {
         EntityValues.setValueEx(entity, properties, value);
     }
 

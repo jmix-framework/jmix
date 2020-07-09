@@ -43,7 +43,7 @@ public class ReferenceToEntitySupport {
      * @param entity entity
      * @return entity id to store in database
      */
-    public Object getReferenceId(Entity entity) {
+    public Object getReferenceId(JmixEntity entity) {
         if (entity instanceof HasUuid) {
             return ((HasUuid) entity).getUuid();
         }
@@ -55,7 +55,7 @@ public class ReferenceToEntitySupport {
      * @return entity id for links
      */
     @Nullable
-    public Object getReferenceIdForLink(Entity entity) {
+    public Object getReferenceIdForLink(JmixEntity entity) {
         Object entityId = EntityValues.getId(entity);
         if (entityId == null)
             return null;

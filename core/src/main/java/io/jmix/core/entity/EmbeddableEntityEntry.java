@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Used by enhancing process
@@ -60,7 +60,7 @@ public class EmbeddableEntityEntry extends BaseEntityEntry {
     public void setRemoved(boolean removed) {
     }
 
-    public EmbeddableEntityEntry(Entity source) {
+    public EmbeddableEntityEntry(JmixEntity source) {
         super(source);
     }
 

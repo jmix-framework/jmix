@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.PersistentAttributesLoadChecker;
@@ -94,8 +94,8 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
     }
 
     protected PropertyLoadedState isLoadedCommonCheck(Object entity, String property) {
-        if (entity instanceof Entity) {
-            SecurityState securityState = ((Entity) entity).__getEntityEntry().getSecurityState();
+        if (entity instanceof JmixEntity) {
+            SecurityState securityState = ((JmixEntity) entity).__getEntityEntry().getSecurityState();
 
             if (securityState.getInaccessibleAttributes() != null) {
                 for (String attributes : securityState.getInaccessibleAttributes()) {
@@ -119,9 +119,9 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
     }
 
     protected boolean checkIsLoadedWithGetter(Object entity, String property) {
-        if (entity instanceof Entity) {
+        if (entity instanceof JmixEntity) {
             try {
-                Object value = EntityValues.getValue(((Entity) entity), property);
+                Object value = EntityValues.getValue(((JmixEntity) entity), property);
                 if (value instanceof Collection) { //check for IndirectCollection behaviour, should fail if property is not loaded
                     //noinspection ResultOfMethodCallIgnored
                     ((Collection) value).size();

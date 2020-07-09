@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -37,7 +36,7 @@ public interface FetchPlanRepository {
      * @param name          fetch plan name
      * @return              fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
-    FetchPlan getFetchPlan(Class<? extends Entity> entityClass, String name);
+    FetchPlan getFetchPlan(Class<? extends JmixEntity> entityClass, String name);
 
     /**
      * Get FetchPlan for an entity.
@@ -70,5 +69,5 @@ public interface FetchPlanRepository {
      * @param entityClass entity class
      * @return names of fetch plans
      */
-    Collection<String> getFetchPlanNames(Class<? extends Entity> entityClass);
+    Collection<String> getFetchPlanNames(Class<? extends JmixEntity> entityClass);
 }

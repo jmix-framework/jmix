@@ -68,8 +68,8 @@ public class EntityStates {
      */
     public boolean isNew(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof Entity) {
-            return ((Entity) entity).__getEntityEntry().isNew();
+        if (entity instanceof JmixEntity) {
+            return ((JmixEntity) entity).__getEntityEntry().isNew();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isNew is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -89,8 +89,8 @@ public class EntityStates {
      */
     public boolean isManaged(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof Entity) {
-            return ((Entity) entity).__getEntityEntry().isManaged();
+        if (entity instanceof JmixEntity) {
+            return ((JmixEntity) entity).__getEntityEntry().isManaged();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isManaged is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -111,7 +111,7 @@ public class EntityStates {
      */
     public boolean isDetached(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isDetached()) {
+        if (entity instanceof JmixEntity && ((JmixEntity) entity).__getEntityEntry().isDetached()) {
             return true;
         } else {
             if (log.isTraceEnabled()) {
@@ -177,7 +177,7 @@ public class EntityStates {
         }
     }
 
-    protected void checkLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan, Set<Entity> visited) {
+    protected void checkLoadedWithFetchPlan(JmixEntity entity, FetchPlan fetchPlan, Set<JmixEntity> visited) {
         if (visited.contains(entity)) {
             return;
         }
@@ -202,12 +202,12 @@ public class EntityStates {
 
                     if (value != null) {
                         if (!metaProperty.getRange().getCardinality().isMany()) {
-                            checkLoadedWithFetchPlan((Entity) value, propertyView, visited);
+                            checkLoadedWithFetchPlan((JmixEntity) value, propertyView, visited);
                         } else {
                             @SuppressWarnings("unchecked")
-                            Collection<Entity> collection = (Collection) value;
+                            Collection<JmixEntity> collection = (Collection) value;
 
-                            for (Entity item : collection) {
+                            for (JmixEntity item : collection) {
                                 checkLoadedWithFetchPlan(item, propertyView, visited);
                             }
                         }
@@ -227,11 +227,11 @@ public class EntityStates {
      * @param entity entity
      * @param view   view
      * @throws IllegalArgumentException if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(Entity, FetchPlan)}
+     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(JmixEntity, FetchPlan)}
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public void checkLoadedWithView(Entity entity, FetchPlan view) {
+    public void checkLoadedWithView(JmixEntity entity, FetchPlan view) {
         checkLoadedWithFetchPlan(entity, view);
     }
 
@@ -244,7 +244,7 @@ public class EntityStates {
      * @throws IllegalArgumentException if at least one of properties is not loaded
      */
     @SuppressWarnings("unchecked")
-    public void checkLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan) {
+    public void checkLoadedWithFetchPlan(JmixEntity entity, FetchPlan fetchPlan) {
         checkNotNullArgument(entity);
         checkNotNullArgument(fetchPlan);
 
@@ -258,11 +258,11 @@ public class EntityStates {
      * @param entity   entity
      * @param viewName view name
      * @throws IllegalArgumentException if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(Entity, String)}
+     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(JmixEntity, String)}
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public void checkLoadedWithView(Entity entity, String viewName) {
+    public void checkLoadedWithView(JmixEntity entity, String viewName) {
         checkLoadedWithFetchPlan(entity, viewName);
     }
 
@@ -275,13 +275,13 @@ public class EntityStates {
      * @throws IllegalArgumentException if at least one of properties is not loaded
      */
     @SuppressWarnings("unchecked")
-    public void checkLoadedWithFetchPlan(Entity entity, String fetchPlanName) {
+    public void checkLoadedWithFetchPlan(JmixEntity entity, String fetchPlanName) {
         checkNotNullArgument(fetchPlanName);
 
         checkLoadedWithFetchPlan(entity, viewRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
     }
 
-    protected boolean isLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan, Set<Entity> visited) {
+    protected boolean isLoadedWithFetchPlan(JmixEntity entity, FetchPlan fetchPlan, Set<JmixEntity> visited) {
         if (visited.contains(entity)) {
             return true;
         }
@@ -304,14 +304,14 @@ public class EntityStates {
 
                     if (value != null) {
                         if (!metaProperty.getRange().getCardinality().isMany()) {
-                            if (!isLoadedWithFetchPlan((Entity) value, propertyFetchPlan, visited)) {
+                            if (!isLoadedWithFetchPlan((JmixEntity) value, propertyFetchPlan, visited)) {
                                 return false;
                             }
                         } else {
                             @SuppressWarnings("unchecked")
-                            Collection<Entity> collection = (Collection) value;
+                            Collection<JmixEntity> collection = (Collection) value;
 
-                            for (Entity item : collection) {
+                            for (JmixEntity item : collection) {
                                 if (!isLoadedWithFetchPlan(item, propertyFetchPlan, visited)) {
                                     return false;
                                 }
@@ -334,11 +334,11 @@ public class EntityStates {
      * @param entity    entity
      * @param fetchPlan view name
      * @return false if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(Entity, FetchPlan)}
+     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(JmixEntity, FetchPlan)}
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public boolean isLoadedWithView(Entity entity, FetchPlan fetchPlan) {
+    public boolean isLoadedWithView(JmixEntity entity, FetchPlan fetchPlan) {
         return isLoadedWithFetchPlan(entity, fetchPlan);
     }
 
@@ -350,7 +350,7 @@ public class EntityStates {
      * @return false if at least one of properties is not loaded
      */
     @SuppressWarnings("unchecked")
-    public boolean isLoadedWithFetchPlan(Entity entity, FetchPlan fetchPlan) {
+    public boolean isLoadedWithFetchPlan(JmixEntity entity, FetchPlan fetchPlan) {
         checkNotNullArgument(entity);
         checkNotNullArgument(fetchPlan);
 
@@ -363,11 +363,11 @@ public class EntityStates {
      * @param entity        entity
      * @param fetchPlanName view name
      * @return false if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(Entity, String)}
+     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(JmixEntity, String)}
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public boolean isLoadedWithView(Entity entity, String fetchPlanName) {
+    public boolean isLoadedWithView(JmixEntity entity, String fetchPlanName) {
         return isLoadedWithFetchPlan(entity, fetchPlanName);
     }
 
@@ -379,7 +379,7 @@ public class EntityStates {
      * @return false if at least one of properties is not loaded
      */
     @SuppressWarnings("unchecked")
-    public boolean isLoadedWithFetchPlan(Entity entity, String fetchPlanName) {
+    public boolean isLoadedWithFetchPlan(JmixEntity entity, String fetchPlanName) {
         checkNotNullArgument(fetchPlanName);
 
         return isLoadedWithFetchPlan(entity, viewRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
@@ -390,7 +390,7 @@ public class EntityStates {
      * @param entity entity instance
      * @return fetch plan
      */
-    public FetchPlan getCurrentFetchPlan(Entity entity) {
+    public FetchPlan getCurrentFetchPlan(JmixEntity entity) {
         checkNotNullArgument(entity);
 
         FetchPlan fetchPlan = new FetchPlan(entity.getClass(), false);
@@ -398,7 +398,7 @@ public class EntityStates {
         return fetchPlan;
     }
 
-    protected void recursivelyGetCurrentFetchPlan(Entity entity, FetchPlan fetchPlan, HashSet<Object> visited) {
+    protected void recursivelyGetCurrentFetchPlan(JmixEntity entity, FetchPlan fetchPlan, HashSet<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -420,10 +420,10 @@ public class EntityStates {
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {
-                                recursivelyGetCurrentFetchPlan((Entity) item, propertyFetchPlan, visited);
+                                recursivelyGetCurrentFetchPlan((JmixEntity) item, propertyFetchPlan, visited);
                             }
                         } else {
-                            recursivelyGetCurrentFetchPlan((Entity) value, propertyFetchPlan, visited);
+                            recursivelyGetCurrentFetchPlan((JmixEntity) value, propertyFetchPlan, visited);
                         }
                     }
                 }
@@ -446,7 +446,7 @@ public class EntityStates {
         if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted())
             return true;
 
-        if (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isRemoved()) {
+        if (entity instanceof JmixEntity && ((JmixEntity) entity).__getEntityEntry().isRemoved()) {
             return true;
         }
         return false;
@@ -462,9 +462,9 @@ public class EntityStates {
      * @param entity entity in the New state
      * @throws IllegalStateException if the entity is Managed
      * @see #isDetached(Object)
-     * @see #makePatch(Entity)
+     * @see #makePatch(JmixEntity)
      */
-    public void makeDetached(Entity entity) {
+    public void makeDetached(JmixEntity entity) {
         checkNotNullArgument(entity, "entity is null");
 
         if (entity.__getEntityEntry().isManaged())
@@ -486,9 +486,9 @@ public class EntityStates {
      * @param entity entity in the New or Detached state
      * @throws IllegalStateException if the entity is Managed
      * @see #isDetached(Object)
-     * @see #makeDetached(Entity)
+     * @see #makeDetached(JmixEntity)
      */
-    public void makePatch(Entity entity) {
+    public void makePatch(JmixEntity entity) {
         checkNotNullArgument(entity, "entity is null");
 
         if (entity.__getEntityEntry().isManaged())

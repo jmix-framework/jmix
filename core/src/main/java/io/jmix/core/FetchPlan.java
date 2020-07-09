@@ -49,7 +49,7 @@ public class FetchPlan implements Serializable {
      */
     public static class FetchPlanParams {
         protected List<FetchPlan> src = Collections.emptyList();
-        protected Class<? extends Entity> entityClass;
+        protected Class<? extends JmixEntity> entityClass;
         protected String name;
         protected boolean includeSystemProperties;
 
@@ -63,7 +63,7 @@ public class FetchPlan implements Serializable {
             this.src = sources;
         }
 
-        public <T extends FetchPlanParams> T entityClass(Class<? extends Entity> entityClass) {
+        public <T extends FetchPlanParams> T entityClass(Class<? extends JmixEntity> entityClass) {
             this.entityClass = entityClass;
             //noinspection unchecked
             return (T) this;
@@ -100,7 +100,7 @@ public class FetchPlan implements Serializable {
 
     private static final long serialVersionUID = 4313784222934349594L;
 
-    private Class<? extends Entity> entityClass;
+    private Class<? extends JmixEntity> entityClass;
 
     private String name;
 
@@ -108,19 +108,19 @@ public class FetchPlan implements Serializable {
 
     private boolean loadPartialEntities;
 
-    public FetchPlan(Class<? extends Entity> entityClass) {
+    public FetchPlan(Class<? extends JmixEntity> entityClass) {
         this(entityClass, "", true);
     }
 
-    public FetchPlan(Class<? extends Entity> entityClass, boolean includeSystemProperties) {
+    public FetchPlan(Class<? extends JmixEntity> entityClass, boolean includeSystemProperties) {
         this(entityClass, "", includeSystemProperties);
     }
 
-    public FetchPlan(Class<? extends Entity> entityClass, String name) {
+    public FetchPlan(Class<? extends JmixEntity> entityClass, String name) {
         this(entityClass, name, true);
     }
 
-    public FetchPlan(Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
+    public FetchPlan(Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
         this(new FetchPlanParams().entityClass(entityClass)
                 .name(name)
                 .includeSystemProperties(includeSystemProperties)
@@ -131,7 +131,7 @@ public class FetchPlan implements Serializable {
         this(src, null, name, includeSystemProperties);
     }
 
-    public FetchPlan(FetchPlan src, @Nullable Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
+    public FetchPlan(FetchPlan src, @Nullable Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
         this(new FetchPlanParams().src(src)
                 .entityClass(entityClass != null ? entityClass : src.entityClass)
                 .name(name)
@@ -150,7 +150,7 @@ public class FetchPlan implements Serializable {
         List<FetchPlan> sources = viewParams.src;
 
         if (isNotEmpty(sources)) {
-            Class<? extends Entity> entityClass = sources.get(0).entityClass;
+            Class<? extends JmixEntity> entityClass = sources.get(0).entityClass;
 
             if (this.entityClass == null) {
                 this.entityClass = entityClass;
@@ -206,7 +206,7 @@ public class FetchPlan implements Serializable {
     /**
      * @return entity class this view belongs to
      */
-    public Class<? extends Entity> getEntityClass() {
+    public Class<? extends JmixEntity> getEntityClass() {
         return entityClass;
     }
 

@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.DisableEnhancing;
@@ -47,7 +47,7 @@ import java.util.UUID;
 @SystemLevel
 @DisableEnhancing
 public class KeyValueEntity
-        implements HasInstanceMetaClass, Entity {
+        implements HasInstanceMetaClass, JmixEntity {
 
     protected UUID uuid;
 
@@ -60,7 +60,7 @@ public class KeyValueEntity
     protected EntityEntry entityEntry;
 
     protected static class KeyValueEntityEntry extends BaseEntityEntry {
-        public KeyValueEntityEntry(Entity source) {
+        public KeyValueEntityEntry(JmixEntity source) {
             super(source);
         }
 

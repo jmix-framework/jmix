@@ -17,7 +17,7 @@
 package io.jmix.core.impl;
 
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.entity.EntityValues;
@@ -31,7 +31,7 @@ import java.io.ObjectOutputStream;
 @SuppressWarnings("unsed")
 public class EntityInternals {
 
-    public static String toString(Entity entity) {
+    public static String toString(JmixEntity entity) {
         EntityEntry entityEntry = entity.__getEntityEntry();
 
         String state = "";
@@ -50,7 +50,7 @@ public class EntityInternals {
         return entity.getClass().getName() + "-" + entityEntry.getEntityId() + " [" + state + "]";
     }
 
-    public static boolean equals(Entity o1, @Nullable Object o2) {
+    public static boolean equals(JmixEntity o1, @Nullable Object o2) {
         if (o1 == o2)
             return true;
 
@@ -58,13 +58,13 @@ public class EntityInternals {
             return false;
 
         Object id1 = o1.__getEntityEntry().getEntityId();
-        Object id2 = ((Entity) o2).__getEntityEntry().getEntityId();
+        Object id2 = ((JmixEntity) o2).__getEntityEntry().getEntityId();
 
         if (id1 != null && id1.equals(id2))
             return true;
 
         Object generatedId1 = o1.__getEntityEntry().getGeneratedId();
-        Object generatedId2 = ((Entity) o2).__getEntityEntry().getGeneratedId();
+        Object generatedId2 = ((JmixEntity) o2).__getEntityEntry().getGeneratedId();
 
         if (generatedId1.equals(generatedId2))
             return true;
@@ -72,19 +72,19 @@ public class EntityInternals {
         return false;
     }
 
-    public static int hashCode(Entity entity) {
+    public static int hashCode(JmixEntity entity) {
         return entity.__getEntityEntry().hashCode();
     }
 
     @SuppressWarnings("unused")
-    public static void fireListeners(Entity entity, String property, @Nullable Object prevValue, @Nullable Object newValue) {
+    public static void fireListeners(JmixEntity entity, String property, @Nullable Object prevValue, @Nullable Object newValue) {
         if (!EntityValues.propertyValueEquals(prevValue, newValue)) {
             ((BaseEntityEntry) entity.__getEntityEntry()).firePropertyChanged(property, prevValue, newValue);
         }
     }
 
     @SuppressWarnings("unused")
-    public static void writeObject(Entity entity, ObjectOutputStream outputStream) {
+    public static void writeObject(JmixEntity entity, ObjectOutputStream outputStream) {
         EntityEntry entityEntry = entity.__getEntityEntry();
         if (entityEntry.isManaged()) {
             entityEntry.setManaged(false);

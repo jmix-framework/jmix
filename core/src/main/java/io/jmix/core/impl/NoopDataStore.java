@@ -20,7 +20,7 @@ import io.jmix.core.DataStore;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.core.ValueLoadContext;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -57,23 +57,23 @@ public class NoopDataStore implements DataStore {
 
     @Nullable
     @Override
-    public <E extends Entity> E load(LoadContext<E> context) {
+    public <E extends JmixEntity> E load(LoadContext<E> context) {
         return null;
     }
 
     @Override
-    public <E extends Entity> List<E> loadList(LoadContext<E> context) {
+    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
         return Collections.emptyList();
     }
 
     @Override
-    public long getCount(LoadContext<? extends Entity> context) {
+    public long getCount(LoadContext<? extends JmixEntity> context) {
         return 0;
     }
 
     @Override
-    public Set<Entity> save(SaveContext context) {
-        Set<Entity> set = new HashSet<>();
+    public Set<JmixEntity> save(SaveContext context) {
+        Set<JmixEntity> set = new HashSet<>();
         set.addAll(context.getEntitiesToSave());
         set.addAll(context.getEntitiesToRemove());
         return set;

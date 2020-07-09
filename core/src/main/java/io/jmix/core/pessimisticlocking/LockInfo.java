@@ -17,7 +17,7 @@
 package io.jmix.core.pessimisticlocking;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.HasUuid;
@@ -35,7 +35,7 @@ import java.util.UUID;
  */
 @ModelObject(name = "sys_LockInfo")
 @SystemLevel
-public class LockInfo implements Entity, HasUuid {
+public class LockInfo implements JmixEntity, HasUuid {
 
     private static final long serialVersionUID = -1991047219638006414L;
 

@@ -16,6 +16,7 @@
 
 package test_support.app.entity.nullable_and_generated_id;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -26,7 +27,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_NGFOO")
 @Entity(name = "test_NGFoo")
-public class NGFoo implements io.jmix.core.Entity, Versioned {
+public class NGFoo implements JmixEntity, Versioned {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

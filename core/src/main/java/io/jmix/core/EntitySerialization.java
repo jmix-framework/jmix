@@ -49,12 +49,12 @@ public interface EntitySerialization {
      * @param options   options specifying how an entity should be serialized
      * @return a string that represents a JSON object
      */
-    String toJson(Entity entity,
+    String toJson(JmixEntity entity,
                   @Nullable FetchPlan fetchPlan,
                   EntitySerializationOption... options);
 
     /**
-     * Serializes a collection of entities to the JSON array. Method works like the {@link #toJson(Entity, FetchPlan,
+     * Serializes a collection of entities to the JSON array. Method works like the {@link #toJson(JmixEntity, FetchPlan,
      * EntitySerializationOption...)}, but return a JSON array as a result.
      *
      * @param entities  a list of entities to be serialized
@@ -62,18 +62,18 @@ public interface EntitySerialization {
      * @param options   options specifying how an entity should be serialized
      * @return a string that represents a JSON array of objects.
      */
-    String toJson(Collection<? extends Entity> entities,
+    String toJson(Collection<? extends JmixEntity> entities,
                   @Nullable FetchPlan fetchPlan,
                   EntitySerializationOption... options);
 
     /**
-     * An overloaded version of the {@link #toJson(Entity, FetchPlan, EntitySerializationOption...)} method with a null
+     * An overloaded version of the {@link #toJson(JmixEntity, FetchPlan, EntitySerializationOption...)} method with a null
      * {@code fetchPlan} parameter and with no serialization options.
      *
      * @param entity an entity to be serialized
      * @return a string that represents a JSON object
      */
-    String toJson(Entity entity);
+    String toJson(JmixEntity entity);
 
     /**
      * An overloaded version of the {@link #toJson(Collection, FetchPlan, EntitySerializationOption...)} method with a null
@@ -82,7 +82,7 @@ public interface EntitySerialization {
      * @param entities a collection of entities to be serialized
      * @return a string that represent a JSON array which contains entity objects
      */
-    String toJson(Collection<? extends Entity> entities);
+    String toJson(Collection<? extends JmixEntity> entities);
 
     /**
      * Serializes any custom POJO or collection of POJOs or JSON. If some field in POJO is an entity then this field
@@ -109,9 +109,9 @@ public interface EntitySerialization {
      * @param options   options specifying how a JSON object graph was serialized
      * @return an entity
      */
-    <T extends Entity> T entityFromJson(String json,
-                                        @Nullable MetaClass metaClass,
-                                        EntitySerializationOption... options);
+    <T extends JmixEntity> T entityFromJson(String json,
+                                            @Nullable MetaClass metaClass,
+                                            EntitySerializationOption... options);
 
     /**
      * Deserializes a JSON array of objects to entities collection
@@ -121,9 +121,9 @@ public interface EntitySerialization {
      * @param options   options specifying how a JSON object graph was serialized
      * @return an entities collection
      */
-    <T extends Entity> Collection<T> entitiesCollectionFromJson(String json,
-                                                                @Nullable MetaClass metaClass,
-                                                                EntitySerializationOption... options);
+    <T extends JmixEntity> Collection<T> entitiesCollectionFromJson(String json,
+                                                                    @Nullable MetaClass metaClass,
+                                                                    EntitySerializationOption... options);
 
     /**
      * Deserializes an object of any class from JSON. Date fields are deserialized according to the {@link

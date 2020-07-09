@@ -40,7 +40,7 @@ public interface DataManager {
      * @return          the loaded detached object, or null if not found
      */
     @Nullable
-    <E extends Entity> E load(LoadContext<E> context);
+    <E extends JmixEntity> E load(LoadContext<E> context);
 
     /**
      * Loads collection of entity instances.
@@ -49,14 +49,14 @@ public interface DataManager {
      * @param context   {@link LoadContext} object, defining what and how to load
      * @return          a list of detached instances, or empty list if nothing found
      */
-    <E extends Entity> List<E> loadList(LoadContext<E> context);
+    <E extends JmixEntity> List<E> loadList(LoadContext<E> context);
 
     /**
      * Returns the number of entity instances for the given query passed in the {@link LoadContext}.
      * @param context   defines the query
      * @return          number of instances in the data store
      */
-    long getCount(LoadContext<? extends Entity> context);
+    long getCount(LoadContext<? extends JmixEntity> context);
 
     /**
      * Commits a collection of new or detached entity instances to the data store.
@@ -70,26 +70,26 @@ public interface DataManager {
      * @param entities  entities to commit
      * @return          set of committed instances
      */
-    EntitySet save(Entity... entities);
+    EntitySet save(JmixEntity... entities);
 
     /**
      * Commits the entity to the data store.
      * @param entity    entity instance
      * @return          committed instance
      */
-    <E extends Entity> E save(E entity);
+    <E extends JmixEntity> E save(E entity);
 
     /**
      * Removes the entities from the data store.
      * @param entity    entity instance
      */
-    void remove(Entity... entity);
+    void remove(JmixEntity... entity);
 
     /**
      * Removes the entity instance from the data store by its id.
      * @param entityId    entity id
      */
-    default <T extends Entity> void remove(Id<T> entityId) {
+    default <T extends JmixEntity> void remove(Id<T> entityId) {
         remove(getReference(entityId));
     }
 
@@ -115,7 +115,7 @@ public interface DataManager {
      * </pre>
      * @param entityClass   class of entity that needs to be loaded
      */
-    default <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
+    default <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
         return new FluentLoader<>(entityClass, this);
     }
 
@@ -128,7 +128,7 @@ public interface DataManager {
      * </pre>
      * @param entityId   {@link Id} of entity that needs to be loaded
      */
-    default <E extends Entity> FluentLoader.ById<E> load(Id<E> entityId) {
+    default <E extends JmixEntity> FluentLoader.ById<E> load(Id<E> entityId) {
         return new FluentLoader<>(entityId.getEntityClass(), this).id(entityId.getValue());
     }
 
@@ -178,7 +178,7 @@ public interface DataManager {
      * Creates a new entity instance in memory. This is a shortcut to {@code Metadata.create()}.
      * @param entityClass   entity class
      */
-    <T extends Entity> T create(Class<T> entityClass);
+    <T extends JmixEntity> T create(Class<T> entityClass);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -197,7 +197,7 @@ public interface DataManager {
      * @param entityClass   entity class
      * @param id            id of an existing object
      */
-    <T extends Entity> T getReference(Class<T> entityClass, Object id);
+    <T extends JmixEntity> T getReference(Class<T> entityClass, Object id);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -206,7 +206,7 @@ public interface DataManager {
      *
      * @see #getReference(Class, Object)
      */
-    default <T extends Entity> T getReference(Id<T> entityId) {
+    default <T extends JmixEntity> T getReference(Id<T> entityId) {
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return getReference(entityId.getEntityClass(), entityId.getValue());
     }

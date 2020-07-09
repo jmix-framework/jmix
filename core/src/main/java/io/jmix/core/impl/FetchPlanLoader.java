@@ -162,7 +162,7 @@ public class FetchPlanLoader {
 
             if (inlineFetchPlan) {
                 // try to import anonymous fetch plan
-                Class<? extends Entity> rangeClass = range.asClass().getJavaClass();
+                Class<? extends JmixEntity> rangeClass = range.asClass().getJavaClass();
 
                 if (refFetchPlan != null) {
                     refFetchPlan = new FetchPlan(refFetchPlan, rangeClass, "", false); // system properties are already in the source fetch plan

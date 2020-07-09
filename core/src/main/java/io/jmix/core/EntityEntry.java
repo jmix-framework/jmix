@@ -25,7 +25,7 @@ import java.util.Collection;
 
 public interface EntityEntry extends Serializable {
 
-    Entity getSource();
+    JmixEntity getSource();
 
     @Nullable
     Object getEntityId();

@@ -30,7 +30,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @param <T> type of entity
  */
-public final class Ids<T extends Entity> extends ArrayList<Id<T>> {
+public final class Ids<T extends JmixEntity> extends ArrayList<Id<T>> {
 
     /**
      * @param entities entity instances
@@ -38,7 +38,7 @@ public final class Ids<T extends Entity> extends ArrayList<Id<T>> {
      * @param <T>      entity type
      * @return list of ids of the passed entities
      */
-    public static <T extends Entity> Ids<T> of(Collection<T> entities) {
+    public static <T extends JmixEntity> Ids<T> of(Collection<T> entities) {
         Ids<T> ids = new Ids<>();
 
         for (T entity : entities) {
@@ -59,7 +59,7 @@ public final class Ids<T extends Entity> extends ArrayList<Id<T>> {
      * @param <T>         entity type
      * @return list of ids of the passed entities
      */
-    public static <T extends Entity> Ids<T> of(Class<T> entityClass, Collection values) {
+    public static <T extends JmixEntity> Ids<T> of(Class<T> entityClass, Collection values) {
         Ids<T> ids = new Ids<>();
 
         for (Object value : values) {
@@ -87,7 +87,7 @@ public final class Ids<T extends Entity> extends ArrayList<Id<T>> {
      * @param <T> type of entity
      * @return list of entity keys
      */
-    public static <T extends Entity> List getValues(List<Id<T>> ids) {
+    public static <T extends JmixEntity> List getValues(List<Id<T>> ids) {
         return ids.stream()
                 .map(Id::getValue)
                 .collect(Collectors.toList());

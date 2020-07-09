@@ -65,9 +65,9 @@ public class EntityImportView implements Serializable {
 
     private final Map<String, EntityImportViewProperty> properties = new HashMap<>();
 
-    private Class<? extends Entity> entityClass;
+    private Class<? extends JmixEntity> entityClass;
 
-    public EntityImportView(Class<? extends Entity> entityClass) {
+    public EntityImportView(Class<? extends JmixEntity> entityClass) {
         this.entityClass = entityClass;
     }
 
@@ -138,7 +138,7 @@ public class EntityImportView implements Serializable {
         return properties.values();
     }
 
-    public Class<? extends Entity> getEntityClass() {
+    public Class<? extends JmixEntity> getEntityClass() {
         return entityClass;
     }
 

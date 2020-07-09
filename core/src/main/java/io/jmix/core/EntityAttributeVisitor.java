@@ -17,10 +17,9 @@
 package io.jmix.core;
 
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.Entity;
 
 /**
- * Visitor to be submitted to {@link MetadataTools#traverseAttributes(Entity, EntityAttributeVisitor)}.
+ * Visitor to be submitted to {@link MetadataTools#traverseAttributes(JmixEntity, EntityAttributeVisitor)}.
  *
  */
 public interface EntityAttributeVisitor {
@@ -31,7 +30,7 @@ public interface EntityAttributeVisitor {
      * @param entity    entity instance
      * @param property  meta-property pointing to the visited attribute
      */
-    void visit(Entity entity, MetaProperty property);
+    void visit(JmixEntity entity, MetaProperty property);
 
     /**
      * Optionally indicates, whether the property has to be visited

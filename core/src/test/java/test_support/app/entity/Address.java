@@ -17,7 +17,7 @@
 package test_support.app.entity;
 
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import org.apache.commons.lang3.LocaleUtils;
@@ -28,7 +28,7 @@ import java.util.Locale;
 
 @Embeddable
 @ModelObject(name = "app_Address")
-public class Address implements Entity {
+public class Address implements JmixEntity {
 
     private static final long serialVersionUID = 3973674066005826186L;
 

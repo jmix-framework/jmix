@@ -38,25 +38,25 @@ public interface DataStore {
      * @return the loaded object, or null if not found
      */
     @Nullable
-    <E extends Entity> E load(LoadContext<E> context);
+    <E extends JmixEntity> E load(LoadContext<E> context);
 
     /**
      * Loads collection of entity instances.
      * @return a list of instances, or empty list if nothing found
      */
-    <E extends Entity> List<E> loadList(LoadContext<E> context);
+    <E extends JmixEntity> List<E> loadList(LoadContext<E> context);
 
     /**
      * Returns the number of entity instances for the given query passed in the {@link LoadContext}.
      * @return number of instances in the storage
      */
-    long getCount(LoadContext<? extends Entity> context);
+    long getCount(LoadContext<? extends JmixEntity> context);
 
     /**
      * Commits a collection of new or detached entity instances to the storage.
      * @return set of committed instances
      */
-    Set<Entity> save(SaveContext context);
+    Set<JmixEntity> save(SaveContext context);
 
     /**
      * Loads list of key-value pairs.

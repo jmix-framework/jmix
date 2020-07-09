@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
 
@@ -24,12 +24,12 @@ import javax.annotation.Nullable;
  * Event object for {@link EntityPropertyChangeListener}.
  */
 public class EntityPropertyChangeEvent {
-    private final Entity item;
+    private final JmixEntity item;
     private final String property;
     private final Object prevValue;
     private final Object value;
 
-    public EntityPropertyChangeEvent(Entity item, String property, Object prevValue, Object value) {
+    public EntityPropertyChangeEvent(JmixEntity item, String property, Object prevValue, Object value) {
         this.item = item;
         this.property = property;
         this.prevValue = prevValue;
@@ -46,7 +46,7 @@ public class EntityPropertyChangeEvent {
     /**
      * @return data model object
      */
-    public Entity getItem() {
+    public JmixEntity getItem() {
         return item;
     }
 

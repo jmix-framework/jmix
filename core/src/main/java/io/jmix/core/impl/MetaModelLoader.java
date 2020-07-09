@@ -17,6 +17,7 @@
 package io.jmix.core.impl;
 
 import com.google.common.base.Joiner;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.ReflectionHelper;
@@ -178,7 +179,7 @@ public class MetaModelLoader {
 
     @Nullable
     protected MetaClassImpl createClass(Session session, Class<?> javaClass) {
-        if (!io.jmix.core.Entity.class.isAssignableFrom(javaClass)) {
+        if (!JmixEntity.class.isAssignableFrom(javaClass)) {
             return null;
         }
 

@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity.annotation;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ReplaceEntity {
-    Class<? extends Entity> value();
+    Class<? extends JmixEntity> value();
 }

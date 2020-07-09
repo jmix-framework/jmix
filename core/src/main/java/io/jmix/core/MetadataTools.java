@@ -68,7 +68,7 @@ public class MetadataTools {
     public static final String LENGTH_ANN_NAME = "jmix.length";
 
     public static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(
-            Entity.class,
+            JmixEntity.class,
             Versioned.class,
             SoftDelete.class,
             HasUuid.class
@@ -146,8 +146,8 @@ public class MetadataTools {
             return datatype.format(value, currentAuthentication.getLocale());
         } else if (range.isEnum()) {
             return messages.getMessage((Enum) value);
-        } else if (value instanceof Entity) {
-            return getInstanceName((Entity) value);
+        } else if (value instanceof JmixEntity) {
+            return getInstanceName((JmixEntity) value);
         } else if (value instanceof Collection) {
             @SuppressWarnings("unchecked")
             Collection<Object> collection = (Collection<Object>) value;
@@ -168,8 +168,8 @@ public class MetadataTools {
     public String format(@Nullable Object value) {
         if (value == null) {
             return "";
-        } else if (value instanceof Entity) {
-            return getInstanceName((Entity) value);
+        } else if (value instanceof JmixEntity) {
+            return getInstanceName((JmixEntity) value);
         } else if (value instanceof Enum) {
             return messages.getMessage((Enum) value, currentAuthentication.getLocale());
         } else if (value instanceof Collection) {
@@ -193,7 +193,7 @@ public class MetadataTools {
      * @return Instance name as defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
      * or <code>toString()</code>.
      */
-    public String getInstanceName(Entity instance) {
+    public String getInstanceName(JmixEntity instance) {
         return instanceNameProvider.getInstanceName(instance);
     }
 
@@ -309,7 +309,7 @@ public class MetadataTools {
     /**
      * Determine whether the given property is system-level. A property is considered system if it is defined not
      * in an entity class but in one of its base interfaces:
-     * {@link Entity}, {@link SoftDelete}, {@link Versioned}, {@link HasUuid}
+     * {@link JmixEntity}, {@link SoftDelete}, {@link Versioned}, {@link HasUuid}
      */
     public boolean isSystem(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
@@ -807,7 +807,7 @@ public class MetadataTools {
      * @param entity  entity graph entry point
      * @param visitor the attribute visitor implementation
      */
-    public void traverseAttributes(Entity entity, EntityAttributeVisitor visitor) {
+    public void traverseAttributes(JmixEntity entity, EntityAttributeVisitor visitor) {
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
 
@@ -822,7 +822,7 @@ public class MetadataTools {
      * @param entity  entity graph entry point
      * @param visitor the attribute visitor implementation
      */
-    public void traverseAttributesByView(FetchPlan view, Entity entity, EntityAttributeVisitor visitor) {
+    public void traverseAttributesByView(FetchPlan view, JmixEntity entity, EntityAttributeVisitor visitor) {
         checkNotNullArgument(view, "view is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
@@ -838,7 +838,7 @@ public class MetadataTools {
      * @param entity  entity graph entry point
      * @param visitor the attribute visitor implementation
      */
-    public void traverseLoadedAttributesByView(FetchPlan view, Entity entity, EntityAttributeVisitor visitor) {
+    public void traverseLoadedAttributesByView(FetchPlan view, JmixEntity entity, EntityAttributeVisitor visitor) {
         checkNotNullArgument(view, "view is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
@@ -853,7 +853,7 @@ public class MetadataTools {
      * @param source source instance
      * @return new instance of the same Java class as source
      */
-    public <T extends Entity> T copy(T source) {
+    public <T extends JmixEntity> T copy(T source) {
         checkNotNullArgument(source, "source is null");
 
         @SuppressWarnings("unchecked")
@@ -873,7 +873,7 @@ public class MetadataTools {
      * @param source source instance
      * @param dest   destination instance
      */
-    public void copy(Entity source, Entity dest) {
+    public void copy(JmixEntity source, JmixEntity dest) {
         checkNotNullArgument(source, "source is null");
         checkNotNullArgument(dest, "dest is null");
 
@@ -907,11 +907,11 @@ public class MetadataTools {
      * INTERNAL
      */
     public interface EntitiesHolder {
-        Entity create(Class<? extends Entity> entityClass, Object id);
+        JmixEntity create(Class<? extends JmixEntity> entityClass, Object id);
 
-        Entity find(Class<? extends Entity> entityClass, Object id);
+        JmixEntity find(Class<? extends JmixEntity> entityClass, Object id);
 
-        void put(Entity entity);
+        void put(JmixEntity entity);
     }
 
     /**
@@ -920,10 +920,10 @@ public class MetadataTools {
     public static class CachingEntitiesHolder implements EntitiesHolder {
 
         private static class CacheKey {
-            private Class<? extends Entity> entityClass;
+            private Class<? extends JmixEntity> entityClass;
             private Object id;
 
-            public CacheKey(Class<? extends Entity> entityClass, Object id) {
+            public CacheKey(Class<? extends JmixEntity> entityClass, Object id) {
                 this.entityClass = entityClass;
                 this.id = id;
             }
@@ -943,12 +943,12 @@ public class MetadataTools {
             }
         }
 
-        protected Map<CacheKey, Entity> cache = new HashMap<>();
+        protected Map<CacheKey, JmixEntity> cache = new HashMap<>();
 
         @Override
-        public Entity create(Class<? extends Entity> entityClass, Object id) {
+        public JmixEntity create(Class<? extends JmixEntity> entityClass, Object id) {
             CacheKey key = new CacheKey(entityClass, id);
-            Entity entity = cache.get(key);
+            JmixEntity entity = cache.get(key);
             if (entity == null) {
                 entity = createInstanceWithId(entityClass, id);
                 cache.put(key, entity);
@@ -958,12 +958,12 @@ public class MetadataTools {
         }
 
         @Override
-        public Entity find(Class<? extends Entity> entityClass, Object id) {
+        public JmixEntity find(Class<? extends JmixEntity> entityClass, Object id) {
             return cache.get(new CacheKey(entityClass, id));
         }
 
         @Override
-        public void put(Entity entity) {
+        public void put(JmixEntity entity) {
             cache.put(new CacheKey(entity.getClass(), EntityValues.getId(entity)), entity);
         }
     }
@@ -972,9 +972,9 @@ public class MetadataTools {
      * Makes a deep copy of the source entity. All referenced entities and collections will be copied as well.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Entity> T deepCopy(T source) {
+    public <T extends JmixEntity> T deepCopy(T source) {
         CachingEntitiesHolder entityFinder = new CachingEntitiesHolder();
-        Entity destination = entityFinder.create(source.getClass(), EntityValues.getId(source));
+        JmixEntity destination = entityFinder.create(source.getClass(), EntityValues.getId(source));
 
         deepCopy(source, destination, entityFinder);
 
@@ -984,7 +984,7 @@ public class MetadataTools {
     /**
      * Copies all property values from source to destination excluding null values.
      */
-    public void deepCopy(Entity source, Entity destination, EntitiesHolder entitiesHolder) {
+    public void deepCopy(JmixEntity source, JmixEntity destination, EntitiesHolder entitiesHolder) {
         for (MetaProperty srcProperty : metadata.getClass(source).getProperties()) {
             String name = srcProperty.getName();
 
@@ -1001,11 +1001,11 @@ public class MetadataTools {
                 Class refClass = srcProperty.getRange().asClass().getJavaClass();
                 if (srcProperty.getRange().getCardinality().isMany()) {
                     @SuppressWarnings("unchecked")
-                    Collection<Entity> srcCollection = (Collection) value;
-                    Collection<Entity> dstCollection = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
+                    Collection<JmixEntity> srcCollection = (Collection) value;
+                    Collection<JmixEntity> dstCollection = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
 
-                    for (Entity srcRef : srcCollection) {
-                        Entity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
+                    for (JmixEntity srcRef : srcCollection) {
+                        JmixEntity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
                         if (reloadedRef == null) {
                             reloadedRef = entitiesHolder.create(srcRef.getClass(), EntityValues.getId(srcRef));
                             deepCopy(srcRef, reloadedRef, entitiesHolder);
@@ -1014,8 +1014,8 @@ public class MetadataTools {
                     }
                     EntityValues.setValue(destination, name, dstCollection);
                 } else {
-                    Entity srcRef = (Entity) value;
-                    Entity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
+                    JmixEntity srcRef = (JmixEntity) value;
+                    JmixEntity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
                     if (reloadedRef == null) {
                         reloadedRef = entitiesHolder.create(srcRef.getClass(), EntityValues.getId(srcRef));
                         deepCopy(srcRef, reloadedRef, entitiesHolder);
@@ -1033,7 +1033,7 @@ public class MetadataTools {
 //        }
     }
 
-    protected void internalTraverseAttributes(Entity entity, EntityAttributeVisitor visitor, HashSet<Object> visited) {
+    protected void internalTraverseAttributes(JmixEntity entity, EntityAttributeVisitor visitor, HashSet<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -1049,10 +1049,10 @@ public class MetadataTools {
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {
-                                internalTraverseAttributes((Entity) item, visitor, visited);
+                                internalTraverseAttributes((JmixEntity) item, visitor, visited);
                             }
                         } else {
-                            internalTraverseAttributes((Entity) value, visitor, visited);
+                            internalTraverseAttributes((JmixEntity) value, visitor, visited);
                         }
                     }
                 }
@@ -1060,8 +1060,8 @@ public class MetadataTools {
         }
     }
 
-    protected void internalTraverseAttributesByFetchPlan(FetchPlan view, Entity entity, EntityAttributeVisitor visitor,
-                                                         Map<Entity, Set<FetchPlan>> visited, boolean checkLoaded) {
+    protected void internalTraverseAttributesByFetchPlan(FetchPlan view, JmixEntity entity, EntityAttributeVisitor visitor,
+                                                         Map<JmixEntity, Set<FetchPlan>> visited, boolean checkLoaded) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {
             fetchPlans = new HashSet<>();
@@ -1090,11 +1090,11 @@ public class MetadataTools {
             if (value != null && propertyView != null) {
                 if (value instanceof Collection) {
                     for (Object item : ((Collection) value)) {
-                        if (item instanceof Entity)
-                            internalTraverseAttributesByFetchPlan(propertyView, (Entity) item, visitor, visited, checkLoaded);
+                        if (item instanceof JmixEntity)
+                            internalTraverseAttributesByFetchPlan(propertyView, (JmixEntity) item, visitor, visited, checkLoaded);
                     }
-                } else if (value instanceof Entity) {
-                    internalTraverseAttributesByFetchPlan(propertyView, (Entity) value, visitor, visited, checkLoaded);
+                } else if (value instanceof JmixEntity) {
+                    internalTraverseAttributesByFetchPlan(propertyView, (JmixEntity) value, visitor, visited, checkLoaded);
                 }
             }
         }
@@ -1109,8 +1109,8 @@ public class MetadataTools {
     }
 
     @SuppressWarnings("unchecked")
-    protected static Entity createInstanceWithId(Class<? extends Entity> entityClass, Object id) {
-        Entity entity = createInstance(entityClass);
+    protected static JmixEntity createInstanceWithId(Class<? extends JmixEntity> entityClass, Object id) {
+        JmixEntity entity = createInstance(entityClass);
         EntityValues.setId(entity, id);
         return entity;
     }

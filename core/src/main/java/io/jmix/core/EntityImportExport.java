@@ -34,7 +34,7 @@ public interface EntityImportExport {
      * @param entities a collection of entities to export
      * @return a byte array of zipped JSON file
      */
-    byte[] exportEntitiesToZIP(Collection<? extends Entity> entities);
+    byte[] exportEntitiesToZIP(Collection<? extends JmixEntity> entities);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
@@ -47,7 +47,7 @@ public interface EntityImportExport {
      * @param fetchPlan before serialization to JSON entities will be reloaded with this fetch plan
      * @return a byte array of zipped JSON file
      */
-    byte[] exportEntitiesToZIP(Collection<? extends Entity> entities, FetchPlan fetchPlan);
+    byte[] exportEntitiesToZIP(Collection<? extends JmixEntity> entities, FetchPlan fetchPlan);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.
@@ -59,7 +59,7 @@ public interface EntityImportExport {
      * @param fetchPlan before serialization to JSON entities will be reloaded with this fetch plan
      * @return a JSON string
      */
-    String exportEntitiesToJSON(Collection<? extends Entity> entities, FetchPlan fetchPlan);
+    String exportEntitiesToJSON(Collection<? extends JmixEntity> entities, FetchPlan fetchPlan);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.</p>
@@ -69,7 +69,7 @@ public interface EntityImportExport {
      * @param entities a collection of entities to export
      * @return a JSON string
      */
-    String exportEntitiesToJSON(Collection<? extends Entity> entities);
+    String exportEntitiesToJSON(Collection<? extends JmixEntity> entities);
 
     /**
      * Deserializes the JSON and persists deserialized entities according to the rules, described by the {@code
@@ -81,7 +81,7 @@ public interface EntityImportExport {
      * @return a collection of entities that have been imported
      * @see EntityImportView
      */
-    Collection<Entity> importEntitiesFromJson(String json, EntityImportView view);
+    Collection<JmixEntity> importEntitiesFromJson(String json, EntityImportView view);
 
     /**
      * Reads a zip archive that contains a JSON file, deserializes the JSON and persists deserialized entities according
@@ -94,13 +94,13 @@ public interface EntityImportExport {
      * @return a collection of entities that have been imported
      * @see EntityImportView
      */
-    Collection<Entity> importEntitiesFromZIP(byte[] zipBytes, EntityImportView entityImportView);
+    Collection<JmixEntity> importEntitiesFromZIP(byte[] zipBytes, EntityImportView entityImportView);
 
     /**
      * See {@link #importEntities(Collection, EntityImportView, boolean)}. The current method doesn't perform bean
      * validation
      */
-    Collection<Entity> importEntities(Collection<? extends Entity> entities, EntityImportView view);
+    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView view);
 
     /**
      * Persists entities according to the rules, described by the {@code entityImportView} parameter. If the entity is
@@ -115,7 +115,7 @@ public interface EntityImportExport {
      *                   mechanism before entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<Entity> importEntities(Collection<? extends Entity> entities, EntityImportView importView, boolean validate);
+    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView importView, boolean validate);
 
     /**
      * Persists entities according to the rules, described by the {@code entityImportView} parameter. If the entity is
@@ -131,5 +131,5 @@ public interface EntityImportExport {
      * @param optimisticLocking whether the passed entities versions should be validated before entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<Entity> importEntities(Collection<? extends Entity> entities, EntityImportView importView, boolean validate, boolean optimisticLocking);
+    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView importView, boolean validate, boolean optimisticLocking);
 }

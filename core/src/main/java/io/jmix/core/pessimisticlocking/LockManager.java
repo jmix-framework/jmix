@@ -16,7 +16,7 @@
 
 package io.jmix.core.pessimisticlocking;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -46,7 +46,7 @@ public interface LockManager {
      * - {@link LockInfo} instance in case of this entity is already locked by someone
      */
     @Nullable
-    LockInfo lock(Entity entity);
+    LockInfo lock(JmixEntity entity);
 
     /**
      * Unlock an arbitrary object.
@@ -61,7 +61,7 @@ public interface LockManager {
      *
      * @param entity entity instance
      */
-    void unlock(Entity entity);
+    void unlock(JmixEntity entity);
 
     /**
      * Get locking status for particular object

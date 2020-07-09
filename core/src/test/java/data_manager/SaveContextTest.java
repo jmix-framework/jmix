@@ -66,7 +66,7 @@ public class SaveContextTest {
         assertTrue(ctx.getEntitiesToRemove().isEmpty());
 
         // when:
-        List<Entity> entitiesToSave = Arrays.asList(pet, owner);
+        List<JmixEntity> entitiesToSave = Arrays.asList(pet, owner);
         ctx = new SaveContext().saving(entitiesToSave);
         // then:
         assertEquals(Sets.newHashSet(pet, owner), ctx.getEntitiesToSave());

@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityEntry;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -30,7 +30,7 @@ public abstract class NullableIdEntityEntry extends BaseEntityEntry {
 
     private static final AtomicLong idGenerator = new AtomicLong(0);
 
-    public NullableIdEntityEntry(Entity source) {
+    public NullableIdEntityEntry(JmixEntity source) {
         super(source);
         generatedId = idGenerator.incrementAndGet();
     }

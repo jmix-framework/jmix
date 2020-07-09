@@ -202,7 +202,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                             continue;
                         }
                         MetaClass nestedViewMetaClass = metaProperty.getRange().asClass();
-                        Class<? extends Entity> nestedViewEntityClass = nestedViewMetaClass.getJavaClass();
+                        Class<? extends JmixEntity> nestedViewEntityClass = nestedViewMetaClass.getJavaClass();
                         if (nestedViewElement.isJsonObject()) {
                             JsonObject nestedViewObject = nestedViewElement.getAsJsonObject();
                             FetchPlan nestedView;
@@ -233,7 +233,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
     }
 
     @Nullable
-    protected FetchPlan findProcessedView(Collection<FetchPlan> processedViews, Class<? extends Entity> aClass, String viewName) {
+    protected FetchPlan findProcessedView(Collection<FetchPlan> processedViews, Class<? extends JmixEntity> aClass, String viewName) {
         for (FetchPlan view : processedViews) {
             if (aClass.equals(view.getEntityClass()) && viewName.equals(view.getName())) {
                 return view;

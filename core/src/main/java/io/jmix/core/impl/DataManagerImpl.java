@@ -55,7 +55,7 @@ public class DataManagerImpl implements DataManager {
 
     @Nullable
     @Override
-    public <E extends Entity> E load(LoadContext<E> context) {
+    public <E extends JmixEntity> E load(LoadContext<E> context) {
         MetaClass metaClass = metadata.getClass(context.getMetaClass());
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
         E entity = storage.load(context);
@@ -65,7 +65,7 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    public <E extends Entity> List<E> loadList(LoadContext<E> context) {
+    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
         MetaClass metaClass = metadata.getClass(context.getMetaClass());
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
         List<E> entities = storage.loadList(context);
@@ -74,34 +74,34 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    public long getCount(LoadContext<? extends Entity> context) {
+    public long getCount(LoadContext<? extends JmixEntity> context) {
         MetaClass metaClass = metadata.getClass(context.getMetaClass());
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
         return storage.getCount(context);
     }
 
     @Override
-    public EntitySet save(Entity... entities) {
+    public EntitySet save(JmixEntity... entities) {
         return save(new SaveContext().saving(entities));
     }
 
     @Override
-    public <E extends Entity> E save(E entity) {
+    public <E extends JmixEntity> E save(E entity) {
         return save(new SaveContext().saving(entity))
                 .optional(entity)
                 .orElseThrow(() -> new IllegalStateException("Data store didn't return a saved entity"));
     }
 
     @Override
-    public void remove(Entity... entities) {
+    public void remove(JmixEntity... entities) {
         save(new SaveContext().removing(entities));
     }
 
     @Override
     public EntitySet save(SaveContext context) {
         Map<String, SaveContext> storeToContextMap = new TreeMap<>();
-        Set<Entity> toRepeat = new HashSet<>();
-        for (Entity entity : context.getEntitiesToSave()) {
+        Set<JmixEntity> toRepeat = new HashSet<>();
+        for (JmixEntity entity : context.getEntitiesToSave()) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             String storeName = getStoreName(metaClass);
 
@@ -116,7 +116,7 @@ public class DataManagerImpl implements DataManager {
             if (view != null)
                 sc.getFetchPlans().put(entity, view);
         }
-        for (Entity entity : context.getEntitiesToRemove()) {
+        for (JmixEntity entity : context.getEntitiesToRemove()) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             String storeName = getStoreName(metaClass);
 
@@ -127,10 +127,10 @@ public class DataManagerImpl implements DataManager {
                 sc.getFetchPlans().put(entity, view);
         }
 
-        Set<Entity> result = new LinkedHashSet<>();
+        Set<JmixEntity> result = new LinkedHashSet<>();
         for (Map.Entry<String, SaveContext> entry : storeToContextMap.entrySet()) {
             DataStore dataStore = dataStoreFactory.get(entry.getKey());
-            Set<Entity> committed = dataStore.save(entry.getValue());
+            Set<JmixEntity> committed = dataStore.save(entry.getValue());
             result.addAll(committed);
         }
 
@@ -141,13 +141,13 @@ public class DataManagerImpl implements DataManager {
             try {
                 SaveContext sc = new SaveContext();
                 sc.setJoinTransaction(context.isJoinTransaction());
-                for (Entity entity : result) {
+                for (JmixEntity entity : result) {
                     if (toRepeat.contains(entity)) {
                         sc.saving(entity, context.getFetchPlans().get(entity));
                     }
                 }
-                Set<Entity> committedEntities = save(sc);
-                for (Entity committedEntity : committedEntities) {
+                Set<JmixEntity> committedEntities = save(sc);
+                for (JmixEntity committedEntity : committedEntities) {
                     if (result.contains(committedEntity)) {
                         result.remove(committedEntity);
                         result.add(committedEntity);
@@ -178,19 +178,19 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
-    public <T extends Entity> T create(Class<T> entityClass) {
+    public <T extends JmixEntity> T create(Class<T> entityClass) {
         return metadata.create(entityClass);
     }
 
     @Override
-    public <T extends Entity> T getReference(Class<T> entityClass, Object id) {
+    public <T extends JmixEntity> T getReference(Class<T> entityClass, Object id) {
         T entity = metadata.create(entityClass);
         EntityValues.setId(entity, id);
         entityStates.makePatch(entity);
         return entity;
     }
 
-    protected boolean writeCrossDataStoreReferences(Entity entity, Collection<Entity> allEntities) {
+    protected boolean writeCrossDataStoreReferences(JmixEntity entity, Collection<JmixEntity> allEntities) {
         if (stores.getAdditional().isEmpty())
             return false;
 
@@ -210,7 +210,7 @@ public class DataManagerImpl implements DataManager {
                     }
                     String relatedPropertyName = relatedProperties.get(0);
                     if (entityStates.isLoaded(entity, relatedPropertyName)) {
-                        Entity refEntity = EntityValues.getValue(entity, property.getName());
+                        JmixEntity refEntity = EntityValues.getValue(entity, property.getName());
                         if (refEntity == null) {
                             EntityValues.setValue(entity, relatedPropertyName, null);
                         } else {
@@ -228,7 +228,7 @@ public class DataManagerImpl implements DataManager {
                                 if (!relatedProperty.getRange().isClass()) {
                                     log.warn("PK of entity referenced by {} is a EmbeddableEntity, but related property {} is not", property, relatedProperty);
                                 } else {
-                                    EntityValues.setValue(entity, relatedPropertyName, metadataTools.copy((Entity) refEntityId));
+                                    EntityValues.setValue(entity, relatedPropertyName, metadataTools.copy((JmixEntity) refEntityId));
                                 }
                             } else {
                                 EntityValues.setValue(entity, relatedPropertyName, refEntityId);
@@ -241,7 +241,7 @@ public class DataManagerImpl implements DataManager {
         return repeatRequired;
     }
 
-    protected void readCrossDataStoreReferences(Collection<? extends Entity> entities, FetchPlan view, MetaClass metaClass,
+    protected void readCrossDataStoreReferences(Collection<? extends JmixEntity> entities, FetchPlan view, MetaClass metaClass,
                                                 boolean joinTransaction) {
         if (stores.getAdditional().isEmpty() || entities.isEmpty() || view == null)
             return;

@@ -111,7 +111,7 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     }
 
     @Override
-    public String getInstanceName(Entity instance) {
+    public String getInstanceName(JmixEntity instance) {
         checkNotNullArgument(instance, "instance is null");
 
         MetaClass metaClass = metadata.getClass(instance.getClass());

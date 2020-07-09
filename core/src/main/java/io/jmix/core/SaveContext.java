@@ -15,8 +15,6 @@
  */
 package io.jmix.core;
 
-import io.jmix.core.Entity;
-
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
@@ -27,8 +25,8 @@ public class SaveContext implements Serializable {
 
     private static final long serialVersionUID = 7239959802146936706L;
 
-    protected Collection<Entity> entitiesToSave = new LinkedHashSet<>();
-    protected Collection<Entity> entitiesToRemove = new LinkedHashSet<>();
+    protected Collection<JmixEntity> entitiesToSave = new LinkedHashSet<>();
+    protected Collection<JmixEntity> entitiesToRemove = new LinkedHashSet<>();
 
     protected Map<Object, FetchPlan> fetchPlans = new HashMap<>();
 
@@ -44,7 +42,7 @@ public class SaveContext implements Serializable {
      * @param entities collection of entities
      * @return this instance for chaining
      */
-    public SaveContext saving(Collection<? extends Entity> entities) {
+    public SaveContext saving(Collection<? extends JmixEntity> entities) {
         entitiesToSave.addAll(entities);
         return this;
     }
@@ -56,7 +54,7 @@ public class SaveContext implements Serializable {
      * @param entity entity instance
      * @return this instance for chaining
      */
-    public SaveContext saving(Entity... entity) {
+    public SaveContext saving(JmixEntity... entity) {
         entitiesToSave.addAll(Arrays.asList(entity));
         return this;
     }
@@ -68,7 +66,7 @@ public class SaveContext implements Serializable {
      * @param fetchPlan   fetch plan which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
-    public SaveContext saving(Entity entity, @Nullable FetchPlan fetchPlan) {
+    public SaveContext saving(JmixEntity entity, @Nullable FetchPlan fetchPlan) {
         entitiesToSave.add(entity);
         if (fetchPlan != null)
             fetchPlans.put(entity, fetchPlan);
@@ -81,7 +79,7 @@ public class SaveContext implements Serializable {
      * @param entity entity instance
      * @return this instance for chaining
      */
-    public SaveContext removing(Entity... entity) {
+    public SaveContext removing(JmixEntity... entity) {
         entitiesToRemove.addAll(Arrays.asList(entity));
         return this;
     }
@@ -92,7 +90,7 @@ public class SaveContext implements Serializable {
      * @param entities collection of entities
      * @return this instance for chaining
      */
-    public SaveContext removing(Collection<? extends Entity> entities) {
+    public SaveContext removing(Collection<? extends JmixEntity> entities) {
         entitiesToRemove.addAll(entities);
         return this;
     }
@@ -101,7 +99,7 @@ public class SaveContext implements Serializable {
      * @return direct reference to collection of changed entities that will be committed to the database.
      * The collection is modifiable.
      */
-    public Collection<Entity> getEntitiesToSave() {
+    public Collection<JmixEntity> getEntitiesToSave() {
         return entitiesToSave;
     }
 
@@ -109,7 +107,7 @@ public class SaveContext implements Serializable {
      * @return direct reference to collection of entities that will be removed from the database.
      * The collection is modifiable.
      */
-    public Collection<Entity> getEntitiesToRemove() {
+    public Collection<JmixEntity> getEntitiesToRemove() {
         return entitiesToRemove;
     }
 

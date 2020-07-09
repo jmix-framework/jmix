@@ -38,26 +38,26 @@ public interface Metadata extends Session {
      * @param entity entity instance
      * @return      MetaClass instance
      */
-    MetaClass getClass(Entity entity);
+    MetaClass getClass(JmixEntity entity);
 
     /**
      * Instantiate an entity, taking into account extended entities.
      * @param entityClass   entity class
      * @return              entity instance
      */
-    <T extends Entity> T create(Class<T> entityClass);
+    <T extends JmixEntity> T create(Class<T> entityClass);
 
     /**
      * Instantiate an entity, taking into account extended entities.
      * @param metaClass     entity MetaClass
      * @return              entity instance
      */
-    Entity create(MetaClass metaClass);
+    JmixEntity create(MetaClass metaClass);
 
     /**
      * Instantiate an entity, taking into account extended entities.
      * @param entityName    entity name
      * @return              entity instance
      */
-    Entity create(String entityName);
+    JmixEntity create(String entityName);
 }

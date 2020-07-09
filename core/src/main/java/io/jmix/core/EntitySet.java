@@ -30,38 +30,38 @@ import java.util.Set;
  * Implementation of {@code Set<Entity>} with convenient methods for getting entities by a prototype instance
  * or by a class and id.
  *
- * @see #get(Entity)
+ * @see #get(JmixEntity)
  * @see #get(Class, Object)
- * @see #optional(Entity)
+ * @see #optional(JmixEntity)
  * @see #optional(Class, Object)
  */
-public class EntitySet extends ForwardingSet<Entity> implements Serializable {
+public class EntitySet extends ForwardingSet<JmixEntity> implements Serializable {
 
-    private Set<? extends Entity> entities;
+    private Set<? extends JmixEntity> entities;
 
     public EntitySet() {
         this.entities = new HashSet<>();
     }
 
-    public EntitySet(Set<? extends Entity> entities) {
+    public EntitySet(Set<? extends JmixEntity> entities) {
         this.entities = entities;
     }
 
-    public EntitySet(Collection<? extends Entity> entities) {
+    public EntitySet(Collection<? extends JmixEntity> entities) {
         this.entities = new HashSet<>(entities);
     }
 
     /**
      * Creates the {@code EntitySet} wrapping an existing set.
      */
-    public static EntitySet of(Set<? extends Entity> entities) {
+    public static EntitySet of(Set<? extends JmixEntity> entities) {
         return new EntitySet(entities);
     }
 
     /**
      * Creates the {@code EntitySet} by copying the given collection to the internal set.
      */
-    public static EntitySet of(Collection<? extends Entity> entities) {
+    public static EntitySet of(Collection<? extends JmixEntity> entities) {
         return new EntitySet(entities);
     }
 
@@ -72,7 +72,7 @@ public class EntitySet extends ForwardingSet<Entity> implements Serializable {
      * @param entityId entity id
      */
     @SuppressWarnings("unchecked")
-    public <T extends Entity> Optional<T> optional(Class<T> entityClass, Object entityId) {
+    public <T extends JmixEntity> Optional<T> optional(Class<T> entityClass, Object entityId) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return (Optional<T>) entities.stream()
@@ -86,7 +86,7 @@ public class EntitySet extends ForwardingSet<Entity> implements Serializable {
      * @param prototype a prototype instance whose class and id are used to look up an entity in the set.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Entity> Optional<T> optional(T prototype) {
+    public <T extends JmixEntity> Optional<T> optional(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
         return (Optional<T>) optional(prototype.getClass(), EntityValues.getId(prototype));
     }
@@ -98,7 +98,7 @@ public class EntitySet extends ForwardingSet<Entity> implements Serializable {
      * @param entityId entity id
      * @throws IllegalArgumentException if the entity not found
      */
-    public <T extends Entity> T get(Class<T> entityClass, Object entityId) {
+    public <T extends JmixEntity> T get(Class<T> entityClass, Object entityId) {
         return optional(entityClass, entityId).orElseThrow(() -> new IllegalArgumentException("Entity not found"));
     }
 
@@ -109,14 +109,14 @@ public class EntitySet extends ForwardingSet<Entity> implements Serializable {
      * @throws IllegalArgumentException if the entity not found
      */
     @SuppressWarnings("unchecked")
-    public <T extends Entity> T get(T prototype) {
+    public <T extends JmixEntity> T get(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
         return (T) get(prototype.getClass(), EntityValues.getId(prototype));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Set<Entity> delegate() {
-        return (Set<Entity>) entities;
+    protected Set<JmixEntity> delegate() {
+        return (Set<JmixEntity>) entities;
     }
 }

@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityInitializer;
 import io.jmix.core.Metadata;
 import io.jmix.core.UuidProvider;
@@ -37,7 +37,7 @@ public class GeneratedIdEntityInitializer implements EntityInitializer, Ordered 
     private Metadata metadata;
 
     @Override
-    public void initEntity(Entity entity) {
+    public void initEntity(JmixEntity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         metaClass.getProperties().stream()
                 .filter(property -> property.getRange().isDatatype()

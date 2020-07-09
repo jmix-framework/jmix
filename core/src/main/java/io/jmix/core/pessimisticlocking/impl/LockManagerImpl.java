@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -143,7 +142,7 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
 
     @Nullable
     @Override
-    public LockInfo lock(Entity entity) {
+    public LockInfo lock(JmixEntity entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         MetaClass metaClass = metadata.getClass(entity.getClass());
@@ -163,7 +162,7 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
     }
 
     @Override
-    public void unlock(Entity entity) {
+    public void unlock(JmixEntity entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         MetaClass metaClass = metadata.getClass(entity.getClass());

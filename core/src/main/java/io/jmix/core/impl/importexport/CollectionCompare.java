@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl.importexport;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,9 +26,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CollectionCompare {
-    protected Consumer<Entity> createConsumer;
-    protected Consumer<Entity> deleteConsumer;
-    protected BiConsumer<Entity, Entity> updateConsumer;
+    protected Consumer<JmixEntity> createConsumer;
+    protected Consumer<JmixEntity> deleteConsumer;
+    protected BiConsumer<JmixEntity, JmixEntity> updateConsumer;
 
     private CollectionCompare() {
     }
@@ -37,28 +37,28 @@ public class CollectionCompare {
         return new CollectionCompare();
     }
 
-    public CollectionCompare onCreate(Consumer<Entity> createConsumer) {
+    public CollectionCompare onCreate(Consumer<JmixEntity> createConsumer) {
         this.createConsumer = createConsumer;
         return this;
     }
 
-    public CollectionCompare onDelete(Consumer<Entity> deleteConsumer) {
+    public CollectionCompare onDelete(Consumer<JmixEntity> deleteConsumer) {
         this.deleteConsumer = deleteConsumer;
         return this;
     }
 
-    public CollectionCompare onUpdate(BiConsumer<Entity, Entity> updateConsumer) {
+    public CollectionCompare onUpdate(BiConsumer<JmixEntity, JmixEntity> updateConsumer) {
         this.updateConsumer = updateConsumer;
         return this;
     }
 
-    public void compare(Collection<Entity> src, Collection<Entity> dst) {
-        final Collection<Entity> srcNN = Optional.ofNullable(src)
+    public void compare(Collection<JmixEntity> src, Collection<JmixEntity> dst) {
+        final Collection<JmixEntity> srcNN = Optional.ofNullable(src)
                 .orElse(Collections.emptyList());
-        final Collection<Entity> dstNN = Optional.ofNullable(dst)
+        final Collection<JmixEntity> dstNN = Optional.ofNullable(dst)
                 .orElse(Collections.emptyList());
-        for (Entity srcEntity : srcNN) {
-            Optional<Entity> existingOptional = dstNN.stream()
+        for (JmixEntity srcEntity : srcNN) {
+            Optional<JmixEntity> existingOptional = dstNN.stream()
                     .filter(e -> Objects.equals(e, srcEntity))
                     .findFirst();
             if (existingOptional.isPresent()) {

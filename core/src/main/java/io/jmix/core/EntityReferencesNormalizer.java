@@ -43,7 +43,7 @@ public class EntityReferencesNormalizer {
      * For each entity in the collection, updates reference properties to point to instances which are items of
      * the collection.
      */
-    public void updateReferences(Collection<Entity> entities) {
+    public void updateReferences(Collection<JmixEntity> entities) {
         updateReferences(entities, entities);
     }
 
@@ -51,18 +51,18 @@ public class EntityReferencesNormalizer {
      * For each entity in the first collection, updates reference properties to point to instances from
      * the second collection.
      */
-    public void updateReferences(Collection<Entity> entities, Collection<Entity> references) {
-        for (Entity entity : entities) {
+    public void updateReferences(Collection<JmixEntity> entities, Collection<JmixEntity> references) {
+        for (JmixEntity entity : entities) {
             if (entity == null)
                 continue;
-            for (Entity refEntity : references) {
+            for (JmixEntity refEntity : references) {
                 if (entity != refEntity) {
                     updateReferences(entity, refEntity, new HashSet<>());                }
             }
         }
     }
 
-    private void updateReferences(Entity entity, Entity refEntity, Set<Entity> visited) {
+    private void updateReferences(JmixEntity entity, JmixEntity refEntity, Set<JmixEntity> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -75,7 +75,7 @@ public class EntityReferencesNormalizer {
                     Collection<?> collection = EntityValues.getValue(entity, property.getName());
                     if (collection != null) {
                         for (Object obj : new ArrayList<>(collection)) {
-                            Entity itemEntity = (Entity) obj;
+                            JmixEntity itemEntity = (JmixEntity) obj;
                             if (itemEntity != refEntity && getId(itemEntity).equals(getId(refEntity))) {
                                 itemEntity = updateCollection(collection, itemEntity, refEntity);
                             }
@@ -83,7 +83,7 @@ public class EntityReferencesNormalizer {
                         }
                     }
                 } else {
-                    Entity propEntity = EntityValues.getValue(entity, property.getName());
+                    JmixEntity propEntity = EntityValues.getValue(entity, property.getName());
                     if (propEntity != null) {
                         if (propEntity != refEntity && getId(propEntity).equals(getId(refEntity))) {
                             if (property.isReadOnly() && !metadataTools.isPersistent(property)) {
@@ -100,7 +100,7 @@ public class EntityReferencesNormalizer {
     }
 
     @SuppressWarnings("unchecked")
-    private Entity updateCollection(Collection collection, Entity itemEntity, Entity refEntity) {
+    private JmixEntity updateCollection(Collection collection, JmixEntity itemEntity, JmixEntity refEntity) {
         if (collection instanceof List) {
             List list = (List) collection;
             int i = list.indexOf(itemEntity);
@@ -112,12 +112,12 @@ public class EntityReferencesNormalizer {
         return refEntity;
     }
 
-    private boolean isPropertyAssignableFrom(MetaProperty property, Entity entity) {
+    private boolean isPropertyAssignableFrom(MetaProperty property, JmixEntity entity) {
         Class<Object> propertyClass = property.getRange().asClass().getJavaClass();
         return propertyClass.isAssignableFrom(entity.getClass());
     }
 
-    private Object getId(Entity entity) {
+    private Object getId(JmixEntity entity) {
         return EntityValues.getGeneratedId(entity);
     }
 }

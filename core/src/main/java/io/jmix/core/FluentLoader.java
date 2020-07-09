@@ -24,7 +24,7 @@ import javax.persistence.TemporalType;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class FluentLoader<E extends Entity> {
+public class FluentLoader<E extends JmixEntity> {
 
     private Class<E> entityClass;
 
@@ -238,7 +238,7 @@ public class FluentLoader<E extends Entity> {
         return new ByQuery<>(this, queryString, parameters);
     }
 
-    public static class ById<E extends Entity> {
+    public static class ById<E extends JmixEntity> {
 
         private FluentLoader<E> loader;
         private Object id;
@@ -361,7 +361,7 @@ public class FluentLoader<E extends Entity> {
         }
     }
 
-    public static class ByIds<E extends Entity> {
+    public static class ByIds<E extends JmixEntity> {
 
         private FluentLoader<E> loader;
         private Collection ids;
@@ -513,7 +513,7 @@ public class FluentLoader<E extends Entity> {
         }
     }
 
-    public static class ByQuery<E extends Entity> {
+    public static class ByQuery<E extends JmixEntity> {
 
         private FluentLoader<E> loader;
 

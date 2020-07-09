@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +37,7 @@ public class QueryStringProcessor {
     @Autowired
     private Metadata metadata;
 
-    public String process(String queryString, Class<? extends Entity> entityClass) {
+    public String process(String queryString, Class<? extends JmixEntity> entityClass) {
         if (Strings.isNullOrEmpty(queryString)) {
             return queryString;
         }
@@ -49,7 +48,7 @@ public class QueryStringProcessor {
         }
     }
 
-    protected String processJpaQuery(String queryString, Class<? extends Entity> entityClass) {
+    protected String processJpaQuery(String queryString, Class<? extends JmixEntity> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
         String entityName = metaClass.getName();
 

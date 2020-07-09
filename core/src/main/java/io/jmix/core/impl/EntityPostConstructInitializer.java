@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.EntityInitializer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +55,7 @@ public class EntityPostConstructInitializer implements EntityInitializer {
                     });
 
     @Override
-    public void initEntity(Entity entity) {
+    public void initEntity(JmixEntity entity) {
         try {
             List<Method> postConstructMethods = postConstructMethodsCache.getUnchecked(entity.getClass());
             // methods are store in the correct execution order

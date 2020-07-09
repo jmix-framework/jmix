@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityInitializer;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -37,12 +37,12 @@ public class EmbeddedIdEntityInitializer implements EntityInitializer, Ordered {
     private MetadataTools metadataTools;
 
     @Override
-    public void initEntity(Entity entity) {
+    public void initEntity(JmixEntity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
         if (primaryKeyProperty != null && metadataTools.isEmbedded(primaryKeyProperty)) {
             // create an instance of embedded ID
-            Entity key = metadata.create(primaryKeyProperty.getRange().asClass());
+            JmixEntity key = metadata.create(primaryKeyProperty.getRange().asClass());
             EntityValues.setId(entity, key);
         }
     }

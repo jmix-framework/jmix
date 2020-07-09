@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
@@ -34,7 +34,7 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     protected byte state = NEW;
     protected SecurityState securityState = new SecurityState();
     protected transient Collection<WeakReference<EntityPropertyChangeListener>> propertyChangeListeners;
-    protected Entity source;
+    protected JmixEntity source;
     protected Map<Class<?>, EntityEntryExtraState> extraStateMap;
     protected Map<Class<?>, EntityValuesProvider> entityValuesProviders;
 
@@ -45,13 +45,13 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
 
     protected static final int PROPERTY_CHANGE_LISTENERS_INITIAL_CAPACITY = 4;
 
-    public BaseEntityEntry(Entity source) {
+    public BaseEntityEntry(JmixEntity source) {
         this.source = source;
     }
 
     @Override
     @NonNull
-    public Entity getSource() {
+    public JmixEntity getSource() {
         return source;
     }
 

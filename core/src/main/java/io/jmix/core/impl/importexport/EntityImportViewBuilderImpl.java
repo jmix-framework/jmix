@@ -72,7 +72,7 @@ public class EntityImportViewBuilderImpl implements EntityImportViewBuilder {
                     if (security.isEntityAttrUpdatePermitted(metaClass, propertyName))
                         view.addLocalProperty(propertyName);
                 } else if (propertyRange.isClass()) {
-                    if (Entity.class.isAssignableFrom(propertyType)) {
+                    if (JmixEntity.class.isAssignableFrom(propertyType)) {
                         if (metadataTools.isEmbedded(metaProperty)) {
                             MetaClass propertyMetaClass = metadata.getClass(propertyType);
                             JsonElement propertyJsonObject = entry.getValue();

@@ -16,8 +16,6 @@
 
 package io.jmix.core;
 
-import io.jmix.core.Entity;
-
 public interface EntityInitializer {
     /**
      * Defines the highest precedence for {@link org.springframework.core.Ordered} providers of the platform.
@@ -29,5 +27,5 @@ public interface EntityInitializer {
      */
     int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
-    void initEntity(Entity entity);
+    void initEntity(JmixEntity entity);
 }

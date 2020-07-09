@@ -36,7 +36,7 @@ public interface InstanceNameProvider {
      *
      * @return instance name
      */
-    String getInstanceName(Entity instance);
+    String getInstanceName(JmixEntity instance);
 
     /**
      * Return a collection of properties included into entity's name pattern (see {@link InstanceName}).

@@ -15,14 +15,14 @@
  */
 package test_support.base.entity;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @ModelObject(name = "base$BaseGenericIdEntity")
-public abstract class BaseGenericIdEntity<T> implements Entity {
+public abstract class BaseGenericIdEntity<T> implements JmixEntity {
 
     private static final long serialVersionUID = -8400641366148656528L;
 

@@ -53,12 +53,12 @@ public class MetadataImpl implements Metadata {
     }
 
     @Override
-    public MetaClass getClass(Entity entity) {
+    public MetaClass getClass(JmixEntity entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
         return session.getClass(entity.getClass());
     }
 
-    protected <T extends Entity> T internalCreate(Class<T> entityClass) {
+    protected <T extends JmixEntity> T internalCreate(Class<T> entityClass) {
         Class<T> extClass = getSession().getClass(entityClass).getJavaClass();
         try {
             T obj = extClass.getDeclaredConstructor().newInstance();
@@ -76,17 +76,17 @@ public class MetadataImpl implements Metadata {
     }
 
     @Override
-    public <T extends Entity> T create(Class<T> entityClass) {
+    public <T extends JmixEntity> T create(Class<T> entityClass) {
         return internalCreate(entityClass);
     }
 
     @Override
-    public Entity create(MetaClass metaClass) {
+    public JmixEntity create(MetaClass metaClass) {
         return internalCreate(metaClass.getJavaClass());
     }
 
     @Override
-    public Entity create(String entityName) {
+    public JmixEntity create(String entityName) {
         MetaClass metaClass = getSession().getClass(entityName);
         return internalCreate(metaClass.getJavaClass());
     }

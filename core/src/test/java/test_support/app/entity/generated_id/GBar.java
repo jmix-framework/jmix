@@ -16,6 +16,7 @@
 
 package test_support.app.entity.generated_id;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -25,7 +26,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_GBAR")
 @Entity(name = "test_GBar")
-public class GBar implements io.jmix.core.Entity, Versioned {
+public class GBar implements JmixEntity, Versioned {
 
     @Id
     @Column(name = "UUID")

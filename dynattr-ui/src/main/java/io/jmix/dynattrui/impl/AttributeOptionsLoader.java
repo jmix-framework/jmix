@@ -16,7 +16,7 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.dynattr.AttributeDefinition;
 
 import java.util.List;
@@ -24,5 +24,5 @@ import java.util.List;
 public interface AttributeOptionsLoader {
     String NAME = "dynattrui_AttributeOptionsLoader";
 
-    List loadOptions(Entity entity, AttributeDefinition attribute);
+    List loadOptions(JmixEntity entity, AttributeDefinition attribute);
 }

@@ -16,7 +16,7 @@
 
 package io.jmix.dynattr;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -35,5 +35,5 @@ public interface CategoryDefinition {
     @Nullable
     String getEntityType();
 
-    Entity getSource();
+    JmixEntity getSource();
 }

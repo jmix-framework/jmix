@@ -16,7 +16,7 @@
 
 package io.jmix.dynattr;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 
@@ -142,5 +142,5 @@ public interface AttributeDefinition {
 
     Configuration getConfiguration();
 
-    Entity getSource();
+    JmixEntity getSource();
 }

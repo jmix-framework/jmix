@@ -75,17 +75,17 @@ public class DynAttrManagerImpl implements DynAttrManager {
     protected String dynamicAttributesStore = Stores.MAIN;
 
     @Override
-    public void storeValues(Collection<Entity> entities) {
+    public void storeValues(Collection<JmixEntity> entities) {
         storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)
                 .executeWithoutResult(status -> {
-                    for (Entity entity : entities) {
+                    for (JmixEntity entity : entities) {
                         doStoreValues(entity);
                     }
                 });
     }
 
-    public void loadValues(Collection<Entity> entities, @Nullable FetchPlan fetchPlan) {
-        Multimap<MetaClass, Entity> entitiesToLoad = collectEntitiesToLoad(entities, fetchPlan);
+    public void loadValues(Collection<JmixEntity> entities, @Nullable FetchPlan fetchPlan) {
+        Multimap<MetaClass, JmixEntity> entitiesToLoad = collectEntitiesToLoad(entities, fetchPlan);
         if (!entitiesToLoad.isEmpty()) {
             storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)
                     .executeWithoutResult(status -> {
@@ -97,7 +97,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
     }
 
     @SuppressWarnings("unchecked")
-    protected void doStoreValues(Entity entity) {
+    protected void doStoreValues(JmixEntity entity) {
         DynamicAttributesState state = (DynamicAttributesState)
                 entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
         if (state != null && state.getDynamicAttributes() != null) {
@@ -185,10 +185,10 @@ public class DynAttrManagerImpl implements DynAttrManager {
         }
     }
 
-    protected void doFetchValues(MetaClass metaClass, Collection<Entity> entities) {
+    protected void doFetchValues(MetaClass metaClass, Collection<JmixEntity> entities) {
         if (dynAttrMetadata.getAttributes(metaClass).isEmpty() ||
                 metadataTools.hasCompositePrimaryKey(metaClass) && !HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
-            for (Entity entity : entities) {
+            for (JmixEntity entity : entities) {
                 DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
                 entity.__getEntityEntry().addExtraState(state);
             }
@@ -215,7 +215,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 }
             }
 
-            for (Entity entity : entities) {
+            for (JmixEntity entity : entities) {
                 Collection<CategoryAttributeValue> values = allAttributeValues.get(referenceToEntitySupport.getReferenceId(entity));
                 DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
                 entity.__getEntityEntry().addExtraState(state);
@@ -354,15 +354,15 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
             if (!ids.isEmpty()) {
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
-                List<Entity> resultList = entityManager.createQuery(
+                List<JmixEntity> resultList = entityManager.createQuery(
                         String.format("select e from %s e where e.%s in :ids", metaClass.getName(), pkName))
                         .setParameter("ids", ids)
                         .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME))
                         .getResultList();
 
 
-                Map<Object, Entity> entityById = new LinkedHashMap<>();
-                for (Entity entity : resultList) {
+                Map<Object, JmixEntity> entityById = new LinkedHashMap<>();
+                for (JmixEntity entity : resultList) {
                     entityById.put(EntityValues.getId(entity), entity);
                 }
 
@@ -393,18 +393,18 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 .getResultList();
     }
 
-    protected Multimap<MetaClass, Entity> collectEntitiesToLoad(Collection<Entity> entities, @Nullable FetchPlan fetchPlan) {
-        Multimap<MetaClass, Entity> entitiesByType = HashMultimap.create();
+    protected Multimap<MetaClass, JmixEntity> collectEntitiesToLoad(Collection<JmixEntity> entities, @Nullable FetchPlan fetchPlan) {
+        Multimap<MetaClass, JmixEntity> entitiesByType = HashMultimap.create();
         if (fetchPlan != null) {
             Set<Class> dependentClasses = collectEntityClasses(fetchPlan, new HashSet<>()).stream()
                     .filter(aClass -> !dynAttrMetadata.getAttributes(metadata.getClass(aClass)).isEmpty())
                     .collect(Collectors.toSet());
-            for (Entity entity : entities) {
+            for (JmixEntity entity : entities) {
                 entitiesByType.put(extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity.getClass())), entity);
                 if (!dependentClasses.isEmpty()) {
                     metadataTools.traverseAttributes(entity, new EntityAttributeVisitor() {
                         @Override
-                        public void visit(Entity visitedEntity, MetaProperty property) {
+                        public void visit(JmixEntity visitedEntity, MetaProperty property) {
                             if (dependentClasses.contains(property.getRange().asClass().getJavaClass()) &&
                                     entityStates.isLoaded(visitedEntity, property.getName())) {
                                 Object value = EntityValues.getValue(visitedEntity, property.getName());
@@ -412,13 +412,13 @@ public class DynAttrManagerImpl implements DynAttrManager {
                                     if (value instanceof Collection) {
                                         //noinspection rawtypes
                                         for (Object item : ((Collection) value)) {
-                                            if (item instanceof Entity) {
-                                                entitiesByType.put(metadata.getClass(item.getClass()), (Entity) item);
+                                            if (item instanceof JmixEntity) {
+                                                entitiesByType.put(metadata.getClass(item.getClass()), (JmixEntity) item);
                                             }
                                         }
-                                    } else if (value instanceof Entity) {
-                                        if (!((Entity) value).__getEntityEntry().isEmbeddable()) {
-                                            entitiesByType.put(metadata.getClass(value.getClass()), (Entity) value);
+                                    } else if (value instanceof JmixEntity) {
+                                        if (!((JmixEntity) value).__getEntityEntry().isEmbeddable()) {
+                                            entitiesByType.put(metadata.getClass(value.getClass()), (JmixEntity) value);
                                         }
                                     }
                                 }
@@ -434,7 +434,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
             }
         } else if (!entities.isEmpty()) {
-            for (Entity entity : entities) {
+            for (JmixEntity entity : entities) {
                 MetaClass metaClass = metadata.getClass(entity.getClass());
                 if (!dynAttrMetadata.getAttributes(metaClass).isEmpty()) {
                     entitiesByType.put(extendedEntities.getOriginalOrThisMetaClass(metaClass), entity);

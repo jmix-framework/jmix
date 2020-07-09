@@ -17,7 +17,7 @@
 package io.jmix.dynattr.impl.model;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @ModelObject(name = "sys_CategoryAttributeConfiguration")
 @SystemLevel
-public class CategoryAttributeConfiguration implements Entity {
+public class CategoryAttributeConfiguration implements JmixEntity {
     private static final long serialVersionUID = 2670605418267938507L;
 
     @Id

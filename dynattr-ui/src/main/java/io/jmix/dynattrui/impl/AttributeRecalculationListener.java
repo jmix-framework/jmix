@@ -16,7 +16,7 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
@@ -61,7 +61,7 @@ public class AttributeRecalculationListener implements Consumer<HasValue.ValueCh
                 ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((HasValueSource<?>) component).getValueSource();
                 InstanceContainer<?> container = valueSource.getContainer();
 
-                Entity entity = container.getItem();
+                JmixEntity entity = container.getItem();
 
                 EntityValues.setValue(entity, DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()), valueChangeEvent.getValue());
 

@@ -16,7 +16,7 @@
 
 package io.jmix.dynattr.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityInitializer;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.DynamicAttributesState;
@@ -28,7 +28,7 @@ public class DynAttrEntityStateInitializer implements EntityInitializer, Ordered
     public static final String NAME = "dynattr_DynAttrEntityStateInitializer";
 
     @Override
-    public void initEntity(Entity entity) {
+    public void initEntity(JmixEntity entity) {
         DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
         state.setDynamicAttributes(new DynamicAttributes());
         entity.__getEntityEntry().addExtraState(state);

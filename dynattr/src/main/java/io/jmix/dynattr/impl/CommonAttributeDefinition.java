@@ -19,7 +19,7 @@ package io.jmix.dynattr.impl;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.AttributeDefinition;
@@ -281,7 +281,7 @@ public class CommonAttributeDefinition implements AttributeDefinition {
     }
 
     @Override
-    public Entity getSource() {
+    public JmixEntity getSource() {
         return attribute;
     }
 

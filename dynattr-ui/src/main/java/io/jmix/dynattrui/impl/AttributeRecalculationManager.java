@@ -17,7 +17,7 @@
 package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
@@ -54,7 +54,7 @@ public class AttributeRecalculationManager {
      * @param attribute an attribute from which the recalculation begins. Value for this attribute won't be changed,
      *                  it is assumed that this attribute was updated before
      */
-    public void recalculateByAttribute(Entity entity, AttributeDefinition attribute) {
+    public void recalculateByAttribute(JmixEntity entity, AttributeDefinition attribute) {
 
         Set<AttributeDefinition> dependentAttributes = attributeDependencies.getDependentAttributes(attribute);
 
@@ -95,7 +95,7 @@ public class AttributeRecalculationManager {
         }
     }
 
-    protected Object evaluateNewValue(Entity entity, String script) {
+    protected Object evaluateNewValue(JmixEntity entity, String script) {
         Map<String, Object> values = new HashMap<>();
         DynamicAttributesState extraState = (DynamicAttributesState) entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
         if (extraState != null && extraState.getDynamicAttributes() != null) {

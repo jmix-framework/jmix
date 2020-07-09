@@ -19,7 +19,7 @@ package io.jmix.dynattrui.impl;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.jmix.core.BeanLocator;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
@@ -384,7 +384,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
     protected void setOptionsLoader(ComboBox lookupField, AttributeDefinition attribute, ContainerValueSource valueSource) {
         InstanceContainer<?> container = valueSource.getContainer();
-        Entity entity = container.getItemOrNull();
+        JmixEntity entity = container.getItemOrNull();
         if (entity != null) {
             List options = optionsLoader.loadOptions(entity, attribute);
             //noinspection unchecked

@@ -125,13 +125,13 @@ public class CategoryAttrsFragment extends ScreenFragment {
                     defaultValue = "";
                     if (attribute.getObjectDefaultEntityId() != null) {
                         MetaClass metaClass = metadata.getClass(entityClass);
-                        LoadContext<Entity> lc = new LoadContext(attribute.getJavaType());
+                        LoadContext<JmixEntity> lc = new LoadContext(attribute.getJavaType());
                         FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
                         lc.setFetchPlan(fetchPlan);
                         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
                         lc.setQueryString(String.format("select e from %s e where e.%s = :entityId", metaClass.getName(), pkName))
                                 .setParameter("entityId", attribute.getObjectDefaultEntityId());
-                        Entity entity = dataManager.load(lc);
+                        JmixEntity entity = dataManager.load(lc);
                         if (entity != null) {
                             defaultValue = metadataTools.getInstanceName(entity);
                         }

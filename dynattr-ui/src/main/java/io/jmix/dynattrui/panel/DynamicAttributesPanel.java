@@ -17,7 +17,7 @@
 package io.jmix.dynattrui.panel;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -60,7 +60,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;
 
-    protected InstanceContainer<Entity> instanceContainer;
+    protected InstanceContainer<JmixEntity> instanceContainer;
 
     protected Integer cols;
     protected Integer rows;
@@ -208,7 +208,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
         }
     }
 
-    protected void initCategoryField(InstanceContainer<Entity> instanceContainer) {
+    protected void initCategoryField(InstanceContainer<JmixEntity> instanceContainer) {
         categoryField.setOptionsList(getCategoriesOptionsList());
         categoryField.setValueSource(new ContainerValueSource<>(instanceContainer, "category"));
     }
@@ -253,7 +253,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
         }
     }
 
-    protected void onInstanceContainerItemChangeEvent(InstanceContainer.ItemChangeEvent<Entity> event) {
+    protected void onInstanceContainerItemChangeEvent(InstanceContainer.ItemChangeEvent<JmixEntity> event) {
         //TODO: think about category
 //        if (event.getItem() instanceof Categorized
 //                && ((Categorized) event.getItem()).getCategory() == null) {
@@ -269,7 +269,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
      *
      * @param instanceContainer {@link InstanceContainer} object with editing entity
      */
-    public void setInstanceContainer(InstanceContainer<Entity> instanceContainer) {
+    public void setInstanceContainer(InstanceContainer<JmixEntity> instanceContainer) {
         this.instanceContainer = instanceContainer;
         propertiesForm.setValueSourceProvider(new ContainerValueSourceProvider<>(instanceContainer));
         initCategoryField(instanceContainer);

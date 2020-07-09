@@ -43,7 +43,7 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
     private DynAttrManager dynAttrManager;
 
     @Override
-    public <E extends Entity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
+    public <E extends JmixEntity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
         boolean needDynamicAttributes = false;
         boolean dynamicAttributesAreLoaded = true;
 
@@ -71,7 +71,7 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
     }
 
     @Override
-    public <E extends Entity> E transformForField(E editedEntity, HasValue<E> field) {
+    public <E extends JmixEntity> E transformForField(E editedEntity, HasValue<E> field) {
         return editedEntity;
     }
 }

@@ -55,7 +55,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     protected static final Pattern COMMON_PARAM_PATTERN = Pattern.compile("\\$\\{(.+?)}");
 
     public interface OptionsLoaderStrategy {
-        List loadOptions(Entity entity, AttributeDefinition attribute, String script);
+        List loadOptions(JmixEntity entity, AttributeDefinition attribute, String script);
     }
 
     @PostConstruct
@@ -66,7 +66,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     }
 
     @Override
-    public List loadOptions(Entity entity, AttributeDefinition attribute) {
+    public List loadOptions(JmixEntity entity, AttributeDefinition attribute) {
         AttributeDefinition.Configuration configuration = attribute.getConfiguration();
         String loaderScript = configuration.getOptionsLoaderScript();
 
@@ -84,7 +84,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         return loaderStrategy;
     }
 
-    protected List executeSql(Entity entity, AttributeDefinition attribute, String script) {
+    protected List executeSql(JmixEntity entity, AttributeDefinition attribute, String script) {
         if (!Strings.isNullOrEmpty(script)) {
             return storeAwareLocator.getTransactionTemplate(Stores.MAIN)
                     .execute(status -> {
@@ -136,22 +136,22 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
 
     protected Object getQueryParameterValue(String name, Map<String, Object> params) {
         if (ENTITY_QUERY_PARAM.equals(name)) {
-            Entity entity = (Entity) params.get("entity");
+            JmixEntity entity = (JmixEntity) params.get("entity");
             if (entity != null) {
                 return EntityValues.getId(entity);
             }
         } else if (name != null && name.startsWith(ENTITY_FIELD_QUERY_PARAM)) {
-            Entity entity = (Entity) params.get("entity");
+            JmixEntity entity = (JmixEntity) params.get("entity");
             if (entity != null) {
                 String attributePath = name.substring(ENTITY_FIELD_QUERY_PARAM.length());
                 Object value = EntityValues.getValueEx(entity, attributePath);
-                return value instanceof Entity ? EntityValues.getId((Entity) value) : value;
+                return value instanceof JmixEntity ? EntityValues.getId((JmixEntity) value) : value;
             }
         }
         return null;
     }
 
-    protected List executeJpql(Entity entity, AttributeDefinition attribute, String script) {
+    protected List executeJpql(JmixEntity entity, AttributeDefinition attribute, String script) {
         MetaClass metaClass = metadata.getClass(attribute.getJavaType());
 
         StringBuilder queryString = new StringBuilder(String.format("select e from %s e", metaClass.getName()));
@@ -197,7 +197,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         }
     }
 
-    protected List executeGroovyScript(Entity entity, AttributeDefinition attribute, String script) {
+    protected List executeGroovyScript(JmixEntity entity, AttributeDefinition attribute, String script) {
         if (!Strings.isNullOrEmpty(script)) {
             return (List) scriptEvaluator.evaluate(new StaticScriptSource(script), Collections.singletonMap("entity", entity));
         }

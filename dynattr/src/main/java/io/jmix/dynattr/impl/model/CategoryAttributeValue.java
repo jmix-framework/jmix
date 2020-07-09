@@ -20,6 +20,7 @@ package io.jmix.dynattr.impl.model;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
@@ -85,7 +86,7 @@ public class CategoryAttributeValue extends StandardEntity {
     private ReferenceToEntity entityValue;
 
     @Transient
-    private io.jmix.core.Entity transientEntityValue;
+    private JmixEntity transientEntityValue;
 
     @OneToMany(mappedBy = "parent")
     @OnDelete(DeletePolicy.CASCADE)
@@ -192,11 +193,11 @@ public class CategoryAttributeValue extends StandardEntity {
         this.entityValue = entityValue;
     }
 
-    public io.jmix.core.Entity getTransientEntityValue() {
+    public JmixEntity getTransientEntityValue() {
         return transientEntityValue;
     }
 
-    public void setTransientEntityValue(io.jmix.core.Entity transientEntityValue) {
+    public void setTransientEntityValue(JmixEntity transientEntityValue) {
         this.transientEntityValue = transientEntityValue;
     }
 
@@ -249,11 +250,11 @@ public class CategoryAttributeValue extends StandardEntity {
             setDecimalValue((BigDecimal) value);
         } else if (value instanceof Boolean) {
             setBooleanValue((Boolean) value);
-        } else if (value instanceof io.jmix.core.Entity) {
+        } else if (value instanceof JmixEntity) {
             ReferenceToEntitySupport referenceToEntitySupport = AppBeans.get(ReferenceToEntitySupport.class);
-            Object referenceId = referenceToEntitySupport.getReferenceId((io.jmix.core.Entity) value);
+            Object referenceId = referenceToEntitySupport.getReferenceId((JmixEntity) value);
             entityValue.setObjectEntityId(referenceId);
-            setTransientEntityValue((io.jmix.core.Entity) value);
+            setTransientEntityValue((JmixEntity) value);
         } else if (value instanceof String) {
             setStringValue((String) value);
         } else if (value instanceof List) {

@@ -16,7 +16,7 @@
 
 package io.jmix.dynattr.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import io.jmix.data.impl.OrmLifecycleListener;
 import io.jmix.dynattr.DynAttrManager;
@@ -33,14 +33,14 @@ public class DynAttrLifecycleListener implements OrmLifecycleListener {
     protected DynAttrManager dynAttrManager;
 
     @Override
-    public void onLoad(Collection<Entity> entities, LoadContext loadContext) {
+    public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext) {
         if (loadContext.isLoadDynamicAttributes()) {
             dynAttrManager.loadValues(entities, loadContext.getFetchPlan());
         }
     }
 
     @Override
-    public void onSave(Collection<Entity> entities) {
+    public void onSave(Collection<JmixEntity> entities) {
         dynAttrManager.storeValues(entities);
     }
 }

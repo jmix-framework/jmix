@@ -25,7 +25,7 @@
             <xs:element name="component" type="screenSettingsComponentType" minOccurs="0"/>
         </xs:sequence>
 
-        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="id" type="xs:string"/>
         <xs:attribute name="auto" type="xs:boolean"/>
     </xs:complexType>
 

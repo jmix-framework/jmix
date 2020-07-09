@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.CollectionContainer;
@@ -29,7 +29,7 @@ import io.jmix.ui.model.Nested;
  * @see EditorScreenFacet
  * @see LookupScreenFacet
  */
-public interface EntityAwareScreenFacet<E extends Entity> {
+public interface EntityAwareScreenFacet<E extends JmixEntity> {
 
     /**
      * Sets entity class.

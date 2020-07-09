@@ -17,7 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 import java.util.EventObject;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 /**
  * A component which can be set as lookup component for a screen.
  */
-public interface LookupComponent<E extends Entity> extends Component {
+public interface LookupComponent<E extends JmixEntity> extends Component {
     /**
      * @param selectHandler handler that should be executed when a user select an item in the lookup screen
      */
@@ -40,7 +40,7 @@ public interface LookupComponent<E extends Entity> extends Component {
     /**
      * Component that fires {@link LookupSelectionChangeEvent} when lookup selected items set is changed.
      */
-    interface LookupSelectionChangeNotifier<T extends Entity> extends LookupComponent<T> {
+    interface LookupSelectionChangeNotifier<T extends JmixEntity> extends LookupComponent<T> {
         Subscription addLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<T>> listener);
 
         /**
@@ -50,7 +50,7 @@ public interface LookupComponent<E extends Entity> extends Component {
         void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<T>> listener);
     }
 
-    class LookupSelectionChangeEvent<T extends Entity> extends EventObject {
+    class LookupSelectionChangeEvent<T extends JmixEntity> extends EventObject {
         public LookupSelectionChangeEvent(LookupComponent<T> source) {
             super(source);
         }

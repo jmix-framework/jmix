@@ -18,7 +18,7 @@ package io.jmix.ui.component.renderer;
 
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.renderers.HtmlRenderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
  */
 @Component(DataGrid.HtmlRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, String> implements DataGrid.HtmlRenderer {
+public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEntity, String> implements DataGrid.HtmlRenderer {
 
     protected HtmlSanitizer htmlSanitizer;
 

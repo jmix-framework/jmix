@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -37,5 +37,5 @@ public @interface PrimaryLookupScreen {
     /**
      * Entity class for which the screen is a default lookup screen.
      */
-    Class<? extends Entity> value();
+    Class<? extends JmixEntity> value();
 }

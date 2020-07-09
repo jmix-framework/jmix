@@ -16,7 +16,7 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.StandardEditor;
@@ -32,10 +32,10 @@ public final class EditorTypeExtractor {
     }
 
     @Nullable
-    public static Class<? extends Entity> extractEntityClass(WindowInfo windowInfo) {
+    public static Class<? extends JmixEntity> extractEntityClass(WindowInfo windowInfo) {
         Class controllerClass = windowInfo.getControllerClass();
 
-        Class<? extends Entity> entityClass = extractEntityTypeByInterface(controllerClass);
+        Class<? extends JmixEntity> entityClass = extractEntityTypeByInterface(controllerClass);
         if (entityClass == null) {
             entityClass = extractEntityTypeByClass(controllerClass);
         }
@@ -44,7 +44,7 @@ public final class EditorTypeExtractor {
     }
 
     @Nullable
-    protected static Class<? extends Entity> extractEntityTypeByInterface(Class controllerClass) {
+    protected static Class<? extends JmixEntity> extractEntityTypeByInterface(Class controllerClass) {
         while (controllerClass != null
                 && !Arrays.asList(controllerClass.getInterfaces()).contains(EditorScreen.class)) {
             controllerClass = controllerClass.getSuperclass();
@@ -54,7 +54,7 @@ public final class EditorTypeExtractor {
             return null;
         }
 
-        Class<? extends Entity> entityClass = null;
+        Class<? extends JmixEntity> entityClass = null;
 
         for (Type genericInterface : controllerClass.getGenericInterfaces()) {
             if (!(genericInterface instanceof ParameterizedType)) {
@@ -72,9 +72,9 @@ public final class EditorTypeExtractor {
                 Type typeArg = paramType.getActualTypeArguments()[0];
 
                 if (typeArg instanceof Class
-                        && Entity.class.isAssignableFrom((Class<?>) typeArg)) {
+                        && JmixEntity.class.isAssignableFrom((Class<?>) typeArg)) {
                     //noinspection unchecked
-                    entityClass = (Class<? extends Entity>) typeArg;
+                    entityClass = (Class<? extends JmixEntity>) typeArg;
 
                     break;
                 }
@@ -85,7 +85,7 @@ public final class EditorTypeExtractor {
     }
 
     @Nullable
-    protected static Class<? extends Entity> extractEntityTypeByClass(Class controllerClass) {
+    protected static Class<? extends JmixEntity> extractEntityTypeByClass(Class controllerClass) {
         while (controllerClass != null
                 && !isAbstractEditor(controllerClass.getSuperclass())
                 && !isStandardEditor(controllerClass.getSuperclass())) {
@@ -102,15 +102,15 @@ public final class EditorTypeExtractor {
             return null;
         }
 
-        Class<? extends Entity> entityClass = null;
+        Class<? extends JmixEntity> entityClass = null;
 
         ParameterizedType paramType = (ParameterizedType) controllerClass.getGenericSuperclass();
         Type typeArg = paramType.getActualTypeArguments()[0];
 
         if (typeArg instanceof Class
-                && Entity.class.isAssignableFrom((Class<?>) typeArg)) {
+                && JmixEntity.class.isAssignableFrom((Class<?>) typeArg)) {
             //noinspection unchecked
-            entityClass = (Class<? extends Entity>) typeArg;
+            entityClass = (Class<? extends JmixEntity>) typeArg;
         }
 
         return entityClass;

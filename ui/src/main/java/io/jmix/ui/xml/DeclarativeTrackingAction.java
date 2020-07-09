@@ -17,7 +17,7 @@
 package io.jmix.ui.xml;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
 import io.jmix.ui.action.Action;
@@ -116,7 +116,7 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
             return false;
         }
 
-        Entity singleSelected = target.getSingleSelected();
+        JmixEntity singleSelected = target.getSingleSelected();
         if (singleSelected == null) {
             return false;
         }

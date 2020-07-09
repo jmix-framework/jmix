@@ -16,7 +16,7 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 /**
  * Lookup screen builder that knows the concrete screen class. It's {@link #build()} method returns that class.
  */
-public class LookupClassBuilder<E extends Entity, S extends Screen & LookupScreen<E>> extends LookupBuilder<E> {
+public class LookupClassBuilder<E extends JmixEntity, S extends Screen & LookupScreen<E>> extends LookupBuilder<E> {
 
     protected Class<S> screenClass;
     protected Consumer<AfterScreenCloseEvent<S>> closeListener;

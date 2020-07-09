@@ -21,7 +21,7 @@ import io.jmix.core.BeanLocator;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class ContainerValueSource<E extends Entity, V> implements EntityValueSource<E, V>, BeanLocatorAware {
+public class ContainerValueSource<E extends JmixEntity, V> implements EntityValueSource<E, V>, BeanLocatorAware {
 
     protected final InstanceContainer<E> container;
 
@@ -80,7 +80,7 @@ public class ContainerValueSource<E extends Entity, V> implements EntityValueSou
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
 
         @SuppressWarnings("unchecked")
-        InstanceContainer<Entity> parentCont = (InstanceContainer<Entity>) container;
+        InstanceContainer<JmixEntity> parentCont = (InstanceContainer<JmixEntity>) container;
 
         for (int i = 1; i < this.metaPropertyPath.length(); i++) {
             MetaPropertyPath intermediatePath = new MetaPropertyPath(this.metaPropertyPath.getMetaClass(),
@@ -90,7 +90,7 @@ public class ContainerValueSource<E extends Entity, V> implements EntityValueSou
 
             DataComponents dataComponents = beanLocator.get(DataComponents.class);
             @SuppressWarnings("unchecked")
-            InstanceContainer<Entity> propertyCont = dataComponents.createInstanceContainer(intermediatePath.getRangeJavaClass());
+            InstanceContainer<JmixEntity> propertyCont = dataComponents.createInstanceContainer(intermediatePath.getRangeJavaClass());
 
             parentCont.addItemChangeListener(event -> {
                 if (event.getItem() != null) {
@@ -104,8 +104,8 @@ public class ContainerValueSource<E extends Entity, V> implements EntityValueSou
 
             parentCont.addItemPropertyChangeListener(event -> {
                 if (Objects.equals(event.getProperty(), intermediatePath.getMetaProperty().getName())) {
-                    Entity entity = (Entity) event.getValue();
-                    Entity prevEntity = (Entity) event.getPrevValue();
+                    JmixEntity entity = (JmixEntity) event.getValue();
+                    JmixEntity prevEntity = (JmixEntity) event.getPrevValue();
                     propertyCont.setItem(entity);
 
                     V prevValue = prevEntity != null ? EntityValues.getValueEx(prevEntity, pathToTarget) : null;
@@ -273,7 +273,7 @@ public class ContainerValueSource<E extends Entity, V> implements EntityValueSou
         if (CollectionUtils.isNotEmpty(newValue)) {
             for (V v : newValue) {
                 if (CollectionUtils.isEmpty(oldValue) || !oldValue.contains(v)) {
-                    Entity entity = (Entity) v;
+                    JmixEntity entity = (JmixEntity) v;
                     EntityValues.setValue(dataContext.merge(entity), inverseProperty.getName(), getItem());
                 }
             }
@@ -282,7 +282,7 @@ public class ContainerValueSource<E extends Entity, V> implements EntityValueSou
         if (CollectionUtils.isNotEmpty(oldValue)) {
             for (V v : oldValue) {
                 if (CollectionUtils.isEmpty(newValue) || !newValue.contains(v)) {
-                    Entity entity = (Entity) v;
+                    JmixEntity entity = (JmixEntity) v;
                     EntityValues.setValue(dataContext.merge(entity), inverseProperty.getName(), null);
                 }
             }

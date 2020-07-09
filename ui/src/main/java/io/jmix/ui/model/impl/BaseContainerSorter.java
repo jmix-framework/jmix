@@ -19,7 +19,7 @@ package io.jmix.ui.model.impl;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Sort;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Sorter;
@@ -60,7 +60,7 @@ public abstract class BaseContainerSorter implements Sorter {
 
     protected abstract void setItemsToContainer(List list);
 
-    protected Comparator<? extends Entity> createComparator(Sort sort, MetaClass metaClass) {
+    protected Comparator<? extends JmixEntity> createComparator(Sort sort, MetaClass metaClass) {
         if (sort.getOrders().size() > 1) {
             throw new UnsupportedOperationException("Sort by multiple properties is not supported");
         }

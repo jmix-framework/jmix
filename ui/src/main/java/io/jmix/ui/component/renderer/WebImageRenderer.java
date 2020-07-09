@@ -17,7 +17,7 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.widget.renderer.JmixImageRenderer;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
  */
 @Component(DataGrid.ImageRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebImageRenderer<T extends Entity>
+public class WebImageRenderer<T extends JmixEntity>
         extends WebAbstractClickableRenderer<T, String>
         implements DataGrid.ImageRenderer<T> {
 

@@ -18,7 +18,7 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.TreeDataGridItems;
 
 import javax.annotation.Nullable;
@@ -34,11 +34,11 @@ import java.util.stream.Stream;
  *
  * @param <E> row item type
  */
-public interface TreeDataGrid<E extends Entity> extends DataGrid<E> {
+public interface TreeDataGrid<E extends JmixEntity> extends DataGrid<E> {
 
     String NAME = "treeDataGrid";
 
-    static <T extends Entity> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
+    static <T extends JmixEntity> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<TreeDataGrid<T>>() {};
     }
 
@@ -123,7 +123,7 @@ public interface TreeDataGrid<E extends Entity> extends DataGrid<E> {
      * children, does nothing.
      *
      * @param items the items to expand
-     * @see TreeDataGrid#expand(Entity[])
+     * @see TreeDataGrid#expand(JmixEntity[])
      */
     void expand(Collection<E> items);
 
@@ -186,7 +186,7 @@ public interface TreeDataGrid<E extends Entity> extends DataGrid<E> {
      * For items that are already collapsed, does nothing.
      *
      * @param items the items to collapse
-     * @see TreeDataGrid#collapse(Entity[])
+     * @see TreeDataGrid#collapse(JmixEntity[])
      */
     void collapse(Collection<E> items);
 
@@ -260,7 +260,7 @@ public interface TreeDataGrid<E extends Entity> extends DataGrid<E> {
      *
      * @param <E> item type
      */
-    class ExpandEvent<E extends Entity> extends EventObject implements HasUserOriginated {
+    class ExpandEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
 
         protected final E expandedItem;
         protected final boolean userOriginated;
@@ -302,7 +302,7 @@ public interface TreeDataGrid<E extends Entity> extends DataGrid<E> {
      *
      * @param <E> item type
      */
-    class CollapseEvent<E extends Entity> extends EventObject implements HasUserOriginated {
+    class CollapseEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
 
         protected final E collapsedItem;
         protected final boolean userOriginated;

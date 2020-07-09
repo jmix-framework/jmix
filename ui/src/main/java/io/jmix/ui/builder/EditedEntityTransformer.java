@@ -16,7 +16,7 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.model.CollectionContainer;
 
@@ -34,7 +34,7 @@ public interface EditedEntityTransformer {
      * @param container data container where the entity will be added
      * @return transformed instance
      */
-    <E extends Entity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container);
+    <E extends JmixEntity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container);
 
     /**
      * Transforms the entity to be added to the given UI field.
@@ -43,5 +43,5 @@ public interface EditedEntityTransformer {
      * @param field UI field where the entity will be displayed
      * @return transformed instance
      */
-    <E extends Entity> E transformForField(E editedEntity, HasValue<E> field);
+    <E extends JmixEntity> E transformForField(E editedEntity, HasValue<E> field);
 }

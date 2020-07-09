@@ -17,7 +17,7 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.common.datastruct.Tree;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.TreeTable;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.TreeTableItems;
@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class WebTreeTable<E extends Entity> extends WebAbstractTable<JmixTreeTable, E> implements TreeTable<E> {
+public class WebTreeTable<E extends JmixEntity> extends WebAbstractTable<JmixTreeTable, E> implements TreeTable<E> {
 
     public WebTreeTable() {
         component = createComponent();

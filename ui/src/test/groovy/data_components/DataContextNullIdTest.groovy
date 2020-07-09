@@ -16,7 +16,7 @@
 
 package data_components
 
-import io.jmix.core.Entity
+import io.jmix.core.JmixEntity
 import io.jmix.ui.model.DataComponents
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataContextSpec
@@ -112,7 +112,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.contains(merged)
 
         and:
-        Map<Object, Entity> entityMap = dataContext.content.get(TestNullableIdEntity)
+        Map<Object, JmixEntity> entityMap = dataContext.content.get(TestNullableIdEntity)
         entityMap.size() == 1
     }
 

@@ -17,7 +17,7 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.TreeItems;
 
@@ -28,14 +28,14 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPanel,
+public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtonsPanel,
                                                 Component.HasCaption, Component.HasIcon, LookupComponent<E>,
                                                 Component.Focusable, HasContextHelp, HasItemCaptionProvider<E>,
                                                 HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "tree";
 
-    static <T extends Entity> TypeToken<Tree<T>> of(Class<T> itemClass) {
+    static <T extends JmixEntity> TypeToken<Tree<T>> of(Class<T> itemClass) {
         return new TypeToken<Tree<T>>() {};
     }
 
@@ -43,7 +43,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
 
     /**
      * @param itemId the id of item to expand
-     * @deprecated Use {@link #expand(Entity)} instead
+     * @deprecated Use {@link #expand(JmixEntity)} instead
      */
     @Deprecated
     void expand(Object itemId);
@@ -54,7 +54,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
 
     /**
      * @param itemId the id of item to collapse
-     * @deprecated Use {@link #collapse(Entity)} instead
+     * @deprecated Use {@link #collapse(JmixEntity)} instead
      */
     @Deprecated
     void collapse(Object itemId);
@@ -108,7 +108,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
      * Allows to define different styles for tree items.
      */
     @Deprecated
-    interface StyleProvider<E extends Entity> extends Function<E, String> {
+    interface StyleProvider<E extends JmixEntity> extends Function<E, String> {
         @Override
         default String apply(E entity) {
             return getStyleName(entity);
@@ -213,7 +213,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
      * @param <E> Tree data type
      */
     @FunctionalInterface
-    interface DetailsGenerator<E extends Entity> {
+    interface DetailsGenerator<E extends JmixEntity> {
 
         /**
          * Returns the component which will be used as details for the given item.
@@ -302,7 +302,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
      *
      * @param <E> item type
      */
-    class ExpandEvent<E extends Entity> extends EventObject implements HasUserOriginated {
+    class ExpandEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
 
         protected final E expandedItem;
         protected final boolean userOriginated;
@@ -344,7 +344,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
      *
      * @param <E> item type
      */
-    class CollapseEvent<E extends Entity> extends EventObject implements HasUserOriginated {
+    class CollapseEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
 
         protected final E collapsedItem;
         protected final boolean userOriginated;
@@ -385,7 +385,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, HasButtonsPane
      * Event sent when the selection changes. It specifies what in a selection has changed, and where the
      * selection took place.
      */
-    class SelectionEvent<E extends Entity> extends EventObject implements HasUserOriginated {
+    class SelectionEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
         protected final Set<E> selected;
         protected final Set<E> oldSelection;
         protected final boolean userOriginated;

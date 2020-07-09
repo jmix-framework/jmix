@@ -17,7 +17,7 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.widget.renderer.JmixCheckBoxRenderer;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
  */
 @Component(DataGrid.CheckBoxRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebCheckBoxRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, Boolean> implements DataGrid.CheckBoxRenderer {
+public class WebCheckBoxRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEntity, Boolean> implements DataGrid.CheckBoxRenderer {
 
     @Override
     protected Renderer<Boolean> createImplementation() {

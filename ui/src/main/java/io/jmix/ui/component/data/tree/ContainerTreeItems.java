@@ -19,7 +19,7 @@ package io.jmix.ui.component.data.tree;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.BindingState;
@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class ContainerTreeItems<E extends Entity> implements EntityTreeItems<E>, ContainerDataUnit<E> {
+public class ContainerTreeItems<E extends JmixEntity> implements EntityTreeItems<E>, ContainerDataUnit<E> {
 
     protected final CollectionContainer<E> container;
 

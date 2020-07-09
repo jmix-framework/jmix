@@ -16,13 +16,13 @@
 
 package io.jmix.ui.component.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.AggregationInfo;
 
 import java.util.Collection;
 import java.util.Map;
 
-public interface AggregatableTableItems<E extends Entity> extends TableItems<E> {
+public interface AggregatableTableItems<E extends JmixEntity> extends TableItems<E> {
 
     /**
      * Perform aggregation and return map with formatted string values.

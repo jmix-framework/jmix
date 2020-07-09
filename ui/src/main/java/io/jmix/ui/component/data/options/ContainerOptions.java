@@ -18,7 +18,7 @@ package io.jmix.ui.component.data.options;
 
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.BindingState;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  *
  * @param <E> entity type
  */
-public class ContainerOptions<E extends Entity> implements Options<E>, EntityOptions<E>, ContainerDataUnit<E> {
+public class ContainerOptions<E extends JmixEntity> implements Options<E>, EntityOptions<E>, ContainerDataUnit<E> {
 
     protected CollectionContainer<E> container;
     protected DataLoader loader;

@@ -16,7 +16,7 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 
@@ -30,13 +30,13 @@ import java.util.function.Consumer;
  *
  * @see EntityComboBox
  */
-public interface EntityPicker<V extends Entity> extends Field<V>, ActionsHolder, Buffered,
+public interface EntityPicker<V extends JmixEntity> extends Field<V>, ActionsHolder, Buffered,
         LookupComponent, Component.Focusable, HasOptionCaptionProvider<V>, SupportsUserAction<V>,
         HasOptionIconProvider<V> {
 
     String NAME = "entityPicker";
 
-    static <T extends Entity> TypeToken<EntityPicker<T>> of(Class<T> valueClass) {
+    static <T extends JmixEntity> TypeToken<EntityPicker<T>> of(Class<T> valueClass) {
         return new TypeToken<EntityPicker<T>>() {};
     }
 
@@ -61,7 +61,7 @@ public interface EntityPicker<V extends Entity> extends Field<V>, ActionsHolder,
      *
      * @param <V> field value type
      */
-    class FieldValueChangeEvent<V extends Entity> extends EventObject {
+    class FieldValueChangeEvent<V extends JmixEntity> extends EventObject {
 
         protected final String text;
         protected final V prevValue;

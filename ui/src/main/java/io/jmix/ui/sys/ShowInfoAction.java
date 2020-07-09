@@ -19,7 +19,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
@@ -49,7 +49,7 @@ public class ShowInfoAction extends BaseAction {
         if (component instanceof Component.BelongToFrame
                 && component instanceof ListComponent) {
 
-            Entity selectedItem = ((ListComponent) component).getSingleSelected();
+            JmixEntity selectedItem = ((ListComponent) component).getSingleSelected();
             if (selectedItem != null) {
                 Metadata metadata = AppBeans.get(Metadata.class);
                 showInfo(selectedItem, metadata.getClass(selectedItem), (Component.BelongToFrame) component);
@@ -57,7 +57,7 @@ public class ShowInfoAction extends BaseAction {
         }
     }
 
-    public void showInfo(Entity entity, MetaClass metaClass, Component.BelongToFrame component) {
+    public void showInfo(JmixEntity entity, MetaClass metaClass, Component.BelongToFrame component) {
         Screens screens = ComponentsHelper.getScreenContext(component)
                 .getScreens();
 

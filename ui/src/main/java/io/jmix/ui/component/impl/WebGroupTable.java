@@ -16,7 +16,7 @@
 package io.jmix.ui.component.impl;
 
 import com.google.common.collect.Lists;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.GroupTable;
@@ -49,7 +49,7 @@ import static com.google.common.base.Strings.emptyToNull;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("deprecation")
-public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupTable, E>
+public class WebGroupTable<E extends JmixEntity> extends WebAbstractTable<JmixGroupTable, E>
         implements GroupTable<E>, GroupColumnManager {
 
     protected Map<Table.Column, GroupAggregationCells> groupAggregationCells = null;
@@ -343,7 +343,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupT
     }
 
     @Override
-    public void expandPath(Entity item) {
+    public void expandPath(JmixEntity item) {
         if (component.hasGroups()) {
             expandGroupsFor((Collection<GroupInfo>) component.rootGroups(), EntityValues.getId(item));
         }
@@ -512,10 +512,10 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupT
         String formattedValue = formatGroupPropertyValue(groupId, value);
 
         if (groupCellValueFormatter != null) {
-            List<Entity> groupItems = component.getGroupItemIds(groupId).stream()
+            List<JmixEntity> groupItems = component.getGroupItemIds(groupId).stream()
                     .map(itemId -> {
                         TableDataContainer container = (TableDataContainer) component.getContainerDataSource();
-                        return (Entity) container.getInternalItem(itemId);
+                        return (JmixEntity) container.getInternalItem(itemId);
                     })
                     .collect(Collectors.toList());
 
@@ -553,7 +553,7 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupT
 
                     TableDataContainer container = (TableDataContainer) component.getContainerDataSource();
 
-                    Entity item = (Entity) container.getInternalItem(itemId);
+                    JmixEntity item = (JmixEntity) container.getInternalItem(itemId);
                     Object captionValue = EntityValues.getValueEx(item, captionProperty);
 
                     // vaadin8 use metadataTools format with metaproperty

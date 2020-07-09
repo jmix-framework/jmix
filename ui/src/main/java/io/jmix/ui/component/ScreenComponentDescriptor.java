@@ -18,7 +18,7 @@ package io.jmix.ui.component;
 
 import com.google.common.base.Strings;
 import io.jmix.core.UuidProvider;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -30,7 +30,7 @@ import java.util.UUID;
 
 @ModelObject(name = "sec$ScreenComponentDescriptor")
 @SystemLevel
-public class ScreenComponentDescriptor implements Entity, HasUuid {
+public class ScreenComponentDescriptor implements JmixEntity, HasUuid {
 
     @Id
     protected UUID id;

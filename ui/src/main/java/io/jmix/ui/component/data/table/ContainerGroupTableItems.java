@@ -18,7 +18,7 @@ package io.jmix.ui.component.data.table;
 
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.GroupTableItems;
@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ContainerGroupTableItems<E extends Entity>
+public class ContainerGroupTableItems<E extends JmixEntity>
         extends ContainerTableItems<E>
         implements GroupTableItems<E> {
 

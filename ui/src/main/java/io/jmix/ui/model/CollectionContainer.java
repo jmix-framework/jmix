@@ -17,7 +17,7 @@
 package io.jmix.ui.model;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 /**
  * Container that holds a collection of entity instances.
  */
-public interface CollectionContainer<E extends Entity> extends InstanceContainer<E> {
+public interface CollectionContainer<E extends JmixEntity> extends InstanceContainer<E> {
 
     /**
      * Returns immutable list of contained entities.
@@ -119,7 +119,7 @@ public interface CollectionContainer<E extends Entity> extends InstanceContainer
     /**
      * Event sent on changes in the container items collection - adding, removing, replacing elements.
      */
-    class CollectionChangeEvent<T extends Entity> extends EventObject {
+    class CollectionChangeEvent<T extends JmixEntity> extends EventObject {
 
         private final CollectionChangeType changeType;
         private final Collection<? extends T> changes;

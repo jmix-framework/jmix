@@ -18,7 +18,7 @@ package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.NumberRenderer;
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
@@ -37,7 +37,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  */
 @Component(DataGrid.NumberRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, Number> implements DataGrid.NumberRenderer {
+public class WebNumberRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEntity, Number> implements DataGrid.NumberRenderer {
 
     private Locale locale;
     private NumberFormat numberFormat;

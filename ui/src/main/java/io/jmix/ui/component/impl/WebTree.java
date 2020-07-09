@@ -35,7 +35,7 @@ import com.vaadin.ui.components.grid.MultiSelectionModel;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.Security;
 import io.jmix.ui.AppUI;
@@ -75,7 +75,7 @@ import java.util.stream.Stream;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.ComponentsHelper.findActionById;
 
-public class WebTree<E extends Entity>
+public class WebTree<E extends JmixEntity>
         extends WebAbstractComponent<JmixTree<E>>
         implements Tree<E>, LookupSelectionChangeNotifier<E>, SecuredActionsHolder,
         HasInnerComponents, InitializingBean, TreeSourceEventsDelegate<E> {

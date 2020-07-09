@@ -18,7 +18,7 @@ package io.jmix.ui.action.entitypicker;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Notifications;
@@ -57,11 +57,11 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "EntityPicker Actions", description = "Opens an entity using the entity edit screen")
 @ActionType(OpenAction.ID)
-public class OpenAction<E extends Entity> extends BaseAction implements EntityPicker.EntityPickerAction, InitializingBean {
+public class OpenAction<E extends JmixEntity> extends BaseAction implements EntityPicker.EntityPickerAction, InitializingBean {
 
     public static final String ID = "entity_open";
 
-    protected EntityPicker<Entity> entityPicker;
+    protected EntityPicker<JmixEntity> entityPicker;
     protected Icons icons;
 
     protected Messages messages;
@@ -289,7 +289,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements EntityPi
         if (!checkFieldValue())
             return;
 
-        Entity entity = entityPicker.getValue();
+        JmixEntity entity = entityPicker.getValue();
 
         if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted()) {
             ScreenContext screenContext = ComponentsHelper.getScreenContext(entityPicker);
@@ -322,7 +322,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements EntityPi
             editor.addAfterCloseListener(afterCloseEvent -> {
                 CloseAction closeAction = afterCloseEvent.getCloseAction();
                 if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
-                    Entity committedEntity = ((EditorScreen) editor).getEditedEntity();
+                    JmixEntity committedEntity = ((EditorScreen) editor).getEditedEntity();
                     afterCommitHandler.accept((E) committedEntity);
                 }
             });
@@ -334,7 +334,7 @@ public class OpenAction<E extends Entity> extends BaseAction implements EntityPi
     }
 
     protected boolean checkFieldValue() {
-        Entity entity = entityPicker.getValue();
+        JmixEntity entity = entityPicker.getValue();
         return entity != null;
     }
 }

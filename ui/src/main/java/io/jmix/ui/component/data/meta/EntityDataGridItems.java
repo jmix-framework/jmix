@@ -16,14 +16,14 @@
 
 package io.jmix.ui.component.data.meta;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.data.DataGridItems;
 
 /**
  * A common interface for providing data for the {@link DataGrid} component.
  *
- * @param <E> items type, extends {@link Entity}.
+ * @param <E> items type, extends {@link JmixEntity}.
  */
-public interface EntityDataGridItems<E extends Entity> extends DataGridItems<E>, EntityDataUnit {
+public interface EntityDataGridItems<E extends JmixEntity> extends DataGridItems<E>, EntityDataUnit {
 }

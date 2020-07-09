@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.SecuredActionsHolder;
@@ -40,7 +40,7 @@ import java.util.function.Function;
 
 import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
-public class WebEntitySuggestionField<V extends Entity> extends WebEntityPicker<V>
+public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPicker<V>
         implements EntitySuggestionField<V>, SecuredActionsHolder {
 
     private static final Logger log = LoggerFactory.getLogger(WebEntitySuggestionField.class);

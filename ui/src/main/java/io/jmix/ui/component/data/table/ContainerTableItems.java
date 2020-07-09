@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.data.table;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Sort;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class ContainerTableItems<E extends Entity> implements EntityTableItems<E>, TableItems.Sortable<E>,
+public class ContainerTableItems<E extends JmixEntity> implements EntityTableItems<E>, TableItems.Sortable<E>,
         ContainerDataUnit<E>, AggregatableTableItems<E> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerTableItems.class);

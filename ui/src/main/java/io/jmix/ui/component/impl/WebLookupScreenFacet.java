@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.component.Frame;
@@ -30,7 +30,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
-public class WebLookupScreenFacet<E extends Entity, S extends Screen & LookupScreen<E>>
+public class WebLookupScreenFacet<E extends JmixEntity, S extends Screen & LookupScreen<E>>
         extends WebAbstractEntityAwareScreenFacet<E, S>
         implements LookupScreenFacet<E, S> {
 

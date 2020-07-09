@@ -16,7 +16,7 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.gui.data.GroupInfo;
 
@@ -30,11 +30,11 @@ import java.util.Map;
  *
  * @param <E> row item type
  */
-public interface GroupTable<E extends Entity> extends Table<E> {
+public interface GroupTable<E extends JmixEntity> extends Table<E> {
 
     String NAME = "groupTable";
 
-    static <T extends Entity> TypeToken<GroupTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+    static <T extends JmixEntity> TypeToken<GroupTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
         return new TypeToken<GroupTable<T>>() {};
     }
 
@@ -73,7 +73,7 @@ public interface GroupTable<E extends Entity> extends Table<E> {
     /**
      * Expand all groups for specified item.
      */
-    void expandPath(Entity item);
+    void expandPath(JmixEntity item);
 
     void collapseAll();
     void collapse(GroupInfo groupId);
@@ -105,7 +105,7 @@ public interface GroupTable<E extends Entity> extends Table<E> {
     /**
      * Allows to define different styles for table cells.
      */
-    interface GroupStyleProvider<E extends Entity> extends StyleProvider<E> {
+    interface GroupStyleProvider<E extends JmixEntity> extends StyleProvider<E> {
         /**
          * Called by {@link GroupTable} to get a style for group row.
          *

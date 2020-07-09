@@ -51,7 +51,7 @@ import java.util.function.Consumer;
  * Displays a list of entities on the left and details of the currently selected instance on the right.
  */
 @ParametersAreNonnullByDefault
-public abstract class MasterDetailScreen<T extends Entity> extends StandardLookup<T> {
+public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardLookup<T> {
 
     /**
      * Indicates that the screen is in editing mode.
@@ -369,7 +369,7 @@ public abstract class MasterDetailScreen<T extends Entity> extends StandardLooku
     /**
      * Pessimistic lock before start of editing, if it is configured for the entity.
      */
-    protected boolean lockIfNeeded(Entity entity) {
+    protected boolean lockIfNeeded(JmixEntity entity) {
         LockManager lockService = getBeanLocator().get(LockManager.class);
 
         LockInfo lockInfo = lockService.lock(getLockName(), EntityValues.getId(entity).toString());
@@ -397,7 +397,7 @@ public abstract class MasterDetailScreen<T extends Entity> extends StandardLooku
      */
     protected void releaseLock() {
         if (justLocked) {
-            Entity entity = getEditContainer().getItemOrNull();
+            JmixEntity entity = getEditContainer().getItemOrNull();
             if (entity != null) {
                 getBeanLocator().get(LockManager.class).unlock(getLockName(), EntityValues.getId(entity).toString());
             }
@@ -611,7 +611,7 @@ public abstract class MasterDetailScreen<T extends Entity> extends StandardLooku
      * @param <E> type of entity
      * @see #addInitEntityListener(Consumer)
      */
-    public static class InitEntityEvent<E extends Entity> extends EventObject {
+    public static class InitEntityEvent<E extends JmixEntity> extends EventObject {
         protected final E entity;
 
         public InitEntityEvent(Screen source, E entity) {

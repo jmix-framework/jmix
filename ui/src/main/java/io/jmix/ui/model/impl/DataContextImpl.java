@@ -72,11 +72,11 @@ public class DataContextImpl implements DataContext {
 
     protected EventHub events = new EventHub();
 
-    protected Map<Class<?>, Map<Object, Entity>> content = new HashMap<>();
+    protected Map<Class<?>, Map<Object, JmixEntity>> content = new HashMap<>();
 
-    protected Set<Entity> modifiedInstances = new HashSet<>();
+    protected Set<JmixEntity> modifiedInstances = new HashSet<>();
 
-    protected Set<Entity> removedInstances = new HashSet<>();
+    protected Set<JmixEntity> removedInstances = new HashSet<>();
 
     protected PropertyChangeListener propertyChangeListener = new PropertyChangeListener();
 
@@ -84,11 +84,11 @@ public class DataContextImpl implements DataContext {
 
     protected DataContextImpl parentContext;
 
-    protected Function<SaveContext, Set<Entity>> commitDelegate;
+    protected Function<SaveContext, Set<JmixEntity>> commitDelegate;
 
-    protected Map<Entity, Map<String, EmbeddedPropertyChangeListener>> embeddedPropertyListeners = new WeakHashMap<>();
+    protected Map<JmixEntity, Map<String, EmbeddedPropertyChangeListener>> embeddedPropertyListeners = new WeakHashMap<>();
 
-    protected Map<Entity, Entity> nullIdEntitiesMap = new /*Identity*/HashMap<>();
+    protected Map<JmixEntity, JmixEntity> nullIdEntitiesMap = new /*Identity*/HashMap<>();
 
     @Nullable
     @Override
@@ -110,15 +110,15 @@ public class DataContextImpl implements DataContext {
         return events.subscribe(ChangeEvent.class, listener);
     }
 
-    protected void fireChangeListener(Entity entity) {
+    protected void fireChangeListener(JmixEntity entity) {
         events.publish(ChangeEvent.class, new ChangeEvent(this, entity));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
-    public <T extends Entity> T find(Class<T> entityClass, Object entityId) {
-        Map<Object, Entity> entityMap = content.get(entityClass);
+    public <T extends JmixEntity> T find(Class<T> entityClass, Object entityId) {
+        Map<Object, JmixEntity> entityMap = content.get(entityClass);
         if (entityMap != null) {
             return (T) entityMap.get(entityId);
         }
@@ -128,27 +128,27 @@ public class DataContextImpl implements DataContext {
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <T extends Entity> T find(T entity) {
+    public <T extends JmixEntity> T find(T entity) {
         checkNotNullArgument(entity, "entity is null");
         return (T) find(entity.getClass(), makeKey(entity));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean contains(Entity entity) {
+    public boolean contains(JmixEntity entity) {
         checkNotNullArgument(entity, "entity is null");
         return find(entity.getClass(), makeKey(entity)) != null;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Entity> T merge(T entity) {
+    public <T extends JmixEntity> T merge(T entity) {
         checkNotNullArgument(entity, "entity is null");
 
         disableListeners = true;
         T result;
         try {
-            Map<Entity, Entity> merged = new IdentityHashMap<>();
+            Map<JmixEntity, JmixEntity> merged = new IdentityHashMap<>();
             result = (T) internalMerge(entity, merged, true);
         } finally {
             disableListeners = false;
@@ -157,16 +157,16 @@ public class DataContextImpl implements DataContext {
     }
 
     @Override
-    public EntitySet merge(Collection<? extends Entity> entities) {
+    public EntitySet merge(Collection<? extends JmixEntity> entities) {
         checkNotNullArgument(entities, "entity collection is null");
 
-        List<Entity> managedList = new ArrayList<>(entities.size());
+        List<JmixEntity> managedList = new ArrayList<>(entities.size());
         disableListeners = true;
         try {
-            Map<Entity, Entity> merged = new IdentityHashMap<>();
+            Map<JmixEntity, JmixEntity> merged = new IdentityHashMap<>();
 
-            for (Entity entity : entities) {
-                Entity managed = internalMerge(entity, merged, true);
+            for (JmixEntity entity : entities) {
+                JmixEntity managed = internalMerge(entity, merged, true);
                 managedList.add(managed);
             }
         } finally {
@@ -175,12 +175,12 @@ public class DataContextImpl implements DataContext {
         return EntitySet.of(managedList);
     }
 
-    protected Entity internalMerge(Entity entity, Map<Entity, Entity> mergedMap, boolean isRoot) {
-        Map<Object, Entity> entityMap = content.computeIfAbsent(entity.getClass(), aClass -> new HashMap<>());
+    protected JmixEntity internalMerge(JmixEntity entity, Map<JmixEntity, JmixEntity> mergedMap, boolean isRoot) {
+        Map<Object, JmixEntity> entityMap = content.computeIfAbsent(entity.getClass(), aClass -> new HashMap<>());
 
-        Entity nullIdEntity = nullIdEntitiesMap.get(entity);
+        JmixEntity nullIdEntity = nullIdEntitiesMap.get(entity);
         if (nullIdEntity != null) {
-            Entity managed = entityMap.get(makeKey(nullIdEntity));
+            JmixEntity managed = entityMap.get(makeKey(nullIdEntity));
             if (managed != null) {
                 mergedMap.put(entity, managed);
                 mergeState(entity, managed, mergedMap, isRoot);
@@ -190,7 +190,7 @@ public class DataContextImpl implements DataContext {
             }
         }
 
-        Entity managed = entityMap.get(makeKey(entity));
+        JmixEntity managed = entityMap.get(makeKey(entity));
 
         if (!isRoot && mergedMap.containsKey(entity)) {
             if (managed != null) {
@@ -223,7 +223,7 @@ public class DataContextImpl implements DataContext {
         return managed;
     }
 
-    protected Object makeKey(Entity entity) {
+    protected Object makeKey(JmixEntity entity) {
         Object id = EntityValues.getId(entity);
         if (id != null) {
             return id;
@@ -232,8 +232,8 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected Entity copyEntity(Entity srcEntity) {
-        Entity dstEntity;
+    protected JmixEntity copyEntity(JmixEntity srcEntity) {
+        JmixEntity dstEntity;
         try {
             dstEntity = srcEntity.getClass().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -243,7 +243,7 @@ public class DataContextImpl implements DataContext {
         return dstEntity;
     }
 
-    protected void mergeState(Entity srcEntity, Entity dstEntity, Map<Entity, Entity> mergedMap, boolean isRoot) {
+    protected void mergeState(JmixEntity srcEntity, JmixEntity dstEntity, Map<JmixEntity, JmixEntity> mergedMap, boolean isRoot) {
         boolean srcNew = entityStates.isNew(srcEntity);
         boolean dstNew = entityStates.isNew(dstEntity);
 
@@ -295,9 +295,9 @@ public class DataContextImpl implements DataContext {
                         throw new UnsupportedOperationException("Unsupported collection type: " + value.getClass().getName());
                     }
                 } else {
-                    Entity srcRef = (Entity) value;
+                    JmixEntity srcRef = (JmixEntity) value;
                     if (!mergedMap.containsKey(srcRef)) {
-                        Entity managedRef = internalMerge(srcRef, mergedMap, false);
+                        JmixEntity managedRef = internalMerge(srcRef, mergedMap, false);
                         setPropertyValue(dstEntity, property, managedRef, false);
                         if (metadataTools.isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
@@ -305,7 +305,7 @@ public class DataContextImpl implements DataContext {
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);
                         }
                     } else {
-                        Entity managedRef = mergedMap.get(srcRef);
+                        JmixEntity managedRef = mergedMap.get(srcRef);
                         if (managedRef != null) {
                             setPropertyValue(dstEntity, property, managedRef, false);
                         } else {
@@ -318,11 +318,11 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected void setPropertyValue(Entity entity, MetaProperty property, @Nullable Object value) {
+    protected void setPropertyValue(JmixEntity entity, MetaProperty property, @Nullable Object value) {
         setPropertyValue(entity, property, value, true);
     }
 
-    protected void setPropertyValue(Entity entity, MetaProperty property, @Nullable Object value, boolean checkEquals) {
+    protected void setPropertyValue(JmixEntity entity, MetaProperty property, @Nullable Object value, boolean checkEquals) {
         if (!property.isReadOnly()) {
             EntityValues.setValue(entity, property.getName(), value, checkEquals);
         } else {
@@ -340,7 +340,7 @@ public class DataContextImpl implements DataContext {
     }
 
     @SuppressWarnings("unchecked")
-    protected void copySystemState(Entity srcEntity, Entity dstEntity) {
+    protected void copySystemState(JmixEntity srcEntity, JmixEntity dstEntity) {
         EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
         entitySystemStateSupport.copySystemState(srcEntity, dstEntity);
 
@@ -349,36 +349,36 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected void mergeSystemState(Entity srcEntity, Entity dstEntity, boolean isRoot) {
+    protected void mergeSystemState(JmixEntity srcEntity, JmixEntity dstEntity, boolean isRoot) {
         if (isRoot) {
             entitySystemStateSupport.mergeSystemState(srcEntity, dstEntity);
         }
     }
 
-    protected void mergeList(List<Entity> list, Entity managedEntity, MetaProperty property, boolean replace,
-                             Map<Entity, Entity> mergedMap) {
+    protected void mergeList(List<JmixEntity> list, JmixEntity managedEntity, MetaProperty property, boolean replace,
+                             Map<JmixEntity, JmixEntity> mergedMap) {
         if (replace) {
-            List<Entity> managedRefs = new ArrayList<>(list.size());
-            for (Entity entity : list) {
-                Entity managedRef = internalMerge(entity, mergedMap, false);
+            List<JmixEntity> managedRefs = new ArrayList<>(list.size());
+            for (JmixEntity entity : list) {
+                JmixEntity managedRef = internalMerge(entity, mergedMap, false);
                 managedRefs.add(managedRef);
             }
-            List<Entity> dstList = createObservableList(managedRefs, managedEntity);
+            List<JmixEntity> dstList = createObservableList(managedRefs, managedEntity);
             setPropertyValue(managedEntity, property, dstList);
 
         } else {
-            List<Entity> dstList = EntityValues.getValue(managedEntity, property.getName());
+            List<JmixEntity> dstList = EntityValues.getValue(managedEntity, property.getName());
             if (dstList == null) {
                 dstList = createObservableList(managedEntity);
                 setPropertyValue(managedEntity, property, dstList);
             }
             if (dstList.size() == 0) {
-                for (Entity srcRef : list) {
+                for (JmixEntity srcRef : list) {
                     dstList.add(internalMerge(srcRef, mergedMap, false));
                 }
             } else {
-                for (Entity srcRef : list) {
-                    Entity managedRef = internalMerge(srcRef, mergedMap, false);
+                for (JmixEntity srcRef : list) {
+                    JmixEntity managedRef = internalMerge(srcRef, mergedMap, false);
                     if (!dstList.contains(managedRef)) {
                         dstList.add(managedRef);
                     }
@@ -387,54 +387,54 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected void mergeSet(Set<Entity> set, Entity managedEntity, MetaProperty property, boolean replace,
-                            Map<Entity, Entity> mergedMap) {
+    protected void mergeSet(Set<JmixEntity> set, JmixEntity managedEntity, MetaProperty property, boolean replace,
+                            Map<JmixEntity, JmixEntity> mergedMap) {
         if (replace) {
-            Set<Entity> managedRefs = new LinkedHashSet<>(set.size());
-            for (Entity entity : set) {
-                Entity managedRef = internalMerge(entity, mergedMap, false);
+            Set<JmixEntity> managedRefs = new LinkedHashSet<>(set.size());
+            for (JmixEntity entity : set) {
+                JmixEntity managedRef = internalMerge(entity, mergedMap, false);
                 managedRefs.add(managedRef);
             }
-            Set<Entity> dstSet = createObservableSet(managedRefs, managedEntity);
+            Set<JmixEntity> dstSet = createObservableSet(managedRefs, managedEntity);
             setPropertyValue(managedEntity, property, dstSet);
 
         } else {
-            Set<Entity> dstSet = EntityValues.getValue(managedEntity, property.getName());
+            Set<JmixEntity> dstSet = EntityValues.getValue(managedEntity, property.getName());
             if (dstSet == null) {
                 dstSet = createObservableSet(managedEntity);
                 setPropertyValue(managedEntity, property, dstSet);
             }
             if (dstSet.size() == 0) {
-                for (Entity srcRef : set) {
+                for (JmixEntity srcRef : set) {
                     dstSet.add(internalMerge(srcRef, mergedMap, false));
                 }
             } else {
-                for (Entity srcRef : set) {
-                    Entity managedRef = internalMerge(srcRef, mergedMap, false);
+                for (JmixEntity srcRef : set) {
+                    JmixEntity managedRef = internalMerge(srcRef, mergedMap, false);
                     dstSet.add(managedRef);
                 }
             }
         }
     }
 
-    protected List<Entity> createObservableList(Entity notifiedEntity) {
+    protected List<JmixEntity> createObservableList(JmixEntity notifiedEntity) {
         return createObservableList(new ArrayList<>(), notifiedEntity);
     }
 
-    protected List<Entity> createObservableList(List<Entity> list, Entity notifiedEntity) {
+    protected List<JmixEntity> createObservableList(List<JmixEntity> list, JmixEntity notifiedEntity) {
         return new ObservableList<>(list, (changeType, changes) -> modified(notifiedEntity));
     }
 
-    protected Set<Entity> createObservableSet(Entity notifiedEntity) {
+    protected Set<JmixEntity> createObservableSet(JmixEntity notifiedEntity) {
         return createObservableSet(new LinkedHashSet<>(), notifiedEntity);
     }
 
-    protected ObservableSet<Entity> createObservableSet(Set<Entity> set, Entity notifiedEntity) {
+    protected ObservableSet<JmixEntity> createObservableSet(Set<JmixEntity> set, JmixEntity notifiedEntity) {
         return new ObservableSet<>(set, (changeType, changes) -> modified(notifiedEntity));
     }
 
     @Override
-    public void remove(Entity entity) {
+    public void remove(JmixEntity entity) {
         checkNotNullArgument(entity, "entity is null");
 
         modifiedInstances.remove(entity);
@@ -444,9 +444,9 @@ public class DataContextImpl implements DataContext {
         removeListeners(entity);
         fireChangeListener(entity);
 
-        Map<Object, Entity> entityMap = content.get(entity.getClass());
+        Map<Object, JmixEntity> entityMap = content.get(entity.getClass());
         if (entityMap != null) {
-            Entity mergedEntity = entityMap.get(makeKey(entity));
+            JmixEntity mergedEntity = entityMap.get(makeKey(entity));
             if (mergedEntity != null) {
                 entityMap.remove(makeKey(entity));
                 removeFromCollections(mergedEntity);
@@ -456,8 +456,8 @@ public class DataContextImpl implements DataContext {
         cleanupContextAfterRemoveEntity(this, entity);
     }
 
-    protected void removeFromCollections(Entity entityToRemove) {
-        for (Map.Entry<Class<?>, Map<Object, Entity>> entry : content.entrySet()) {
+    protected void removeFromCollections(JmixEntity entityToRemove) {
+        for (Map.Entry<Class<?>, Map<Object, JmixEntity>> entry : content.entrySet()) {
             Class<?> entityClass = entry.getKey();
 
             MetaClass metaClass = metadata.getClass(entityClass);
@@ -466,8 +466,8 @@ public class DataContextImpl implements DataContext {
                         && metaProperty.getRange().getCardinality().isMany()
                         && metaProperty.getRange().asClass().getJavaClass().isAssignableFrom(entityToRemove.getClass())) {
 
-                    Map<Object, Entity> entityMap = entry.getValue();
-                    for (Entity entity : entityMap.values()) {
+                    Map<Object, JmixEntity> entityMap = entry.getValue();
+                    for (JmixEntity entity : entityMap.values()) {
                         if (entityStates.isLoaded(entity, metaProperty.getName())) {
                             Collection collection = EntityValues.getValue(entity, metaProperty.getName());
                             if (collection != null) {
@@ -481,12 +481,12 @@ public class DataContextImpl implements DataContext {
     }
 
     @Override
-    public void evict(Entity entity) {
+    public void evict(JmixEntity entity) {
         checkNotNullArgument(entity, "entity is null");
 
-        Map<Object, Entity> entityMap = content.get(entity.getClass());
+        Map<Object, JmixEntity> entityMap = content.get(entity.getClass());
         if (entityMap != null) {
-            Entity mergedEntity = entityMap.get(makeKey(entity));
+            JmixEntity mergedEntity = entityMap.get(makeKey(entity));
             if (mergedEntity != null) {
                 entityMap.remove(makeKey(entity));
                 removeListeners(entity);
@@ -498,36 +498,36 @@ public class DataContextImpl implements DataContext {
 
     @Override
     public void evictModified() {
-        Set<Entity> tmpModifiedInstances = new HashSet<>(modifiedInstances);
-        Set<Entity> tmpRemovedInstances = new HashSet<>(removedInstances);
+        Set<JmixEntity> tmpModifiedInstances = new HashSet<>(modifiedInstances);
+        Set<JmixEntity> tmpRemovedInstances = new HashSet<>(removedInstances);
 
-        for (Entity entity : tmpModifiedInstances) {
+        for (JmixEntity entity : tmpModifiedInstances) {
             evict(entity);
         }
-        for (Entity entity : tmpRemovedInstances) {
+        for (JmixEntity entity : tmpRemovedInstances) {
             evict(entity);
         }
     }
 
     @Override
     public void clear() {
-        for (Entity entity : getAll()) {
+        for (JmixEntity entity : getAll()) {
             evict(entity);
         }
     }
 
     @Override
-    public <T extends Entity> T create(Class<T> entityClass) {
+    public <T extends JmixEntity> T create(Class<T> entityClass) {
         T entity = metadata.create(entityClass);
         return merge(entity);
     }
 
-    protected void removeListeners(Entity entity) {
+    protected void removeListeners(JmixEntity entity) {
         entity.__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
         Map<String, EmbeddedPropertyChangeListener> listenerMap = embeddedPropertyListeners.get(entity);
         if (listenerMap != null) {
             for (Map.Entry<String, EmbeddedPropertyChangeListener> entry : listenerMap.entrySet()) {
-                Entity embedded = EntityValues.getValue(entity, entry.getKey());
+                JmixEntity embedded = EntityValues.getValue(entity, entry.getKey());
                 if (embedded != null) {
                     embedded.__getEntityEntry().removePropertyChangeListener(entry.getValue());
                     embedded.__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
@@ -543,13 +543,13 @@ public class DataContextImpl implements DataContext {
     }
 
     @Override
-    public boolean isModified(Entity entity) {
+    public boolean isModified(JmixEntity entity) {
         return modifiedInstances.contains(entity);
     }
 
     @Override
-    public void setModified(Entity entity, boolean modified) {
-        Entity merged = find(entity);
+    public void setModified(JmixEntity entity, boolean modified) {
+        JmixEntity merged = find(entity);
         if (merged == null) {
             return;
         }
@@ -561,17 +561,17 @@ public class DataContextImpl implements DataContext {
     }
 
     @Override
-    public Set<Entity> getModified() {
+    public Set<JmixEntity> getModified() {
         return Collections.unmodifiableSet(modifiedInstances);
     }
 
     @Override
-    public boolean isRemoved(Entity entity) {
+    public boolean isRemoved(JmixEntity entity) {
         return removedInstances.contains(entity);
     }
 
     @Override
-    public Set<Entity> getRemoved() {
+    public Set<JmixEntity> getRemoved() {
         return Collections.unmodifiableSet(removedInstances);
     }
 
@@ -584,7 +584,7 @@ public class DataContextImpl implements DataContext {
 
         EntitySet committedAndMerged;
         try {
-            Set<Entity> committed = performCommit();
+            Set<JmixEntity> committed = performCommit();
             committedAndMerged = mergeCommitted(committed);
         } finally {
             nullIdEntitiesMap.clear();
@@ -609,16 +609,16 @@ public class DataContextImpl implements DataContext {
     }
 
     @Override
-    public Function<SaveContext, Set<Entity>> getCommitDelegate() {
+    public Function<SaveContext, Set<JmixEntity>> getCommitDelegate() {
         return commitDelegate;
     }
 
     @Override
-    public void setCommitDelegate(Function<SaveContext, Set<Entity>> delegate) {
+    public void setCommitDelegate(Function<SaveContext, Set<JmixEntity>> delegate) {
         this.commitDelegate = delegate;
     }
 
-    protected Set<Entity> performCommit() {
+    protected Set<JmixEntity> performCommit() {
         if (!hasChanges())
             return Collections.emptySet();
 
@@ -629,14 +629,14 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected Set<Entity> commitToDataManager() {
+    protected Set<JmixEntity> commitToDataManager() {
         SaveContext saveContext = new SaveContext()
                 .saving(isolate(filterCommittedInstances(modifiedInstances)))
                 .removing(isolate(filterCommittedInstances(removedInstances)));
 
         entityReferencesNormalizer.updateReferences(saveContext.getEntitiesToSave());
 
-        for (Entity entity : saveContext.getEntitiesToSave()) {
+        for (JmixEntity entity : saveContext.getEntitiesToSave()) {
             saveContext.getFetchPlans().put(entity, entityStates.getCurrentFetchPlan(entity));
         }
 
@@ -647,19 +647,19 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected List<Entity> filterCommittedInstances(Set<Entity> instances) {
+    protected List<JmixEntity> filterCommittedInstances(Set<JmixEntity> instances) {
         return instances.stream()
                 .filter(entity -> !metadataTools.isEmbeddable(entity.getClass()))
                 .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
-    public Collection<Entity> isolate(List<Entity> entities) {
+    public Collection<JmixEntity> isolate(List<JmixEntity> entities) {
         // re-serialize the whole collection to preserve links between objects
         List isolatedEntities = (List) StandardSerialization.deserialize(StandardSerialization.serialize(entities));
         for (int i = 0; i < isolatedEntities.size(); i++) {
-            Entity isolatedEntity = (Entity) isolatedEntities.get(i);
-            Entity entity = entities.get(i);
+            JmixEntity isolatedEntity = (JmixEntity) isolatedEntities.get(i);
+            JmixEntity entity = entities.get(i);
             if (EntityValues.getId(entity) == null) {
                 nullIdEntitiesMap.put(isolatedEntity, entity);
             }
@@ -667,23 +667,23 @@ public class DataContextImpl implements DataContext {
         return isolatedEntities;
     }
 
-    protected Set<Entity> commitToParentContext() {
-        HashSet<Entity> committedEntities = new HashSet<>();
-        for (Entity entity : modifiedInstances) {
-            Entity merged = parentContext.merge(entity);
+    protected Set<JmixEntity> commitToParentContext() {
+        HashSet<JmixEntity> committedEntities = new HashSet<>();
+        for (JmixEntity entity : modifiedInstances) {
+            JmixEntity merged = parentContext.merge(entity);
             parentContext.modifiedInstances.add(merged);
             committedEntities.add(merged);
         }
-        for (Entity entity : removedInstances) {
+        for (JmixEntity entity : removedInstances) {
             parentContext.remove(entity);
             cleanupContextAfterRemoveEntity(parentContext, entity);
         }
         return committedEntities;
     }
 
-    protected void cleanupContextAfterRemoveEntity(DataContextImpl context, Entity removedEntity) {
+    protected void cleanupContextAfterRemoveEntity(DataContextImpl context, JmixEntity removedEntity) {
         if (entityStates.isNew(removedEntity)) {
-            for (Entity modifiedInstance : new ArrayList<>(context.modifiedInstances)) {
+            for (JmixEntity modifiedInstance : new ArrayList<>(context.modifiedInstances)) {
                 if (entityStates.isNew(modifiedInstance) && entityHasReference(modifiedInstance, removedEntity)) {
                     context.modifiedInstances.remove(modifiedInstance);
                 }
@@ -691,7 +691,7 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected boolean entityHasReference(Entity entity, Entity refEntity) {
+    protected boolean entityHasReference(JmixEntity entity, JmixEntity refEntity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaClass refMetaClass = metadata.getClass(refEntity.getClass());
 
@@ -701,11 +701,11 @@ public class DataContextImpl implements DataContext {
                         && Objects.equals(EntityValues.getValue(entity, metaProperty.getName()), refEntity));
     }
 
-    protected EntitySet mergeCommitted(Set<Entity> committed) {
+    protected EntitySet mergeCommitted(Set<JmixEntity> committed) {
         // transform into sorted collection to have reproducible behavior
-        List<Entity> entitiesToMerge = new ArrayList<>();
-        for (Entity entity : committed) {
-            Entity e = nullIdEntitiesMap.getOrDefault(entity, entity);
+        List<JmixEntity> entitiesToMerge = new ArrayList<>();
+        for (JmixEntity entity : committed) {
+            JmixEntity e = nullIdEntitiesMap.getOrDefault(entity, entity);
             if (contains(e)) {
                 entitiesToMerge.add(entity);
             }
@@ -715,15 +715,15 @@ public class DataContextImpl implements DataContext {
         return merge(entitiesToMerge);
     }
 
-    public Collection<Entity> getAll() {
-        List<Entity> resultList = new ArrayList<>();
-        for (Map<Object, Entity> entityMap : content.values()) {
+    public Collection<JmixEntity> getAll() {
+        List<JmixEntity> resultList = new ArrayList<>();
+        for (Map<Object, JmixEntity> entityMap : content.values()) {
             resultList.addAll(entityMap.values());
         }
         return resultList;
     }
 
-    protected void modified(Entity entity) {
+    protected void modified(JmixEntity entity) {
         if (!disableListeners) {
             modifiedInstances.add(entity);
             fireChangeListener(entity);
@@ -732,16 +732,16 @@ public class DataContextImpl implements DataContext {
 
     public String printContent() {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<Class<?>, Map<Object, Entity>> entry : content.entrySet()) {
+        for (Map.Entry<Class<?>, Map<Object, JmixEntity>> entry : content.entrySet()) {
             sb.append("=== ").append(entry.getKey().getSimpleName()).append(" ===\n");
-            for (Entity entity : entry.getValue().values()) {
+            for (JmixEntity entity : entry.getValue().values()) {
                 sb.append(printEntity(entity, 1, Sets.newIdentityHashSet())).append('\n');
             }
         }
         return sb.toString();
     }
 
-    protected String printEntity(Entity entity, int level, Set<Entity> visited) {
+    protected String printEntity(JmixEntity entity, int level, Set<JmixEntity> visited) {
         StringBuilder sb = new StringBuilder();
         sb.append(printObject(entity)).append(" ").append(entity.toString()).append("\n");
 
@@ -755,14 +755,14 @@ public class DataContextImpl implements DataContext {
                 continue;
             Object value = EntityValues.getValue(entity, property.getName());
             String prefix = StringUtils.repeat("  ", level);
-            if (value instanceof Entity) {
-                String str = printEntity((Entity) value, level + 1, visited);
+            if (value instanceof JmixEntity) {
+                String str = printEntity((JmixEntity) value, level + 1, visited);
                 if (!str.equals(""))
                     sb.append(prefix).append(str);
             } else if (value instanceof Collection) {
                 sb.append(prefix).append(value.getClass().getSimpleName()).append("[\n");
                 for (Object item : (Collection) value) {
-                    String str = printEntity((Entity) item, level + 1, visited);
+                    String str = printEntity((JmixEntity) item, level + 1, visited);
                     if (!str.equals(""))
                         sb.append(prefix).append(str);
                 }
@@ -783,7 +783,7 @@ public class DataContextImpl implements DataContext {
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(e.getItem().getClass());
             if (primaryKeyProperty != null
                     && e.getProperty().equals(primaryKeyProperty.getName())) {
-                Map<Object, Entity> entityMap = content.get(e.getItem().getClass());
+                Map<Object, JmixEntity> entityMap = content.get(e.getItem().getClass());
                 if (entityMap != null) {
                     if (e.getPrevValue() == null) {
                         entityMap.remove(e.getItem());
@@ -803,9 +803,9 @@ public class DataContextImpl implements DataContext {
 
     protected class EmbeddedPropertyChangeListener implements EntityPropertyChangeListener {
 
-        private final Entity entity;
+        private final JmixEntity entity;
 
-        public EmbeddedPropertyChangeListener(Entity entity) {
+        public EmbeddedPropertyChangeListener(JmixEntity entity) {
             this.entity = entity;
         }
 

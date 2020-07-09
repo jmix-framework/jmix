@@ -16,11 +16,13 @@
 
 package test_support.entity;
 
+import io.jmix.core.JmixEntity;
+
 import javax.persistence.*;
 
 @Entity(name = "test$IdentityIdEntity")
 @Table(name = "TEST_IDENTITY_ID_ENTITY")
-public class TestIdentityIdEntity implements io.jmix.core.Entity {
+public class TestIdentityIdEntity implements JmixEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

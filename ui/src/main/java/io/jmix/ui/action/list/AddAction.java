@@ -17,7 +17,7 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.Security;
@@ -57,7 +57,7 @@ import java.util.function.Supplier;
  */
 @StudioAction(category = "List Actions", description = "Adds entities to the list using a lookup screen")
 @ActionType(AddAction.ID)
-public class AddAction<E extends Entity> extends ListAction implements Action.DisabledWhenScreenReadOnly {
+public class AddAction<E extends JmixEntity> extends ListAction implements Action.DisabledWhenScreenReadOnly {
 
     public static final String ID = "add";
 

@@ -17,7 +17,7 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
@@ -57,7 +57,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "List Actions", description = "Creates an entity instance using its editor screen")
 @ActionType(CreateAction.ID)
-public class CreateAction<E extends Entity> extends ListAction implements Action.DisabledWhenScreenReadOnly {
+public class CreateAction<E extends JmixEntity> extends ListAction implements Action.DisabledWhenScreenReadOnly {
 
     public static final String ID = "create";
 
@@ -338,7 +338,7 @@ public class CreateAction<E extends Entity> extends ListAction implements Action
             editor.addAfterCloseListener(afterCloseEvent -> {
                 CloseAction closeAction = afterCloseEvent.getCloseAction();
                 if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
-                    Entity committedEntity = ((EditorScreen) editor).getEditedEntity();
+                    JmixEntity committedEntity = ((EditorScreen) editor).getEditedEntity();
                     afterCommitHandler.accept((E) committedEntity);
                 }
             });

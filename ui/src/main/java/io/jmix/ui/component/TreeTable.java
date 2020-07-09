@@ -16,7 +16,7 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * TreeTable extends the {@link Table} component so that it can also visualize a hierarchy of its Items in a similar
@@ -24,11 +24,11 @@ import io.jmix.core.Entity;
  *
  * @param <E> row item type
  */
-public interface TreeTable<E extends Entity> extends Table<E> {
+public interface TreeTable<E extends JmixEntity> extends Table<E> {
 
     String NAME = "treeTable";
 
-    static <T extends Entity> TypeToken<TreeTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+    static <T extends JmixEntity> TypeToken<TreeTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
         return new TypeToken<TreeTable<T>>() {};
     }
 

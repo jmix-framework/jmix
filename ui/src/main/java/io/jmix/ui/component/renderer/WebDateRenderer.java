@@ -17,7 +17,7 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.DateRenderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
@@ -38,7 +38,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  */
 @Component(DataGrid.DateRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Entity, Date> implements DataGrid.DateRenderer {
+public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEntity, Date> implements DataGrid.DateRenderer {
 
     private Locale locale;
     private String formatString;

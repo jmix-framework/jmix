@@ -17,7 +17,7 @@
 package io.jmix.ui.builder;
 
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
@@ -35,7 +35,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Lookup screen builder that is not aware of concrete screen class. It's {@link #build()} method returns {@link Screen}.
  */
-public class LookupBuilder<E extends Entity> {
+public class LookupBuilder<E extends JmixEntity> {
 
     protected final FrameOwner origin;
     protected final Class<E> entityClass;

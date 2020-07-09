@@ -19,7 +19,7 @@ package io.jmix.ui.component.compatibility;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.CaptionMode;
 import io.jmix.ui.component.HasItemCaptionProvider;
@@ -50,11 +50,11 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
 
     @Override
     public String apply(Object o) {
-        if (!(o instanceof Entity)) {
+        if (!(o instanceof JmixEntity)) {
             return "";
         }
 
-        Entity entity = (Entity) o;
+        JmixEntity entity = (JmixEntity) o;
         if (captionMode == CaptionMode.PROPERTY
                 && captionProperty != null) {
 

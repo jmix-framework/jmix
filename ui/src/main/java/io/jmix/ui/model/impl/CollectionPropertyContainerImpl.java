@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityPropertyChangeEvent;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -27,7 +27,7 @@ import io.jmix.ui.model.InstanceContainer;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class CollectionPropertyContainerImpl<E extends Entity>
+public class CollectionPropertyContainerImpl<E extends JmixEntity>
         extends CollectionContainerImpl<E> implements CollectionPropertyContainer<E> {
 
     protected InstanceContainer master;
@@ -72,7 +72,7 @@ public class CollectionPropertyContainerImpl<E extends Entity>
     @Override
     public void setItems(@Nullable Collection<E> entities) {
         super.setItems(entities);
-        Entity masterItem = master.getItemOrNull();
+        JmixEntity masterItem = master.getItemOrNull();
         if (masterItem != null) {
             MetaProperty masterProperty = getMasterProperty();
             Collection masterCollection = EntityValues.getValue(masterItem, masterProperty.getName());

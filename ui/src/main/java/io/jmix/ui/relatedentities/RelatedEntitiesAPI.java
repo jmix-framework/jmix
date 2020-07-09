@@ -16,7 +16,7 @@
 
 package io.jmix.ui.relatedentities;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.gui.OpenType;
@@ -60,7 +60,7 @@ public interface RelatedEntitiesAPI {
      * @deprecated Use {@link #builder(FrameOwner)} to create and set up screen for related entities.
      */
     @Deprecated
-    void openRelatedScreen(Collection<? extends Entity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty);
+    void openRelatedScreen(Collection<? extends JmixEntity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty);
 
     /**
      * Shows found related entities in chosen screen.
@@ -73,7 +73,7 @@ public interface RelatedEntitiesAPI {
      * @deprecated Use {@link #builder(FrameOwner)} to create and set up screen for related entities.
      */
     @Deprecated
-    void openRelatedScreen(Collection<? extends Entity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty,
+    void openRelatedScreen(Collection<? extends JmixEntity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty,
                            RelatedScreenDescriptor descriptor);
 
     /**
@@ -85,7 +85,7 @@ public interface RelatedEntitiesAPI {
      * @deprecated Use {@link #builder(FrameOwner)} to create and set up screen for related entities.
      */
     @Deprecated
-    <T extends Entity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property);
+    <T extends JmixEntity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property);
 
     /**
      * Shows found related entities in chosen screen.
@@ -98,8 +98,8 @@ public interface RelatedEntitiesAPI {
      * @deprecated Use {@link #builder(FrameOwner)} to create and set up screen for related entities.
      */
     @Deprecated
-    <T extends Entity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property,
-                                              RelatedScreenDescriptor descriptor);
+    <T extends JmixEntity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property,
+                                                  RelatedScreenDescriptor descriptor);
 
     /**
      * @deprecated Use {@link #builder(FrameOwner)} to create and set up screen for related entities.

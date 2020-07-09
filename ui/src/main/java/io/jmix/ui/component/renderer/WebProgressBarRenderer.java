@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.renderer;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.widget.renderer.JmixProgressBarRenderer;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 @Component(DataGrid.ProgressBarRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebProgressBarRenderer
-        extends WebAbstractDataGrid.AbstractRenderer<Entity, Double>
+        extends WebAbstractDataGrid.AbstractRenderer<JmixEntity, Double>
         implements DataGrid.ProgressBarRenderer {
 
     @Override

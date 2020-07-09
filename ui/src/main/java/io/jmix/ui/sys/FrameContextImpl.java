@@ -16,7 +16,7 @@
 package io.jmix.ui.sys;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Component;
@@ -115,9 +115,9 @@ public class FrameContextImpl implements FrameContext {
             List<String> propertyPath = Arrays.asList(elements).subList(path.length, elements.length);
             String[] properties = propertyPath.toArray(new String[0]);
 
-            if (value instanceof Entity) {
+            if (value instanceof JmixEntity) {
                 //noinspection RedundantTypeArguments
-                return EntityValues.getValueEx(((Entity) value), properties);
+                return EntityValues.getValueEx(((JmixEntity) value), properties);
             } else if (value instanceof EnumClass) {
                 if (properties.length == 1 && "id".equals(properties[0])) {
                     //noinspection unchecked

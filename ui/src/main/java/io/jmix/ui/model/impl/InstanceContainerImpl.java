@@ -17,7 +17,7 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.EventHub;
@@ -41,7 +41,7 @@ import java.util.function.Consumer;
 /**
  *
  */
-public class InstanceContainerImpl<E extends Entity> implements InstanceContainer<E>, HasLoader, ItemPropertyChangeNotifier {
+public class InstanceContainerImpl<E extends JmixEntity> implements InstanceContainer<E>, HasLoader, ItemPropertyChangeNotifier {
 
     private static final Logger log = LoggerFactory.getLogger(InstanceContainerImpl.class);
 
@@ -128,13 +128,13 @@ public class InstanceContainerImpl<E extends Entity> implements InstanceContaine
         return events.subscribe(ItemChangeEvent.class, (Consumer) listener);
     }
 
-    protected void attachListener(Entity entity) {
+    protected void attachListener(JmixEntity entity) {
         if (entity != null) {
             entity.__getEntityEntry().addPropertyChangeListener(listener);
         }
     }
 
-    protected void detachListener(Entity entity) {
+    protected void detachListener(JmixEntity entity) {
         if (entity != null) {
             entity.__getEntityEntry().removePropertyChangeListener(listener);
         }

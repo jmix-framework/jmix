@@ -17,7 +17,7 @@
 package io.jmix.ui.component.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -52,7 +52,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WebTokenList<V extends Entity>
+public class WebTokenList<V extends JmixEntity>
         extends WebV8AbstractField<JmixTokenList<V>, Collection<V>, Collection<V>>
         implements TokenList<V>, InitializingBean {
 

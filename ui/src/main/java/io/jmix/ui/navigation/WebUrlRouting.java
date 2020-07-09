@@ -20,7 +20,7 @@ import com.vaadin.server.Page;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Events;
 import io.jmix.core.Metadata;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.*;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
@@ -257,7 +257,7 @@ public class WebUrlRouting implements UrlRouting {
         Map<String, String> params = new LinkedHashMap<>();
 
         if (isEditor(screen)) {
-            Entity editedEntity = ((EditorScreen) screen).getEditedEntity();
+            JmixEntity editedEntity = ((EditorScreen) screen).getEditedEntity();
             if (editedEntity != null) {
                 if (entityStates.isNew(editedEntity)) {
                     params.put("id", NEW_ENTITY_ID);
@@ -477,7 +477,7 @@ public class WebUrlRouting implements UrlRouting {
         }
 
         @Override
-        public String getEditorRoute(Entity entity, Map<String, String> urlParams) {
+        public String getEditorRoute(JmixEntity entity, Map<String, String> urlParams) {
             checkNotNullArgument(entity, "Entity cannot be null");
             checkNotNullArgument(urlParams, "URL params cannot be null");
 
@@ -488,7 +488,7 @@ public class WebUrlRouting implements UrlRouting {
         }
 
         @Override
-        public String getEditorRoute(Entity entity, String screenId, Map<String, String> urlParams) {
+        public String getEditorRoute(JmixEntity entity, String screenId, Map<String, String> urlParams) {
             checkNotNullArgument(entity, "Entity cannot be null");
             checkNotEmptyString(screenId, "Editor screen id cannot be empty");
             checkNotNullArgument(urlParams, "URL params cannot be null");
@@ -499,7 +499,7 @@ public class WebUrlRouting implements UrlRouting {
         }
 
         @Override
-        public String getEditorRoute(Entity entity, Class<? extends Screen> screenClass, Map<String, String> urlParams) {
+        public String getEditorRoute(JmixEntity entity, Class<? extends Screen> screenClass, Map<String, String> urlParams) {
             checkNotNullArgument(entity, "Entity cannot be null");
             checkNotNullArgument(screenClass, "Editor screen id cannot be empty");
             checkNotNullArgument(urlParams, "URL params cannot be null");
@@ -518,7 +518,7 @@ public class WebUrlRouting implements UrlRouting {
             return UiDescriptorUtils.getInferredScreenId(uiController, screenClass);
         }
 
-        protected Map<String, String> prepareEditorUrlParams(Entity entity, Map<String, String> urlParams) {
+        protected Map<String, String> prepareEditorUrlParams(JmixEntity entity, Map<String, String> urlParams) {
             if (EntityValues.getId(entity) == null) {
                 throw new IllegalArgumentException("Unable to generate route for an entity without id: " + entity);
             }

@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.DataUnit;
 
 import javax.annotation.Nullable;
@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
 
-public interface ListComponent<E extends Entity> extends Component, Component.BelongToFrame, ActionsHolder {
+public interface ListComponent<E extends JmixEntity> extends Component, Component.BelongToFrame, ActionsHolder {
 
     boolean isMultiSelect();
 
@@ -44,7 +44,7 @@ public interface ListComponent<E extends Entity> extends Component, Component.Be
      * @deprecated Use {@link Function} instead
      */
     @Deprecated
-    interface IconProvider<E extends Entity> extends Function<E, String> {
+    interface IconProvider<E extends JmixEntity> extends Function<E, String> {
         @Override
         default String apply(E entity) {
             return getItemIcon(entity);

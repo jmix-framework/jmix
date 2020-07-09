@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.factory;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
@@ -95,8 +95,8 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
         if ((lookupAnnotation = mpp.getMetaProperty().getAnnotatedElement().getAnnotation(Lookup.class)) != null
                 && lookupAnnotation.type() == LookupType.DROPDOWN) {
             MetaClass metaClass = mpp.getMetaProperty().getRange().asClass();
-            CollectionContainer<Entity> container = dataComponents.createCollectionContainer(metaClass.getJavaClass());
-            CollectionLoader<Entity> loader = dataComponents.createCollectionLoader();
+            CollectionContainer<JmixEntity> container = dataComponents.createCollectionContainer(metaClass.getJavaClass());
+            CollectionLoader<JmixEntity> loader = dataComponents.createCollectionLoader();
             loader.setQuery("select e from " + metaClass.getName() + " e");
             loader.setFetchPlan(FetchPlan.INSTANCE_NAME);
             loader.setContainer(container);

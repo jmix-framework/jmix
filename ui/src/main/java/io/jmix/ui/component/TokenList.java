@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.data.options.MapEntityOptions;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface TokenList<V extends Entity> extends Field<Collection<V>>,
+public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
         Component.BelongToFrame, Component.HasCaption, Component.Editable, Component.Focusable, HasCaptionMode,
         HasOptionCaptionProvider<V> {
 

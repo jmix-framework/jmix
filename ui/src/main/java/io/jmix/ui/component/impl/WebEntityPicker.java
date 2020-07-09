@@ -20,7 +20,7 @@ import com.vaadin.data.ValueProvider;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
 import com.vaadin.shared.Registration;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
@@ -52,7 +52,7 @@ import java.util.function.Function;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.ComponentsHelper.findActionById;
 
-public class WebEntityPicker<V extends Entity> extends WebV8AbstractField<JmixPickerField<V>, V, V>
+public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<JmixPickerField<V>, V, V>
         implements EntityPicker<V>, SecuredActionsHolder, InitializingBean {
 
     /* Beans */

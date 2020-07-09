@@ -21,7 +21,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
@@ -49,7 +49,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @param <E> row item type
  */
-public interface Table<E extends Entity>
+public interface Table<E extends JmixEntity>
         extends
             ListComponent<E>, Component.Editable, HasButtonsPanel, HasTablePresentations, Component.HasCaption,
             HasContextHelp, Component.HasIcon, HasRowsCount, LookupComponent<E>, Component.Focusable,
@@ -63,7 +63,7 @@ public interface Table<E extends Entity>
 
     String NAME = "table";
 
-    static <T extends Entity> TypeToken<Table<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+    static <T extends JmixEntity> TypeToken<Table<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
         return new TypeToken<Table<T>>() {};
     }
 
@@ -360,7 +360,7 @@ public interface Table<E extends Entity>
      *
      * @param <E> type of a table
      */
-    class ColumnCollapseEvent<E extends Entity> extends EventObject {
+    class ColumnCollapseEvent<E extends JmixEntity> extends EventObject {
         protected final Column column;
         protected final boolean collapsed;
 
@@ -409,7 +409,7 @@ public interface Table<E extends Entity>
     /**
      * Allows to define different styles for table cells.
      */
-    interface StyleProvider<E extends Entity> {
+    interface StyleProvider<E extends JmixEntity> {
         /**
          * Called by {@link Table} to get a style for row or cell.<br>
          * All unhandled exceptions from StyleProvider in Web components by default are logged with ERROR level
@@ -489,7 +489,7 @@ public interface Table<E extends Entity>
      *
      * @param item entity item
      * @return datasource containing the item
-     * @deprecated Use {@link #getInstanceContainer(Entity)} instead.
+     * @deprecated Use {@link #getInstanceContainer(JmixEntity)} instead.
      */
     /*
     TODO: legacy-ui
@@ -519,7 +519,7 @@ public interface Table<E extends Entity>
     /**
      * Allows rendering of an arbitrary {@link Component} inside a table cell.
      */
-    interface ColumnGenerator<E extends Entity> {
+    interface ColumnGenerator<E extends JmixEntity> {
         /**
          * Called by {@link Table} when rendering a column for which the generator was created.
          *
@@ -536,7 +536,7 @@ public interface Table<E extends Entity>
      * @param <E> type of item
      * @param <P> type of printable value, e.g. String/Date/Integer/Double/BigDecimal
      */
-    interface Printable<E extends Entity, P> {
+    interface Printable<E extends JmixEntity, P> {
         P getValue(E item);
     }
 
@@ -546,7 +546,7 @@ public interface Table<E extends Entity>
      * @param <E> entity type
      * @param <P> printable value type
      */
-    interface PrintableColumnGenerator<E extends Entity, P> extends ColumnGenerator<E>, Printable<E, P> {
+    interface PrintableColumnGenerator<E extends JmixEntity, P> extends ColumnGenerator<E>, Printable<E, P> {
     }
 
     /**
@@ -659,7 +659,7 @@ public interface Table<E extends Entity>
      * @deprecated Use {@link Column#addClickListener(Consumer)}  instead.
      */
     @Deprecated
-    interface CellClickListener<T extends Entity> {
+    interface CellClickListener<T extends JmixEntity> {
         /**
          * @param item     row item
          * @param columnId id of column
@@ -667,7 +667,7 @@ public interface Table<E extends Entity>
         void onClick(T item, String columnId);
     }
 
-    class CellClickEvent<T extends Entity> extends EventObject {
+    class CellClickEvent<T extends JmixEntity> extends EventObject {
         protected final T item;
         protected final String columnId;
 
@@ -794,7 +794,7 @@ public interface Table<E extends Entity>
      * Event sent when the selection changes. It specifies what in a selection has changed, and where the
      * selection took place.
      */
-    class SelectionEvent<E extends Entity> extends EventObject implements HasUserOriginated {
+    class SelectionEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
         protected final Set<E> selected;
         protected final boolean userOriginated;
 
@@ -833,7 +833,7 @@ public interface Table<E extends Entity>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    class Column<T extends Entity> implements HasXmlDescriptor, HasCaption, HasHtmlCaption, HasFormatter<Object> {
+    class Column<T extends JmixEntity> implements HasXmlDescriptor, HasCaption, HasHtmlCaption, HasFormatter<Object> {
 
         private static final Logger log = LoggerFactory.getLogger(Table.class);
 
@@ -1264,7 +1264,7 @@ public interface Table<E extends Entity>
          *
          * @param <E> an entity class
          */
-        public static class ClickEvent<E extends Entity> extends EventObject {
+        public static class ClickEvent<E extends JmixEntity> extends EventObject {
 
             protected final E item;
             protected final boolean isText;
@@ -1534,7 +1534,7 @@ public interface Table<E extends Entity>
      * @see #setEmptyStateLinkMessage(String)
      * @see #setEmptyStateLinkClickHandler(Consumer)
      */
-    class EmptyStateClickEvent<E extends Entity> extends EventObject {
+    class EmptyStateClickEvent<E extends JmixEntity> extends EventObject {
 
         public EmptyStateClickEvent(Table<E> source) {
             super(source);

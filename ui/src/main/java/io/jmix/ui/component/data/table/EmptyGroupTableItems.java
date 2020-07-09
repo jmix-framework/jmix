@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.data.table;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.GroupTableItems;
 import io.jmix.ui.gui.data.GroupInfo;
@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class EmptyGroupTableItems<E extends Entity> extends EmptyTableItems<E> implements GroupTableItems<E> {
+public class EmptyGroupTableItems<E extends JmixEntity> extends EmptyTableItems<E> implements GroupTableItems<E> {
 
     public EmptyGroupTableItems(MetaClass metaClass) {
         super(metaClass);

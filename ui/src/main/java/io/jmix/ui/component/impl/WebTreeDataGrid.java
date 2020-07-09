@@ -22,7 +22,7 @@ import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Grid;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.data.BindingState;
@@ -41,7 +41,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<JmixTreeGrid<E>, E>
+public class WebTreeDataGrid<E extends JmixEntity> extends WebAbstractDataGrid<JmixTreeGrid<E>, E>
         implements TreeDataGrid<E> {
 
     protected Predicate<E> itemCollapseAllowedProvider = t -> true;

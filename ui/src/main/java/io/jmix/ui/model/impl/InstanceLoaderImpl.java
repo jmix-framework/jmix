@@ -37,7 +37,7 @@ import java.util.function.Function;
 /**
  *
  */
-public class InstanceLoaderImpl<E extends Entity> implements InstanceLoader<E> {
+public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<E> {
 
 
     @Autowired

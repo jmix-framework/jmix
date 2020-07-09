@@ -17,9 +17,8 @@
 package io.jmix.ui.filter;
 
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.stereotype.Component;
@@ -64,7 +63,7 @@ public class OpManagerImpl implements OpManager {
 
         else if (UUID.class.equals(javaClass)
                 || Enum.class.isAssignableFrom(javaClass)
-                || Entity.class.isAssignableFrom(javaClass))
+                || JmixEntity.class.isAssignableFrom(javaClass))
             return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, NOT_EMPTY);
 
         else

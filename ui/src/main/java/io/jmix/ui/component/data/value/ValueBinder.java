@@ -22,7 +22,7 @@ import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.EntityEntry;
@@ -221,7 +221,7 @@ public class ValueBinder {
             this.sourceValueChangeSubscription = source.addValueChangeListener(this::sourceValueChanged);
             this.sourceStateChangeSubscription = source.addStateChangeListener(this::valueSourceStateChanged);
             if (source instanceof EntityValueSource) {
-                EntityValueSource<Entity, V> entityValueSource = (EntityValueSource<Entity, V>) this.source;
+                EntityValueSource<JmixEntity, V> entityValueSource = (EntityValueSource<JmixEntity, V>) this.source;
                 this.sourceInstanceChangeSubscription = entityValueSource.addInstanceChangeListener(this::sourceInstanceChanged);
 
                 if (component instanceof Field) {
@@ -299,7 +299,7 @@ public class ValueBinder {
             }
         }
 
-        protected void sourceInstanceChanged(@SuppressWarnings("unused") EntityValueSource.InstanceChangeEvent<Entity> event) {
+        protected void sourceInstanceChanged(@SuppressWarnings("unused") EntityValueSource.InstanceChangeEvent<JmixEntity> event) {
             if (source.getState() == BindingState.ACTIVE
                     && !isBuffered()) {
 
@@ -326,8 +326,8 @@ public class ValueBinder {
                     && valueSource.getItem() != null
                     && metaPropertyPath.getMetaProperty().getRange().isClass()) {
 
-                Entity rootItem = valueSource.getItem();
-                Entity targetItem = rootItem;
+                JmixEntity rootItem = valueSource.getItem();
+                JmixEntity targetItem = rootItem;
 
                 MetaProperty[] propertiesChain = metaPropertyPath.getMetaProperties();
                 if (propertiesChain.length > 1) {

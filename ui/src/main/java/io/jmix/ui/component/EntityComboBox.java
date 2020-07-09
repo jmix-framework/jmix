@@ -17,16 +17,16 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * A components that adds to {@link EntityPicker} the ability to select an entity from drop-down list.
  */
-public interface EntityComboBox<V extends Entity> extends ComboBox<V>, EntityPicker<V>, SupportsOptionsContainer<V> {
+public interface EntityComboBox<V extends JmixEntity> extends ComboBox<V>, EntityPicker<V>, SupportsOptionsContainer<V> {
 
     String NAME = "entityComboBox";
 
-    static <T extends Entity> TypeToken<EntityComboBox<T>> of(Class<T> valueClass) {
+    static <T extends JmixEntity> TypeToken<EntityComboBox<T>> of(Class<T> valueClass) {
         return new TypeToken<EntityComboBox<T>>() {};
     }
 

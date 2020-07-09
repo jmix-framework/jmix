@@ -168,7 +168,7 @@ public class MenuItemCommands {
         }
 
         //noinspection unchecked
-        Entity entity = dataManager.load(ctx);
+        JmixEntity entity = dataManager.load(ctx);
         if (entity == null) {
             throw new RuntimeException(String.format("Unable to load entity of class '%s' with id '%s'",
                     entityClass, entityId));
@@ -291,11 +291,11 @@ public class MenuItemCommands {
             sample.stop(UiMonitoring.createMenuTimer(meterRegistry, item.getId()));
         }
 
-        protected Entity getEntityToEdit(String screenId) {
-            Entity entityItem;
+        protected JmixEntity getEntityToEdit(String screenId) {
+            JmixEntity entityItem;
 
             if (params.containsKey("item")) {
-                entityItem = (Entity) params.get("item");
+                entityItem = (JmixEntity) params.get("item");
             } else {
                 Object entityToEdit = controllerProperties.stream()
                         .filter(prop -> "entityToEdit".equals(prop.getName()))
@@ -303,8 +303,8 @@ public class MenuItemCommands {
                         .map(UiControllerProperty::getValue)
                         .orElse(null);
 
-                if (entityToEdit instanceof Entity) {
-                    entityItem = (Entity) entityToEdit;
+                if (entityToEdit instanceof JmixEntity) {
+                    entityItem = (JmixEntity) entityToEdit;
                 } else {
                     String[] strings = screenId.split("[.]");
                     String metaClassName;

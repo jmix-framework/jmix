@@ -16,7 +16,7 @@
 
 package io.jmix.ui.relatedentities;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Screens;
@@ -89,7 +89,7 @@ public class RelatedEntitiesClassBuilder<S extends Screen> extends RelatedEntiti
     }
 
     @Override
-    public RelatedEntitiesClassBuilder<S> withSelectedEntities(Collection<? extends Entity> selectedEntities) {
+    public RelatedEntitiesClassBuilder<S> withSelectedEntities(Collection<? extends JmixEntity> selectedEntities) {
         super.withSelectedEntities(selectedEntities);
         return this;
     }

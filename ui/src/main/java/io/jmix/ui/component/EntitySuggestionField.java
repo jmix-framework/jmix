@@ -17,18 +17,18 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * SuggestionPickerField adds to PickerField the ability to search an entity by user input.
  *
  * @param <V> type of value
  */
-public interface EntitySuggestionField<V extends Entity> extends SuggestionField<V>, EntityPicker<V> {
+public interface EntitySuggestionField<V extends JmixEntity> extends SuggestionField<V>, EntityPicker<V> {
 
     String NAME = "entitySuggestionField";
 
-    static <T extends Entity> TypeToken<EntitySuggestionField<T>> of(Class<T> valueClass) {
+    static <T extends JmixEntity> TypeToken<EntitySuggestionField<T>> of(Class<T> valueClass) {
         return new TypeToken<EntitySuggestionField<T>>() {};
     }
 }

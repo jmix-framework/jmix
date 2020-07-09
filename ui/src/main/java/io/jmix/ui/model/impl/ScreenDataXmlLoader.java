@@ -101,7 +101,7 @@ public class ScreenDataXmlLoader {
     protected void loadInstanceContainer(ScreenData screenData, Element element, @Nullable ScreenData hostScreenData) {
         String containerId = getRequiredAttr(element, "id");
 
-        InstanceContainer<Entity> container;
+        InstanceContainer<JmixEntity> container;
 
         if (checkProvided(element, hostScreenData)) {
             assert hostScreenData != null;
@@ -126,7 +126,7 @@ public class ScreenDataXmlLoader {
     protected void loadCollectionContainer(ScreenData screenData, Element element, @Nullable ScreenData hostScreenData) {
         String containerId = getRequiredAttr(element, "id");
 
-        CollectionContainer<Entity> container;
+        CollectionContainer<JmixEntity> container;
 
         if (checkProvided(element, hostScreenData)) {
             assert hostScreenData != null;
@@ -224,7 +224,7 @@ public class ScreenDataXmlLoader {
     }
 
     @SuppressWarnings("unchecked")
-    protected void loadNestedContainer(ScreenData screenData, Element element, InstanceContainer<Entity> masterContainer,
+    protected void loadNestedContainer(ScreenData screenData, Element element, InstanceContainer<JmixEntity> masterContainer,
                                        @Nullable ScreenData hostScreenData) {
         if (!element.getName().equals("collection") && !element.getName().equals("instance"))
             return;
@@ -267,9 +267,9 @@ public class ScreenDataXmlLoader {
         }
     }
 
-    protected void loadInstanceLoader(ScreenData screenData, Element element, InstanceContainer<Entity> container,
+    protected void loadInstanceLoader(ScreenData screenData, Element element, InstanceContainer<JmixEntity> container,
                                       @Nullable ScreenData hostScreenData) {
-        InstanceLoader<Entity> loader;
+        InstanceLoader<JmixEntity> loader;
 
         String loaderId = element.attributeValue("id");
         if (loaderId == null) {
@@ -293,9 +293,9 @@ public class ScreenDataXmlLoader {
         screenData.registerLoader(loaderId, loader);
     }
 
-    protected void loadCollectionLoader(ScreenData screenData, Element element, CollectionContainer<Entity> container,
+    protected void loadCollectionLoader(ScreenData screenData, Element element, CollectionContainer<JmixEntity> container,
                                         @Nullable ScreenData hostScreenData) {
-        CollectionLoader<Entity> loader;
+        CollectionLoader<JmixEntity> loader;
 
         String loaderId = element.attributeValue("id");
         if (loaderId == null) {
@@ -376,12 +376,12 @@ public class ScreenDataXmlLoader {
         screenData.registerLoader(loaderId, loader);
     }
 
-    protected Class<Entity> getEntityClass(Element element) {
+    protected Class<JmixEntity> getEntityClass(Element element) {
         String entityClassName = getRequiredAttr(element, "class");
         return ReflectionHelper.getClass(entityClassName);
     }
 
-    protected void loadFetchPlan(Element element, Class<Entity> entityClass, InstanceContainer<Entity> container) {
+    protected void loadFetchPlan(Element element, Class<JmixEntity> entityClass, InstanceContainer<JmixEntity> container) {
 
         Element fetchPlanElement = element.element("fetchPlan");
         if (fetchPlanElement == null) {
@@ -401,7 +401,7 @@ public class ScreenDataXmlLoader {
         }
     }
 
-    protected FetchPlan loadInlineFetchPlan(Element viewElem, Class<Entity> entityClass) {
+    protected FetchPlan loadInlineFetchPlan(Element viewElem, Class<JmixEntity> entityClass) {
         FetchPlanLoader.FetchPlanInfo viewInfo = fetchPlanLoader.getFetchPlanInfo(viewElem, metadata.getClass(entityClass));
         FetchPlan.FetchPlanParams viewParams = fetchPlanLoader.getFetchPlanParams(viewInfo, a -> fetchPlanRepository.getFetchPlan(viewInfo.getMetaClass(), a));
         FetchPlan view = new FetchPlan(viewParams);
@@ -449,7 +449,7 @@ public class ScreenDataXmlLoader {
         }
     }
 
-    protected void loadEntityId(Element element, InstanceLoader<Entity> loader) {
+    protected void loadEntityId(Element element, InstanceLoader<JmixEntity> loader) {
         String entityIdStr = element.attributeValue("entityId");
         if (Strings.isNullOrEmpty(entityIdStr)) {
             return;
@@ -486,7 +486,7 @@ public class ScreenDataXmlLoader {
         loader.setMaxResults(Integer.parseInt(maxResultsStr));
     }
 
-    protected void loadCacheable(Element element, CollectionLoader<Entity> loader) {
+    protected void loadCacheable(Element element, CollectionLoader<JmixEntity> loader) {
         String cacheableVal = element.attributeValue("cacheable");
         if (!Strings.isNullOrEmpty(cacheableVal))
             loader.setCacheable(Boolean.parseBoolean(cacheableVal));

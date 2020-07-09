@@ -16,14 +16,14 @@
 
 package io.jmix.ui.component.data.table;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeTableItems;
 import io.jmix.ui.model.CollectionContainer;
 
 import java.util.*;
 
-public class ContainerTreeTableItems<E extends Entity>
+public class ContainerTreeTableItems<E extends JmixEntity>
             extends ContainerTableItems<E>
             implements TreeTableItems<E> {
 
@@ -46,8 +46,8 @@ public class ContainerTreeTableItems<E extends Entity>
         if (hierarchyProperty != null) {
             Set<Object> result = new LinkedHashSet<>();
             for (Object id : ids) {
-                Entity item = getItemNN(id);
-                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                JmixEntity item = getItemNN(id);
+                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
                 if (parentItem == null || (container.getItemOrNull(EntityValues.getId(parentItem)) == null))
                     result.add(EntityValues.getId(item));
             }
@@ -60,11 +60,11 @@ public class ContainerTreeTableItems<E extends Entity>
     @Override
     public Object getParent(Object itemId) {
         if (hierarchyProperty != null) {
-            Entity item = getItem(itemId);
+            JmixEntity item = getItem(itemId);
             if (item == null)
                 return null;
             else {
-                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
                 return parentItem == null ? null : EntityValues.getId(parentItem);
             }
         }
@@ -74,7 +74,7 @@ public class ContainerTreeTableItems<E extends Entity>
     @Override
     public Collection<?> getChildren(Object itemId) {
         if (hierarchyProperty != null) {
-            Entity currentItem = getItem(itemId);
+            JmixEntity currentItem = getItem(itemId);
             if (currentItem == null)
                 return Collections.emptyList();
 
@@ -82,8 +82,8 @@ public class ContainerTreeTableItems<E extends Entity>
 
             Collection ids = getItemIds();
             for (Object id : ids) {
-                Entity item = getItemNN(id);
-                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                JmixEntity item = getItemNN(id);
+                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
                 if (parentItem != null && EntityValues.getId(parentItem).equals(itemId))
                     res.add(EntityValues.getId(item));
             }
@@ -95,11 +95,11 @@ public class ContainerTreeTableItems<E extends Entity>
 
     @Override
     public boolean isRoot(Object itemId) {
-        Entity item = getItem(itemId);
+        JmixEntity item = getItem(itemId);
         if (item == null) return false;
 
         if (hierarchyProperty != null) {
-            Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+            JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
             return (parentItem == null || (container.getItemOrNull(EntityValues.getId(parentItem)) == null));
         } else {
             return true;
@@ -108,15 +108,15 @@ public class ContainerTreeTableItems<E extends Entity>
 
     @Override
     public boolean hasChildren(Object itemId) {
-        Entity currentItem = getItem(itemId);
+        JmixEntity currentItem = getItem(itemId);
         if (currentItem == null)
             return false;
 
         if (hierarchyProperty != null) {
             Collection ids = getItemIds();
             for (Object id : ids) {
-                Entity item = getItemNN(id);
-                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                JmixEntity item = getItemNN(id);
+                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
                 if (parentItem != null && EntityValues.getId(parentItem).equals(itemId))
                     return true;
             }

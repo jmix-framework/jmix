@@ -16,14 +16,14 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Interface for editor screen controllers.
  *
  * @param <T> type of entity
  */
-public interface EditorScreen<T extends Entity> extends ChangeTracker {
+public interface EditorScreen<T extends JmixEntity> extends ChangeTracker {
     /**
      * Name of action that commits changes.
      * <br> If the screen doesn't contain a component with {@link #WINDOW_COMMIT_AND_CLOSE} ID, this action also

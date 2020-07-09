@@ -69,7 +69,7 @@ class DataContextSpec extends Specification {
         entityStates.makeDetached(entity)
     }
 
-    void makeDetached(Entity... entities) {
+    void makeDetached(JmixEntity... entities) {
         entities.each { makeDetached(it) }
     }
 
@@ -94,7 +94,7 @@ class DataContextSpec extends Specification {
         TimeSource timeSource = AppBeans.get(TimeSource)
 
         T e = reserialize(entity)
-        entityStates.makeDetached((Entity) e)
+        entityStates.makeDetached((JmixEntity) e)
 
         if (e instanceof Versioned) {
             Versioned versioned = (Versioned) e
@@ -102,7 +102,7 @@ class DataContextSpec extends Specification {
             versioned.version++
         }
 
-        if (e instanceof Entity && e.__getEntityEntry() instanceof EntityEntryAuditable) {
+        if (e instanceof JmixEntity && e.__getEntityEntry() instanceof EntityEntryAuditable) {
             EntityEntryAuditable entityEntry = ((EntityEntryAuditable) e.__getEntityEntry());
 
             entityEntry.setCreatedDate(timeSource.currentTimestamp())

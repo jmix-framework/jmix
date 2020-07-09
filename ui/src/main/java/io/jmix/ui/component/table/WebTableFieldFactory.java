@@ -21,7 +21,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.TableFieldFactory;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.Security;
@@ -44,7 +44,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class WebTableFieldFactory<E extends Entity> extends AbstractFieldFactory implements TableFieldFactory {
+public class WebTableFieldFactory<E extends JmixEntity> extends AbstractFieldFactory implements TableFieldFactory {
     protected WebAbstractTable<?, E> webTable;
     protected Security security;
     protected MetadataTools metadataTools;
@@ -65,7 +65,7 @@ public class WebTableFieldFactory<E extends Entity> extends AbstractFieldFactory
         Table.Column columnConf = webTable.getColumnsInternal().get(propertyId);
 
         TableDataContainer tableDataContainer = (TableDataContainer) container;
-        Entity entity  = (Entity) tableDataContainer.getInternalItem(itemId);
+        JmixEntity entity  = (JmixEntity) tableDataContainer.getInternalItem(itemId);
         InstanceContainer instanceContainer = webTable.getInstanceContainer((E) entity);
 
         io.jmix.ui.component.Component columnComponent =

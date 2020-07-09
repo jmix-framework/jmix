@@ -21,7 +21,7 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.FileStorageResource;
@@ -105,7 +105,7 @@ public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements I
 
         valueChangeSubscription = valueSource.addValueChangeListener(event -> updateComponent());
         if (valueSource instanceof EntityValueSource) {
-            instanceChangeSubscription = ((EntityValueSource<Entity, T>) valueSource)
+            instanceChangeSubscription = ((EntityValueSource<JmixEntity, T>) valueSource)
                     .addInstanceChangeListener(event -> updateComponent());
         }
     }

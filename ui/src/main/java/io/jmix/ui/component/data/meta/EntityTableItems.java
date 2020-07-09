@@ -16,17 +16,17 @@
 
 package io.jmix.ui.component.data.meta;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.TableItems;
 
 import javax.annotation.Nullable;
 
 /**
- * Interface for table data components bound to {@link Entity} type.
+ * Interface for table data components bound to {@link JmixEntity} type.
  *
  * @param <E> entity type
  */
-public interface EntityTableItems<E extends Entity> extends TableItems<E>, EntityDataUnit {
+public interface EntityTableItems<E extends JmixEntity> extends TableItems<E>, EntityDataUnit {
     /**
      * @return the current item contained in the source
      */

@@ -16,14 +16,14 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.EntityAwareScreenFacet;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.Screen;
 
-public abstract class WebAbstractEntityAwareScreenFacet<E extends Entity, S extends Screen>
+public abstract class WebAbstractEntityAwareScreenFacet<E extends JmixEntity, S extends Screen>
         extends WebAbstractScreenFacet<S>
         implements EntityAwareScreenFacet<E> {
 

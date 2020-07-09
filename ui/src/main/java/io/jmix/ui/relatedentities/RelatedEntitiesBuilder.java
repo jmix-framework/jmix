@@ -16,7 +16,7 @@
 
 package io.jmix.ui.relatedentities;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Screens;
@@ -56,7 +56,7 @@ public class RelatedEntitiesBuilder {
 
     protected FrameOwner origin;
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
-    protected Collection<? extends Entity> selectedEntities;
+    protected Collection<? extends JmixEntity> selectedEntities;
 
     protected String filterCaption;
 
@@ -140,7 +140,7 @@ public class RelatedEntitiesBuilder {
     /**
      * @return selected entities set by {@link #withSelectedEntities(Collection)}
      */
-    public Collection<? extends Entity> getSelectedEntities() {
+    public Collection<? extends JmixEntity> getSelectedEntities() {
         return selectedEntities;
     }
 
@@ -259,7 +259,7 @@ public class RelatedEntitiesBuilder {
      * @param selectedEntities selected entities
      * @return current instance of builder
      */
-    public RelatedEntitiesBuilder withSelectedEntities(Collection<? extends Entity> selectedEntities) {
+    public RelatedEntitiesBuilder withSelectedEntities(Collection<? extends JmixEntity> selectedEntities) {
         this.selectedEntities = selectedEntities;
         return this;
     }

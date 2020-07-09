@@ -33,7 +33,7 @@ public class FetchPlanAwareEntityTransformer implements EditedEntityTransformer 
     private DataManager dataManager;
 
     @Override
-    public <E extends Entity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
+    public <E extends JmixEntity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
         FetchPlan fetchPlan = container.getFetchPlan();
         if (fetchPlan != null && !entityStates.isLoadedWithFetchPlan(editedEntity, fetchPlan)) {
             return dataManager.load(Id.of(editedEntity)).fetchPlan(fetchPlan).one();
@@ -43,7 +43,7 @@ public class FetchPlanAwareEntityTransformer implements EditedEntityTransformer 
     }
 
     @Override
-    public <E extends Entity> E transformForField(E editedEntity, HasValue<E> field) {
+    public <E extends JmixEntity> E transformForField(E editedEntity, HasValue<E> field) {
         return editedEntity;
     }
 }

@@ -17,7 +17,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
@@ -263,7 +263,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * Only for compatibility with old screens.
      */
     @Deprecated
-    interface Editor<T extends Entity> extends Window, EditorScreen<T>, Window.Committable/*, LegacyFrame TODO: legacy-ui */ {
+    interface Editor<T extends JmixEntity> extends Window, EditorScreen<T>, Window.Committable/*, LegacyFrame TODO: legacy-ui */ {
         /**
          * Name that is used to register a client type specific screen implementation in
          * {@link io.jmix.ui.xml.layout.ComponentsFactory}
@@ -282,7 +282,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
          *
          * @param item entity instance
          */
-        void setItem(Entity item);
+        void setItem(JmixEntity item);
 
         /**
          * Called by the framework to validate the screen components and commit changes.
@@ -335,7 +335,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * Represents a lookup screen.
      */
     @Deprecated
-    interface Lookup<T extends Entity> extends Window, LookupScreen<T>/*, LegacyFrame TODO: legacy-ui */ {
+    interface Lookup<T extends JmixEntity> extends Window, LookupScreen<T>/*, LegacyFrame TODO: legacy-ui */ {
 
         String LOOKUP_ITEM_CLICK_ACTION_ID = "lookupItemClickAction";
         String LOOKUP_ENTER_PRESSED_ACTION_ID = "lookupEnterPressed";

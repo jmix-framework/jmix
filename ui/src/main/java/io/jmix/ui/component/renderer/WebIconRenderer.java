@@ -19,7 +19,7 @@ package io.jmix.ui.component.renderer;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.icon.IconResolver;
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 
 @Component(DataGrid.IconRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebIconRenderer<T extends Entity>
+public class WebIconRenderer<T extends JmixEntity>
         extends WebAbstractDataGrid.AbstractRenderer<T, Resource> implements DataGrid.IconRenderer<T> {
 
     protected Icons icons;

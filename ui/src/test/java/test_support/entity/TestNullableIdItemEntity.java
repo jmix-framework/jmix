@@ -16,11 +16,13 @@
 
 package test_support.entity;
 
+import io.jmix.core.JmixEntity;
+
 import javax.persistence.*;
 
 @Entity(name = "test_NullableIdItemEntity")
 @Table(name = "TEST_NULLABLE_ID_ITEM_ENTITY")
-public class TestNullableIdItemEntity implements io.jmix.core.Entity {
+public class TestNullableIdItemEntity implements JmixEntity {
 
     private static final long serialVersionUID = 8115973479078477156L;
 

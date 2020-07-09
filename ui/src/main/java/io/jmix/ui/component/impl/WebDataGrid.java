@@ -16,10 +16,10 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.widget.JmixGrid;
 
-public class WebDataGrid<E extends Entity> extends WebAbstractDataGrid<JmixGrid<E>, E> {
+public class WebDataGrid<E extends JmixEntity> extends WebAbstractDataGrid<JmixGrid<E>, E> {
 
     @Override
     protected JmixGrid<E> createComponent() {

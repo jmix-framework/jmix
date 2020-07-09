@@ -19,7 +19,7 @@ package io.jmix.ui.component.data.datagrid;
 import io.jmix.core.Sort;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -44,7 +44,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class ContainerDataGridItems<E extends Entity>
+public class ContainerDataGridItems<E extends JmixEntity>
         implements EntityDataGridItems<E>, AggregatableDataGridItems<E>, DataGridItems.Sortable<E>, ContainerDataUnit<E> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerDataGridItems.class);

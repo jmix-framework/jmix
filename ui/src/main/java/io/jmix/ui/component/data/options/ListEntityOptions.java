@@ -20,7 +20,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityOptions;
@@ -35,7 +35,7 @@ import java.util.function.Consumer;
  *
  * @param <E> entity type
  */
-public class ListEntityOptions<E extends Entity> extends ListOptions<E> implements Options<E>, EntityOptions<E> {
+public class ListEntityOptions<E extends JmixEntity> extends ListOptions<E> implements Options<E>, EntityOptions<E> {
 
     private static final Logger log = LoggerFactory.getLogger(ListEntityOptions.class);
 

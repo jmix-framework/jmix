@@ -41,36 +41,36 @@ public class NoopDataContext implements DataContext {
 
     @Nullable
     @Override
-    public <T extends Entity> T find(Class<T> entityClass, Object entityId) {
+    public <T extends JmixEntity> T find(Class<T> entityClass, Object entityId) {
         return null;
     }
 
     @Override
-    public <T extends Entity> T find(T entity) {
+    public <T extends JmixEntity> T find(T entity) {
         return null;
     }
 
     @Override
-    public boolean contains(Entity entity) {
+    public boolean contains(JmixEntity entity) {
         return false;
     }
 
     @Override
-    public <T extends Entity> T merge(T entity) {
+    public <T extends JmixEntity> T merge(T entity) {
         return entity;
     }
 
     @Override
-    public EntitySet merge(Collection<? extends Entity> entities) {
+    public EntitySet merge(Collection<? extends JmixEntity> entities) {
         return EntitySet.of(entities);
     }
 
     @Override
-    public void remove(Entity entity) {
+    public void remove(JmixEntity entity) {
     }
 
     @Override
-    public void evict(Entity entity) {
+    public void evict(JmixEntity entity) {
     }
 
     @Override
@@ -82,7 +82,7 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public <T extends Entity> T create(Class<T> entityClass) {
+    public <T extends JmixEntity> T create(Class<T> entityClass) {
         return beanLocator.get(Metadata.class).create(entityClass);
     }
 
@@ -92,26 +92,26 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public boolean isModified(Entity entity) {
+    public boolean isModified(JmixEntity entity) {
         return false;
     }
 
     @Override
-    public void setModified(Entity entity, boolean modified) {
+    public void setModified(JmixEntity entity, boolean modified) {
     }
 
     @Override
-    public Set<Entity> getModified() {
+    public Set<JmixEntity> getModified() {
         return Collections.emptySet();
     }
 
     @Override
-    public boolean isRemoved(Entity entity) {
+    public boolean isRemoved(JmixEntity entity) {
         return false;
     }
 
     @Override
-    public Set<Entity> getRemoved() {
+    public Set<JmixEntity> getRemoved() {
         return Collections.emptySet();
     }
 
@@ -145,11 +145,11 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public Function<SaveContext, Set<Entity>> getCommitDelegate() {
+    public Function<SaveContext, Set<JmixEntity>> getCommitDelegate() {
         return null;
     }
 
     @Override
-    public void setCommitDelegate(Function<SaveContext, Set<Entity>> delegate) {
+    public void setCommitDelegate(Function<SaveContext, Set<JmixEntity>> delegate) {
     }
 }

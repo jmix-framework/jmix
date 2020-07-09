@@ -17,7 +17,7 @@
 package io.jmix.ui.action;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.core.security.Security;
 import io.jmix.ui.component.ListComponent;
@@ -65,7 +65,7 @@ public class ItemTrackingAction extends ListAction implements Action.HasSecurity
             return false;
         }
 
-        Entity singleSelected = target.getSingleSelected();
+        JmixEntity singleSelected = target.getSingleSelected();
         if (singleSelected == null) {
             return false;
         }

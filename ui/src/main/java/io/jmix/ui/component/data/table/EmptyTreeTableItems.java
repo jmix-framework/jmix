@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.data.table;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.TreeTableItems;
 
@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 
-public class EmptyTreeTableItems<E extends Entity> extends EmptyTableItems<E> implements TreeTableItems<E> {
+public class EmptyTreeTableItems<E extends JmixEntity> extends EmptyTableItems<E> implements TreeTableItems<E> {
 
     public EmptyTreeTableItems(MetaClass metaClass) {
         super(metaClass);

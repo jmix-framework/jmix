@@ -16,7 +16,7 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.screen.Screen;
 
 import java.util.Collections;
@@ -137,7 +137,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        default String getEditorRoute(Entity entity) {
+        default String getEditorRoute(JmixEntity entity) {
             return getEditorRoute(entity, Collections.emptyMap());
         }
 
@@ -151,7 +151,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        default String getEditorRoute(Entity entity, String screenId) {
+        default String getEditorRoute(JmixEntity entity, String screenId) {
             return getEditorRoute(entity, screenId, Collections.emptyMap());
         }
 
@@ -163,7 +163,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        default String getEditorRoute(Entity entity, Class<? extends Screen> screenClass) {
+        default String getEditorRoute(JmixEntity entity, Class<? extends Screen> screenClass) {
             return getEditorRoute(entity, screenClass, Collections.emptyMap());
         }
 
@@ -197,7 +197,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        String getEditorRoute(Entity entity, Map<String, String> urlParams);
+        String getEditorRoute(JmixEntity entity, Map<String, String> urlParams);
 
         /**
          * Generates route for editor with the given {@code screenId} and {@code entity} and {@code urlParams}.
@@ -210,7 +210,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        String getEditorRoute(Entity entity, String screenId, Map<String, String> urlParams);
+        String getEditorRoute(JmixEntity entity, String screenId, Map<String, String> urlParams);
 
         /**
          * Generates route for editor with the given {@code screenClass} and {@code entity} and {@code urlParams}.
@@ -221,6 +221,6 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        String getEditorRoute(Entity entity, Class<? extends Screen> screenClass, Map<String, String> urlParams);
+        String getEditorRoute(JmixEntity entity, Class<? extends Screen> screenClass, Map<String, String> urlParams);
     }
 }

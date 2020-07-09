@@ -16,13 +16,13 @@
 
 package io.jmix.ui.component.data.meta;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.TreeItems;
 
 import javax.annotation.Nullable;
 
 
-public interface EntityTreeItems<E extends Entity> extends TreeItems<E>, EntityDataUnit {
+public interface EntityTreeItems<E extends JmixEntity> extends TreeItems<E>, EntityDataUnit {
     /**
      * @return the current item contained in the source
      */

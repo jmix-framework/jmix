@@ -16,13 +16,13 @@
 
 package io.jmix.ui.component.compatibility;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.Table;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class TableCellClickListenerWrapper<E extends Entity> implements Consumer<Table.CellClickEvent<E>> {
+public class TableCellClickListenerWrapper<E extends JmixEntity> implements Consumer<Table.CellClickEvent<E>> {
 
     protected final Table.CellClickListener<E> listener;
 

@@ -17,7 +17,7 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.ButtonRenderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
  */
 @Component(DataGrid.ButtonRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebButtonRenderer<T extends Entity>
+public class WebButtonRenderer<T extends JmixEntity>
         extends WebAbstractClickableRenderer<T, String>
         implements DataGrid.ButtonRenderer<T> {
 

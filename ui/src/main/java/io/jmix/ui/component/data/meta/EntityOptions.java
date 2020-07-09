@@ -17,14 +17,14 @@
 package io.jmix.ui.component.data.meta;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.Options;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
 
-public interface EntityOptions<E extends Entity> extends Options<E>, EntityDataUnit {
+public interface EntityOptions<E extends JmixEntity> extends Options<E>, EntityDataUnit {
     /**
      * Set current item in the source.
      *

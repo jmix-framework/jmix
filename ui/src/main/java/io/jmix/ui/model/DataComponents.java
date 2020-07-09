@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -73,7 +73,7 @@ public class DataComponents {
     /**
      * Creates {@code InstanceContainer}.
      */
-    public <E extends Entity> InstanceContainer<E> createInstanceContainer(Class<E> entityClass) {
+    public <E extends JmixEntity> InstanceContainer<E> createInstanceContainer(Class<E> entityClass) {
         InstanceContainerImpl<E> container = new InstanceContainerImpl<>(metadata.getClass(entityClass));
         autowire(container);
         return container;
@@ -83,9 +83,9 @@ public class DataComponents {
      * Creates {@code InstancePropertyContainer}.
      */
     @SuppressWarnings("unchecked")
-    public <E extends Entity> InstancePropertyContainer<E> createInstanceContainer(Class<E> entityClass,
-                                                                                   InstanceContainer<? extends Entity> masterContainer,
-                                                                                   String property) {
+    public <E extends JmixEntity> InstancePropertyContainer<E> createInstanceContainer(Class<E> entityClass,
+                                                                                       InstanceContainer<? extends JmixEntity> masterContainer,
+                                                                                       String property) {
         InstancePropertyContainerImpl<E> container = new InstancePropertyContainerImpl<>(
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
@@ -93,7 +93,7 @@ public class DataComponents {
         if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)
                 && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
             masterContainer.addItemChangeListener(e -> {
-                Entity item = masterContainer.getItemOrNull();
+                JmixEntity item = masterContainer.getItemOrNull();
                 container.setItem(item != null ? EntityValues.getValue(item, property) : null);
             });
 
@@ -110,7 +110,7 @@ public class DataComponents {
     /**
      * Creates {@code CollectionContainer}.
      */
-    public <E extends Entity> CollectionContainer<E> createCollectionContainer(Class<E> entityClass) {
+    public <E extends JmixEntity> CollectionContainer<E> createCollectionContainer(Class<E> entityClass) {
         CollectionContainerImpl<E> container = new CollectionContainerImpl<>(metadata.getClass(entityClass));
         autowire(container);
         container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
@@ -121,9 +121,9 @@ public class DataComponents {
      * Creates {@code CollectionPropertyContainer}.
      */
     @SuppressWarnings("unchecked")
-    public <E extends Entity> CollectionPropertyContainer<E> createCollectionContainer(Class<E> entityClass,
-                                                                                       InstanceContainer<? extends Entity> masterContainer,
-                                                                                       String property) {
+    public <E extends JmixEntity> CollectionPropertyContainer<E> createCollectionContainer(Class<E> entityClass,
+                                                                                           InstanceContainer<? extends JmixEntity> masterContainer,
+                                                                                           String property) {
         CollectionPropertyContainerImpl<E> container = new CollectionPropertyContainerImpl<>(
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
@@ -132,7 +132,7 @@ public class DataComponents {
         if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)
                 && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
             masterContainer.addItemChangeListener(e -> {
-                Entity item = masterContainer.getItemOrNull();
+                JmixEntity item = masterContainer.getItemOrNull();
                 container.setItems(item != null ? EntityValues.getValue(item, property) : null);
             });
 
@@ -177,7 +177,7 @@ public class DataComponents {
     /**
      * Creates {@code InstanceLoader}.
      */
-    public <E extends Entity> InstanceLoader<E> createInstanceLoader() {
+    public <E extends JmixEntity> InstanceLoader<E> createInstanceLoader() {
         InstanceLoaderImpl<E> loader = new InstanceLoaderImpl<>();
         autowire(loader);
         return loader;
@@ -186,7 +186,7 @@ public class DataComponents {
     /**
      * Creates {@code CollectionLoader}.
      */
-    public <E extends Entity> CollectionLoader<E> createCollectionLoader() {
+    public <E extends JmixEntity> CollectionLoader<E> createCollectionLoader() {
         CollectionLoaderImpl<E> loader = new CollectionLoaderImpl<>();
         autowire(loader);
         return loader;

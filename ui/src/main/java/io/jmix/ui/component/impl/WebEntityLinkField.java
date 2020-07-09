@@ -113,8 +113,8 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
                 return "";
             }
 
-            if (value instanceof Entity) {
-                return metadataTools.getInstanceName((Entity) value);
+            if (value instanceof JmixEntity) {
+                return metadataTools.getInstanceName((JmixEntity) value);
             }
 
             Datatype datatype = Datatypes.getNN(value.getClass());
@@ -277,9 +277,9 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     protected void openEntityEditor() {
         V value = getValue();
 
-        Entity entity = null;
-        if (value instanceof Entity) {
-            entity = (Entity) value;
+        JmixEntity entity = null;
+        if (value instanceof JmixEntity) {
+            entity = (JmixEntity) value;
         } else if (getValueSource() instanceof EntityValueSource) {
             entity = ((EntityValueSource) getValueSource()).getItem();
         }
@@ -336,7 +336,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
             Screen screenSource = null;
             if (StringUtils.isNotEmpty(closeActionId)
                     && Window.COMMIT_ACTION_ID.equals(closeActionId)) {
-                Entity item = null;
+                JmixEntity item = null;
                 screenSource = event.getSource();
                 if (screenSource instanceof EditorScreen) {
                     item = ((EditorScreen) screenSource).getEditedEntity();
@@ -358,7 +358,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
                 new EditorCloseEvent<>(this, editorScreen, closeActionId));
     }
 
-    protected void afterCommitOpenedEntity(Entity item) {
+    protected void afterCommitOpenedEntity(JmixEntity item) {
         MetaProperty metaProperty = getMetaPropertyForEditedValue();
         if (metaProperty != null && metaProperty.getRange().isClass()) {
             if (getValueSource() != null) {

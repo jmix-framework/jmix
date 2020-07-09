@@ -43,7 +43,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -576,7 +575,7 @@ public class WindowConfig {
         return getMetaClassScreenId(metaClass, Window.EDITOR_WINDOW_SUFFIX);
     }
 
-    public WindowInfo getEditorScreen(Entity entity) {
+    public WindowInfo getEditorScreen(JmixEntity entity) {
         MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         WindowInfo windowInfo = primaryEditors.get(originalMetaClass.getJavaClass());
@@ -595,7 +594,7 @@ public class WindowConfig {
      * @return id of lookup screen
      * @throws NoSuchScreenException if the screen with specified ID is not registered
      */
-    public WindowInfo getLookupScreen(Class<? extends Entity> entityClass) {
+    public WindowInfo getLookupScreen(Class<? extends JmixEntity> entityClass) {
         MetaClass metaClass = metadata.getSession().findClass(entityClass);
 
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);

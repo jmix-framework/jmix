@@ -17,7 +17,7 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.ScreenBuilders;
@@ -53,7 +53,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "List Actions", description = "Opens an editor screen for an entity instance in read-only mode")
 @ActionType(ViewAction.ID)
-public class ViewAction<E extends Entity> extends SecuredListAction {
+public class ViewAction<E extends JmixEntity> extends SecuredListAction {
 
     public static final String ID = "view";
 
@@ -274,7 +274,7 @@ public class ViewAction<E extends Entity> extends SecuredListAction {
             throw new IllegalStateException("Target is not bound to entity");
         }
 
-        Entity editedEntity = target.getSingleSelected();
+        JmixEntity editedEntity = target.getSingleSelected();
         if (editedEntity == null) {
             throw new IllegalStateException("There is not selected item in ViewAction target");
         }
@@ -294,7 +294,7 @@ public class ViewAction<E extends Entity> extends SecuredListAction {
             editor.addAfterCloseListener(afterCloseEvent -> {
                 CloseAction closeAction = afterCloseEvent.getCloseAction();
                 if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
-                    Entity committedEntity = ((EditorScreen) editor).getEditedEntity();
+                    JmixEntity committedEntity = ((EditorScreen) editor).getEditedEntity();
                     afterCommitHandler.accept((E) committedEntity);
                 }
             });

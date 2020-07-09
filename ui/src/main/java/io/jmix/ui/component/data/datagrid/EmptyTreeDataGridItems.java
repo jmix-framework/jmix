@@ -16,14 +16,14 @@
 
 package io.jmix.ui.component.data.datagrid;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.TreeDataGridItems;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
-public class EmptyTreeDataGridItems<E extends Entity> extends EmptyDataGridItems<E> implements TreeDataGridItems<E> {
+public class EmptyTreeDataGridItems<E extends JmixEntity> extends EmptyDataGridItems<E> implements TreeDataGridItems<E> {
 
     public EmptyTreeDataGridItems(MetaClass metaClass) {
         super(metaClass);

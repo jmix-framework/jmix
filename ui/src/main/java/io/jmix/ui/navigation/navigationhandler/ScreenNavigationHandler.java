@@ -290,9 +290,9 @@ public class ScreenNavigationHandler implements NavigationHandler {
         }
 
         if (MapUtils.isNotEmpty(options)) {
-            Entity entity = (Entity) options.get("item");
+            JmixEntity entity = (JmixEntity) options.get("item");
             //noinspection unchecked
-            ((EditorScreen<Entity>) editor).setEntityToEdit(entity);
+            ((EditorScreen<JmixEntity>) editor).setEntityToEdit(entity);
         }
 
         return editor;
@@ -320,7 +320,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
                 ? requestedState.getParams().get("id")
                 : NEW_ENTITY_ID;
 
-        Class<? extends Entity> entityClass = EditorTypeExtractor.extractEntityClass(windowInfo);
+        Class<? extends JmixEntity> entityClass = EditorTypeExtractor.extractEntityClass(windowInfo);
         if (entityClass == null) {
             return null;
         }
@@ -352,7 +352,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
         ctx.setId(id);
         ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME));
 
-        Entity entity = dataManager.load(ctx);
+        JmixEntity entity = dataManager.load(ctx);
         if (entity == null) {
             urlChangeHandler.revertNavigationState();
             throw new EntityAccessException(metaClass, id);

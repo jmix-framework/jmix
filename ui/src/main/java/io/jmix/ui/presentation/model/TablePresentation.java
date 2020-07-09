@@ -16,7 +16,7 @@
 
 package io.jmix.ui.presentation.model;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.presentation.TablePresentations;
 
 /**
@@ -28,7 +28,7 @@ import io.jmix.ui.presentation.TablePresentations;
  *
  * @see TablePresentations
  */
-public interface TablePresentation extends Entity {
+public interface TablePresentation extends JmixEntity {
 
     String getName();
 

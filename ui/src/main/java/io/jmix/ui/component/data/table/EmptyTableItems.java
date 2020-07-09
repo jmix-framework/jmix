@@ -17,7 +17,7 @@
 package io.jmix.ui.component.data.table;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.TableItems;
@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class EmptyTableItems<E extends Entity> implements EntityTableItems<E>, TableItems.Sortable<E>, EmptyDataUnit {
+public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E>, TableItems.Sortable<E>, EmptyDataUnit {
 
     protected MetaClass metaClass;
 

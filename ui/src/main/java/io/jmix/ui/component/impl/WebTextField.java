@@ -19,7 +19,7 @@ import com.google.common.base.Strings;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.shared.ui.ValueChangeMode;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
@@ -132,11 +132,11 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
                 if (range.isClass()) {
                     MetadataTools metadataTools = beanLocator.get(MetadataTools.class);
                     if (range.getCardinality().isMany()) {
-                        return ((Collection<Entity>) modelValue).stream()
+                        return ((Collection<JmixEntity>) modelValue).stream()
                                 .map(metadataTools::getInstanceName)
                                 .collect(Collectors.joining(", "));
                     } else {
-                        return metadataTools.getInstanceName((Entity) modelValue);
+                        return metadataTools.getInstanceName((JmixEntity) modelValue);
                     }
                 } else if (range.isEnum()) {
                     Messages messages = beanLocator.get(Messages.class);

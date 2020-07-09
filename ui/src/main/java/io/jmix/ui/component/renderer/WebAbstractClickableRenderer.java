@@ -17,14 +17,14 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.ClickableRenderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.component.impl.WebWrapperUtils;
 
 import java.util.function.Consumer;
 
-public abstract class WebAbstractClickableRenderer<T extends Entity, V> extends WebAbstractDataGrid.AbstractRenderer<T, V>
+public abstract class WebAbstractClickableRenderer<T extends JmixEntity, V> extends WebAbstractDataGrid.AbstractRenderer<T, V>
         implements DataGrid.HasRendererClickListener<T> {
 
     protected Consumer<DataGrid.RendererClickEvent<T>> listener;

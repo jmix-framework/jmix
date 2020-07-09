@@ -21,7 +21,7 @@ import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.LoadContext;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.SuggestionField;
@@ -52,7 +52,7 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
             if (StringUtils.isNotEmpty(entityClassName)) {
                 DataManager dataManager = beanLocator.get(DataManager.NAME);
                 suggestionField.setSearchExecutor((searchString, searchParams) -> {
-                    Class<Entity> entityClass = ReflectionHelper.getClass(entityClassName);
+                    Class<JmixEntity> entityClass = ReflectionHelper.getClass(entityClassName);
                     if (escapeValue) {
                         searchString = QueryUtils.escapeForLike(searchString);
                     }

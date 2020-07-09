@@ -18,7 +18,7 @@ package io.jmix.ui.component.table;
 
 import com.google.common.base.Strings;
 import com.vaadin.ui.VerticalLayout;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -49,7 +49,7 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onClick(Entity item, String columnId) {
+    public void onClick(JmixEntity item, String columnId) {
         Table.Column column = table.getColumn(columnId);
 
         MetaClass metaClass = metadata.getClass(item.getClass());

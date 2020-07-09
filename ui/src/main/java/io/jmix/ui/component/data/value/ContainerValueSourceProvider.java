@@ -16,12 +16,12 @@
 
 package io.jmix.ui.component.data.value;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.ValueSourceProvider;
 import io.jmix.ui.model.InstanceContainer;
 
-public class ContainerValueSourceProvider<E extends Entity> implements ValueSourceProvider {
+public class ContainerValueSourceProvider<E extends JmixEntity> implements ValueSourceProvider {
 
     protected final InstanceContainer<E> container;
 

@@ -16,14 +16,14 @@
 
 package io.jmix.ui.component.compatibility;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.LookupScreen;
 
 import java.util.function.Predicate;
 
 @Deprecated
-public class SelectValidatorAdapter<T extends Entity> implements Predicate<LookupScreen.ValidationContext<T>> {
+public class SelectValidatorAdapter<T extends JmixEntity> implements Predicate<LookupScreen.ValidationContext<T>> {
 
     private final Window.Lookup.Validator validator;
 

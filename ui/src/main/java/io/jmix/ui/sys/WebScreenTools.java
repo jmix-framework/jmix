@@ -16,7 +16,7 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.ui.*;
 import io.jmix.ui.navigation.EditorTypeExtractor;
@@ -88,9 +88,9 @@ public class WebScreenTools implements ScreenTools {
         */
     }
 
-    protected Entity getEntityToEdit(String screenId) {
+    protected JmixEntity getEntityToEdit(String screenId) {
         WindowInfo windowInfo = windowConfig.getWindowInfo(screenId);
-        Class<? extends Entity> entityClass = EditorTypeExtractor.extractEntityClass(windowInfo);
+        Class<? extends JmixEntity> entityClass = EditorTypeExtractor.extractEntityClass(windowInfo);
 
         if (entityClass == null) {
             throw new UnsupportedOperationException(

@@ -17,7 +17,7 @@
 package io.jmix.ui.component.data.meta;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.ValueSource;
 
@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  *
  * @param <V> type of value
  */
-public interface EntityValueSource<E extends Entity, V> extends ValueSource<V>, EntityDataUnit {
+public interface EntityValueSource<E extends JmixEntity, V> extends ValueSource<V>, EntityDataUnit {
     /**
      * @return entity
      */
@@ -53,7 +53,7 @@ public interface EntityValueSource<E extends Entity, V> extends ValueSource<V>, 
      *
      * @param <E> entity type
      */
-    class InstanceChangeEvent<E extends Entity> extends EventObject {
+    class InstanceChangeEvent<E extends JmixEntity> extends EventObject {
         private final E prevItem;
         private final E item;
 

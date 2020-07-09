@@ -18,7 +18,7 @@ package io.jmix.ui.model;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 
 import javax.annotation.Nonnull;
@@ -34,7 +34,7 @@ import java.util.function.Consumer;
  *
  * @see CollectionContainer
  */
-public interface InstanceContainer<E extends Entity> {
+public interface InstanceContainer<E extends JmixEntity> {
 
     /**
      * Returns the contained entity instance.
@@ -114,7 +114,7 @@ public interface InstanceContainer<E extends Entity> {
     /**
      * Event sent on changing a property value of the contained entity instance.
      */
-    class ItemPropertyChangeEvent<T extends Entity> extends EventObject {
+    class ItemPropertyChangeEvent<T extends JmixEntity> extends EventObject {
         private final T item;
         private final String property;
         private final Object prevValue;
@@ -182,7 +182,7 @@ public interface InstanceContainer<E extends Entity> {
     /**
      * Event sent when the entity instance selected in the container is replaced with another instance or null.
      */
-    class ItemChangeEvent<T extends Entity> extends EventObject {
+    class ItemChangeEvent<T extends JmixEntity> extends EventObject {
 
         private final T prevItem;
         private final T item;

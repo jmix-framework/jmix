@@ -17,7 +17,7 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
@@ -107,7 +107,7 @@ public class RefreshAction extends ListAction {
             DataContext dataContext = loader.getDataContext();
             if (dataContext != null) {
                 for (Object entity : container.getItems()) {
-                    dataContext.evict((Entity) entity);
+                    dataContext.evict((JmixEntity) entity);
                 }
             }
             loader.load();

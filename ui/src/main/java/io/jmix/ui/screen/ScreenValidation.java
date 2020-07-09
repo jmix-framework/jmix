@@ -19,7 +19,7 @@ package io.jmix.ui.screen;
 import com.google.common.collect.Iterables;
 import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
@@ -163,11 +163,11 @@ public class ScreenValidation {
      * @param item   item to validate
      * @return validation errors
      */
-    public ValidationErrors validateCrossFieldRules(@SuppressWarnings("unused") FrameOwner origin, Entity item) {
+    public ValidationErrors validateCrossFieldRules(@SuppressWarnings("unused") FrameOwner origin, JmixEntity item) {
         ValidationErrors errors = new ValidationErrors();
 
         Validator validator = beanValidation.getValidator();
-        Set<ConstraintViolation<Entity>> violations = validator.validate(item, UiCrossFieldChecks.class);
+        Set<ConstraintViolation<JmixEntity>> violations = validator.validate(item, UiCrossFieldChecks.class);
 
         violations.stream()
                 .filter(violation -> {

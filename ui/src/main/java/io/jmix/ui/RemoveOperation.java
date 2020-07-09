@@ -19,7 +19,7 @@ package io.jmix.ui;
 import io.jmix.core.SaveContext;
 import io.jmix.core.DataManager;
 import io.jmix.core.*;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -76,7 +76,7 @@ public class RemoveOperation {
      * @param origin      invoking screen
      * @param <E>         type of entity
      */
-    public <E extends Entity> RemoveBuilder<E> builder(Class<E> entityClass, FrameOwner origin) {
+    public <E extends JmixEntity> RemoveBuilder<E> builder(Class<E> entityClass, FrameOwner origin) {
         checkNotNullArgument(entityClass);
         checkNotNullArgument(origin);
 
@@ -89,7 +89,7 @@ public class RemoveOperation {
      * @param listComponent list component
      * @param <E>           type of entity
      */
-    public <E extends Entity> RemoveBuilder<E> builder(ListComponent<E> listComponent) {
+    public <E extends JmixEntity> RemoveBuilder<E> builder(ListComponent<E> listComponent) {
         checkNotNullArgument(listComponent);
         checkNotNullArgument(listComponent.getFrame());
 
@@ -113,7 +113,7 @@ public class RemoveOperation {
      * @param target list component
      * @param <E>    entity type
      */
-    public <E extends Entity> void removeSelected(ListComponent<E> target) {
+    public <E extends JmixEntity> void removeSelected(ListComponent<E> target) {
         builder(target)
                 .withConfirmation(true)
                 .remove();
@@ -125,13 +125,13 @@ public class RemoveOperation {
      * @param target list component
      * @param <E>    entity type
      */
-    public <E extends Entity> void excludeSelected(ListComponent<E> target) {
+    public <E extends JmixEntity> void excludeSelected(ListComponent<E> target) {
         builder(target)
                 .withConfirmation(false)
                 .exclude();
     }
 
-    protected <E extends Entity> void triggerAction(RemoveBuilder<E> builder) {
+    protected <E extends JmixEntity> void triggerAction(RemoveBuilder<E> builder) {
         List<E> selectedItems = Collections.emptyList();
         if (builder.getItems() != null) {
             selectedItems = builder.getItems();
@@ -148,7 +148,7 @@ public class RemoveOperation {
         }
     }
 
-    protected <E extends Entity> void performAction(RemoveBuilder<E> builder, List<E> selectedItems) {
+    protected <E extends JmixEntity> void performAction(RemoveBuilder<E> builder, List<E> selectedItems) {
         if (builder.getBeforeActionPerformedHandler() != null) {
             BeforeActionPerformedEvent<E> event = new BeforeActionPerformedEvent<>(builder.getOrigin(), selectedItems);
             builder.getBeforeActionPerformedHandler().accept(event);
@@ -171,7 +171,7 @@ public class RemoveOperation {
         }
     }
 
-    protected <E extends Entity> void removeItems(RemoveBuilder<E> builder, List<E> selectedItems) {
+    protected <E extends JmixEntity> void removeItems(RemoveBuilder<E> builder, List<E> selectedItems) {
         FrameOwner origin = builder.getOrigin();
         ScreenData screenData = UiControllerUtils.getScreenData(origin);
 
@@ -188,16 +188,16 @@ public class RemoveOperation {
         focusListComponent(builder);
     }
 
-    protected <E extends Entity> void focusListComponent(RemoveBuilder<E> builder) {
+    protected <E extends JmixEntity> void focusListComponent(RemoveBuilder<E> builder) {
         if (builder.getListComponent() instanceof Focusable) {
             ((Focusable) builder.getListComponent()).focus();
         }
     }
 
-    protected void commitIfNeeded(Collection<? extends Entity> entitiesToRemove, CollectionContainer container,
+    protected void commitIfNeeded(Collection<? extends JmixEntity> entitiesToRemove, CollectionContainer container,
                                   ScreenData screenData) {
 
-        List<? extends Entity> entitiesToCommit = entitiesToRemove.stream()
+        List<? extends JmixEntity> entitiesToCommit = entitiesToRemove.stream()
                 .filter(entity -> !entityStates.isNew(entity))
                 .collect(Collectors.toList());
 
@@ -214,22 +214,22 @@ public class RemoveOperation {
 
         if (needCommit) {
             SaveContext saveContext = new SaveContext();
-            for (Entity entity : entitiesToCommit) {
+            for (JmixEntity entity : entitiesToCommit) {
                 saveContext.removing(entity);
             }
             dataManager.save(saveContext);
-            for (Entity entity : entitiesToRemove) {
+            for (JmixEntity entity : entitiesToRemove) {
                 screenData.getDataContext().evict(entity);
             }
         } else {
-            for (Entity entity : entitiesToRemove) {
+            for (JmixEntity entity : entitiesToRemove) {
                 screenData.getDataContext().remove(entity);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> void excludeItems(RemoveBuilder<E> builder, List<E> selectedItems) {
+    protected <E extends JmixEntity> void excludeItems(RemoveBuilder<E> builder, List<E> selectedItems) {
         CollectionContainer<E> container = getCollectionContainer(builder);
 
         if (!(container instanceof Nested)) {
@@ -239,7 +239,7 @@ public class RemoveOperation {
         InstanceContainer masterDc = ((Nested) container).getMaster();
 
         String property = ((Nested) container).getProperty();
-        Entity masterItem = masterDc.getItem();
+        JmixEntity masterItem = masterDc.getItem();
 
         MetaProperty metaProperty = metadata.getClass(masterItem).getProperty(property);
         MetaProperty inverseMetaProperty = metaProperty.getInverse();
@@ -252,7 +252,7 @@ public class RemoveOperation {
 
             if (inversePropClass.isAssignableFrom(dcClass)) {
                 // update reference for One-To-Many
-                for (Entity item : selectedItems) {
+                for (JmixEntity item : selectedItems) {
                     EntityValues.setValue(item, inverseMetaProperty.getName(), null);
                 }
             }
@@ -264,7 +264,7 @@ public class RemoveOperation {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> CollectionContainer<E> getCollectionContainer(RemoveBuilder<E> builder) {
+    protected <E extends JmixEntity> CollectionContainer<E> getCollectionContainer(RemoveBuilder<E> builder) {
         CollectionContainer<E> container;
         if (builder.getContainer() != null) {
             container = builder.getContainer();
@@ -278,7 +278,7 @@ public class RemoveOperation {
     }
 
     @SuppressWarnings("CodeBlock2Expr")
-    protected <E extends Entity> void performActionWithConfirmation(RemoveBuilder<E> builder, List<E> selectedItems) {
+    protected <E extends JmixEntity> void performActionWithConfirmation(RemoveBuilder<E> builder, List<E> selectedItems) {
         ScreenContext screenContext = getScreenContext(builder.getOrigin());
 
         Dialogs dialogs = screenContext.getDialogs();
@@ -315,7 +315,7 @@ public class RemoveOperation {
      *
      * @param <E> entity type
      */
-    public static class RemoveBuilder<E extends Entity> {
+    public static class RemoveBuilder<E extends JmixEntity> {
 
         protected final FrameOwner origin;
         protected final Class<E> entityClass;

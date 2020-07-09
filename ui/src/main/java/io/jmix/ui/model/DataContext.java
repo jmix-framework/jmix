@@ -19,7 +19,7 @@ package io.jmix.ui.model;
 import io.jmix.core.EntitySet;
 import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
@@ -46,19 +46,19 @@ public interface DataContext {
      * @return entity instance or null if there is no such entity in the context
      */
     @Nullable
-    <T extends Entity> T find(Class<T> entityClass, Object entityId);
+    <T extends JmixEntity> T find(Class<T> entityClass, Object entityId);
 
     /**
      * Returns the instance of entity with the same id if it exists in this context.
      * @return entity instance or null if there is no such entity in the context
      */
     @Nullable
-    <T extends Entity> T find(T entity);
+    <T extends JmixEntity> T find(T entity);
 
     /**
      * Returns true if the context contains the given entity (distinguished by its class and id).
      */
-    boolean contains(Entity entity);
+    boolean contains(JmixEntity entity);
 
     /**
      * Merge the given entity into the context. The whole object graph with all references will be merged.
@@ -79,19 +79,19 @@ public interface DataContext {
      * @return the instance which is tracked by the context
      */
     @CheckReturnValue
-    <T extends Entity> T merge(T entity);
+    <T extends JmixEntity> T merge(T entity);
 
     /**
      * Merge the given entities into the context. The whole object graph for each element of the collection with all
      * references will be merged.
      * <p>
-     * Same as {@link #merge(Entity)} but for a collection of instances.
+     * Same as {@link #merge(JmixEntity)} but for a collection of instances.
      *
      * @return set of instances tracked by the context
-     * @see #merge(Entity)
+     * @see #merge(JmixEntity)
      */
     @CheckReturnValue
-    EntitySet merge(Collection<? extends Entity> entities);
+    EntitySet merge(Collection<? extends JmixEntity> entities);
 
     /**
      * Removes the entity from the context and registers it as deleted. The entity will be removed from the data store
@@ -99,14 +99,14 @@ public interface DataContext {
      * <p>
      * If the given entity is not in the context, nothing happens.
      */
-    void remove(Entity entity);
+    void remove(JmixEntity entity);
 
     /**
      * Removes the entity from the context so the context stops tracking it.
      * <p>
      * If the given entity is not in the context, nothing happens.
      */
-    void evict(Entity entity);
+    void evict(JmixEntity entity);
 
     /**
      * Clears the lists of created/modified/deleted entities and evicts these entities.
@@ -116,7 +116,7 @@ public interface DataContext {
     /**
      * Evicts all tracked entities.
      *
-     * @see #evict(Entity)
+     * @see #evict(JmixEntity)
      */
     void clear();
 
@@ -130,7 +130,7 @@ public interface DataContext {
      * @param entityClass entity class
      * @return a new instance which is tracked by the context
      */
-    <T extends Entity> T create(Class<T> entityClass);
+    <T extends JmixEntity> T create(Class<T> entityClass);
 
     /**
      * Returns true if the context has detected changes in the tracked entities.
@@ -140,7 +140,7 @@ public interface DataContext {
     /**
      * Returns true if the context has detected changes in the given entity.
      */
-    boolean isModified(Entity entity);
+    boolean isModified(JmixEntity entity);
 
     /**
      * Registers or unregisters the given entity as modified.
@@ -148,22 +148,22 @@ public interface DataContext {
      * @param entity   entity instance which is already merged into the context
      * @param modified true to register or false to unregister
      */
-    void setModified(Entity entity, boolean modified);
+    void setModified(JmixEntity entity, boolean modified);
 
     /**
      * Returns an immutable set of entities registered as modified.
      */
-    Set<Entity> getModified();
+    Set<JmixEntity> getModified();
 
     /**
      * Returns true if the context has registered removal of the given entity.
      */
-    boolean isRemoved(Entity entity);
+    boolean isRemoved(JmixEntity entity);
 
     /**
      * Returns an immutable set of entities registered for removal.
      */
-    Set<Entity> getRemoved();
+    Set<JmixEntity> getRemoved();
 
     /**
      * Commits changed and removed instances to the middleware. After successful commit, the context contains
@@ -201,9 +201,9 @@ public interface DataContext {
      */
     class ChangeEvent extends EventObject {
 
-        private final Entity entity;
+        private final JmixEntity entity;
 
-        public ChangeEvent(DataContext dataContext, Entity entity) {
+        public ChangeEvent(DataContext dataContext, JmixEntity entity) {
             super(dataContext);
             this.entity = entity;
         }
@@ -219,7 +219,7 @@ public interface DataContext {
         /**
          * Returns the changed entity.
          */
-        public Entity getEntity() {
+        public JmixEntity getEntity() {
             return entity;
         }
     }
@@ -255,11 +255,11 @@ public interface DataContext {
      */
     class PreCommitEvent extends EventObject {
 
-        private final Collection<Entity> modifiedInstances;
-        private final Collection<Entity> removedInstances;
+        private final Collection<JmixEntity> modifiedInstances;
+        private final Collection<JmixEntity> removedInstances;
         private boolean commitPrevented;
 
-        public PreCommitEvent(DataContext dataContext, Collection<Entity> modified, Collection<Entity> removed) {
+        public PreCommitEvent(DataContext dataContext, Collection<JmixEntity> modified, Collection<JmixEntity> removed) {
             super(dataContext);
             this.modifiedInstances = modified;
             this.removedInstances = removed;
@@ -276,14 +276,14 @@ public interface DataContext {
         /**
          * Returns the collection of modified instances.
          */
-        public Collection<Entity> getModifiedInstances() {
+        public Collection<JmixEntity> getModifiedInstances() {
             return modifiedInstances;
         }
 
         /**
          * Returns the collection of removed instances.
          */
-        public Collection<Entity> getRemovedInstances() {
+        public Collection<JmixEntity> getRemovedInstances() {
             return removedInstances;
         }
 
@@ -333,9 +333,9 @@ public interface DataContext {
      */
     class PostCommitEvent extends EventObject {
 
-        private final Collection<Entity> committedInstances;
+        private final Collection<JmixEntity> committedInstances;
 
-        public PostCommitEvent(DataContext dataContext, Collection<Entity> committedInstances) {
+        public PostCommitEvent(DataContext dataContext, Collection<JmixEntity> committedInstances) {
             super(dataContext);
             this.committedInstances = committedInstances;
         }
@@ -376,10 +376,10 @@ public interface DataContext {
      * Returns a function which will be used to commit data instead of standard implementation.
      */
     @Nullable
-    Function<SaveContext, Set<Entity>> getCommitDelegate();
+    Function<SaveContext, Set<JmixEntity>> getCommitDelegate();
 
     /**
      * Sets a function which will be used to commit data instead of standard implementation.
      */
-    void setCommitDelegate(Function<SaveContext, Set<Entity>> delegate);
+    void setCommitDelegate(Function<SaveContext, Set<JmixEntity>> delegate);
 }

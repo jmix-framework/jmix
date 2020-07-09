@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.builder.EditMode;
 import io.jmix.ui.meta.*;
 import io.jmix.ui.model.DataContext;
@@ -39,7 +39,7 @@ import java.util.function.Supplier;
                 @StudioProperty(name = "id", required = true)
         }
 )
-public interface EditorScreenFacet<E extends Entity, S extends Screen & EditorScreen<E>>
+public interface EditorScreenFacet<E extends JmixEntity, S extends Screen & EditorScreen<E>>
         extends ScreenFacet<S>, EntityAwareScreenFacet<E> {
 
     /**

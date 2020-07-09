@@ -16,7 +16,7 @@
 
 package io.jmix.ui.facet;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -61,7 +61,7 @@ public abstract class AbstractEntityAwareScreenFacetProvider<T extends ScreenFac
 
                 MetaClass entityClass = getMetadata().getClass(clazz);
                 if (entityClass != null) {
-                    facet.setEntityClass(((Class<? extends Entity>) clazz));
+                    facet.setEntityClass(((Class<? extends JmixEntity>) clazz));
                 } else {
                     throw new GuiDevelopmentException(
                             String.format("Screen entity class '%s' does not extend Entity class", entityClassFqn),

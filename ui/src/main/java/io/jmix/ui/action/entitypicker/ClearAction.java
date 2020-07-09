@@ -17,7 +17,7 @@
 package io.jmix.ui.action.entitypicker;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.ActionType;
@@ -137,7 +137,7 @@ public class ClearAction extends BaseAction implements EntityPicker.EntityPicker
         ValueSource valueSource = entityPicker.getValueSource();
         if (value != null && !value.equals(entityPicker.getEmptyValue()) && valueSource instanceof EntityValueSource) {
             EntityValueSource entityValueSource = (EntityValueSource) entityPicker.getValueSource();
-            Entity entity = (Entity) entityPicker.getValue();
+            JmixEntity entity = (JmixEntity) entityPicker.getValue();
             if (entityValueSource.getMetaPropertyPath() != null
                     && entityValueSource.getMetaPropertyPath().getMetaProperty().getType() == MetaProperty.Type.COMPOSITION) {
                 FrameOwner screen = entityPicker.getFrame().getFrameOwner();

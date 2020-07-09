@@ -16,7 +16,7 @@
 
 package io.jmix.ui.relatedentities;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.screen.FrameOwner;
@@ -34,22 +34,22 @@ public class RelatedEntitiesBean implements RelatedEntitiesAPI {
     }
 
     @Override
-    public void openRelatedScreen(Collection<? extends Entity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty) {
+    public void openRelatedScreen(Collection<? extends JmixEntity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public void openRelatedScreen(Collection<? extends Entity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty, RelatedScreenDescriptor descriptor) {
+    public void openRelatedScreen(Collection<? extends JmixEntity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty, RelatedScreenDescriptor descriptor) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public <T extends Entity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property) {
+    public <T extends JmixEntity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public <T extends Entity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property, RelatedScreenDescriptor descriptor) {
+    public <T extends JmixEntity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property, RelatedScreenDescriptor descriptor) {
         throw new UnsupportedOperationException("Not implemented");
     }
 }

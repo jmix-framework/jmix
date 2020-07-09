@@ -17,7 +17,7 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.RemoveOperation;
@@ -49,7 +49,7 @@ import java.util.function.Consumer;
  */
 @StudioAction(category = "List Actions", description = "Excludes entities from the list. The excluded entities are not deleted.")
 @ActionType(ExcludeAction.ID)
-public class ExcludeAction<E extends Entity> extends SecuredListAction implements Action.DisabledWhenScreenReadOnly {
+public class ExcludeAction<E extends JmixEntity> extends SecuredListAction implements Action.DisabledWhenScreenReadOnly {
 
     public static final String ID = "exclude";
 

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -29,7 +29,7 @@ import static io.jmix.ui.component.Window.SELECT_ACTION_ID;
  *
  * @param <E> type of entity
  */
-public interface LookupScreen<E extends Entity> {
+public interface LookupScreen<E extends JmixEntity> {
     String LOOKUP_SELECT_ACTION_ID = "lookupSelectAction";
     String LOOKUP_CANCEL_ACTION_ID = "lookupCancelAction";
 
@@ -65,7 +65,7 @@ public interface LookupScreen<E extends Entity> {
      *
      * @param <T> type of entity
      */
-    class ValidationContext<T extends Entity> {
+    class ValidationContext<T extends JmixEntity> {
         private Screen screen;
         private Collection<T> selectedItems;
 

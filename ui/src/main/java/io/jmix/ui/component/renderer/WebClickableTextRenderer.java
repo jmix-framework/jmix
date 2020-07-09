@@ -17,7 +17,7 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.widget.renderer.JmixClickableTextRenderer;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  */
 @Component(DataGrid.ClickableTextRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebClickableTextRenderer<T extends Entity>
+public class WebClickableTextRenderer<T extends JmixEntity>
         extends WebAbstractClickableRenderer<T, String>
         implements DataGrid.ClickableTextRenderer<T> {
 

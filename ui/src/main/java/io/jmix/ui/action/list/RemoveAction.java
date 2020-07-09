@@ -17,7 +17,7 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
@@ -50,7 +50,7 @@ import java.util.function.Consumer;
  */
 @StudioAction(category = "List Actions", description = "Removes an entity instance from the list and from the database")
 @ActionType(RemoveAction.ID)
-public class RemoveAction<E extends Entity> extends SecuredListAction implements Action.DisabledWhenScreenReadOnly {
+public class RemoveAction<E extends JmixEntity> extends SecuredListAction implements Action.DisabledWhenScreenReadOnly {
 
     public static final String ID = "remove";
 

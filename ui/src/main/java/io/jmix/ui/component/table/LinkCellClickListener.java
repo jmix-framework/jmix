@@ -17,7 +17,7 @@
 package io.jmix.ui.component.table;
 
 import io.jmix.core.*;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.Table;
@@ -41,7 +41,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
     }
 
     @Override
-    public void onClick(Entity rowItem, String columnId) {
+    public void onClick(JmixEntity rowItem, String columnId) {
         Table.Column column = table.getColumn(columnId);
         if (column.getXmlDescriptor() != null) {
             String invokeMethodName = column.getXmlDescriptor().attributeValue("linkInvoke");
@@ -52,11 +52,11 @@ public class LinkCellClickListener implements Table.CellClickListener {
             }
         }
 
-        Entity entity;
+        JmixEntity entity;
         Object value = EntityValues.getValueEx(rowItem, columnId);
 
-        if (value instanceof Entity) {
-            entity = (Entity) value;
+        if (value instanceof JmixEntity) {
+            entity = (JmixEntity) value;
         } else {
             entity = rowItem;
         }
@@ -124,7 +124,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
         });*/
     }
 
-    protected void handleEditorCommit(Entity editorItem, Entity rowItem, String columnId) {
+    protected void handleEditorCommit(JmixEntity editorItem, JmixEntity rowItem, String columnId) {
         MetaPropertyPath mpp = metadata.getClass(rowItem).getPropertyPath(columnId);
         if (mpp == null) {
             throw new IllegalStateException(String.format("Unable to find metaproperty %s for class %s",
@@ -158,7 +158,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
         }
     }
 
-    protected void callControllerInvoke(Entity rowItem, String columnId, String invokeMethodName) {
+    protected void callControllerInvoke(JmixEntity rowItem, String columnId, String invokeMethodName) {
         FrameOwner controller = table.getFrame().getFrameOwner();
         /* todo legacy-ui
         if (controller instanceof LegacyFragmentAdapter) {
@@ -188,7 +188,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
     }
 
     protected Method findLinkInvokeMethod(Class cls, String methodName) {
-        Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, Entity.class, String.class);
+        Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, JmixEntity.class, String.class);
         if (exactMethod != null) {
             return exactMethod;
         }
@@ -199,7 +199,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
             if (availableMethod.getName().equals(methodName)) {
                 if (availableMethod.getParameterCount() == 2
                         && Void.TYPE.equals(availableMethod.getReturnType())) {
-                    if (Entity.class.isAssignableFrom(availableMethod.getParameterTypes()[0]) &&
+                    if (JmixEntity.class.isAssignableFrom(availableMethod.getParameterTypes()[0]) &&
                             String.class == availableMethod.getParameterTypes()[1]) {
                         // get accessible version of method
                         return MethodUtils.getAccessibleMethod(availableMethod);

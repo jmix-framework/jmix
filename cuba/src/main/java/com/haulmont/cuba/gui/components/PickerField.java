@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.data.NestedDatasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -60,11 +60,11 @@ import java.util.function.Supplier;
  * @deprecated Use {@link EntityPicker} instead
  */
 @Deprecated
-public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>, HasCaptionMode {
+public interface PickerField<V extends JmixEntity> extends Field<V>, EntityPicker<V>, HasCaptionMode {
 
     String NAME = "pickerField";
 
-    static <T extends Entity> TypeToken<PickerField<T>> of(Class<T> valueClass) {
+    static <T extends JmixEntity> TypeToken<PickerField<T>> of(Class<T> valueClass) {
         return new TypeToken<PickerField<T>>() {
         };
     }
@@ -178,7 +178,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
 
     abstract class StandardAction extends BaseAction implements PickerFieldAction {
 
-        protected PickerField<Entity> pickerField;
+        protected PickerField<JmixEntity> pickerField;
 
         protected boolean editable = true;
 
@@ -405,8 +405,8 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                 return;
             }
 
-            Entity item = (Entity) items.iterator().next();
-            Entity newValue = transformValueFromLookupWindow(item);
+            JmixEntity item = (JmixEntity) items.iterator().next();
+            JmixEntity newValue = transformValueFromLookupWindow(item);
 
             if (pickerField instanceof LookupPickerField) {
                 LookupPickerField lookupPickerField = (LookupPickerField) pickerField;
@@ -443,7 +443,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
          * @param valueFromLookupWindow value selected in Lookup window.
          * @return value that will be set to PickerField
          */
-        public Entity transformValueFromLookupWindow(Entity valueFromLookupWindow) {
+        public JmixEntity transformValueFromLookupWindow(JmixEntity valueFromLookupWindow) {
             return valueFromLookupWindow;
         }
 
@@ -510,7 +510,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
         @Override
         public void actionPerform(Component component) {
             if (pickerField.isEditable()) {
-                Entity value = pickerField.getValue();
+                JmixEntity value = pickerField.getValue();
 
                 EntityValueSource entityValueSource = (EntityValueSource) pickerField.getValueSource();
                 if (value != null
@@ -639,7 +639,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                         && metaPropertyPath.getMetaProperty().getType() == MetaProperty.Type.COMPOSITION;
             }
 
-            Entity entity = getEntity();
+            JmixEntity entity = getEntity();
             if (entity == null && composition) {
                 entity = initEntity();
             }
@@ -720,16 +720,16 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
             return resultParams;
         }
 
-        protected Entity getEntity() {
+        protected JmixEntity getEntity() {
             return pickerField.getValue();
         }
 
-        protected Entity initEntity() {
+        protected JmixEntity initEntity() {
             EntityValueSource entityValueSource = (EntityValueSource) pickerField.getValueSource();
-            Entity entity = AppBeans.get(Metadata.class).create(
+            JmixEntity entity = AppBeans.get(Metadata.class).create(
                     entityValueSource.getMetaPropertyPath().getMetaProperty().getRange().asClass());
 
-            Entity ownerEntity = entityValueSource.getItem();
+            JmixEntity ownerEntity = entityValueSource.getItem();
             MetaProperty inverseProp = entityValueSource.getMetaPropertyPath().getMetaProperty().getInverse();
             if (inverseProp != null) {
                 EntityValues.setValue(entity, inverseProp.getName(), ownerEntity);
@@ -739,7 +739,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
         }
 
         @SuppressWarnings("unchecked")
-        protected void afterCommitOpenedEntity(Entity item) {
+        protected void afterCommitOpenedEntity(JmixEntity item) {
             /*
             TODO: legacy-ui
             if (pickerField instanceof LookupField) {

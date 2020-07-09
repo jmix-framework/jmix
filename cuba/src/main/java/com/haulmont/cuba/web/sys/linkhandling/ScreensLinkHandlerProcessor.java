@@ -24,7 +24,7 @@ import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import com.haulmont.cuba.core.global.EntityLoadInfo;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Screens;
@@ -137,7 +137,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
             if (info == null) {
                 log.warn("Invalid item definition: {}", itemStr);
             } else {
-                Entity entity = loadEntityInstance(info);
+                JmixEntity entity = loadEntityInstance(info);
                 if (entity == null) {
                     throw new EntityAccessException();
                 }
@@ -172,7 +172,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
             String value = parts[1];
             EntityLoadInfo info = EntityLoadInfo.parse(value);
             if (info != null) {
-                Entity entity = loadEntityInstance(info);
+                JmixEntity entity = loadEntityInstance(info);
                 if (entity != null)
                     params.put(name, entity);
             } else if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value)) {
@@ -184,14 +184,14 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
         return params;
     }
 
-    protected Entity loadEntityInstance(EntityLoadInfo info) {
+    protected JmixEntity loadEntityInstance(EntityLoadInfo info) {
         if (info.isNewEntity()) {
             return metadata.create(info.getMetaClass());
         }
 
         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntityFromLink(info.getMetaClass());
         //noinspection unchecked
-        LoadContext<Entity> ctx = new LoadContext(info.getMetaClass());
+        LoadContext<JmixEntity> ctx = new LoadContext(info.getMetaClass());
         ctx.setQueryString(format("select e from %s e where e.%s = :entityId", info.getMetaClass().getName(), pkName))
                 .setParameter("entityId", info.getId());
         if (info.getViewName() != null) {
@@ -202,7 +202,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
                 log.warn("Unable to find view \"{}\" for entity \"{}\"", info.getViewName(), info.getMetaClass());
             }
         }
-        Entity entity;
+        JmixEntity entity;
         try {
             entity = dataService.load(ctx);
         } catch (Exception e) {

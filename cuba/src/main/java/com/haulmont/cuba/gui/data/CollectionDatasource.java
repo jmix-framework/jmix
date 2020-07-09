@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.filter.QueryFilter;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -38,7 +38,7 @@ import java.util.Map;
  * @deprecated Use {@link CollectionContainer} APIs instead.
  */
 @Deprecated
-public interface CollectionDatasource<T extends Entity, K> extends Datasource<T> {
+public interface CollectionDatasource<T extends JmixEntity, K> extends Datasource<T> {
 
     /**
      * @return item by ID, can be null
@@ -112,7 +112,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
 
     /**
      * Suspend invocation of {@code collectionChanged} method of registered {@link CollectionChangeListener}s.
-     * It makes sense in case of massive updates of the datasource by {@link #addItem(Entity)}
+     * It makes sense in case of massive updates of the datasource by {@link #addItem(JmixEntity)}
      * or similar methods.
      * After that, {@code collectionChanged} will be invoked once on {@link #resumeListeners()} call.
      * <br>Usage example:
@@ -276,7 +276,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Ordered<T extends Entity, K> extends CollectionDatasource<T, K> {
+    interface Ordered<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
         @Nullable
         K firstItemId();
 
@@ -304,7 +304,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
         void includeItemFirst(T item);
     }
 
-    interface Indexed<T extends Entity, K> extends Ordered<T, K> {
+    interface Indexed<T extends JmixEntity, K> extends Ordered<T, K> {
         int indexOfId(K itemId);
 
         @Nullable
@@ -319,7 +319,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Sortable<T extends Entity, K> extends Ordered<T, K> {
+    interface Sortable<T extends JmixEntity, K> extends Ordered<T, K> {
 
         /**
          * Sort order
@@ -386,14 +386,14 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
     /**
      * Sorts items in-memory after DB sorting
      */
-    interface SortDelegate<T extends Entity, K> {
+    interface SortDelegate<T extends JmixEntity, K> {
         void sort(List<T> entities, Sortable.SortInfo<MetaPropertyPath>[] sortInfo);
     }
 
     /**
      * Set ability to override in-memory sorting in CollectionDatasource
      */
-    interface SupportsSortDelegate<T extends Entity, K> {
+    interface SupportsSortDelegate<T extends JmixEntity, K> {
         void setSortDelegate(SortDelegate<T, K> sortDelegate);
     }
 
@@ -403,7 +403,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Aggregatable<T extends Entity, K> extends CollectionDatasource<T, K> {
+    interface Aggregatable<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
 
         /**
          * Perform aggregation and return map with formatted string values.
@@ -431,7 +431,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface Lazy<T extends Entity, K> extends CollectionDatasource<T, K> {
+    interface Lazy<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
 
         boolean isCompletelyLoaded();
     }
@@ -442,7 +442,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
      * @param <T> type of entity
      * @param <K> type of entity ID
      */
-    interface SupportsPaging<T extends Entity, K> extends CollectionDatasource<T, K> {
+    interface SupportsPaging<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
 
         /**
          * Returns count of records in database for the current query and filter
@@ -462,7 +462,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
      * When it is in suspended state, it doesn't actually refresh on refreshIfNotSuspended() calls, but refreshes
      * once after switch to not suspended.
      */
-    interface Suspendable<T extends Entity, K> extends CollectionDatasource<T, K> {
+    interface Suspendable<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
 
         boolean isSuspended();
 
@@ -476,7 +476,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
     /**
      * CollectionDatasource that supports applying filter to previously selected data.
      */
-    interface SupportsApplyToSelected<T extends Entity, K> extends CollectionDatasource<T, K> {
+    interface SupportsApplyToSelected<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
 
         void pinQuery();
 
@@ -499,7 +499,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
         NEVER
     }
 
-    interface SupportsRefreshMode<T extends Entity, K> extends CollectionDatasource<T, K> {
+    interface SupportsRefreshMode<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
         RefreshMode getRefreshMode();
 
         void setRefreshMode(RefreshMode refreshMode);
@@ -516,7 +516,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
         UPDATE
     }
 
-    class CollectionChangeEvent<T extends Entity, K> {
+    class CollectionChangeEvent<T extends JmixEntity, K> {
         private final CollectionDatasource<T, K> ds;
         private final Operation operation;
         private final List<T> items;
@@ -551,7 +551,7 @@ public interface CollectionDatasource<T extends Entity, K> extends Datasource<T>
     }
 
     @FunctionalInterface
-    interface CollectionChangeListener<T extends Entity, K> {
+    interface CollectionChangeListener<T extends JmixEntity, K> {
         /**
          * Enclosed collection changed.
          */

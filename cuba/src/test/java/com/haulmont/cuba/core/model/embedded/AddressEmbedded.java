@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.embedded;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import com.haulmont.chile.core.annotations.NamePattern;
 
@@ -26,7 +26,7 @@ import javax.persistence.Embeddable;
 @NamePattern("%s|index")
 @ModelObject(name = "test$AddressEmbedded")
 @Embeddable
-public class AddressEmbedded implements Entity {
+public class AddressEmbedded implements JmixEntity {
     private static final long serialVersionUID = 728993860314123316L;
 
     @Column(name = "STREET")

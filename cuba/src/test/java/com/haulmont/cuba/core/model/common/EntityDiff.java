@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.model.common;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.data.entity.BaseUuidEntity;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -42,9 +42,9 @@ public class EntityDiff extends BaseUuidEntity {
 
     private EntitySnapshot afterSnapshot;
 
-    private Entity beforeEntity;
+    private JmixEntity beforeEntity;
 
-    private Entity afterEntity;
+    private JmixEntity afterEntity;
 
     private List<EntityPropertyDiff> propertyDiffs = new ArrayList<>();
 
@@ -76,19 +76,19 @@ public class EntityDiff extends BaseUuidEntity {
         this.afterSnapshot = afterSnapshot;
     }
 
-    public Entity getBeforeEntity() {
+    public JmixEntity getBeforeEntity() {
         return beforeEntity;
     }
 
-    public void setBeforeEntity(Entity beforeEntity) {
+    public void setBeforeEntity(JmixEntity beforeEntity) {
         this.beforeEntity = beforeEntity;
     }
 
-    public Entity getAfterEntity() {
+    public JmixEntity getAfterEntity() {
         return afterEntity;
     }
 
-    public void setAfterEntity(Entity afterEntity) {
+    public void setAfterEntity(JmixEntity afterEntity) {
         this.afterEntity = afterEntity;
     }
 

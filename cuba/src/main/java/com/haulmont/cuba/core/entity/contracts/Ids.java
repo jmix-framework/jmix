@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.entity.contracts;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @param <T> type of entity
  */
-public final class Ids<T extends Entity, K> extends ArrayList<Id<T, K>> {
+public final class Ids<T extends JmixEntity, K> extends ArrayList<Id<T, K>> {
 
     /**
      * @param entities entity instances
@@ -39,7 +39,7 @@ public final class Ids<T extends Entity, K> extends ArrayList<Id<T, K>> {
      * @param <T>      entity type
      * @return list of ids of the passed entities
      */
-    public static <T extends Entity, K> Ids<T, K> of(Collection<T> entities) {
+    public static <T extends JmixEntity, K> Ids<T, K> of(Collection<T> entities) {
         Ids<T, K> ids = new Ids<>();
 
         for (T entity : entities) {
@@ -60,7 +60,7 @@ public final class Ids<T extends Entity, K> extends ArrayList<Id<T, K>> {
      * @param <T>         entity type
      * @return list of ids of the passed entities
      */
-    public static <T extends Entity, K> Ids<T, K> of(Class<T> entityClass, Collection<K> values) {
+    public static <T extends JmixEntity, K> Ids<T, K> of(Class<T> entityClass, Collection<K> values) {
         Ids<T, K> ids = new Ids<>();
 
         for (K value : values) {
@@ -88,7 +88,7 @@ public final class Ids<T extends Entity, K> extends ArrayList<Id<T, K>> {
      * @param <T> type of entity
      * @return list of entity keys
      */
-    public static <T extends Entity, K> List<K> getValues(List<Id<T, K>> ids) {
+    public static <T extends JmixEntity, K> List<K> getValues(List<Id<T, K>> ids) {
         return ids.stream()
                 .map(Id::getValue)
                 .collect(Collectors.toList());

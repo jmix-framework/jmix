@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  * @param <K> type of entity ID
  */
 @Deprecated
-public abstract class AbstractCollectionDatasource<T extends Entity, K>
+public abstract class AbstractCollectionDatasource<T extends JmixEntity, K>
         extends DatasourceImpl<T>
         implements CollectionDatasource<T, K>,
         CollectionDatasource.SupportsRefreshMode<T, K> {
@@ -224,7 +224,7 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
                     }
 
                     if (datasource.getState() == State.VALID) {
-                        final Entity item = datasource.getItem();
+                        final JmixEntity item = datasource.getItem();
                         if (elements.length > 1) {
                             String[] valuePath = ArrayUtils.subarray(elements, 1, elements.length);
                             String propertyName = ObjectPathUtils.formatValuePath(valuePath);
@@ -247,7 +247,7 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
                         Map<String, Object> windowParams = dsContext.getFrameContext().getParams();
                         value = windowParams.get(path);
                         if (value == null && elements.length > 1) {
-                            Entity entity = (Entity) windowParams.get(elements[0]);
+                            JmixEntity entity = (JmixEntity) windowParams.get(elements[0]);
                             if (entity != null) {
                                 String[] valuePath = ArrayUtils.subarray(elements, 1, elements.length);
                                 String propertyName = ObjectPathUtils.formatValuePath(valuePath);
@@ -302,8 +302,8 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
                         String[] pathElements = info.getPath().split("\\.");
                         if (pathElements.length > 1) {
                             Object entity = params.get(pathElements[0]);
-                            if (entity instanceof Entity) {
-                                value = EntityValues.getValueEx((Entity) entity, Arrays.copyOfRange(pathElements, 1, pathElements.length));
+                            if (entity instanceof JmixEntity) {
+                                value = EntityValues.getValueEx((JmixEntity) entity, Arrays.copyOfRange(pathElements, 1, pathElements.length));
                             }
                         }
                     }
@@ -480,17 +480,17 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
             DataSupplier supplier = getDataSupplier();
 
             CommitContext context = new CommitContext();
-            for (Entity entity : itemsToCreate) {
+            for (JmixEntity entity : itemsToCreate) {
                 context.addInstanceToCommit(entity, view);
             }
-            for (Entity entity : itemsToUpdate) {
+            for (JmixEntity entity : itemsToUpdate) {
                 context.addInstanceToCommit(entity, view);
             }
-            for (Entity entity : itemsToDelete) {
+            for (JmixEntity entity : itemsToDelete) {
                 context.addInstanceToRemove(entity);
             }
 
-            Set<Entity> committed = supplier.commit(context);
+            Set<JmixEntity> committed = supplier.commit(context);
 
             committed(committed);
         } else {
@@ -580,7 +580,7 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
      * @return number of rows. In case of error returns 0 and sets {@link #dataLoadError} field to the exception object
      */
     public int getCount() {
-        LoadContext<Entity> context = new LoadContext<>(metaClass);
+        LoadContext<JmixEntity> context = new LoadContext<>(metaClass);
         LoadContext.Query q = (LoadContext.Query) createDataQuery(context, savedParameters == null ? Collections.emptyMap() : savedParameters);
         context.setSoftDeletion(isSoftDeletion());
         if (q == null)

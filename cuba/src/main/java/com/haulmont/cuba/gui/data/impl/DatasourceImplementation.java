@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -27,7 +27,7 @@ import java.util.Set;
  * Common internal methods of datasources.
  */
 @Deprecated
-public interface DatasourceImplementation<T extends Entity> extends Datasource<T> {
+public interface DatasourceImplementation<T extends JmixEntity> extends Datasource<T> {
 
     /**
      * Moves the datasource to {@link State#INVALID}.
@@ -97,7 +97,7 @@ public interface DatasourceImplementation<T extends Entity> extends Datasource<T
      * Invoked after commit.
      * @param entities  committed entities returned from middleware
      */
-    void committed(Set<Entity> entities);
+    void committed(Set<JmixEntity> entities);
 
     /**
      * Enables or disables datasource listeners.

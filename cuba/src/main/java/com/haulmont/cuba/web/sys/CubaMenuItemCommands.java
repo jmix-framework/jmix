@@ -17,7 +17,7 @@
 package com.haulmont.cuba.web.sys;
 
 import com.google.common.collect.ImmutableMap;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import com.haulmont.cuba.core.global.EntityLoadInfo;
 import io.jmix.ui.WindowInfo;
@@ -80,7 +80,7 @@ public class CubaMenuItemCommands extends MenuItemCommands {
         return builder.build();
     }
 
-    protected Entity loadEntityInstance(EntityLoadInfo info) {
+    protected JmixEntity loadEntityInstance(EntityLoadInfo info) {
         LoadContext ctx = new LoadContext(info.getMetaClass()).setId(info.getId());
         if (info.getFetchPlanName() != null) {
             ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(info.getMetaClass(), info.getFetchPlanName()));

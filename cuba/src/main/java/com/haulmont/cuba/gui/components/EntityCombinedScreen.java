@@ -8,7 +8,7 @@ import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
@@ -109,7 +109,7 @@ public class EntityCombinedScreen extends AbstractLookup {
 
         browseDs.addItemChangeListener(e -> {
             if (e.getItem() != null) {
-                Entity reloadedItem = getDsContext().getDataSupplier().reload(
+                JmixEntity reloadedItem = getDsContext().getDataSupplier().reload(
                         e.getDs().getItem(), editDs.getView(), null, e.getDs().getLoadDynamicAttributes());
                 editDs.setItem(reloadedItem);
             }
@@ -125,7 +125,7 @@ public class EntityCombinedScreen extends AbstractLookup {
         table.addAction(new CreateAction(table) {
             @SuppressWarnings("unchecked")
             @Override
-            protected void internalOpenEditor(CollectionDatasource datasource, Entity newItem, Datasource parentDs, Map<String, Object> params) {
+            protected void internalOpenEditor(CollectionDatasource datasource, JmixEntity newItem, Datasource parentDs, Map<String, Object> params) {
                 initNewItem(newItem);
                 table.setSelected(Collections.emptyList());
                 getFieldGroup().getDatasource().setItem(newItem);
@@ -141,7 +141,7 @@ public class EntityCombinedScreen extends AbstractLookup {
      * before setting it into the datasource.
      * @param item  new entity instance
      */
-    protected void initNewItem(Entity item) {
+    protected void initNewItem(JmixEntity item) {
     }
 
     /**
@@ -153,14 +153,14 @@ public class EntityCombinedScreen extends AbstractLookup {
             @Override
             public void actionPerform(Component component) {
                 if (table.getSelected().size() == 1) {
-                    if (lockIfNeeded((Entity) table.getSelected().iterator().next())) {
+                    if (lockIfNeeded((JmixEntity) table.getSelected().iterator().next())) {
                         super.actionPerform(component);
                     }
                 }
             }
 
             @Override
-            protected void internalOpenEditor(CollectionDatasource datasource, Entity existingItem, Datasource parentDs, Map<String, Object> params) {
+            protected void internalOpenEditor(CollectionDatasource datasource, JmixEntity existingItem, Datasource parentDs, Map<String, Object> params) {
                 refreshOptionsForLookupFields();
                 enableEditControls(false);
             }
@@ -191,7 +191,7 @@ public class EntityCombinedScreen extends AbstractLookup {
     /**
      * Pessimistic lock before start of editing, if it is configured for the entity.
      */
-    protected boolean lockIfNeeded(Entity entity) {
+    protected boolean lockIfNeeded(JmixEntity entity) {
         MetaClass metaClass = getMetaClassForLocking(entity);
 
         LockInfo lockInfo = getBeanLocator().get(LockService.class).lock(metaClass.getName(), EntityValues.getId(entity).toString());
@@ -217,7 +217,7 @@ public class EntityCombinedScreen extends AbstractLookup {
     protected void releaseLock() {
         if (justLocked) {
             Datasource ds = getFieldGroup().getDatasource();
-            Entity entity = ds.getItem();
+            JmixEntity entity = ds.getItem();
             if (entity != null) {
                 MetaClass metaClass = getMetaClassForLocking(entity);
                 getBeanLocator().get(LockService.class).unlock(metaClass.getName(), EntityValues.getId(entity).toString());
@@ -225,7 +225,7 @@ public class EntityCombinedScreen extends AbstractLookup {
         }
     }
 
-    protected MetaClass getMetaClassForLocking(Entity item) {
+    protected MetaClass getMetaClassForLocking(JmixEntity item) {
         Metadata metadata = getBeanLocator().get(Metadata.NAME);
         // lock original metaClass, if any, because by convention all the configuration is based on original entities
         MetaClass metaClass = getBeanLocator().get(ExtendedEntities.class).getOriginalMetaClass(metadata.getClass(item));
@@ -344,7 +344,7 @@ public class EntityCombinedScreen extends AbstractLookup {
 
         ListComponent table = getTable();
         CollectionDatasource browseDs = table.getDatasource();
-        Entity editedItem = getFieldGroup().getDatasource().getItem();
+        JmixEntity editedItem = getFieldGroup().getDatasource().getItem();
         if (creating) {
             browseDs.includeItem(editedItem);
         } else {
@@ -364,9 +364,9 @@ public class EntityCombinedScreen extends AbstractLookup {
         CollectionDatasource browseDs = getTable().getDatasource();
         Datasource editDs = getFieldGroup().getDatasource();
 
-        Entity selectedItem = browseDs.getItem();
+        JmixEntity selectedItem = browseDs.getItem();
         if (selectedItem != null) {
-            Entity reloadedItem = getDsContext().getDataSupplier().reload(
+            JmixEntity reloadedItem = getDsContext().getDataSupplier().reload(
                     selectedItem, editDs.getView(), null, editDs.getLoadDynamicAttributes());
             browseDs.setItem(reloadedItem);
         } else {

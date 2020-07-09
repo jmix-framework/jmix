@@ -16,14 +16,14 @@
 package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.global.impl.EntityListenerUtils;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.sql.Connection;
 
 /**
  * Defines the contract for handling entities after they have been inserted into DB.
  */
-public interface AfterInsertEntityListener<T extends Entity> extends io.jmix.data.listener.AfterInsertEntityListener<T> {
+public interface AfterInsertEntityListener<T extends JmixEntity> extends io.jmix.data.listener.AfterInsertEntityListener<T> {
 
     /**
      * Executes after the object has been inserted into DB.

@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global.impl;
 import com.haulmont.cuba.core.app.events.AttributeChanges;
 import com.haulmont.cuba.core.app.events.EntityChangedEvent;
 import com.haulmont.cuba.core.entity.contracts.Id;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Events;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -31,8 +31,8 @@ public class CubaEntityChangedEventManager {
     private Events eventPublisher;
 
     @EventListener
-    public void handleEvent(io.jmix.data.event.EntityChangedEvent<? extends Entity> event) {
-        io.jmix.core.Id<? extends Entity> entityId = event.getEntityId();
+    public void handleEvent(io.jmix.data.event.EntityChangedEvent<? extends JmixEntity> event) {
+        io.jmix.core.Id<? extends JmixEntity> entityId = event.getEntityId();
         eventPublisher.publish(new EntityChangedEvent<>(event.getSource(),
                 Id.of(entityId.getValue(), entityId.getEntityClass()),
                 resolveType(event.getType()),

@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class DatasourceTreeItems<E extends Entity, K> implements EntityTreeItems<E> {
+public class DatasourceTreeItems<E extends JmixEntity, K> implements EntityTreeItems<E> {
 
     protected HierarchicalDatasource<E, K> datasource;
     protected EventHub events = new EventHub();

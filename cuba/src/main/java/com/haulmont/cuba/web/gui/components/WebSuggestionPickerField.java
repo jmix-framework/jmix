@@ -18,11 +18,11 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.SuggestionPickerField;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.impl.WebEntitySuggestionField;
 
 @Deprecated
-public class WebSuggestionPickerField<V extends Entity> extends WebEntitySuggestionField<V>
+public class WebSuggestionPickerField<V extends JmixEntity> extends WebEntitySuggestionField<V>
         implements SuggestionPickerField<V> {
 
     @Deprecated

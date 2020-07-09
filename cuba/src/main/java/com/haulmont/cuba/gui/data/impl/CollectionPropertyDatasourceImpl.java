@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.google.common.collect.Iterables;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -43,7 +43,7 @@ import java.util.*;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class CollectionPropertyDatasourceImpl<T extends Entity, K>
+public class CollectionPropertyDatasourceImpl<T extends JmixEntity, K>
         extends
         PropertyDatasourceImpl<T>
         implements
@@ -134,14 +134,14 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
     protected void reattachListeners(Collection prevColl, Collection coll) {
         if (prevColl != null)
             for (Object entity : prevColl) {
-                if (entity instanceof Entity)
-                    detachListener((Entity) entity);
+                if (entity instanceof JmixEntity)
+                    detachListener((JmixEntity) entity);
             }
 
         if (coll != null)
             for (Object entity : coll) {
-                if (entity instanceof Entity)
-                    attachListener((Entity) entity);
+                if (entity instanceof JmixEntity)
+                    attachListener((JmixEntity) entity);
             }
     }
 
@@ -270,7 +270,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
                 || !security.isEntityAttrPermitted(parentMetaClass, metaProperty.getName(), EntityAttrAccess.VIEW)) {
             return new ArrayList<>(); // Don't use Collections.emptyList() to avoid confusing UnsupportedOperationExceptions
         } else {
-            final Entity master = masterDs.getItem();
+            final JmixEntity master = masterDs.getItem();
             //noinspection unchecked
             return master == null ? null : (Collection<T>) EntityValues.getValue(master, metaProperty.getName());
         }
@@ -320,10 +320,10 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
                 // Last chance to find and set a master item
                 MetaProperty inverseProp = metaProperty.getInverse();
                 if (inverseProp != null) {
-                    Entity probableMasterItem = EntityValues.getValue(item, inverseProp.getName());
+                    JmixEntity probableMasterItem = EntityValues.getValue(item, inverseProp.getName());
                     if (probableMasterItem != null) {
-                        Collection<Entity> masterCollection = ((CollectionPropertyDatasourceImpl) masterDs).getCollection();
-                        for (Entity masterCollectionItem : masterCollection) {
+                        Collection<JmixEntity> masterCollection = ((CollectionPropertyDatasourceImpl) masterDs).getCollection();
+                        for (JmixEntity masterCollectionItem : masterCollection) {
                             if (masterCollectionItem.equals(probableMasterItem)) {
                                 masterDs.setItem(masterCollectionItem);
                                 break;
@@ -351,7 +351,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
 
         modified = true;
         if (cascadeProperty) {
-            final Entity parentItem = masterDs.getItem();
+            final JmixEntity parentItem = masterDs.getItem();
             ((DatasourceImplementation) masterDs).modified(parentItem);
         }
         if (metaProperty != null && metaProperty.getRange() != null && metaProperty.getRange().getCardinality() != null
@@ -398,7 +398,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
     }
 
     protected void initCollection() {
-        Entity item = masterDs.getItem();
+        JmixEntity item = masterDs.getItem();
         if (item == null)
             throw new IllegalStateException("Item is null");
 
@@ -441,7 +441,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
 
             modified = true;
             if (cascadeProperty) {
-                final Entity parentItem = masterDs.getItem();
+                final JmixEntity parentItem = masterDs.getItem();
                 //noinspection unchecked
                 ((DatasourceImplementation) masterDs).modified(parentItem);
             } else {
@@ -581,7 +581,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
 
                     modified = true;
                     if (cascadeProperty) {
-                        final Entity parentItem = masterDs.getItem();
+                        final JmixEntity parentItem = masterDs.getItem();
                         //noinspection unchecked
                         ((DatasourceImplementation) masterDs).modified(parentItem);
                     } else {
@@ -754,14 +754,14 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void committed(Set<Entity> entities) {
+    public void committed(Set<JmixEntity> entities) {
         if (!State.VALID.equals(masterDs.getState()))
             return;
 
         Collection<T> collection = getCollection();
         if (collection != null) {
             for (T item : new ArrayList<>(collection)) {
-                for (Entity entity : entities) {
+                for (JmixEntity entity : entities) {
                     if (entity.equals(item)) {
                         if (collection instanceof List) {
                             List list = (List) collection;
@@ -780,7 +780,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
             }
         }
 
-        for (Entity entity : entities) {
+        for (JmixEntity entity : entities) {
             if (entity.equals(item)) {
                 item = (T) entity;
             }

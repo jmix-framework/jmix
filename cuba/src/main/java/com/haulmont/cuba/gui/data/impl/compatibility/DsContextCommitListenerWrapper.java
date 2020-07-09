@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.data.impl.compatibility;
 
 import com.haulmont.cuba.core.global.CommitContext;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.gui.data.DsContext;
 
 import java.util.Set;
@@ -32,7 +32,7 @@ public class DsContextCommitListenerWrapper implements DsContext.BeforeCommitLis
     }
 
     @Override
-    public void afterCommit(CommitContext context, Set<Entity> result) {
+    public void afterCommit(CommitContext context, Set<JmixEntity> result) {
         commitListener.afterCommit(context, result);
     }
 

@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.model.common.PermissionType;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
@@ -192,10 +192,10 @@ public class UpdateDetachedTest {
         p.setTarget("newTarget");
 
         CommitContext commitCtx = new CommitContext(Collections.singleton(p));
-        Set<Entity> entities = dataManager.commit(commitCtx);
+        Set<JmixEntity> entities = dataManager.commit(commitCtx);
 
         Permission result = null;
-        for (Entity entity : entities) {
+        for (JmixEntity entity : entities) {
             if (entity.equals(p))
                 result = (Permission) entity;
         }

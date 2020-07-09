@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.data.PropertyDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -149,7 +149,7 @@ public class ExcludeAction extends RemoveAction
         }
 
         @SuppressWarnings("unchecked")
-        Set<Entity> selected = target.getSelected();
+        Set<JmixEntity> selected = target.getSelected();
         if (!selected.isEmpty()) {
             if (confirm) {
                 confirmAndRemove(selected);
@@ -166,7 +166,7 @@ public class ExcludeAction extends RemoveAction
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void doRemove(Set<Entity> selected, boolean autocommit) {
+    protected void doRemove(Set<JmixEntity> selected, boolean autocommit) {
         CollectionDatasource ds = target.getDatasource();
         if (ds instanceof NestedDatasource) {
             // Clear reference to master entity
@@ -180,7 +180,7 @@ public class ExcludeAction extends RemoveAction
                     Class inversePropClass = extendedEntities.getEffectiveClass(inverseProp.getDomain());
                     Class dsClass = extendedEntities.getEffectiveClass(ds.getMetaClass());
                     if (inversePropClass.isAssignableFrom(dsClass)) {
-                        for (Entity item : selected) {
+                        for (JmixEntity item : selected) {
                             EntityValues.setValue(item, inverseProp.getName(), null);
                         }
                     }
@@ -188,7 +188,7 @@ public class ExcludeAction extends RemoveAction
             }
         }
 
-        for (Entity item : selected) {
+        for (JmixEntity item : selected) {
             ds.modifyItem(item);
             ds.excludeItem(item);
         }

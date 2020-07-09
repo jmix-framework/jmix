@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.gui.data.GroupInfo;
 
@@ -32,7 +32,7 @@ import java.util.List;
  * @deprecated Use {@link io.jmix.ui.model.CollectionContainer} APIs instead.
  */
 @Deprecated
-public interface GroupDatasource<T extends Entity, K> extends CollectionDatasource<T, K> {
+public interface GroupDatasource<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
     /**
      * Perform grouping by the list of properties
      */

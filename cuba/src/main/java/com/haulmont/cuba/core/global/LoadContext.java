@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.global;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * <p>
  * Instead of using this class directly, consider fluent interface with the entry point in {@link DataManager#load(Class)}.
  */
-public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
+public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<E> {
 
     private static final long serialVersionUID = 6022448642011883513L;
 
@@ -51,7 +51,7 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
      *
      * @param entityClass   class of the loaded entities
      */
-    public static <E extends Entity> LoadContext<E> create(Class<E> entityClass) {
+    public static <E extends JmixEntity> LoadContext<E> create(Class<E> entityClass) {
         return new LoadContext<>(entityClass);
     }
 

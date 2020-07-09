@@ -19,7 +19,7 @@ import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.gui.data.DataSupplier;
@@ -33,57 +33,57 @@ public class GenericDataSupplier implements DataSupplier {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E extends Entity> E newInstance(MetaClass metaClass) {
+    public <E extends JmixEntity> E newInstance(MetaClass metaClass) {
         return (E) getMetadata().create(metaClass);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, String fetchPlanName) {
+    public <E extends JmixEntity> E reload(E entity, String fetchPlanName) {
         return getDataManager().reload(entity, fetchPlanName);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan) {
+    public <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan) {
         return getDataManager().reload(entity, fetchPlan);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass) {
+    public <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass) {
         return getDataManager().reload(entity, fetchPlan, metaClass);
     }
 
     @Override
-    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
+    public <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
         return getDataManager().reload(entity, fetchPlan, metaClass, loadDynamicAttributes);
     }
 
     @Override
-    public <E extends Entity> E commit(E instance, @Nullable FetchPlan fetchPlan) {
+    public <E extends JmixEntity> E commit(E instance, @Nullable FetchPlan fetchPlan) {
         return getDataManager().commit(instance, fetchPlan);
     }
 
     @Override
-    public <E extends Entity> E commit(E entity, @Nullable String fetchPlanName) {
+    public <E extends JmixEntity> E commit(E entity, @Nullable String fetchPlanName) {
         return getDataManager().commit(entity, fetchPlanName);
     }
 
     @Override
-    public <E extends Entity> E commit(E instance) {
+    public <E extends JmixEntity> E commit(E instance) {
         return getDataManager().commit(instance);
     }
 
     @Override
-    public EntitySet commit(Entity... entities) {
+    public EntitySet commit(JmixEntity... entities) {
         return getDataManager().commit(entities);
     }
 
     @Override
-    public void remove(Entity entity) {
+    public void remove(JmixEntity entity) {
         getDataManager().remove(entity);
     }
 
     @Override
-    public <T extends Entity, K> void remove(Id<T, K> entityId) {
+    public <T extends JmixEntity, K> void remove(Id<T, K> entityId) {
         getDataManager().remove(entityId);
     }
 
@@ -103,12 +103,12 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
+    public <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
         return getDataManager().load(entityClass);
     }
 
     @Override
-    public <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
+    public <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
         return getDataManager().load(entityId);
     }
 
@@ -123,17 +123,17 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     @Override
-    public <T extends Entity> T create(Class<T> entityClass) {
+    public <T extends JmixEntity> T create(Class<T> entityClass) {
         return getDataManager().create(entityClass);
     }
 
     @Override
-    public <T extends Entity, K> T getReference(Class<T> entityClass, K id) {
+    public <T extends JmixEntity, K> T getReference(Class<T> entityClass, K id) {
         return getDataManager().getReference(entityClass, id);
     }
 
     @Override
-    public <T extends Entity, K> T getReference(Id<T, K> entityId) {
+    public <T extends JmixEntity, K> T getReference(Id<T, K> entityId) {
         return null;
     }
 
@@ -144,18 +144,18 @@ public class GenericDataSupplier implements DataSupplier {
 
     @Override
     @Nullable
-    public <E extends Entity> E load(LoadContext<E> context) {
+    public <E extends JmixEntity> E load(LoadContext<E> context) {
         return getDataManager().load(context);
     }
 
     @Override
     @Nonnull
-    public <E extends Entity> List<E> loadList(LoadContext<E> context) {
+    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
         return getDataManager().loadList(context);
     }
 
     @Override
-    public long getCount(LoadContext<? extends Entity> context) {
+    public long getCount(LoadContext<? extends JmixEntity> context) {
         return getDataManager().getCount(context);
     }
 

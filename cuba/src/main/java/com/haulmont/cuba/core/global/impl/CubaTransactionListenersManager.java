@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global.impl;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -57,14 +57,14 @@ public class CubaTransactionListenersManager implements
     }
 
     @Override
-    public void beforeCommit(String storeName, Collection<Entity> managedEntities) {
+    public void beforeCommit(String storeName, Collection<JmixEntity> managedEntities) {
         for (BeforeCommitTransactionListener listener : beforeCommitTxListeners) {
             listener.beforeCommit(persistence.getEntityManager(storeName), managedEntities);
         }
     }
 
     @Override
-    public void afterComplete(boolean committed, Collection<Entity> detachedEntities) {
+    public void afterComplete(boolean committed, Collection<JmixEntity> detachedEntities) {
         for (AfterCompleteTransactionListener listener : afterCompleteTxListeners) {
             listener.afterComplete(committed, detachedEntities);
         }

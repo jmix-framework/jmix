@@ -17,13 +17,13 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.global.impl.EntityListenerUtils;
 import com.haulmont.cuba.core.EntityManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Defines the contract for handling of entities before they have been updated in DB.
  *
  */
-public interface BeforeUpdateEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeUpdateEntityListener<T> {
+public interface BeforeUpdateEntityListener<T extends JmixEntity> extends io.jmix.data.listener.BeforeUpdateEntityListener<T> {
 
     /**
      * Executes before the object has been updated in DB.

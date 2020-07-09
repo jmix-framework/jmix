@@ -70,18 +70,18 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public void persist(Entity entity) {
+    public void persist(JmixEntity entity) {
         delegate.persist(entity);
     }
 
     @Override
-    public <T extends Entity> T merge(T entity) {
+    public <T extends JmixEntity> T merge(T entity) {
         return delegate.merge(entity);
     }
 
     @Override
     @Deprecated
-    public <T extends Entity> T merge(T entity, @Nullable FetchPlan fetchPlan) {
+    public <T extends JmixEntity> T merge(T entity, @Nullable FetchPlan fetchPlan) {
         T managed = merge(entity);
         if (fetchPlan != null) {
             metadataTools.traverseAttributesByView(fetchPlan, managed, (e, p) -> { /* do nothing, just fetch */ });
@@ -91,7 +91,7 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     @Deprecated
-    public <T extends Entity> T merge(T entity, @Nullable String fetchPlanName) {
+    public <T extends JmixEntity> T merge(T entity, @Nullable String fetchPlanName) {
         if (fetchPlanName != null) {
             return merge(entity, fetchPlanRepository.getFetchPlan(entity.getClass(), fetchPlanName));
         } else {
@@ -100,24 +100,24 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public void remove(Entity entity) {
+    public void remove(JmixEntity entity) {
         delegate.remove(entity);
     }
 
     @Override
-    public <T extends Entity, K> T find(Class<T> entityClass, K id) {
+    public <T extends JmixEntity, K> T find(Class<T> entityClass, K id) {
         return delegate.find(entityClass, id);
     }
 
     @Nullable
     @Override
-    public <T extends Entity, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans) {
+    public <T extends JmixEntity, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans) {
         return delegate.find(entityClass, id, PersistenceHints.builder().withFetchPlans(fetchPlans).build());
     }
 
     @Nullable
     @Override
-    public <T extends Entity, K> T find(Class<T> entityClass, K id, String... fetchPlanNames) {
+    public <T extends JmixEntity, K> T find(Class<T> entityClass, K id, String... fetchPlanNames) {
         FetchPlan[] fetchPlanArray = new FetchPlan[fetchPlanNames.length];
         for (int i = 0; i < fetchPlanNames.length; i++) {
             fetchPlanArray[i] = fetchPlanRepository.getFetchPlan(entityClass, fetchPlanNames[i]);
@@ -126,7 +126,7 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public <T extends Entity, K> T getReference(Class<T> clazz, K id) {
+    public <T extends JmixEntity, K> T getReference(Class<T> clazz, K id) {
         return delegate.getReference(clazz, id);
     }
 
@@ -170,7 +170,7 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public <T extends Entity> TypedQuery<T> createNativeQuery(String sql, Class<T> resultClass) {
+    public <T extends JmixEntity> TypedQuery<T> createNativeQuery(String sql, Class<T> resultClass) {
         TypedQuery<T> query = createQueryInstance(true, resultClass);
         query.setQueryString(sql);
         return query;
@@ -178,12 +178,12 @@ public class EntityManagerImpl implements EntityManager {
 
     @Override
     @Deprecated
-    public void fetch(Entity entity, FetchPlan fetchPlan) {
+    public void fetch(JmixEntity entity, FetchPlan fetchPlan) {
     }
 
     @Nullable
     @Override
-    public <T extends Entity, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames) {
+    public <T extends JmixEntity, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(id, "id is null");
 
@@ -194,15 +194,15 @@ public class EntityManagerImpl implements EntityManager {
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <T extends Entity> T reload(T entity, String... fetchPlanNames) {
+    public <T extends JmixEntity> T reload(T entity, String... fetchPlanNames) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
-        Entity resultEntity = find(entity.getClass(), EntityValues.getId(entity), fetchPlanNames);
+        JmixEntity resultEntity = find(entity.getClass(), EntityValues.getId(entity), fetchPlanNames);
         return (T) resultEntity;
     }
 
     @Override
-    public <T extends Entity> T reloadNN(T entity, String... fetchPlanNames) {
+    public <T extends JmixEntity> T reloadNN(T entity, String... fetchPlanNames) {
         T reloaded = reload(entity, fetchPlanNames);
         if (reloaded == null)
             throw new EntityNotFoundException("Entity " + entity + " has been deleted");
@@ -216,7 +216,7 @@ public class EntityManagerImpl implements EntityManager {
     }
 
     @Override
-    public void detach(Entity entity) {
+    public void detach(JmixEntity entity) {
         delegate.detach(entity);
     }
 

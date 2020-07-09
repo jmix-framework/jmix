@@ -19,7 +19,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -45,7 +45,7 @@ public class OriginalEntityLoadInfo extends EntityLoadInfo {
      * @param entity    entity instance
      * @return          info instance
      */
-    public static OriginalEntityLoadInfo create(Entity entity) {
+    public static OriginalEntityLoadInfo create(JmixEntity entity) {
         Objects.requireNonNull(entity, "entity is null");
 
         Metadata metadata = AppBeans.get(Metadata.NAME);

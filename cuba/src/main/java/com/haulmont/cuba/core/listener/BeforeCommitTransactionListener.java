@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.EntityManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 
@@ -36,5 +36,5 @@ public interface BeforeCommitTransactionListener {
      * @param entityManager     current {@code EntityManager}
      * @param managedEntities   current persistence context, i.e. a collection of entities in Managed state
      */
-    void beforeCommit(EntityManager entityManager, Collection<Entity> managedEntities);
+    void beforeCommit(EntityManager entityManager, Collection<JmixEntity> managedEntities);
 }

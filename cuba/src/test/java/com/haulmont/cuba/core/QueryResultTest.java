@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.testsupport.TestSupport;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -124,7 +124,7 @@ public class QueryResultTest {
         context.getPrevQueries().add(prevQuery);
         context.setQueryKey(111);
 
-        List<? extends Entity> entities = dataManager.loadList(context);
+        List<? extends JmixEntity> entities = dataManager.loadList(context);
         assertEquals(10, entities.size());
 
         List<Map<String, Object>> queryResults = getQueryResults();
@@ -134,7 +134,7 @@ public class QueryResultTest {
     @Test
     public void testThirdQuery() throws SQLException {
         LoadContext context;
-        List<Entity> entities;
+        List<JmixEntity> entities;
 
         context = new LoadContext(User.class).setFetchPlan(FetchPlan.LOCAL);
         LoadContext.Query query1 = context.setQueryString("select u from test$User u where u.email like :email")

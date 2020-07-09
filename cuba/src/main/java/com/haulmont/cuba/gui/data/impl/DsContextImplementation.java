@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.CommitContext;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.filter.ParameterInfo;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
@@ -42,5 +42,5 @@ public interface DsContextImplementation extends DsContext {
     void resumeSuspended();
 
     void fireBeforeCommit(CommitContext context);
-    void fireAfterCommit(CommitContext context, Set<Entity> committedEntities);
+    void fireAfterCommit(CommitContext context, Set<JmixEntity> committedEntities);
 }

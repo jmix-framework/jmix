@@ -19,7 +19,7 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.SearchPickerField;
 import com.vaadin.server.Resource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.event.Subscription;
@@ -51,7 +51,7 @@ import static io.jmix.ui.component.impl.WebComboBox.NULL_ITEM_ICON_GENERATOR;
 import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
 @Deprecated
-public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
+public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V>
         implements SearchPickerField<V>, SecuredActionsHolder {
 
     protected V nullOption;

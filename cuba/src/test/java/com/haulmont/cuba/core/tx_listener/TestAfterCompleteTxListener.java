@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.tx_listener;
 
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.EntityStates;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,7 +42,7 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
     private EntityStates entityStates;
 
     @Override
-    public void afterComplete(boolean committed, Collection<Entity> detachedEntities) {
+    public void afterComplete(boolean committed, Collection<JmixEntity> detachedEntities) {
         if (test != null) {
             switch (test) {
                 case "testCommit":
@@ -64,11 +64,11 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
         }
     }
 
-    private void testCommit(boolean committed, Collection<Entity> detachedEntities) {
+    private void testCommit(boolean committed, Collection<JmixEntity> detachedEntities) {
         assertTrue(committed);
 
         User user = null;
-        for (Entity entity : detachedEntities) {
+        for (JmixEntity entity : detachedEntities) {
             assertTrue(entityStates.isDetached(entity));
             if (entity instanceof User && ((User) entity).getLogin().startsWith("TxLstnrTst-1-"))
                 user = (User) entity;
@@ -80,11 +80,11 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
         }
     }
 
-    private void testRollback(boolean committed, Collection<Entity> detachedEntities) {
+    private void testRollback(boolean committed, Collection<JmixEntity> detachedEntities) {
         assertFalse(committed);
 
         User user = null;
-        for (Entity entity : detachedEntities) {
+        for (JmixEntity entity : detachedEntities) {
             if (entity instanceof User && ((User) entity).getLogin().startsWith("TxLstnrTst-1-"))
                 user = (User) entity;
         }
@@ -96,8 +96,8 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
         }
     }
 
-    private void testAccessName(boolean committed, Collection<Entity> detachedEntities) {
-        for (Entity entity : detachedEntities) {
+    private void testAccessName(boolean committed, Collection<JmixEntity> detachedEntities) {
+        for (JmixEntity entity : detachedEntities) {
             if (entity instanceof User) {
                 try {
                     System.out.println("User name: " + ((User) entity).getName());
@@ -108,8 +108,8 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
         }
     }
 
-    private void testAccessGroup(boolean committed, Collection<Entity> detachedEntities) {
-        for (Entity entity : detachedEntities) {
+    private void testAccessGroup(boolean committed, Collection<JmixEntity> detachedEntities) {
+        for (JmixEntity entity : detachedEntities) {
             if (entity instanceof User) {
                 try {
                     System.out.println("User group: " + ((User) entity).getGroup());
@@ -120,8 +120,8 @@ public class TestAfterCompleteTxListener implements AfterCompleteTransactionList
         }
     }
 
-    private void testAccessUserRoles(boolean committed, Collection<Entity> detachedEntities) {
-        for (Entity entity : detachedEntities) {
+    private void testAccessUserRoles(boolean committed, Collection<JmixEntity> detachedEntities) {
+        for (JmixEntity entity : detachedEntities) {
             if (entity instanceof User) {
                 try {
                     System.out.println("User roles size: " + ((User) entity).getUserRoles().size());

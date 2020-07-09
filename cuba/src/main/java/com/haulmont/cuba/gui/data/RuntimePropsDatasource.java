@@ -17,14 +17,14 @@
 
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
 
 import java.util.Collection;
 
 @Deprecated
-public interface RuntimePropsDatasource<T extends Entity> extends Datasource<T> {
+public interface RuntimePropsDatasource<T extends JmixEntity> extends Datasource<T> {
 
     Datasource getMainDs();
 

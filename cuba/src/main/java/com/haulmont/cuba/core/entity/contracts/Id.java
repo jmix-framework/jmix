@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.entity.contracts;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @param <T> entity type
  */
-public final class Id<T extends Entity, K> implements Serializable {
+public final class Id<T extends JmixEntity, K> implements Serializable {
     private final K id;
     private final Class<T> entityClass;
 
@@ -59,7 +59,7 @@ public final class Id<T extends Entity, K> implements Serializable {
      * @param <T>    entity type
      * @return Id of the passed entity
      */
-    public static <T extends Entity, K> Id<T, K> of(T entity) {
+    public static <T extends JmixEntity, K> Id<T, K> of(T entity) {
         checkNotNullArgument(entity);
         checkNotNullArgument(EntityValues.getId(entity));
 
@@ -75,7 +75,7 @@ public final class Id<T extends Entity, K> implements Serializable {
      * @return Id of the passed entity or null
      */
     @Nullable
-    public static <T extends Entity, K> Id<T, K> ofNullable(@Nullable T entity) {
+    public static <T extends JmixEntity, K> Id<T, K> ofNullable(@Nullable T entity) {
         return entity == null ? null : Id.of(entity);
     }
 
@@ -86,7 +86,7 @@ public final class Id<T extends Entity, K> implements Serializable {
      * @param <T>         entity type
      * @return Id of the passed entity
      */
-    public static <T extends Entity, K> Id<T, K> of(K id, Class<T> entityClass) {
+    public static <T extends JmixEntity, K> Id<T, K> of(K id, Class<T> entityClass) {
         checkNotNullArgument(id);
         checkNotNullArgument(entityClass);
 

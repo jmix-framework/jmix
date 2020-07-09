@@ -62,7 +62,7 @@ import java.util.Set;
  * @deprecated Use {@link io.jmix.ui.screen.StandardEditor} APIs instead.
  */
 @Deprecated
-public class AbstractEditor<T extends Entity> extends AbstractWindow
+public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
         implements Window.Editor<T>, ReadOnlyAwareScreen {
 
     @Autowired
@@ -149,13 +149,13 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     /**
      * Called by the framework to set an edited entity after creation of all components and datasources, and after
      * {@link #init(java.util.Map)}.
-     * <p>Don't override this method in subclasses, use hooks {@link #initNewItem(Entity)}
+     * <p>Don't override this method in subclasses, use hooks {@link #initNewItem(JmixEntity)}
      * and {@link #postInit()} instead.</p>
      *
      * @param item entity instance
      */
     @SuppressWarnings("unchecked")
-    public void setItem(Entity item) {
+    public void setItem(JmixEntity item) {
         if (PersistenceHelper.isNew(item)) {
             DatasourceImplementation parentDs = (DatasourceImplementation) getParentDs();
             if (parentDs == null || !parentDs.getItemsToCreate().contains(item)) {
@@ -187,7 +187,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     }
 
     @SuppressWarnings("unchecked")
-    protected void setItemInternal(Entity item) {
+    protected void setItemInternal(JmixEntity item) {
         Datasource ds = getDatasourceInternal();
         DataSupplier dataservice = ds.getDataSupplier();
 
@@ -198,7 +198,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
             ds.setLoadDynamicAttributes(true);
         }
 
-        Class<? extends Entity> entityClass = item.getClass();
+        Class<? extends JmixEntity> entityClass = item.getClass();
         Object entityId = EntityValues.getId(item);
 
         EntityStates entityStates = getBeanLocator().get(EntityStates.class);
@@ -228,7 +228,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
 
         if (PersistenceHelper.isNew(item)
                 && !ds.getMetaClass().equals(metadata.getClass(item))) {
-            Entity newItem = ds.getDataSupplier().newInstance(ds.getMetaClass());
+            JmixEntity newItem = ds.getDataSupplier().newInstance(ds.getMetaClass());
             MetadataTools metadataTools = getBeanLocator().get(MetadataTools.NAME);
             metadataTools.copy(item, newItem);
             item = newItem;
@@ -312,7 +312,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
      * and then reopens. When an editor is opened, we reload the item from the database, hence we need to remove
      * nested items previously deleted by the user.
      */
-    protected void handlePreviouslyDeletedCompositionItems(Entity entity, DatasourceImplementation parentDs) {
+    protected void handlePreviouslyDeletedCompositionItems(JmixEntity entity, DatasourceImplementation parentDs) {
         Metadata metadata = getBeanLocator().get(Metadata.NAME);
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (!PersistenceHelper.isLoaded(entity, property.getName()))
@@ -406,7 +406,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
             BeanValidation beanValidation = getBeanLocator().get(BeanValidation.NAME);
 
             Validator validator = beanValidation.getValidator();
-            Set<ConstraintViolation<Entity>> violations = validator.validate(getItem(), UiCrossFieldChecks.class);
+            Set<ConstraintViolation<JmixEntity>> violations = validator.validate(getItem(), UiCrossFieldChecks.class);
 
             violations.stream()
                     .filter(violation -> {
@@ -519,7 +519,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     }
 
     /**
-     * Hook to be implemented in subclasses. Called by {@link #setItem(Entity)} when
+     * Hook to be implemented in subclasses. Called by {@link #setItem(JmixEntity)} when
      * the editor is opened for a new entity instance. Allows to additionally initialize the new entity instance
      * before setting it into the datasource.
      *
@@ -529,7 +529,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     }
 
     /**
-     * Hook to be implemented in subclasses. Called by {@link #setItem(Entity)}.
+     * Hook to be implemented in subclasses. Called by {@link #setItem(JmixEntity)}.
      * At the moment of calling the main datasource is initialized and {@link #getItem()} returns reloaded entity instance.
      * <br>
      * This method can be called second time by {@link #postCommit(boolean, boolean)} if the window is not closed after
@@ -570,7 +570,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     protected boolean postCommit(boolean committed, boolean close) {
         if (committed && !close) {
             if (showSaveNotification) {
-                Entity entity = getItem();
+                JmixEntity entity = getItem();
                 MetadataTools metadataTools = getBeanLocator().get(MetadataTools.class);
 
                 showNotification(

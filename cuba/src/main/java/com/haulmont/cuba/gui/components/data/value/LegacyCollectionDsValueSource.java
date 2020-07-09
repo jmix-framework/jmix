@@ -25,7 +25,7 @@ import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -50,7 +50,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * @param <V> value type
  */
 @SuppressWarnings("unchecked")
-public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSource<Collection<V>>, BeanLocatorAware {
+public class LegacyCollectionDsValueSource<V extends JmixEntity> implements ValueSource<Collection<V>>, BeanLocatorAware {
 
     private static final Logger log = LoggerFactory.getLogger(LegacyCollectionDsValueSource.class);
 

@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui;
 
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
@@ -69,22 +69,22 @@ public interface WindowManager {
     Window openWindow(WindowInfo windowInfo, OpenType openType);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType,
+    Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType,
                              Datasource parentDs);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType);
+    Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params);
+    Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType, Map<String, Object> params);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item,
+    Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item,
                              OpenType openType, Map<String, Object> params,
                              Datasource parentDs);
 
     // used only for legacy screens
-    Screen createEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params);
+    Screen createEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType, Map<String, Object> params);
 
     @Deprecated
     Window.Lookup openLookup(WindowInfo windowInfo, Window.Lookup.Handler handler,

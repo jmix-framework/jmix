@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.components;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;
@@ -96,8 +96,8 @@ public class SelectAction extends AbstractAction {
     protected void removeListeners(Collection selected) {
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
         for (Object obj : selected) {
-            if (obj instanceof Entity) {
-                metadataTools.traverseAttributes((Entity) obj, (entity, property) -> entity.__getEntityEntry().removeAllListeners());
+            if (obj instanceof JmixEntity) {
+                metadataTools.traverseAttributes((JmixEntity) obj, (entity, property) -> entity.__getEntityEntry().removeAllListeners());
             }
         }
     }

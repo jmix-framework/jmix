@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.listener.AfterDeleteEntityListener;
 import com.haulmont.cuba.core.listener.AfterInsertEntityListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import io.jmix.core.Id;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import io.jmix.data.event.EntityChangedEvent;
@@ -110,12 +110,12 @@ public class TestEntityChangedEventListener implements
     }
 
     @Override
-    public void beforeCommit(EntityManager entityManager, Collection<Entity> managedEntities) {
+    public void beforeCommit(EntityManager entityManager, Collection<JmixEntity> managedEntities) {
         allEvents.add(new EventInfo("BeforeCommitTransactionListener", managedEntities));
     }
 
     @Override
-    public void afterComplete(boolean committed, Collection<Entity> detachedEntities) {
+    public void afterComplete(boolean committed, Collection<JmixEntity> detachedEntities) {
         allEvents.add(new EventInfo("AfterCompleteTransactionListener", new Object[]{committed, detachedEntities}));
     }
 

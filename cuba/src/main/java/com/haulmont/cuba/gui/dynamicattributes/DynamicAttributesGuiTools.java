@@ -80,7 +80,7 @@ public class DynamicAttributesGuiTools {
         return false;
     }
 
-    public void initDefaultAttributeValues(Entity item, MetaClass metaClass) {
+    public void initDefaultAttributeValues(JmixEntity item, MetaClass metaClass) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
         Collection<AttributeDefinition> attributes = dynAttrMetadata.getAttributes(metaClass);
 
@@ -112,7 +112,7 @@ public class DynamicAttributesGuiTools {
      * Reload dynamic attributes on the entity
      */
     @SuppressWarnings("unchecked")
-    public void reloadDynamicAttributes(Entity entity) {
+    public void reloadDynamicAttributes(JmixEntity entity) {
         MetaClass metaClass = metadata.getClassNN(entity.getClass());
         FetchPlan fetchPlan = new FetchPlan(metaClass.getJavaClass(), false)
                 .addProperty(metadataTools.getPrimaryKeyName(metaClass));
@@ -120,7 +120,7 @@ public class DynamicAttributesGuiTools {
                 .setFetchPlan(fetchPlan)
                 .setLoadDynamicAttributes(true)
                 .setId(EntityValues.getId(entity));
-        Entity reloadedEntity = dataManager.load(loadContext);
+        JmixEntity reloadedEntity = dataManager.load(loadContext);
         if (reloadedEntity != null) {
             DynamicAttributesState state = (DynamicAttributesState) entity.
                     __getEntityEntry().getExtraState(DynamicAttributesState.class);
@@ -133,7 +133,7 @@ public class DynamicAttributesGuiTools {
         }
     }
 
-    public boolean hasDynamicAttributes(Entity entity) {
+    public boolean hasDynamicAttributes(JmixEntity entity) {
         DynamicAttributesState state = (DynamicAttributesState) entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
         if (state != null) {
             return state.getDynamicAttributes() != null;
@@ -214,7 +214,7 @@ public class DynamicAttributesGuiTools {
         return security.isEntityOpPermitted(entityClass, EntityOp.READ);
     }
 
-    protected void setDefaultAttributeValue(Entity item, AttributeDefinition attribute,
+    protected void setDefaultAttributeValue(JmixEntity item, AttributeDefinition attribute,
                                             boolean entityIsCategorized, ZonedDateTime currentTimestamp) {
         String propertyName = DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode());
         if (entityIsCategorized) {
@@ -233,12 +233,12 @@ public class DynamicAttributesGuiTools {
         if (attribute.getDefaultValue() != null) {
             if (attribute.getDataType() == AttributeType.ENTITY) {
                 MetaClass entityMetaClass = metadata.getClassNN(attribute.getJavaType());
-                LoadContext<Entity> lc = new LoadContext<>(entityMetaClass).setFetchPlan(
+                LoadContext<JmixEntity> lc = new LoadContext<>(entityMetaClass).setFetchPlan(
                         fetchPlanRepository.getFetchPlan(entityMetaClass, FetchPlan.INSTANCE_NAME));
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(entityMetaClass);
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", entityMetaClass.getName(), pkName))
                         .setParameter("entityId", attribute.getDefaultValue());
-                Entity defaultEntity = dataManager.load(lc);
+                JmixEntity defaultEntity = dataManager.load(lc);
                 EntityValues.setValue(item, propertyName, defaultEntity);
             } else if (attribute.isCollection()) {
                 List<Object> list = new ArrayList<>();

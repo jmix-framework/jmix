@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.components.data.datagrid.DatasourceDataGridItems;
 import com.haulmont.cuba.gui.components.data.datagrid.SortableDatasourceDataGridItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.DataGridItems;
 
 /**
@@ -32,10 +32,10 @@ import io.jmix.ui.component.data.DataGridItems;
  */
 @SuppressWarnings("rawtypes, unchecked")
 @Deprecated
-public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E>,
+public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E>,
         HasSettings, HasDataLoadingSettings {
 
-    static <T extends Entity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
+    static <T extends JmixEntity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<DataGrid<T>>() {
         };
     }
@@ -78,7 +78,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @param <E> DataGrid data type
      * @param <T> column data type
      */
-    interface ColumnGenerator<E extends Entity, T> {
+    interface ColumnGenerator<E extends JmixEntity, T> {
         /**
          * Returns value for given event.
          *
@@ -103,7 +103,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @param <E> DataGrid data type
      * @param <T> Column data type
      */
-    interface GenericColumnGenerator<E extends Entity, T> {
+    interface GenericColumnGenerator<E extends JmixEntity, T> {
 
         /**
          * Returns value for given event.
@@ -146,7 +146,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
     /**
      * A column in the DataGrid.
      */
-    interface Column<E extends Entity> extends io.jmix.ui.component.DataGrid.Column<E> {
+    interface Column<E extends JmixEntity> extends io.jmix.ui.component.DataGrid.Column<E> {
 
         /**
          * @return the type of value represented by this column

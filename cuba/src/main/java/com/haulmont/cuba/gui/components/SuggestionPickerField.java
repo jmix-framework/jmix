@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.components;
 
 import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.EntitySuggestionField;
 
 /**
@@ -28,12 +28,12 @@ import io.jmix.ui.component.EntitySuggestionField;
  * @deprecated Use {@link EntitySuggestionField} instead
  */
 @Deprecated
-public interface SuggestionPickerField<V extends Entity> extends EntitySuggestionField<V>,
+public interface SuggestionPickerField<V extends JmixEntity> extends EntitySuggestionField<V>,
         SuggestionField<V>, PickerField<V> {
 
     String NAME = "suggestionPickerField";
 
-    static <T extends Entity> TypeToken<SuggestionPickerField<T>> of(Class<T> valueClass) {
+    static <T extends JmixEntity> TypeToken<SuggestionPickerField<T>> of(Class<T> valueClass) {
         return new TypeToken<SuggestionPickerField<T>>() {};
     }
 }

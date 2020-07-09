@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
@@ -52,7 +52,7 @@ public class TestBeforeCommitTxListener implements BeforeCommitTransactionListen
     private EntityStates entityStates;
 
     @Override
-    public void beforeCommit(EntityManager entityManager, Collection<Entity> managedEntities) {
+    public void beforeCommit(EntityManager entityManager, Collection<JmixEntity> managedEntities) {
         if (test != null) {
             System.out.println("beforeCommit: managedEntities=" + managedEntities);
             switch (test) {
@@ -119,7 +119,7 @@ public class TestBeforeCommitTxListener implements BeforeCommitTransactionListen
         throw new RuntimeException("some error");
     }
 
-    private void changeEntity(Collection<Entity> managedEntities) {
+    private void changeEntity(Collection<JmixEntity> managedEntities) {
         for (Object entity : managedEntities) {
             if (entity instanceof User && ((User) entity).getLogin().startsWith("TxLstnrTst-")) {
                 User user = (User) entity;
@@ -142,7 +142,7 @@ public class TestBeforeCommitTxListener implements BeforeCommitTransactionListen
         entityManager.persist(u);
     }
 
-    private void queryWithFlush(Collection<Entity> managedEntities, EntityManager entityManager) {
+    private void queryWithFlush(Collection<JmixEntity> managedEntities, EntityManager entityManager) {
         if (!managedEntities.stream().anyMatch(e -> e instanceof User && ((User) e).getLogin().startsWith("TxLstnrTst-")))
             return;
 

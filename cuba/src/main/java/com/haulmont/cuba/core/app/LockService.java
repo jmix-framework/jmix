@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.app;
 
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.pessimisticlocking.LockInfo;
 import io.jmix.core.pessimisticlocking.LockNotSupported;
 
@@ -52,7 +52,7 @@ public interface LockService {
      * - {@link LockInfo} instance in case of this entity is already locked by someone
      */
     @Nullable
-    LockInfo lock(Entity entity);
+    LockInfo lock(JmixEntity entity);
 
     /**
      * Unlock an arbitrary object.
@@ -67,7 +67,7 @@ public interface LockService {
      *
      * @param entity entity instance
      */
-    void unlock(Entity entity);
+    void unlock(JmixEntity entity);
 
     /**
      * Get locking status for particular object

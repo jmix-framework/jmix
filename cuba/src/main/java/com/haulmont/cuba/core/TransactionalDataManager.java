@@ -18,7 +18,7 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.TransactionalAction;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.entity.KeyValueEntity;
@@ -74,7 +74,7 @@ public interface TransactionalDataManager {
      *
      * @param entityClass class of entity that needs to be loaded
      */
-    <E extends Entity> FluentLoader<E> load(Class<E> entityClass);
+    <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass);
 
     /**
      * Entry point to the fluent API for loading entities.
@@ -86,7 +86,7 @@ public interface TransactionalDataManager {
      *
      * @param entityId {@link Id} of entity that needs to be loaded
      */
-    <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId);
+    <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId);
 
     /**
      * Entry point to the fluent API for loading scalar values.
@@ -136,7 +136,7 @@ public interface TransactionalDataManager {
      */
     @Nullable
     @CheckReturnValue
-    <E extends Entity> E load(LoadContext<E> context);
+    <E extends JmixEntity> E load(LoadContext<E> context);
 
     /**
      * Loads collection of entity instances.
@@ -145,7 +145,7 @@ public interface TransactionalDataManager {
      * @return a list of detached instances, or empty list if nothing found
      */
     @CheckReturnValue
-    <E extends Entity> List<E> loadList(LoadContext<E> context);
+    <E extends JmixEntity> List<E> loadList(LoadContext<E> context);
 
     /**
      * Loads list of key-value pairs.
@@ -162,7 +162,7 @@ public interface TransactionalDataManager {
      * @param entities entities to save
      * @return set of saved instances
      */
-    EntitySet save(Entity... entities);
+    EntitySet save(JmixEntity... entities);
 
     /**
      * Saves the entity to the data store.
@@ -170,7 +170,7 @@ public interface TransactionalDataManager {
      * @param entity entity instance
      * @return saved instance
      */
-    <E extends Entity> E save(E entity);
+    <E extends JmixEntity> E save(E entity);
 
     /**
      * Saves the entity to the data store.
@@ -179,7 +179,7 @@ public interface TransactionalDataManager {
      * @param view   view object which affects the returned instance
      * @return saved instance fetched according to the given view
      */
-    <E extends Entity> E save(E entity, @Nullable FetchPlan view);
+    <E extends JmixEntity> E save(E entity, @Nullable FetchPlan view);
 
     /**
      * Saves the entity to the data store.
@@ -188,21 +188,21 @@ public interface TransactionalDataManager {
      * @param viewName name of a view which affects the returned instance
      * @return saved instance fetched according to the given view
      */
-    <E extends Entity> E save(E entity, @Nullable String viewName);
+    <E extends JmixEntity> E save(E entity, @Nullable String viewName);
 
     /**
      * Removes the entity instance from the data store.
      *
      * @param entity entity instance
      */
-    void remove(Entity entity);
+    void remove(JmixEntity entity);
 
     /**
      * Removes the entity instance from the data store by its id.
      *
      * @param entityId entity id
      */
-    default <T extends Entity, K> void remove(Id<T, K> entityId) {
+    default <T extends JmixEntity, K> void remove(Id<T, K> entityId) {
         remove(getReference(entityId));
     }
 
@@ -211,7 +211,7 @@ public interface TransactionalDataManager {
      *
      * @param entityClass entity class
      */
-    <T extends Entity> T create(Class<T> entityClass);
+    <T extends JmixEntity> T create(Class<T> entityClass);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -231,7 +231,7 @@ public interface TransactionalDataManager {
      * @param entityClass entity class
      * @param id          id of an existing object
      */
-    <T extends Entity, K> T getReference(Class<T> entityClass, K id);
+    <T extends JmixEntity, K> T getReference(Class<T> entityClass, K id);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -239,7 +239,7 @@ public interface TransactionalDataManager {
      * @param entityId id of an existing object
      * @see #getReference(Class, Object)
      */
-    default <T extends Entity, K> T getReference(Id<T, K> entityId) {
+    default <T extends JmixEntity, K> T getReference(Id<T, K> entityId) {
         Preconditions.checkNotNullArgument(entityId, "id is null");
         //noinspection unchecked
         return getReference(entityId.getEntityClass(), entityId.getValue());

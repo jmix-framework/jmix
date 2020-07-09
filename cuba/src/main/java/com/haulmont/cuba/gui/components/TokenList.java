@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 
@@ -28,5 +28,5 @@ import java.util.Collection;
  * @deprecated Use {@link io.jmix.ui.component.TokenList} instead
  */
 @Deprecated
-public interface TokenList<V extends Entity> extends Field<Collection<V>>, io.jmix.ui.component.TokenList<V> {
+public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>, io.jmix.ui.component.TokenList<V> {
 }

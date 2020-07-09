@@ -21,7 +21,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -29,7 +29,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class PropertyDatasourceImpl<T extends Entity>
+public class PropertyDatasourceImpl<T extends JmixEntity>
         extends AbstractDatasource<T>
         implements Datasource<T>, DatasourceImplementation<T>, PropertyDatasource<T> {
 
@@ -49,8 +49,8 @@ public class PropertyDatasourceImpl<T extends Entity>
     @SuppressWarnings("unchecked")
     protected void initParentDsListeners() {
         masterDs.addItemChangeListener(e -> {
-            Entity prevValue = getItem(e.getPrevItem());
-            Entity newValue = getItem(e.getItem());
+            JmixEntity prevValue = getItem(e.getPrevItem());
+            JmixEntity newValue = getItem(e.getItem());
             reattachListeners(prevValue, newValue);
             fireItemChanged((T) prevValue);
         });
@@ -61,13 +61,13 @@ public class PropertyDatasourceImpl<T extends Entity>
 
         masterDs.addItemPropertyChangeListener(e -> {
             if (e.getProperty().equals(metaProperty.getName()) && !Objects.equals(e.getPrevValue(), e.getValue())) {
-                reattachListeners((Entity) e.getPrevValue(), (Entity) e.getValue());
+                reattachListeners((JmixEntity) e.getPrevValue(), (JmixEntity) e.getValue());
                 fireItemChanged((T) e.getPrevValue());
             }
         });
     }
 
-    protected void reattachListeners(Entity prevItem, Entity item) {
+    protected void reattachListeners(JmixEntity prevItem, JmixEntity item) {
         if (prevItem != item) {
             detachListener(prevItem);
             attachListener(item);
@@ -81,7 +81,7 @@ public class PropertyDatasourceImpl<T extends Entity>
 
     @Override
     public T getItem() {
-        final Entity item = masterDs.getItem();
+        final JmixEntity item = masterDs.getItem();
         return getItem(item);
     }
 
@@ -93,7 +93,7 @@ public class PropertyDatasourceImpl<T extends Entity>
         return getState() == State.VALID ? getItem() : null;
     }
 
-    protected T getItem(Entity item) {
+    protected T getItem(JmixEntity item) {
         return item == null ? null : (T) EntityValues.getValue(item, metaProperty.getName());
     }
 
@@ -167,23 +167,23 @@ public class PropertyDatasourceImpl<T extends Entity>
 
             if (parentDs instanceof CollectionDatasource) {
                 CollectionDatasource parentCollectionDs = (CollectionDatasource) parentDs;
-                for (Entity item : itemsToCreate) {
+                for (JmixEntity item : itemsToCreate) {
                     if (parentCollectionDs.containsItem(EntityValues.getId(item))) {
                         parentCollectionDs.modifyItem(item);
                     } else {
                         parentCollectionDs.addItem(item);
                     }
                 }
-                for (Entity item : itemsToUpdate) {
+                for (JmixEntity item : itemsToUpdate) {
                     parentCollectionDs.modifyItem(item);
                 }
-                for (Entity item : itemsToDelete) {
+                for (JmixEntity item : itemsToDelete) {
                     parentCollectionDs.removeItem(item);
                 }
                 // after repeated edit of new items the parent datasource can contain items-to-create which are deleted
                 // in this datasource, so we need to delete them
-                Collection<Entity> parentItemsToCreate = ((DatasourceImplementation) parentCollectionDs).getItemsToCreate();
-                for (Entity createdItem : new ArrayList<>(parentItemsToCreate)) {
+                Collection<JmixEntity> parentItemsToCreate = ((DatasourceImplementation) parentCollectionDs).getItemsToCreate();
+                for (JmixEntity createdItem : new ArrayList<>(parentItemsToCreate)) {
                     if (!this.itemsToCreate.contains(createdItem)) {
                         MetaProperty inverseProp = metaProperty.getInverse();
                         // delete only if they have the same master item
@@ -195,7 +195,7 @@ public class PropertyDatasourceImpl<T extends Entity>
                     }
                 }
             } else {
-                Entity item = null;
+                JmixEntity item = null;
                 if (!itemsToCreate.isEmpty()) {
                     item = itemsToCreate.iterator().next();
                 } else if (!itemsToUpdate.isEmpty()) {
@@ -222,7 +222,7 @@ public class PropertyDatasourceImpl<T extends Entity>
             metadata.getTools().copy(item, getItem());
             itemsToUpdate.add(item);
         } else {
-            final Entity parentItem = masterDs.getItem();
+            final JmixEntity parentItem = masterDs.getItem();
             EntityValues.setValue(parentItem, metaProperty.getName(), item);
         }
         setModified(true);
@@ -250,12 +250,12 @@ public class PropertyDatasourceImpl<T extends Entity>
     }
 
     @Override
-    public void committed(Set<Entity> entities) {
-        Entity parentItem = masterDs.getItem();
+    public void committed(Set<JmixEntity> entities) {
+        JmixEntity parentItem = masterDs.getItem();
 
         T prevItem = getItem();
         T newItem = null;
-        for (Entity entity : entities) {
+        for (JmixEntity entity : entities) {
             if (entity.equals(prevItem)) {
                 //noinspection unchecked
                 newItem = (T) entity;
@@ -279,13 +279,13 @@ public class PropertyDatasourceImpl<T extends Entity>
             ((DatasourceImplementation) masterDs).setModified(isModified);
         } else {
             if (parentItem != null) {
-                Entity newParentItem = null;
-                Entity previousParentItem = null;
+                JmixEntity newParentItem = null;
+                JmixEntity previousParentItem = null;
 
                 // Find previous and new parent items
-                Iterator<Entity> commitIter = entities.iterator();
+                Iterator<JmixEntity> commitIter = entities.iterator();
                 while (commitIter.hasNext() && (previousParentItem == null) && (newParentItem == null)) {
-                    Entity commitItem = commitIter.next();
+                    JmixEntity commitItem = commitIter.next();
                     if (commitItem.equals(parentItem)) {
                         previousParentItem = parentItem;
                         newParentItem = commitItem;

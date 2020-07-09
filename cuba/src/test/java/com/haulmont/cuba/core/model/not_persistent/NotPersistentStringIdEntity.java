@@ -16,14 +16,14 @@
 
 package com.haulmont.cuba.core.model.not_persistent;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.persistence.Id;
 
 @ModelObject(name = "test$NotPersistentStringIdEntity")
-public class NotPersistentStringIdEntity implements Entity {
+public class NotPersistentStringIdEntity implements JmixEntity {
 
     @Id
     @ModelProperty(mandatory = true)

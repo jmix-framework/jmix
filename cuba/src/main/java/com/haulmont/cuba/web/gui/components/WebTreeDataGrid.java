@@ -24,7 +24,7 @@ import com.haulmont.cuba.settings.converter.LegacyTreeDataGridSettingsConverter;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @Deprecated
-public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl.WebTreeDataGrid<E>
+public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl.WebTreeDataGrid<E>
         implements TreeDataGrid<E> {
 
     protected LegacySettingsDelegate settingsDelegate;

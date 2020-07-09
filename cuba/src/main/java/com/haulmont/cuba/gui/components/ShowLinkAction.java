@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.action.BaseAction;
@@ -31,7 +31,7 @@ public class ShowLinkAction extends BaseAction {
     public static final String ACTION_ID = "showLink";
 
     public interface Handler {
-        String makeLink(Entity entity);
+        String makeLink(JmixEntity entity);
     }
 
     protected CollectionDatasource ds;

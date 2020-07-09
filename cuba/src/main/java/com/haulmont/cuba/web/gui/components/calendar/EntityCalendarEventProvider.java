@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.calendar.CalendarEvent;
 import io.jmix.ui.component.calendar.CalendarEventProvider;
 import io.jmix.ui.component.calendar.EntityCalendarEvent;
@@ -119,7 +119,7 @@ public class EntityCalendarEventProvider implements CalendarEventProvider,
 
         if (itemsCache == null) {
             itemsCache = new ArrayList<>();
-            for (Entity entity : (Collection<Entity>) datasource.getItems()) {
+            for (JmixEntity entity : (Collection<JmixEntity>) datasource.getItems()) {
                 itemsCache.add(new EntityCalendarEvent<>(entity, this));
             }
             return itemsCache;

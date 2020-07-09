@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.global;
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Utility class providing information about entity states.
@@ -102,7 +102,7 @@ public class PersistenceHelper {
      * @param viewName view name
      * @throws IllegalArgumentException if at least one of properties is not loaded
      */
-    public static void checkLoadedWithView(Entity entity, String viewName) {
+    public static void checkLoadedWithView(JmixEntity entity, String viewName) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
         if (entityStates != null) {
             entityStates.checkLoadedWithFetchPlan(entity, viewName);
@@ -118,7 +118,7 @@ public class PersistenceHelper {
      * @param viewName view name
      * @return false if at least one of properties is not loaded
      */
-    public static boolean isLoadedWithView(Entity entity, String viewName) {
+    public static boolean isLoadedWithView(JmixEntity entity, String viewName) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
         if (entityStates != null) {
             return entityStates.isLoadedWithView(entity, viewName);
@@ -136,9 +136,9 @@ public class PersistenceHelper {
     }
 
     /**
-     * @see EntityStates#makeDetached(Entity)
+     * @see EntityStates#makeDetached(JmixEntity)
      */
-    public static void makeDetached(Entity entity) {
+    public static void makeDetached(JmixEntity entity) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
         if (entityStates != null) {
             entityStates.makeDetached(entity);
@@ -148,9 +148,9 @@ public class PersistenceHelper {
     }
 
     /**
-     * @see EntityStates#makePatch(Entity)
+     * @see EntityStates#makePatch(JmixEntity)
      */
-    public static void makePatch(Entity entity) {
+    public static void makePatch(JmixEntity entity) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
         if (entityStates != null) {
             entityStates.makePatch(entity);

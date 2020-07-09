@@ -17,12 +17,12 @@
 package com.haulmont.cuba.gui.components.compatibility;
 
 import com.haulmont.cuba.gui.components.PickerField;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class PickerFieldFieldListenerWrapper<E extends Entity>
+public class PickerFieldFieldListenerWrapper<E extends JmixEntity>
         implements Consumer<PickerField.FieldValueChangeEvent<E>> {
 
     protected final PickerField.FieldListener listener;

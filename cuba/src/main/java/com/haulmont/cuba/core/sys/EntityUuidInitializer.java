@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.sys;
 
 import io.jmix.core.EntityInitializer;
 import io.jmix.core.UuidProvider;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.HasUuid;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class EntityUuidInitializer implements EntityInitializer, Ordered {
     public static final String NAME = "cuba_EntityUuidInitializer";
 
     @Override
-    public void initEntity(Entity entity) {
+    public void initEntity(JmixEntity entity) {
         if (entity instanceof HasUuid && ((HasUuid) entity).getUuid() == null) {
             ((HasUuid) entity).setUuid(UuidProvider.createUuid());
         }

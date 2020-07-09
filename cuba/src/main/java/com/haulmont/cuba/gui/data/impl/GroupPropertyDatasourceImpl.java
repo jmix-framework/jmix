@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.GroupDatasource;
@@ -26,7 +26,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-public class GroupPropertyDatasourceImpl<T extends Entity, K>
+public class GroupPropertyDatasourceImpl<T extends JmixEntity, K>
         extends CollectionPropertyDatasourceImpl<T, K>
         implements GroupDatasource<T, K>, GroupDatasource.SupportsGroupSortDelegate {
 

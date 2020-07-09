@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.collections.ReadOnlyLinkedMapValuesView;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -47,7 +47,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * @param <T> type of entity
  * @param <K> type of entity ID
  */
-public class CollectionDatasourceImpl<T extends Entity, K>
+public class CollectionDatasourceImpl<T extends JmixEntity, K>
         extends
         AbstractCollectionDatasource<T, K>
         implements
@@ -505,7 +505,7 @@ public class CollectionDatasourceImpl<T extends Entity, K>
         if (data.containsKey(EntityValues.<K>getId(item))) {
             if (PersistenceHelper.isNew(item)) {
                 Object existingItem = data.get(EntityValues.<K>getId(item));
-                metadata.getTools().copy(item, (Entity) existingItem);
+                metadata.getTools().copy(item, (JmixEntity) existingItem);
                 modified((T) existingItem);
             } else {
                 updateItem(item);
@@ -541,12 +541,12 @@ public class CollectionDatasourceImpl<T extends Entity, K>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void committed(Set<Entity> entities) {
+    public void committed(Set<JmixEntity> entities) {
         if (!State.VALID.equals(state)) {
             return;
         }
 
-        for (Entity entity : entities) {
+        for (JmixEntity entity : entities) {
             if (!metaClass.getJavaClass().isAssignableFrom(entity.getClass()))
                 continue;
 
@@ -693,8 +693,8 @@ public class CollectionDatasourceImpl<T extends Entity, K>
 
     protected void detachListener(Collection instances) {
         for (Object obj : instances) {
-            if (obj instanceof Entity)
-                detachListener((Entity) obj);
+            if (obj instanceof JmixEntity)
+                detachListener((JmixEntity) obj);
         }
     }
 

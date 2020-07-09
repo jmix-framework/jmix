@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data;
 
 import com.haulmont.cuba.core.global.CommitContext;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.FrameContext;
 
 import javax.annotation.Nullable;
@@ -174,7 +174,7 @@ public interface DsContext {
          * @param context commit context
          * @param result  set of committed entities returning from the middleware service
          */
-        void afterCommit(CommitContext context, Set<Entity> result);
+        void afterCommit(CommitContext context, Set<JmixEntity> result);
     }
 
     /**
@@ -189,7 +189,7 @@ public interface DsContext {
         public void beforeCommit(CommitContext context) {
         }
         @Override
-        public void afterCommit(CommitContext context, Set<Entity> result) {
+        public void afterCommit(CommitContext context, Set<JmixEntity> result) {
         }
     }
 
@@ -216,6 +216,6 @@ public interface DsContext {
          * @param context commit context
          * @param result  set of committed entities returning from the middleware service
          */
-        void afterCommit(CommitContext context, Set<Entity> result);
+        void afterCommit(CommitContext context, Set<JmixEntity> result);
     }
 }

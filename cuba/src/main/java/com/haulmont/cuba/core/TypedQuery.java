@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 
 import javax.annotation.Nullable;
@@ -72,13 +72,13 @@ public interface TypedQuery<T> extends Query {
     TypedQuery<T> setView(@Nullable FetchPlan view);
 
     @Override
-    TypedQuery<T> setView(Class<? extends Entity> entityClass, String viewName);
+    TypedQuery<T> setView(Class<? extends JmixEntity> entityClass, String viewName);
 
     @Override
     TypedQuery<T> addView(FetchPlan view);
 
     @Override
-    TypedQuery<T> addView(Class<? extends Entity> entityClass, String viewName);
+    TypedQuery<T> addView(Class<? extends JmixEntity> entityClass, String viewName);
 
     /**
      * Set View for this Query instance.

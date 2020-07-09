@@ -16,14 +16,14 @@
 package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.global.impl.EntityListenerUtils;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.sql.Connection;
 
 /**
  * Defines the contract for handling of entities after they have been deleted or marked as deleted in DB.
  */
-public interface AfterDeleteEntityListener<T extends Entity> extends io.jmix.data.listener.AfterDeleteEntityListener<T> {
+public interface AfterDeleteEntityListener<T extends JmixEntity> extends io.jmix.data.listener.AfterDeleteEntityListener<T> {
 
     /**
      * Executes after the object has been deleted or marked as deleted in DB.

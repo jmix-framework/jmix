@@ -31,11 +31,11 @@ public class ViewBuilder extends FetchPlanBuilder {
 
     public static final String NAME = "cuba_ViewBuilder";
 
-    public static ViewBuilder of(Class<? extends Entity> entityClass) {
+    public static ViewBuilder of(Class<? extends JmixEntity> entityClass) {
         return AppBeans.getPrototype(ViewBuilder.class, entityClass);
     }
 
-    protected ViewBuilder(Class<? extends Entity> entityClass) {
+    protected ViewBuilder(Class<? extends JmixEntity> entityClass) {
         super(entityClass);
     }
 

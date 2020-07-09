@@ -15,13 +15,13 @@
  */
 package com.haulmont.cuba.core.listener;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Defines the contract for handling entities right before they are attached to an EntityManager on merge operation.
  *
  */
-public interface BeforeAttachEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeAttachEntityListener<T> {
+public interface BeforeAttachEntityListener<T extends JmixEntity> extends io.jmix.data.listener.BeforeAttachEntityListener<T> {
 
     /**
      * Executes before the object is attached to an EntityManager on merge operation.

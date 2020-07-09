@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components.data.datagrid;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -40,7 +40,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DatasourceDataGridItems<E extends Entity, K>
+public class DatasourceDataGridItems<E extends JmixEntity, K>
         implements EntityDataGridItems<E>, AggregatableDataGridItems<E>, DatasourceDataUnit {
 
     protected CollectionDatasource.Indexed<E, K> datasource;

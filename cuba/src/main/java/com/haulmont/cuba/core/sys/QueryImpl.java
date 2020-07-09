@@ -17,7 +17,7 @@ package com.haulmont.cuba.core.sys;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.data.PersistenceHints;
 import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.TypedQuery;
@@ -153,7 +153,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> setView(Class<? extends Entity> entityClass, String viewName) {
+    public TypedQuery<T> setView(Class<? extends JmixEntity> entityClass, String viewName) {
         setView(fetchPlanRepository.getFetchPlan(entityClass, viewName));
         return this;
     }
@@ -175,7 +175,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     }
 
     @Override
-    public TypedQuery<T> addView(Class<? extends Entity> entityClass, String fetchPlanName) {
+    public TypedQuery<T> addView(Class<? extends JmixEntity> entityClass, String fetchPlanName) {
         addView(fetchPlanRepository.getFetchPlan(entityClass, fetchPlanName));
         return this;
     }

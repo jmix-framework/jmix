@@ -27,7 +27,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Component;
@@ -118,12 +118,12 @@ public class ParamWrapper implements Component, HasValue<Object> {
                     }
                 }
             }
-        } else if (value instanceof Entity) {
-            value = EntityValues.getId(((Entity) value));
+        } else if (value instanceof JmixEntity) {
+            value = EntityValues.getId(((JmixEntity) value));
         } else if (value instanceof Collection) {
             List<Object> list = new ArrayList<>(((Collection) value).size());
             for (Object obj : ((Collection) value)) {
-                list.add(obj instanceof Entity ? EntityValues.getId(((Entity) obj)) : obj);
+                list.add(obj instanceof JmixEntity ? EntityValues.getId(((JmixEntity) obj)) : obj);
             }
             value = list;
         } else if (value instanceof EnumClass) {

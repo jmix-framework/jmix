@@ -2983,7 +2983,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public void actionPerform(Component component) {
-            Set<Entity> ownerSelection = target.getSelected();
+            Set<JmixEntity> ownerSelection = target.getSelected();
 
             if (!ownerSelection.isEmpty()) {
                 String entityType;

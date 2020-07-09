@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.global.ViewRepository;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanNotFoundException;
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +35,7 @@ public class ViewRepositoryImpl implements ViewRepository {
     protected FetchPlanRepository fetchPlanRepository;
 
     @Override
-    public FetchPlan getView(Class<? extends Entity> entityClass, String name) {
+    public FetchPlan getView(Class<? extends JmixEntity> entityClass, String name) {
         try {
             return fetchPlanRepository.getFetchPlan(entityClass, name);
         } catch (FetchPlanNotFoundException e) {
@@ -64,7 +64,7 @@ public class ViewRepositoryImpl implements ViewRepository {
     }
 
     @Override
-    public Collection<String> getViewNames(Class<? extends Entity> entityClass) {
+    public Collection<String> getViewNames(Class<? extends JmixEntity> entityClass) {
         return fetchPlanRepository.getFetchPlanNames(entityClass);
     }
 }

@@ -16,7 +16,7 @@
 package com.haulmont.cuba.core.global;
 
 import com.haulmont.chile.core.annotations.NamePattern;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 
@@ -66,19 +66,19 @@ public class View extends FetchPlan {
 
     private static final long serialVersionUID = 4313784222934349594L;
 
-    public View(Class<? extends Entity> entityClass) {
+    public View(Class<? extends JmixEntity> entityClass) {
         super(entityClass);
     }
 
-    public View(Class<? extends Entity> entityClass, boolean includeSystemProperties) {
+    public View(Class<? extends JmixEntity> entityClass, boolean includeSystemProperties) {
         super(entityClass, includeSystemProperties);
     }
 
-    public View(Class<? extends Entity> entityClass, String name) {
+    public View(Class<? extends JmixEntity> entityClass, String name) {
         super(entityClass, name);
     }
 
-    public View(Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
+    public View(Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
         super(entityClass, name, includeSystemProperties);
     }
 
@@ -86,7 +86,7 @@ public class View extends FetchPlan {
         super(src, name, includeSystemProperties);
     }
 
-    public View(View src, @Nullable Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
+    public View(View src, @Nullable Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
         super(src, entityClass, name, includeSystemProperties);
     }
 

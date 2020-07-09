@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.options.DatasourceOptions;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.ui.component.Frame;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Deprecated
-public class WebSearchField<V extends Entity> extends WebLookupField<V> implements SearchField<V> {
+public class WebSearchField<V extends JmixEntity> extends WebLookupField<V> implements SearchField<V> {
     protected static final String SEARCHSELECT_STYLENAME = "c-searchselect";
 
     protected int minSearchStringLength = 0;

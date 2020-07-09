@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.components.data.table.DatasourceTableItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.GroupDatasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.TableItems;
 
 /**
@@ -32,7 +32,7 @@ import io.jmix.ui.component.data.TableItems;
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
-public interface GroupTable<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.GroupTable<E>, HasSettings,
+public interface GroupTable<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.GroupTable<E>, HasSettings,
         HasDataLoadingSettings {
 
     /**

@@ -16,7 +16,7 @@
 package com.haulmont.cuba.gui.data;
 
 import com.haulmont.cuba.core.global.DataManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 
 /**
@@ -42,5 +42,5 @@ public interface DataSupplier extends DataManager /*, todo vm DataService /* for
      * @param metaClass     entity MetaClass
      * @return              created instance
      */
-    <A extends Entity> A newInstance(MetaClass metaClass);
+    <A extends JmixEntity> A newInstance(MetaClass metaClass);
 }

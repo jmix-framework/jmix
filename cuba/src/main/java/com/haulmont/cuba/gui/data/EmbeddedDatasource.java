@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Datasource containing an embedded entity from a property of another entity instance.
@@ -24,6 +24,6 @@ import io.jmix.core.Entity;
  * @param <T> type of enclosed embeddable entity
  */
 @Deprecated
-public interface EmbeddedDatasource<T extends Entity>
+public interface EmbeddedDatasource<T extends JmixEntity>
         extends NestedDatasource<T> {
 }

@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
@@ -24,7 +24,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @ModelObject(name = "test_PetclinicAddress")
-public class Address implements Entity {
+public class Address implements JmixEntity {
 
     private static final long serialVersionUID = 3973674066005826186L;
 

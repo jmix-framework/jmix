@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.data.options;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
@@ -31,7 +31,7 @@ import io.jmix.ui.component.data.meta.EntityOptions;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class DatasourceOptions<E extends Entity, K> implements Options<E>, EntityOptions<E> {
+public class DatasourceOptions<E extends JmixEntity, K> implements Options<E>, EntityOptions<E> {
 
     protected CollectionDatasource<E, K> datasource;
     protected EventHub events = new EventHub();

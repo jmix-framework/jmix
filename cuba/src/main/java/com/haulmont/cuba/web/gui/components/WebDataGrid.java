@@ -22,7 +22,7 @@ import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.settings.converter.LegacyDataGridSettingsConverter;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.core.common.util.Preconditions;
@@ -41,7 +41,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @Deprecated
-public class WebDataGrid<E extends Entity> extends io.jmix.ui.component.impl.WebDataGrid<E> implements DataGrid<E> {
+public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl.WebDataGrid<E> implements DataGrid<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
 
@@ -216,7 +216,7 @@ public class WebDataGrid<E extends Entity> extends io.jmix.ui.component.impl.Web
                 this, new LegacyDataGridSettingsConverter(), getSettingsBinder());
     }
 
-    protected static class ColumnImpl<E extends Entity>
+    protected static class ColumnImpl<E extends JmixEntity>
             extends WebAbstractDataGrid.ColumnImpl<E>
             implements DataGrid.Column<E> {
 

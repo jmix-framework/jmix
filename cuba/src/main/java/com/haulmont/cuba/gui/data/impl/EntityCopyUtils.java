@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.data.impl;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -32,10 +32,10 @@ import java.util.List;
 
 public class EntityCopyUtils {
 
-    public static Entity copyCompositions(Entity src) {
+    public static JmixEntity copyCompositions(JmixEntity src) {
         Preconditions.checkNotNullArgument(src, "source is null");
 
-        Entity dest;
+        JmixEntity dest;
         try {
             dest = src.getClass().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
@@ -48,7 +48,7 @@ public class EntityCopyUtils {
         return dest;
     }
 
-    public static void copyCompositions(Entity source, Entity dest) {
+    public static void copyCompositions(JmixEntity source, JmixEntity dest) {
         Preconditions.checkNotNullArgument(source, "source is null");
         Preconditions.checkNotNullArgument(dest, "dest is null");
 
@@ -66,17 +66,17 @@ public class EntityCopyUtils {
                     if (value != null && srcProperty.getRange().getCardinality().isMany()
                             && srcProperty.getType() == MetaProperty.Type.COMPOSITION) {
                         //noinspection unchecked
-                        Collection<Entity> srcCollection = (Collection) value;
+                        Collection<JmixEntity> srcCollection = (Collection) value;
 
                         // Copy first to a Set to remove duplicates that could be created on repeated editing newly
                         // added items
-                        Collection<Entity> tmpCollection = new LinkedHashSet<>();
-                        for (Entity item : srcCollection) {
-                            Entity copy = copyCompositions(item);
+                        Collection<JmixEntity> tmpCollection = new LinkedHashSet<>();
+                        for (JmixEntity item : srcCollection) {
+                            JmixEntity copy = copyCompositions(item);
                             tmpCollection.add(copy);
                         }
 
-                        Collection<Entity> dstCollection;
+                        Collection<JmixEntity> dstCollection;
                         if (value instanceof List)
                             dstCollection = new ArrayList<>(tmpCollection);
                         else
@@ -103,7 +103,7 @@ public class EntityCopyUtils {
 //            destGenericEntity.setDynamicAttributes(sourceGenericEntity.getDynamicAttributes());
     }
 
-    public static void copyCompositionsBack(Entity source, Entity dest) {
+    public static void copyCompositionsBack(JmixEntity source, JmixEntity dest) {
         Preconditions.checkNotNullArgument(source, "source is null");
         Preconditions.checkNotNullArgument(dest, "dest is null");
 

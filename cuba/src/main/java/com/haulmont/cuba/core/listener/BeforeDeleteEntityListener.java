@@ -17,14 +17,14 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.global.impl.EntityListenerUtils;
 import com.haulmont.cuba.core.EntityManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Defines the contract for handling of entities before they have been deleted or
  * marked as deleted in DB.
  *
  */
-public interface BeforeDeleteEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeDeleteEntityListener<T> {
+public interface BeforeDeleteEntityListener<T extends JmixEntity> extends io.jmix.data.listener.BeforeDeleteEntityListener<T> {
 
     /**
      * Executes before the object has been deleted or marked as deleted in DB.

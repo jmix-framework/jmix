@@ -18,12 +18,12 @@ package com.haulmont.cuba.gui.components.data.table;
 
 import com.google.common.base.Preconditions;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.TableItems;
 
 @SuppressWarnings("unchecked")
-public class SortableDatasourceTableItems<E extends Entity, K>
+public class SortableDatasourceTableItems<E extends JmixEntity, K>
         extends DatasourceTableItems<E, K>
         implements TableItems.Sortable<E> {
 

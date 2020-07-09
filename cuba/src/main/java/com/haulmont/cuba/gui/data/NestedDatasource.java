@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 
 /**
@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
  * @deprecated Use {@link io.jmix.ui.model.Nested} APIs instead.
  */
 @Deprecated
-public interface NestedDatasource<T extends Entity> extends Datasource<T> {
+public interface NestedDatasource<T extends JmixEntity> extends Datasource<T> {
 
     /**
      * Setup the datasource right after creation.

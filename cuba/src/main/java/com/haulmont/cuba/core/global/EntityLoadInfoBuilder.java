@@ -20,7 +20,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -54,7 +54,7 @@ public class EntityLoadInfoBuilder {
      * @param viewName view name, can be null
      * @return info instance
      */
-    public EntityLoadInfo create(Entity entity, @Nullable String viewName) {
+    public EntityLoadInfo create(JmixEntity entity, @Nullable String viewName) {
         Objects.requireNonNull(entity, "entity is null");
 
         MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
@@ -71,7 +71,7 @@ public class EntityLoadInfoBuilder {
      * @param entity entity instance
      * @return info instance
      */
-    public EntityLoadInfo create(Entity entity) {
+    public EntityLoadInfo create(JmixEntity entity) {
         return create(entity, null);
     }
 
@@ -96,7 +96,7 @@ public class EntityLoadInfoBuilder {
                 if (metaClass == null) {
                     return null;
                 }
-                Entity entity = metadata.create(metaClass);
+                JmixEntity entity = metadata.create(metaClass);
                 MetaProperty primaryKeyProp = metadataTools.getPrimaryKeyProperty(metaClass);
                 boolean stringKey = primaryKeyProp != null && primaryKeyProp.getJavaType().equals(String.class);
                 return new EntityLoadInfo(EntityValues.getId(entity), metaClass, null, stringKey, true);
@@ -188,7 +188,7 @@ public class EntityLoadInfoBuilder {
      * @param entity     entity instance
      * @return true if the collection contains an info about the given entity instance. View part of the info is ignored.
      */
-    public boolean contains(Collection<EntityLoadInfo> collection, Entity entity) {
+    public boolean contains(Collection<EntityLoadInfo> collection, JmixEntity entity) {
         Preconditions.checkNotNullArgument(collection, "collection is null");
         Preconditions.checkNotNullArgument(entity, "entity is null");
 

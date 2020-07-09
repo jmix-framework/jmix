@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.impl.CollectionDatasourceImpl;
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl;
 import com.haulmont.cuba.web.components.AbstractComponentTest;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.model.common.Group;
 
 import java.util.UUID;
@@ -32,7 +32,7 @@ import java.util.UUID;
 public abstract class AbstractComponentDsTest extends AbstractComponentTest {
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> Datasource<E> createTestDatasource(Class<E> entityClass) {
+    protected <E extends JmixEntity> Datasource<E> createTestDatasource(Class<E> entityClass) {
         Datasource<E> datasource = new DsBuilder()
                 .setId("testDs")
                 .setJavaClass(entityClass)

@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.self_reference;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
@@ -25,7 +25,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @ModelObject(name = "test$BaseDictEntity")
-public class BaseDictEntity implements Entity {
+public class BaseDictEntity implements JmixEntity {
 
     @Id
     @Column(name = "CODE", nullable = false, length = 32)

@@ -19,7 +19,7 @@ package spec.haulmont.cuba.web.datacontext
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.OrderLineParam
-import io.jmix.core.Entity
+import io.jmix.core.JmixEntity
 import io.jmix.ui.screen.UiControllerUtils
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.datacontext.screens.OrderScreen
@@ -173,7 +173,7 @@ class CompositionScreensTest extends UiScreenSpec {
         orderScreenCtx.isRemoved(lineParam)
     }
 
-    private static <T extends Entity> T makeSaved(T entity) {
+    private static <T extends JmixEntity> T makeSaved(T entity) {
         throw new NotImplementedException()
         /*def cc = new CommitContext().addInstanceToCommit(entity)
         def ds = TestServiceProxy.getDefault(DataService)

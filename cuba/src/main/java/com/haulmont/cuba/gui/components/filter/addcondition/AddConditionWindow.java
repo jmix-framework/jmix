@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescr
 import com.haulmont.cuba.gui.components.filter.descriptor.HeaderConditionDescriptor;
 import com.haulmont.cuba.gui.components.filter.descriptor.PropertyConditionDescriptor;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Button;
@@ -116,12 +116,12 @@ public class AddConditionWindow extends AbstractWindow {
     }
 
     public void select() {
-        Set<Entity> selectedItems = tree.getSelected();
+        Set<JmixEntity> selectedItems = tree.getSelected();
         if (selectedItems.isEmpty()) {
             showNotification(messages.getMessage("filter.addCondition.selectCondition"), NotificationType.WARNING);
             return;
         } else {
-            for (Entity item : selectedItems) {
+            for (JmixEntity item : selectedItems) {
                 if (item instanceof HeaderConditionDescriptor) {
                     showNotification(messages.getMessage("filter.addCondition.youSelectedGroup"), NotificationType.WARNING);
                     return;

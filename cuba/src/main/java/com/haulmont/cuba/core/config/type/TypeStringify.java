@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import com.haulmont.cuba.core.config.ConfigUtil;
 import com.haulmont.cuba.core.config.EnumStore;
 import com.haulmont.cuba.core.config.EnumStoreMode;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -64,7 +64,7 @@ public abstract class TypeStringify {
                 }
             } else {
                 if ((method.getParameterTypes().length > 0)) {
-                    if (Entity.class.isAssignableFrom(method.getParameterTypes()[0])) {
+                    if (JmixEntity.class.isAssignableFrom(method.getParameterTypes()[0])) {
                         return new EntityStringify();
                     }
                 }

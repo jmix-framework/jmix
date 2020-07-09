@@ -34,7 +34,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.common.datastruct.Node;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.WindowParam;
@@ -149,7 +149,7 @@ public class FilterEditor extends AbstractWindow {
     @Autowired
     private DataManager dataManager;
 
-    protected Set<Entity> modifiedGlobalDefaultFilters = new HashSet<>();
+    protected Set<JmixEntity> modifiedGlobalDefaultFilters = new HashSet<>();
 
     public interface Companion {
         void showComponentName(WindowManager windowManager, String title, String message);

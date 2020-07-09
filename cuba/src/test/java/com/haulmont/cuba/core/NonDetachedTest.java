@@ -177,7 +177,7 @@ public class NonDetachedTest {
     }
 
     interface Saver {
-        void save(Entity entity);
+        void save(JmixEntity entity);
     }
 
     private Order loadChangeAndSave(Saver saver) {

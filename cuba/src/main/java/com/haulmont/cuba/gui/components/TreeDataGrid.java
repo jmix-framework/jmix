@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.components.data.datagrid.DatasourceTreeDataGridItem
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.DataGridItems;
 
 /**
@@ -32,10 +32,10 @@ import io.jmix.ui.component.data.DataGridItems;
  */
 @SuppressWarnings("rawtypes")
 @Deprecated
-public interface TreeDataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeDataGrid<E>,
+public interface TreeDataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.TreeDataGrid<E>,
         DataGrid<E>, HasSettings, HasDataLoadingSettings {
 
-    static <T extends Entity> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
+    static <T extends JmixEntity> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<TreeDataGrid<T>>() {};
     }
 

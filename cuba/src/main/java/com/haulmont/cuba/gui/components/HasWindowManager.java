@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.Notifications;
@@ -91,7 +91,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractEditor openEditor(Entity item, OpenType openType) {
+    default AbstractEditor openEditor(JmixEntity item, OpenType openType) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo editorScreen = windowConfig.getEditorScreen(item);
         return (AbstractEditor) getWindowManager().openEditor(editorScreen, item, openType);
@@ -106,7 +106,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractEditor openEditor(Entity item, OpenType openType,
+    default AbstractEditor openEditor(JmixEntity item, OpenType openType,
                                       Map<String, Object> params) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo editorScreen = windowConfig.getEditorScreen(item);
@@ -124,7 +124,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractEditor openEditor(Entity item, OpenType openType,
+    default AbstractEditor openEditor(JmixEntity item, OpenType openType,
                                       Map<String, Object> params, Datasource parentDs) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo editorScreen = windowConfig.getEditorScreen(item);
@@ -143,7 +143,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractEditor openEditor(String windowAlias, Entity item, OpenType openType,
+    default AbstractEditor openEditor(String windowAlias, JmixEntity item, OpenType openType,
                                       Map<String, Object> params, Datasource parentDs) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo windowInfo = windowConfig.getWindowInfo(windowAlias);
@@ -160,7 +160,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractEditor openEditor(String windowAlias, Entity item, OpenType openType,
+    default AbstractEditor openEditor(String windowAlias, JmixEntity item, OpenType openType,
                                       Map<String, Object> params) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo windowInfo = windowConfig.getWindowInfo(windowAlias);
@@ -178,7 +178,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractEditor openEditor(String windowAlias, Entity item, OpenType openType,
+    default AbstractEditor openEditor(String windowAlias, JmixEntity item, OpenType openType,
                                       Datasource parentDs) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo windowInfo = windowConfig.getWindowInfo(windowAlias);
@@ -194,7 +194,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractEditor openEditor(String windowAlias, Entity item, OpenType openType) {
+    default AbstractEditor openEditor(String windowAlias, JmixEntity item, OpenType openType) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo windowInfo = windowConfig.getWindowInfo(windowAlias);
         return (AbstractEditor) getWindowManager().openEditor(windowInfo, item, openType);
@@ -209,7 +209,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractLookup openLookup(Class<? extends Entity> entityClass, Window.Lookup.Handler handler,
+    default AbstractLookup openLookup(Class<? extends JmixEntity> entityClass, Window.Lookup.Handler handler,
                                       OpenType openType) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo lookupScreen = windowConfig.getLookupScreen(entityClass);
@@ -226,7 +226,7 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractLookup openLookup(Class<? extends Entity> entityClass, Window.Lookup.Handler handler,
+    default AbstractLookup openLookup(Class<? extends JmixEntity> entityClass, Window.Lookup.Handler handler,
                                       OpenType openType, Map<String, Object> params) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
         WindowInfo lookupScreen = windowConfig.getLookupScreen(entityClass);

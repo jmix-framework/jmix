@@ -17,14 +17,14 @@ package com.haulmont.cuba.core.listener;
 
 import com.haulmont.cuba.core.global.impl.EntityListenerUtils;
 import com.haulmont.cuba.core.EntityManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Defines the contract for handling entities right before they are detached from an EntityManager
  * on transaction commit.
  *
  */
-public interface BeforeDetachEntityListener<T extends Entity> extends io.jmix.data.listener.BeforeDetachEntityListener<T> {
+public interface BeforeDetachEntityListener<T extends JmixEntity> extends io.jmix.data.listener.BeforeDetachEntityListener<T> {
 
     /**
      * Executes before the object is detached from an EntityManager on transaction commit.

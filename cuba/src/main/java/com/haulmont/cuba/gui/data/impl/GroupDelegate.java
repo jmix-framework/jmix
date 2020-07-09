@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.GroupDatasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -32,7 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class GroupDelegate<T extends Entity, K> {
+public abstract class GroupDelegate<T extends JmixEntity, K> {
 
     protected Object[] groupProperties = null;
 

@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.listener;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 
@@ -35,5 +35,5 @@ public interface AfterCompleteTransactionListener {
      * @param detachedEntities  collection of entities in Detached state
      *                          that made up the persistence context of the completed transaction
      */
-    void afterComplete(boolean committed, Collection<Entity> detachedEntities);
+    void afterComplete(boolean committed, Collection<JmixEntity> detachedEntities);
 }

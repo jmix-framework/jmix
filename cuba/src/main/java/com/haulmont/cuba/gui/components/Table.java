@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.data.table.DatasourceTableItems;
 import com.haulmont.cuba.gui.components.data.table.SortableDatasourceTableItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.data.TableItems;
 
 /**
@@ -31,7 +31,7 @@ import io.jmix.ui.component.data.TableItems;
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
-public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
+public interface Table<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
         HasDataLoadingSettings {
 
     /**

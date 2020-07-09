@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 
 
 @SuppressWarnings("unchecked")
-public class DatasourceTableItems<E extends Entity, K>
+public class DatasourceTableItems<E extends JmixEntity, K>
         implements EntityTableItems<E>, DatasourceDataUnit, AggregatableTableItems<E> {
 
     protected CollectionDatasource datasource;

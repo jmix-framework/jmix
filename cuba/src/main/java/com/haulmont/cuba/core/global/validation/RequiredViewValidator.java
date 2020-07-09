@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.global.validation;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintValidator;
@@ -38,12 +38,12 @@ public class RequiredViewValidator implements ConstraintValidator<RequiredView, 
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         try {
             EntityStates entityStates = AppBeans.get(EntityStates.NAME);
-            if (value instanceof Entity) {
-                entityStates.checkLoadedWithFetchPlan((Entity) value, view);
+            if (value instanceof JmixEntity) {
+                entityStates.checkLoadedWithFetchPlan((JmixEntity) value, view);
             } else if (value instanceof Collection) {
                 @SuppressWarnings("unchecked")
-                Collection<Entity> entities = (Collection<Entity>) value;
-                for (Entity entity : entities) {
+                Collection<JmixEntity> entities = (Collection<JmixEntity>) value;
+                for (JmixEntity entity : entities) {
                     entityStates.checkLoadedWithFetchPlan(entity, view);
                 }
             }

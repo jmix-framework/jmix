@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.common.datastruct.Tree;
@@ -29,7 +29,7 @@ import java.util.*;
  * @param <K> Key
  */
 @Deprecated
-public abstract class AbstractTreeDatasource<T extends Entity, K>
+public abstract class AbstractTreeDatasource<T extends JmixEntity, K>
         extends CollectionDatasourceImpl<T, K>
         implements HierarchicalDatasource<T, K> {
 

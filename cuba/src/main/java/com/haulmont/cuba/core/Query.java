@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.core;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.data.QueryHints;
 
@@ -216,7 +216,7 @@ public interface Query {
      * @param viewName    view name
      * @return the same query instance
      */
-    Query setView(Class<? extends Entity> entityClass, String viewName);
+    Query setView(Class<? extends JmixEntity> entityClass, String viewName);
 
     /**
      * Adds View for this Query instance.
@@ -235,7 +235,7 @@ public interface Query {
      * @param viewName    view name - must not be null
      * @return the same query instance
      */
-    Query addView(Class<? extends Entity> entityClass, String viewName);
+    Query addView(Class<? extends JmixEntity> entityClass, String viewName);
 
     /**
      * Indicates that the query results should be cached.

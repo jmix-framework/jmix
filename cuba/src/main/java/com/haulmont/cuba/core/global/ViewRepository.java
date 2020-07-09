@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.metamodel.model.MetaClass;
 
@@ -38,7 +38,7 @@ public interface ViewRepository {
      * @param name        view name
      * @return view instance. Throws {@link ViewNotFoundException} if not found.
      */
-    FetchPlan getView(Class<? extends Entity> entityClass, String name);
+    FetchPlan getView(Class<? extends JmixEntity> entityClass, String name);
 
     /**
      * Get View for an entity.
@@ -73,5 +73,5 @@ public interface ViewRepository {
      * @param entityClass entity class
      * @return names of views
      */
-    Collection<String> getViewNames(Class<? extends Entity> entityClass);
+    Collection<String> getViewNames(Class<? extends JmixEntity> entityClass);
 }

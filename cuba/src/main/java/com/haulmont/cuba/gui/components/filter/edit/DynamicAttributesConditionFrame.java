@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
 import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
 import io.jmix.core.AppBeans;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -142,7 +142,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                     attributeLookup.getValue().getId() + "'))";
         } else {
             String valueFieldName = "stringValue";
-            if (Entity.class.isAssignableFrom(javaClass))
+            if (JmixEntity.class.isAssignableFrom(javaClass))
                 valueFieldName = "entityValue." + referenceToEntitySupport.getReferenceIdPropertyName(metadata.getClassNN(javaClass));
             else if (String.class.isAssignableFrom(javaClass))
                 valueFieldName = "stringValue";

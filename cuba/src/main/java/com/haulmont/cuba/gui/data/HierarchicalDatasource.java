@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 
@@ -28,7 +28,7 @@ import java.util.Collection;
  * @deprecated Use {@link io.jmix.ui.model.CollectionContainer} APIs instead.
  */
 @Deprecated
-public interface HierarchicalDatasource<T extends Entity, K> extends CollectionDatasource<T, K> {
+public interface HierarchicalDatasource<T extends JmixEntity, K> extends CollectionDatasource<T, K> {
 
     /** Property of entity which forms the hierarchy */
     String getHierarchyPropertyName();

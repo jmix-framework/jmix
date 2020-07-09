@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.FetchPlan;
 
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  * @deprecated Use {@link io.jmix.ui.model.InstanceContainer} APIs instead.
  */
 @Deprecated
-public interface Datasource<T extends Entity> {
+public interface Datasource<T extends JmixEntity> {
 
     /** Where to commit changes */
     enum CommitMode {
@@ -146,7 +146,7 @@ public interface Datasource<T extends Entity> {
     @Nullable
     FetchPlan getView();
 
-    class ItemChangeEvent<T extends Entity> {
+    class ItemChangeEvent<T extends JmixEntity> {
         private final Datasource<T> ds;
         private final T prevItem;
         private final T item;
@@ -185,7 +185,7 @@ public interface Datasource<T extends Entity> {
      * Listener to datasource item change events.
      */
     @FunctionalInterface
-    interface ItemChangeListener<T extends Entity> {
+    interface ItemChangeListener<T extends JmixEntity> {
         /**
          * Current item changed, that is now {@link Datasource#getItem()} returns a different
          * instance.
@@ -196,7 +196,7 @@ public interface Datasource<T extends Entity> {
     void addItemChangeListener(ItemChangeListener<T> listener);
     void removeItemChangeListener(ItemChangeListener<T> listener);
 
-    class StateChangeEvent<T extends Entity> {
+    class StateChangeEvent<T extends JmixEntity> {
         private final Datasource<T> ds;
         private final Datasource.State prevState;
         private final Datasource.State state;
@@ -233,7 +233,7 @@ public interface Datasource<T extends Entity> {
      * Listener to datasource state change events.
      */
     @FunctionalInterface
-    interface StateChangeListener<T extends Entity> {
+    interface StateChangeListener<T extends JmixEntity> {
         /**
          * Datasource state changed.
          */
@@ -243,7 +243,7 @@ public interface Datasource<T extends Entity> {
     void addStateChangeListener(StateChangeListener<T> listener);
     void removeStateChangeListener(StateChangeListener<T> listener);
 
-    class ItemPropertyChangeEvent<T extends Entity> {
+    class ItemPropertyChangeEvent<T extends JmixEntity> {
         private final Datasource<T> ds;
         private final T item;
         private final String property;
@@ -300,7 +300,7 @@ public interface Datasource<T extends Entity> {
      * Listener to datasource item property value change events.
      */
     @FunctionalInterface
-    interface ItemPropertyChangeListener<T extends Entity> {
+    interface ItemPropertyChangeListener<T extends JmixEntity> {
         /**
          * Property value of some datasource item changed. In case of {@link CollectionDatasource} this method may be
          * called for any item of collection if its property value changed.

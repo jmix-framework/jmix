@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
@@ -50,7 +50,7 @@ public interface DataManager {
      * @return the loaded detached object, or null if not found
      */
     @Nullable
-    <E extends Entity> E load(LoadContext<E> context);
+    <E extends JmixEntity> E load(LoadContext<E> context);
 
     /**
      * Loads collection of entity instances.
@@ -60,7 +60,7 @@ public interface DataManager {
      * @param context {@link LoadContext} object, defining what and how to load
      * @return a list of detached instances, or empty list if nothing found
      */
-    <E extends Entity> List<E> loadList(LoadContext<E> context);
+    <E extends JmixEntity> List<E> loadList(LoadContext<E> context);
 
     /**
      * Returns the number of entity instances for the given query passed in the {@link LoadContext}.
@@ -68,7 +68,7 @@ public interface DataManager {
      * @param context defines the query
      * @return number of instances in the data store
      */
-    long getCount(LoadContext<? extends Entity> context);
+    long getCount(LoadContext<? extends JmixEntity> context);
 
     /**
      * Reloads the entity instance from data store with the fetch plan specified.
@@ -78,7 +78,7 @@ public interface DataManager {
      * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, String fetchPlanName);
+    <E extends JmixEntity> E reload(E entity, String fetchPlanName);
 
     /**
      * Reloads the entity instance from data store with the fetch plan specified.
@@ -88,7 +88,7 @@ public interface DataManager {
      * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, FetchPlan fetchPlan);
+    <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan);
 
     /**
      * Reloads the entity instance from data store with the fetch plan specified. Loading instance class may differ from original
@@ -100,7 +100,7 @@ public interface DataManager {
      * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass);
+    <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass);
 
     /**
      * Reloads the entity instance from data store with the fetch plan specified. Loading instance class may differ from original
@@ -113,7 +113,7 @@ public interface DataManager {
      * @return reloaded instance
      * @throws EntityAccessException if the entity cannot be reloaded because it was deleted or access restrictions has been changed
      */
-    <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes);
+    <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes);
 
     /**
      * Commits a collection of new or detached entity instances to the data store.
@@ -129,7 +129,7 @@ public interface DataManager {
      * @param entities entities to commit
      * @return set of committed instances
      */
-    EntitySet commit(Entity... entities);
+    EntitySet commit(JmixEntity... entities);
 
     /**
      * Commits the entity to the data store.
@@ -138,7 +138,7 @@ public interface DataManager {
      * @param fetchPlan fetch plan object, affects the returned committed instance
      * @return committed instance
      */
-    <E extends Entity> E commit(E entity, @Nullable FetchPlan fetchPlan);
+    <E extends JmixEntity> E commit(E entity, @Nullable FetchPlan fetchPlan);
 
     /**
      * Commits the entity to the data store.
@@ -147,7 +147,7 @@ public interface DataManager {
      * @param fetchPlanName fetch plan name, affects the returned committed instance
      * @return committed instance
      */
-    <E extends Entity> E commit(E entity, @Nullable String fetchPlanName);
+    <E extends JmixEntity> E commit(E entity, @Nullable String fetchPlanName);
 
     /**
      * Commits the entity to the data store.
@@ -155,21 +155,21 @@ public interface DataManager {
      * @param entity entity instance
      * @return committed instance
      */
-    <E extends Entity> E commit(E entity);
+    <E extends JmixEntity> E commit(E entity);
 
     /**
      * Removes the entity instance from the data store.
      *
      * @param entity entity instance
      */
-    void remove(Entity entity);
+    void remove(JmixEntity entity);
 
     /**
      * Removes the entity instance from the data store by its id.
      *
      * @param entityId entity id
      */
-    default <T extends Entity, K> void remove(Id<T, K> entityId) {
+    default <T extends JmixEntity, K> void remove(Id<T, K> entityId) {
         remove(getReference(entityId));
     }
 
@@ -214,7 +214,7 @@ public interface DataManager {
      *
      * @param entityClass class of entity that needs to be loaded
      */
-    default <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
+    default <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
         FluentLoader<E> loader = new FluentLoader<>(entityClass, getDelegate());
         loader.joinTransaction(false);
         return loader;
@@ -230,7 +230,7 @@ public interface DataManager {
      *
      * @param entityId {@link Id} of entity that needs to be loaded
      */
-    default <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
+    default <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
         FluentLoader<E> loader = new FluentLoader<>(entityId.getEntityClass(), getDelegate());
         loader.joinTransaction(false);
         return loader.id(entityId.getValue());
@@ -289,7 +289,7 @@ public interface DataManager {
      *
      * @param entityClass entity class
      */
-    <T extends Entity> T create(Class<T> entityClass);
+    <T extends JmixEntity> T create(Class<T> entityClass);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -308,7 +308,7 @@ public interface DataManager {
      * @param entityClass entity class
      * @param id          id of an existing object
      */
-    <T extends Entity, K> T getReference(Class<T> entityClass, K id);
+    <T extends JmixEntity, K> T getReference(Class<T> entityClass, K id);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -316,7 +316,7 @@ public interface DataManager {
      * @param entityId id of an existing object
      * @see #getReference(Class, Object)
      */
-    default <T extends Entity, K> T getReference(Id<T, K> entityId) {
+    default <T extends JmixEntity, K> T getReference(Id<T, K> entityId) {
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return getReference(entityId.getEntityClass(), entityId.getValue());
     }

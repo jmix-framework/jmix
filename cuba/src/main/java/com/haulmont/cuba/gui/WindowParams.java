@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.FrameContext;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -109,8 +109,8 @@ public enum WindowParams {
      * @param params    parameters map
      * @return          parameter value
      */
-    public Entity getEntity(Map<String, Object> params) {
-        return (Entity) params.get(name());
+    public JmixEntity getEntity(Map<String, Object> params) {
+        return (JmixEntity) params.get(name());
     }
 
     /**

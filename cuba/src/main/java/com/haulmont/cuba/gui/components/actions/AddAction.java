@@ -25,7 +25,7 @@ import com.haulmont.cuba.gui.data.PropertyDatasource;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -371,7 +371,7 @@ public class AddAction extends ListAction
 
             ds.suspendListeners();
             try {
-                Entity masterEntity = null;
+                JmixEntity masterEntity = null;
                 MetaProperty inverseProp = null;
                 boolean initializeMasterReference = false;
 
@@ -395,8 +395,8 @@ public class AddAction extends ListAction
                 }
 
                 for (Object item : items) {
-                    if (item instanceof Entity) {
-                        Entity entity = (Entity) item;
+                    if (item instanceof JmixEntity) {
+                        JmixEntity entity = (JmixEntity) item;
                         if (!ds.containsItem(EntityValues.getId(entity))) {
                             // Initialize reference to master entity
                             if (initializeMasterReference) {

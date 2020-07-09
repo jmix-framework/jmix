@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -27,7 +27,7 @@ import io.jmix.core.Entity;
  * @deprecated Use {@link io.jmix.ui.component.ListComponent} instead
  */
 @Deprecated
-public interface ListComponent<E extends Entity> extends io.jmix.ui.component.ListComponent<E> {
+public interface ListComponent<E extends JmixEntity> extends io.jmix.ui.component.ListComponent<E> {
 
     /**
      * @return collection datasource

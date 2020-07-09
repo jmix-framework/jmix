@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Messages;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -50,7 +50,7 @@ import java.util.function.Supplier;
  * Standard list action to create a new entity instance.
  * <p>
  * Action's behaviour can be customized by providing arguments to constructor, setting properties, or overriding
- * methods {@link #afterCommit(Entity)}, {@link #afterWindowClosed(Window)}
+ * methods {@link #afterCommit(JmixEntity)}, {@link #afterWindowClosed(Window)}
  * <p>
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
@@ -93,7 +93,7 @@ public class CreateAction extends ListAction
         /**
          * @param entity    new committed entity instance
          */
-        void handle(Entity entity);
+        void handle(JmixEntity entity);
     }
 
     public interface AfterWindowClosedHandler {
@@ -218,12 +218,12 @@ public class CreateAction extends ListAction
 
         final CollectionDatasource datasource = target.getDatasource();
 
-        Entity item = createEntity();
+        JmixEntity item = createEntity();
 
         if (target instanceof Tree) {
             String hierarchyProperty = ((Tree) target).getHierarchyProperty();
 
-            Entity parentItem = datasource.getItem();
+            JmixEntity parentItem = datasource.getItem();
             // datasource.getItem() may contain deleted item
             if (parentItem != null && !datasource.containsItem(EntityValues.getId(parentItem))) {
                 parentItem = null;
@@ -265,7 +265,7 @@ public class CreateAction extends ListAction
         internalOpenEditor(datasource, item, parentDs, params);
     }
 
-    protected Entity createEntity() {
+    protected JmixEntity createEntity() {
         CollectionDatasource datasource = target.getDatasource();
         DataSupplier dataSupplier = datasource.getDataSupplier();
         return dataSupplier.newInstance(datasource.getMetaClass());
@@ -287,7 +287,7 @@ public class CreateAction extends ListAction
         return params;
     }
 
-    protected void setInitialValuesToItem(Entity item) {
+    protected void setInitialValuesToItem(JmixEntity item) {
         Map<String, Object> values = getInitialValues();
         if (values != null) {
             for (Map.Entry<String, Object> entry : values.entrySet()) {
@@ -306,7 +306,7 @@ public class CreateAction extends ListAction
     }
 
     @SuppressWarnings("unchecked")
-    protected void internalOpenEditor(CollectionDatasource datasource, Entity newItem, Datasource parentDs,
+    protected void internalOpenEditor(CollectionDatasource datasource, JmixEntity newItem, Datasource parentDs,
                                       Map<String, Object> params) {
         LegacyFrame frameOwner = (LegacyFrame) target.getFrame().getFrameOwner();
         AbstractEditor window = frameOwner.openEditor(getWindowId(), newItem, getOpenType(), params, parentDs);
@@ -319,10 +319,10 @@ public class CreateAction extends ListAction
                 }
 
                 if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                    Entity editedItem = window.getItem();
+                    JmixEntity editedItem = window.getItem();
                     if (editedItem != null) {
                         if (parentDs == null) {
-                            editedItem = (Entity) AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
+                            editedItem = (JmixEntity) AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
                             if (addFirst && datasource instanceof CollectionDatasource.Ordered)
                                 ((CollectionDatasource.Ordered) datasource).includeItemFirst(editedItem);
                             else
@@ -460,7 +460,7 @@ public class CreateAction extends ListAction
      * Hook invoked after the editor was committed and closed
      * @param entity    new committed entity instance
      */
-    protected void afterCommit(Entity entity) {
+    protected void afterCommit(JmixEntity entity) {
     }
 
     /**

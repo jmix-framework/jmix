@@ -20,7 +20,7 @@ package com.haulmont.cuba.gui.components.filter;
 import io.jmix.core.AppBeans;
 import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.common.util.Dom4j;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.ui.filter.ConditionType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -82,7 +82,7 @@ public class UserSetHelper {
     public static String createIdsString(Set<String> current, Collection entities) {
         Set<String> convertedSet = new HashSet<>();
         for (Object entity : entities) {
-            Object id = getReferenceToEntitySupport().getReferenceIdForLink((Entity) entity);
+            Object id = getReferenceToEntitySupport().getReferenceIdForLink((JmixEntity) entity);
             if (id != null) {
                 convertedSet.add(id.toString());
             }
@@ -105,7 +105,7 @@ public class UserSetHelper {
     public static String removeIds(Set<String> current, Collection entities) {
         Set<String> convertedSet = new HashSet<>();
         for (Object entity : entities) {
-            Object id = getReferenceToEntitySupport().getReferenceIdForLink((Entity) entity);
+            Object id = getReferenceToEntitySupport().getReferenceIdForLink((JmixEntity) entity);
             if (id != null) {
                 convertedSet.add(id.toString());
             }

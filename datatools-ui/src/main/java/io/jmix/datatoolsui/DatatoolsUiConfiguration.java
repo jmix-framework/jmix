@@ -37,7 +37,7 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.datatoolsui", value = "classpath:/io/jmix/datatoolsui/module.properties")
 public class DatatoolsUiConfiguration {
 
-    @Bean("jmix_JmixDatatoolsUiConfiguration")
+    @Bean("datatools_UiControllersConfiguration")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers

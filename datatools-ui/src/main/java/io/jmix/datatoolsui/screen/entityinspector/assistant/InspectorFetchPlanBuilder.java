@@ -32,7 +32,7 @@ import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFetchPlanBuilder {
 
-    public static final String NAME = "jmix_EntityInspectorFetchPlanBuilder";
+    public static final String NAME = "datatools_EntityInspectorFetchPlanBuilder";
 
     @Autowired
     protected Metadata metadata;

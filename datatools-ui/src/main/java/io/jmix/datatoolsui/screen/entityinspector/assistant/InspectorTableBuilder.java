@@ -46,7 +46,7 @@ import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorTableBuilder {
 
-    public static final String NAME = "jmix_EntityInspectorTableBuilder";
+    public static final String NAME = "datatools_EntityInspectorTableBuilder";
 
     @Autowired
     protected MetadataTools metadataTools;

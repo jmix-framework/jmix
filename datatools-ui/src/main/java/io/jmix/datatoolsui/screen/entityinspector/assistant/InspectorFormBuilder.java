@@ -50,7 +50,7 @@ import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.*;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFormBuilder {
 
-    public static final String NAME = "jmix_EntityInspectorFormBuilder";
+    public static final String NAME = "datatools_EntityInspectorFormBuilder";
 
     public static final int MAX_TEXTFIELD_STRING_LENGTH = 255;
 

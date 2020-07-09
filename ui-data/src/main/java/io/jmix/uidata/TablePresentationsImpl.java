@@ -18,7 +18,6 @@ package io.jmix.uidata;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.CurrentAuthentication;
@@ -30,9 +29,6 @@ import io.jmix.ui.presentation.PresentationsChangeListener;
 import io.jmix.ui.presentation.model.TablePresentation;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -46,8 +42,6 @@ public class TablePresentationsImpl implements TablePresentations {
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected DataManager dataManager;
-    @Autowired
-    protected Dom4jTools dom4jTools;
     @Autowired
     protected CurrentAuthentication authentication;
     @Autowired
@@ -107,25 +101,6 @@ public class TablePresentationsImpl implements TablePresentations {
     }
 
     @Override
-    public Element getSettings(TablePresentation p) {
-        Preconditions.checkNotNullArgument(p);
-
-        p = getPresentation(EntityValues.<UUID>getId(p));
-        if (p != null) {
-            Document doc;
-            if (!StringUtils.isEmpty(p.getSettings())) {
-                doc = dom4jTools.readDocument(p.getSettings());
-            } else {
-                doc = DocumentHelper.createDocument();
-                doc.setRootElement(doc.addElement("presentation"));
-            }
-            return doc.getRootElement();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public String getSettingsString(TablePresentation p) {
         Preconditions.checkNotNullArgument(p);
 
@@ -136,18 +111,6 @@ public class TablePresentationsImpl implements TablePresentations {
         }
 
         return StringUtils.isBlank(p.getSettings()) ? null : p.getSettings();
-    }
-
-    @Override
-    public void setSettings(TablePresentation p, Element e) {
-        Preconditions.checkNotNullArgument(p);
-        Preconditions.checkNotNullArgument(e);
-
-        p = getPresentation(EntityValues.<UUID>getId(p));
-        if (p != null) {
-            p.setSettings(dom4jTools.writeDocument(e.getDocument(), false));
-            modify(p);
-        }
     }
 
     @Override

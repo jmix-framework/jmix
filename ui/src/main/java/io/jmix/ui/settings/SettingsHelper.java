@@ -19,14 +19,24 @@ package io.jmix.ui.settings;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.settings.component.ComponentSettings;
 
+import javax.annotation.Nullable;
+
 public final class SettingsHelper {
 
     private SettingsHelper() {
     }
 
     public static <T extends ComponentSettings> T createSettings(Class<T> settingsClass) {
+        return createSettings(settingsClass, null);
+    }
+
+    public static <T extends ComponentSettings> T createSettings(Class<T> settingsClass, @Nullable String id) {
         try {
-            return ReflectionHelper.newInstance(settingsClass);
+            T settings = ReflectionHelper.newInstance(settingsClass);
+            if (id != null) {
+                settings.setId(id);
+            }
+            return settings;
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(String.format("Cannot create settings '%s'", settingsClass), e);
         }

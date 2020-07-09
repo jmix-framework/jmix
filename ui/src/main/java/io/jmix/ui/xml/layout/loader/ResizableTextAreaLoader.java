@@ -62,8 +62,6 @@ public class ResizableTextAreaLoader extends TextAreaLoader {
             if (!Strings.isNullOrEmpty(resizableDirection)) {
                 textArea.setResizableDirection(ResizeDirection.valueOf(resizableDirection));
             }
-
-            loadSettingsEnabled(textArea, element);
         }
     }
 

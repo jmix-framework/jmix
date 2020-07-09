@@ -26,17 +26,17 @@ import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.screen.compatibility.CubaLegacySettings;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
-import io.jmix.ui.settings.compatibility.Settings;
-import io.jmix.ui.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.SettingsHelper;
+import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.widget.JmixTabSheet;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -44,10 +44,12 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
-import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         implements TabSheet, UiPermissionAware, SupportsChildrenSelection {
+
+    @Autowired(required = false)
+    protected UserSettingsTools userSettingsTools;
 
     protected boolean postInitTaskAdded;
     protected boolean componentTabChangeListenerInitialized;
@@ -384,7 +386,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         com.vaadin.ui.TabSheet.Tab tabControl = this.component.addTab(tabComponent);
         getLazyTabs().add(tabComponent);
 
-        this.component.addSelectedTabChangeListener(new LazyTabChangeListener(tabContent, descriptor, loader));
+        this.component.addSelectedTabChangeListener(createLazyTabChangeListener(tabContent, descriptor, loader));
         context = loader.getContext();
 
         if (!postInitTaskAdded
@@ -601,6 +603,12 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         publish(SelectedTabChangeEvent.class, event);
     }
 
+    protected LazyTabChangeListener createLazyTabChangeListener(ComponentContainer tabContent,
+                                                                Element descriptor,
+                                                                ComponentLoader loader) {
+        return new LazyTabChangeListener(tabContent, descriptor, loader);
+    }
+
     protected class LazyTabChangeListener implements com.vaadin.ui.TabSheet.SelectedTabChangeListener {
         protected ComponentContainer tabContent;
         protected Element descriptor;
@@ -636,44 +644,13 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
                 contentComponent.setDescription(null);
 
                 Window window = ComponentsHelper.getWindow(WebTabSheet.this);
-                if (window != null) {
-                    if (window.getFrameOwner() instanceof CubaLegacySettings) {
-                        Settings settings = ((CubaLegacySettings) window.getFrameOwner()).getSettings();
-                        if (settings != null) {
-                            walkComponents(tabContent, (settingsComponent, name) -> {
-                                if (settingsComponent.getId() != null
-                                        && settingsComponent instanceof HasSettings) {
-                                    Element e = settings.get(name);
-                                    ((HasSettings) settingsComponent).applySettings(e);
+                applySettings(window);
+            }
+        }
 
-                                    if (component instanceof HasTablePresentations
-                                            && e.attributeValue("presentation") != null) {
-                                        final String def = e.attributeValue("presentation");
-                                        if (!StringUtils.isEmpty(def)) {
-                                            UUID defaultId = UUID.fromString(def);
-                                            ((HasTablePresentations) component).applyPresentationAsDefault(defaultId);
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    } else {
-                        window.getFacets().forEach(facet -> {
-                            if (facet instanceof ScreenSettingsFacet) {
-                                ScreenSettingsFacet settingsFacet = (ScreenSettingsFacet) facet;
-                                Consumer<ScreenSettingsFacet.SettingsContext> applyHandler = settingsFacet.getApplySettingsDelegate();
-                                if (applyHandler != null) {
-                                    applyHandler.accept(new ScreenSettingsFacet.SettingsContext(
-                                            WebTabSheet.this,
-                                            tabContent.getComponents(),
-                                            settingsFacet.getSettings()));
-                                } else {
-                                    settingsFacet.applySettings(settingsFacet.getSettings());
-                                }
-                            }
-                        });
-                    }
-                }
+        protected void applySettings(Window window) {
+            if (window != null && userSettingsTools != null) {
+                userSettingsTools.applyLazyTabSettings(window, WebTabSheet.this, tabContent);
             }
         }
     }

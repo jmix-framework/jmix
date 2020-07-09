@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.settings;
+package io.jmix.uidata.settings;
 
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.TableSettings;
@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 public interface ScreenSettings {
 
-    String NAME = "ui_ScreenSettings";
+    String NAME = "uidata_ScreenSettings";
 
     /**
      * Set to true if screen settings changed manually. It will guarantee that settings will be persisted.

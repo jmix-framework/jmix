@@ -39,7 +39,7 @@ public class WebScreenTools implements ScreenTools {
     protected Metadata metadata;
     @Autowired
     protected WindowConfig windowConfig;
-    @Autowired
+    @Autowired(required = false)
     protected UserSettingService userSettingService;
 
     @Override

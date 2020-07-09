@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @org.springframework.stereotype.Component(ComponentSettingsRegistry.NAME)
 public class ComponentSettingsRegistry implements InitializingBean {
 
-    public static final String NAME = "ui_ComponentSettingsRegistry";
+    public static final String NAME = "uidata_ComponentSettingsRegistry";
 
     @Inject
     protected List<ComponentSettingsBinder> settings;

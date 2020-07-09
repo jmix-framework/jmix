@@ -44,7 +44,7 @@ public class GroupTableSettingsBinder extends AbstractTableSettingsBinder {
 
     private static final Logger log = LoggerFactory.getLogger(GroupTableSettingsBinder.class);
 
-    public static final String NAME = "jmix_GroupTableSettingsBinder";
+    public static final String NAME = "ui_GroupTableSettingsBinder";
 
     protected MetadataTools metadataTools;
 

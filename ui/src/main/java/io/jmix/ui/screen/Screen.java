@@ -25,7 +25,6 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.model.ScreenData;
-import io.jmix.ui.screen.compatibility.CubaLegacySettings;
 import io.jmix.ui.navigation.UrlParamsChangedEvent;
 import io.jmix.ui.util.OperationResult;
 import org.springframework.context.ApplicationListener;
@@ -320,11 +319,6 @@ public abstract class Screen implements FrameOwner {
             }
 
             return OperationResult.fail();
-        }
-
-        // support legacy screens with settings
-        if (this instanceof CubaLegacySettings) {
-            ((CubaLegacySettings) this).saveSettings();
         }
 
         // todo history

@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * A split panel contains two components and lays them vertically or horizontally.
  */
 public interface SplitPanel extends ComponentContainer, Component.BelongToFrame, Component.HasIcon,
-        Component.HasCaption, HasContextHelp, HasSettings, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
+        Component.HasCaption, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "split";
 

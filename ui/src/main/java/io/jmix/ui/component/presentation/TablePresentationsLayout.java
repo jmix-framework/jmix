@@ -16,7 +16,7 @@
 package io.jmix.ui.component.presentation;
 
 import com.vaadin.ui.*;
-import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.AppUI;
@@ -36,7 +36,7 @@ import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
-public class TablePresentations extends VerticalLayout {
+public class TablePresentationsLayout extends VerticalLayout {
 
     public static final String CUSTOM_STYLE_NAME_PREFIX = "cs";
 
@@ -57,12 +57,14 @@ public class TablePresentations extends VerticalLayout {
     protected Map<Object, MenuBar.MenuItem> presentationsMenuMap;
 
     protected Messages messages;
+    protected BeanLocator beanLocator;
 
     protected PresentationActionsBuilder presentationActionsBuilder;
 
-    public TablePresentations(Table component, ComponentSettingsBinder settingsBinder) {
+    public TablePresentationsLayout(Table component, ComponentSettingsBinder settingsBinder, BeanLocator beanLocator) {
         this.table = component;
-        this.messages = AppBeans.get(Messages.NAME);
+        this.beanLocator = beanLocator;
+        this.messages = beanLocator.get(Messages.NAME);
 
         this.tableImpl = table.unwrapOrNull(JmixEnhancedTable.class);
 
@@ -313,7 +315,7 @@ public class TablePresentations extends VerticalLayout {
 
     protected PresentationActionsBuilder getPresentationActionsBuilder() {
         if (presentationActionsBuilder == null)
-            presentationActionsBuilder = new PresentationActionsBuilder(table, settingsBinder);
+            presentationActionsBuilder = beanLocator.getPrototype(PresentationActionsBuilder.NAME, table, settingsBinder);
         return presentationActionsBuilder;
     }
 

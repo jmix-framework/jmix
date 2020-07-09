@@ -16,17 +16,18 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SaveAsPresentationAction extends AbstractEditPresentationAction {
 
-    protected Metadata metadata = AppBeans.get(Metadata.NAME);
+    @Autowired
+    protected Metadata metadata;
 
     public SaveAsPresentationAction(Table table, ComponentSettingsBinder settingsBinder) {
         super(table, "PresentationsPopup.saveAs", settingsBinder);

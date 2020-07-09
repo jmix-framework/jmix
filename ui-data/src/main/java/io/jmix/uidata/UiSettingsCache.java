@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.settings;
+package io.jmix.uidata;
 
 import com.vaadin.server.VaadinSession;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.executor.IllegalConcurrentAccessException;
+import io.jmix.ui.settings.UserSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +34,7 @@ import java.util.Optional;
 @Component(UiSettingsCache.NAME)
 public class UiSettingsCache {
 
-    public static final String NAME = "cuba_SettingsClient";
+    public static final String NAME = "uidata_SettingsClient";
 
     @Autowired
     protected UserSettingService userSettingService;

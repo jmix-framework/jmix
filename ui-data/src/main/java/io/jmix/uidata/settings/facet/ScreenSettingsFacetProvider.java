@@ -18,7 +18,6 @@ package io.jmix.uidata.settings.facet;
 
 import com.google.common.base.Strings;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -30,7 +29,7 @@ import java.util.Optional;
 @org.springframework.stereotype.Component(ScreenSettingsFacetProvider.NAME)
 public class ScreenSettingsFacetProvider implements FacetProvider<ScreenSettingsFacet> {
 
-    public static final String NAME = "ui_ui_persistence_ScreenSettingsFacetProvider";
+    public static final String NAME = "uidata_ScreenSettingsFacetProvider";
 
     @Override
     public Class<ScreenSettingsFacet> getFacetClass() {

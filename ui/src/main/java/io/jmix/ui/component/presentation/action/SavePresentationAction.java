@@ -16,20 +16,21 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.AppBeans;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
-import io.jmix.ui.screen.compatibility.CubaLegacySettings;
-import io.jmix.ui.settings.ScreenSettings;
 import io.jmix.ui.settings.SettingsHelper;
+import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.SettingsWrapperImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class SavePresentationAction extends AbstractPresentationAction {
+
+    @Autowired(required = false)
+    protected UserSettingsTools userSettingsTools;
 
     public SavePresentationAction(Table table, ComponentSettingsBinder settingsBinder) {
         super(table, "PresentationsPopup.save", settingsBinder);
@@ -42,27 +43,27 @@ public class SavePresentationAction extends AbstractPresentationAction {
         TablePresentations presentations = table.getPresentations();
         TablePresentation current = presentations.getCurrent();
 
-        if (table.getFrame().getFrameOwner() instanceof CubaLegacySettings) {
-            Element e = presentations.getSettings(current);
-            table.saveSettings(e);
-            presentations.setSettings(current, e);
-        } else {
-            ScreenSettings screenSettings = AppBeans.getPrototype(ScreenSettings.NAME, table.getFrame().getId());
-            ComponentSettings settings = SettingsHelper.createSettings(settingsBinder.getSettingsClass());
-            settings.setId(table.getId());
-
-            String settingsString = presentations.getSettingsString(current);
-            if (settingsString != null) {
-                ComponentSettings convertedSettings = screenSettings.toComponentSettings(settingsString, settingsBinder.getSettingsClass());
-                if (convertedSettings != null) {
-                    settings = convertedSettings;
-                }
-            }
-
-            settingsBinder.saveSettings(table, new SettingsWrapperImpl(settings));
-            presentations.setSettings(current, screenSettings.toSettingsString(settings));
-        }
+        setSettingsToPresentation(presentations, current);
 
         presentations.commit();
+    }
+
+    protected void setSettingsToPresentation(TablePresentations presentations, TablePresentation current) {
+        if (userSettingsTools == null) {
+            return;
+        }
+
+        ComponentSettings settings = SettingsHelper.createSettings(settingsBinder.getSettingsClass(), table.getId());
+
+        String settingsString = presentations.getSettingsString(current);
+        if (settingsString != null) {
+            ComponentSettings convertedSettings = userSettingsTools.toComponentSettings(settingsString, settingsBinder.getSettingsClass());
+            if (convertedSettings != null) {
+                settings = convertedSettings;
+            }
+        }
+
+        settingsBinder.saveSettings(table, new SettingsWrapperImpl(settings));
+        presentations.setSettings(current, userSettingsTools.toSettingsString(settings));
     }
 }

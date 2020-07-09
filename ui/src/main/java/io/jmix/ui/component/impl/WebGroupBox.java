@@ -21,26 +21,19 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.*;
-import io.jmix.ui.settings.compatibility.converter.LegacyGroupBoxSettingsConverter;
-import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
-import io.jmix.ui.settings.component.GroupBoxSettings;
-import io.jmix.ui.settings.component.SettingsWrapperImpl;
-import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import io.jmix.ui.settings.component.binder.GroupBoxSettingsBinder;
 import io.jmix.ui.widget.JmixGroupBox;
 import io.jmix.ui.widget.JmixHorizontalActionsLayout;
 import io.jmix.ui.widget.JmixOrderedActionsLayout;
 import io.jmix.ui.widget.JmixVerticalActionsLayout;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Element;
+import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements GroupBoxLayout {
+public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements GroupBoxLayout, InitializingBean {
 
     private static final String GROUPBOX_PANEL_STYLENAME = "c-panel-groupbox";
 
@@ -48,12 +41,7 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
 
     protected Orientation orientation = Orientation.VERTICAL;
 
-    protected boolean settingsEnabled = true;
-    protected boolean settingsChanged = false;
-
     protected Map<ShortcutAction, ShortcutListener> shortcuts;
-
-    protected LegacySettingsConverter settingsConverter;
 
     public WebGroupBox() {
         component = new JmixGroupBox();
@@ -63,8 +51,10 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
         JmixVerticalActionsLayout container = new JmixVerticalActionsLayout();
         container.setStyleName("c-groupbox-inner");
         component.setContent(container);
+    }
 
-        settingsConverter = createSettingsConverter();
+    @Override
+    public void afterPropertiesSet() throws Exception {
     }
 
     @Override
@@ -275,44 +265,6 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
     protected void fireExpandStateChange(boolean expanded, boolean invokedByUser) {
         ExpandedStateChangeEvent event = new ExpandedStateChangeEvent(this, expanded, invokedByUser);
         publish(ExpandedStateChangeEvent.class, event);
-
-        if (invokedByUser) {
-            settingsChanged = true;
-        }
-    }
-
-    @Override
-    public void applySettings(Element element) {
-        if (isSettingsEnabled()) {
-            GroupBoxSettings settings = settingsConverter.convertToComponentSettings(element);
-            getSettingsBinder().applySettings(this, new SettingsWrapperImpl(settings));
-        }
-    }
-
-    @Override
-    public boolean saveSettings(Element element) {
-        if (!isSettingsEnabled()) {
-            return false;
-        }
-
-        GroupBoxSettings settings = settingsConverter.convertToComponentSettings(element);
-
-        boolean modified = getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
-        if (modified) {
-            settingsConverter.copyToElement(settings, element);
-        }
-
-        return modified;
-    }
-
-    @Override
-    public boolean isSettingsEnabled() {
-        return settingsEnabled;
-    }
-
-    @Override
-    public void setSettingsEnabled(boolean settingsEnabled) {
-        this.settingsEnabled = settingsEnabled;
     }
 
     @Override
@@ -449,13 +401,5 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
         for (Component component : ownComponents) {
             ((AttachNotifier) component).detached();
         }
-    }
-
-    protected LegacySettingsConverter createSettingsConverter() {
-        return new LegacyGroupBoxSettingsConverter();
-    }
-
-    protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(GroupBoxSettingsBinder.NAME);
     }
 }

@@ -100,8 +100,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
         this.tabbedContainer = createTabbedModeContainer();
 
-        UserSettingsTools userSettingsTools = beanLocator.get(UserSettingsTools.NAME);
-        setMode(userSettingsTools.loadAppWindowMode());
+        loadModeFromSettings();
     }
 
     @Override
@@ -726,6 +725,17 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
             layout = (TabWindowContainer) singleWindowContainer.getWindowContainer();
         }
         return layout;
+    }
+
+    protected void loadModeFromSettings() {
+        UserSettingsTools userSettingsTools =
+                beanLocator.containsBean(UserSettingsTools.NAME) ?
+                        beanLocator.get(UserSettingsTools.NAME)
+                        : null;
+
+        if (userSettingsTools != null) {
+            setMode(userSettingsTools.loadAppWindowMode());
+        }
     }
 
     public int generateUrlStateMark() {

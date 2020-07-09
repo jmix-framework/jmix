@@ -49,7 +49,7 @@ public class HeliumThemeVariantsManager {
     @Autowired
     protected CoreProperties coreProperties;
 
-    @Autowired
+    @Autowired(required = false)
     protected UserSettingService userSettingService;
 
     @Autowired
@@ -169,14 +169,17 @@ public class HeliumThemeVariantsManager {
     }
 
     protected void saveUserSetting(String name, String value) {
-        userSettingService.saveSetting(name, value);
+        if (userSettingService != null)
+            userSettingService.saveSetting(name, value);
     }
 
+    @Nullable
     protected String loadUserSetting(String name) {
-        return userSettingService.loadSetting(name);
+        return userSettingService == null ? null : userSettingService.loadSetting(name);
     }
 
     protected void removeUserSetting(String name) {
-        userSettingService.deleteSettings(name);
+        if (userSettingService != null)
+            userSettingService.deleteSettings(name);
     }
 }

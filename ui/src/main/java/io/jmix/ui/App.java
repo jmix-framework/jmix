@@ -27,6 +27,7 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.RootWindow;
+import io.jmix.ui.event.screen.CloseWindowsInternalEvent;
 import io.jmix.ui.exception.ExceptionHandlers;
 import io.jmix.ui.executor.IllegalConcurrentAccessException;
 import io.jmix.ui.icon.JmixIcon;
@@ -35,7 +36,6 @@ import io.jmix.ui.logging.AppLog;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.settings.UiSettingsCache;
 import io.jmix.ui.sys.*;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsRepository;
@@ -47,7 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -92,8 +94,6 @@ public abstract class App {
     protected ThemeConstantsRepository themeConstantsRepository;
     @Autowired
     protected MessageTools messageTools;
-    @Autowired
-    protected UiSettingsCache settingsCache;
 
     @Autowired
     protected Events events;
@@ -452,7 +452,7 @@ public abstract class App {
                                 uiProperties.isForceRefreshAuthenticatedTabs()
 //                        ui.hasAuthenticatedSession()
 //                                && (Objects.equals(ui.getUserSession(), currentSession)
-                                )
+                )
                 .collect(Collectors.toList());
 
         removeAllWindows(authenticatedUIs);
@@ -511,10 +511,6 @@ public abstract class App {
 //        ui.getPage().open(ControllerUtils.getLocationWithoutParams(), "_self");
 //    }
 
-    protected void clearSettingsCache() {
-        settingsCache.clear();
-    }
-
     /**
      * Try to perform logout. If there are unsaved changes in opened windows then logout will not be performed and
      * unsaved changes dialog will appear.
@@ -564,7 +560,7 @@ public abstract class App {
 
                 return OperationResult.fail();
             } else {
-                forceLogout();
+                performForceLogout();
 
                 return OperationResult.success();
             }
@@ -580,18 +576,34 @@ public abstract class App {
     }
 
     protected void performStandardLogout(AppUI ui) {
-//        todo implement
-//        ((WebScreens) ui.getScreens()).saveScreenHistory();
-//
-        ((WebScreens) ui.getScreens()).saveScreenSettings();
+        closeWindowsInternal(true);
+
+        forceLogout();
+    }
+
+    protected void performForceLogout() {
+        closeWindowsInternal(false);
 
         forceLogout();
     }
 
     protected void forceLogout() {
-        removeAllWindows();
         //todo MG
 //        Connection connection = getConnection();
 //        connection.logout();
+    }
+
+    /**
+     * Removes all windows from all UIs and fires {@link CloseWindowsInternalEvent} application event.
+     *
+     * @param fireEvent fire event or not
+     */
+    public void closeWindowsInternal(boolean fireEvent) {
+        if (fireEvent) {
+            AppUI ui = AppUI.getCurrent();
+            events.publish(new CloseWindowsInternalEvent(ui.getScreens()));
+        }
+
+        removeAllWindows();
     }
 }

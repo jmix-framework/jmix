@@ -16,16 +16,14 @@
 package io.jmix.ui.presentation;
 
 import io.jmix.ui.component.HasTablePresentations;
-import io.jmix.ui.presentation.model.EmptyTablePresentation;
 import io.jmix.ui.presentation.model.TablePresentation;
-import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
  * Provide the workflow with presentations (visual settings of a component).
- * <br><br> A component must implement {@link HasTablePresentations} interface
+ * <br><br> A component must implement {@link HasTablePresentations} interface.
  *
  * @see TablePresentation
  */
@@ -45,30 +43,12 @@ public interface TablePresentations {
     void setCurrent(@Nullable TablePresentation p);
 
     /**
-     * Returns user settings for the selected presentation or <code>null</code>
-     * if the presentation doesn't exist or if the presentation doesn't contain any settings
-     *
-     * @deprecated Use {@link #getSettingsString(TablePresentation) instead.}
-     */
-    @Nullable
-    @Deprecated
-    Element getSettings(TablePresentation p);
-
-    /**
      * @param p presentation
      * @return user settings for the selected presentation or <code>null</code> if the presentation doesn't exist or if
      * the presentation doesn't contain any settings
      */
     @Nullable
     String getSettingsString(TablePresentation p);
-
-    /**
-     * Sets user settings for the selected presentation
-     *
-     * @deprecated Use {@link #setSettings(TablePresentation, String)} instead.
-     */
-    @Deprecated
-    void setSettings(TablePresentation p, Element e);
 
     /**
      * Sets user settings for the selected presentation
@@ -156,7 +136,5 @@ public interface TablePresentations {
     /**
      * @return presentation instance or stub if "ui-persistence" add-on is not added to the project
      */
-    default TablePresentation create() {
-        return new EmptyTablePresentation();
-    }
+    TablePresentation create();
 }

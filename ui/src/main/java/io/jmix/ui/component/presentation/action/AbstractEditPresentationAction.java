@@ -16,21 +16,20 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.DevelopmentException;
+import io.jmix.core.BeanLocator;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.presentation.PresentationEditor;
-import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.presentation.model.TablePresentation;
-import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractEditPresentationAction extends AbstractPresentationAction {
 
     protected Class<? extends PresentationEditor> editorClass;
+
+    @Autowired
+    protected BeanLocator beanLocator;
 
     public AbstractEditPresentationAction(Table table, String id, ComponentSettingsBinder settingsBinder) {
         super(table, id, settingsBinder);
@@ -44,23 +43,26 @@ public abstract class AbstractEditPresentationAction extends AbstractPresentatio
 
     protected PresentationEditor createEditor(TablePresentation presentation, ComponentSettingsBinder settingsBinder) {
         Class<? extends PresentationEditor> windowClass = getPresentationEditorClass();
-        try {
-            Constructor<? extends PresentationEditor> windowConstructor = windowClass.getConstructor(
-                    FrameOwner.class,
-                    TablePresentation.class,
-                    HasTablePresentations.class,
-                    ComponentSettingsBinder.class);
 
-            return windowConstructor.newInstance(table.getFrame().getFrameOwner(), presentation, table, settingsBinder);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new DevelopmentException("Invalid presentation's screen");
-        }
+        return beanLocator.getPrototype(windowClass,
+                table.getFrame().getFrameOwner(),
+                presentation,
+                table,
+                settingsBinder);
     }
 
     protected Class<? extends PresentationEditor> getPresentationEditorClass() {
         return editorClass == null ? PresentationEditor.class : editorClass;
     }
 
+    /**
+     * Sets Editor class that should be opened.
+     * <p>
+     * Note, editor class should be a PROTOTYPE bean.
+     *
+     * @param editorClass editor class
+     * @see PresentationEditor
+     */
     public void setEditorClass(Class<? extends PresentationEditor> editorClass) {
         this.editorClass = editorClass;
     }

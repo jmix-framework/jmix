@@ -22,7 +22,7 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.uidata.UiDataConfiguration;
-import io.jmix.ui.settings.UiSettingsCache;
+import io.jmix.uidata.UiSettingsCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

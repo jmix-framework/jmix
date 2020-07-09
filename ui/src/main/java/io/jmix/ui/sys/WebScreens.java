@@ -18,6 +18,7 @@ package io.jmix.ui.sys;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
 import io.jmix.core.BeanLocator;
+import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.security.AccessDeniedException;
@@ -36,6 +37,8 @@ import io.jmix.ui.component.impl.WebDialogWindow.GuiDialogWindow;
 import io.jmix.ui.component.impl.WebTabWindow;
 import io.jmix.ui.component.impl.WebWindow;
 import io.jmix.ui.component.impl.WindowImplementation;
+import io.jmix.ui.event.screen.AfterShowScreenEvent;
+import io.jmix.ui.event.screen.BeforeShowScreenEvent;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.gui.data.compatibility.DsSupport;
 import io.jmix.ui.icon.JmixIcon;
@@ -49,9 +52,6 @@ import io.jmix.ui.navigation.UrlTools;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
-import io.jmix.ui.screen.compatibility.CubaLegacySettings;
-import io.jmix.ui.settings.compatibility.Settings;
-import io.jmix.ui.settings.compatibility.SettingsImpl;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
@@ -68,7 +68,9 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -113,6 +115,8 @@ public class WebScreens implements Screens {
     protected ScreenViewsLoader screenViewsLoader;
     @Autowired
     protected MeterRegistry meterRegistry;
+    @Autowired
+    protected Events events;
 
     // todo implement
     /*@Autowired
@@ -366,7 +370,7 @@ public class WebScreens implements Screens {
 
         Timer.Sample beforeShowSample = Timer.start(meterRegistry);
 
-        applyDataLoadingSettings(screen);
+        events.publish(new BeforeShowScreenEvent(screen));
 
         fireEvent(screen, BeforeShowEvent.class, new BeforeShowEvent(screen));
 
@@ -404,7 +408,7 @@ public class WebScreens implements Screens {
 
         userActionsLog.trace("Screen {} {} opened", screen.getId(), screen.getClass());
 
-        afterShowWindow(screen);
+        events.publish(new AfterShowScreenEvent(screen));
 
         changeUrl(screen);
 
@@ -509,36 +513,6 @@ public class WebScreens implements Screens {
         if (!uiComponent.isAttached()) {
             throw new IllegalStateException("Screen is not opened " + screen.getId());
         }
-    }
-
-    protected void applyDataLoadingSettings(Screen screen) {
-        if (screen instanceof CubaLegacySettings) {
-            ((CubaLegacySettings) screen).applyDataLoadingSettings(getSettingsImpl(screen.getId()));
-        }
-    }
-
-    protected void afterShowWindow(Screen screen) {
-        WindowContext windowContext = screen.getWindow().getContext();
-
-        if (screen instanceof CubaLegacySettings) {
-            ((CubaLegacySettings) screen).applySettings(getSettingsImpl(screen.getId()));
-        }
-
-        /*
-        TODO: legacy-ui
-        if (screen instanceof LegacyFrame) {
-            if (!WindowParams.DISABLE_RESUME_SUSPENDED.getBool(windowContext)) {
-                DsContext dsContext = ((LegacyFrame) screen).getDsContext();
-                if (dsContext != null) {
-                    ((DsContextImplementation) dsContext).resumeSuspended();
-                }
-            }
-        }*/
-
-    }
-
-    protected Settings getSettingsImpl(String id) {
-        return new SettingsImpl(id);
     }
 
     @Override
@@ -1043,7 +1017,7 @@ public class WebScreens implements Screens {
                                     .withCaption(messages.getMessage("closeApplication"))
                                     .withIcon(icons.get(JmixIcon.DIALOG_OK))
                                     .withHandler(event -> {
-                                        closeWindowsInternal();
+                                        ui.getApp().closeWindowsInternal(true);
 
                                         result.success();
                                     }),
@@ -1054,45 +1028,10 @@ public class WebScreens implements Screens {
 
             return result;
         } else {
-            closeWindowsInternal();
+            ui.getApp().closeWindowsInternal(true);
 
             return OperationResult.success();
         }
-    }
-
-    protected void closeWindowsInternal() {
-        saveScreenSettings();
-        saveScreenHistory();
-
-        ui.getApp().removeAllWindows();
-    }
-
-    public void saveScreenHistory() {
-        // todo screen history
-        /*getOpenedWorkAreaScreensStream().forEach(s ->
-                screenHistorySupport.saveScreenHistory(s)
-        );
-
-        getDialogScreensStream().forEach(s ->
-                screenHistorySupport.saveScreenHistory(s)
-        );*/
-    }
-
-    public void saveScreenSettings() {
-        Screen rootScreen = getOpenedScreens().getRootScreen();
-
-        if (rootScreen instanceof CubaLegacySettings)
-            ((CubaLegacySettings) rootScreen).saveSettings();
-
-        getOpenedWorkAreaScreensStream().forEach(screen -> {
-            if (screen instanceof CubaLegacySettings)
-                ((CubaLegacySettings) screen).saveSettings();
-        });
-
-        getDialogScreensStream().forEach((screen -> {
-            if (screen instanceof CubaLegacySettings)
-                ((CubaLegacySettings) screen).saveSettings();
-        }));
     }
 
     // used only for legacy screens

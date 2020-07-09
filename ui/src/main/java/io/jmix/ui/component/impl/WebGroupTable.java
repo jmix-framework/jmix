@@ -18,7 +18,6 @@ package io.jmix.ui.component.impl;
 import com.google.common.collect.Lists;
 import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Table;
@@ -26,13 +25,10 @@ import io.jmix.ui.component.columnmanager.GroupColumnManager;
 import io.jmix.ui.component.data.GroupTableItems;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.ValueConversionException;
-import io.jmix.ui.component.data.meta.EntityTableItems;
 import io.jmix.ui.component.table.GroupTableDataContainer;
 import io.jmix.ui.component.table.TableDataContainer;
 import io.jmix.ui.component.table.TableItemsEventsDelegate;
 import io.jmix.ui.gui.data.GroupInfo;
-import io.jmix.ui.settings.compatibility.converter.LegacyGroupTableSettingsConverter;
-import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.GroupTableSettingsBinder;
 import io.jmix.ui.widget.JmixEnhancedTable.AggregationInputValueChangeContext;
@@ -42,8 +38,6 @@ import io.jmix.ui.widget.JmixGroupTable.GroupAggregationInputValueChangeContext;
 import io.jmix.ui.widget.data.AggregationContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Element;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -196,11 +190,6 @@ public class WebGroupTable<E extends Entity> extends WebAbstractTable<JmixGroupT
     @Override
     protected ComponentSettingsBinder getSettingsBinder() {
         return beanLocator.get(GroupTableSettingsBinder.NAME);
-    }
-
-    @Override
-    protected LegacySettingsConverter createSettingsConverter() {
-        return new LegacyGroupTableSettingsConverter();
     }
 
     @Override

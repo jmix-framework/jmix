@@ -17,12 +17,11 @@
 package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.HasSettings;
 
 /**
  * A component displaying a panel with application and search folders.
  */
-public interface FoldersPane extends Component.BelongToFrame, HasSettings {
+public interface FoldersPane extends Component.BelongToFrame {
 
     String NAME = "foldersPane";
 

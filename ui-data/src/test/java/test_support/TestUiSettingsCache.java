@@ -16,7 +16,7 @@
 
 package test_support;
 
-import io.jmix.ui.settings.UiSettingsCache;
+import io.jmix.uidata.UiSettingsCache;
 
 import java.util.Map;
 import java.util.Optional;

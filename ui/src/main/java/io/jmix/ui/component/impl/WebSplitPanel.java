@@ -18,19 +18,12 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.*;
-import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
-import io.jmix.ui.settings.compatibility.converter.LegacySplitPanelSettingsConverter;
-import io.jmix.ui.settings.component.SettingsWrapperImpl;
-import io.jmix.ui.settings.component.SplitPanelSettings;
-import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import io.jmix.ui.settings.component.binder.SplitPanelSettingsBinder;
 import io.jmix.ui.widget.JmixDockableSplitPanel;
 import io.jmix.ui.widget.JmixHorizontalSplitPanel;
 import io.jmix.ui.widget.JmixVerticalSplitPanel;
 import io.jmix.ui.widget.client.split.SplitPanelDockMode;
 import com.vaadin.server.Sizeable.Unit;
 import com.vaadin.ui.AbstractSplitPanel;
-import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -44,17 +37,9 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
     protected List<Component> ownComponents = new ArrayList<>(3);
 
     protected int orientation;
-    protected boolean settingsEnabled = true;
-    protected boolean settingsChanged = false;
 
     protected float currentPosition = 0;
     protected boolean inverse = false;
-
-    protected LegacySettingsConverter settingsConverter;
-
-    public WebSplitPanel() {
-        settingsConverter = createSettingsConverter();
-    }
 
     @Override
     public void add(Component childComponent) {
@@ -114,10 +99,6 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
         SplitPositionChangeEvent jmixEvent = new SplitPositionChangeEvent(this, currentPosition,
                 event.getSplitPosition(), event.isUserOriginated());
         publish(SplitPositionChangeEvent.class, jmixEvent);
-
-        if (event.isUserOriginated()) {
-            settingsChanged = true;
-        }
     }
 
     @Override
@@ -185,42 +166,6 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
     @Override
     public Collection<Component> getComponents() {
         return ComponentsHelper.getComponents(this);
-    }
-
-    @Override
-    public void applySettings(Element element) {
-        if (!isSettingsEnabled()) {
-            return;
-        }
-
-        SplitPanelSettings settings = settingsConverter.convertToComponentSettings(element);
-        getSettingsBinder().applySettings(this, new SettingsWrapperImpl(settings));
-    }
-
-    @Override
-    public boolean saveSettings(Element element) {
-        if (!isSettingsEnabled()) {
-            return false;
-        }
-
-        SplitPanelSettings settings = settingsConverter.convertToComponentSettings(element);
-
-        boolean modified = getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
-        if (modified) {
-            settingsConverter.copyToElement(settings, element);
-        }
-
-        return modified;
-    }
-
-    @Override
-    public boolean isSettingsEnabled() {
-        return settingsEnabled;
-    }
-
-    @Override
-    public void setSettingsEnabled(boolean settingsEnabled) {
-        this.settingsEnabled = settingsEnabled;
     }
 
     @Override
@@ -391,13 +336,5 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
         for (Component component : ownComponents) {
             ((AttachNotifier) component).detached();
         }
-    }
-
-    protected LegacySettingsConverter createSettingsConverter() {
-        return new LegacySplitPanelSettingsConverter();
-    }
-
-    protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(SplitPanelSettingsBinder.NAME);
     }
 }

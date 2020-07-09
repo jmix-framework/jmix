@@ -18,9 +18,8 @@ package io.jmix.uidata.settings;
 
 import com.google.gson.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.ui.settings.ScreenSettings;
-import io.jmix.ui.settings.UiSettingsCache;
 import io.jmix.ui.settings.component.ComponentSettings;
+import io.jmix.uidata.UiSettingsCache;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

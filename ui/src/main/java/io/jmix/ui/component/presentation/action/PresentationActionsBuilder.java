@@ -16,13 +16,18 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.security.Security;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +35,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+@Component(PresentationActionsBuilder.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PresentationActionsBuilder {
+
+    public static final String NAME = "ui_PresentationActionsBuilder";
 
     public enum Type {
         SAVE,
@@ -40,26 +49,29 @@ public class PresentationActionsBuilder {
         RESET
     }
 
+    @Autowired
     protected Security security;
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     protected Table table;
-
     protected Collection actionTypes;
-
     protected ComponentSettingsBinder settingsBinder;
 
     public PresentationActionsBuilder(Table component, ComponentSettingsBinder settingsBinder) {
         table = component;
-        security = AppBeans.get(Security.NAME);
         this.settingsBinder = settingsBinder;
     }
 
     public Collection<AbstractAction> build() {
         Collection<AbstractAction> actions = new ArrayList<>();
+        AutowireCapableBeanFactory factory = applicationContext.getAutowireCapableBeanFactory();
         for (Object type : getActionTypes()) {
             AbstractAction action = buildAction(type);
-            if (action != null)
+            if (action != null) {
+                factory.autowireBean(action);
                 actions.add(action);
+            }
         }
         return actions;
     }

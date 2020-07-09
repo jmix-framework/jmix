@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @param <V> type of value
  * @see TextArea
  */
-public interface ResizableTextArea<V> extends TextArea<V>, HasSettings {
+public interface ResizableTextArea<V> extends TextArea<V> {
     String NAME = "resizableTextArea";
 
     /**

@@ -25,7 +25,7 @@ import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityTableItems;
 import io.jmix.ui.component.impl.WebTable;
-import io.jmix.ui.component.presentation.TablePresentations;
+import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.HasLoader;
@@ -61,7 +61,7 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
             table.setTextSelectionEnabled(tableSettings.getTextSelection());
 
             if (table.getPresentations() != null) {
-                ((TablePresentations) getEnhancedTable(table).getPresentationsLayout()).updateTextSelection();
+                ((TablePresentationsLayout) getEnhancedTable(table).getPresentationsLayout()).updateTextSelection();
             }
         }
 

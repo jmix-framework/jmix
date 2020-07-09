@@ -42,7 +42,6 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
-import io.jmix.ui.presentation.EmptyTablePresentationsImpl;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -53,7 +52,6 @@ import io.jmix.ui.xml.DeclarativeTrackingAction;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
 import io.jmix.ui.xml.layout.LoaderResolver;
-import io.jmix.ui.xml.layout.loader.LoadPresentationsPostInitTask;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -61,6 +59,7 @@ import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nonnull;
@@ -428,14 +427,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         }
     }
 
-    // TODO VM
-    protected void loadSettingsEnabled(HasSettings component, Element element) {
-        String settingsEnabled = element.attributeValue("settingsEnabled");
-        if (StringUtils.isNotEmpty(settingsEnabled)) {
-            component.setSettingsEnabled(Boolean.parseBoolean(settingsEnabled));
-        }
-    }
-
     protected void loadWidth(Component component, Element element, @Nullable String defaultValue) {
         String width = element.attributeValue("width");
         if ("auto".equalsIgnoreCase(width)) {
@@ -517,8 +508,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected void loadPresentations(HasTablePresentations component, Element element) {
         String presentations = element.attributeValue("presentations");
         if (StringUtils.isNotEmpty(presentations)) {
-            TablePresentations presentationBean = beanLocator.getPrototype(TablePresentations.NAME, component);
-            if (!(presentationBean instanceof EmptyTablePresentationsImpl)) {
+            if (beanLocator.containsBean(TablePresentations.NAME)) {
                 component.usePresentations(Boolean.parseBoolean(presentations));
                 getComponentContext().addPostInitTask(new LoadPresentationsPostInitTask(component));
             } else {

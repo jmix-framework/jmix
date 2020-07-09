@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.ui.settings.impl;
+package io.jmix.ui.event.screen;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.ui.Screens;
+import org.springframework.context.ApplicationEvent;
+
+/**
+ * Application event which is fired when framework close all windows. For instance, when user logs out.
+ */
+public class CloseWindowsInternalEvent extends ApplicationEvent {
+
+    public CloseWindowsInternalEvent(Screens screens) {
+        super(screens);
+    }
+
+    @Override
+    public Screens getSource() {
+        return (Screens) super.getSource();
+    }
+}

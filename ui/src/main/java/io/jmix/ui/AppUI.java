@@ -78,8 +78,8 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     @Autowired
     protected UiProperties properties;
 
-    @Autowired
-    protected UserSettingsTools userSettingsTools;
+//    @Autowired
+//    protected UserSettingsTools userSettingsTools;
     @Autowired
     protected ThemeConstantsRepository themeConstantsRepository;
 

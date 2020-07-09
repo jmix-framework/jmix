@@ -59,8 +59,6 @@ public class SplitPanelLoader extends ContainerLoader<SplitPanel> {
         loadDescription(resultComponent, element);
         loadContextHelp(resultComponent, element);
 
-        loadSettingsEnabled(resultComponent, element);
-
         loadSplitPosition(resultComponent, element);
         loadMaxSplitPosition(resultComponent, element);
         loadMinSplitPosition(resultComponent, element);

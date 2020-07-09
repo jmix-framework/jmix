@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.ui.settings.compatibility;
+package io.jmix.ui.event.screen;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.ui.screen.Screen;
+import org.springframework.context.ApplicationEvent;
+
+/**
+ * Application event that is fired after {@link Screen} is shown.
+ */
+public class AfterShowScreenEvent extends ApplicationEvent {
+
+    public AfterShowScreenEvent(Screen screen) {
+        super(screen);
+    }
+
+    @Override
+    public Screen getSource() {
+        return (Screen) super.getSource();
+    }
+}

@@ -120,7 +120,6 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
         loadEnable(resultComponent, element);
         loadVisible(resultComponent, element);
-        loadSettingsEnabled(resultComponent, element);
 
         loadAlign(resultComponent, element);
         loadStyleName(resultComponent, element);

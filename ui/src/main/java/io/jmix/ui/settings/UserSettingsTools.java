@@ -17,23 +17,65 @@
 
 package io.jmix.ui.settings;
 
-import io.jmix.core.common.util.Preconditions;
-import io.jmix.ui.UiProperties;
+import io.jmix.ui.component.Accordion;
 import io.jmix.ui.component.AppWorkArea;
-import org.springframework.stereotype.Component;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.TabSheet;
+import io.jmix.ui.component.Window;
+import io.jmix.ui.settings.component.ComponentSettings;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 
 /**
  * Utility bean for work with user settings on web client tier.
  */
-@Component(UserSettingsTools.NAME)
-public class UserSettingsTools {
+public interface UserSettingsTools {
 
-    public static final String NAME = "cuba_UserSettingsTools";
+    String NAME = "ui_UserSettingsTools";
 
-    public static class FoldersState {
+    AppWorkArea.Mode loadAppWindowMode();
+
+    void saveAppWindowMode(AppWorkArea.Mode mode);
+
+    String loadTheme();
+
+    void saveAppWindowTheme(String theme);
+
+    FoldersState loadFoldersState();
+
+    /**
+     * Converts the string representation of settings to the given component settings class.
+     *
+     * @param settings      settings string representation
+     * @param settingsClass component settings class
+     * @param <T>           type of component settings
+     * @return component settings instance
+     */
+    @Nullable
+    <T extends ComponentSettings> T toComponentSettings(String settings, Class<T> settingsClass);
+
+    /**
+     * Converts component settings to a string representation.
+     *
+     * @param settings component settings
+     * @return string representation of settings
+     */
+    String toSettingsString(ComponentSettings settings);
+
+    /**
+     * Helps to apply settings for the components in a lazy tab e.g. {@link TabSheet} or {@link Accordion}.
+     *
+     * @param window     screen window
+     * @param source     component source
+     * @param tabContent tab content
+     */
+    void applyLazyTabSettings(Window window, Component source, ComponentContainer tabContent);
+
+//    todo folders panel
+//    void saveFoldersState(boolean visible, int horizontalSplit, int verticalSplit);
+
+    class FoldersState {
 
         public final boolean visible;
         public final int horizontalSplit;
@@ -45,66 +87,4 @@ public class UserSettingsTools {
             this.visible = visible;
         }
     }
-
-    @Inject
-    protected UserSettingService userSettingService;
-
-    @Inject
-    protected UiProperties uiProperties;
-
-    public AppWorkArea.Mode loadAppWindowMode() {
-        String s = userSettingService.loadSetting("appWindowMode");
-        if (s != null) {
-            if (AppWorkArea.Mode.SINGLE.name().equals(s)) {
-                return AppWorkArea.Mode.SINGLE;
-            } else if (AppWorkArea.Mode.TABBED.name().equals(s)) {
-                return AppWorkArea.Mode.TABBED;
-            }
-        }
-        return AppWorkArea.Mode.valueOf(uiProperties.getAppWindowMode().toUpperCase());
-    }
-
-    public void saveAppWindowMode(AppWorkArea.Mode mode) {
-        Preconditions.checkNotNullArgument(mode);
-
-        userSettingService.saveSetting("appWindowMode", mode.name());
-    }
-
-    public String loadTheme() {
-        String s = userSettingService.loadSetting("theme");
-        if (s != null) {
-            return s;
-        }
-        return uiProperties.getTheme();
-    }
-
-    public void saveAppWindowTheme(String theme) {
-        userSettingService.saveSetting("theme", theme);
-    }
-
-    @Nullable
-    public FoldersState loadFoldersState() {
-        String s = userSettingService.loadSetting("foldersState");
-        if (s == null)
-            return null;
-
-        String[] parts = s.split(",");
-        if (parts.length != 3)
-            return null;
-
-        try {
-            return new FoldersState(Boolean.parseBoolean(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /* todo folders panel
-    public void saveFoldersState(boolean visible, int horizontalSplit, int verticalSplit) {
-        userSettingService.saveSetting(ClientType.WEB, "foldersState",
-                String.valueOf(visible) + ","
-                + String.valueOf(horizontalSplit) + ","
-                + String.valueOf(verticalSplit)
-        );
-    }*/
 }

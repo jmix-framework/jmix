@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.impl;
 
-import com.google.common.base.Strings;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.TreeDataProvider;
@@ -31,10 +30,6 @@ import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.TreeDataGridItems;
 import io.jmix.ui.component.datagrid.DataGridDataProvider;
 import io.jmix.ui.component.datagrid.HierarchicalDataGridDataProvider;
-import io.jmix.ui.settings.compatibility.converter.LegacySettingsConverter;
-import io.jmix.ui.settings.compatibility.converter.LegacyTreeDataGridSettingsConverter;
-import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import io.jmix.ui.settings.component.binder.TreeDataGridSettingsBinder;
 import io.jmix.ui.widget.JmixTreeGrid;
 
 import javax.annotation.Nullable;
@@ -268,16 +263,6 @@ public class WebTreeDataGrid<E extends Entity> extends WebAbstractDataGrid<JmixT
         CollapseEvent<E> event = new CollapseEvent<>(WebTreeDataGrid.this,
                 e.getCollapsedItem(), e.isUserOriginated());
         publish(CollapseEvent.class, event);
-    }
-
-    @Override
-    protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(TreeDataGridSettingsBinder.NAME);
-    }
-
-    @Override
-    protected LegacySettingsConverter createSettingsConverter() {
-        return new LegacyTreeDataGridSettingsConverter();
     }
 
     @Override

@@ -23,6 +23,7 @@ import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.settings.UserSettingService;
+import io.jmix.ui.settings.UserSettingsTools;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.*;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -43,6 +44,11 @@ public class UiDataConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public TablePresentations presentations(Component component) {
         return new TablePresentationsImpl(component);
+    }
+
+    @Bean(UserSettingsTools.NAME)
+    public UserSettingsTools userSettingsTools() {
+        return new UserSettingsToolsImpl();
     }
 }
 

@@ -51,9 +51,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  */
 public interface Table<E extends Entity>
         extends
-            ListComponent<E>, Component.Editable, HasSettings, HasDataLoadingSettings,
-            HasButtonsPanel, HasTablePresentations, Component.HasCaption, HasContextHelp,
-            Component.HasIcon, HasRowsCount, LookupComponent<E>, Component.Focusable,
+            ListComponent<E>, Component.Editable, HasButtonsPanel, HasTablePresentations, Component.HasCaption,
+            HasContextHelp, Component.HasIcon, HasRowsCount, LookupComponent<E>, Component.Focusable,
             RowsCount.RowsCountTarget, HasSubParts, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     enum ColumnAlignment {

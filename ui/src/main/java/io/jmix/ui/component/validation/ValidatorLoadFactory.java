@@ -42,6 +42,7 @@ public class ValidatorLoadFactory {
 
     protected final Map<String, BiFunction<Element, String, AbstractValidator>> validatorsMap
             = ImmutableMap.<String, BiFunction<Element, String, AbstractValidator>>builder()
+            .put("custom", this::loadCustomValidator)
             .put("decimalMin", this::loadDecimalMinValidator)
             .put("decimalMax", this::loadDecimalMaxValidator)
             .put("doubleMin", this::loadDoubleMinValidator)
@@ -90,6 +91,19 @@ public class ValidatorLoadFactory {
             return function.apply(element, messagePack);
         }
         return null;
+    }
+
+    protected AbstractValidator loadCustomValidator(Element element, String messagePack) {
+        String beanName = element.attributeValue("bean");
+        if (Strings.isNullOrEmpty(beanName)) {
+            throw new IllegalArgumentException("Bean name is not defined");
+        }
+
+        AbstractValidator validator = beanLocator.getPrototype(beanName);
+
+        validator.setMessage(loadMessage(element, messagePack));
+
+        return validator;
     }
 
     protected AbstractValidator loadDecimalMinValidator(Element element, String messagePack) {

@@ -239,7 +239,6 @@ public class AttributeLocationFragment extends ScreenFragment {
                         metadataTools.resolveMetaPropertyPathOrNull(metadata.getClass(CategoryAttribute.class), "name"));
         column.setSortable(false);
         column.setCaption(messages.getMessage(AttributeLocationFragment.class, "targetDataGrid.column.caption") + " " + i);
-        dataGrid.setSettingsEnabled(false);
         dataGrid.setColumnsCollapsingAllowed(false);
         dataGrid.setWidth("175px");
         return dataGrid;

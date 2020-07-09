@@ -15,7 +15,7 @@
  */
 package io.jmix.data.entity;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.*;
@@ -25,7 +25,7 @@ import javax.persistence.*;
  */
 @MappedSuperclass
 @ModelObject(name = "sys$BaseIntIdentityIdEntity")
-public abstract class BaseIntIdentityIdEntity implements Entity {
+public abstract class BaseIntIdentityIdEntity implements JmixEntity {
 
     private static final long serialVersionUID = 3083677558630811496L;
 

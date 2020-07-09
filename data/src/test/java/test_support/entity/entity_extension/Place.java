@@ -16,6 +16,7 @@
 
 package test_support.entity.entity_extension;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
@@ -26,7 +27,7 @@ import java.util.UUID;
 
 @Entity(name = "exttest_Place")
 @Table(name = "EXTTEST_PLACE")
-public class Place implements io.jmix.core.Entity {
+public class Place implements JmixEntity {
 
     @Id
     @Column(name = "ID")

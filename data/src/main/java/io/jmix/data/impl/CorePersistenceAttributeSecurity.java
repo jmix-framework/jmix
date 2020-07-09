@@ -17,7 +17,7 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.security.OnCoreSecurityImplementation;
 import io.jmix.data.PersistenceAttributeSecurity;
 import org.springframework.context.annotation.Conditional;
@@ -35,27 +35,27 @@ public class CorePersistenceAttributeSecurity implements PersistenceAttributeSec
     }
 
     @Override
-    public void afterLoad(Entity entity) {
+    public void afterLoad(JmixEntity entity) {
 
     }
 
     @Override
-    public void afterLoad(Collection<? extends Entity> entities) {
+    public void afterLoad(Collection<? extends JmixEntity> entities) {
 
     }
 
     @Override
-    public void beforePersist(Entity entity) {
+    public void beforePersist(JmixEntity entity) {
 
     }
 
     @Override
-    public void beforeMerge(Entity entity) {
+    public void beforeMerge(JmixEntity entity) {
 
     }
 
     @Override
-    public void afterCommit(Entity entity) {
+    public void afterCommit(JmixEntity entity) {
 
     }
 }

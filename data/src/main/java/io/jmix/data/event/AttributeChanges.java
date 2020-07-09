@@ -16,7 +16,7 @@
 
 package io.jmix.data.event;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Id;
 
 import javax.annotation.Nullable;
@@ -120,7 +120,7 @@ public class AttributeChanges {
      * @return Id of the referenced object
      */
     @Nullable
-    public <E extends Entity> Id<E> getOldReferenceId(String attributeName) {
+    public <E extends JmixEntity> Id<E> getOldReferenceId(String attributeName) {
         return getOldValue(attributeName);
     }
 
@@ -140,7 +140,7 @@ public class AttributeChanges {
      * @param entityClass   class of the attribute
      * @return collection of Ids
      */
-    public <E extends Entity> Collection<Id<E>> getOldCollection(String attributeName, Class<E> entityClass) {
+    public <E extends JmixEntity> Collection<Id<E>> getOldCollection(String attributeName, Class<E> entityClass) {
         return getOldValue(attributeName);
     }
 

@@ -16,6 +16,7 @@
 
 package test_support.entity.equality;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -26,7 +27,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_GFOO")
 @Entity(name = "test_GFoo")
-public class GFoo implements io.jmix.core.Entity, Versioned {
+public class GFoo implements JmixEntity, Versioned {
 
     @Id
     @JmixGeneratedValue

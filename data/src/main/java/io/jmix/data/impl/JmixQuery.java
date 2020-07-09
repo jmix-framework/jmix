@@ -19,7 +19,7 @@ package io.jmix.data.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Id;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
@@ -123,9 +123,9 @@ public class JmixQuery<E> implements TypedQuery<E> {
 
         @SuppressWarnings("unchecked")
         List<E> resultList = (List<E>) getResultFromCache(query, false, obj -> {
-            ((List) obj).stream().filter(item -> item instanceof Entity).forEach(item -> {
+            ((List) obj).stream().filter(item -> item instanceof JmixEntity).forEach(item -> {
                 for (FetchPlan fetchPlan : fetchPlans) {
-                    entityFetcher.fetch((Entity) item, fetchPlan);
+                    entityFetcher.fetch((JmixEntity) item, fetchPlan);
                 }
             });
         });
@@ -144,9 +144,9 @@ public class JmixQuery<E> implements TypedQuery<E> {
 
         @SuppressWarnings("unchecked")
         E result = (E) getResultFromCache(jpaQuery, true, obj -> {
-            if (obj instanceof Entity) {
+            if (obj instanceof JmixEntity) {
                 for (FetchPlan fetchPlan : fetchPlans) {
-                    entityFetcher.fetch((Entity) obj, fetchPlan);
+                    entityFetcher.fetch((JmixEntity) obj, fetchPlan);
                 }
             }
         });
@@ -393,9 +393,9 @@ public class JmixQuery<E> implements TypedQuery<E> {
                 List list = (List) obj;
                 if (!list.isEmpty()) {
                     Object item = list.get(0);
-                    if (item instanceof Entity) {
+                    if (item instanceof JmixEntity) {
                         for (FetchPlan fetchPlan : fetchPlans) {
-                            entityFetcher.fetch((Entity) item, fetchPlan);
+                            entityFetcher.fetch((JmixEntity) item, fetchPlan);
                         }
                     }
                 }
@@ -441,7 +441,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
                 if (resultClass == null)
                     query = (JpaQuery) entityManager.createNativeQuery(queryString);
                 else {
-                    if (!Entity.class.isAssignableFrom(resultClass)) {
+                    if (!JmixEntity.class.isAssignableFrom(resultClass)) {
                         throw new IllegalArgumentException("Non-entity result class for native query is not supported" +
                                 " by EclipseLink: " + resultClass);
                     }
@@ -518,7 +518,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         if (resultClass == null) {
             return null;
         }
-        if (Entity.class.isAssignableFrom(resultClass)) {
+        if (JmixEntity.class.isAssignableFrom(resultClass)) {
             return extendedEntities.getEffectiveClass(resultClass);
         }
         return resultClass;
@@ -812,12 +812,12 @@ public class JmixQuery<E> implements TypedQuery<E> {
 
     private boolean isCollectionOfEntitiesOrEnums(Object value) {
         return value instanceof Collection
-                && ((Collection<?>) value).stream().allMatch(it -> it instanceof Entity || it instanceof EnumClass);
+                && ((Collection<?>) value).stream().allMatch(it -> it instanceof JmixEntity || it instanceof EnumClass);
     }
 
     private Object convertToCollectionOfIds(Object value) {
         return ((Collection<?>) value).stream()
-                .map(it -> it instanceof Entity ? EntityValues.getId(((Entity) it)) : ((EnumClass) it).getId())
+                .map(it -> it instanceof JmixEntity ? EntityValues.getId(((JmixEntity) it)) : ((EnumClass) it).getId())
                 .collect(Collectors.toList());
     }
 

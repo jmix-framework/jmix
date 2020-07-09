@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityEntryAuditable;
@@ -64,7 +64,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     protected AuditConvertionService conversionService;
 
     protected boolean justDeleted(SoftDelete entity) {
-        return entity.isDeleted() && persistenceTools.getDirtyFields((Entity) entity).contains("deleteTs");
+        return entity.isDeleted() && persistenceTools.getDirtyFields((JmixEntity) entity).contains("deleteTs");
     }
 
     @Override
@@ -86,8 +86,8 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
 
     @Override
     public void postBuild(DescriptorEvent event) {
-        if (event.getObject() instanceof Entity) {
-            ((Entity) event.getObject()).__getEntityEntry().setNew(false);
+        if (event.getObject() instanceof JmixEntity) {
+            ((JmixEntity) event.getObject()).__getEntityEntry().setNew(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
@@ -100,9 +100,9 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     @Override
     public void postClone(DescriptorEvent event) {
         // in shared cache mode, postBuild event is missed, so we repeat it here
-        if (event.getObject() instanceof Entity) {
-            ((Entity) event.getObject()).__copyEntityEntry();
-            ((Entity) event.getObject()).__getEntityEntry().setNew(false);
+        if (event.getObject() instanceof JmixEntity) {
+            ((JmixEntity) event.getObject()).__copyEntityEntry();
+            ((JmixEntity) event.getObject()).__getEntityEntry().setNew(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
@@ -111,19 +111,19 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
                 entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup));
         }
 
-        if (event.getObject() instanceof Entity)
-            support.registerInstance((Entity) event.getObject(), event.getSession());
+        if (event.getObject() instanceof JmixEntity)
+            support.registerInstance((JmixEntity) event.getObject(), event.getSession());
     }
 
     @Override
     public void postDelete(DescriptorEvent event) {
         String storeName = support.getStorageName(event.getSession());
-        manager.fireListener((Entity) event.getSource(), EntityListenerType.AFTER_DELETE, storeName);
+        manager.fireListener((JmixEntity) event.getSource(), EntityListenerType.AFTER_DELETE, storeName);
     }
 
     @Override
     public void postInsert(DescriptorEvent event) {
-        Entity entity = (Entity) event.getSource();
+        JmixEntity entity = (JmixEntity) event.getSource();
         String storeName = support.getStorageName(event.getSession());
         manager.fireListener(entity, EntityListenerType.AFTER_INSERT, storeName);
         support.getSavedInstances(storeName).add(entity);
@@ -146,7 +146,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     @Override
     public void postUpdate(DescriptorEvent event) {
         String storeName = support.getStorageName(event.getSession());
-        Entity entity = (Entity) event.getSource();
+        JmixEntity entity = (JmixEntity) event.getSource();
         if (entity instanceof SoftDelete && persistenceTools.isDirty(entity, "deleteTs") && ((SoftDelete) entity).isDeleted()) {
             manager.fireListener(entity, EntityListenerType.AFTER_DELETE, storeName);
         } else {
@@ -168,7 +168,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
 
     @Override
     public void prePersist(DescriptorEvent event) {
-        Entity entity = (Entity) event.getObject();
+        JmixEntity entity = (JmixEntity) event.getObject();
         Date ts = timeSource.currentTimestamp();
         BaseUser user = auditInfoProvider.getCurrentUser();
 
@@ -184,7 +184,7 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
 
     @Override
     public void preUpdate(DescriptorEvent event) {
-        Entity entity = (Entity) event.getObject();
+        JmixEntity entity = (JmixEntity) event.getObject();
         if (!((entity instanceof SoftDelete) && justDeleted((SoftDelete) entity))
                 && entity.__getEntityEntry() instanceof EntityEntryAuditable) {
             setUpdateInfo((EntityEntryAuditable) entity.__getEntityEntry(),

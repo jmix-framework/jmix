@@ -16,6 +16,7 @@
 
 package test_support.entity.number_id_generation;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
@@ -27,7 +28,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_LONG_ID_WITH_UUID_ENTITY")
 @Entity(name = "test_TestLongIdWithUuidEntity")
-public class TestLongIdWithUuidEntity implements io.jmix.core.Entity {
+public class TestLongIdWithUuidEntity implements JmixEntity {
 
     @Id
     @Column(name = "ID", nullable = false)

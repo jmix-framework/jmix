@@ -17,7 +17,7 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -56,7 +56,7 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
     @Override
     protected boolean isLoadedSpecificCheck(Object entity, String property, MetaClass metaClass, MetaProperty metaProperty) {
         if (metadataTools.isEmbeddable(metaClass)
-                || (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isNew())) {
+                || (entity instanceof JmixEntity && ((JmixEntity) entity).__getEntityEntry().isNew())) {
             // this is a workaround for unexpected EclipseLink behaviour when PersistenceUnitUtil.isLoaded
             // throws exception if embedded entity refers to persistent entity
             return checkIsLoadedWithGetter(entity, property);

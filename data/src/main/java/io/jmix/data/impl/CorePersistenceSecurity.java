@@ -17,7 +17,7 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.security.OnCoreSecurityImplementation;
 import io.jmix.data.PersistenceSecurity;
 import org.springframework.context.annotation.Conditional;
@@ -40,52 +40,52 @@ public class CorePersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public void applyConstraints(Entity entity) {
+    public void applyConstraints(JmixEntity entity) {
 
     }
 
     @Override
-    public void applyConstraints(Collection<Entity> entities) {
+    public void applyConstraints(Collection<JmixEntity> entities) {
 
     }
 
     @Override
-    public boolean filterByConstraints(Collection<Entity> entities) {
+    public boolean filterByConstraints(Collection<JmixEntity> entities) {
         return false;
     }
 
     @Override
-    public boolean filterByConstraints(Entity entity) {
+    public boolean filterByConstraints(JmixEntity entity) {
         return false;
     }
 
     @Override
-    public void restoreSecurityState(Entity entity) {
+    public void restoreSecurityState(JmixEntity entity) {
 
     }
 
     @Override
-    public void restoreFilteredData(Entity entity) {
+    public void restoreFilteredData(JmixEntity entity) {
 
     }
 
     @Override
-    public void assertToken(Entity entity) {
+    public void assertToken(JmixEntity entity) {
 
     }
 
     @Override
-    public void assertTokenForREST(Entity entity, FetchPlan view) {
+    public void assertTokenForREST(JmixEntity entity, FetchPlan view) {
 
     }
 
     @Override
-    public void calculateFilteredData(Entity entity) {
+    public void calculateFilteredData(JmixEntity entity) {
 
     }
 
     @Override
-    public void calculateFilteredData(Collection<Entity> entities) {
+    public void calculateFilteredData(Collection<JmixEntity> entities) {
 
     }
 }

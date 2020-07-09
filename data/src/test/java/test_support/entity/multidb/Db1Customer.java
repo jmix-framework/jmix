@@ -5,6 +5,7 @@
 
 package test_support.entity.multidb;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.Store;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity(name = "test_Db1Customer")
 @Table(name = "CUSTOMER")
 @Store(name = "db1")
-public class Db1Customer implements io.jmix.core.Entity {
+public class Db1Customer implements JmixEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO/*, generator = "ref$Db1Customer"*/)

@@ -54,8 +54,8 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     @Override
     @Nullable
     public String onUnfetchedAttribute(FetchGroupTracker entity, String attributeName) {
-        if (entity instanceof Entity) {
-            EntityEntry entityEntry = ((Entity) entity).__getEntityEntry();
+        if (entity instanceof JmixEntity) {
+            EntityEntry entityEntry = ((JmixEntity) entity).__getEntityEntry();
             if (entityEntry.getSecurityState().getInaccessibleAttributes() != null) {
                 for (String attribute : entityEntry.getSecurityState().getInaccessibleAttributes()) {
                     if (attributeName.equals(attribute))
@@ -72,8 +72,8 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
 
     protected boolean cannotAccessUnfetched(FetchGroupTracker entity) {
         return Boolean.FALSE.equals(accessLocalUnfetched.get())
-                && entity instanceof Entity
-                && !AppBeans.get(EntityStates.class).isLoadedWithFetchPlan((Entity) entity, FetchPlan.LOCAL);
+                && entity instanceof JmixEntity
+                && !AppBeans.get(EntityStates.class).isLoadedWithFetchPlan((JmixEntity) entity, FetchPlan.LOCAL);
     }
 
     @Override

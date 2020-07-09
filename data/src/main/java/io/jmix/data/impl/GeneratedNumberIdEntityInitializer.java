@@ -44,7 +44,7 @@ public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Or
     protected CoreProperties coreProperties;
 
     @Override
-    public void initEntity(Entity entity) {
+    public void initEntity(JmixEntity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         if (!coreProperties.isIdGenerationForEntitiesInAdditionalDataStoresEnabled()
                 && !Stores.MAIN.equals(metadataTools.getStoreName(metaClass))) {

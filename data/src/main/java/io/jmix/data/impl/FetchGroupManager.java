@@ -364,7 +364,7 @@ public class FetchGroupManager {
     }
 
     private void processFetchPlan(FetchPlan fetchPlan, FetchGroupField parentField, Set<FetchGroupField> fetchGroupFields, boolean useFetchGroup) {
-        Class<? extends Entity> entityClass = fetchPlan.getEntityClass();
+        Class<? extends JmixEntity> entityClass = fetchPlan.getEntityClass();
         MetaClass entityMetaClass = metadata.getClass(entityClass);
 
         if (useFetchGroup) {
@@ -437,13 +437,13 @@ public class FetchGroupManager {
         return result;
     }
 
-    private FetchGroupField createFetchGroupField(Class<? extends Entity> entityClass,
+    private FetchGroupField createFetchGroupField(Class<? extends JmixEntity> entityClass,
                                                   FetchGroupField parentField,
                                                   String property) {
         return createFetchGroupField(entityClass, parentField, property, FetchMode.AUTO);
     }
 
-    private FetchGroupField createFetchGroupField(Class<? extends Entity> entityClass,
+    private FetchGroupField createFetchGroupField(Class<? extends JmixEntity> entityClass,
                                                   FetchGroupField parentField,
                                                   String property,
                                                   FetchMode fetchMode) {

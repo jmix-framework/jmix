@@ -148,7 +148,7 @@ public class OrmDataStore implements DataStore {
 
     @Nullable
     @Override
-    public <E extends Entity> E load(LoadContext<E> context) {
+    public <E extends JmixEntity> E load(LoadContext<E> context) {
         if (log.isDebugEnabled()) {
             log.debug("load: store={}, metaClass={}, id={}, view={}", storeName, context.getMetaClass(), context.getId(), context.getFetchPlan());
         }
@@ -223,7 +223,7 @@ public class OrmDataStore implements DataStore {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends Entity> List<E> loadList(LoadContext<E> context) {
+    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
         if (log.isDebugEnabled())
             log.debug("loadList: store=" + storeName + ", metaClass=" + context.getMetaClass() + ", view=" + context.getFetchPlan()
                     + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
@@ -277,11 +277,11 @@ public class OrmDataStore implements DataStore {
 
             if (!resultList.isEmpty()) {
                 //noinspection rawtypes
-                fireLoadListeners((List<Entity>) resultList, context);
+                fireLoadListeners((List<JmixEntity>) resultList, context);
             }
 
             if (needToApplyInMemoryReadConstraints) {
-                persistenceSecurity.calculateFilteredData((Collection<Entity>) resultList);
+                persistenceSecurity.calculateFilteredData((Collection<JmixEntity>) resultList);
             }
 
             if (context.isJoinTransaction()) {
@@ -298,7 +298,7 @@ public class OrmDataStore implements DataStore {
         commitTransaction(txStatus);
 
         if (needToApplyInMemoryReadConstraints) {
-            persistenceSecurity.applyConstraints((Collection<Entity>) resultList);
+            persistenceSecurity.applyConstraints((Collection<JmixEntity>) resultList);
         }
         if (isAuthorizationRequired(context)) {
             attributeSecurity.afterLoad(resultList);
@@ -312,7 +312,7 @@ public class OrmDataStore implements DataStore {
         return pkProperty == null || pkProperty.getRange().isClass();
     }
 
-    protected <E extends Entity> List<E> loadListBySingleIds(LoadContext<E> context, EntityManager em, FetchPlan fetchPlan) {
+    protected <E extends JmixEntity> List<E> loadListBySingleIds(LoadContext<E> context, EntityManager em, FetchPlan fetchPlan) {
         LoadContext<?> contextCopy = context.copy();
         contextCopy.setIds(Collections.emptyList());
 
@@ -328,7 +328,7 @@ public class OrmDataStore implements DataStore {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> List<E> loadListByBatchesOfIds(LoadContext<E> context, EntityManager em, FetchPlan view, int batchSize) {
+    protected <E extends JmixEntity> List<E> loadListByBatchesOfIds(LoadContext<E> context, EntityManager em, FetchPlan view, int batchSize) {
         List<List<Object>> partitions = Lists.partition((List<Object>) context.getIds(), batchSize);
 
         List<E> entities = new ArrayList<>(context.getIds().size());
@@ -345,7 +345,7 @@ public class OrmDataStore implements DataStore {
         return entities;
     }
 
-    protected <E extends Entity> List<E> checkAndReorderLoadedEntities(List<?> ids, List<E> entities, MetaClass metaClass) {
+    protected <E extends JmixEntity> List<E> checkAndReorderLoadedEntities(List<?> ids, List<E> entities, MetaClass metaClass) {
         List<E> result = new ArrayList<>(ids.size());
         Map<Object, E> idToEntityMap = entities.stream().collect(Collectors.toMap(e -> getId(e), Function.identity()));
         for (Object id : ids) {
@@ -359,7 +359,7 @@ public class OrmDataStore implements DataStore {
     }
 
     @Override
-    public long getCount(LoadContext<? extends Entity> context) {
+    public long getCount(LoadContext<? extends JmixEntity> context) {
         if (log.isDebugEnabled())
             log.debug("getCount: store=" + storeName + ", metaClass=" + context.getMetaClass()
                     + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
@@ -437,13 +437,13 @@ public class OrmDataStore implements DataStore {
     }
 
     @Override
-    public Set<Entity> save(SaveContext context) {
+    public Set<JmixEntity> save(SaveContext context) {
         if (log.isDebugEnabled())
             log.debug("save: store=" + storeName + ", entitiesToSave=" + context.getEntitiesToSave()
                     + ", entitiesToRemove=" + context.getEntitiesToRemove());
 
-        Set<Entity> saved = new HashSet<>();
-        List<Entity> persisted = new ArrayList<>();
+        Set<JmixEntity> saved = new HashSet<>();
+        List<JmixEntity> persisted = new ArrayList<>();
 
         // todo dynamic attributes
 //        List<BaseGenericIdEntity> identityEntitiesToStoreDynamicAttributes = new ArrayList<>();
@@ -466,7 +466,7 @@ public class OrmDataStore implements DataStore {
                 //            List<BaseGenericIdEntity> entitiesToStoreDynamicAttributes = new ArrayList<>();
 
                 // persist new
-                for (Entity entity : context.getEntitiesToSave()) {
+                for (JmixEntity entity : context.getEntitiesToSave()) {
                     if (entityStates.isNew(entity)) {
 
                         if (isAuthorizationRequired(context)) {
@@ -488,7 +488,7 @@ public class OrmDataStore implements DataStore {
                 }
 
                 // merge the rest - instances can be detached or not
-                for (Entity entity : context.getEntitiesToSave()) {
+                for (JmixEntity entity : context.getEntitiesToSave()) {
                     if (!entityStates.isNew(entity)) {
 
                         if (isAuthorizationRequired(context)) {
@@ -499,7 +499,7 @@ public class OrmDataStore implements DataStore {
                             attributeSecurity.beforeMerge(entity);
                         }
 
-                        Entity merged = em.merge(entity);
+                        JmixEntity merged = em.merge(entity);
                         saved.add(merged);
 
                         entityFetcher.fetch(merged, getFetchPlanFromContext(context, entity));
@@ -519,14 +519,14 @@ public class OrmDataStore implements DataStore {
                 fireSaveListeners(context.getEntitiesToSave());
 
                 // remove
-                for (Entity entity : context.getEntitiesToRemove()) {
+                for (JmixEntity entity : context.getEntitiesToRemove()) {
 
                     if (isAuthorizationRequired(context)) {
                         persistenceSecurity.assertToken(entity);
                     }
                     persistenceSecurity.restoreSecurityStateAndFilteredData(entity);
 
-                    Entity e;
+                    JmixEntity e;
                     if (entity instanceof SoftDelete) {
                         attributeSecurity.beforeMerge(entity);
 
@@ -574,7 +574,7 @@ public class OrmDataStore implements DataStore {
                 if (context.isJoinTransaction()) {
                     List<EntityChangedEvent> events = entityChangedEventManager.collect(saved);
                     em.flush();
-                    for (Entity entity : saved) {
+                    for (JmixEntity entity : saved) {
                         em.detach(entity);
                     }
                     entityChangedEventManager.publish(events);
@@ -611,7 +611,7 @@ public class OrmDataStore implements DataStore {
 //            }
 //        }
 
-        Set<Entity> resultEntities = savedEntitiesHolder.getEntities(saved);
+        Set<JmixEntity> resultEntities = savedEntitiesHolder.getEntities(saved);
 
         reloadIfUnfetched(resultEntities, context);
 
@@ -622,7 +622,7 @@ public class OrmDataStore implements DataStore {
         if (!context.isDiscardSaved()) {
 
             if (isAuthorizationRequired(context)) {
-                for (Entity entity : resultEntities) {
+                for (JmixEntity entity : resultEntities) {
                     if (!persisted.contains(entity)) {
                         attributeSecurity.afterCommit(entity);
                     }
@@ -636,11 +636,11 @@ public class OrmDataStore implements DataStore {
         return context.isDiscardSaved() ? Collections.emptySet() : resultEntities;
     }
 
-    protected void reloadIfUnfetched(Set<Entity> resultEntities, SaveContext context) {
+    protected void reloadIfUnfetched(Set<JmixEntity> resultEntities, SaveContext context) {
         if (context.getFetchPlans().isEmpty())
             return;
 
-        List<Entity> entitiesToReload = resultEntities.stream()
+        List<JmixEntity> entitiesToReload = resultEntities.stream()
                 .filter(entity -> {
                     FetchPlan fetchPlan = context.getFetchPlans().get(entity);
                     return fetchPlan != null && !entityStates.isLoadedWithFetchPlan(entity, fetchPlan);
@@ -652,10 +652,10 @@ public class OrmDataStore implements DataStore {
             try {
                 EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
-                for (Entity entity : entitiesToReload) {
+                for (JmixEntity entity : entitiesToReload) {
                     FetchPlan fetchPlan = context.getFetchPlans().get(entity);
                     log.debug("Reloading {} according to the requested fetchPlan", entity);
-                    Entity reloadedEntity = em.find(entity.getClass(), getId(entity),
+                    JmixEntity reloadedEntity = em.find(entity.getClass(), getId(entity),
                             PersistenceHints.builder().withFetchPlan(fetchPlan).build());
                     resultEntities.remove(entity);
                     if (reloadedEntity != null) {
@@ -749,7 +749,7 @@ public class OrmDataStore implements DataStore {
         return entities;
     }
 
-    protected FetchPlan getFetchPlanFromContext(SaveContext context, Entity entity) {
+    protected FetchPlan getFetchPlanFromContext(SaveContext context, JmixEntity entity) {
         FetchPlan view = context.getFetchPlans().get(entity);
         if (view == null) {
             view = fetchPlanRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
@@ -759,7 +759,7 @@ public class OrmDataStore implements DataStore {
     }
 
     @Nullable
-    protected FetchPlan getFetchPlanFromContextOrNull(SaveContext context, Entity entity) {
+    protected FetchPlan getFetchPlanFromContextOrNull(SaveContext context, JmixEntity entity) {
         FetchPlan view = context.getFetchPlans().get(entity);
         if (view == null) {
             return null;
@@ -768,7 +768,7 @@ public class OrmDataStore implements DataStore {
         return isAuthorizationRequired(context) ? attributeSecurity.createRestrictedFetchPlan(view) : view;
     }
 
-    protected void checkOperationPermitted(Entity entity, ConstraintOperationType operationType) {
+    protected void checkOperationPermitted(JmixEntity entity, ConstraintOperationType operationType) {
         MetaClass metaClass = metadata.getClass(entity);
         if (security.hasConstraints()
                 && security.hasConstraints(metaClass)
@@ -844,7 +844,7 @@ public class OrmDataStore implements DataStore {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> List<E> getResultList(LoadContext<E> context, Query query, boolean ensureDistinct) {
+    protected <E extends JmixEntity> List<E> getResultList(LoadContext<E> context, Query query, boolean ensureDistinct) {
         List<E> list = executeQuery(query, false);
         int initialSize = list.size();
         if (initialSize == 0) {
@@ -854,7 +854,7 @@ public class OrmDataStore implements DataStore {
         boolean filteredByConstraints = false;
 
         if (needToFilterByInMemoryReadConstraints) {
-            filteredByConstraints = persistenceSecurity.filterByConstraints((Collection<Entity>) list);
+            filteredByConstraints = persistenceSecurity.filterByConstraints((Collection<JmixEntity>) list);
         }
 
         if (!ensureDistinct) {
@@ -873,9 +873,9 @@ public class OrmDataStore implements DataStore {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> List<E> getResultListIteratively(LoadContext<E> context, Query query,
-                                                                  Collection<E> filteredCollection,
-                                                                  int initialSize, boolean needToFilterByInMemoryReadConstraints) {
+    protected <E extends JmixEntity> List<E> getResultListIteratively(LoadContext<E> context, Query query,
+                                                                      Collection<E> filteredCollection,
+                                                                      int initialSize, boolean needToFilterByInMemoryReadConstraints) {
         int requestedFirst = context.getQuery().getFirstResult();
         int requestedMax = context.getQuery().getMaxResults();
 
@@ -906,7 +906,7 @@ public class OrmDataStore implements DataStore {
             }
 
             if (needToFilterByInMemoryReadConstraints) {
-                persistenceSecurity.filterByConstraints((Collection<Entity>) list);
+                persistenceSecurity.filterByConstraints((Collection<JmixEntity>) list);
             }
 
             filteredCollection.addAll(list);
@@ -929,7 +929,7 @@ public class OrmDataStore implements DataStore {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends Entity> List<E> executeQuery(Query query, boolean singleResult) {
+    protected <E extends JmixEntity> List<E> executeQuery(Query query, boolean singleResult) {
         List<E> list;
         try {
             if (singleResult) {
@@ -963,7 +963,7 @@ public class OrmDataStore implements DataStore {
         Set<MetaClass> checkedUpdateRights = new HashSet<>();
         Set<MetaClass> checkedDeleteRights = new HashSet<>();
 
-        for (Entity entity : context.getEntitiesToSave()) {
+        for (JmixEntity entity : context.getEntitiesToSave()) {
             if (entity == null)
                 continue;
 
@@ -975,7 +975,7 @@ public class OrmDataStore implements DataStore {
             }
         }
 
-        for (Entity entity : context.getEntitiesToRemove()) {
+        for (JmixEntity entity : context.getEntitiesToRemove()) {
             if (entity == null)
                 continue;
 
@@ -1177,7 +1177,7 @@ public class OrmDataStore implements DataStore {
         return txManager.getTransaction(def);
     }
 
-    protected <E extends Entity> void detachEntity(EntityManager em, @Nullable E rootEntity, FetchPlan view) {
+    protected <E extends JmixEntity> void detachEntity(EntityManager em, @Nullable E rootEntity, FetchPlan view) {
         if (rootEntity == null)
             return;
         em.detach(rootEntity);
@@ -1187,8 +1187,8 @@ public class OrmDataStore implements DataStore {
                 if (value != null) {
                     if (property.getRange().getCardinality().isMany()) {
                         @SuppressWarnings("unchecked")
-                        Collection<Entity> collection = (Collection<Entity>) value;
-                        for (Entity element : collection) {
+                        Collection<JmixEntity> collection = (Collection<JmixEntity>) value;
+                        for (JmixEntity element : collection) {
                             em.detach(element);
                         }
                     } else {
@@ -1199,7 +1199,7 @@ public class OrmDataStore implements DataStore {
         });
     }
 
-    protected void fireLoadListeners(Collection<Entity> entities, LoadContext<?> context) {
+    protected void fireLoadListeners(Collection<JmixEntity> entities, LoadContext<?> context) {
         if (ormLifecycleListeners != null) {
             for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
                 //noinspection unchecked
@@ -1208,7 +1208,7 @@ public class OrmDataStore implements DataStore {
         }
     }
 
-    protected void fireSaveListeners(Collection<Entity> entities) {
+    protected void fireSaveListeners(Collection<JmixEntity> entities) {
         if (ormLifecycleListeners != null) {
             for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
                 lifecycleListener.onSave(entities);

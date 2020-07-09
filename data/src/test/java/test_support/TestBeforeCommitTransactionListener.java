@@ -16,7 +16,7 @@
 
 package test_support;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.data.listener.BeforeCommitTransactionListener;
 import org.springframework.stereotype.Component;
 
@@ -26,10 +26,10 @@ import java.util.function.Consumer;
 @Component
 public class TestBeforeCommitTransactionListener implements BeforeCommitTransactionListener {
 
-    public Consumer<Collection<Entity>> before;
+    public Consumer<Collection<JmixEntity>> before;
 
     @Override
-    public void beforeCommit(String storeName, Collection<Entity> managedEntities) {
+    public void beforeCommit(String storeName, Collection<JmixEntity> managedEntities) {
         if (before != null) {
             before.accept(managedEntities);
         }

@@ -23,7 +23,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.cluster.ClusterListenerAdapter;
 import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
@@ -152,8 +152,8 @@ public class QueryCacheManager {
         QueryResult queryResult;
         if (resultList.size() > 0) {
             List idList = (List) resultList.stream()
-                    .filter(item -> item instanceof Entity)
-                    .map(item -> EntityValues.getId(((Entity) item)))
+                    .filter(item -> item instanceof JmixEntity)
+                    .map(item -> EntityValues.getId(((JmixEntity) item)))
                     .collect(Collectors.toList());
             queryResult = new QueryResult(idList, type, getDescendants(relatedTypes));
         } else {
@@ -175,7 +175,7 @@ public class QueryCacheManager {
     public <T> void putResultToCache(QueryKey queryKey, T result, String type, Set<String> relatedTypes, RuntimeException exception) {
         QueryResult queryResult;
         if (exception == null) {
-            queryResult = new QueryResult(Collections.singletonList(EntityValues.getId(((Entity) result))), type, relatedTypes);
+            queryResult = new QueryResult(Collections.singletonList(EntityValues.getId(((JmixEntity) result))), type, relatedTypes);
         } else {
             queryResult = new QueryResult(Collections.emptyList(), type, relatedTypes, exception);
         }

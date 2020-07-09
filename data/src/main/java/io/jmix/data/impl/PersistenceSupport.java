@@ -22,7 +22,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.StackTrace;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.StoreAwareLocator;
@@ -54,7 +54,6 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -99,7 +98,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     private Logger implicitFlushLog = LoggerFactory.getLogger("com.haulmont.cuba.IMPLICIT_FLUSH");
 
-    protected static Set<Entity> createEntitySet() {
+    protected static Set<JmixEntity> createEntitySet() {
         return Sets.newIdentityHashSet();
     }
 
@@ -148,7 +147,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         return runner;
     }
 
-    public void registerInstance(Entity entity, javax.persistence.EntityManager entityManager) {
+    public void registerInstance(JmixEntity entity, javax.persistence.EntityManager entityManager) {
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             throw new RuntimeException("No transaction");
 
@@ -158,7 +157,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         entity.__getEntityEntry().setDetached(false);
     }
 
-    public void registerInstance(Entity entity, AbstractSession session) {
+    public void registerInstance(JmixEntity entity, AbstractSession session) {
         // Can be called outside of a transaction when fetching lazy attributes
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             return;
@@ -169,7 +168,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         getInstanceContainerResourceHolder(getStorageName(session)).registerInstanceForUnitOfWork(entity, (UnitOfWork) session);
     }
 
-    public Collection<Entity> getSavedInstances(String storeName) {
+    public Collection<JmixEntity> getSavedInstances(String storeName) {
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             throw new RuntimeException("No transaction");
 
@@ -206,7 +205,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         traverseEntities(getInstanceContainerResourceHolder(storeName), new OnSaveEntityVisitor(storeName), warnAboutImplicitFlush);
     }
 
-    protected void fireBeforeDetachEntityListener(Entity entity, String storeName) {
+    protected void fireBeforeDetachEntityListener(JmixEntity entity, String storeName) {
         if (!(entity.__getEntityEntry().isDetached())) {
             JmixEntityFetchGroup.setAccessLocalUnfetched(false);
             try {
@@ -217,7 +216,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    protected static boolean isDeleted(Entity entity, AttributeChangeListener changeListener) {
+    protected static boolean isDeleted(JmixEntity entity, AttributeChangeListener changeListener) {
         if ((entity instanceof SoftDelete)) {
             ObjectChangeSet changeSet = changeListener.getObjectChangeSet();
             return changeSet != null
@@ -234,10 +233,10 @@ public class PersistenceSupport implements ApplicationContextAware {
     }
 
     protected void beforeStore(ContainerResourceHolder container, EntityVisitor visitor,
-                               Collection<Entity> instances, Set<Entity> processed, boolean warnAboutImplicitFlush) {
+                               Collection<JmixEntity> instances, Set<JmixEntity> processed, boolean warnAboutImplicitFlush) {
         boolean possiblyChanged = false;
-        Set<Entity> withoutPossibleChanges = createEntitySet();
-        for (Entity entity : instances) {
+        Set<JmixEntity> withoutPossibleChanges = createEntitySet();
+        for (JmixEntity entity : instances) {
             processed.add(entity);
 
             if (!(entity instanceof ChangeTracker))
@@ -261,7 +260,7 @@ public class PersistenceSupport implements ApplicationContextAware {
             }
         }
 
-        Collection<Entity> afterProcessing = container.getAllInstances();
+        Collection<JmixEntity> afterProcessing = container.getAllInstances();
         if (afterProcessing.size() > processed.size()) {
             afterProcessing.removeAll(processed);
             beforeStore(container, visitor, afterProcessing, processed, false);
@@ -283,7 +282,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    public void detach(javax.persistence.EntityManager entityManager, Entity entity) {
+    public void detach(javax.persistence.EntityManager entityManager, JmixEntity entity) {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
 
@@ -299,10 +298,10 @@ public class PersistenceSupport implements ApplicationContextAware {
     }
 
     protected void makeDetached(Object instance) {
-        if (instance instanceof Entity) {
-            ((Entity) instance).__getEntityEntry().setNew(false);
-            ((Entity) instance).__getEntityEntry().setManaged(false);
-            ((Entity) instance).__getEntityEntry().setDetached(true);
+        if (instance instanceof JmixEntity) {
+            ((JmixEntity) instance).__getEntityEntry().setNew(false);
+            ((JmixEntity) instance).__getEntityEntry().setManaged(false);
+            ((JmixEntity) instance).__getEntityEntry().setDetached(true);
         }
         if (instance instanceof FetchGroupTracker) {
             ((FetchGroupTracker) instance)._persistence_setSession(null);
@@ -321,7 +320,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    protected void fireEntityChange(Entity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
+    protected void fireEntityChange(JmixEntity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
         if (lifecycleListeners == null) {
             return;
         }
@@ -331,16 +330,16 @@ public class PersistenceSupport implements ApplicationContextAware {
     }
 
     public interface EntityVisitor {
-        boolean visit(Entity entity);
+        boolean visit(JmixEntity entity);
     }
 
     public static class ContainerResourceHolder extends ResourceHolderSupport {
 
-        protected Map<UnitOfWork, Set<Entity>> unitOfWorkMap = new HashMap<>();
+        protected Map<UnitOfWork, Set<JmixEntity>> unitOfWorkMap = new HashMap<>();
 
-        protected Set<Entity> savedInstances = createEntitySet();
+        protected Set<JmixEntity> savedInstances = createEntitySet();
 
-        protected Set<Entity> newDetachedInstances = createEntitySet();
+        protected Set<JmixEntity> newDetachedInstances = createEntitySet();
 
         protected String storeName;
 
@@ -352,14 +351,14 @@ public class PersistenceSupport implements ApplicationContextAware {
             return storeName;
         }
 
-        protected void registerInstanceForUnitOfWork(Entity instance, UnitOfWork unitOfWork) {
+        protected void registerInstanceForUnitOfWork(JmixEntity instance, UnitOfWork unitOfWork) {
             if (log.isTraceEnabled())
                 log.trace("ContainerResourceHolder.registerInstanceForUnitOfWork: instance = " +
                         instance + ", UnitOfWork = " + unitOfWork);
 
             instance.__getEntityEntry().setManaged(true);
 
-            Set<Entity> instances = unitOfWorkMap.get(unitOfWork);
+            Set<JmixEntity> instances = unitOfWorkMap.get(unitOfWork);
             if (instances == null) {
                 instances = createEntitySet();
                 unitOfWorkMap.put(unitOfWork, instances);
@@ -367,34 +366,34 @@ public class PersistenceSupport implements ApplicationContextAware {
             instances.add(instance);
         }
 
-        protected void unregisterInstance(Entity instance, UnitOfWork unitOfWork) {
-            Set<Entity> instances = unitOfWorkMap.get(unitOfWork);
+        protected void unregisterInstance(JmixEntity instance, UnitOfWork unitOfWork) {
+            Set<JmixEntity> instances = unitOfWorkMap.get(unitOfWork);
             if (instances != null) {
                 instances.remove(instance);
             }
         }
 
-        protected Collection<Entity> getInstances(UnitOfWork unitOfWork) {
-            HashSet<Entity> set = new HashSet<>();
-            Set<Entity> entities = unitOfWorkMap.get(unitOfWork);
+        protected Collection<JmixEntity> getInstances(UnitOfWork unitOfWork) {
+            HashSet<JmixEntity> set = new HashSet<>();
+            Set<JmixEntity> entities = unitOfWorkMap.get(unitOfWork);
             if (entities != null)
                 set.addAll(entities);
             return set;
         }
 
-        protected Collection<Entity> getAllInstances() {
-            Set<Entity> set = createEntitySet();
-            for (Set<Entity> instances : unitOfWorkMap.values()) {
+        protected Collection<JmixEntity> getAllInstances() {
+            Set<JmixEntity> set = createEntitySet();
+            for (Set<JmixEntity> instances : unitOfWorkMap.values()) {
                 set.addAll(instances);
             }
             return set;
         }
 
-        protected Collection<Entity> getSavedInstances() {
+        protected Collection<JmixEntity> getSavedInstances() {
             return savedInstances;
         }
 
-        public Set<Entity> getNewDetachedInstances() {
+        public Set<JmixEntity> getNewDetachedInstances() {
             return newDetachedInstances;
         }
 
@@ -432,11 +431,11 @@ public class PersistenceSupport implements ApplicationContextAware {
                 fireFlush(container.getStoreName());
             }
 
-            Collection<Entity> instances = container.getAllInstances();
+            Collection<JmixEntity> instances = container.getAllInstances();
             Set<String> typeNames = new HashSet<>();
             for (Object instance : instances) {
-                if (instance instanceof Entity) {
-                    Entity entity = (Entity) instance;
+                if (instance instanceof JmixEntity) {
+                    JmixEntity entity = (JmixEntity) instance;
 
                     if (readOnly) {
                         AttributeChangeListener changeListener =
@@ -460,7 +459,7 @@ public class PersistenceSupport implements ApplicationContextAware {
             }
 
             if (!readOnly) {
-                Collection<Entity> allInstances = container.getAllInstances();
+                Collection<JmixEntity> allInstances = container.getAllInstances();
                 for (BeforeCommitTransactionListener transactionListener : beforeCommitTxListeners) {
                     transactionListener.beforeCommit(container.getStoreName(), allInstances);
                 }
@@ -476,19 +475,19 @@ public class PersistenceSupport implements ApplicationContextAware {
         @Override
         public void afterCompletion(int status) {
             try {
-                Collection<Entity> instances = container.getAllInstances();
+                Collection<JmixEntity> instances = container.getAllInstances();
                 if (log.isTraceEnabled())
                     log.trace("ContainerResourceSynchronization.afterCompletion: instances = " + instances);
                 for (Object instance : instances) {
-                    if (instance instanceof Entity) {
+                    if (instance instanceof JmixEntity) {
                         if (status == TransactionSynchronization.STATUS_COMMITTED) {
-                            if (((Entity) instance).__getEntityEntry().isNew()) {
+                            if (((JmixEntity) instance).__getEntityEntry().isNew()) {
                                 // new instances become not new and detached only if the transaction was committed
-                                ((Entity) instance).__getEntityEntry().setNew(false);
+                                ((JmixEntity) instance).__getEntityEntry().setNew(false);
                             }
                         } else { // commit failed or the transaction was rolled back
                             makeDetached(instance);
-                            for (Entity entity : container.getNewDetachedInstances()) {
+                            for (JmixEntity entity : container.getNewDetachedInstances()) {
                                 entity.__getEntityEntry().setNew(true);
                                 entity.__getEntityEntry().setDetached(false);
                             }
@@ -504,10 +503,10 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
 
         private void detachAll() {
-            Collection<Entity> instances = container.getAllInstances();
-            for (Entity instance : instances) {
+            Collection<JmixEntity> instances = container.getAllInstances();
+            for (JmixEntity instance : instances) {
                 if (instance.__getEntityEntry().isNew()) {
-                    container.getNewDetachedInstances().add((Entity) instance);
+                    container.getNewDetachedInstances().add((JmixEntity) instance);
                 }
             }
 
@@ -556,7 +555,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
 
         @Override
-        public boolean visit(Entity entity) {
+        public boolean visit(JmixEntity entity) {
             if (entity.__getEntityEntry().isNew()
                     && !getSavedInstances(storeName).contains(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, storeName);
@@ -640,7 +639,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 //            }
 //        }
 
-        protected void processDeletePolicy(Entity entity) {
+        protected void processDeletePolicy(JmixEntity entity) {
             DeletePolicyProcessor processor = AppBeans.get(DeletePolicyProcessor.NAME); // prototype
             processor.setEntity(entity);
             processor.process();

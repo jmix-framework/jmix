@@ -17,7 +17,7 @@
 package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 
@@ -30,13 +30,13 @@ public interface PersistenceAttributeSecurity {
 
     FetchPlan createRestrictedFetchPlan(FetchPlan fetchPlan);
 
-    void afterLoad(Entity entity);
+    void afterLoad(JmixEntity entity);
 
-    void afterLoad(Collection<? extends Entity> entities);
+    void afterLoad(Collection<? extends JmixEntity> entities);
 
-    void beforePersist(Entity entity);
+    void beforePersist(JmixEntity entity);
 
-    void beforeMerge(Entity entity);
+    void beforeMerge(JmixEntity entity);
 
-    void afterCommit(Entity entity);
+    void afterCommit(JmixEntity entity);
 }

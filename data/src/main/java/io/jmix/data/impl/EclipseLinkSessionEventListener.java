@@ -92,7 +92,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
                 setMultipleTableConstraintDependency(metaClass, desc);
             }
 
-            if (Entity.class.isAssignableFrom(desc.getJavaClass())) {
+            if (JmixEntity.class.isAssignableFrom(desc.getJavaClass())) {
                 // set DescriptorEventManager that doesn't invoke listeners for base classes
                 desc.setEventManager(new DescriptorEventManagerWrapper(desc.getDescriptorEventManager()));
                 desc.getEventManager().addListener(descriptorEventListener);
@@ -169,7 +169,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
 
     protected void enhancementCheck(Class entityClass, List<Pair<Class, String>> missingEnhancements) {
         boolean jmixEnhanced = ArrayUtils.contains(entityClass.getInterfaces(), JmixSettersEnhanced.class)
-                || !(Entity.class.isAssignableFrom(entityClass))
+                || !(JmixEntity.class.isAssignableFrom(entityClass))
                 || ArrayUtils.contains(entityClass.getDeclaredAnnotations(), DisableEnhancing.class);
         boolean persistenceObject = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceObject.class);
         boolean persistenceWeaved = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeaved.class);

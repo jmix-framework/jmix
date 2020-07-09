@@ -20,7 +20,7 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
@@ -47,7 +47,7 @@ import org.springframework.core.ResolvableTypeProvider;
  *
  * @param <E> entity type
  */
-public class EntityPersistingEvent<E extends Entity> extends ApplicationEvent implements ResolvableTypeProvider {
+public class EntityPersistingEvent<E extends JmixEntity> extends ApplicationEvent implements ResolvableTypeProvider {
 
     private final E entity;
 

@@ -15,6 +15,7 @@
  */
 package test_support.entity.entity_extension;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
@@ -26,7 +27,7 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "CARD_TYPE", discriminatorType = DiscriminatorType.INTEGER)
 @DiscriminatorValue("0")
-public class Card implements io.jmix.core.Entity {
+public class Card implements JmixEntity {
 
     @Id
     @Column(name = "ID")

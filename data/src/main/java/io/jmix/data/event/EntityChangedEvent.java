@@ -46,7 +46,7 @@ import org.springframework.core.ResolvableTypeProvider;
  *
  * @param <E> entity type
  */
-public class EntityChangedEvent<E extends Entity> extends ApplicationEvent implements ResolvableTypeProvider {
+public class EntityChangedEvent<E extends JmixEntity> extends ApplicationEvent implements ResolvableTypeProvider {
 
     /**
      * Type of the event: {@link #CREATED}, {@link #UPDATED} or {@link #DELETED}.

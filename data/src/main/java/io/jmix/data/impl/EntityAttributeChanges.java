@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.sessions.changesets.AggregateChangeRecord;
@@ -65,7 +65,7 @@ public class EntityAttributeChanges {
     /**
      * Accumulates changes for the entity. Stores changed attribute names and old values.
      */
-    public void addChanges(Entity entity) {
+    public void addChanges(JmixEntity entity) {
         if (!(entity instanceof ChangeTracker))
             return;
 

@@ -19,7 +19,7 @@ package io.jmix.data.impl;
 import io.jmix.core.Events;
 import io.jmix.core.Id;
 import io.jmix.core.Metadata;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -76,9 +76,9 @@ public class EntityChangedEventManager {
 
     private Map<Class, PublishingInfo> infoCache = new ConcurrentHashMap<>();
 
-    public List<EntityChangedEvent> collect(Collection<Entity> entities) {
+    public List<EntityChangedEvent> collect(Collection<JmixEntity> entities) {
         List<EntityChangedEvent> list = new ArrayList<>();
-        for (Entity entity : entities) {
+        for (JmixEntity entity : entities) {
 
             PublishingInfo info = infoCache.computeIfAbsent(entity.getClass(), aClass -> {
                 MetaClass metaClass = metadata.getClass(entity.getClass());
@@ -134,7 +134,7 @@ public class EntityChangedEventManager {
 
     @SuppressWarnings("unchecked")
     @Nullable
-    private AttributeChanges getEntityAttributeChanges(@Nullable Entity entity, @Nullable ObjectChangeSet changeSet) {
+    private AttributeChanges getEntityAttributeChanges(@Nullable JmixEntity entity, @Nullable ObjectChangeSet changeSet) {
         if (changeSet == null)
             return null;
         Set<AttributeChanges.Change> changes = new HashSet<>();
@@ -146,12 +146,12 @@ public class EntityChangedEventManager {
                         getEntityAttributeChanges(null, ((AggregateChangeRecord) changeRecord).getChangedObject()));
             } else {
                 Object oldValue = changeRecord.getOldValue();
-                if (oldValue instanceof Entity) {
-                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), Id.of((Entity) oldValue)));
+                if (oldValue instanceof JmixEntity) {
+                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), Id.of((JmixEntity) oldValue)));
                 } else if (oldValue instanceof Collection) {
-                    Collection<Entity> coll = (Collection<Entity>) oldValue;
+                    Collection<JmixEntity> coll = (Collection<JmixEntity>) oldValue;
                     Collection<Id> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
-                    for (Entity item : coll) {
+                    for (JmixEntity item : coll) {
                         idColl.add(Id.of(item));
                     }
                     changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), idColl));
@@ -241,24 +241,24 @@ public class EntityChangedEventManager {
 //    }
 
     @SuppressWarnings("unchecked")
-    private AttributeChanges getEntityAttributeChanges(Entity entity, boolean deleted) {
+    private AttributeChanges getEntityAttributeChanges(JmixEntity entity, boolean deleted) {
         Set<AttributeChanges.Change> changes = new HashSet<>();
         Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
 
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             Object value = EntityValues.getValue(entity, property.getName());
             if (deleted) {
-                if (value instanceof Entity) {
-                    boolean isEmbeddable = ((Entity) value).__getEntityEntry().isEmbeddable();
+                if (value instanceof JmixEntity) {
+                    boolean isEmbeddable = ((JmixEntity) value).__getEntityEntry().isEmbeddable();
                     if (isEmbeddable) {
-                        embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges((Entity) value, true));
+                        embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges((JmixEntity) value, true));
                     } else {
-                        changes.add(new AttributeChanges.Change(property.getName(), Id.of((Entity) value)));
+                        changes.add(new AttributeChanges.Change(property.getName(), Id.of((JmixEntity) value)));
                     }
                 } else if (value instanceof Collection) {
-                    Collection<Entity> coll = (Collection<Entity>) value;
+                    Collection<JmixEntity> coll = (Collection<JmixEntity>) value;
                     Collection<Id> idColl = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
-                    for (Entity item : coll) {
+                    for (JmixEntity item : coll) {
                         idColl.add(Id.of(item));
                     }
                     changes.add(new AttributeChanges.Change(property.getName(), idColl));

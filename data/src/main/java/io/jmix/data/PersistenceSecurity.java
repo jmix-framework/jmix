@@ -17,7 +17,7 @@
 package io.jmix.data;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.data.impl.JmixQuery;
 
 import java.util.Collection;
@@ -53,45 +53,45 @@ public interface PersistenceSecurity {
      * Applies in-memory constraints to the entity by filtered data
      * @param entity -
      */
-    void applyConstraints(Entity entity);
+    void applyConstraints(JmixEntity entity);
 
     /**
      * Applies in-memory constraints to the entity fields by filtered data
      * @param entities - collection of entities
      */
-    void applyConstraints(Collection<Entity> entities);
+    void applyConstraints(Collection<JmixEntity> entities);
 
     /**
      * Filter entities in collection by in-memory constraints
      * @param entities - collection of entities that will be filtered
      * @return true if some items were filtered out
      */
-    boolean filterByConstraints(Collection<Entity> entities);
+    boolean filterByConstraints(Collection<JmixEntity> entities);
 
     /**
      * Filter entity by in-memory constraints
      * @param entity - entity that will be filtered
      * @return true, if entity should be filtered from client output
      */
-    boolean filterByConstraints(Entity entity);
+    boolean filterByConstraints(JmixEntity entity);
 
     /**
      * Reads security token and restores security state
      * @param entity - entity to restore security state
      */
-    void restoreSecurityState(Entity entity);
+    void restoreSecurityState(JmixEntity entity);
 
     /**
      * Restores filtered data from security token
      * @param entity - entity to restore filtered data
      */
-    void restoreFilteredData(Entity entity);
+    void restoreFilteredData(JmixEntity entity);
 
     /**
      * Reads security token and restores security state and filtered data
      * @param entity - entity to restore
      */
-    default void restoreSecurityStateAndFilteredData(Entity entity) {
+    default void restoreSecurityStateAndFilteredData(JmixEntity entity) {
         restoreSecurityState(entity);
         restoreFilteredData(entity);
     }
@@ -101,7 +101,7 @@ public interface PersistenceSecurity {
      * For example, security constraints exists
      * @param entity - entity to check security token
      */
-    void assertToken(Entity entity);
+    void assertToken(JmixEntity entity);
 
     /**
      * Validate that security token for REST exists for specific cases.
@@ -109,17 +109,17 @@ public interface PersistenceSecurity {
      * @param entity - entity to check security token
      * @param view - view for entity
      */
-    void assertTokenForREST(Entity entity, FetchPlan view);
+    void assertTokenForREST(JmixEntity entity, FetchPlan view);
 
     /**
      * Calculate filtered data
      * @param entity for which will calculate filtered data
      */
-    void calculateFilteredData(Entity entity);
+    void calculateFilteredData(JmixEntity entity);
 
     /**
      * Calculate filtered data
      * @param entities - collection of entities for which will calculate filtered data
      */
-    void calculateFilteredData(Collection<Entity> entities);
+    void calculateFilteredData(Collection<JmixEntity> entities);
 }

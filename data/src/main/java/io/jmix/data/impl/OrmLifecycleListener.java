@@ -16,13 +16,12 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import io.jmix.data.EntityChangeType;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Interface for persistence lifecycle listeners notified by {@link PersistenceSupport} before commit.
@@ -37,7 +36,7 @@ public interface OrmLifecycleListener {
      * @param changes object describing changes in the entity attributes - null for {@code CREATE} and {@code DELETE}
      *                change types
      */
-    default void onEntityChange(Entity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
+    default void onEntityChange(JmixEntity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
     }
 
     /**
@@ -51,12 +50,12 @@ public interface OrmLifecycleListener {
     /**
      * Invoked when entities are loaded from ORM store
      */
-    default void onLoad(Collection<Entity> entities, LoadContext loadContext) {
+    default void onLoad(Collection<JmixEntity> entities, LoadContext loadContext) {
     }
 
     /**
      * Invoked when entities are saved in ORM store
      */
-    default void onSave(Collection<Entity> entities) {
+    default void onSave(Collection<JmixEntity> entities) {
     }
 }

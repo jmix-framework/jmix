@@ -84,9 +84,9 @@ public class PersistenceTools {
      *
      * @param entity entity instance
      * @return dirty attribute names
-     * @see #isDirty(Entity, String...)
+     * @see #isDirty(JmixEntity, String...)
      */
-    public Set<String> getDirtyFields(Entity entity) {
+    public Set<String> getDirtyFields(JmixEntity entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
@@ -115,10 +115,10 @@ public class PersistenceTools {
      * <br> If the entity is not persistent or not in the Managed state, returns false.
      *
      * @param entity entity instance
-     * @see #getDirtyFields(Entity)
-     * @see #isDirty(Entity, String...)
+     * @see #getDirtyFields(JmixEntity)
+     * @see #isDirty(JmixEntity, String...)
      */
-    public boolean isDirty(Entity entity) {
+    public boolean isDirty(JmixEntity entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
@@ -138,9 +138,9 @@ public class PersistenceTools {
      *
      * @param entity     entity instance
      * @param attributes attributes to check
-     * @see #getDirtyFields(Entity)
+     * @see #getDirtyFields(JmixEntity)
      */
-    public boolean isDirty(Entity entity, String... attributes) {
+    public boolean isDirty(JmixEntity entity, String... attributes) {
         Set<String> dirtyFields = getDirtyFields(entity);
         for (String attribute : attributes) {
             if (dirtyFields.contains(attribute))
@@ -152,18 +152,18 @@ public class PersistenceTools {
     /**
      * Returns an old value of an attribute changed in the current transaction. The entity must be in the Managed state.
      * For enum attributes returns enum id. <br>
-     * You can check if the value has been changed using {@link #isDirty(Entity, String...)} method.
+     * You can check if the value has been changed using {@link #isDirty(JmixEntity, String...)} method.
      *
      * @param entity    entity instance
      * @param attribute attribute name
      * @return an old value stored in the database. For a new entity returns null.
      * @throws IllegalArgumentException if the entity is not persistent or not in the Managed state
-     * @see #getOldEnumValue(Entity, String)
-     * @see #isDirty(Entity, String...)
-     * @see #getDirtyFields(Entity)
+     * @see #getOldEnumValue(JmixEntity, String)
+     * @see #isDirty(JmixEntity, String...)
+     * @see #getDirtyFields(JmixEntity)
      */
     @Nullable
-    public Object getOldValue(Entity entity, String attribute) {
+    public Object getOldValue(JmixEntity entity, String attribute) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         if (!(entity instanceof ChangeTracker))
@@ -199,7 +199,7 @@ public class PersistenceTools {
                             }
                             for (Object item : oldValue) {
                                 SoftDelete softDelete = (SoftDelete) item;
-                                if (!softDelete.isDeleted() || softDelete.isDeleted() && isDirty((Entity) softDelete, "deleteTs")) {
+                                if (!softDelete.isDeleted() || softDelete.isDeleted() && isDirty((JmixEntity) softDelete, "deleteTs")) {
                                     filteredValue.add(softDelete);
                                 }
                             }
@@ -218,7 +218,7 @@ public class PersistenceTools {
     /**
      * Returns an old value of an enum attribute changed in the current transaction. The entity must be in the Managed state.
      * <p>
-     * Unlike {@link #getOldValue(Entity, String)}, returns enum value and not its id.
+     * Unlike {@link #getOldValue(JmixEntity, String)}, returns enum value and not its id.
      *
      * @param entity    entity instance
      * @param attribute attribute name
@@ -226,7 +226,7 @@ public class PersistenceTools {
      * @throws IllegalArgumentException if the entity is not persistent or not in the Managed state
      */
     @Nullable
-    public EnumClass getOldEnumValue(Entity entity, String attribute) {
+    public EnumClass getOldEnumValue(JmixEntity entity, String attribute) {
         Object value = getOldValue(entity, attribute);
         if (value == null)
             return null;
@@ -276,7 +276,7 @@ public class PersistenceTools {
      * @throws IllegalStateException    if the entity is not in Managed state
      * @throws RuntimeException         if anything goes wrong when retrieving the ID
      */
-    public RefId getReferenceId(Entity entity, String property) {
+    public RefId getReferenceId(JmixEntity entity, String property) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaProperty metaProperty = metaClass.getProperty(property);
 
@@ -300,7 +300,7 @@ public class PersistenceTools {
                 if (!fetchGroup.containsAttributeInternal(property))
                     return RefId.createNotLoaded(property);
                 else {
-                    Entity refEntity = getValue(entity, property);
+                    JmixEntity refEntity = getValue(entity, property);
                     return RefId.create(property, refEntity == null ? null : getId(refEntity));
                 }
             }
@@ -358,10 +358,10 @@ public class PersistenceTools {
      *
      * @param entities instances to remove from the database.
      */
-    public void deleteRecord(Entity... entities) {
+    public void deleteRecord(JmixEntity... entities) {
         if (entities == null)
             return;
-        for (Entity entity : entities) {
+        for (JmixEntity entity : entities) {
             if (entity == null)
                 continue;
 
@@ -393,7 +393,7 @@ public class PersistenceTools {
     }
 
     /**
-     * A wrapper for the reference ID value returned by {@link #getReferenceId(Entity, String)} method.
+     * A wrapper for the reference ID value returned by {@link #getReferenceId(JmixEntity, String)} method.
      *
      * @see #isLoaded()
      * @see #getValue()

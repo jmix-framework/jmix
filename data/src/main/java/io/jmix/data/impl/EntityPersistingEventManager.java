@@ -17,7 +17,7 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.Events;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.data.event.EntityPersistingEvent;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +31,8 @@ public class EntityPersistingEventManager {
     @Autowired
     protected Events events;
 
-    public void publishEvent(Entity entity) {
-        EntityPersistingEvent<Entity> event = new EntityPersistingEvent<>(this, entity);
+    public void publishEvent(JmixEntity entity) {
+        EntityPersistingEvent<JmixEntity> event = new EntityPersistingEvent<>(this, entity);
         events.publish(event);
     }
 }

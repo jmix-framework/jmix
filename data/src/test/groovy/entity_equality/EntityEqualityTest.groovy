@@ -16,7 +16,7 @@
 
 package entity_equality
 
-import io.jmix.core.Entity
+import io.jmix.core.JmixEntity
 import io.jmix.core.entity.EntityValues
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.support.TransactionTemplate
@@ -38,7 +38,7 @@ class EntityEqualityTest extends DataSpec {
 
     def "entity equality across states"(Class entityClass) {
         Set set = new HashSet<>()
-        Entity entity = createEntity(entityClass)
+        JmixEntity entity = createEntity(entityClass)
 
         when:
         set.add(entity)
@@ -82,7 +82,7 @@ class EntityEqualityTest extends DataSpec {
 
     }
 
-    Entity createEntity(Class entityClass) {
+    JmixEntity createEntity(Class entityClass) {
         def entity = entityClass.newInstance()
         entity.name = 'foo'
         entity

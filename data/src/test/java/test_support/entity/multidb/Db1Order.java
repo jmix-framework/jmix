@@ -6,6 +6,7 @@
 package test_support.entity.multidb;
 
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.annotation.Store;
 
@@ -16,7 +17,7 @@ import java.util.UUID;
 @Entity(name = "test_Db1Order")
 @Table(name = "ORDER_")
 @Store(name = "db1")
-public class Db1Order implements io.jmix.core.Entity {
+public class Db1Order implements JmixEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE/*, generator = "ref$Db1Order"*/)

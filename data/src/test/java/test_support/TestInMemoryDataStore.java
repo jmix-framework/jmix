@@ -34,7 +34,7 @@ public class TestInMemoryDataStore implements DataStore {
 
     private String name;
 
-    private Map<String, Map<Object, Entity>> entities = new ConcurrentHashMap<>();
+    private Map<String, Map<Object, JmixEntity>> entities = new ConcurrentHashMap<>();
 
     @Autowired
     private Metadata metadata;
@@ -51,8 +51,8 @@ public class TestInMemoryDataStore implements DataStore {
 
     @Nullable
     @Override
-    public <E extends Entity> E load(LoadContext<E> context) {
-        Map<Object, Entity> instances = entities.get(context.getMetaClass());
+    public <E extends JmixEntity> E load(LoadContext<E> context) {
+        Map<Object, JmixEntity> instances = entities.get(context.getMetaClass());
         if (instances == null)
             return null;
         else
@@ -60,8 +60,8 @@ public class TestInMemoryDataStore implements DataStore {
     }
 
     @Override
-    public <E extends Entity> List<E> loadList(LoadContext<E> context) {
-        Map<Object, Entity> instances = entities.get(context.getMetaClass());
+    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
+        Map<Object, JmixEntity> instances = entities.get(context.getMetaClass());
         if (instances == null)
             return Collections.emptyList();
         else
@@ -69,8 +69,8 @@ public class TestInMemoryDataStore implements DataStore {
     }
 
     @Override
-    public long getCount(LoadContext<? extends Entity> context) {
-        Map<Object, Entity> instances = entities.get(context.getMetaClass());
+    public long getCount(LoadContext<? extends JmixEntity> context) {
+        Map<Object, JmixEntity> instances = entities.get(context.getMetaClass());
         if (instances == null)
             return 0;
         else
@@ -78,12 +78,12 @@ public class TestInMemoryDataStore implements DataStore {
     }
 
     @Override
-    public Set<Entity> save(SaveContext context) {
-        Set<Entity> result = new HashSet<>();
+    public Set<JmixEntity> save(SaveContext context) {
+        Set<JmixEntity> result = new HashSet<>();
 
-        for (Entity entity : context.getEntitiesToSave()) {
+        for (JmixEntity entity : context.getEntitiesToSave()) {
             String metaClassName = metadata.getClass(entity.getClass()).getName();
-            Map<Object, Entity> instances = entities.get(metaClassName);
+            Map<Object, JmixEntity> instances = entities.get(metaClassName);
             if (instances == null) {
                 instances = new ConcurrentHashMap<>();
                 entities.put(metaClassName, instances);
@@ -91,9 +91,9 @@ public class TestInMemoryDataStore implements DataStore {
             instances.put(EntityValues.getId(entity), entity);
             result.add(entity);
         }
-        for (Entity entity : context.getEntitiesToRemove()) {
+        for (JmixEntity entity : context.getEntitiesToRemove()) {
             String metaClassName = metadata.getClass(entity.getClass()).getName();
-            Map<Object, Entity> instances = entities.get(metaClassName);
+            Map<Object, JmixEntity> instances = entities.get(metaClassName);
             if (instances != null) {
                 instances.remove(EntityValues.getId(entity));
             }

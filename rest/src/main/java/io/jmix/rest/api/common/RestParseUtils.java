@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.Datatypes;
@@ -94,13 +94,13 @@ public class RestParseUtils {
         if (Double.class == clazz || Double.TYPE == clazz
                 || Float.class == clazz || Float.TYPE == clazz) return Datatypes.getNN(Double.class).parse(value);
         if (UUID.class == clazz) return UUID.fromString(value);
-        if (Entity.class.isAssignableFrom(clazz)) {
+        if (JmixEntity.class.isAssignableFrom(clazz)) {
             return entitySerializationAPI.entityFromJson(value, metadata.getClass(clazz));
         }
         if (Collection.class.isAssignableFrom(clazz)) {
             //if type argument for the collection is defined and is not entity, then do the basic deserialization
             if (argumentTypeClass != null) {
-                if (!Entity.class.isAssignableFrom(argumentTypeClass)) {
+                if (!JmixEntity.class.isAssignableFrom(argumentTypeClass)) {
                     return deserialize(value, type);
                 }
             }

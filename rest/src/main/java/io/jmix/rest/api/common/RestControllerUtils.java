@@ -86,7 +86,7 @@ public class RestControllerUtils {
      *
      * @param entity the entity. After the method is executed forbidden attributes will be cleaned.
      */
-    public void applyAttributesSecurity(Entity entity) {
+    public void applyAttributesSecurity(JmixEntity entity) {
         metadataTools.traverseAttributes(entity, new FillingInaccessibleAttributesVisitor());
     }
 
@@ -108,7 +108,7 @@ public class RestControllerUtils {
         }
 
         @Override
-        public void visit(Entity entity, MetaProperty property) {
+        public void visit(JmixEntity entity, MetaProperty property) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             if (!security.isEntityAttrReadPermitted(metaClass, property.getName())) {
                 addInaccessibleAttribute(entity, property.getName());
@@ -121,7 +121,7 @@ public class RestControllerUtils {
         }
     }
 
-    private void addInaccessibleAttribute(Entity entity, String property) {
+    private void addInaccessibleAttribute(JmixEntity entity, String property) {
         SecurityState securityState = entity.__getEntityEntry().getSecurityState();
         String[] attributes = securityState.getInaccessibleAttributes();
         attributes = attributes == null ? new String[1] : Arrays.copyOf(attributes, attributes.length + 1);

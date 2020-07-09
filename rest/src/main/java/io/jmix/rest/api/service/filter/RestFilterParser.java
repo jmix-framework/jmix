@@ -24,7 +24,7 @@ import com.google.gson.JsonParser;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -193,7 +193,7 @@ public class RestFilterParser {
         }
 
         if (metaProperty.getRange().isClass()) {
-            if (Entity.class.isAssignableFrom(metaProperty.getJavaType())) {
+            if (JmixEntity.class.isAssignableFrom(metaProperty.getJavaType())) {
                 MetaClass _metaClass = metadata.getClass(metaProperty.getJavaType());
                 MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(_metaClass);
                 String pkName = primaryKeyProperty.getName();

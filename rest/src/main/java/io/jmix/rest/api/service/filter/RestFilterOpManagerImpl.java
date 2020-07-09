@@ -19,7 +19,7 @@ package io.jmix.rest.api.service.filter;
 
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.Metadata;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class RestFilterOpManagerImpl implements RestFilterOpManager {
 
         else if (UUID.class.equals(javaClass)
                 || Enum.class.isAssignableFrom(javaClass)
-                || Entity.class.isAssignableFrom(javaClass))
+                || JmixEntity.class.isAssignableFrom(javaClass))
             return EnumSet.of(EQUAL, IN, NOT_IN, NOT_EQUAL, NOT_EMPTY, IS_NULL);
 
         else

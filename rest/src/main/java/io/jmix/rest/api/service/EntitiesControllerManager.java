@@ -111,7 +111,7 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanReadEntity(metaClass);
 
-        LoadContext<Entity> ctx = new LoadContext<>(metaClass);
+        LoadContext<JmixEntity> ctx = new LoadContext<>(metaClass);
         Object id = getIdFromString(entityId, metaClass);
         ctx.setId(id);
 
@@ -122,7 +122,7 @@ public class EntitiesControllerManager {
 
         ctx.setLoadDynamicAttributes(BooleanUtils.isTrue(dynamicAttributes));
 
-        Entity entity = dataManager.load(ctx);
+        JmixEntity entity = dataManager.load(ctx);
         checkEntityIsNotNull(entityName, entityId, entity);
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
@@ -290,7 +290,7 @@ public class EntitiesControllerManager {
                                        @Nullable String modelVersion,
                                        MetaClass metaClass,
                                        Map<String, Object> queryParameters) {
-        LoadContext<Entity> ctx = new LoadContext<>(metaClass);
+        LoadContext<JmixEntity> ctx = new LoadContext<>(metaClass);
         String orderedQueryString = addOrderBy(queryString, sort);
         LoadContext.Query query = new LoadContext.Query(orderedQueryString);
 
@@ -316,7 +316,7 @@ public class EntitiesControllerManager {
 
         ctx.setLoadDynamicAttributes(BooleanUtils.isTrue(dynamicAttributes));
 
-        List<Entity> entities = dataManager.loadList(ctx);
+        List<JmixEntity> entities = dataManager.loadList(ctx);
         entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
@@ -374,7 +374,7 @@ public class EntitiesControllerManager {
 
         entityJson = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION, entityJson);
 
-        Entity entity = createEntityFromJson(metaClass, entityJson);
+        JmixEntity entity = createEntityFromJson(metaClass, entityJson);
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
                 .path("/{id}")
@@ -399,12 +399,12 @@ public class EntitiesControllerManager {
 
         entitiesJson = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION, entitiesJson);
 
-        Collection<Entity> mainCollectionEntity = new ArrayList<>();
+        Collection<JmixEntity> mainCollectionEntity = new ArrayList<>();
         JsonArray entitiesJsonArray = new JsonParser().parse(entitiesJson).getAsJsonArray();
 
         if (restProperties.isResponseViewEnabled() && responseView != null) {
             for (JsonElement jsonElement : entitiesJsonArray) {
-                Entity mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
+                JmixEntity mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
                 if (!entityStates.isLoadedWithView(mainEntity, responseView)) {
                     mainEntity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
                 }
@@ -413,7 +413,7 @@ public class EntitiesControllerManager {
             }
         } else {
             for (JsonElement jsonElement : entitiesJsonArray) {
-                Entity mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
+                JmixEntity mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
                 restControllerUtils.applyAttributesSecurity(mainEntity);
                 mainCollectionEntity.add(mainEntity);
             }
@@ -424,8 +424,8 @@ public class EntitiesControllerManager {
         return new ResponseInfo(uriComponents.toUri(), bodyJson);
     }
 
-    protected Entity createEntityFromJson(MetaClass metaClass, String entityJson) {
-        Entity entity;
+    protected JmixEntity createEntityFromJson(MetaClass metaClass, String entityJson) {
+        JmixEntity entity;
         try {
             entity = entitySerialization.entityFromJson(entityJson, metaClass);
         } catch (Exception e) {
@@ -434,7 +434,7 @@ public class EntitiesControllerManager {
 
         EntityImportView entityImportView = entityImportViewBuilder.buildFromJson(entityJson, metaClass);
 
-        Collection<Entity> importedEntities;
+        Collection<JmixEntity> importedEntities;
         try {
             importedEntities = entityImportExport.importEntities(Collections.singletonList(entity), entityImportView, true);
         } catch (EntityImportException e) {
@@ -456,7 +456,7 @@ public class EntitiesControllerManager {
 
         //there may be multiple entities in importedEntities (because of @Composition references), so we must find
         // the main entity that will be returned
-        Entity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, entityJson, entityId);
+        JmixEntity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, entityJson, entityId);
         if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithView(entity, responseView)) {
             entity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
         }
@@ -474,11 +474,11 @@ public class EntitiesControllerManager {
         checkCanUpdateEntity(metaClass);
 
         JsonArray entitiesJsonArray = new JsonParser().parse(entitiesJson).getAsJsonArray();
-        Collection<Entity> entities = new ArrayList<>();
+        Collection<JmixEntity> entities = new ArrayList<>();
         if (restProperties.isResponseViewEnabled() && responseView != null) {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 String entityId = jsonElement.getAsJsonObject().get("id").getAsString();
-                Entity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
+                JmixEntity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
                 if (!entityStates.isLoadedWithFetchPlan(entity, responseView)) {
                     entity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
                 }
@@ -488,7 +488,7 @@ public class EntitiesControllerManager {
         } else {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 String entityId = jsonElement.getAsJsonObject().get("id").getAsString();
-                Entity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
+                JmixEntity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
                 restControllerUtils.applyAttributesSecurity(entity);
                 entities.add(entity);
             }
@@ -497,22 +497,22 @@ public class EntitiesControllerManager {
         return new ResponseInfo(null, bodyJson);
     }
 
-    protected Entity getUpdatedEntity(String entityName,
-                                      String modelVersion,
-                                      String transformedEntityName,
-                                      MetaClass metaClass,
-                                      String entityJson,
-                                      String entityId) {
+    protected JmixEntity getUpdatedEntity(String entityName,
+                                          String modelVersion,
+                                          String transformedEntityName,
+                                          MetaClass metaClass,
+                                          String entityJson,
+                                          String entityId) {
         Object id = getIdFromString(entityId, metaClass);
 
         LoadContext loadContext = new LoadContext(metaClass).setId(id);
         @SuppressWarnings("unchecked")
-        Entity existingEntity = dataManager.load(loadContext);
+        JmixEntity existingEntity = dataManager.load(loadContext);
 
         checkEntityIsNotNull(transformedEntityName, entityId, existingEntity);
         entityJson = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.FROM_VERSION, entityJson);
 
-        Entity entity;
+        JmixEntity entity;
         try {
             entity = entitySerialization.entityFromJson(entityJson, metaClass);
         } catch (Exception e) {
@@ -523,7 +523,7 @@ public class EntitiesControllerManager {
         EntityValues.setId(entity, id);
 
         EntityImportView entityImportView = entityImportViewBuilder.buildFromJson(entityJson, metaClass);
-        Collection<Entity> importedEntities;
+        Collection<JmixEntity> importedEntities;
         try {
             importedEntities = entityImportExport.importEntities(Collections.singletonList(entity),
                     entityImportView, true, restProperties.isOptimisticLockingEnabled());
@@ -543,7 +543,7 @@ public class EntitiesControllerManager {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanDeleteEntity(metaClass);
         Object id = getIdFromString(entityId, metaClass);
-        Entity entity = dataManager.load(new LoadContext<>(metaClass).setId(id));
+        JmixEntity entity = dataManager.load(new LoadContext<>(metaClass).setId(id));
         checkEntityIsNotNull(entityName, entityId, entity);
         dataManager.remove(entity);
     }
@@ -561,7 +561,7 @@ public class EntitiesControllerManager {
             String entityId = entitiesJsonArray.get(i).getAsString();
 
             Object id = getIdFromString(entityId, metaClass);
-            Entity entity = dataManager.load(new LoadContext<>(metaClass).setId(id));
+            JmixEntity entity = dataManager.load(new LoadContext<>(metaClass).setId(id));
             checkEntityIsNotNull(entityName, entityId, entity);
             dataManager.remove(entity);
         }
@@ -588,7 +588,7 @@ public class EntitiesControllerManager {
         }
     }
 
-    protected void checkEntityIsNotNull(String entityName, String entityId, Entity entity) {
+    protected void checkEntityIsNotNull(String entityName, String entityId, JmixEntity entity) {
         if (entity == null) {
             throw new RestAPIException("Entity not found",
                     String.format("Entity %s with id %s not found", entityName, entityId),
@@ -631,10 +631,10 @@ public class EntitiesControllerManager {
     /**
      * Finds entity with given metaClass.
      */
-    protected Entity getMainEntity(Collection<Entity> importedEntities, MetaClass metaClass) {
-        Entity mainEntity = null;
+    protected JmixEntity getMainEntity(Collection<JmixEntity> importedEntities, MetaClass metaClass) {
+        JmixEntity mainEntity = null;
         if (importedEntities.size() > 1) {
-            Optional<Entity> first = importedEntities.stream().filter(e -> metadata.getClass(e).equals(metaClass)).findFirst();
+            Optional<JmixEntity> first = importedEntities.stream().filter(e -> metadata.getClass(e).equals(metaClass)).findFirst();
             if (first.isPresent()) mainEntity = first.get();
         } else {
             mainEntity = importedEntities.iterator().next();
@@ -648,7 +648,7 @@ public class EntitiesControllerManager {
      * may use other entities properties (references to other entities) and as a result we get an UnfetchedAttributeException while
      * producing the JSON for response
      */
-    protected String createEntityJson(Entity entity, MetaClass metaClass, String responseView, String version) {
+    protected String createEntityJson(JmixEntity entity, MetaClass metaClass, String responseView, String version) {
         Preconditions.checkNotNullArgument(entity);
 
         String json;
@@ -661,7 +661,7 @@ public class EntitiesControllerManager {
         return restControllerUtils.transformJsonIfRequired(metaClass.getName(), version, JsonTransformationDirection.TO_VERSION, json);
     }
 
-    protected String createEntitiesJson(Collection<Entity> entities, MetaClass metaClass, String responseView, String version) {
+    protected String createEntitiesJson(Collection<JmixEntity> entities, MetaClass metaClass, String responseView, String version) {
         String json;
         if (restProperties.isResponseViewEnabled()) {
             FetchPlan view = findOrCreateResponseView(metaClass, responseView);
@@ -675,7 +675,7 @@ public class EntitiesControllerManager {
 
     protected FetchPlan findOrCreateResponseView(MetaClass metaClass, String responseView) {
         if (StringUtils.isEmpty(responseView)) {
-            return new FetchPlan(Entity.class, false)
+            return new FetchPlan(JmixEntity.class, false)
                     .addProperty("id")
                     .addProperty(EntitySerialization.ENTITY_NAME_PROP)
                     .addProperty(EntitySerialization.INSTANCE_NAME_PROP);

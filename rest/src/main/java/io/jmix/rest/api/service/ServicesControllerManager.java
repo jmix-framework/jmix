@@ -146,8 +146,8 @@ public class ServicesControllerManager {
         }
 
         Class<?> methodReturnType = serviceMethod.getReturnType();
-        if (Entity.class.isAssignableFrom(methodReturnType)) {
-            Entity entity = (Entity) methodResult;
+        if (JmixEntity.class.isAssignableFrom(methodReturnType)) {
+            JmixEntity entity = (JmixEntity) methodResult;
             restControllerUtils.applyAttributesSecurity(entity);
             String entityJson = entitySerializationAPI.toJson(entity,
                     null,
@@ -157,9 +157,9 @@ public class ServicesControllerManager {
             return new ServiceCallResult(entityJson, true);
         } else if (Collection.class.isAssignableFrom(methodReturnType)) {
             Type returnTypeArgument = getMethodReturnTypeArgument(serviceMethod);
-            if ((returnTypeArgument instanceof Class && Entity.class.isAssignableFrom((Class) returnTypeArgument))
+            if ((returnTypeArgument instanceof Class && JmixEntity.class.isAssignableFrom((Class) returnTypeArgument))
                     || isEntitiesCollection((Collection) methodResult)) {
-                Collection<? extends Entity> entities = (Collection<? extends Entity>) methodResult;
+                Collection<? extends JmixEntity> entities = (Collection<? extends JmixEntity>) methodResult;
                 entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));
                 String entitiesJson = entitySerializationAPI.toJson(entities,
                         null,
@@ -203,7 +203,7 @@ public class ServicesControllerManager {
     protected boolean isEntitiesCollection(Collection collection) {
         if (collection.isEmpty()) return false;
         for (Object item : collection) {
-            if (!(item instanceof Entity)) {
+            if (!(item instanceof JmixEntity)) {
                 return false;
             }
         }

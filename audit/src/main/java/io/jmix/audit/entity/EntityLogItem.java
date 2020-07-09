@@ -18,6 +18,7 @@ package io.jmix.audit.entity;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
@@ -107,7 +108,7 @@ public class EntityLogItem extends BaseUuidEntity {
     private String entityInstanceName;
 
     @Transient
-    private transient io.jmix.core.Entity dbGeneratedIdEntity;
+    private transient JmixEntity dbGeneratedIdEntity;
 
     @Transient
     @ModelProperty
@@ -211,11 +212,11 @@ public class EntityLogItem extends BaseUuidEntity {
         this.entityRef = entityRef;
     }
 
-    public io.jmix.core.Entity getDbGeneratedIdEntity() {
+    public JmixEntity getDbGeneratedIdEntity() {
         return dbGeneratedIdEntity;
     }
 
-    public void setDbGeneratedIdEntity(io.jmix.core.Entity dbGeneratedIdEntity) {
+    public void setDbGeneratedIdEntity(JmixEntity dbGeneratedIdEntity) {
         this.dbGeneratedIdEntity = dbGeneratedIdEntity;
     }
 

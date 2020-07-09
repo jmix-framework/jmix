@@ -16,7 +16,7 @@
 
 package io.jmix.audit;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.data.impl.EntityAttributeChanges;
 
 import javax.annotation.Nullable;
@@ -38,24 +38,24 @@ public interface EntityLog {
     /**
      * Logs creation of an entity which is configured for manual logging (LoggedEntity.auto == false).
      */
-    void registerCreate(Entity entity);
+    void registerCreate(JmixEntity entity);
 
     /**
      * Logs creation of an entity which is configured for auto or manual logging
      * (depending on the {@code auto} parameter).
      */
-    void registerCreate(Entity entity, boolean auto);
+    void registerCreate(JmixEntity entity, boolean auto);
 
     /**
      * Logs modification of an entity which is configured for manual logging (LoggedEntity.auto == false).
      */
-    void registerModify(Entity entity);
+    void registerModify(JmixEntity entity);
 
     /**
      * Logs modification of an entity which is configured for auto or manual logging
      * (depending on the {@code auto} parameter).
      */
-    void registerModify(Entity entity, boolean auto);
+    void registerModify(JmixEntity entity, boolean auto);
 
 
     /**
@@ -64,18 +64,18 @@ public interface EntityLog {
      *
      * @param changes attribute changes provided by caller
      */
-    void registerModify(Entity entity, boolean auto, @Nullable EntityAttributeChanges changes);
+    void registerModify(JmixEntity entity, boolean auto, @Nullable EntityAttributeChanges changes);
 
     /**
      * Logs deletion of an entity which is configured for manual logging (LoggedEntity.auto == false).
      */
-    void registerDelete(Entity entity);
+    void registerDelete(JmixEntity entity);
 
     /**
      * Logs deletion of an entity which is configured for auto or manual logging
      * (depending on the {@code auto} parameter).
      */
-    void registerDelete(Entity entity, boolean auto);
+    void registerDelete(JmixEntity entity, boolean auto);
 
     /**
      * Invalidates configuration cache.
@@ -98,7 +98,7 @@ public interface EntityLog {
     boolean isLoggingForCurrentThread();
 
     /**
-     * Flush records accumulated by invocations of {@link #registerCreate(Entity)} and other registration methods
+     * Flush records accumulated by invocations of {@link #registerCreate(JmixEntity)} and other registration methods
      * to the database.
      */
     void flush(String storeName);

@@ -5,7 +5,7 @@ import io.jmix.audit.entity.LoggedAttribute
 import io.jmix.audit.entity.LoggedEntity
 import io.jmix.core.AppBeans
 import io.jmix.core.CoreConfiguration
-import io.jmix.core.Entity
+import io.jmix.core.JmixEntity
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
@@ -114,7 +114,7 @@ class AbstractEntityLogTest extends Specification {
         getEntityLogItems(entityName, entityId).first()
     }
 
-    protected EntityLogItem getLatestEntityLogItem(String entityName, Entity entity) {
+    protected EntityLogItem getLatestEntityLogItem(String entityName, JmixEntity entity) {
         Object id = EntityValues.getId(entity);
         getEntityLogItems(entityName, id).first()
     }

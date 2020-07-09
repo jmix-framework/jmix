@@ -98,7 +98,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     @Autowired
     protected DataContext dataContext;
     @Autowired
-    protected EntityPicker<Entity> instancePicker;
+    protected EntityPicker<JmixEntity> instancePicker;
     @Autowired
     protected Table<EntityLogItem> entityLogTable;
     @Autowired
@@ -221,7 +221,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
                     .withSelectHandler(items -> {
                         if (!items.isEmpty()) {
                             Object item = items.iterator().next();
-                            instancePicker.setValue((Entity) item);
+                            instancePicker.setValue((JmixEntity) item);
                         }
                     })
                     .build();
@@ -416,7 +416,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
     @Subscribe("searchBtn")
     public void onSearchBtnClick(Button.ClickEvent event) {
-        Entity entity = instancePicker.getValue();
+        JmixEntity entity = instancePicker.getValue();
         if (entity != null) {
             Object entityId = referenceToEntitySupport.getReferenceId(entity);
             if (entityId instanceof UUID) {

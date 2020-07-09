@@ -136,7 +136,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     }
 
     @Override
-    public void onEntityChange(Entity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
+    public void onEntityChange(JmixEntity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
         if (entity instanceof EntityLogItem) {
             return;
         }
@@ -384,7 +384,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         log.debug("Loaded: entitiesAuto={}, entitiesManual={}", entitiesAuto.size(), entitiesManual.size());
     }
 
-    protected String getEntityName(Entity entity) {
+    protected String getEntityName(JmixEntity entity) {
         MetaClass metaClass;
 //        TODO: DynamicAttributes
 //        if (entity instanceof CategoryAttributeValue) {
@@ -397,7 +397,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         return extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
     }
 
-    protected boolean doNotRegister(@Nullable Entity entity) {
+    protected boolean doNotRegister(@Nullable JmixEntity entity) {
         if (entity == null) {
             return true;
         }
@@ -411,12 +411,12 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     }
 
     @Override
-    public void registerCreate(Entity entity) {
+    public void registerCreate(JmixEntity entity) {
         registerCreate(entity, false);
     }
 
     @Override
-    public void registerCreate(Entity entity, boolean auto) {
+    public void registerCreate(JmixEntity entity, boolean auto) {
         try {
             if (doNotRegister(entity))
                 return;
@@ -458,7 +458,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
                 .collect(Collectors.toSet());
     }
 
-    protected void internalRegisterCreate(Entity entity, String entityName, String storeName, Set<String> attributes) {
+    protected void internalRegisterCreate(JmixEntity entity, String entityName, String storeName, Set<String> attributes) {
         EntityLogItem item;
         // Create a new transaction in main DB if we are saving an entity from additional data store
         if (!Stores.isMain(storeName)) {
@@ -541,17 +541,17 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     }
 
     @Override
-    public void registerModify(Entity entity) {
+    public void registerModify(JmixEntity entity) {
         registerModify(entity, false);
     }
 
     @Override
-    public void registerModify(Entity entity, boolean auto) {
+    public void registerModify(JmixEntity entity, boolean auto) {
         registerModify(entity, auto, null);
     }
 
     @Override
-    public void registerModify(Entity entity, boolean auto, @Nullable EntityAttributeChanges changes) {
+    public void registerModify(JmixEntity entity, boolean auto, @Nullable EntityAttributeChanges changes) {
         try {
             if (doNotRegister(entity))
                 return;
@@ -588,7 +588,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         }
     }
 
-    protected void internalRegisterModify(Entity entity, @Nullable EntityAttributeChanges changes, MetaClass metaClass,
+    protected void internalRegisterModify(JmixEntity entity, @Nullable EntityAttributeChanges changes, MetaClass metaClass,
                                           String storeName, Set<String> attributes) {
         EntityLogItem item = null;
 
@@ -638,7 +638,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         }
     }
 
-    protected Set<EntityLogAttr> createLogAttributes(Entity entity, Set<String> attributes,
+    protected Set<EntityLogAttr> createLogAttributes(JmixEntity entity, Set<String> attributes,
                                                      @Nullable EntityAttributeChanges changes) {
         Set<EntityLogAttr> result = new HashSet<>();
         for (String name : attributes) {
@@ -722,12 +722,12 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     }
 
     @Override
-    public void registerDelete(Entity entity) {
+    public void registerDelete(JmixEntity entity) {
         registerDelete(entity, false);
     }
 
     @Override
-    public void registerDelete(Entity entity, boolean auto) {
+    public void registerDelete(JmixEntity entity, boolean auto) {
         try {
             if (doNotRegister(entity))
                 return;
@@ -755,7 +755,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         }
     }
 
-    protected void internalRegisterDelete(Entity entity, String entityName, String storeName, Set<String> attributes) {
+    protected void internalRegisterDelete(JmixEntity entity, String entityName, String storeName, Set<String> attributes) {
         EntityLogItem item;
         // Create a new transaction in main DB if we are saving an entity from additional data store
         if (!Stores.isMain(storeName)) {
@@ -768,7 +768,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         enqueueItem(item, storeName);
     }
 
-    protected EntityLogItem generateEntityLogItem(Entity entity, String entityName, Set<String> attributes,
+    protected EntityLogItem generateEntityLogItem(JmixEntity entity, String entityName, Set<String> attributes,
                                                   EntityLogItem.Type type) {
         EntityLogItem item;
         Date ts = timeSource.currentTimestamp();
@@ -788,7 +788,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         return item;
     }
 
-    protected Set<String> getAllAttributes(Entity entity) {
+    protected Set<String> getAllAttributes(JmixEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -816,11 +816,11 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 
     @Nullable
     protected Object getValueId(@Nullable Object value) {
-        if (value instanceof Entity) {
-            if (((Entity) value).__getEntityEntry().isEmbeddable()) {
+        if (value instanceof JmixEntity) {
+            if (((JmixEntity) value).__getEntityEntry().isEmbeddable()) {
                 return null;
             } else {
-                return referenceToEntitySupport.getReferenceId((Entity) value);
+                return referenceToEntitySupport.getReferenceId((JmixEntity) value);
             }
         } else {
             return null;
@@ -830,8 +830,8 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     protected String stringify(@Nullable Object value, MetaProperty metaProperty) {
         if (value == null)
             return "";
-        else if (value instanceof Entity) {
-            return metadataTools.getInstanceName((Entity) value);
+        else if (value instanceof JmixEntity) {
+            return metadataTools.getInstanceName((JmixEntity) value);
         } else if (value instanceof Date) {
             Datatype datatype = metaProperty.getRange().asDatatype();
             return datatype.format(value);
@@ -868,7 +868,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 //        return null;
 //    }
 
-    protected Set<String> calculateDirtyFields(Entity entity, @Nullable EntityAttributeChanges changes) {
+    protected Set<String> calculateDirtyFields(JmixEntity entity, @Nullable EntityAttributeChanges changes) {
         if (changes == null) {
             if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
                 return Collections.emptySet();
@@ -929,7 +929,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 //        return fieldName;
 //    }
 
-    protected void logError(Entity entity, Exception e) {
+    protected void logError(JmixEntity entity, Exception e) {
         log.warn("Unable to log entity {}, id={}", entity, EntityValues.getId(entity), e);
     }
 

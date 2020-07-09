@@ -1,5 +1,5 @@
 import io.jmix.audit.entity.EntityLogItem
-import io.jmix.core.Entity
+import io.jmix.core.JmixEntity
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.impl.EntityAttributeChanges
 import test_support.testmodel.IdentityEntity
@@ -214,13 +214,13 @@ class EntityLogTest extends AbstractEntityLogTest {
 
     }
 
-    protected saveEntity(Entity entity) {
+    protected saveEntity(JmixEntity entity) {
         withTransaction {
             em.persist(entity)
         }
     }
 
-    private clearEntityById(Entity entity, String tableName) {
+    private clearEntityById(JmixEntity entity, String tableName) {
         Object id = EntityValues.getId(entity)
         if (entity && id) {
             runSqlUpdate("delete from $tableName where id = ${id}")

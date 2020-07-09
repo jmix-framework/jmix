@@ -16,7 +16,7 @@
 
 package io.jmix.security.role.annotation;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 
 import java.lang.annotation.*;
 
@@ -45,7 +45,7 @@ import java.lang.annotation.*;
 @Repeatable(JpqlRowLevelPolicyContainer.class)
 public @interface JpqlRowLevelPolicy {
 
-    Class<? extends Entity> entityClass();
+    Class<? extends JmixEntity> entityClass();
 
     String where();
 

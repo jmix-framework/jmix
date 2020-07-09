@@ -137,10 +137,10 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public boolean filterByConstraints(Collection<Entity> entities) {
+    public boolean filterByConstraints(Collection<JmixEntity> entities) {
         boolean filtered = false;
-        for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext(); ) {
-            Entity entity = iterator.next();
+        for (Iterator<JmixEntity> iterator = entities.iterator(); iterator.hasNext(); ) {
+            JmixEntity entity = iterator.next();
             if (!isPermittedInMemory(entity)) {
                 //we ignore situations when the collection is immutable
                 iterator.remove();
@@ -151,34 +151,34 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public boolean filterByConstraints(Entity entity) {
+    public boolean filterByConstraints(JmixEntity entity) {
         return !isPermittedInMemory(entity);
     }
 
     @Override
-    public void applyConstraints(Collection<Entity> entities) {
+    public void applyConstraints(Collection<JmixEntity> entities) {
         Set<EntityId> handled = new LinkedHashSet<>();
         entities.forEach(entity -> applyConstraints(entity, handled));
     }
 
     @Override
-    public void applyConstraints(Entity entity) {
+    public void applyConstraints(JmixEntity entity) {
         applyConstraints(entity, new HashSet<>());
     }
 
     @Override
-    public void calculateFilteredData(Entity entity) {
+    public void calculateFilteredData(JmixEntity entity) {
         calculateFilteredData(entity, new HashSet<>(), false);
     }
 
     @Override
-    public void calculateFilteredData(Collection<Entity> entities) {
+    public void calculateFilteredData(Collection<JmixEntity> entities) {
         Set<EntityId> handled = new LinkedHashSet<>();
         entities.forEach(entity -> calculateFilteredData(entity, handled, false));
     }
 
     @Override
-    public void restoreSecurityState(Entity entity) {
+    public void restoreSecurityState(JmixEntity entity) {
         try {
             securityTokenManager.readSecurityToken(entity);
         } catch (SecurityTokenException e) {
@@ -190,7 +190,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void restoreFilteredData(Entity entity) {
+    public void restoreFilteredData(JmixEntity entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         String storeName = metadataTools.getStoreName(metaClass);
         EntityManager entityManager = storeAwareLocator.getEntityManager(storeName);
@@ -218,13 +218,13 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
                     }
 
                     for (Object entityId : filteredIds) {
-                        Entity reference = entityManager.getReference((Class<Entity>) entityClass, entityId);
+                        JmixEntity reference = entityManager.getReference((Class<JmixEntity>) entityClass, entityId);
                         //we ignore situations when the currentValue is immutable
                         currentCollection.add(reference);
                     }
-                } else if (Entity.class.isAssignableFrom(propertyClass)) {
+                } else if (JmixEntity.class.isAssignableFrom(propertyClass)) {
                     Object entityId = filteredIds.iterator().next();
-                    Entity reference = entityManager.getReference((Class<Entity>) entityClass, entityId);
+                    JmixEntity reference = entityManager.getReference((Class<JmixEntity>) entityClass, entityId);
                     //we ignore the situation when the field is read-only
                     EntityValues.setValue(entity, property.getName(), reference);
                 }
@@ -233,7 +233,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public void assertToken(Entity entity) {
+    public void assertToken(JmixEntity entity) {
         EntityEntry entityEntry = entity.__getEntityEntry();
         if (entityEntry.getSecurityState().getSecurityToken() == null) {
             assertSecurityConstraints(entity, (e, metaProperty) -> entityStates.isDetached(entity)
@@ -242,7 +242,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @Override
-    public void assertTokenForREST(Entity entity, FetchPlan view) {
+    public void assertTokenForREST(JmixEntity entity, FetchPlan view) {
         EntityEntry entityEntry = entity.__getEntityEntry();
         if (entityEntry.getSecurityState().getSecurityToken() == null) {
             assertSecurityConstraints(entity,
@@ -250,7 +250,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
         }
     }
 
-    protected void assertSecurityConstraints(Entity entity, BiPredicate<Entity, MetaProperty> predicate) {
+    protected void assertSecurityConstraints(JmixEntity entity, BiPredicate<JmixEntity, MetaProperty> predicate) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty)) {
@@ -295,7 +295,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @SuppressWarnings("unchecked")
-    protected void applyConstraints(Entity entity, Set<EntityId> handled) {
+    protected void applyConstraints(JmixEntity entity, Set<EntityId> handled) {
         MetaClass metaClass = metadata.getClass(entity);
         EntityId entityId = new EntityId(referenceToEntitySupport.getReferenceId(entity), metaClass.getName());
         if (handled.contains(entityId)) {
@@ -310,8 +310,8 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
                     Object value = EntityValues.getValue(entity, property.getName());
                     if (value instanceof Collection) {
                         Collection entities = (Collection) value;
-                        for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext(); ) {
-                            Entity item = iterator.next();
+                        for (Iterator<JmixEntity> iterator = entities.iterator(); iterator.hasNext(); ) {
+                            JmixEntity item = iterator.next();
                             if (filteredData != null && filteredData.containsEntry(property.getName(),
                                     referenceToEntitySupport.getReferenceId(item))) {
                                 iterator.remove();
@@ -319,12 +319,12 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
                                 applyConstraints(item, handled);
                             }
                         }
-                    } else if (value instanceof Entity) {
+                    } else if (value instanceof JmixEntity) {
                         if (filteredData != null && filteredData.containsEntry(property.getName(),
-                                referenceToEntitySupport.getReferenceId((Entity) value))) {
-                            EntityValues.setValue((Entity) value, property.getName(), null);
+                                referenceToEntitySupport.getReferenceId((JmixEntity) value))) {
+                            EntityValues.setValue((JmixEntity) value, property.getName(), null);
                         } else {
-                            applyConstraints((Entity) value, handled);
+                            applyConstraints((JmixEntity) value, handled);
                         }
                     }
                 }
@@ -333,7 +333,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean calculateFilteredData(Entity entity, Set<EntityId> handled, boolean checkPermitted) {
+    protected boolean calculateFilteredData(JmixEntity entity, Set<EntityId> handled, boolean checkPermitted) {
         if (referenceToEntitySupport.getReferenceId(entity) == null) {
             return false;
         }
@@ -351,7 +351,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (value instanceof Collection) {
                     Set filtered = new LinkedHashSet();
-                    for (Entity item : (Collection<Entity>) value) {
+                    for (JmixEntity item : (Collection<JmixEntity>) value) {
                         if (calculateFilteredData(item, handled, true)) {
                             filtered.add(referenceToEntitySupport.getReferenceId(item));
                         }
@@ -359,8 +359,8 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
                     if (!filtered.isEmpty()) {
                         securityTokenManager.addFiltered(entity, property.getName(), filtered);
                     }
-                } else if (value instanceof Entity) {
-                    Entity valueEntity = (Entity) value;
+                } else if (value instanceof JmixEntity) {
+                    JmixEntity valueEntity = (JmixEntity) value;
                     if (calculateFilteredData(valueEntity, handled, true)) {
                         securityTokenManager.addFiltered(entity, property.getName(),
                                 referenceToEntitySupport.getReferenceId(valueEntity));
@@ -372,7 +372,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
         return false;
     }
 
-    protected boolean isPermittedInMemory(Entity entity) {
+    protected boolean isPermittedInMemory(JmixEntity entity) {
         return ((StandardSecurity) security).isPermitted(entity, constraint ->
                 constraint.getCheckType().memory()
                         && (constraint.getOperationType() == ConstraintOperationType.READ

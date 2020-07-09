@@ -16,7 +16,7 @@
 
 package io.jmix.security.impl;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -151,7 +151,7 @@ public class StandardSecurity implements Security {
     }
 
     @Override
-    public boolean isPermitted(Entity entity, ConstraintOperationType operationType) {
+    public boolean isPermitted(JmixEntity entity, ConstraintOperationType operationType) {
         return isPermitted(entity,
                 constraint -> {
                     ConstraintOperationType opType = constraint.getOperationType();
@@ -165,7 +165,7 @@ public class StandardSecurity implements Security {
     }
 
     @Override
-    public boolean isPermitted(Entity entity, String customCode) {
+    public boolean isPermitted(JmixEntity entity, String customCode) {
         return isPermitted(entity,
                 constraint -> customCode.equals(constraint.getCode()) && constraint.getCheckType().memory());
     }
@@ -192,7 +192,7 @@ public class StandardSecurity implements Security {
     }
 
     @Override
-    public Object evaluateConstraintScript(Entity entity, String groovyScript) {
+    public Object evaluateConstraintScript(JmixEntity entity, String groovyScript) {
         Map<String, Object> context = new HashMap<>();
         context.put("__entity__", entity);
         context.put("parse", new MethodClosure(this, "parseValue"));
@@ -220,7 +220,7 @@ public class StandardSecurity implements Security {
         return isEntityAttrPermitted(metaClass, propertyPath.getMetaProperty().getName(), access);
     }
 
-    protected boolean isPermitted(Entity entity, Predicate<ConstraintData> predicate) {
+    protected boolean isPermitted(JmixEntity entity, Predicate<ConstraintData> predicate) {
         List<ConstraintData> constraints = getConstraints(metadata.getClass(entity), predicate);
         for (ConstraintData constraint : constraints) {
             if (!isPermitted(entity, constraint)) {
@@ -230,7 +230,7 @@ public class StandardSecurity implements Security {
         return true;
     }
 
-    protected boolean isPermitted(Entity entity, ConstraintData constraint) {
+    protected boolean isPermitted(JmixEntity entity, ConstraintData constraint) {
         String metaClassName = metadata.getClass(entity.getClass()).getName();
         String groovyScript = constraint.getGroovyScript();
         if (constraint.getCheckType().memory() && StringUtils.isNotBlank(groovyScript)) {
@@ -280,9 +280,9 @@ public class StandardSecurity implements Security {
     @Nullable
     protected Object parseValue(Class<?> clazz, String strValue) {
         try {
-            if (Entity.class.isAssignableFrom(clazz)) {
+            if (JmixEntity.class.isAssignableFrom(clazz)) {
                 MetaClass metaClass = metadata.getClass(clazz);
-                Entity entity = metadata.create(metaClass);
+                JmixEntity entity = metadata.create(metaClass);
                 MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(metaClass);
 
                 if (pkProperty != null) {

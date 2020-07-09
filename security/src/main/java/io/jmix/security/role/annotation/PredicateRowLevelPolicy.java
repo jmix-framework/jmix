@@ -16,7 +16,7 @@
 
 package io.jmix.security.role.annotation;
 
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.security.model.RowLevelPolicyAction;
 
 import java.lang.annotation.ElementType;
@@ -51,7 +51,7 @@ public @interface PredicateRowLevelPolicy {
     /**
      * Entity class on which the predicate must be tested
      */
-    Class<? extends Entity> entityClass();
+    Class<? extends JmixEntity> entityClass();
 
     /**
      * Entity CRUD operations on which the predicate must be tested

@@ -18,7 +18,7 @@ package io.jmix.securityui.screen.role;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DataManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.security.model.*;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
@@ -115,8 +115,8 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         //non-persistent entities are automatically marked as modified. If isNew is not set, we must remove
         //all entities from dataContext.modifiedInstances collection
         if (!openedByCreateAction) {
-            Set<Entity> modified = new HashSet<>(dataContext.getModified());
-            for (Entity entity : modified) {
+            Set<JmixEntity> modified = new HashSet<>(dataContext.getModified());
+            for (JmixEntity entity : modified) {
                 dataContext.setModified(entity, false);
             }
         }
@@ -267,7 +267,7 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         }
     }
 
-    private void saveRoleEntityToDatabase(Collection<Entity> modifiedInstances) {
+    private void saveRoleEntityToDatabase(Collection<JmixEntity> modifiedInstances) {
         RoleModel roleModel = getEditedEntity();
         String roleDatabaseId = roleModel.getCustomProperties().get("databaseId");
         RoleEntity roleEntity;

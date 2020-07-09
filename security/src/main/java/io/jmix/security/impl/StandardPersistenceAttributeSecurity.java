@@ -96,7 +96,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      * @param entity just loaded detached entity
      */
     @Override
-    public void afterLoad(Entity entity) {
+    public void afterLoad(JmixEntity entity) {
         if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
@@ -111,10 +111,10 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      * @param entities list of just loaded detached entities
      */
     @Override
-    public void afterLoad(Collection<? extends Entity> entities) {
+    public void afterLoad(Collection<? extends JmixEntity> entities) {
         Preconditions.checkNotNullArgument(entities, "entities list is null");
 
-        for (Entity entity : entities) {
+        for (JmixEntity entity : entities) {
             afterLoad(entity);
         }
     }
@@ -125,7 +125,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      * @param entity new entity
      */
     @Override
-    public void beforePersist(Entity entity) {
+    public void beforePersist(JmixEntity entity) {
         if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
@@ -146,7 +146,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      * @param entity detached entity
      */
     @Override
-    public void beforeMerge(Entity entity) {
+    public void beforeMerge(JmixEntity entity) {
         if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
@@ -155,7 +155,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         for (MetaProperty metaProperty : metadata.getClass(entity).getProperties()) {
             String name = metaProperty.getName();
             if (metadataTools.isEmbedded(metaProperty) && entityStates.isLoaded(entity, name)) {
-                Entity embedded = EntityValues.getValue(entity, name);
+                JmixEntity embedded = EntityValues.getValue(entity, name);
                 applySecurityToFetchGroup(embedded);
             }
         }
@@ -167,7 +167,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
      * @param entity detached entity
      */
     @Override
-    public void afterCommit(Entity entity) {
+    public void afterCommit(JmixEntity entity) {
         if (!properties.isEntityAttributePermissionChecking()) {
             return;
         }
@@ -176,7 +176,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         }
     }
 
-    protected void applySecurityToFetchGroup(Entity entity) {
+    protected void applySecurityToFetchGroup(JmixEntity entity) {
         if (entity == null) {
             return;
         }
@@ -219,7 +219,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         }
     }
 
-    private void addInaccessibleAttribute(Entity entity, String property) {
+    private void addInaccessibleAttribute(JmixEntity entity, String property) {
         EntityEntry entityEntry = entity.__getEntityEntry();
 
         String[] attributes = entityEntry.getSecurityState().getInaccessibleAttributes();
@@ -230,7 +230,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         entityEntry.getSecurityState().setInaccessibleAttributes(attributes);
     }
 
-    protected void setNullPropertyValue(Entity entity, MetaProperty property) {
+    protected void setNullPropertyValue(JmixEntity entity, MetaProperty property) {
         // Using reflective access to field because the attribute can be unfetched if loading not partial entities,
         // which is the case when in-memory constraints exist
         Range range = property.getRange();
@@ -258,7 +258,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         }
 
         @Override
-        public void visit(Entity entity, MetaProperty property) {
+        public void visit(JmixEntity entity, MetaProperty property) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             if (!security.isEntityAttrReadPermitted(metaClass, property.getName())) {
                 addInaccessibleAttribute(entity, property.getName());
@@ -271,7 +271,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
 
     protected class ClearInaccessibleAttributesVisitor implements EntityAttributeVisitor {
         @Override
-        public void visit(Entity entity, MetaProperty property) {
+        public void visit(JmixEntity entity, MetaProperty property) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             String propertyName = property.getName();
             if (!security.isEntityAttrReadPermitted(metaClass, propertyName)) {
@@ -283,7 +283,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         }
     }
 
-    private static void setValue(Entity entity, String attribute, @Nullable Object value) {
+    private static void setValue(JmixEntity entity, String attribute, @Nullable Object value) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
         Field field = FieldUtils.getField(entity.getClass(), attribute, true);
         if (field == null)
@@ -295,7 +295,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
         }
     }
 
-    private static void setValueForHolder(Entity entity, String attribute, @Nullable Object value) {
+    private static void setValueForHolder(JmixEntity entity, String attribute, @Nullable Object value) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
         Field field = FieldUtils.getField(entity.getClass(), String.format("_persistence_%s_vh",attribute), true);
         if (field == null)

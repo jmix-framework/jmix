@@ -17,7 +17,7 @@
 package io.jmix.securitydata.user;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.Entity;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @param <T>
  */
-public abstract class AbstractDatabaseUserRepository<T extends BaseUser & Entity> implements UserRepository {
+public abstract class AbstractDatabaseUserRepository<T extends BaseUser & JmixEntity> implements UserRepository {
 
     protected T systemUser;
     protected T anonymousUser;

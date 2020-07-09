@@ -67,7 +67,7 @@ public class SecurityTokenManager {
     /**
      * Encrypt filtered data and write the result to the security token
      */
-    public void writeSecurityToken(Entity entity) {
+    public void writeSecurityToken(JmixEntity entity) {
         SecurityState securityState = entity.__getEntityEntry().getSecurityState();
         if (securityState != null) {
             JSONObject jsonObject = new JSONObject();
@@ -103,7 +103,7 @@ public class SecurityTokenManager {
     /**
      * Decrypt security token and read filtered data
      */
-    public void readSecurityToken(Entity entity) {
+    public void readSecurityToken(JmixEntity entity) {
         SecurityState securityState = entity.__getEntityEntry().getSecurityState();
         if (securityState.getSecurityToken() == null) {
             return;
@@ -174,7 +174,7 @@ public class SecurityTokenManager {
         return result.toArray(new String[0]);
     }
 
-    protected Object getEntityId(Entity entity) {
+    protected Object getEntityId(JmixEntity entity) {
         return EntityValues.getId(entity);
     }
 
@@ -207,7 +207,7 @@ public class SecurityTokenManager {
     /**
      * INTERNAL.
      */
-    public void addFiltered(Entity entity, String property, Object id) {
+    public void addFiltered(JmixEntity entity, String property, Object id) {
         EntityEntry entityEntry = entity.__getEntityEntry();
         Multimap<String, Object> filteredData = entityEntry.getSecurityState().getFilteredData();
         if (filteredData == null) {
@@ -220,7 +220,7 @@ public class SecurityTokenManager {
     /**
      * INTERNAL.
      */
-    public void addFiltered(Entity entity, String property, Collection ids) {
+    public void addFiltered(JmixEntity entity, String property, Collection ids) {
         EntityEntry entityEntry = entity.__getEntityEntry();
         Multimap<String, Object> filteredData = entityEntry.getSecurityState().getFilteredData();
         if (filteredData == null) {

@@ -72,7 +72,7 @@ public class InspectorFormBuilder {
     protected Security security;
 
     private final InstanceContainer container;
-    private Entity entityToEdit;
+    private JmixEntity entityToEdit;
 
     private String caption = null;
     private Integer maxCaptionLength = 50;
@@ -115,7 +115,7 @@ public class InspectorFormBuilder {
 
     public Form build() {
         MetaClass metaClass = container.getEntityMetaClass();
-        Entity item = getItem();
+        JmixEntity item = getItem();
 
         Form form = uiComponents.create(Form.class);
         if (captionWidth != null) {
@@ -165,7 +165,7 @@ public class InspectorFormBuilder {
         return form;
     }
 
-    private Entity getItem() {
+    private JmixEntity getItem() {
         return container.getItem();
     }
 

@@ -57,7 +57,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -69,7 +68,7 @@ import static io.jmix.ui.download.DownloadFormat.ZIP;
 @Route("jmixEntityInspector")
 @UiController("entityInspector.browse")
 @UiDescriptor("entity-inspector-browser.xml")
-public class EntityInspectorBrowser extends StandardLookup<Entity> {
+public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
 
     public static final int MAX_TEXT_LENGTH = 50;
 
@@ -157,7 +156,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
     }
 
     @Override
-    protected LookupComponent<Entity> getLookupComponent() {
+    protected LookupComponent<JmixEntity> getLookupComponent() {
         return entitiesTable;
     }
 
@@ -167,7 +166,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
         for (MetaClass metaClass : metadata.getClasses()) {
             if (readPermitted(metaClass)) {
                 Class javaClass = metaClass.getJavaClass();
-                if (Entity.class.isAssignableFrom(javaClass) && isNotAbstract(javaClass)) {
+                if (JmixEntity.class.isAssignableFrom(javaClass) && isNotAbstract(javaClass)) {
                     options.put(messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")", metaClass);
                 }
             }
@@ -306,7 +305,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
             byte[] fileBytes = importUpload.getValue();
             String fileName = event.getFileName();
             try {
-                Collection<Entity> importedEntities;
+                Collection<JmixEntity> importedEntities;
                 if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
                     String content = new String(fileBytes, StandardCharsets.UTF_8);
                     importedEntities = entityImportExport.importEntitiesFromJson(content, createEntityImportView(selectedMeta));
@@ -370,7 +369,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
     }
 
     protected EntityImportView createEntityImportView(MetaClass metaClass) {
-        Class<? extends Entity> javaClass = metaClass.getJavaClass();
+        Class<? extends JmixEntity> javaClass = metaClass.getJavaClass();
         EntityImportView entityImportView = new EntityImportView(javaClass);
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
@@ -418,7 +417,7 @@ public class EntityInspectorBrowser extends StandardLookup<Entity> {
 
         @Override
         public void actionPerform(Component component) {
-            Collection<Entity> selected = entitiesTable.getSelected();
+            Collection<JmixEntity> selected = entitiesTable.getSelected();
             if (selected.isEmpty()
                     && entitiesTable.getItems() != null) {
                 selected = entitiesTable.getItems().getItems();

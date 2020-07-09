@@ -1327,6 +1327,7 @@
                     <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
                     <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
                     <xs:element name="email" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="script" minOccurs="0" type="scriptValidatorType"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -1382,6 +1383,14 @@
             <xs:extension base="messageValidatorType">
                 <xs:attribute name="min" type="xs:integer"/>
                 <xs:attribute name="max" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="scriptValidatorType">
+        <xs:complexContent>
+            <xs:extension base="messageValidatorType">
+                <xs:attribute name="path" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

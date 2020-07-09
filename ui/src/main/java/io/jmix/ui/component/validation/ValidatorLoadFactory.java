@@ -22,10 +22,10 @@ import io.jmix.core.BeanLocator;
 import io.jmix.core.MessageTools;
 import io.jmix.core.common.util.Preconditions;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -62,6 +62,7 @@ public class ValidatorLoadFactory {
             .put("positiveOrZero", this::loadValidatorWithoutAttributes)
             .put("positive", this::loadValidatorWithoutAttributes)
             .put("regexp", this::loadRegexpValidator)
+            .put("script", this::loadScriptValidator)
             .put("size", this::loadSizeValidator)
             .build();
 
@@ -292,6 +293,23 @@ public class ValidatorLoadFactory {
         RegexpValidator validator = beanLocator.getPrototype(RegexpValidator.NAME, regexp);
         validator.setMessage(loadMessage(element, messagePack));
 
+        return validator;
+    }
+
+    protected AbstractValidator loadScriptValidator(Element element, String messagePack) {
+        GroovyScriptValidator validator = beanLocator.getPrototype(GroovyScriptValidator.NAME);
+
+        String script = element.getText();
+        if (script != null) {
+            validator.setValidatorGroovyScript(script);
+        }
+
+        String scriptPath = element.attributeValue("path");
+        if (scriptPath != null) {
+            validator.setScriptPath(scriptPath);
+        }
+
+        validator.setMessage(loadMessage(element, messagePack));
         return validator;
     }
 

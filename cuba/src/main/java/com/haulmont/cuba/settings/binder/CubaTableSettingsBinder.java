@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.settings;
+package com.haulmont.cuba.settings.binder;
 
 import com.haulmont.cuba.web.gui.components.WebTable;
 import io.jmix.ui.component.Component;
@@ -23,7 +23,7 @@ import io.jmix.ui.settings.component.binder.TableSettingsBinder;
 @org.springframework.stereotype.Component(CubaTableSettingsBinder.NAME)
 public class CubaTableSettingsBinder extends TableSettingsBinder {
 
-    public static final String NAME = "jmix_CubaTableSettingsBinder";
+    public static final String NAME = "cuba_CubaTableSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

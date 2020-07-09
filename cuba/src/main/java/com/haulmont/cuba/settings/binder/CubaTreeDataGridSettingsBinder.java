@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.settings;
+package com.haulmont.cuba.settings.binder;
 
-import com.haulmont.cuba.web.gui.components.WebResizableTextArea;
+import com.haulmont.cuba.web.gui.components.WebTreeDataGrid;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.settings.component.binder.ResizableTextAreaSettingsBinder;
+import io.jmix.ui.settings.component.binder.TreeDataGridSettingsBinder;
 
-@org.springframework.stereotype.Component(CubaResizableTextAreaSettingsBinder.NAME)
-public class CubaResizableTextAreaSettingsBinder extends ResizableTextAreaSettingsBinder {
+@org.springframework.stereotype.Component(CubaTreeDataGridSettingsBinder.NAME)
+public class CubaTreeDataGridSettingsBinder extends TreeDataGridSettingsBinder {
 
-    public static final String NAME = "jmix_CubaResizableTextAreaSettingsBinder";
+    public static final String NAME = "cuba_CubaTreeDataGridSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebResizableTextArea.class;
+        return WebTreeDataGrid.class;
     }
 }

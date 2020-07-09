@@ -34,7 +34,8 @@ import javax.annotation.Nullable;
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
-public interface TreeTable<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeTable<E> {
+public interface TreeTable<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeTable<E>, HasSettings,
+        HasDataLoadingSettings {
 
     /**
      * @return hierarchical datasource

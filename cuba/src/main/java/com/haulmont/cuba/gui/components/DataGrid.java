@@ -32,7 +32,8 @@ import io.jmix.ui.component.data.DataGridItems;
  */
 @SuppressWarnings("rawtypes, unchecked")
 @Deprecated
-public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E> {
+public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E>,
+        HasSettings, HasDataLoadingSettings {
 
     static <T extends Entity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<DataGrid<T>>() {

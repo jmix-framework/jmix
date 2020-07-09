@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.settings;
+package com.haulmont.cuba.settings.binder;
 
-import com.haulmont.cuba.web.gui.components.WebTreeTable;
+import com.haulmont.cuba.web.gui.components.WebSplitPanel;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.settings.component.binder.TreeTableSettingsBinder;
+import io.jmix.ui.settings.component.binder.SplitPanelSettingsBinder;
 
-@org.springframework.stereotype.Component(CubaTreeTableSettingsBinder.NAME)
-public class CubaTreeTableSettingsBinder extends TreeTableSettingsBinder {
+@org.springframework.stereotype.Component(CubaSplitPanelSettingsBinder.NAME)
+public class CubaSplitPanelSettingsBinder extends SplitPanelSettingsBinder {
 
-    public static final String NAME = "jmix_CubaTreeTableSettingsBinder";
+    public static final String NAME = "cuba_CubaSplitPanelSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebTreeTable.class;
+        return WebSplitPanel.class;
     }
 }

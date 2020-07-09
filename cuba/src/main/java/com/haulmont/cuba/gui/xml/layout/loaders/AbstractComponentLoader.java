@@ -16,7 +16,10 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.components.HasSettings;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.component.Component;
+import org.dom4j.Element;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -29,5 +32,9 @@ public abstract class AbstractComponentLoader<T extends Component>
             "'context' must implement io.jmix.ui.xml.layout.ComponentLoader.ComponentContext");
 
         return (ComponentLoaderContext) context;
+    }
+
+    protected void loadSettingsEnabled(HasSettings component, Element element) {
+        ComponentLoaderHelper.loadSettingsEnabled(component, element);
     }
 }

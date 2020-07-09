@@ -25,7 +25,7 @@ import com.haulmont.cuba.gui.data.Datasource;
  * @deprecated Use {@link io.jmix.ui.component.ResizableTextArea} instead
  */
 @Deprecated
-public interface ResizableTextArea<V> extends TextArea<V>, io.jmix.ui.component.ResizableTextArea<V> {
+public interface ResizableTextArea<V> extends TextArea<V>, io.jmix.ui.component.ResizableTextArea<V>, HasSettings {
 
     String NAME = io.jmix.ui.component.ResizableTextArea.NAME;
 }

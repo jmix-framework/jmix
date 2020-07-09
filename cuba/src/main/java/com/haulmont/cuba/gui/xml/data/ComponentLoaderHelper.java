@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.data;
 
+import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.action.Action;
@@ -71,5 +72,12 @@ public final class ComponentLoaderHelper {
     public static boolean isLegacyFrame(ComponentLoader.Context context) {
         return context instanceof ComponentLoader.ComponentContext
                 && ((ComponentLoader.ComponentContext) context).getFrame().getFrameOwner() instanceof CubaLegacyFrame;
+    }
+
+    public static void loadSettingsEnabled(HasSettings component, Element element) {
+        String settingsEnabled = element.attributeValue("settingsEnabled");
+        if (StringUtils.isNotEmpty(settingsEnabled)) {
+            component.setSettingsEnabled(Boolean.parseBoolean(settingsEnabled));
+        }
     }
 }

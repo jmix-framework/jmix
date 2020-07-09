@@ -31,7 +31,8 @@ import io.jmix.ui.component.data.TableItems;
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
-public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Table<E> {
+public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
+        HasDataLoadingSettings {
 
     /**
      * Sets {@code CollectionDatasource} as Table data source.

@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.TreeTable;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.xml.layout.loader.TreeTableLoader;
@@ -25,6 +26,13 @@ import org.dom4j.Element;
 
 @SuppressWarnings("rawtypes")
 public class CubaTreeTableLoader extends TreeTableLoader {
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        ComponentLoaderHelper.loadSettingsEnabled((TreeTable) resultComponent, element);
+    }
 
     @Override
     protected CubaTreeTableDataHolder initTableDataHolder() {

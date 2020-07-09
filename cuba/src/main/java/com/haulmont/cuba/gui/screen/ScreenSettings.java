@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.gui.screen;
 
-import io.jmix.ui.component.HasDataLoadingSettings;
+import com.haulmont.cuba.gui.components.HasDataLoadingSettings;
 import io.jmix.ui.component.HasTablePresentations;
-import io.jmix.ui.component.HasSettings;
+import com.haulmont.cuba.gui.components.HasSettings;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.Screen;
-import io.jmix.ui.settings.compatibility.Settings;
+import com.haulmont.cuba.settings.Settings;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Component(ScreenSettings.NAME)
 public class ScreenSettings {
-    public static final String NAME = "jmix_CubaScreenSettings";
+    public static final String NAME = "cuba_ScreenSettings";
 
     private static final Logger log = LoggerFactory.getLogger(ScreenSettings.class);
 

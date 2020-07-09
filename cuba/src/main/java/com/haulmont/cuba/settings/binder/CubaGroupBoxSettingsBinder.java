@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.settings;
+package com.haulmont.cuba.settings.binder;
 
-import com.haulmont.cuba.web.gui.components.WebDataGrid;
+import com.haulmont.cuba.web.gui.components.WebGroupBox;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.settings.component.binder.DataGridSettingsBinder;
+import io.jmix.ui.settings.component.binder.GroupBoxSettingsBinder;
 
-@org.springframework.stereotype.Component(CubaDataGridSettingsBinder.NAME)
-public class CubaDataGridSettingsBinder extends DataGridSettingsBinder {
+@org.springframework.stereotype.Component(CubaGroupBoxSettingsBinder.NAME)
+public class CubaGroupBoxSettingsBinder extends GroupBoxSettingsBinder {
 
-    public static final String NAME = "jmix_CubaDataGridSettingsBinder";
+    public static final String NAME = "cuba_CubaGroupBoxSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebDataGrid.class;
+        return WebGroupBox.class;
     }
 }

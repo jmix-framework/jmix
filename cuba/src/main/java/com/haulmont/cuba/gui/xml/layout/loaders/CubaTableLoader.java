@@ -18,12 +18,20 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import org.dom4j.Element;
 
 @SuppressWarnings("rawtypes")
 public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        ComponentLoaderHelper.loadSettingsEnabled((Table) resultComponent, element);
+    }
 
     @Override
     protected CubaTableDataHolder initTableDataHolder() {
@@ -43,8 +51,6 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
 
         return holder;
     }
-
-
 
     @Override
     protected void setupDataContainer(TableDataHolder holder) {

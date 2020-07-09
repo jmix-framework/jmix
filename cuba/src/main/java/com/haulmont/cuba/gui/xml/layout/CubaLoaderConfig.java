@@ -29,6 +29,7 @@ import io.jmix.ui.component.CurrencyField;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.DateField;
 import io.jmix.ui.component.DatePicker;
+import io.jmix.ui.component.GroupBoxLayout;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Image;
 import io.jmix.ui.component.Label;
@@ -40,6 +41,7 @@ import io.jmix.ui.component.ResizableTextArea;
 import io.jmix.ui.component.RichTextArea;
 import io.jmix.ui.component.Slider;
 import io.jmix.ui.component.SourceCodeEditor;
+import io.jmix.ui.component.SplitPanel;
 import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TextArea;
@@ -133,6 +135,8 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put("grid", GridLayoutLoader.class);
         loaders.put(FileUploadField.NAME, CubaFileUploadFieldLoader.class);
         loaders.put(FileMultiUploadField.NAME, FileMultiUploadFieldLoader.class);
+        loaders.put(GroupBoxLayout.NAME, CubaGroupBoxLayoutLoader.class);
+        loaders.put(SplitPanel.NAME, CubaSplitPanelLoader.class);
     }
 
     protected boolean isLegacyScreen(Element element) {

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.settings;
+package com.haulmont.cuba.settings.binder;
 
-
-import com.haulmont.cuba.web.gui.components.WebGroupTable;
+import com.haulmont.cuba.web.gui.components.WebResizableTextArea;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.settings.component.binder.GroupTableSettingsBinder;
+import io.jmix.ui.settings.component.binder.ResizableTextAreaSettingsBinder;
 
-@org.springframework.stereotype.Component(CubaGroupTableSettingsBinder.NAME)
-public class CubaGroupTableSettingsBinder extends GroupTableSettingsBinder {
+@org.springframework.stereotype.Component(CubaResizableTextAreaSettingsBinder.NAME)
+public class CubaResizableTextAreaSettingsBinder extends ResizableTextAreaSettingsBinder {
 
-    public static final String NAME = "jmix_CubaGroupTableSettingsBinder";
+    public static final String NAME = "cuba_CubaResizableTextAreaSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebGroupTable.class;
+        return WebResizableTextArea.class;
     }
 }

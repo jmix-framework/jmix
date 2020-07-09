@@ -31,8 +31,8 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.screen.compatibility.CubaLegacySettings;
-import io.jmix.ui.settings.compatibility.Settings;
+import com.haulmont.cuba.settings.CubaLegacySettings;
+import com.haulmont.cuba.settings.Settings;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 import org.dom4j.Element;
@@ -178,6 +178,11 @@ public class AbstractWindow extends Screen
                 event.preventWindowClose(result);
             }
         }
+    }
+
+    @Subscribe
+    public void onAfterDetach(AfterDetachEvent event) {
+        saveSettings();
     }
 
     /**

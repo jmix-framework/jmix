@@ -32,7 +32,8 @@ import io.jmix.ui.component.data.DataGridItems;
  */
 @SuppressWarnings("rawtypes")
 @Deprecated
-public interface TreeDataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeDataGrid<E>, DataGrid<E> {
+public interface TreeDataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.TreeDataGrid<E>,
+        DataGrid<E>, HasSettings, HasDataLoadingSettings {
 
     static <T extends Entity> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<TreeDataGrid<T>>() {};

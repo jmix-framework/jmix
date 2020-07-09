@@ -27,6 +27,7 @@ dependencies {
     api project(':modules:core')
     api project(':modules:data')
     api project(':modules:ui')
+    api project(':modules:ui-data')
     api project(':modules:security')
     api project(':modules:dynattr')
     api project(':modules:dynattr-ui')

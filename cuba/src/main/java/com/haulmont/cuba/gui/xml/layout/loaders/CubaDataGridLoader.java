@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
@@ -31,6 +32,13 @@ import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
 public class CubaDataGridLoader extends DataGridLoader {
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        ComponentLoaderHelper.loadSettingsEnabled((DataGrid) resultComponent, element);
+    }
 
     @Override
     protected CubaDataGridDataHolder initDataGridDataHolder() {

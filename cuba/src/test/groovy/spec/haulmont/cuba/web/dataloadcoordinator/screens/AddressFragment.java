@@ -18,7 +18,7 @@ package spec.haulmont.cuba.web.dataloadcoordinator.screens;
 
 import com.haulmont.cuba.core.model.City;
 import com.haulmont.cuba.core.model.Country;
-import com.haulmont.cuba.core.global.LoadContext;
+import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.DataLoadCoordinator;
 import io.jmix.ui.component.EntityComboBox;
@@ -32,6 +32,7 @@ import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,7 +81,4 @@ public class AddressFragment extends ScreenFragment {
         events.add(new LoadEvent("citiesDl", loadContext));
         return Collections.singletonList(metadata.create(City.class));
     }
-    
-    
-    
 }

@@ -20,11 +20,11 @@
         caption="Owners">
     <data readOnly="true">
         <collection id="ownersDc"
-                    class="com.haulmont.cuba.web.testmodel.petclinic.Owner"
+                    class="com.haulmont.cuba.core.model.Owner"
                     fetchPlan="owner-with-category-view">
             <loader id="ownersDl">
                 <query>
-                    <![CDATA[select e from pc_Owner e]]>
+                    <![CDATA[select e from test_PetclinicOwner e]]>
                     <condition>
                         <and>
                             <c:jpql>
@@ -38,9 +38,9 @@
                 </query>
             </loader>
         </collection>
-        <collection id="petsDc" class="com.haulmont.cuba.web.testmodel.petclinic.Pet">
+        <collection id="petsDc" class="com.haulmont.cuba.core.model.Pet">
             <loader id="petsDl">
-                <query><![CDATA[select e from pc_Pet e where e.owner = :owner]]></query>
+                <query><![CDATA[select e from test_PetclinicPet e where e.owner = :owner]]></query>
             </loader>
         </collection>
     </data>
@@ -56,11 +56,12 @@
     </facets>
     <layout expand="split"
             spacing="true">
-        <filter id="filter"
-                applyTo="ownersTable"
-                dataLoader="ownersDl">
-            <properties include=".*"/>
-        </filter>
+<!--        todo filter -->
+<!--        <filter id="filter"-->
+<!--                applyTo="ownersTable"-->
+<!--                dataLoader="ownersDl">-->
+<!--            <properties include=".*"/>-->
+<!--        </filter>-->
         <split id="split" orientation="horizontal" width="100%">
             <groupTable id="ownersTable"
                         width="100%"

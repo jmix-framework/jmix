@@ -19,14 +19,14 @@
         focusComponent="form">
     <data>
         <instance id="ownerDc"
-                  class="com.haulmont.cuba.web.testmodel.petclinic.Owner"
+                  class="com.haulmont.cuba.core.model.Owner"
                   fetchPlan="owner-with-category-view">
             <loader/>
             <instance id="addressDc" property="address"/>
         </instance>
-        <collection id="petsDc" class="com.haulmont.cuba.web.testmodel.petclinic.Pet" fetchPlan="_local">
+        <collection id="petsDc" class="com.haulmont.cuba.core.model.Pet" fetchPlan="_local">
             <loader id="petsDl">
-                <query>select e from pc_Pet e where e.owner = :container_ownerDc</query>
+                <query>select e from test_PetclinicPet e where e.owner = :container_ownerDc</query>
             </loader>
         </collection>
     </data>

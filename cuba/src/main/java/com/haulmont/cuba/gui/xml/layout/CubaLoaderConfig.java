@@ -57,7 +57,9 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;
 import io.jmix.ui.xml.layout.loader.ButtonLoader;
 import io.jmix.ui.xml.layout.loader.FileMultiUploadFieldLoader;
+import io.jmix.ui.xml.layout.loader.FragmentLoader;
 import io.jmix.ui.xml.layout.loader.GridLayoutLoader;
+import io.jmix.ui.xml.layout.loader.WindowLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
@@ -66,6 +68,9 @@ import org.springframework.stereotype.Component;
 public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
     public static final String NAME = "cuba_LegacyLoaderConfig";
+
+    protected Class<? extends WindowLoader> windowLoader = CubaWindowLoader.class;
+    protected Class<? extends FragmentLoader> fragmentLoader = CubaFragmentLoader.class;
 
     @Override
     public boolean supports(Element element) {
@@ -81,7 +86,15 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
     @Override
     public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
         if (isLegacyScreen(root))
-            return CubaFragmentLoader.class;
+            return fragmentLoader;
+
+        return null;
+    }
+
+    @Override
+    public Class<? extends ComponentLoader> getWindowLoader(Element root) {
+        if (isLegacyScreen(root))
+            return windowLoader;
 
         return null;
     }

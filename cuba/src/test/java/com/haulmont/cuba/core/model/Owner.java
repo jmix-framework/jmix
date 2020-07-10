@@ -19,10 +19,8 @@ package com.haulmont.cuba.core.model;
 import com.haulmont.chile.core.annotations.NamePattern;
 import io.jmix.data.entity.StandardEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 @Entity(name = "test_PetclinicOwner")
 @Table(name = "TEST_PC_OWNER")
@@ -33,6 +31,14 @@ public class Owner extends StandardEntity {
 
     @Column(name = "name")
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID")
+    protected OwnerCategory category;
+
+    @Email
+    @Column(name = "EMAIL")
+    protected String email;
 
     @Embedded
     private Address address;
@@ -55,5 +61,21 @@ public class Owner extends StandardEntity {
 
     public String getCaption(){
         return getName();
+    }
+
+    public OwnerCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(OwnerCategory category) {
+        this.category = category;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

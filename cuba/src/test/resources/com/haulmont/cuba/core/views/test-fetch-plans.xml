@@ -149,4 +149,8 @@
         <property name="parent"/>
         <property name="constraints" fetchPlan="_local"/>
     </fetchPlan>
+
+    <fetchPlan entity="test_PetclinicOwner" name="owner-with-category-view">
+        <property name="category" fetchPlan="_local"/>
+    </fetchPlan>
 </fetchPlans>

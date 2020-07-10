@@ -17,15 +17,14 @@
 package spec.haulmont.cuba.web.timer
 
 import io.jmix.ui.app.main.MainScreen
+import io.jmix.ui.component.Timer
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.widget.JmixTimer
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.timer.screens.FragmentWithTimer
 import spec.haulmont.cuba.web.timer.screens.ScreenWithNestedFragment
 import spec.haulmont.cuba.web.timer.screens.ScreenWithTimer
-import spock.lang.Ignore
 
-@Ignore
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck", "GroovyPointlessBoolean"])
 class TimerFacetTest extends UiScreenSpec {
 

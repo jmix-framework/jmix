@@ -18,15 +18,15 @@
 <fragment xmlns="http://jmix.io/schema/ui/fragment">
     <data>
         <instance id="addressDc"
-                  class="com.haulmont.cuba.web.testmodel.petclinic.Address"
+                  class="com.haulmont.cuba.core.model.Address"
                   fetchPlan="_local" provided="true">
         </instance>
-        <collection id="countriesDc" class="com.haulmont.cuba.web.testmodel.petclinic.Country" fetchPlan="_minimal">
+        <collection id="countriesDc" class="com.haulmont.cuba.core.model.Country" fetchPlan="_minimal">
             <loader id="countriesDl">
                 <query><![CDATA[select e from pc_Country e ]]></query>
             </loader>
         </collection>
-        <collection id="citiesDc" class="com.haulmont.cuba.web.testmodel.petclinic.City" fetchPlan="_minimal">
+        <collection id="citiesDc" class="com.haulmont.cuba.core.model.City" fetchPlan="_minimal">
             <loader id="citiesDl">
                 <query><![CDATA[select e from pc_City e where e.country = :container_countriesDc]]></query>
             </loader>

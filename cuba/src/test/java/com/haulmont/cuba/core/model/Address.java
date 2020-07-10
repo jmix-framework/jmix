@@ -19,8 +19,7 @@ package com.haulmont.cuba.core.model;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 @Embeddable
 @ModelObject(name = "test_PetclinicAddress")
@@ -28,25 +27,60 @@ public class Address implements JmixEntity {
 
     private static final long serialVersionUID = 3973674066005826186L;
 
-    @Column(name = "CITY")
-    protected String city;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "COUNTRY_ID")
+    protected Country country;
 
-    @Column(name = "ZIP", length = 10)
-    protected String zip;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CITY_ID")
+    protected City city;
 
-    public String getCity() {
+    @Column(name = "POSTCODE", length = 20)
+    protected String postcode;
+
+    @Column(name = "LINE1")
+    protected String line1;
+
+    @Column(name = "LINE2")
+    protected String line2;
+
+    public City getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(City city) {
         this.city = city;
     }
 
-    public String getZip() {
-        return zip;
+    public String getPostcode() {
+        return postcode;
     }
 
-    public void setZip(String zip) {
-        this.zip = zip;
+    public void setPostcode(String postcode) {
+        this.postcode = postcode;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    public String getLine2() {
+        return line2;
+    }
+
+    public void setLine2(String line2) {
+        this.line2 = line2;
+    }
+
+    public String getLine1() {
+        return line1;
+    }
+
+    public void setLine1(String line1) {
+        this.line1 = line1;
     }
 }

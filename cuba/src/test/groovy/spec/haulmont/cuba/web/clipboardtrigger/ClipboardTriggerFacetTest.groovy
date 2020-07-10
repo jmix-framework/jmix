@@ -10,7 +10,6 @@ import io.jmix.ui.component.ClipboardTrigger
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.clipboardtrigger.screens.ScreenWithClipboardTrigger
-import spock.lang.Ignore
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class ClipboardTriggerFacetTest extends UiScreenSpec {
@@ -19,7 +18,6 @@ class ClipboardTriggerFacetTest extends UiScreenSpec {
         exportScreensPackages(['spec.haulmont.cuba.web.clipboardtrigger.screens'])
     }
 
-    @Ignore
     def "open screen with ClipboardTrigger"() {
         def screens = vaadinUi.screens
 

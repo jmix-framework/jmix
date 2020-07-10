@@ -28,11 +28,8 @@ import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcAutoWithFragmentScr
 import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcManualNoParamScreen
 import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcManualScreen
 import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcManualWithLoadDataBeforeShowScreen
-import spock.lang.Ignore
 import spock.lang.Unroll
 
-// todo filter
-@Ignore
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataLoadCoordinatorFacetTest extends UiScreenSpec {
 

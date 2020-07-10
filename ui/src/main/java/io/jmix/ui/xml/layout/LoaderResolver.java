@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 @Component(LoaderResolver.NAME)
 public class LoaderResolver {
 
@@ -31,7 +32,6 @@ public class LoaderResolver {
     @Autowired
     protected List<LoaderConfig> loaderConfigs;
 
-    @SuppressWarnings("rawtypes")
     @Nullable
     public Class<? extends ComponentLoader> getLoader(Element element) {
         for (LoaderConfig config : loaderConfigs) {
@@ -42,11 +42,21 @@ public class LoaderResolver {
         return null;
     }
 
-    @SuppressWarnings("rawtypes")
     @Nullable
     public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
         for (LoaderConfig config : loaderConfigs) {
             Class<? extends ComponentLoader> loader = config.getFragmentLoader(root);
+            if (loader != null) {
+                return loader;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public Class<? extends ComponentLoader> getWindowLoader(Element root) {
+        for (LoaderConfig config : loaderConfigs) {
+            Class<? extends ComponentLoader> loader = config.getWindowLoader(root);
             if (loader != null) {
                 return loader;
             }

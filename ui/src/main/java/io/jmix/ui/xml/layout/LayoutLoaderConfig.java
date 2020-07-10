@@ -72,6 +72,15 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
     }
 
     @Override
+    public Class<? extends ComponentLoader> getWindowLoader(Element root) {
+        if (isNotLegacyScreen(root)) {
+            return windowLoader;
+        }
+
+        return null;
+    }
+
+    @Override
     public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
         if (isNotLegacyScreen(root))
             return fragmentLoader;
@@ -98,10 +107,16 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
     @Nullable
     protected Element getRootElement(String rootName, Element child) {
         Element parent = child.getParent();
-
-        while (parent != null
-                && !rootName.equals(parent.getName())) {
-            parent = parent.getParent();
+        if (parent == null) {
+            // element is root
+            if (child.getName().equals(rootName)) {
+                return child;
+            }
+        } else {
+            while (parent != null
+                    && !rootName.equals(parent.getName())) {
+                parent = parent.getParent();
+            }
         }
 
         return parent;

@@ -49,6 +49,13 @@ public interface LoaderConfig {
     Class<? extends ComponentLoader> getFragmentLoader(Element root);
 
     /**
+     * @param root window's root element
+     * @return loader class for window or {@code null} if config does not support given {@code root}
+     */
+    @Nullable
+    Class<? extends ComponentLoader> getWindowLoader(Element root);
+
+    /**
      * Defines the highest precedence for {@link org.springframework.core.Ordered} or
      * {@link org.springframework.core.annotation.Order} icon providers.
      */

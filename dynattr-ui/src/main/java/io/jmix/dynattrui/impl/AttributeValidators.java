@@ -18,14 +18,20 @@ package io.jmix.dynattrui.impl;
 
 import io.jmix.core.BeanLocator;
 import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.ui.component.validation.*;
+import io.jmix.ui.component.validation.DecimalMaxValidator;
+import io.jmix.ui.component.validation.DecimalMinValidator;
+import io.jmix.ui.component.validation.DoubleMaxValidator;
+import io.jmix.ui.component.validation.DoubleMinValidator;
+import io.jmix.ui.component.validation.GroovyScriptValidator;
+import io.jmix.ui.component.validation.MaxValidator;
+import io.jmix.ui.component.validation.MinValidator;
+import io.jmix.ui.component.validation.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Component(AttributeValidators.NAME)
 public class AttributeValidators {
@@ -39,8 +45,8 @@ public class AttributeValidators {
      *
      * @return collection of validators
      */
-    public Collection<Consumer<?>> getValidators(AttributeDefinition attribute) {
-        List<Consumer<?>> validators;
+    public Collection<Validator<?>> getValidators(AttributeDefinition attribute) {
+        List<Validator<?>> validators;
 
         switch (attribute.getDataType()) {
             case INTEGER:
@@ -66,8 +72,8 @@ public class AttributeValidators {
         return validators;
     }
 
-    protected List<Consumer<?>> createIntegerValidators(AttributeDefinition attribute) {
-        List<Consumer<?>> validators = new ArrayList<>();
+    protected List<Validator<?>> createIntegerValidators(AttributeDefinition attribute) {
+        List<Validator<?>> validators = new ArrayList<>();
         if (attribute.getConfiguration().getMinInt() != null) {
             validators.add(beanLocator.getPrototype(MinValidator.NAME, attribute.getConfiguration().getMinInt()));
         }
@@ -77,8 +83,8 @@ public class AttributeValidators {
         return validators;
     }
 
-    protected List<Consumer<?>> createDoubleValidators(AttributeDefinition attribute) {
-        List<Consumer<?>> validators = new ArrayList<>();
+    protected List<Validator<?>> createDoubleValidators(AttributeDefinition attribute) {
+        List<Validator<?>> validators = new ArrayList<>();
         if (attribute.getConfiguration().getMinDouble() != null) {
             validators.add(beanLocator.getPrototype(DoubleMinValidator.NAME, attribute.getConfiguration().getMinDouble()));
         }
@@ -88,8 +94,8 @@ public class AttributeValidators {
         return validators;
     }
 
-    protected List<Consumer<?>> createDecimalValidators(AttributeDefinition attribute) {
-        List<Consumer<?>> validators = new ArrayList<>();
+    protected List<Validator<?>> createDecimalValidators(AttributeDefinition attribute) {
+        List<Validator<?>> validators = new ArrayList<>();
         if (attribute.getConfiguration().getMinDecimal() != null) {
             validators.add(beanLocator.getPrototype(DecimalMinValidator.NAME, attribute.getConfiguration().getMinDecimal()));
         }

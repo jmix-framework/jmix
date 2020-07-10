@@ -40,6 +40,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
+import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.sys.ScreensHelper;
@@ -305,8 +306,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected void setValidators(Field field, AttributeDefinition attribute) {
-        Collection<Consumer<?>> validators = attributeValidators.getValidators(attribute);
-        for (Consumer<?> validator : validators) {
+        Collection<Validator<?>> validators = attributeValidators.getValidators(attribute);
+        for (Validator<?> validator : validators) {
             if (field instanceof ListEditor) {
                 //noinspection unchecked
                 ((ListEditor) field).addListItemValidator(validator);

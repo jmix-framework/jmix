@@ -37,6 +37,7 @@ import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
+import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.widget.JmixCssActionsLayout;
@@ -51,7 +52,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.time.*;
 import java.util.*;
-import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.impl.WebWrapperUtils.fromVaadinTimeMode;
@@ -67,7 +67,7 @@ public class WebDateField<V extends Comparable<V>>
 
     protected DateTimeTransformations dateTimeTransformations;
 
-    protected List<Consumer> validators; // lazily initialized list
+    protected List<Validator<V>> validators; // lazily initialized list
 
     protected Resolution resolution;
     protected ZoneId zoneId;
@@ -647,18 +647,19 @@ public class WebDateField<V extends Comparable<V>>
         timeField.setRequiredError(msg);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void addValidator(Consumer<? super V> validator) {
+    public void addValidator(Validator<? super V> validator) {
         if (validators == null) {
             validators = new ArrayList<>(VALIDATORS_LIST_INITIAL_CAPACITY);
         }
         if (!validators.contains(validator)) {
-            validators.add(validator);
+            validators.add((Validator<V>) validator);
         }
     }
 
     @Override
-    public void removeValidator(Consumer<V> validator) {
+    public void removeValidator(Validator<V> validator) {
         if (validators != null) {
             validators.remove(validator);
         }
@@ -666,12 +667,12 @@ public class WebDateField<V extends Comparable<V>>
 
     @SuppressWarnings("unchecked")
     @Override
-    public Collection<Consumer<V>> getValidators() {
+    public Collection<Validator<V>> getValidators() {
         if (validators == null) {
             return Collections.emptyList();
         }
 
-        return (Collection) Collections.unmodifiableCollection(validators);
+        return Collections.unmodifiableCollection(validators);
     }
 
     @Override
@@ -720,7 +721,7 @@ public class WebDateField<V extends Comparable<V>>
     protected void triggerValidators(V value) throws ValidationFailedException {
         if (validators != null) {
             try {
-                for (Consumer validator : validators) {
+                for (Validator<V> validator : validators) {
                     validator.accept(value);
                 }
             } catch (ValidationException e) {

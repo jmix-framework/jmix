@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  *
  * @param <T> value type
  */
-public abstract class AbstractValidator<T> implements Consumer<T> {
+public abstract class AbstractValidator<T> implements Validator<T> {
 
     protected Messages messages;
     protected CurrentAuthentication currentAuthentication;

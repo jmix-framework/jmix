@@ -39,6 +39,7 @@ import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.ValueBinding;
+import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.component.validator.BeanPropertyValidator;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -48,7 +49,6 @@ import javax.validation.metadata.BeanDescriptor;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Component(ValueBinder.NAME)
@@ -206,9 +206,9 @@ public class ValueBinder {
 
         @SuppressWarnings("unchecked")
         protected void disableBeanValidator(Field<?> component) {
-            Collection<? extends Consumer<?>> validators = component.getValidators();
+            Collection<? extends Validator<?>> validators = component.getValidators();
 
-            for (Consumer validator : validators.toArray(new Consumer[0])) {
+            for (Validator validator : validators.toArray(new Validator[0])) {
                 if (validator instanceof BeanPropertyValidator) {
                     component.removeValidator(validator);
                 }

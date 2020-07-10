@@ -20,10 +20,10 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
+import io.jmix.ui.component.validation.Validator;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.function.Consumer;
 
 /**
  * Base interface for "fields" - components intended to display and edit value of a certain entity attribute.
@@ -49,11 +49,12 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
      * Add validator instance.
      * {@link ValidationException} this exception must be thrown by the validator if the value is not valid.
      */
-    void addValidator(Consumer<? super V> validator);
-    void removeValidator(Consumer<V> validator);
+    void addValidator(Validator<? super V> validator);
 
-    default void addValidators(Consumer<? super V>... validators) {
-        for (Consumer<? super V> validator : validators) {
+    void removeValidator(Validator<V> validator);
+
+    default void addValidators(Validator<? super V>... validators) {
+        for (Validator<? super V> validator : validators) {
             addValidator(validator);
         }
     }
@@ -61,7 +62,7 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
     /**
      * @return unmodifiable collection with Field validators
      */
-    Collection<Consumer<V>> getValidators();
+    Collection<Validator<V>> getValidators();
 
     /**
      * @return datasource property

@@ -28,12 +28,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
-public class AbstractBeanValidator implements Consumer {
+public class AbstractBeanValidator implements io.jmix.ui.component.validation.Validator {
 
     protected Class beanClass;
     protected String beanProperty;

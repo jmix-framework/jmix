@@ -162,7 +162,9 @@ public class DynamicAttributesGuiTools {
      * @return collection of validators
      */
     public Collection<Consumer<?>> createValidators(AttributeDefinition attribute) {
-        return attributeValidators.getValidators(attribute);
+        return attributeValidators.getValidators(attribute).stream()
+                .map(validator -> (Consumer<?>) validator)
+                .collect(Collectors.toList());
     }
 
     public void listenDynamicAttributesChanges(Datasource datasource) {

@@ -18,6 +18,18 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.TwinColumn;
 
+import java.util.Collection;
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebTwinColumn<V> extends io.jmix.ui.component.impl.WebTwinColumn<V> implements TwinColumn<V> {
+    @Override
+    public void addValidator(Consumer<? super Collection<V>> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<Collection<V>> validator) {
+        removeValidator(validator::accept);
+    }
 }

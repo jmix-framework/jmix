@@ -18,7 +18,18 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.RadioButtonGroup;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebRadioButtonGroup<V> extends io.jmix.ui.component.impl.WebRadioButtonGroup<V>
         implements RadioButtonGroup<V> {
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
+    }
 }

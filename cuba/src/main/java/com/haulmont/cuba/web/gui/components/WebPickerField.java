@@ -20,6 +20,8 @@ import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.impl.WebEntityPicker;
 
+import java.util.function.Consumer;
+
 public class WebPickerField<V extends JmixEntity> extends WebEntityPicker<V> implements PickerField<V> {
 
     @Deprecated
@@ -44,5 +46,15 @@ public class WebPickerField<V extends JmixEntity> extends WebEntityPicker<V> imp
         PickerField.OpenAction action = PickerField.OpenAction.create(this);
         addAction(action);
         return action;
+    }
+
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
     }
 }

@@ -19,6 +19,7 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.LookupField;
 import io.jmix.ui.component.impl.WebComboBox;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Deprecated
@@ -58,5 +59,15 @@ public class WebLookupField<V> extends WebComboBox<V> implements LookupField<V> 
     @Override
     public void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider) {
         setOptionIconProvider(optionIconProvider);
+    }
+
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
     }
 }

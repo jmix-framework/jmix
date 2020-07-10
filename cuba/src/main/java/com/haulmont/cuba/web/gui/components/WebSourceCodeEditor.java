@@ -18,7 +18,17 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.SourceCodeEditor;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebSourceCodeEditor extends io.jmix.ui.component.impl.WebSourceCodeEditor implements SourceCodeEditor {
+    @Override
+    public void addValidator(Consumer<? super String> validator) {
+        addValidator(validator::accept);
+    }
 
+    @Override
+    public void removeValidator(Consumer<String> validator) {
+        removeValidator(validator::accept);
+    }
 }

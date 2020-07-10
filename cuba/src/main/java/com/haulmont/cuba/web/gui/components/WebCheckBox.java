@@ -18,6 +18,17 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.CheckBox;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebCheckBox extends io.jmix.ui.component.impl.WebCheckBox implements CheckBox {
+    @Override
+    public void addValidator(Consumer<? super Boolean> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<Boolean> validator) {
+        removeValidator(validator::accept);
+    }
 }

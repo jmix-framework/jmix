@@ -17,6 +17,7 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
 import com.haulmont.cuba.gui.components.OptionsField;

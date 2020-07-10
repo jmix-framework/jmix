@@ -18,6 +18,17 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.DatePicker;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebDatePicker<V> extends io.jmix.ui.component.impl.WebDatePicker<V> implements DatePicker<V> {
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
+    }
 }

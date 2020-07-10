@@ -21,6 +21,8 @@ import com.haulmont.cuba.gui.components.SuggestionPickerField;
 import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.impl.WebEntitySuggestionField;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebSuggestionPickerField<V extends JmixEntity> extends WebEntitySuggestionField<V>
         implements SuggestionPickerField<V> {
@@ -47,5 +49,15 @@ public class WebSuggestionPickerField<V extends JmixEntity> extends WebEntitySug
         PickerField.OpenAction action = PickerField.OpenAction.create(this);
         addAction(action);
         return action;
+    }
+
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
     }
 }

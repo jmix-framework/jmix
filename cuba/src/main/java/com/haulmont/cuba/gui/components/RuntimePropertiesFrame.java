@@ -340,7 +340,7 @@ public class RuntimePropertiesFrame extends AbstractFrame {
 
             validators = dynamicAttributesGuiTools.createValidators(attribute);
 
-            Field.Validator validator = null;
+            Consumer validator = null;
             Class type = attribute.getJavaType();
             if (type.equals(Integer.class)) {
                 validator = new IntegerValidator(messages.getMessage("validation.invalidNumber"));

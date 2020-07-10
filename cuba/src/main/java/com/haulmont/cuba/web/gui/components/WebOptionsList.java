@@ -287,4 +287,14 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
     public Subscription addDoubleClickListener(Consumer<OptionsList.DoubleClickEvent<I>> listener) {
         return getEventHub().subscribe(OptionsList.DoubleClickEvent.class, (Consumer) listener);
     }
+
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
+    }
 }

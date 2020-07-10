@@ -18,6 +18,17 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.SuggestionField;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebSuggestionField<V> extends io.jmix.ui.component.impl.WebSuggestionField<V> implements SuggestionField<V> {
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
+    }
 }

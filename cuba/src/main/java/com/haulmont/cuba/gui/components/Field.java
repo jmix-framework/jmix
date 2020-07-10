@@ -102,12 +102,25 @@ public interface Field<V> extends io.jmix.ui.component.Field<V>, DatasourceCompo
         }
     }
 
+    @Deprecated
+    void addValidator(Consumer<? super V> validator);
+
+    @Deprecated
+    void removeValidator(Consumer<V> validator);
+
+    @Deprecated
+    default void addValidators(Consumer<? super V>... validators) {
+        for (Consumer<? super V> validator : validators) {
+            addValidator(validator);
+        }
+    }
+
     /**
      * Field validator.<br>
      * Validators are invoked when {@link Validatable#validate()} is called.
      * Editor screen calls {@code validate()} on commit.
      *
-     * @deprecated Use typed {@link Consumer} instead.
+     * @deprecated Use typed {@link io.jmix.ui.component.validation.Validator} instead.
      */
     @Deprecated
     interface Validator<T> extends Consumer<T> {

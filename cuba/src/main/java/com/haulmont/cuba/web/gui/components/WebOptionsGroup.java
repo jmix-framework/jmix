@@ -290,4 +290,14 @@ public class WebOptionsGroup<V, I> extends WebAbstractField<JmixOptionGroup, V> 
                 || (value instanceof Collection
                 && ((Collection) value).isEmpty());
     }
+
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
+    }
 }

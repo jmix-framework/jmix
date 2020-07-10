@@ -41,6 +41,7 @@ import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.function.Consumer;
 
 @Deprecated
 public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorageUploadField<FileDescriptor>
@@ -170,5 +171,15 @@ public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorage
     @Override
     public FileDescriptor getReference() {
         return getFileDescriptor();
+    }
+
+    @Override
+    public void addValidator(Consumer<? super FileDescriptor> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<FileDescriptor> validator) {
+        removeValidator(validator::accept);
     }
 }

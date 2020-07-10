@@ -21,6 +21,7 @@ import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.impl.WebEntityComboBox;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Deprecated
@@ -85,5 +86,15 @@ public class WebLookupPickerField<V extends JmixEntity> extends WebEntityComboBo
     @Override
     public void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider) {
         setOptionIconProvider(optionIconProvider);
+    }
+
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
     }
 }

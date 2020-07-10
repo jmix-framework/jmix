@@ -32,6 +32,7 @@ import io.jmix.ui.component.impl.CompositeWithContextHelp;
 import io.jmix.ui.component.impl.CompositeWithHtmlCaption;
 import io.jmix.ui.component.impl.CompositeWithHtmlDescription;
 import io.jmix.ui.component.impl.CompositeWithIcon;
+import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.widget.JmixTextField;
 
 import java.util.Collection;
@@ -101,17 +102,17 @@ public class TestStepperField extends CompositeComponent<CssLayout> implements F
     }
 
     @Override
-    public void addValidator(Consumer<? super Integer> validator) {
+    public void addValidator(Validator<? super Integer> validator) {
         valueField.addValidator(validator);
     }
 
     @Override
-    public void removeValidator(Consumer<Integer> validator) {
+    public void removeValidator(Validator<Integer> validator) {
         valueField.removeValidator(validator);
     }
 
     @Override
-    public Collection<Consumer<Integer>> getValidators() {
+    public Collection<Validator<Integer>> getValidators() {
         return valueField.getValidators();
     }
 

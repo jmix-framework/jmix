@@ -18,6 +18,17 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Slider;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebSlider<V extends Number> extends io.jmix.ui.component.impl.WebSlider<V> implements Slider<V> {
+    @Override
+    public void addValidator(Consumer<? super V> validator) {
+        addValidator(validator::accept);
+    }
+
+    @Override
+    public void removeValidator(Consumer<V> validator) {
+        removeValidator(validator::accept);
+    }
 }

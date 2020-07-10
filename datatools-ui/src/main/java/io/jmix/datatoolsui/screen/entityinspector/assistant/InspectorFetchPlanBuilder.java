@@ -37,18 +37,18 @@ public class InspectorFetchPlanBuilder {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    private MetadataTools metadataTools;
+    protected MetadataTools metadataTools;
     @Autowired
-    FetchPlans fetchPlans;
+    protected FetchPlans fetchPlans;
 
-    private final FetchPlanBuilder fetchPlanBuilder;
+    protected final FetchPlanBuilder fetchPlanBuilder;
 
     protected Class<? extends JmixEntity> entityClass;
-    private MetaClass metaClass;
+    protected MetaClass metaClass;
 
-    private boolean withCollections = false;
-    private boolean withEmbedded = false;
-    private boolean withSystemProperties = false;
+    protected boolean withCollections = false;
+    protected boolean withEmbedded = false;
+    protected boolean withSystemProperties = false;
 
     public static InspectorFetchPlanBuilder of(BeanLocator beanLocator, Class<? extends JmixEntity> entityClass) {
         return beanLocator.getPrototype(InspectorFetchPlanBuilder.class, entityClass);

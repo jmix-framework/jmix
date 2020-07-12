@@ -19,4 +19,8 @@
             template="/com/haulmont/cuba/web/app/loginwindow/loginwindow.xml"/>
     <screen id="mainWindow"
             template="/com/haulmont/cuba/web/app/mainwindow/mainwindow.xml"/>
+    <screen id="backgroundWorkWindow"
+            template="/com/haulmont/cuba/gui/backgroundwork/background-work-window.xml"/>
+    <screen id="backgroundWorkProgressWindow"
+            template="/com/haulmont/cuba/gui/backgroundwork/background-work-progress-window.xml"/>
 </screen-config>

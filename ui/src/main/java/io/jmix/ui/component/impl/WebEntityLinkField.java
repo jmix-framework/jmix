@@ -18,7 +18,6 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -316,7 +315,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         }
 
         ScreenContext context = ComponentsHelper.getScreenContext(this);
-        if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted()) {
+        if (metadataTools.isSoftDeleted(entity)) {
             context.getNotifications().create(Notifications.NotificationType.HUMANIZED)
                     .withCaption(messages.getMessage("OpenAction.objectIsDeleted"))
                     .show();

@@ -21,6 +21,7 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 import io.jmix.core.Events;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.event.BackgroundTaskUnhandledExceptionEvent;
@@ -28,6 +29,7 @@ import io.jmix.ui.executor.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 
@@ -152,7 +154,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
         private volatile boolean isClosed = false;
         private volatile boolean doneHandled = false;
 
-        private SecurityContext securityContext;
+        private Authentication authentication;
         private String username;
 
         private Map<String, Object> params;
@@ -166,8 +168,8 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     Collections.unmodifiableMap(runnableTask.getParams()) :
                     Collections.emptyMap();
 
-            // copy security context
-//            this.securityContext = (SecurityContext) SecurityContextHolder.getContext().getAuthentication();
+            authentication = SecurityContextHelper.getAuthentication();
+
             this.username = currentAuthentication.getUser().getUsername();
 
             this.future = new FutureTask<V>(this) {
@@ -188,8 +190,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
                 Thread.currentThread().setName(THREAD_NAME_PREFIX + matcher.group(1) + "-" + username);
             }
 
-            // todo Set security permissions
-            // AppContext.setSecurityContext(securityContext);
+            SecurityContextHelper.setAuthentication(authentication);
             try {
                 // do not run any activity if canceled before start
                 return runnableTask.run(new TaskLifeCycle<T>() {
@@ -220,8 +221,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     }
                 });
             } finally {
-                // todo Set null security permissions
-                // AppContext.setSecurityContext(null);
+                SecurityContextHelper.setAuthentication(null);
             }
         }
 

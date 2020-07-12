@@ -26,6 +26,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.app.backgroundwork.BackgroundWorkDialog;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
@@ -34,6 +35,7 @@ import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.inputdialog.InputDialogAction;
+import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
@@ -109,6 +111,11 @@ public class WebDialogs implements Dialogs {
     @Override
     public InputDialogBuilder createInputDialog(FrameOwner owner) {
         return new InputDialogBuilderImpl(owner);
+    }
+
+    @Override
+    public BackgroundWorkDialogBuilder createBackgroundWorkDialog(FrameOwner owner, BackgroundTask backgroundTask) {
+        return new BackgroundWorkDialogBuilderImpl(owner, backgroundTask);
     }
 
     public JmixButton createButton(Action action) {
@@ -840,6 +847,86 @@ public class WebDialogs implements Dialogs {
         @Override
         public InputDialog build() {
             return inputDialog;
+        }
+    }
+
+    public class BackgroundWorkDialogBuilderImpl<T extends Number, V> implements BackgroundWorkDialogBuilder<T,V> {
+
+        protected BackgroundWorkDialog<T, V> backgroundWorkDialog;
+
+        public BackgroundWorkDialogBuilderImpl(FrameOwner owner, BackgroundTask<T, V> task) {
+            //noinspection unchecked
+            backgroundWorkDialog = screenBuilders.screen(owner)
+                    .withScreenClass(BackgroundWorkDialog.class)
+                    .withOpenMode(OpenMode.DIALOG)
+                    .build();
+            backgroundWorkDialog.setTask(task);
+        }
+
+        @Override
+        public BackgroundWorkDialogBuilder<T,V> withCancelAllowed(boolean cancelAllowed) {
+            backgroundWorkDialog.setCancelAllowed(cancelAllowed);
+            return this;
+        }
+
+        @Override
+        public boolean isCancelAllowed() {
+            return backgroundWorkDialog.isCancelAllowed();
+        }
+
+        @Override
+        public BackgroundWorkDialogBuilder<T,V> withTotal(Number total) {
+            backgroundWorkDialog.setTotal(total);
+            return this;
+        }
+
+        @Override
+        public Number getTotal() {
+            return backgroundWorkDialog.getTotal();
+        }
+
+        @Override
+        public BackgroundWorkDialogBuilder<T,V> withShowProgressInPercentage(boolean percentProgress) {
+            backgroundWorkDialog.setShowProgressInPercentage(percentProgress);
+            return this;
+        }
+
+        @Override
+        public boolean isShowProgressInPercentage() {
+            return backgroundWorkDialog.isShowProgressInPercentage();
+        }
+
+        @Override
+        public BackgroundWorkDialogBuilder<T,V> withCaption(String caption) {
+            backgroundWorkDialog.getWindow().setCaption(caption);
+            return this;
+        }
+
+        @Override
+        public String getCaption() {
+            return backgroundWorkDialog.getWindow().getCaption();
+        }
+
+        @Override
+        public BackgroundWorkDialogBuilder<T,V> withMessage(String message) {
+            backgroundWorkDialog.setMessage(message);
+            return this;
+        }
+
+        @Override
+        public String getMessage() {
+            return backgroundWorkDialog.getMessage();
+        }
+
+        @Override
+        public BackgroundWorkDialog<T,V> show() {
+            backgroundWorkDialog.show();
+            return backgroundWorkDialog;
+        }
+
+        @Override
+        public BackgroundWorkDialog<T,V> build() {
+            return backgroundWorkDialog;
         }
     }
 }

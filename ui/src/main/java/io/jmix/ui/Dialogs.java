@@ -17,6 +17,7 @@
 package io.jmix.ui;
 
 import io.jmix.ui.action.Action;
+import io.jmix.ui.app.backgroundwork.BackgroundWorkDialog;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
@@ -24,6 +25,7 @@ import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.inputdialog.InputDialogAction;
+import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.screen.FrameOwner;
 
 import java.util.function.Consumer;
@@ -109,6 +111,25 @@ public interface Dialogs {
      * @return builder
      */
     InputDialogBuilder createInputDialog(FrameOwner owner);
+
+    /**
+     * Creates background work dialog builder.
+     * <p>
+     * Example of showing a background work dialog:
+     * <pre>{@code
+     * dialogs.createBackgroundWorkDialog(this, backgroundTask)
+     *         .withCaption("Task")
+     *         .withMessage("My Task is Running")
+     *         .withTotal(total)
+     *         .withShowProgressInPercentage(true)
+     *         .withCancelAllowed(true)
+     *         .show();
+     * }</pre>
+     *
+     * @param owner origin screen from the dialog is invoked
+     * @return builder
+     */
+    <T extends Number, V> BackgroundWorkDialogBuilder<T, V> createBackgroundWorkDialog(FrameOwner owner, BackgroundTask<T, V> backgroundTask);
 
     /**
      * Builder of dialog with option buttons.
@@ -373,6 +394,67 @@ public interface Dialogs {
          * @return input dialog
          */
         InputDialog build();
+    }
+
+
+    /**
+     * Builder of background work dialog.
+     */
+    interface BackgroundWorkDialogBuilder<T extends Number, V> extends
+            HasCaption<BackgroundWorkDialogBuilder<T, V>>,
+            HasMessage<BackgroundWorkDialogBuilder<T, V>> {
+
+        /**
+         * Determines whether the dialog can be closed.
+         * False by default.
+         *
+         * @param cancelAllowed true if dialog is closeable
+         * @return builder
+         */
+        BackgroundWorkDialogBuilder<T, V> withCancelAllowed(boolean cancelAllowed);
+
+        /**
+         * @return true if the dialog can be closed
+         */
+        boolean isCancelAllowed();
+
+        /**
+         * @param total amount of items to be processed by background task,
+         * use {@link io.jmix.ui.executor.TaskLifeCycle#publish(Object[])} to notify the dialog about progress
+         * completion.
+         * @return builder
+         */
+        BackgroundWorkDialogBuilder<T, V> withTotal(Number total);
+
+        /**
+         * @return total
+         */
+        Number getTotal();
+
+        /**
+         * @param percentProgress true if progress should be represented as percentage (rather than as raw number)
+         * @return builder
+         */
+        BackgroundWorkDialogBuilder<T, V> withShowProgressInPercentage(boolean percentProgress);
+
+        /**
+         * @return true if progress should is shown in percents
+         */
+        boolean isShowProgressInPercentage();
+
+        /**
+         * Shows the dialog.
+         *
+         * @return background work dialog
+         */
+        BackgroundWorkDialog<T, V> show();
+
+        /**
+         * Builds the dialog.
+         *
+         * @return background work dialog
+         */
+        BackgroundWorkDialog<T, V> build();
     }
 
     /**

@@ -19,7 +19,6 @@ package io.jmix.datatoolsui.screen.entityinspector;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import io.jmix.core.*;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -215,8 +214,8 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
             boolean removeEnabled = true;
             if (!selectionEvent.getSelected().isEmpty()) {
                 for (Object o : selectionEvent.getSelected()) {
-                    if (o instanceof SoftDelete) {
-                        if (((SoftDelete) o).isDeleted()) {
+                    if (o instanceof JmixEntity) {
+                        if (metadataTools.isSoftDeleted((JmixEntity) o)) {
                             removeEnabled = false;
                         }
                     }

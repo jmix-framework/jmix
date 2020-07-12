@@ -35,16 +35,6 @@ public class MssqlDbmsFeatures implements DbmsFeatures {
     }
 
     @Override
-    public String getIdColumn() {
-        return "ID";
-    }
-
-    @Override
-    public String getDeleteTsColumn() {
-        return "DELETE_TS";
-    }
-
-    @Override
     public String getTimeStampType() {
         return "DATETIME";
     }

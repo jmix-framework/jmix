@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package auditing
+package auditing_and_softdelete
 
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource

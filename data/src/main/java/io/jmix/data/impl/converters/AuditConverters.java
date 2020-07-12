@@ -31,6 +31,14 @@ public class AuditConverters {
         }
     }
 
+    public enum LongToDateConverter implements Converter<Long, Date> {
+        INSTANCE;
+
+        public Date convert(Long source) {
+            return new Date(source);
+        }
+    }
+
     public enum UserToStringConverter implements Converter<BaseUser, String> {
         INSTANCE;
 
@@ -38,6 +46,8 @@ public class AuditConverters {
             return source.getUsername();
         }
     }
+
+    //todo taimanov String to User converter. or move to separate UserAware/AuditAware bean
 
 
 }

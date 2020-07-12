@@ -18,7 +18,6 @@ package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -372,8 +371,8 @@ public class FetchGroupManager {
 
         if (useFetchGroup) {
             // Always add SoftDelete properties to support EntityManager contract
-            if (SoftDelete.class.isAssignableFrom(entityClass)) {
-                for (String property : getInterfaceProperties(SoftDelete.class)) {
+            if (metadataTools.isSoftDeleted(entityClass)) {
+                for (String property : metadataTools.getSoftDeleteProperties(entityClass)) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, property));
                 }
             }

@@ -33,16 +33,6 @@ public interface DbmsFeatures {
     Map<String, String> getJpaParameters();
 
     /**
-     * @return  primary key column name
-     */
-    String getIdColumn();
-
-    /**
-     * @return  soft deletion column name
-     */
-    String getDeleteTsColumn();
-
-    /**
      * @return name of data type storing date and time
      */
     String getTimeStampType();

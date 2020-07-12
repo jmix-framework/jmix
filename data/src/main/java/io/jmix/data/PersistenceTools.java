@@ -18,7 +18,8 @@ package io.jmix.data;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityEntrySoftDelete;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -38,11 +39,11 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.changesets.ChangeRecord;
 import org.eclipse.persistence.sessions.changesets.CollectionChangeRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
@@ -186,9 +187,9 @@ public class PersistenceTools {
                 if (changeRecord instanceof CollectionChangeRecord) {
                     if (PersistenceHints.isSoftDeletion(entityManager) && changeRecord.getOldValue() != null) {
                         MetaProperty metaProperty = metadata.getClass(entity).getProperty(attribute);
-                        if (SoftDelete.class.isAssignableFrom(metaProperty.getRange().asClass().getJavaClass())) {
+                        if (metadataTools.isSoftDeleted(metaProperty.getRange().asClass().getJavaClass())) {
                             Collection oldValue = (Collection) changeRecord.getOldValue();
-                            Collection<SoftDelete> filteredValue;
+                            Collection<JmixEntity> filteredValue;
                             Class<?> propertyType = metaProperty.getJavaType();
                             if (List.class.isAssignableFrom(propertyType)) {
                                 filteredValue = new ArrayList<>();
@@ -198,9 +199,11 @@ public class PersistenceTools {
                                 throw new RuntimeException(String.format("Could not instantiate collection with class [%s].", propertyType));
                             }
                             for (Object item : oldValue) {
-                                SoftDelete softDelete = (SoftDelete) item;
-                                if (!softDelete.isDeleted() || softDelete.isDeleted() && isDirty((JmixEntity) softDelete, "deleteTs")) {
-                                    filteredValue.add(softDelete);
+                                EntityEntrySoftDelete softDeleteEntry = (EntityEntrySoftDelete) ((JmixEntity) item).__getEntityEntry();
+                                if (!softDeleteEntry.isDeleted() ||
+                                        softDeleteEntry.isDeleted() && isDirty((JmixEntity) item,
+                                                metadataTools.getDeletedDatePropertyNN((JmixEntity) item))) {
+                                    filteredValue.add((JmixEntity) item);
                                 }
                             }
                             return filteredValue;

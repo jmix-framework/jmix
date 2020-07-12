@@ -35,16 +35,6 @@ public class PostgresDbmsFeatures implements DbmsFeatures {
     }
 
     @Override
-    public String getIdColumn() {
-        return "id";
-    }
-
-    @Override
-    public String getDeleteTsColumn() {
-        return "delete_ts";
-    }
-
-    @Override
     public String getTimeStampType() {
         return "timestamp";
     }

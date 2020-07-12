@@ -16,18 +16,23 @@
 
 package io.jmix.data.impl.converters;
 
+import io.jmix.core.entity.BaseUser;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+import java.util.Date;
+
 /**
  * Default implementation to support common types.
  * Instantiate this bean and add custom converters to support different date/time and user types.
  */
-@Component(AuditConvertionService.NAME)
-public class AuditConversionServiceBean implements AuditConvertionService {
+@Component(AuditConversionService.NAME)
+public class AuditConversionServiceBean implements AuditConversionService {
 
     private GenericConversionService conversionService;
 
@@ -35,7 +40,10 @@ public class AuditConversionServiceBean implements AuditConvertionService {
         conversionService = new GenericConversionService();
 
         conversionService.addConverter(Jsr310Converters.DateToLocalDateTimeConverter.INSTANCE);
+        conversionService.addConverter(Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE);
+
         conversionService.addConverter(AuditConverters.DateToLongConverter.INSTANCE);
+        conversionService.addConverter(AuditConverters.LongToDateConverter.INSTANCE);
 
         conversionService.addConverter(AuditConverters.UserToStringConverter.INSTANCE);
     }
@@ -66,5 +74,30 @@ public class AuditConversionServiceBean implements AuditConvertionService {
 
     public GenericConversionService getConversionService() {
         return conversionService;
+    }
+
+    @Override
+    public void setDeletedDate(EntityEntrySoftDelete softDeleteEntry, Date timestamp) {
+        softDeleteEntry.setDeletedDate(convert(timestamp, softDeleteEntry.getDeletedDateClass()));
+    }
+
+    @Override
+    public Date getDeletedDate(EntityEntrySoftDelete softDeleteEntry) {
+        return convert(softDeleteEntry.getDeletedDate(), Date.class);
+    }
+
+    @Override
+    public void setDeletedBy(EntityEntrySoftDelete softDeleteEntry, BaseUser user) {
+        if (softDeleteEntry.getDeletedByClass() != null) {
+            softDeleteEntry.setDeletedBy(convert(user, softDeleteEntry.getDeletedByClass()));
+        }
+    }
+
+    @Nullable
+    @Override
+    public BaseUser getDeletedBy(EntityEntrySoftDelete softDeleteEntry) {
+        if (softDeleteEntry.getDeletedByClass() == null || softDeleteEntry.getDeletedBy() == null)
+            return null;
+        return convert(softDeleteEntry.getDeletedBy(), BaseUser.class);
     }
 }

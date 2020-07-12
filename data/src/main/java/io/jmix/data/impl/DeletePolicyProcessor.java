@@ -16,9 +16,8 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -28,13 +27,13 @@ import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.sql.DataSource;
@@ -175,7 +174,7 @@ public class DeletePolicyProcessor {
                     } else {
                         JmixEntity value = getReference(entity, property);
                         if (value != null && checkIfEntityBelongsToMaster(property, value)) {
-                            if (!(value instanceof SoftDelete)) {
+                            if (!(value.__getEntityEntry() instanceof EntityEntrySoftDelete)) {
                                 if (entityStates.isLoaded(entity, property.getName())) {
                                     EntityValues.setValue(entity, property.getName(), null);
                                     entityManager.remove(value);

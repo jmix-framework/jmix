@@ -18,12 +18,9 @@ package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import io.jmix.core.EntityStates;
-import io.jmix.core.JmixEntity;
-import io.jmix.core.Metadata;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
 import io.jmix.core.common.util.StackTrace;
-import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.event.EntityChangedEvent;
@@ -75,6 +72,9 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Autowired
     protected EntityListenerManager entityListenerManager;
@@ -223,12 +223,12 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    protected static boolean isDeleted(JmixEntity entity, AttributeChangeListener changeListener) {
-        if ((entity instanceof SoftDelete)) {
+    protected boolean isDeleted(JmixEntity entity, AttributeChangeListener changeListener) {
+        if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete) {
             ObjectChangeSet changeSet = changeListener.getObjectChangeSet();
             return changeSet != null
-                    && changeSet.getAttributesToChanges().containsKey("deleteTs")
-                    && ((SoftDelete) entity).isDeleted();
+                    && changeSet.getAttributesToChanges().containsKey(metadataTools.getDeletedDateProperty(entity.getClass()))
+                    && ((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted();
 
         } else {
             return entity.__getEntityEntry().isRemoved();
@@ -586,7 +586,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 
                 fireEntityChange(entity, EntityChangeType.DELETE, null);
 
-                if (entity instanceof SoftDelete)
+                if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete)
                     processDeletePolicy(entity);
 
                 // todo fts

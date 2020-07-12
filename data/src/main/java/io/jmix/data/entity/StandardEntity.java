@@ -15,7 +15,8 @@
  */
 package io.jmix.data.entity;
 
-import io.jmix.core.entity.SoftDelete;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import org.springframework.data.annotation.CreatedBy;
@@ -34,7 +35,7 @@ import java.util.Date;
  */
 @MappedSuperclass
 @ModelObject(name = "sys$StandardEntity")
-public abstract class StandardEntity extends BaseUuidEntity implements Versioned, SoftDelete {
+public abstract class StandardEntity extends BaseUuidEntity implements Versioned {
 
     private static final long serialVersionUID = 5642226839555253331L;
 
@@ -58,9 +59,11 @@ public abstract class StandardEntity extends BaseUuidEntity implements Versioned
     @Column(name = "UPDATED_BY", length = 50)
     protected String updatedBy;
 
+    @DeletedDate
     @Column(name = "DELETE_TS")
     protected Date deleteTs;
 
+    @DeletedBy
     @Column(name = "DELETED_BY", length = 50)
     protected String deletedBy;
 
@@ -106,27 +109,22 @@ public abstract class StandardEntity extends BaseUuidEntity implements Versioned
         this.updatedBy = updatedBy;
     }
 
-    @Override
     public Boolean isDeleted() {
         return deleteTs != null;
     }
 
-    @Override
     public Date getDeleteTs() {
         return deleteTs;
     }
 
-    @Override
     public void setDeleteTs(Date deleteTs) {
         this.deleteTs = deleteTs;
     }
 
-    @Override
     public String getDeletedBy() {
         return deletedBy;
     }
 
-    @Override
     public void setDeletedBy(String deletedBy) {
         this.deletedBy = deletedBy;
     }

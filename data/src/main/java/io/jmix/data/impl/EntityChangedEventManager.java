@@ -46,6 +46,8 @@ public class EntityChangedEventManager {
 
     @Autowired
     private Metadata metadata;
+    @Autowired
+    protected PersistenceSupport persistenceSupport;
 
     @Autowired
     private Events eventPublisher;
@@ -112,7 +114,7 @@ public class EntityChangedEventManager {
                             log.warn("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
                             continue;
                         }
-                        if (info.onDeleted && PersistenceSupport.isDeleted(entity, changeListener)) {
+                        if (info.onDeleted && persistenceSupport.isDeleted(entity, changeListener)) {
                             type = EntityChangedEvent.Type.DELETED;
                             attributeChanges = getEntityAttributeChanges(entity, true);
                         } else if (info.onUpdated && changeListener.hasChanges()) {

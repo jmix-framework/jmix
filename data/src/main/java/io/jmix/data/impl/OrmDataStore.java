@@ -20,8 +20,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.KeyValueEntity;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -538,7 +538,7 @@ public class OrmDataStore implements DataStore {
                     persistenceSecurity.restoreSecurityStateAndFilteredData(entity);
 
                     JmixEntity e;
-                    if (entity instanceof SoftDelete) {
+                    if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete) {
                         attributeSecurity.beforeMerge(entity);
 
                         e = em.merge(entity);

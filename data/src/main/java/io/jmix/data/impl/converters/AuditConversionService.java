@@ -16,18 +16,35 @@
 
 package io.jmix.data.impl.converters;
 
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.BaseUser;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 
 /**
- * Used for current time conversion from {@link Date} to {@link CreatedDate} and {@link LastModifiedDate} field types
- * Also converts current user to {@link CreatedBy} and {@link LastModifiedBy} field types
+ * Used for current time conversion from {@link Date} to {@link CreatedDate}, {@link LastModifiedDate} and {@link DeletedDate} field types.<br/>
+ * <p>
+ * Also converts current user to {@link CreatedBy}, {@link LastModifiedBy} and {@link DeletedBy} field types
  */
-public interface AuditConvertionService extends ConversionService {
-    String NAME = "data_AuditConvertionService";
+public interface AuditConversionService extends ConversionService {
+    String NAME = "data_AuditConversionService";
+
+    void setDeletedDate(EntityEntrySoftDelete softDeleteEntry, Date timestamp);
+
+    @Nullable
+    Date getDeletedDate(EntityEntrySoftDelete softDeleteEntry);
+
+    void setDeletedBy(EntityEntrySoftDelete softDeleteEntry, BaseUser user);
+
+    @Nullable
+    BaseUser getDeletedBy(EntityEntrySoftDelete softDeleteEntry);
+
 }

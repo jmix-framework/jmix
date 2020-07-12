@@ -17,10 +17,13 @@
 package io.jmix.data.impl.eclipselink;
 
 import com.google.common.base.Strings;
-import io.jmix.core.*;
+import io.jmix.core.EntityStates;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.datastruct.Pair;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.JmixSettersEnhanced;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -103,13 +106,23 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
                 // set DescriptorEventManager that doesn't invoke listeners for base classes
                 desc.setEventManager(new DescriptorEventManagerWrapper(desc.getDescriptorEventManager()));
                 desc.getEventManager().addListener(beanFactory.getBean(JmixEclipseLinkDescriptorEventListener.class));
-            }
 
-            if (SoftDelete.class.isAssignableFrom(desc.getJavaClass())) {
-                desc.getQueryManager().setAdditionalCriteria("this.deleteTs is null");
-                desc.setDeletePredicate(entity -> entity instanceof SoftDelete &&
-                        entityStates.isLoaded(entity, "deleteTs") &&
-                        ((SoftDelete) entity).isDeleted());
+
+                Class<? extends JmixEntity> entityClass = desc.getJavaClass();
+
+                if (metadataTools.isSoftDeleted(entityClass)) {
+                    String fieldName = metadataTools.getDeletedDateProperty(entityClass);
+                    desc.getQueryManager().setAdditionalCriteria("this." + fieldName + " is null");
+
+                    desc.setDeletePredicate(entity -> {
+                        if (((JmixEntity) entity).__getEntityEntry() instanceof EntityEntrySoftDelete) {
+                            EntityEntrySoftDelete entityEntry = (EntityEntrySoftDelete) ((JmixEntity) entity).__getEntityEntry();
+                            return entityStates.isLoaded(entity, fieldName) && entityEntry.isDeleted();
+                        }
+                        return false;
+                    });
+                }
+
             }
 
             List<DatabaseMapping> mappings = desc.getMappings();
@@ -144,14 +157,15 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
 
                 if (mapping.isOneToManyMapping()) {
                     OneToManyMapping oneToManyMapping = (OneToManyMapping) mapping;
-                    if (SoftDelete.class.isAssignableFrom(oneToManyMapping.getReferenceClass())) {
-                        oneToManyMapping.setAdditionalJoinCriteria(new ExpressionBuilder().get("deleteTs").isNull());
+                    Class referenceClass = oneToManyMapping.getReferenceClass();
+                    if (metadataTools.isSoftDeleted(referenceClass)) {
+                        oneToManyMapping.setAdditionalJoinCriteria(new ExpressionBuilder().get(metadataTools.getDeletedDateProperty(referenceClass)).isNull());
                     }
                 }
 
                 if (mapping.isOneToOneMapping()) {
                     OneToOneMapping oneToOneMapping = (OneToOneMapping) mapping;
-                    if (SoftDelete.class.isAssignableFrom(oneToOneMapping.getReferenceClass())) {
+                    if (metadataTools.isSoftDeleted(oneToOneMapping.getReferenceClass())) {
                         if (mapping.isManyToOneMapping()) {
                             oneToOneMapping.setSoftDeletionForBatch(false);
                             oneToOneMapping.setSoftDeletionForValueHolder(false);
@@ -163,7 +177,7 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
                                     oneToOneMapping.setSoftDeletionForValueHolder(false);
                                 } else {
                                     oneToOneMapping.setAdditionalJoinCriteria(
-                                            new ExpressionBuilder().get("deleteTs").isNull());
+                                            new ExpressionBuilder().get(metadataTools.getDeletedDateProperty(oneToOneMapping.getReferenceClass())).isNull());
                                 }
                             }
                         }

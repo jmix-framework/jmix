@@ -126,6 +126,8 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
 
         setupAuditing(nestedCtClass, ctClass, info);
 
+        setupSoftDelete(nestedCtClass, ctClass, info);
+
         nestedCtClass.writeFile(outputDir);
     }
 
@@ -151,6 +153,29 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         return false;
     }
 
+    private void setupSoftDelete(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info) throws NotFoundException, CannotCompileException {
+        CtField deletedDateField = info.getAnnotatedField(DELETED_DATE);
+        CtField deletedByField = info.getAnnotatedField(DELETED_BY);
+
+        if (deletedDateField != null) {
+            createStandardMethods("DeletedDate", deletedDateField, nestedClass, ctClass);
+            createStandardMethods("DeletedBy", deletedByField, nestedClass, ctClass);
+
+            CtMethod isDeletedMethod = CtNewMethod.make(CtClass.booleanType, "isDeleted",
+                    null, null,
+                    String.format("return ((%s)getSource()).get%s() != null;",
+                            ctClass.getName(),
+                            StringUtils.capitalize(deletedDateField.getName())),
+                    nestedClass);
+            nestedClass.addMethod(isDeletedMethod);
+
+            nestedClass.addInterface(classPool.get("io.jmix.core.entity.EntityEntrySoftDelete"));
+        } else if (deletedByField != null) {
+            throw new RuntimeException("@DeletedBy annotation cannot be used without @DeletedDate. Class: "
+                    + ctClass.getName());
+        }
+    }
+
     protected void setupAuditing(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info) throws NotFoundException, CannotCompileException {
 
         CtField createdDateField = info.getAnnotatedField(CREATED_DATE);
@@ -158,10 +183,10 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         CtField lastModifiedDateField = info.getAnnotatedField(LAST_MODIFIED_DATE);
         CtField lastModifiedByField = info.getAnnotatedField(LAST_MODIFIED_BY);
 
-        createAuditMethods("CreatedDate", createdDateField, nestedClass, ctClass);
-        createAuditMethods("CreatedBy", createdByField, nestedClass, ctClass);
-        createAuditMethods("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
-        createAuditMethods("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
+        createSetterAndTypeGetter("CreatedDate", createdDateField, nestedClass, ctClass);
+        createSetterAndTypeGetter("CreatedBy", createdByField, nestedClass, ctClass);
+        createSetterAndTypeGetter("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
+        createSetterAndTypeGetter("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
 
         if (createdDateField != null || createdByField != null || lastModifiedDateField != null || lastModifiedByField != null) {
             nestedClass.addInterface(classPool.get("io.jmix.core.entity.EntityEntryAuditable"));
@@ -175,14 +200,35 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         }
     }
 
-    protected void createAuditMethods(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
+    /**
+     * Creates setter, getter, and type getter for specified {@code propName} referring to {@code propField}
+     *
+     * @param propName should be capitalized
+     */
+    protected void createStandardMethods(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
             throws CannotCompileException, NotFoundException {
 
         if (propField == null)
             return;
 
-        CtClass objectClass = classPool.get("java.lang.Object");
-        CtClass classClass = classPool.get("java.lang.Class");
+        createSetterAndTypeGetter(propName, propField, nestedClass, ctClass);
+
+        CtMethod getDeletedDateMethod = CtNewMethod.make(classPool.get(Object.class.getName()), "get" + propName,
+                null, null,
+                String.format("return ((%s)getSource()).get%s();",
+                        ctClass.getName(),
+                        StringUtils.capitalize(propField.getName())),
+                nestedClass);
+        nestedClass.addMethod(getDeletedDateMethod);
+    }
+
+    protected void createSetterAndTypeGetter(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
+            throws CannotCompileException, NotFoundException {
+        if (propField == null)
+            return;
+
+        CtClass objectClass = classPool.get(Object.class.getName());
+        CtClass classClass = classPool.get(Class.class.getName());
 
         nestedClass.addMethod(CtNewMethod.make(CtClass.voidType, "set" + propName, new CtClass[]{objectClass}, null,
                 String.format("((%s)getSource()).set%s((%s)$1);",

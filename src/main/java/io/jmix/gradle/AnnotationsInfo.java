@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 public class AnnotationsInfo {
     public static final String LEGACY_INTERFACE_CREATABLE = "com.haulmont.cuba.core.entity.Creatable";
     public static final String LEGACY_INTERFACE_UPDATABLE = "com.haulmont.cuba.core.entity.Updatable";
+    public static final String LEGACY_INTERFACE_SOFT_DELETE = "io.jmix.core.entity.SoftDelete";//todo taimanov fix path after migration
 
     private Multimap<FieldAnnotation, CtField> declaredFields = HashMultimap.create();
     private Multimap<FieldAnnotation, CtField> inheritedFields = HashMultimap.create();
@@ -92,6 +93,11 @@ public class AnnotationsInfo {
             info.putField(FieldAnnotation.LAST_MODIFIED_DATE, entityClass.getField("updateTs"));
         }
 
+        if (interfaceNames.contains(LEGACY_INTERFACE_SOFT_DELETE)) {
+            info.putField(FieldAnnotation.DELETED_DATE, entityClass.getField("deleteTs"));
+            info.putField(FieldAnnotation.DELETED_BY, entityClass.getField("deletedBy"));
+        }
+
         return info;
     }
 
@@ -99,7 +105,7 @@ public class AnnotationsInfo {
     protected void putField(FieldAnnotation annotation, CtField field) {
         CtField alreadyAnnotated = getAnnotatedField(annotation);
         if (alreadyAnnotated != null && annotation.unique) {
-            throw new IllegalStateException(String.format("More than one @%s field in %s: %s#%s, %s#%s",
+            throw new RuntimeException(String.format("More than one @%s field in %s: %s#%s, %s#%s",
                     annotation.getSimpleName(),
                     entityClass.getName(),
                     alreadyAnnotated.getDeclaringClass().getSimpleName(), alreadyAnnotated.getName(),
@@ -162,6 +168,9 @@ public class AnnotationsInfo {
         CREATED_DATE("org.springframework.data.annotation.CreatedDate"),
         LAST_MODIFIED_BY("org.springframework.data.annotation.LastModifiedBy"),
         LAST_MODIFIED_DATE("org.springframework.data.annotation.LastModifiedDate"),
+
+        DELETED_BY("io.jmix.core.annotation.DeletedBy"),
+        DELETED_DATE("io.jmix.core.annotation.DeletedDate"),
 
         ID("javax.persistence.Id"), //todo make not unique and support composite primary keys in EnhancingStep
         EMBEDDED_ID("javax.persistence.EmbeddedId"),

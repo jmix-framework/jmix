@@ -344,7 +344,7 @@ public class FetchPlan implements Serializable {
         }
 
         addSystemPropertiesFrom(Versioned.class, entityClass, metaClass, metadataTools, result);
-        addSystemPropertiesFrom(SoftDelete.class, entityClass, metaClass, metadataTools, result);
+        addSystemPropertiesFrom(SoftDelete.class, entityClass, metaClass, metadataTools, result);//todo taimanov exclude SoftDelete from system
 
         return result;
     }

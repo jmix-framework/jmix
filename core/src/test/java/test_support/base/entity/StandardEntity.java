@@ -30,7 +30,7 @@ import java.util.Date;
 
 @MappedSuperclass
 @ModelObject(name = "base$StandardEntity")
-public abstract class StandardEntity extends BaseUuidEntity implements Versioned, SoftDelete {
+public abstract class StandardEntity extends BaseUuidEntity implements Versioned, SoftDelete {//todo taimanov migrate entity
 
     private static final long serialVersionUID = 5642226839555253331L;
 

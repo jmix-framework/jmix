@@ -18,16 +18,16 @@ package io.jmix.core;
 
 import com.google.common.collect.Sets;
 import io.jmix.core.common.util.StackTrace;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashSet;
@@ -142,7 +142,7 @@ public class EntityStates {
      */
     @Deprecated
     public boolean isSoftDeleted(Class entityClass) {
-        return SoftDelete.class.isAssignableFrom(entityClass);
+        return metadataTools.isSoftDeleted(entityClass);
     }
 
     /**
@@ -443,11 +443,15 @@ public class EntityStates {
      */
     public boolean isDeleted(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted())
-            return true;
+        if (entity instanceof JmixEntity) {
+            JmixEntity casted = (JmixEntity) entity;
+            if (casted.__getEntityEntry() instanceof EntityEntrySoftDelete
+                    && ((EntityEntrySoftDelete) (casted.__getEntityEntry())).isDeleted())
+                return true;
 
-        if (entity instanceof JmixEntity && ((JmixEntity) entity).__getEntityEntry().isRemoved()) {
-            return true;
+            if (((JmixEntity) entity).__getEntityEntry().isRemoved()) {
+                return true;
+            }
         }
         return false;
     }

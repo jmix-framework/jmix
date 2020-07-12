@@ -65,10 +65,10 @@ class FetchPlanRepositoryTest extends Specification {
     private boolean containsSystemProperties(FetchPlan fetchPlan) {
 
         def systemProperties = [
-            "id",
-            "version",
-            "deleteTs",
-            "deletedBy",
+                "id",
+                "version",
+                "deleteTs",//todo taimanov remove from system
+                "deletedBy",//todo taimanov remove from system
         ]
 
         systemProperties.any { systemProperty -> fetchPlan.containsProperty(systemProperty) }

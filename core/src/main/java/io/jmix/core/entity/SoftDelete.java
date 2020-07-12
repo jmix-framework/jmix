@@ -15,12 +15,17 @@
  */
 package io.jmix.core.entity;
 
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+
 import java.util.Date;
 
 /**
  * Interface to be implemented by entities that support soft deletion.
  *
+ * @deprecated use {@link DeletedDate} and {@link DeletedBy} annotations instead
  */
+@Deprecated
 public interface SoftDelete {
 
     /**

@@ -210,9 +210,7 @@ public class ViewBuilderTest {
 
     private boolean containsSystemProperties(FetchPlan view) {
         return view.containsProperty("id")
-                && view.containsProperty("version")
-                && view.containsProperty("deleteTs")
-                && view.containsProperty("deletedBy");
+                && view.containsProperty("version");
     }
 
 }

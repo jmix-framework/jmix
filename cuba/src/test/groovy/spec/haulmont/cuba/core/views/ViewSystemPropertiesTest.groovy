@@ -31,8 +31,6 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
         then:
 
         view.containsProperty('version')
-        view.containsProperty('deleteTs')
-        view.containsProperty('deletedBy')
     }
 
     def "view does not contain system properties"() {
@@ -44,7 +42,5 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
         then:
 
         !view.containsProperty('version')
-        !view.containsProperty('deleteTs')
-        !view.containsProperty('deletedBy')
     }
 }

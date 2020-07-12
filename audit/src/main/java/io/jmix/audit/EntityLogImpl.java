@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.jmix.audit;
 
 import com.google.common.base.Strings;
@@ -23,9 +22,9 @@ import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -598,7 +597,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         Set<String> dirty = calculateDirtyFields(entity, changes);
         Set<EntityLogAttr> entityLogAttrs;
         EntityLogItem.Type type;
-        if (entity instanceof SoftDelete && dirty.contains("deleteTs") && !((SoftDelete) entity).isDeleted()) {
+        if (isSoftDeleteEntityRestored(entity, dirty)) {
             type = EntityLogItem.Type.RESTORE;
             entityLogAttrs = createLogAttributes(entity, attributes, changes);
         } else {
@@ -929,6 +928,13 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 //
 //        return fieldName;
 //    }
+
+    private boolean isSoftDeleteEntityRestored(JmixEntity entity, Set<String> dirty) {
+        return ((entity.__getEntityEntry() instanceof EntityEntrySoftDelete)
+                && dirty.contains(metadataTools.getDeletedDatePropertyNN(entity))
+                && !((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted()
+        );
+    }
 
     protected void logError(JmixEntity entity, Exception e) {
         log.warn("Unable to log entity {}, id={}", entity, EntityValues.getId(entity), e);

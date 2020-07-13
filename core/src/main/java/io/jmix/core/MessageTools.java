@@ -70,7 +70,7 @@ public class MessageTools {
      * @param ref   reference to message in the following format: {@code msg://group/message_id}
      * @return      localized message or input string itself if it doesn't begin with {@code msg://}
      */
-    public String loadString(String ref) {
+    public String loadString(@Nullable String ref) {
         return loadString(null, ref);
     }
 
@@ -93,7 +93,7 @@ public class MessageTools {
      * </ul>
      * @return localized message or input string itself if it doesn't begin with {@code msg://}
      */
-    public String loadString(@Nullable String group, String ref) {
+    public String loadString(@Nullable String group, @Nullable String ref) {
         return loadString(group, ref, null);
     }
 
@@ -108,7 +108,7 @@ public class MessageTools {
      * </ul>
      * @return localized message or input string itself if it doesn't begin with {@code msg://}
      */
-    public String loadString(@Nullable String group, String ref, @Nullable Locale locale) {
+    public String loadString(@Nullable String group, @Nullable String ref, @Nullable Locale locale) {
         if (ref == null)
             return "";
         if (ref.startsWith(MARK)) {

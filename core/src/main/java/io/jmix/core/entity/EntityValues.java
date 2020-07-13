@@ -227,7 +227,7 @@ public class EntityValues {
      * @return true if {@code a} equals to {@code b}, but in case of {@code a} is {@link } or {@code Collection} returns
      * true only if {@code a} is the same instance as {@code b}
      */
-    public static boolean propertyValueEquals(Object a, Object b) {
+    public static boolean propertyValueEquals(@Nullable Object a, @Nullable Object b) {
         if (a == b) {
             return true;
         }

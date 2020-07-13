@@ -22,7 +22,7 @@ apply plugin: 'io.jmix'
 group = 'io.jmix.core'
 
 dependencies {
-    api platform(project(':jmix-platform'))
+    api platform(project(':platform'))
 
     api 'org.springframework.boot:spring-boot'
     api 'org.springframework:spring-context'

@@ -23,8 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import javax.annotation.Nonnull;
-
 /**
  * @deprecated For the {@link Screen} use ScreenSettingsFacet in the "ui-persistence" add-on instead.
  */
@@ -60,7 +58,6 @@ public class SettingsImpl implements Settings {
     }
 
     @Override
-    @Nonnull
     public Element get() {
         checkLoaded();
         Element e = root.element("window");
@@ -71,7 +68,6 @@ public class SettingsImpl implements Settings {
         return new SettingsElementWrapper(e, this);
     }
 
-    @Nonnull
     @Override
     public Element get(String componentId) {
         checkLoaded();

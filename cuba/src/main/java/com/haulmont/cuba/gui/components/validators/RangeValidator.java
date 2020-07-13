@@ -19,7 +19,6 @@ package com.haulmont.cuba.gui.components.validators;
 import com.haulmont.cuba.gui.components.Field;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -37,7 +36,6 @@ public class RangeValidator implements Field.Validator {
 
     protected String message;
     protected String messagesPack;
-    protected Messages messages = AppBeans.get(Messages.NAME);
     protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
 
     protected Class<? extends Comparable> type = String.class;
@@ -71,7 +69,8 @@ public class RangeValidator implements Field.Validator {
         setMaxValue(getValueFromString(maxValueStr));
     }
 
-    public RangeValidator(String message, String messagesPack, Class<? extends Comparable> type, Comparable minValue, Comparable maxValue) {
+    public RangeValidator(@Nullable String message, @Nullable String messagesPack, Class<? extends Comparable> type,
+                          Comparable minValue, Comparable maxValue) {
         this.message = message;
         this.messagesPack = messagesPack;
         this.type = type;
@@ -139,6 +138,7 @@ public class RangeValidator implements Field.Validator {
         this.ignoreCase = ignoreCase;
     }
 
+    @Nullable
     public Comparable getMinValue() {
         return minValue;
     }
@@ -148,6 +148,7 @@ public class RangeValidator implements Field.Validator {
         this.minValue = minValue;
     }
 
+    @Nullable
     public Comparable getMaxValue() {
         return maxValue;
     }

@@ -19,7 +19,6 @@ package com.haulmont.cuba.gui.components.validators;
 import com.haulmont.cuba.gui.components.Field;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.dom4j.Element;
 
@@ -31,7 +30,6 @@ public class StringValidator implements Field.Validator {
 
     protected String message;
     protected String messagesPack;
-    protected Messages messages = AppBeans.get(Messages.NAME);
     protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
 
     public StringValidator(Element element, String messagesPack) {

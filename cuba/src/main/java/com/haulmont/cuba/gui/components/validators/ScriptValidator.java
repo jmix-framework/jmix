@@ -18,7 +18,6 @@ package com.haulmont.cuba.gui.components.validators;
 import com.haulmont.cuba.gui.components.Field;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
-import io.jmix.core.Messages;
 import io.jmix.core.Resources;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.GroovyScriptValidator;
@@ -28,9 +27,12 @@ import org.dom4j.Element;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +48,6 @@ public class ScriptValidator implements Field.Validator {
     private String scriptPath;
     private boolean innerScript;
     private Map<String, Object> params;
-    protected Messages messages = AppBeans.get(Messages.NAME);
     protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
     protected Resources resources = AppBeans.get(Resources.NAME);
     protected ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
@@ -99,7 +100,7 @@ public class ScriptValidator implements Field.Validator {
                 throw new RuntimeException("Error evaluating Groovy expression", e);
             }
         } else if (scriptPath != null) {
-            try (FileReader reader = new FileReader(resources.getResource(scriptPath).getFile())) {
+            try (Reader reader = new InputStreamReader(new FileInputStream(resources.getResource(scriptPath).getFile()), StandardCharsets.UTF_8)) {
                 isValid = (Boolean) engine.eval(reader);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException("Groovy script file not found", e);

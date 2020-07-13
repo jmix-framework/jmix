@@ -25,8 +25,8 @@ configurations {
 }
 
 dependencies {
-    implementation platform(project(':jmix-platform'))
-    themes platform(project(':jmix-platform'))
+    implementation platform(project(':platform'))
+    themes platform(project(':platform'))
 
     implementation 'com.vaadin:vaadin-themes'
     themes 'com.vaadin:vaadin-themes'

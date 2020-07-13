@@ -24,7 +24,7 @@ group = 'io.jmix.ui'
 def jmixUi = rootProject.project(':modules:ui')
 
 dependencies {
-    api platform(project(':jmix-platform'))
+    api platform(project(':platform'))
 
     api(jmixUi) {
         exclude(group: 'org.hibernate.validator', module: 'hibernate-validator')

@@ -32,6 +32,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.LegacyComponent;
 import com.vaadin.ui.TabSheet;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -93,7 +94,7 @@ public class DDTabSheet extends TabSheet
             // index of it
             if (rawDropData.get(Constants.DROP_DETAIL_TO) != null) {
                 Object to = rawDropData.get(Constants.DROP_DETAIL_TO);
-                index = Integer.valueOf(to.toString());
+                index = Integer.parseInt(to.toString());
             }
 
             if (index >= 0 && index < getComponentCount()) {
@@ -147,6 +148,7 @@ public class DDTabSheet extends TabSheet
          * 
          * @return The drop location
          */
+        @Nullable
         public HorizontalDropLocation getDropLocation() {
             if (getData(
                     Constants.DROP_DETAIL_HORIZONTAL_DROP_LOCATION) != null) {

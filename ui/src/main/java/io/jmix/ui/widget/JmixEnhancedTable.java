@@ -23,6 +23,7 @@ import com.vaadin.util.ReflectTools;
 import com.vaadin.v7.data.Property;
 import io.jmix.ui.widget.data.AggregationContainer;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.EventObject;
 import java.util.Map;
@@ -98,11 +99,13 @@ public interface JmixEnhancedTable extends AggregationContainer {
     boolean getCustomPopupAutoClose();
     void setCustomPopupAutoClose(boolean popupAutoClose);
 
+    @Nullable
     String getColumnDescription(Object columnId);
-    void setColumnDescription(Object columnId, String description);
+    void setColumnDescription(Object columnId, @Nullable String description);
 
+    @Nullable
     String getAggregationDescription(Object columnId);
-    void setAggregationDescription(Object columnId, String description);
+    void setAggregationDescription(Object columnId, @Nullable String description);
 
     boolean getColumnSortable(Object columnId);
     void setColumnSortable(Object columnId, boolean sortable);

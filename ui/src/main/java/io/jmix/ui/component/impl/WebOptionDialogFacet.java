@@ -62,20 +62,22 @@ public class WebOptionDialogFacet extends WebAbstractFacet
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         this.caption = caption;
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption;
     }
 
     @Override
-    public void setMessage(String message) {
+    public void setMessage(@Nullable String message) {
         this.message = message;
     }
 
+    @Nullable
     @Override
     public String getMessage() {
         return message;

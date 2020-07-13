@@ -17,6 +17,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.DataLoadContext;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -51,12 +52,13 @@ public interface RowsCount extends Component.BelongToFrame {
      * @return a component that displays data from the same datasource, usually a {@link Table}. Can be null.
      */
     @Deprecated
+    @Nullable
     ListComponent getOwner();
     /**
      * @deprecated Use {@link #setRowsCountTarget(RowsCountTarget)} instead.
      */
     @Deprecated
-    void setOwner(ListComponent owner);
+    void setOwner(@Nullable ListComponent owner);
 
     /**
      * @return a component that displays data, usually a {@link Table}. Can be null.

@@ -19,11 +19,13 @@ package io.jmix.ui.widget;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Component;
 
+import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-public interface TabSheetBehaviour {
+public interface TabSheetBehaviour extends Serializable {
 
     void addTab(Component component, String tabId);
 
@@ -35,6 +37,7 @@ public interface TabSheetBehaviour {
 
     void removeComponent(Component component);
 
+    @Nullable
     Component getPreviousTab(Component tab);
 
     void setTabTestId(String tabId, String testId);
@@ -53,11 +56,11 @@ public interface TabSheetBehaviour {
 
     void setTabCaption(String tabId, String caption);
 
-    void setTabDescription(String tabId, String description);
+    void setTabDescription(String tabId, @Nullable String description);
 
     Component getTabComponent(String tabId);
 
-    void setTabIcon(String tabId, Resource icon);
+    void setTabIcon(String tabId, @Nullable Resource icon);
 
     void setTabClosable(String tabId, boolean closable);
 
@@ -67,6 +70,7 @@ public interface TabSheetBehaviour {
 
     void setSelectedTab(Component component);
 
+    @Nullable
     Component getSelectedTab();
 
     Iterator<Component> getTabComponents();

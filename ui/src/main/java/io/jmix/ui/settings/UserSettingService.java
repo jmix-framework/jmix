@@ -39,7 +39,7 @@ public interface UserSettingService {
     /**
      * Save settings for the current user and null client type
      */
-    void saveSetting(String name, String value);
+    void saveSetting(String name, @Nullable String value);
 
     /**
      * Delete settings for the current user

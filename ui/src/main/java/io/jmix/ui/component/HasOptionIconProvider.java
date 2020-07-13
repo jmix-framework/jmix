@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -31,10 +32,11 @@ public interface HasOptionIconProvider<T> extends Component {
      *
      * @param optionIconProvider caption provider for options
      */
-    void setOptionIconProvider(Function<? super T, String> optionIconProvider);
+    void setOptionIconProvider(@Nullable Function<? super T, String> optionIconProvider);
 
     /**
      * @return option icon provider
      */
+    @Nullable
     Function<? super T, String> getOptionIconProvider();
 }

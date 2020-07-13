@@ -174,7 +174,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {
@@ -349,6 +349,7 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
         return () -> removeLayoutClickListener(listener);
     }
 
+    @Nullable
     protected com.vaadin.ui.Component findChildComponent(com.vaadin.ui.Component vComponent) {
         while (vComponent != null
                 && vComponent.getParent() != component.getComponent(0)) {
@@ -357,7 +358,8 @@ public class WebScrollBoxLayout extends WebAbstractComponent<JmixScrollBoxLayout
         return vComponent;
     }
 
-    protected Component findExistingComponent(com.vaadin.ui.Component vComponent) {
+    @Nullable
+    protected Component findExistingComponent(@Nullable com.vaadin.ui.Component vComponent) {
         for (Component component : getComponents()) {
             if (component.unwrapComposition(com.vaadin.ui.Component.class) == vComponent) {
                 return component;

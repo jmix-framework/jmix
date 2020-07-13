@@ -24,7 +24,6 @@ import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Events;
-import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.ui.App;
 import io.jmix.ui.UiProperties;
@@ -75,7 +74,6 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         performanceTestMode = uiProperties.isPerformanceTestMode();
 
         this.messages = AppBeans.get(Messages.NAME);
-        MessageTools messageTools = AppBeans.get(MessageTools.NAME);
 
         addSessionInitListener(event -> {
             WrappedSession wrappedSession = event.getSession().getSession();

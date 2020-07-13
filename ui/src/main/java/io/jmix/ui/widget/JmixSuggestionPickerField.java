@@ -19,6 +19,7 @@ package io.jmix.ui.widget;
 import com.vaadin.data.HasValue;
 import com.vaadin.shared.Registration;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -121,11 +122,12 @@ public class JmixSuggestionPickerField<T> extends JmixPickerField<T> {
         return getFieldInternal().getSuggestionsLimit();
     }
 
+    @Nullable
     public String getInputPrompt() {
         return getFieldInternal().getInputPrompt();
     }
 
-    public void setInputPrompt(String inputPrompt) {
+    public void setInputPrompt(@Nullable String inputPrompt) {
         getFieldInternal().setInputPrompt(inputPrompt);
     }
 

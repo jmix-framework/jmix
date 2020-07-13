@@ -27,7 +27,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.HasValueSource;
@@ -292,7 +291,7 @@ public class EditorBuilderProcessor {
 
             // TODO VM legacy
             // legacy screens support
-            WindowInfo windowInfo = windowConfig.getWindowInfo(editorScreenId);
+            // WindowInfo windowInfo = windowConfig.getWindowInfo(editorScreenId);
             ScreenOptions options = builder.getOptions();
 
 

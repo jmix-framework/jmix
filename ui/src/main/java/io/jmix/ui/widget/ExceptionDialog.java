@@ -393,7 +393,7 @@ public class ExceptionDialog extends JmixWindow {
         AppUI ui = (AppUI) getUI();
 
         //todo MG logout
-        App app = ui.getApp();
+        // App app = ui.getApp();
         try {
 //            Connection connection = app.getConnection();
 //            if (connection.isConnected()) {

@@ -111,7 +111,7 @@ public class UiControllersConfiguration extends AbstractScanConfiguration {
         return new UiControllerDefinition(controllerId, className, metadataReader.getResource(), routeDefinition);
     }
 
-
+    @Nullable
     protected RouteDefinition extractRouteDefinition(MetadataReader metadataReader) {
         Map<String, Object> routeAnnotation =
                 metadataReader.getAnnotationMetadata().getAnnotationAttributes(Route.class.getName());

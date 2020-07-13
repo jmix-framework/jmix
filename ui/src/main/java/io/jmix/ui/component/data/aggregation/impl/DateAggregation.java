@@ -18,6 +18,7 @@ package io.jmix.ui.component.data.aggregation.impl;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.aggregation.NumberAggregationHelper;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -27,6 +28,7 @@ public class DateAggregation extends BasicAggregation<Date> {
         super(Date.class);
     }
 
+    @Nullable
     @Override
     public Date min(Collection<Date> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
@@ -39,6 +41,7 @@ public class DateAggregation extends BasicAggregation<Date> {
         return result != null ? new Date(result.longValue()) : null;
     }
 
+    @Nullable
     @Override
     public Date max(Collection<Date> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();

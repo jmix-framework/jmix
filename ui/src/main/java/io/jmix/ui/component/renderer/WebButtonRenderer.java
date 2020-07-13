@@ -23,6 +23,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -48,7 +49,7 @@ public class WebButtonRenderer<T extends JmixEntity>
         this(listener, "");
     }
 
-    public WebButtonRenderer(Consumer<DataGrid.RendererClickEvent<T>> listener, String nullRepresentation) {
+    public WebButtonRenderer(@Nullable Consumer<DataGrid.RendererClickEvent<T>> listener, String nullRepresentation) {
         super(listener);
         this.nullRepresentation = nullRepresentation;
     }

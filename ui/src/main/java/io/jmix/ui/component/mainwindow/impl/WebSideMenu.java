@@ -75,9 +75,9 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
     }
 
     @Override
-    public void setSidePanelToggleButton(Button toggleButton) {
+    public void setSidePanelToggleButton(@Nullable Button toggleButton) {
         if (this.toggleButton != null) {
-            toggleButton.setAction(null);
+            this.toggleButton.setAction(null);
         }
 
         if (toggleButton != null) {
@@ -110,6 +110,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
         }
     }
 
+    @Nullable
     @Override
     public Button getSidePanelToggleButton() {
         return toggleButton;
@@ -163,7 +164,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
 
     @Override
     public MenuItem createMenuItem(String id) {
-        return createMenuItem(id, null, null, null);
+        return createMenuItem(id, id, null, null);
     }
 
     @Override
@@ -390,13 +391,14 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
             delegateItem.setDescription(description);
         }
 
+        @Nullable
         @Override
         public String getIcon() {
             return icon;
         }
 
         @Override
-        public void setIcon(String icon) {
+        public void setIcon(@Nullable String icon) {
             this.icon = icon;
 
             if (icon != null) {
@@ -476,13 +478,14 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
             delegateItem.setJTestId(cubaId);
         }
 
+        @Nullable
         @Override
         public Consumer<MenuItem> getCommand() {
             return command;
         }
 
         @Override
-        public void setCommand(Consumer<MenuItem> command) {
+        public void setCommand(@Nullable Consumer<MenuItem> command) {
             this.command = command;
 
             if (command != null) {

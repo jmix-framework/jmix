@@ -30,7 +30,7 @@ public class DataGridConverterBasedValueProvider implements ValueProvider {
     @Override
     public Object apply(Object value) {
         //noinspection unchecked
-        return converter.convertToPresentation(value, null, null);
+        return converter.convertToPresentation(value, Object.class, null);
     }
 
     public DataGrid.Converter getConverter() {

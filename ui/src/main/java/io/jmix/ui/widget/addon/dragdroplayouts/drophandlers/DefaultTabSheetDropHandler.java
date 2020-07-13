@@ -22,7 +22,6 @@ import com.vaadin.event.dd.acceptcriteria.Not;
 import com.vaadin.shared.ui.dd.HorizontalDropLocation;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.SingleComponentContainer;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
 
@@ -88,10 +87,8 @@ public class DefaultTabSheetDropHandler
                 .getSourceComponent();
 
         // Detach from old source
-        if (source instanceof ComponentContainer) {
-            ((ComponentContainer) source).removeComponent(c);
-        } else if (source instanceof SingleComponentContainer) {
-            ((SingleComponentContainer) source).setContent(null);
+        if (source != null) {
+            source.removeComponent(c);
         }
 
         if (location == HorizontalDropLocation.LEFT) {

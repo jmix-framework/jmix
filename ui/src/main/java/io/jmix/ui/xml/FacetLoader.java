@@ -23,9 +23,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +48,6 @@ public class FacetLoader {
                 .collect(toMap(FacetProvider::getFacetTag, identity()));
     }
 
-    @Nonnull
     public Facet load(Element element, ComponentContext context) {
         @SuppressWarnings("unchecked")
         FacetProvider<Facet> facetProvider = registrations.get(element.getName());

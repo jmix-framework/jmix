@@ -157,7 +157,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     }
 
     @Override
-    public void setValue(V value) {
+    public void setValue(@Nullable V value) {
         super.setValue(value);
 
         if (value != null) {
@@ -431,6 +431,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         }
     }
 
+    @Nullable
     protected CollectionContainer getCollectionContainerFromOwner() {
         if (owner != null && owner.getItems() != null) {
             if (owner.getItems() instanceof ContainerDataUnit) {
@@ -449,6 +450,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         return null;
     }*/
 
+    @Nullable
     protected MetaProperty getMetaPropertyForEditedValue() {
         ValueSource<V> valueSource = getValueSource();
         if (valueSource instanceof EntityValueSource) {

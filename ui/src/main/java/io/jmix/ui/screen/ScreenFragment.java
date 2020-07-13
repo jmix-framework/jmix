@@ -26,7 +26,6 @@ import io.jmix.ui.Fragments;
 import io.jmix.ui.model.ScreenData;
 import org.springframework.context.ApplicationListener;
 
-import javax.annotation.Nonnull;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.EventObject;
 import java.util.List;
@@ -105,7 +104,6 @@ public abstract class ScreenFragment implements FrameOwner {
      * @return host screen of the fragment
      * @throws IllegalStateException if host screen cannot be found though hierarchy of fragments
      */
-    @Nonnull
     protected Screen getHostScreen() {
         FrameOwner parent = this.hostController;
 

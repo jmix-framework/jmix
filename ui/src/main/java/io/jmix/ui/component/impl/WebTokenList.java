@@ -44,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
@@ -176,7 +175,7 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public void setValue(Collection<V> value) {
+    public void setValue(@Nullable Collection<V> value) {
         Collection<V> oldValue = getOldValue(value);
 
         oldValue = new ArrayList<>(oldValue != null
@@ -193,13 +192,14 @@ public class WebTokenList<V extends JmixEntity>
         fireValueChange(oldValue, value);
     }
 
-    protected Collection<V> getOldValue(Collection<V> newValue) {
+    @Nullable
+    protected Collection<V> getOldValue(@Nullable Collection<V> newValue) {
         return equalCollections(newValue, internalValue)
                 ? component.getValue()
                 : internalValue;
     }
 
-    protected void fireValueChange(Collection<V> oldValue, Collection<V> value) {
+    protected void fireValueChange(@Nullable Collection<V> oldValue, @Nullable Collection<V> value) {
         if (!equalCollections(oldValue, value)) {
             ValueChangeEvent<Collection<V>> event =
                     new ValueChangeEvent<>(this, oldValue, value, false);
@@ -207,7 +207,7 @@ public class WebTokenList<V extends JmixEntity>
         }
     }
 
-    protected boolean equalCollections(Collection<V> a, Collection<V> b) {
+    protected boolean equalCollections(@Nullable Collection<V> a, @Nullable Collection<V> b) {
         if (CollectionUtils.isEmpty(a)
                 && CollectionUtils.isEmpty(b)) {
             return true;
@@ -222,7 +222,7 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
         entityComboBox.setFrame(frame);
     }
@@ -257,13 +257,14 @@ public class WebTokenList<V extends JmixEntity>
         return entityComboBox.getOptionCaptionProvider();
     }
 
+    @Nullable
     @Override
     public String getOptionsCaptionProperty() {
         return entityComboBox.getCaptionProperty();
     }
 
     @Override
-    public void setOptionsCaptionProperty(String optionsCaptionProperty) {
+    public void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty) {
         entityComboBox.setCaptionProperty(optionsCaptionProperty);
     }
 
@@ -560,7 +561,6 @@ public class WebTokenList<V extends JmixEntity>
         return valueSourceValue;
     }
 
-    @Nonnull
     protected Collection<V> getValueSourceValue() {
         ValueSource<Collection<V>> valueSource = getValueSource();
         if (valueSource == null) {
@@ -775,10 +775,11 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
         this.optionCaptionProvider = optionCaptionProvider;
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;

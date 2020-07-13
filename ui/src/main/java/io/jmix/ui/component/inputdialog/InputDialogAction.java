@@ -26,6 +26,7 @@ import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**

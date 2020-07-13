@@ -203,13 +203,14 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
             this.name = name;
         }
 
+        @Nullable
         @Override
         public String getCaption() {
             return getVaadinTab().getCaption();
         }
 
         @Override
-        public void setCaption(String caption) {
+        public void setCaption(@Nullable String caption) {
             getVaadinTab().setCaption(caption);
         }
 
@@ -272,13 +273,14 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
             return getVaadinTab().getStyleName();
         }
 
+        @Nullable
         @Override
         public String getIcon() {
             return icon;
         }
 
         @Override
-        public void setIcon(String icon) {
+        public void setIcon(@Nullable String icon) {
             this.icon = icon;
             if (!StringUtils.isEmpty(icon)) {
                 Resource iconResource = AppBeans.get(IconResolver.class) // todo replace
@@ -297,10 +299,11 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         }
 
         @Override
-        public void setDescription(String description) {
+        public void setDescription(@Nullable String description) {
             getVaadinTab().setDescription(description);
         }
 
+        @Nullable
         @Override
         public String getDescription() {
             return getVaadinTab().getDescription();
@@ -448,7 +451,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {
@@ -462,6 +465,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         }
     }
 
+    @Nullable
     @Override
     public Tab getSelectedTab() {
         final com.vaadin.ui.Component component = this.component.getSelectedTab();

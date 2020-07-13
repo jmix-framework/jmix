@@ -33,6 +33,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.LegacyComponent;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -97,8 +98,7 @@ public class DDHorizontalLayout extends HorizontalLayout
             // Get over which component (if any) the drop was made and the
             // index of it
             if (getData(Constants.DROP_DETAIL_TO) != null) {
-                index = Integer
-                        .valueOf(getData(Constants.DROP_DETAIL_TO).toString());
+                index = Integer.parseInt(getData(Constants.DROP_DETAIL_TO).toString());
                 if (index >= 0 && index < components.size()) {
                     over = components.get(index);
                 }
@@ -146,6 +146,7 @@ public class DDHorizontalLayout extends HorizontalLayout
          * 
          * @return The drop location
          */
+        @Nullable
         public HorizontalDropLocation getDropLocation() {
             if (getData(
                     Constants.DROP_DETAIL_HORIZONTAL_DROP_LOCATION) != null) {

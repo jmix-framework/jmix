@@ -40,7 +40,6 @@ import io.jmix.ui.model.*;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
@@ -145,7 +144,6 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
     /**
      * @return currently edited entity instance loaded to editor form
      */
-    @Nonnull
     protected T getEditedEntity() {
         if (!editing) {
             throw new IllegalStateException("Edited entity is not available because form is in non-editing state");

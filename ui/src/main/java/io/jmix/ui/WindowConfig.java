@@ -41,7 +41,6 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -115,7 +114,6 @@ public class WindowConfig {
             return resolveWindowInfo(windowInfo).getTemplate();
         }
 
-        @Nonnull
         @Override
         public Class<? extends FrameOwner> getControllerClass(WindowInfo windowInfo) {
             return resolveWindowInfo(windowInfo).getControllerClass();
@@ -622,7 +620,7 @@ public class WindowConfig {
         protected final Type type;
 
         public ResolvedWindowInfo(WindowInfo windowInfo, Type type, Class<? extends FrameOwner> controllerClass,
-                                  String template) {
+                                  @Nullable String template) {
             super(windowInfo.getId(), null, windowInfo.getDescriptor(),
                     windowInfo.getControllerClassName(), windowInfo.getRouteDefinition());
 
@@ -643,7 +641,6 @@ public class WindowConfig {
             return type;
         }
 
-        @Nonnull
         @Override
         public Class<? extends FrameOwner> getControllerClass() {
             return controllerClass;

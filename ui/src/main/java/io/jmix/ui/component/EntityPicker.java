@@ -40,8 +40,9 @@ public interface EntityPicker<V extends JmixEntity> extends Field<V>, ActionsHol
         return new TypeToken<EntityPicker<T>>() {};
     }
 
+    @Nullable
     MetaClass getMetaClass();
-    void setMetaClass(MetaClass metaClass);
+    void setMetaClass(@Nullable MetaClass metaClass);
 
     void setFieldEditable(boolean editable);
 

@@ -29,6 +29,7 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 

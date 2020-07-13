@@ -24,6 +24,7 @@ import io.jmix.ui.widget.client.timefield.AmPm;
 import io.jmix.ui.widget.client.timefield.TimeMode;
 import io.jmix.ui.widget.client.timefield.TimeResolution;
 
+import javax.annotation.Nullable;
 import java.time.LocalTime;
 import java.util.function.Supplier;
 
@@ -56,6 +57,7 @@ public class JmixTimeFieldWrapper extends CustomField<LocalTime> {
         amPmField.addValueChangeListener(this::amPmFieldValueChanged);
     }
 
+    @Nullable
     @Override
     public LocalTime getValue() {
         return internalValue;
@@ -218,7 +220,7 @@ public class JmixTimeFieldWrapper extends CustomField<LocalTime> {
         return convertFrom12hFormat(new AmPmLocalTime(time.getTime(), amPm));
     }
 
-    protected void setValueToPresentation(AmPmLocalTime value) {
+    protected void setValueToPresentation(@Nullable AmPmLocalTime value) {
         if (value == null) {
             timeField.setValue(null);
             amPmField.setValue(AmPm.AM);
@@ -228,7 +230,8 @@ public class JmixTimeFieldWrapper extends CustomField<LocalTime> {
         }
     }
 
-    protected LocalTime convertToModel(AmPmLocalTime presentationValue) {
+    @Nullable
+    protected LocalTime convertToModel(@Nullable AmPmLocalTime presentationValue) {
         if (presentationValue == null) {
             return null;
         }
@@ -240,7 +243,8 @@ public class JmixTimeFieldWrapper extends CustomField<LocalTime> {
         return convertFrom12hFormat(presentationValue);
     }
 
-    protected AmPmLocalTime convertToPresentation(LocalTime modelValue) {
+    @Nullable
+    protected AmPmLocalTime convertToPresentation(@Nullable LocalTime modelValue) {
         if (modelValue == null) {
             return null;
         }

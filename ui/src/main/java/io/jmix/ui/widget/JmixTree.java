@@ -29,6 +29,7 @@ import com.vaadin.ui.components.grid.NoSelectionModel;
 import com.vaadin.ui.components.grid.SingleSelectionModel;
 import io.jmix.ui.widget.tree.EnhancedTreeDataProvider;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -74,6 +75,7 @@ public class JmixTree<T> extends Tree<T> implements Action.ShortcutNotifier {
         getCompositionRoot().setGridSelectionModel(model);
     }
 
+    @Nullable
     @Override
     protected Grid.SelectionMode getSelectionMode() {
         SelectionModel<T> selectionModel = getSelectionModel();
@@ -98,7 +100,7 @@ public class JmixTree<T> extends Tree<T> implements Action.ShortcutNotifier {
         super.setDataProvider(dataProvider);
     }
 
-    public Collection<T> getChildren(T item) {
+    public Collection<T> getChildren(@Nullable T item) {
         return getDataProvider()
                 .fetchChildren(new HierarchicalQuery<>(null, item))
                 .collect(Collectors.toList());
@@ -122,7 +124,7 @@ public class JmixTree<T> extends Tree<T> implements Action.ShortcutNotifier {
         expandRecursively(getChildren(null), Integer.MAX_VALUE);
     }
 
-    public void expandItemWithParents(T item) {
+    public void expandItemWithParents(@Nullable T item) {
         List<T> itemsToExpand = new ArrayList<>();
 
         T current = item;

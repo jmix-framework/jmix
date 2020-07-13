@@ -35,6 +35,7 @@ public interface ListComponent<E extends JmixEntity> extends Component, Componen
     void setSelected(@Nullable E item);
     void setSelected(Collection<E> items);
 
+    @Nullable
     DataUnit getItems();
 
     /**

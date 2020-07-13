@@ -33,7 +33,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.Collections;
@@ -215,7 +215,6 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     }
 
                     @Override
-                    @Nonnull
                     public Map<String, Object> getParams() {
                         return params;
                     }
@@ -338,6 +337,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
         }
 
         @ExecutedOnUIThread
+        @Nullable
         @Override
         public final V getResult() {
             V result;

@@ -19,6 +19,7 @@ package io.jmix.ui.icon;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -28,7 +29,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
@@ -39,7 +44,7 @@ public class FontAwesomeIconProvider implements IconProvider {
 
     private static final Logger log = LoggerFactory.getLogger(FontAwesomeIconProvider.class);
 
-    protected static final String[] FONT_AWESOME_PREFIXES = {"font-icon:", "font-awesome-icon:"};
+    protected static final List<String> FONT_AWESOME_PREFIXES = ImmutableList.of("font-icon:", "font-awesome-icon:");
 
     protected static final LoadingCache<String, Resource> iconsCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<String, Resource>() {
@@ -52,6 +57,7 @@ public class FontAwesomeIconProvider implements IconProvider {
     @Autowired
     protected ThemeConstantsManager themeConstantsManager;
 
+    @Nullable
     protected static Resource getIconNonCached(String iconName) {
         Resource resource = null;
 

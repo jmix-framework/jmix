@@ -231,7 +231,7 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         super.setCaption(caption);
 
         this.captionInitialized = true;

@@ -18,6 +18,7 @@ package io.jmix.ui.component.data;
 
 import io.jmix.ui.component.TreeTable;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
@@ -33,6 +34,7 @@ public interface TreeTableItems<I> extends TableItems.Sortable<I> {
     Collection<?> getRootItemIds();
 
     /** Get parent ID for item with the given ID */
+    @Nullable
     Object getParent(Object itemId);
 
     /** Get children IDs for item with the given ID */

@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -60,9 +61,10 @@ public interface HasOptionsStyleProvider<I> extends Component {
      *
      * @param optionStyleProvider style provider
      */
-    void setOptionStyleProvider(Function<? super I, String> optionStyleProvider);
+    void setOptionStyleProvider(@Nullable Function<? super I, String> optionStyleProvider);
     /**
      * @return the currently used item style provider
      */
+    @Nullable
     Function<? super I, String> getOptionStyleProvider();
 }

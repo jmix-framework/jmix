@@ -21,6 +21,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeTableItems;
 import io.jmix.ui.model.CollectionContainer;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class ContainerTreeTableItems<E extends JmixEntity>
@@ -57,6 +58,7 @@ public class ContainerTreeTableItems<E extends JmixEntity>
         }
     }
 
+    @Nullable
     @Override
     public Object getParent(Object itemId) {
         if (hierarchyProperty != null) {

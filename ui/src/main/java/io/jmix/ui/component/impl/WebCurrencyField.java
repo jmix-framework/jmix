@@ -33,6 +33,8 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Locale;
@@ -82,7 +84,7 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
     }
 
     @Override
-    protected String convertToPresentation(V modelValue) throws ConversionException {
+    protected String convertToPresentation(@Nullable V modelValue) throws ConversionException {
         Datatype<V> datatype = getDatatypeInternal();
         // Vaadin TextField does not permit `null` value
         if (datatype != null) {
@@ -99,8 +101,9 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
         return nullToEmpty(super.convertToPresentation(modelValue));
     }
 
+    @Nullable
     @Override
-    protected V convertToModel(String componentRawValue) throws ConversionException {
+    protected V convertToModel(@Nullable String componentRawValue) throws ConversionException {
         String value = StringUtils.trimToNull(emptyToNull(componentRawValue));
 
         Datatype<V> datatype = getDatatypeInternal();
@@ -249,6 +252,7 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
         return datatype;
     }
 
+    @Nullable
     protected Datatype<V> getDatatypeInternal() {
         if (datatype != null) {
             return datatype;

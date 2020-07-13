@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -139,14 +141,14 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
     }
 
     @Override
-    protected Set<V> convertToPresentation(Collection<V> modelValue) throws ConversionException {
+    protected Set<V> convertToPresentation(@Nullable Collection<V> modelValue) throws ConversionException {
         return new LinkedHashSet<>(CollectionUtils.isNotEmpty(modelValue)
                 ? modelValue
                 : Collections.emptySet());
     }
 
     @Override
-    protected Collection<V> convertToModel(Set<V> componentRawValue) throws ConversionException {
+    protected Collection<V> convertToModel(@Nullable Set<V> componentRawValue) throws ConversionException {
         if (valueBinding != null) {
             Class<?> targetType = valueBinding.getSource().getType();
 
@@ -174,13 +176,14 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
                 : Collections.emptySet();
     }
 
+    @Nullable
     @Override
     public Options<V> getOptions() {
         return optionsBinding != null ? optionsBinding.getSource() : null;
     }
 
     @Override
-    public void setOptions(Options<V> options) {
+    public void setOptions(@Nullable Options<V> options) {
         if (this.optionsBinding != null) {
             this.optionsBinding.unbind();
             this.optionsBinding = null;
@@ -236,7 +239,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
         if (this.optionCaptionProvider != optionCaptionProvider) {
             this.optionCaptionProvider = optionCaptionProvider;
 
@@ -245,6 +248,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;
@@ -269,6 +273,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         return optionIconProvider;
     }
 
+    @Nullable
     protected Resource generateOptionIcon(V item) {
         String resourceId;
         try {

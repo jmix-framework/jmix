@@ -97,11 +97,13 @@ public abstract class AbstractAction implements Action {
         return id;
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption == null ? getDefaultCaption() : caption;
     }
 
+    @Nullable
     protected String getDefaultCaption() {
         if (messages != null) {
             // legacy behaviour
@@ -112,7 +114,7 @@ public abstract class AbstractAction implements Action {
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         String oldValue = this.caption;
         if (!Objects.equals(oldValue, caption)) {
             this.caption = caption;
@@ -120,13 +122,14 @@ public abstract class AbstractAction implements Action {
         }
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return description;
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         String oldValue = this.description;
         if (!Objects.equals(oldValue, description)) {
             this.description = description;
@@ -134,13 +137,14 @@ public abstract class AbstractAction implements Action {
         }
     }
 
+    @Nullable
     @Override
     public KeyCombination getShortcutCombination() {
         return shortcut;
     }
 
     @Override
-    public void setShortcutCombination(KeyCombination shortcut) {
+    public void setShortcutCombination(@Nullable KeyCombination shortcut) {
         KeyCombination oldValue = this.shortcut;
         if (!Objects.equals(oldValue, shortcut)) {
             this.shortcut = shortcut;
@@ -149,7 +153,7 @@ public abstract class AbstractAction implements Action {
     }
 
     @Override
-    public void setShortcut(String shortcut) {
+    public void setShortcut(@Nullable String shortcut) {
         if (shortcut != null) {
             setShortcutCombination(KeyCombination.create(shortcut));
         } else {
@@ -157,13 +161,14 @@ public abstract class AbstractAction implements Action {
         }
     }
 
+    @Nullable
     @Override
     public String getIcon() {
         return icon;
     }
 
     @Override
-    public void setIcon(String icon) {
+    public void setIcon(@Nullable String icon) {
         String oldValue = this.icon;
         if (!Objects.equals(oldValue, icon)) {
             this.icon = icon;
@@ -221,6 +226,7 @@ public abstract class AbstractAction implements Action {
         return owners;
     }
 
+    @Nullable
     @Override
     public ActionOwner getOwner() {
         return owners.isEmpty() ? null : owners.get(0);

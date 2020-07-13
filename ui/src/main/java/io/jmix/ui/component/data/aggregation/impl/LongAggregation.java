@@ -15,13 +15,16 @@
  */
 package io.jmix.ui.component.data.aggregation.impl;
 
+import javax.annotation.Nullable;
+
 public class LongAggregation extends BasicNumberAggregation<Long> {
     public LongAggregation() {
         super(Long.class);
     }
 
+    @Nullable
     @Override
-    protected Long convert(Double result) {
+    protected Long convert(@Nullable Double result) {
         return result == null ? null : result.longValue();
     }
 }

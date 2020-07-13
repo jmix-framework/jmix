@@ -19,7 +19,6 @@ package io.jmix.ui.model;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
@@ -51,7 +50,6 @@ public interface CollectionContainer<E extends JmixEntity> extends InstanceConta
      *
      * @throws IllegalArgumentException if the container doesn't have an entity with the given id
      */
-    @Nonnull
     E getItem(Object entityId);
 
     /**

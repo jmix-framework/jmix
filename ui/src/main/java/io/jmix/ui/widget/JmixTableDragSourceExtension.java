@@ -20,6 +20,7 @@ import io.jmix.ui.widget.client.table.JmixTableDragSourceExtensionServerRpc;
 import com.vaadin.ui.dnd.DragSourceExtension;
 import com.vaadin.v7.ui.Table;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class JmixTableDragSourceExtension<T extends Table & JmixEnhancedTable> e
     /**
      * @return id of dragged item. If were dragged more than one it returns first item id in the collection.
      */
+    @Nullable
     public Object getLastSingleDraggedItemId() {
         return transferredItems.isEmpty() ? null : transferredItems.iterator().next();
     }

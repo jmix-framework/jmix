@@ -19,6 +19,7 @@
 
 package name.fraser.neil.plaintext;
 
+import javax.annotation.Nullable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -158,7 +159,7 @@ public class diff_match_patch {
      *                   internally for recursive calls.  Users should set DiffTimeout instead.
      * @return Linked List of Diff objects.
      */
-    private LinkedList<Diff> diff_main(String text1, String text2,
+    private LinkedList<Diff> diff_main(@Nullable String text1, @Nullable String text2,
                                        boolean checklines, long deadline) {
         // Check for null inputs.
         if (text1 == null || text2 == null) {
@@ -677,6 +678,7 @@ public class diff_match_patch {
      * suffix of text1, the prefix of text2, the suffix of text2 and the
      * common middle.  Or null if there was no match.
      */
+    @Nullable
     protected String[] diff_halfMatch(String text1, String text2) {
         if (Diff_Timeout <= 0) {
             // Don't risk returning a non-optimal diff if we have unlimited time.
@@ -726,6 +728,7 @@ public class diff_match_patch {
      * suffix of longtext, the prefix of shorttext, the suffix of shorttext
      * and the common middle.  Or null if there was no match.
      */
+    @Nullable
     private String[] diff_halfMatchI(String longtext, String shorttext, int i) {
         // Start with a 1/4 length substring at position i as a seed.
         String seed = longtext.substring(i, i + longtext.length() / 4);
@@ -1812,7 +1815,7 @@ public class diff_match_patch {
      * @param diffs Array of Diff objects for text1 to text2.
      * @return LinkedList of Patch objects.
      */
-    public LinkedList<Patch> patch_make(LinkedList<Diff> diffs) {
+    public LinkedList<Patch> patch_make(@Nullable LinkedList<Diff> diffs) {
         if (diffs == null) {
             throw new IllegalArgumentException("Null inputs. (patch_make)");
         }
@@ -1844,7 +1847,7 @@ public class diff_match_patch {
      * @param diffs Array of Diff objects for text1 to text2.
      * @return LinkedList of Patch objects.
      */
-    public LinkedList<Patch> patch_make(String text1, LinkedList<Diff> diffs) {
+    public LinkedList<Patch> patch_make(@Nullable String text1, @Nullable LinkedList<Diff> diffs) {
         if (text1 == null || diffs == null) {
             throw new IllegalArgumentException("Null inputs. (patch_make)");
         }
@@ -2068,10 +2071,11 @@ public class diff_match_patch {
      */
     public String patch_addPadding(LinkedList<Patch> patches) {
         short paddingLength = this.Patch_Margin;
-        String nullPadding = "";
+        StringBuilder buffer = new StringBuilder();
         for (short x = 1; x <= paddingLength; x++) {
-            nullPadding += String.valueOf((char) x);
+            buffer.append((char) x);
         }
+        String nullPadding = buffer.toString();
 
         // Bump all the patches forward.
         for (Patch aPatch : patches) {

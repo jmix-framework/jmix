@@ -104,6 +104,7 @@ public class DeclarativeAction extends BaseAction {
         }
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption;

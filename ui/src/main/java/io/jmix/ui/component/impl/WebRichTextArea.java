@@ -107,14 +107,15 @@ public class WebRichTextArea extends WebV8AbstractField<JmixRichTextArea, String
     }
 
     @Override
-    protected String convertToPresentation(String modelValue) throws ConversionException {
+    protected String convertToPresentation(@Nullable String modelValue) throws ConversionException {
         String presentationValue = nullToEmpty(super.convertToPresentation(modelValue));
         presentationValue = sanitize(presentationValue);
         return presentationValue;
     }
 
+    @Nullable
     @Override
-    protected String convertToModel(String componentRawValue) throws ConversionException {
+    protected String convertToModel(@Nullable String componentRawValue) throws ConversionException {
         String modelValue = sanitize(componentRawValue);
         modelValue = emptyToNull(modelValue);
         return super.convertToModel(modelValue);

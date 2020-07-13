@@ -18,6 +18,7 @@ package io.jmix.ui.component.data.aggregation.impl;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.aggregation.NumberAggregationHelper;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
@@ -65,6 +66,7 @@ public abstract class BasicNumberAggregation<T extends Number> extends BasicAggr
         return EnumSet.allOf(AggregationInfo.Type.class);
     }
 
+    @Nullable
     @Override
     public T min(Collection<T> items) {
         NumberAggregationHelper helper = new NumberAggregationHelper();
@@ -76,5 +78,6 @@ public abstract class BasicNumberAggregation<T extends Number> extends BasicAggr
         return convert(helper.min());
     }
 
-    protected abstract T convert(Double result);
+    @Nullable
+    protected abstract T convert(@Nullable Double result);
 }

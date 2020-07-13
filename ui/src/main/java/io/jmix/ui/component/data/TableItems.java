@@ -43,6 +43,7 @@ public interface TableItems<I> extends DataUnit {
         return item;
     }
 
+    @Nullable
     Object getItemValue(Object itemId, Object propertyId);
 
     int size();
@@ -103,7 +104,8 @@ public interface TableItems<I> extends DataUnit {
          * @param itemId item id
          * @return ID of the next visible Item or <code>null</code>
          */
-        Object nextItemId(Object itemId);
+        @Nullable
+        Object nextItemId(@Nullable Object itemId);
 
         /**
          * Gets the ID of the item preceding the item that corresponds to <code>itemId</code>.
@@ -111,16 +113,19 @@ public interface TableItems<I> extends DataUnit {
          * @param itemId item id
          * @return ID of the previous visible item or <code>null</code>
          */
-        Object prevItemId(Object itemId);
+        @Nullable
+        Object prevItemId(@Nullable Object itemId);
 
         /**
          * @return ID of the first visible item
          */
+        @Nullable
         Object firstItemId();
 
         /**
          * @return ID of the last visible item
          */
+        @Nullable
         Object lastItemId();
 
         /**

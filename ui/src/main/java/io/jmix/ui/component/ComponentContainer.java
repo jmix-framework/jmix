@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.stream.Stream;
@@ -85,7 +84,6 @@ public interface ComponentContainer extends Component {
      *
      * @return component. Throws exception if not found.
      */
-    @Nonnull
     default Component getComponentNN(String id) {
         Component component = getComponent(id);
         if (component == null) {

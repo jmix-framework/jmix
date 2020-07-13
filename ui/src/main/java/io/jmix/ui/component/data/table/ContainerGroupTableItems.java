@@ -111,7 +111,8 @@ public class ContainerGroupTableItems<E extends JmixEntity>
         }
     }
 
-    protected GroupInfo<MetaPropertyPath> groupItems(int propertyIndex, GroupInfo parent, List<GroupInfo> children,
+    @Nullable
+    protected GroupInfo<MetaPropertyPath> groupItems(int propertyIndex, @Nullable GroupInfo parent, List<GroupInfo> children,
                                                      E item, LinkedMap<MetaPropertyPath, Object> groupValues) {
         MetaPropertyPath property = (MetaPropertyPath) groupProperties[propertyIndex++];
         Object itemValue = getValueByProperty(item, property);
@@ -258,6 +259,7 @@ public class ContainerGroupTableItems<E extends JmixEntity>
         return parentGroups;
     }
 
+    @Nullable
     @Override
     public Object getGroupProperty(GroupInfo groupId) {
         if (containsGroup(groupId)) {
@@ -266,6 +268,7 @@ public class ContainerGroupTableItems<E extends JmixEntity>
         return null;
     }
 
+    @Nullable
     @Override
     public Object getGroupPropertyValue(GroupInfo groupId) {
         if (containsGroup(groupId)) {

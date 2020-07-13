@@ -34,6 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -122,6 +124,7 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         }
     }
 
+    @Nullable
     protected BackgroundTask<Long, List<V>> getSearchSuggestionsTask(final String query) {
         if (this.searchExecutor == null)
             return null;
@@ -192,6 +195,7 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     protected String generateItemStylename(Object item) {
         if (optionStyleProvider == null) {
             return null;
@@ -304,19 +308,20 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         return getComponent().getPopupWidth();
     }
 
+    @Nullable
     @Override
     public String getInputPrompt() {
         return getComponent().getInputPrompt();
     }
 
     @Override
-    public void setInputPrompt(String inputPrompt) {
+    public void setInputPrompt(@Nullable String inputPrompt) {
         getComponent().setInputPrompt(inputPrompt);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionStyleProvider(Function<? super V, String> optionStyleProvider) {
+    public void setOptionStyleProvider(@Nullable Function<? super V, String> optionStyleProvider) {
         if (this.optionStyleProvider != optionStyleProvider) {
             this.optionStyleProvider = optionStyleProvider;
 
@@ -328,6 +333,7 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionStyleProvider() {
         return optionStyleProvider;

@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class AppCookies {
         requestedCookies = new HashMap<>();
     }
 
+    @Nullable
     public String getCookieValue(String name) {
         Cookie cookie = getCookieIfEnabled(name);
         return cookie == null ? null : cookie.getValue();
@@ -80,10 +82,12 @@ public class AppCookies {
         }
     }
 
+    @Nullable
     protected Cookie getCookieIfEnabled(String name) {
         return isCookiesEnabled() ? getCookie(name) : null;
     }
 
+    @Nullable
     protected Cookie getCookie(String name) {
         ServletRequestAttributes requestContext = getRequestContext();
         if (identityHashCode(requestContext.getRequest()) != lastRequestHash) {

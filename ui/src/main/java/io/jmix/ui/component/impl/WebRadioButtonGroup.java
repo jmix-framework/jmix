@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -85,7 +87,8 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
         component.setItemCaptionGenerator(this::generateItemCaption);
     }
 
-    protected String generateItemCaption(V item) {
+    @Nullable
+    protected String generateItemCaption(@Nullable V item) {
         if (item == null) {
             return null;
         }
@@ -144,13 +147,14 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
                 : Collections.emptyList();
     }
 
+    @Nullable
     @Override
     public Options<V> getOptions() {
         return optionsBinding != null ? optionsBinding.getSource() : null;
     }
 
     @Override
-    public void setOptions(Options<V> options) {
+    public void setOptions(@Nullable Options<V> options) {
         if (this.optionsBinding != null) {
             this.optionsBinding.unbind();
             this.optionsBinding = null;
@@ -179,7 +183,7 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionDescriptionProvider(Function<? super V, String> optionDescriptionProvider) {
+    public void setOptionDescriptionProvider(@Nullable Function<? super V, String> optionDescriptionProvider) {
         if (this.optionDescriptionProvider != optionDescriptionProvider) {
             this.optionDescriptionProvider = optionDescriptionProvider;
 
@@ -191,13 +195,14 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionDescriptionProvider() {
         return optionDescriptionProvider;
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
         if (this.optionCaptionProvider != optionCaptionProvider) {
             this.optionCaptionProvider = optionCaptionProvider;
 
@@ -206,6 +211,7 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;
@@ -213,7 +219,7 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionIconProvider(Function<? super V, String> optionIconProvider) {
+    public void setOptionIconProvider(@Nullable Function<? super V, String> optionIconProvider) {
         if (this.optionIconProvider != optionIconProvider) {
             this.optionIconProvider = optionIconProvider;
 
@@ -225,11 +231,13 @@ public class WebRadioButtonGroup<V> extends WebV8AbstractField<JmixRadioButtonGr
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionIconProvider() {
         return optionIconProvider;
     }
 
+    @Nullable
     protected Resource generateOptionIcon(V item) {
         String resourceId;
         try {

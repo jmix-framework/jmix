@@ -29,14 +29,16 @@ import java.util.function.Consumer;
  * @param <V> value type
  */
 public interface HasValue<V> extends Component {
+    @Nullable
     V getValue();
 
-    void setValue(V value);
+    void setValue(@Nullable V value);
 
     default void clear() {
         setValue(getEmptyValue());
     }
 
+    @Nullable
     default V getEmptyValue() {
         return null;
     }
@@ -59,7 +61,7 @@ public interface HasValue<V> extends Component {
             this(component, prevValue, value, false);
         }
 
-        public ValueChangeEvent(Object source, V prevValue, V value, boolean userOriginated) {
+        public ValueChangeEvent(Object source, @Nullable V prevValue, @Nullable V value, boolean userOriginated) {
             super(source);
             this.prevValue = prevValue;
             this.value = value;

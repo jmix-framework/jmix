@@ -20,6 +20,8 @@ import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.ui.screen.*;
 
+import javax.annotation.Nullable;
+
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public final class UiDescriptorUtils {
@@ -35,7 +37,7 @@ public final class UiDescriptorUtils {
         return getInferredScreenId(uiController.id(), uiController.value(), annotatedScreenClass.getName());
     }
 
-    public static String getInferredScreenId(String idAttribute, String valueAttribute, String className) {
+    public static String getInferredScreenId(@Nullable String idAttribute, @Nullable String valueAttribute, String className) {
         String id = valueAttribute;
         if (Strings.isNullOrEmpty(id)) {
             id = idAttribute;

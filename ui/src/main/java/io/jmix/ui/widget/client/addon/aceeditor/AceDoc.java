@@ -19,6 +19,7 @@ import io.jmix.ui.widget.client.addon.aceeditor.TransportDoc.TransportMarker;
 import io.jmix.ui.widget.client.addon.aceeditor.TransportDoc.TransportMarkerAnnotation;
 import io.jmix.ui.widget.client.addon.aceeditor.TransportDoc.TransportRowAnnotation;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
@@ -52,9 +53,9 @@ public class AceDoc implements Serializable {
                 Collections.<MarkerAnnotation>emptySet());
 	}
 
-	public AceDoc(String text, Map<String, AceMarker> markers,
-			Set<RowAnnotation> rowAnnotations,
-			Set<MarkerAnnotation> markerAnnotations) {
+	public AceDoc(@Nullable String text, Map<String, AceMarker> markers,
+			@Nullable Set<RowAnnotation> rowAnnotations,
+			@Nullable Set<MarkerAnnotation> markerAnnotations) {
         if (text == null) {
             text = "";
         }
@@ -117,7 +118,7 @@ public class AceDoc implements Serializable {
 		return getText().hashCode();
 	}
 
-    public boolean textEquals(String a, String b) {
+    public boolean textEquals(@Nullable String a, @Nullable String b) {
         return a == null ? b == null : a.equals(b);
     }
 
@@ -146,6 +147,7 @@ public class AceDoc implements Serializable {
 	}
 	
 
+	@Nullable
 	private Set<TransportRowAnnotation> getTransportRowAnnotations() {
 		if (rowAnnotations==null) {
 			return null;
@@ -158,6 +160,7 @@ public class AceDoc implements Serializable {
 		return anns;
 	}
 
+	@Nullable
 	private Set<TransportMarkerAnnotation> getTransportMarkerAnnotations() {
 		if (markerAnnotations==null) {
 			return null;
@@ -187,8 +190,9 @@ public class AceDoc implements Serializable {
 		return ms;
 	}
 
+	@Nullable
 	private static Set<MarkerAnnotation> markerAnnotationsFromTransport(
-			Set<TransportMarkerAnnotation> markerAnnotations) {
+			@Nullable Set<TransportMarkerAnnotation> markerAnnotations) {
 		if (markerAnnotations==null) {
 			return null;
 		}
@@ -199,8 +203,9 @@ public class AceDoc implements Serializable {
 		return anns;
 	}
 
+	@Nullable
 	private static Set<RowAnnotation> rowAnnotationsFromTransport(
-			Set<TransportRowAnnotation> rowAnnotations) {
+			@Nullable Set<TransportRowAnnotation> rowAnnotations) {
 		if (rowAnnotations==null) {
 			return null;
 		}

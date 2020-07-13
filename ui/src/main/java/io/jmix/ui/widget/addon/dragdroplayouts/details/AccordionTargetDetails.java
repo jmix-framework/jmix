@@ -19,6 +19,7 @@ import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.dd.VerticalDropLocation;
 import com.vaadin.ui.Component;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class AccordionTargetDetails extends TargetDetailsImpl {
         // index of it
         Object to = rawDropData.get("to");
         if (to != null) {
-            index = Integer.valueOf(to.toString());
+            index = Integer.parseInt(to.toString());
 
             if (index < accordion.getComponentCount()) {
                 Iterator<Component> iter = accordion.getComponentIterator();
@@ -91,6 +92,7 @@ public class AccordionTargetDetails extends TargetDetailsImpl {
      * 
      * @return The drop location
      */
+    @Nullable
     public VerticalDropLocation getDropLocation() {
         if (getData("vdetail") != null) {
             return VerticalDropLocation.valueOf((String) getData("vdetail"));

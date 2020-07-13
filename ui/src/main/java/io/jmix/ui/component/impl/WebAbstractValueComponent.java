@@ -25,6 +25,7 @@ import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.data.value.ValueBinder;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class WebAbstractValueComponent<T extends com.vaadin.ui.Component & com.vaadin.data.HasValue<P>, P, V>
@@ -34,7 +35,7 @@ public abstract class WebAbstractValueComponent<T extends com.vaadin.ui.Componen
     protected ValueBinding<V> valueBinding;
 
     @Override
-    public void setValueSource(ValueSource<V> valueSource) {
+    public void setValueSource(@Nullable ValueSource<V> valueSource) {
         if (this.valueBinding != null) {
             valueBinding.unbind();
 
@@ -77,18 +78,20 @@ public abstract class WebAbstractValueComponent<T extends com.vaadin.ui.Componen
         // hook
     }
 
+    @Nullable
     @Override
     public ValueSource<V> getValueSource() {
         return valueBinding != null ? valueBinding.getSource() : null;
     }
 
+    @Nullable
     @Override
     public V getValue() {
         return internalValue;
     }
 
     @Override
-    public void setValue(V value) {
+    public void setValue(@Nullable V value) {
         setValueToPresentation(convertToPresentation(value));
 
         V oldValue = internalValue;
@@ -114,7 +117,7 @@ public abstract class WebAbstractValueComponent<T extends com.vaadin.ui.Componen
 //        unsubscribe(ValueChangeEvent.class, (Consumer) listener);
 //    }
 
-    protected void setValueToPresentation(P value) {
+    protected void setValueToPresentation(@Nullable P value) {
         if (hasValidationError()) {
             setValidationError(null);
         }
@@ -153,17 +156,19 @@ public abstract class WebAbstractValueComponent<T extends com.vaadin.ui.Componen
         }
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
-    protected V convertToModel(P componentRawValue) throws ConversionException {
+    protected V convertToModel(@Nullable P componentRawValue) throws ConversionException {
         return (V) componentRawValue;
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
-    protected P convertToPresentation(V modelValue) throws ConversionException {
+    protected P convertToPresentation(@Nullable V modelValue) throws ConversionException {
         return (P) modelValue;
     }
 
-    protected boolean fieldValueEquals(V value, V oldValue) {
+    protected boolean fieldValueEquals(@Nullable V value, @Nullable V oldValue) {
         return EntityValues.propertyValueEquals(oldValue, value);
     }
 

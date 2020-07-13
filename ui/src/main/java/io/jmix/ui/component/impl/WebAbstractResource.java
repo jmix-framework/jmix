@@ -18,6 +18,8 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.server.Resource;
 
+import javax.annotation.Nullable;
+
 public abstract class WebAbstractResource implements WebResource {
     protected Resource resource;
     protected Runnable resourceUpdateHandler;
@@ -45,7 +47,7 @@ public abstract class WebAbstractResource implements WebResource {
         }
     }
 
-    protected void setResourceUpdatedHandler(Runnable resourceUpdated) {
+    protected void setResourceUpdatedHandler(@Nullable Runnable resourceUpdated) {
         this.resourceUpdateHandler = resourceUpdated;
     }
 

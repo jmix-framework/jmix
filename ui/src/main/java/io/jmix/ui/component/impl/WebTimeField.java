@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.time.LocalTime;
 import java.util.Date;
 
@@ -161,8 +163,9 @@ public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, Lo
         return super.isModified();
     }
 
+    @Nullable
     @Override
-    protected LocalTime convertToPresentation(V modelValue) throws ConversionException {
+    protected LocalTime convertToPresentation(@Nullable V modelValue) throws ConversionException {
         if (modelValue == null) {
             return null;
         }
@@ -200,6 +203,7 @@ public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, Lo
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     protected V constructModelValue() {
         LocalTime timeValue = component.getValue();
         if (timeValue == null) {

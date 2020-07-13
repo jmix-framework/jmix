@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -114,11 +115,12 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      *
      * @param optionIconProvider provider which provides icons for options
      */
-    void setOptionIconProvider(Function<? super V, String> optionIconProvider);
+    void setOptionIconProvider(@Nullable Function<? super V, String> optionIconProvider);
 
     /**
      * @return icon provider of the LookupField.
      */
+    @Nullable
     Function<? super V, String> getOptionIconProvider();
 
     /**
@@ -127,11 +129,12 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * @see Resource
      * @param optionImageProvider options image provider
      */
-    void setOptionImageProvider(Function<? super V, Resource> optionImageProvider);
+    void setOptionImageProvider(@Nullable Function<? super V, Resource> optionImageProvider);
 
     /**
      * @return options image provider.
      */
+    @Nullable
     Function<? super V, Resource> getOptionImageProvider();
 
     /**

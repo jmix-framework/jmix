@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -203,6 +205,7 @@ public class XmlInheritanceProcessor {
 
     protected interface ElementTargetLocator {
         boolean suitableFor(Element extElem);
+        @Nullable
         Element locate(Element resultParentElem, Element extElem);
     }
 
@@ -213,6 +216,7 @@ public class XmlInheritanceProcessor {
             return !StringUtils.isBlank(extElem.attributeValue("id"));
         }
 
+        @Nullable
         @Override
         public Element locate(Element resultParentElem, Element extElem) {
             String id = extElem.attributeValue("id");
@@ -232,6 +236,7 @@ public class XmlInheritanceProcessor {
             return "view".equals(extElem.getName());
         }
 
+        @Nullable
         @Override
         public Element locate(Element resultParentElem, Element extElem) {
             String entity = extElem.attributeValue("entity");
@@ -257,6 +262,7 @@ public class XmlInheritanceProcessor {
             return "property".equals(extElem.getName());
         }
 
+        @Nullable
         @Override
         public Element locate(Element resultParentElem, Element extElem) {
             String name = extElem.attributeValue("name");
@@ -278,6 +284,7 @@ public class XmlInheritanceProcessor {
                     && extElem.attributeValue("action") != null;
         }
 
+        @Nullable
         @Override
         public Element locate(Element resultParentElem, Element extElem) {
             String action = extElem.attributeValue("action");

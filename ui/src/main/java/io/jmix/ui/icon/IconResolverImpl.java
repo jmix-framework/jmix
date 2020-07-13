@@ -16,6 +16,7 @@
 
 package io.jmix.ui.icon;
 
+import com.google.common.collect.ImmutableList;
 import com.vaadin.server.Resource;
 import io.jmix.ui.App;
 import io.jmix.ui.theme.ThemeConstants;
@@ -25,12 +26,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.List;
 
 @Component(IconResolver.NAME)
 public class IconResolverImpl implements IconResolver {
     protected static final String THEME_PREFIX = "theme://";
-    protected static final String[] PROPERTY_PREFIXES = {"icons.", "cuba.web."};
+    protected static final List<String> PROPERTY_PREFIXES = ImmutableList.of("icons.", "cuba.web.");
 
     private static final Logger log = LoggerFactory.getLogger(IconResolverImpl.class);
 
@@ -39,8 +42,9 @@ public class IconResolverImpl implements IconResolver {
     @Autowired
     protected List<IconProvider> iconProviders;
 
+    @Nullable
     @Override
-    public Resource getIconResource(String iconPath) {
+    public Resource getIconResource(@Nullable String iconPath) {
         if (StringUtils.isEmpty(iconPath)) {
             return null;
         }
@@ -53,6 +57,7 @@ public class IconResolverImpl implements IconResolver {
         return getResource(iconPath);
     }
 
+    @Nullable
     protected Resource getResource(String iconPath) {
         return iconProviders.stream()
                 .filter(p -> p.canProvide(iconPath))
@@ -64,6 +69,7 @@ public class IconResolverImpl implements IconResolver {
                 });
     }
 
+    @Nullable
     protected String getThemeIcon(String iconName) {
         ThemeConstants theme = App.getInstance().getThemeConstants();
 

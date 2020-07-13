@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
@@ -98,6 +100,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         component.setCancelSearchHandler(this::cancelSearch);
     }
 
+    @Nullable
     @Override
     public V getValue() {
         V value = super.getValue();
@@ -110,6 +113,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     protected String generateItemStylename(Object item) {
         if (optionStyleProvider == null) {
             return null;
@@ -118,7 +122,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         return this.optionStyleProvider.apply((V)item);
     }
 
-    protected String convertToTextView(V value) {
+    protected String convertToTextView(@Nullable V value) {
         if (value == null) {
             return "";
         }
@@ -140,12 +144,13 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
         if (this.optionCaptionProvider != optionCaptionProvider) {
             this.optionCaptionProvider = optionCaptionProvider;
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;
@@ -168,6 +173,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         }
     }
 
+    @Nullable
     protected BackgroundTask<Long, List<V>> getSearchSuggestionsTask(final String query) {
         if (this.searchExecutor == null) {
             return null;
@@ -334,13 +340,14 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         component.setTabIndex(tabIndex);
     }
 
+    @Nullable
     @Override
     public String getInputPrompt() {
         return component.getInputPrompt();
     }
 
     @Override
-    public void setInputPrompt(String inputPrompt) {
+    public void setInputPrompt(@Nullable String inputPrompt) {
         component.setInputPrompt(inputPrompt);
     }
 
@@ -377,7 +384,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionStyleProvider(Function<? super V, String> optionStyleProvider) {
+    public void setOptionStyleProvider(@Nullable Function<? super V, String> optionStyleProvider) {
         if (this.optionStyleProvider != optionStyleProvider) {
             this.optionStyleProvider = optionStyleProvider;
 
@@ -389,6 +396,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionStyleProvider() {
         return optionStyleProvider;

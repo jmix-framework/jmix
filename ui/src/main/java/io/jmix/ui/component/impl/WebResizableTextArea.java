@@ -27,6 +27,7 @@ import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.Component;
 import org.springframework.beans.factory.InitializingBean;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V>
@@ -87,13 +88,14 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
         setResizableDirection(value);
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return wrapper.getCaption();
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         wrapper.setCaption(caption);
     }
 
@@ -107,13 +109,14 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
         wrapper.setCaptionAsHtml(captionAsHtml);
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return wrapper.getDescription();
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         wrapper.setDescription(description);
     }
 

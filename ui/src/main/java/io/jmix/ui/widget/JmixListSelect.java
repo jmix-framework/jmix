@@ -24,6 +24,7 @@ import com.vaadin.v7.ui.ListSelect;
 import io.jmix.ui.widget.client.listselect.JmixListSelectServerRpc;
 import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -64,7 +65,7 @@ public class JmixListSelect extends ListSelect {
         this.resetValueToNullOnContainerChange = false;
     }
 
-    public void setValueToComponent(Object value) {
+    public void setValueToComponent(@Nullable Object value) {
         omitValueChange = true;
 
         setValue(value, false, true);

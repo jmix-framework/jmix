@@ -21,7 +21,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.ExpandingLayout.ExpandDirection;
 import io.jmix.ui.screen.Screen;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -69,13 +69,11 @@ public class LayoutAnalyzer {
     }
 
     public interface Inspection {
-        @Nonnull
         List<LayoutTip> analyze(Component component, String path);
     }
 
     public static class ComponentUndefinedSize implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
 
@@ -99,7 +97,6 @@ public class LayoutAnalyzer {
 
     public static class ScrollBoxInnerComponentRelativeSize implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
             if (c instanceof ScrollBoxLayout) {
@@ -142,7 +139,6 @@ public class LayoutAnalyzer {
 
     public static class ComponentRelativeSizeInsideUndefinedSizedContainer implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
             if (c instanceof ComponentContainer) {
@@ -185,7 +181,6 @@ public class LayoutAnalyzer {
 
     public static class AlignInsideUndefinedSizedContainer implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
             if (c instanceof ComponentContainer) {
@@ -219,7 +214,6 @@ public class LayoutAnalyzer {
 
     public static class RelativeHeightComponentInsideUndefinedHeightDialog implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
             if (c instanceof Window && c.getHeight() < 0) {
@@ -246,7 +240,6 @@ public class LayoutAnalyzer {
 
     public static class RelativeWidthComponentInsideUndefinedWidthDialog implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
             if (c instanceof Window && c.getWidth() < 0) {
@@ -273,7 +266,6 @@ public class LayoutAnalyzer {
 
     public static class ExpandOfSingleComponent implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
             if (c instanceof ExpandingLayout) {
@@ -298,7 +290,6 @@ public class LayoutAnalyzer {
 
     public static class ExpandedComponentOverlapsAnother implements Inspection {
 
-        @Nonnull
         @Override
         public List<LayoutTip> analyze(Component component, String path) {
             if (component instanceof ExpandingLayout) {
@@ -327,6 +318,7 @@ public class LayoutAnalyzer {
             return Collections.emptyList();
         }
 
+        @Nullable
         private Component getExpandedComponent(ExpandingLayout container) {
             Collection<Component> components = container.getOwnComponents();
             for (Component innerComponent : components) {

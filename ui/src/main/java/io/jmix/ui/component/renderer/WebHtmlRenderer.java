@@ -28,6 +28,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 /**
  * A renderer for presenting HTML content.
  */
@@ -70,10 +72,11 @@ public class WebHtmlRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEn
         super.setNullRepresentation(nullRepresentation);
     }
 
+    @Nullable
     @Override
     public ValueProvider<String, String> getPresentationValueProvider() {
         return (ValueProvider<String, String>) html ->
-                getDataGrid().isHtmlSanitizerEnabled()
+                getDataGrid() != null && getDataGrid().isHtmlSanitizerEnabled()
                         ? htmlSanitizer.sanitize(html)
                         : html;
     }

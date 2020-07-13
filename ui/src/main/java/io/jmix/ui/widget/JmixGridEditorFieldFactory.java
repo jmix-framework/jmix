@@ -19,6 +19,8 @@ package io.jmix.ui.widget;
 import com.vaadin.ui.Grid;
 import io.jmix.ui.widget.grid.JmixEditorField;
 
+import javax.annotation.Nullable;
+
 /**
  * Factory that generates components for {@link JmixGrid} editor.
  */
@@ -31,5 +33,6 @@ public interface JmixGridEditorFieldFactory<T> {
      * @param column the column for which the field is being created
      * @return generated component
      */
+    @Nullable
     JmixEditorField<?> createField(T bean, Grid.Column<T, ?> column);
 }

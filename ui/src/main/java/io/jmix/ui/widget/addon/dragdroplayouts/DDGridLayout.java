@@ -92,15 +92,13 @@ public class DDGridLayout extends GridLayout
             super(rawDropData, DDGridLayout.this);
 
             if (getData(Constants.DROP_DETAIL_ROW) != null) {
-                row = Integer
-                        .valueOf(getData(Constants.DROP_DETAIL_ROW).toString());
+                row = Integer.parseInt(getData(Constants.DROP_DETAIL_ROW).toString());
             } else {
                 row = -1;
             }
 
             if (getData(Constants.DROP_DETAIL_COLUMN) != null) {
-                column = Integer.valueOf(
-                        getData(Constants.DROP_DETAIL_COLUMN).toString());
+                column = Integer.parseInt(getData(Constants.DROP_DETAIL_COLUMN).toString());
             } else {
                 column = -1;
             }
@@ -191,7 +189,7 @@ public class DDGridLayout extends GridLayout
     /**
      * Contains the transferable details when dragging from a GridLayout.
      */
-    public class GridLayoutTransferable extends LayoutBoundTransferable {
+    public static class GridLayoutTransferable extends LayoutBoundTransferable {
 
         /**
          * Constructor
@@ -212,8 +210,7 @@ public class DDGridLayout extends GridLayout
          * @return The row index
          */
         public int getSourceRow() {
-            return Integer
-                    .valueOf(getData(Constants.DROP_DETAIL_ROW).toString());
+            return Integer.parseInt(getData(Constants.DROP_DETAIL_ROW).toString());
         }
 
         /**
@@ -222,8 +219,7 @@ public class DDGridLayout extends GridLayout
          * @return The column index
          */
         public int getSourceColumn() {
-            return Integer
-                    .valueOf(getData(Constants.DROP_DETAIL_COLUMN).toString());
+            return Integer.parseInt(getData(Constants.DROP_DETAIL_COLUMN).toString());
         }
     }
 

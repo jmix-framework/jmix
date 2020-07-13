@@ -27,6 +27,7 @@ import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.widget.JmixButton;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -77,13 +78,14 @@ public class WebButton extends WebAbstractComponent<JmixButton> implements Butto
     protected void afterActionPerformed() {
     }
 
+    @Nullable
     @Override
     public Action getAction() {
         return action;
     }
 
     @Override
-    public void setIcon(String icon) {
+    public void setIcon(@Nullable String icon) {
         this.icon = icon;
 
         // -icon style is added automatically on the client-side of JmixButton
@@ -96,7 +98,7 @@ public class WebButton extends WebAbstractComponent<JmixButton> implements Butto
     }
 
     @Override
-    public void setAction(Action action) {
+    public void setAction(@Nullable Action action) {
         if (action != this.action) {
             if (this.action != null) {
                 this.action.removeOwner(this);

@@ -38,6 +38,7 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.sys.TestIdManager;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -109,6 +110,7 @@ public class WindowBreadCrumbs extends CssLayout {
         }
     }
 
+    @Nullable
     protected Resource resolveIcon(BeanLocator beanLocator, JmixIcon icon) {
         String iconName = beanLocator.get(Icons.class).get(icon);
         return beanLocator.get(IconResolver.class).getIconResource(iconName);
@@ -116,7 +118,7 @@ public class WindowBreadCrumbs extends CssLayout {
 
     protected void onCloseWindowButtonClick(@SuppressWarnings("unused") MouseEventDetails meDetails) {
         Window window = getCurrentWindow();
-        if (!window.isCloseable()) {
+        if (window == null || !window.isCloseable()) {
             return;
         }
 
@@ -126,7 +128,7 @@ public class WindowBreadCrumbs extends CssLayout {
         }
     }
 
-    protected boolean isCloseWithCloseButtonPrevented(Window currentWindow) {
+    protected boolean isCloseWithCloseButtonPrevented(@Nullable Window currentWindow) {
         WebWindow webWindow = (WebWindow) currentWindow;
 
         if (webWindow != null) {
@@ -156,6 +158,7 @@ public class WindowBreadCrumbs extends CssLayout {
         return logoLayout;
     }
 
+    @Nullable
     public Window getCurrentWindow() {
         if (windows.isEmpty()) {
             return null;
@@ -211,7 +214,7 @@ public class WindowBreadCrumbs extends CssLayout {
         }
     }
 
-    public void setWindowNavigateHandler(WindowNavigateHandler handler) {
+    public void setWindowNavigateHandler(@Nullable WindowNavigateHandler handler) {
         this.windowNavigateHandler = handler;
     }
 
@@ -307,10 +310,11 @@ public class WindowBreadCrumbs extends CssLayout {
     public static class NavigationButton extends JmixButton {
         protected final Window window;
 
-        public NavigationButton(Window window) {
+        public NavigationButton(@Nullable Window window) {
             this.window = window;
         }
 
+        @Nullable
         public Window getWindow() {
             return window;
         }

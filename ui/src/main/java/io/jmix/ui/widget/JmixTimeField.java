@@ -25,6 +25,7 @@ import com.vaadin.ui.AbstractField;
 import elemental.json.Json;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -196,6 +197,7 @@ public class JmixTimeField extends AbstractField<LocalTime> {
         }
     }
 
+    @Nullable
     protected LocalTime parseValue(String text) {
         if (StringUtils.isNotEmpty(text) && !text.equals(placeholder)) {
             DateTimeFormatter dateTimeFormatter = getDateTimeFormatter();
@@ -205,7 +207,7 @@ public class JmixTimeField extends AbstractField<LocalTime> {
         }
     }
 
-    protected String formatValue(LocalTime value) {
+    protected String formatValue(@Nullable LocalTime value) {
         if (value == null) {
             return "";
         }

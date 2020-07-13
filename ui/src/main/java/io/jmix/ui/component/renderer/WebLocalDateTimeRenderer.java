@@ -26,6 +26,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -60,7 +61,7 @@ public class WebLocalDateTimeRenderer extends WebAbstractDataGrid.AbstractRender
         this(formatPattern, locale, "");
     }
 
-    public WebLocalDateTimeRenderer(String formatPattern, Locale locale, String nullRepresentation) {
+    public WebLocalDateTimeRenderer(String formatPattern, @Nullable Locale locale, String nullRepresentation) {
         super(nullRepresentation);
 
         this.formatPattern = formatPattern;

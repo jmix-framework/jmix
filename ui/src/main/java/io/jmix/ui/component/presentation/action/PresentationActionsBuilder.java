@@ -29,7 +29,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +94,7 @@ public class PresentationActionsBuilder {
     }
 
     @Nullable
-    protected AbstractAction buildActionByType(@Nonnull Object type) {
+    protected AbstractAction buildActionByType(Object type) {
         if (type instanceof Type) {
             switch ((Type) type) {
                 case SAVE: return buildSaveAction();
@@ -109,10 +108,12 @@ public class PresentationActionsBuilder {
     }
 
     @SuppressWarnings("unused")
+    @Nullable
     protected AbstractAction buildCustomAction(Object type) {
         return null;
     }
 
+    @Nullable
     protected AbstractAction buildSaveAction() {
         if (isGlobalPresentation())
             return new SavePresentationAction(table, settingsBinder);
@@ -123,12 +124,14 @@ public class PresentationActionsBuilder {
         return new SaveAsPresentationAction(table, settingsBinder);
     }
 
+    @Nullable
     protected AbstractAction buildEditAction() {
         if (isGlobalPresentation())
             return new EditPresentationAction(table, settingsBinder);
         return null;
     }
 
+    @Nullable
     protected AbstractAction buildDeleteAction() {
         if (isGlobalPresentation())
             return new DeletePresentationAction(table);

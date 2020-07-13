@@ -19,6 +19,7 @@ package io.jmix.ui.component;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class KeyCombination {
@@ -34,7 +35,8 @@ public class KeyCombination {
      * @param keyString string of type "Modifiers-Key", e.g. "Alt-N". Case-insensitive.
      * @return new instance
      */
-    public static KeyCombination create(String keyString) {
+    @Nullable
+    public static KeyCombination create(@Nullable String keyString) {
         if (keyString == null) {
             return null;
         }
@@ -84,7 +86,7 @@ public class KeyCombination {
         return ""; // sb.toString();
     }
 
-    public KeyCombination(Key key, Modifier... modifiers) {
+    public KeyCombination(@Nullable Key key, @Nullable Modifier... modifiers) {
         if (key == null && modifiers == null) {
             throw new IllegalArgumentException("Combination is empty");
         }
@@ -92,10 +94,12 @@ public class KeyCombination {
         this.modifiers = modifiers;
     }
 
+    @Nullable
     public Key getKey() {
         return key;
     }
 
+    @Nullable
     public Modifier[] getModifiers() {
         return modifiers;
     }

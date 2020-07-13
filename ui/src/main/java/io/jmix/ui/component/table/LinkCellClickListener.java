@@ -18,25 +18,23 @@ package io.jmix.ui.component.table;
 
 import io.jmix.core.*;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
 
 public class LinkCellClickListener implements Table.CellClickListener {
 
     protected Table table;
-    protected BeanLocator beanLocator;
     protected Metadata metadata;
 
     public LinkCellClickListener(Table table, BeanLocator beanLocator) {
         this.table = table;
-        this.beanLocator = beanLocator;
         this.metadata = beanLocator.get(Metadata.class);
     }
 
@@ -51,7 +49,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
                 return;
             }
         }
-
+        /*
         JmixEntity entity;
         Object value = EntityValues.getValueEx(rowItem, columnId);
 
@@ -61,7 +59,6 @@ public class LinkCellClickListener implements Table.CellClickListener {
             entity = rowItem;
         }
 
-        /*
         TODO: legacy-ui
         WindowManager wm;
         Window window = ComponentsHelper.getWindow(table);
@@ -187,6 +184,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
         }
     }
 
+    @Nullable
     protected Method findLinkInvokeMethod(Class cls, String methodName) {
         Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, JmixEntity.class, String.class);
         if (exactMethod != null) {

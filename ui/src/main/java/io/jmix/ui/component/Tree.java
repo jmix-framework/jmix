@@ -74,8 +74,9 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
     String getHierarchyProperty();
 
     @Override
+    @Nullable
     TreeItems<E> getItems();
-    void setItems(TreeItems<E> treeItems);
+    void setItems(@Nullable TreeItems<E> treeItems);
 
     /**
      * Assign action to be executed on double click inside a tree node.
@@ -128,7 +129,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
     /**
      * Set the icon provider for the tree.
      */
-    void setIconProvider(Function<? super E, String> iconProvider);
+    void setIconProvider(@Nullable Function<? super E, String> iconProvider);
 
     /**
      * Repaint UI representation of the tree including style providers and icon providers without refreshing the tree data.
@@ -238,7 +239,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      *
      * @param generator the details generator to set
      */
-    void setDetailsGenerator(Tree.DetailsGenerator<? super E> generator);
+    void setDetailsGenerator(@Nullable Tree.DetailsGenerator<? super E> generator);
 
     /**
      * Checks whether details are visible for the given item.

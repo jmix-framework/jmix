@@ -31,6 +31,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -168,7 +170,7 @@ public class MenuConfig {
         }
     }
 
-    protected void loadMenuItems(Element parentElement, MenuItem parentItem) {
+    protected void loadMenuItems(Element parentElement, @Nullable MenuItem parentItem) {
         for (Element element : parentElement.elements()) {
             MenuItem menuItem = null;
             MenuItem currentParentItem = parentItem;
@@ -234,7 +236,8 @@ public class MenuConfig {
         }
     }
 
-    protected MenuItem createMenuItem(Element element, MenuItem currentParentItem) {
+    @Nullable
+    protected MenuItem createMenuItem(Element element, @Nullable MenuItem currentParentItem) {
         String id = element.attributeValue("id");
 
         String idFromActions;
@@ -288,7 +291,7 @@ public class MenuConfig {
         return menuItem;
     }
 
-    protected void checkDuplicateAction(String menuItemId, String... actionDefinition) {
+    protected void checkDuplicateAction(@Nullable String menuItemId, String... actionDefinition) {
         boolean actionDefined = true;
         for (String s : actionDefinition) {
             actionDefined &= StringUtils.isNotEmpty(s);
@@ -333,7 +336,8 @@ public class MenuConfig {
         }
     }
 
-    protected String getIconPath(String icon) {
+    @Nullable
+    protected String getIconPath(@Nullable String icon) {
         if (icon == null || icon.isEmpty()) {
             return null;
         }
@@ -353,11 +357,12 @@ public class MenuConfig {
         return iconPath;
     }
 
-    protected String loadResourceString(String caption) {
+    protected String loadResourceString(@Nullable String caption) {
         return messageTools.loadString(caption);
     }
 
-    protected String loadThemeString(String value) {
+    @Nullable
+    protected String loadThemeString(@Nullable String value) {
         if (value != null && value.startsWith(ThemeConstants.PREFIX)) {
             value = themeConstantsManager.getConstants()
                     .get(value.substring(ThemeConstants.PREFIX.length()));
@@ -365,7 +370,7 @@ public class MenuConfig {
         return value;
     }
 
-    protected void addItem(List<MenuItem> items, MenuItem menuItem, MenuItem beforeItem, boolean before) {
+    protected void addItem(List<MenuItem> items, @Nullable MenuItem menuItem, @Nullable MenuItem beforeItem, boolean before) {
         if (beforeItem == null) {
             items.add(menuItem);
         } else {
@@ -377,6 +382,7 @@ public class MenuConfig {
         }
     }
 
+    @Nullable
     protected MenuItem findItem(String id, MenuItem item) {
         if (id.equals(item.getId()))
             return item;

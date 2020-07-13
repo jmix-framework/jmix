@@ -83,7 +83,7 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
 
     @Override
     public MenuItem createMenuItem(String id) {
-        return createMenuItem(id, null, null, null);
+        return createMenuItem(id, id, null, null);
     }
 
     @Override
@@ -260,11 +260,12 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
         protected String icon;
         protected boolean separator;
 
-        public MenuItemImpl(WebAppMenu menu, String id) {
+        public MenuItemImpl(WebAppMenu menu, @Nullable String id) {
             this.menu = menu;
             this.id = id;
         }
 
+        @Nullable
         @Override
         public String getId() {
             return id;
@@ -303,13 +304,14 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
             delegateItem.setDescription(description);
         }
 
+        @Nullable
         @Override
         public String getIcon() {
             return icon;
         }
 
         @Override
-        public void setIcon(String icon) {
+        public void setIcon(@Nullable String icon) {
             this.icon = icon;
 
             if (icon != null) {
@@ -341,13 +343,14 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
             delegateItem.setStyleName(styleName);
         }
 
+        @Nullable
         @Override
         public Consumer<MenuItem> getCommand() {
             return command;
         }
 
         @Override
-        public void setCommand(Consumer<MenuItem> command) {
+        public void setCommand(@Nullable Consumer<MenuItem> command) {
             this.command = command;
 
             if (command != null) {

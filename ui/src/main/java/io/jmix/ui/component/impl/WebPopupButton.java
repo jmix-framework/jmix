@@ -327,7 +327,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
         });
     }
 
-    protected void setPopupButtonIcon(Button button, String icon) {
+    protected void setPopupButtonIcon(Button button, @Nullable String icon) {
         if (!StringUtils.isEmpty(icon)) {
             Resource iconResource = getIconResource(icon);
             button.setIcon(iconResource);
@@ -375,8 +375,8 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
     }
 
     @Override
-    public void removeAction(@Nullable Action action) {
-        if (action != null && actionOrder.remove(action)) {
+    public void removeAction(Action action) {
+        if (actionOrder.remove(action)) {
             action.removePropertyChangeListener(actionPropertyChangeListener);
             Button button = actionButtons.remove(action);
 
@@ -387,7 +387,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
     }
 
     @Override
-    public void removeAction(@Nullable String id) {
+    public void removeAction(String id) {
         Action action = getAction(id);
         if (action != null) {
             removeAction(action);

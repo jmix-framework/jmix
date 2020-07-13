@@ -89,11 +89,7 @@ public class DefaultHorizontalLayoutDropHandler
         }
 
         // Add component
-        if (idx >= 0) {
-            layout.addComponent(comp, idx);
-        } else {
-            layout.addComponent(comp, 0);
-        }
+        layout.addComponent(comp, Math.max(idx, 0));
 
         // Add component alignment if given
         if (dropAlignment != null) {

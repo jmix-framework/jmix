@@ -19,6 +19,7 @@ package io.jmix.ui.widget.client.verticalmenu;
 import com.vaadin.shared.communication.ClientRpc;
 import elemental.json.JsonArray;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public interface JmixSideMenuClientRpc extends ClientRpc {
@@ -34,7 +35,7 @@ public interface JmixSideMenuClientRpc extends ClientRpc {
      *
      * @param itemId target item id
      */
-    void selectItem(String itemId);
+    void selectItem(@Nullable String itemId);
 
     /**
      * Update badges of items

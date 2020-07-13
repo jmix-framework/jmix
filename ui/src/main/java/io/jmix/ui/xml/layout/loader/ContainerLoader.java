@@ -22,6 +22,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,6 +113,7 @@ public abstract class ContainerLoader<T extends Component> extends AbstractCompo
         }
     }
 
+    @Nullable
     protected String find(String[] parts, String name) {
         String prefix = name + "=";
 

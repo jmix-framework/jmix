@@ -25,7 +25,6 @@ import org.owasp.html.PolicyFactory;
 import org.owasp.html.Sanitizers;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
@@ -188,7 +187,6 @@ public class HtmlSanitizer {
     /**
      * @return a policy factory
      */
-    @Nonnull
     public PolicyFactory getPolicyFactory() {
         return policyFactory;
     }
@@ -198,7 +196,7 @@ public class HtmlSanitizer {
      *
      * @param policyFactory a policy factory
      */
-    public void setPolicyFactory(@Nonnull PolicyFactory policyFactory) {
+    public void setPolicyFactory(PolicyFactory policyFactory) {
         this.policyFactory = policyFactory;
     }
 

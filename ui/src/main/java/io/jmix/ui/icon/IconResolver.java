@@ -18,6 +18,8 @@ package io.jmix.ui.icon;
 
 import com.vaadin.server.Resource;
 
+import javax.annotation.Nullable;
+
 /**
  * A facade bean that is intended for resolving icon resources by the given {@code iconPath} using
  * all available {@link IconProvider} beans.
@@ -31,5 +33,6 @@ public interface IconResolver {
      * @param iconPath icon path
      * @return {@link Resource} instance
      */
-    Resource getIconResource(String iconPath);
+    @Nullable
+    Resource getIconResource(@Nullable String iconPath);
 }

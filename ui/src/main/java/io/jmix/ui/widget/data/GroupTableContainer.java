@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.widget.data;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 public interface GroupTableContainer extends TableSortableContainer {
@@ -28,8 +29,10 @@ public interface GroupTableContainer extends TableSortableContainer {
 
     Collection<?> getChildren(Object id);
 
+    @Nullable
     Object getGroupProperty(Object id);
 
+    @Nullable
     Object getGroupPropertyValue(Object id);
 
     Collection<?> getGroupItemIds(Object id);

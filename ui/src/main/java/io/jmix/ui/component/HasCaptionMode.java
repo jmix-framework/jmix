@@ -19,6 +19,7 @@ package io.jmix.ui.component;
 import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -36,6 +37,7 @@ public interface HasCaptionMode {
      *
      * @deprecated use {@link HasOptionCaptionProvider#getOptionCaptionProvider()} instead
      */
+    @Nullable
     @Deprecated
     default CaptionMode getCaptionMode() {
         Function provider = ((HasOptionCaptionProvider) this).getOptionCaptionProvider();
@@ -55,7 +57,7 @@ public interface HasCaptionMode {
      * @deprecated use {@link HasOptionCaptionProvider#setOptionCaptionProvider(Function)} instead
      */
     @Deprecated
-    default void setCaptionMode(CaptionMode captionMode) {
+    default void setCaptionMode(@Nullable CaptionMode captionMode) {
         Function provider = ((HasOptionCaptionProvider) this).getOptionCaptionProvider();
 
         String captionProperty = null;
@@ -76,6 +78,7 @@ public interface HasCaptionMode {
      *
      * @deprecated use {@link HasOptionCaptionProvider#getOptionCaptionProvider()} instead
      */
+    @Nullable
     @Deprecated
     default String getCaptionProperty() {
         Function provider = ((HasOptionCaptionProvider) this).getOptionCaptionProvider();
@@ -95,7 +98,7 @@ public interface HasCaptionMode {
      * @deprecated use {@link HasOptionCaptionProvider#setOptionCaptionProvider(Function)} instead
      */
     @Deprecated
-    default void setCaptionProperty(String captionProperty) {
+    default void setCaptionProperty(@Nullable String captionProperty) {
         CaptionMode captionMode = null;
 
         Function provider = ((HasOptionCaptionProvider) this).getOptionCaptionProvider();

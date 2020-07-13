@@ -28,6 +28,7 @@ import com.vaadin.ui.*;
 import com.vaadin.v7.event.FieldEvents;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -154,6 +155,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         super.removeComponent(((TabImpl) tab));
     }
 
+    @Nullable
     protected TabImpl getContentTab(Component tabContent) {
         return (TabImpl) tabToContentMap.get(tabContent);
     }
@@ -164,7 +166,9 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
 
     protected void _closeTab(Component tabContent) {
         CloseHandler closeHandler = ((TabImpl) tabs.get(tabContent)).getCloseHandler();
-        closeHandler.onTabClose(this, tabContent);
+        if (closeHandler != null) {
+            closeHandler.onTabClose(this, tabContent);
+        }
     }
 
     @Override
@@ -172,13 +176,11 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         return behaviour;
     }
 
-    public Tab addTab(Component c, String caption, Resource icon) {
+    public Tab addTab(Component c, @Nullable String caption, @Nullable Resource icon) {
         return addTab(c, caption, icon, tabComponents.size());
     }
 
-    public Tab addTab(Component tabComponent, String caption, Resource icon, int position) {
-        if (tabComponent == null)
-            return null;
+    public Tab addTab(Component tabComponent, @Nullable String caption, @Nullable Resource icon, int position) {
 
         TabImpl tab = new TabImpl(tabComponent);
 
@@ -201,7 +203,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         return tab;
     }
 
-    protected void setSelected(Component component) {
+    protected void setSelected(@Nullable Component component) {
         if (component == null || component == selected)
             return;
 
@@ -427,9 +429,10 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
 
         String getId();
 
+        @Nullable
         Resource getIcon();
 
-        void setIcon(Resource icon);
+        void setIcon(@Nullable Resource icon);
 
         String getDescription();
 
@@ -484,11 +487,12 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
             setPrimaryStyleName(MANAGED_TAB_STYLENAME);
         }
 
+        @Nullable
         protected CloseHandler getCloseHandler() {
             return closeHandler;
         }
 
-        protected void setCloseHandler(CloseHandler closeHandler) {
+        protected void setCloseHandler(@Nullable CloseHandler closeHandler) {
             this.closeHandler = closeHandler;
         }
 
@@ -559,10 +563,11 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         }
 
         @Override
-        public void setIcon(Resource icon) {
+        public void setIcon(@Nullable Resource icon) {
             tabbarTab.setIcon(icon);
         }
 
+        @Nullable
         @Override
         public Resource getIcon() {
             return tabbarTab.getIcon();
@@ -612,7 +617,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         }
 
         @Override
-        public void setTabDescription(String tabId, String description) {
+        public void setTabDescription(String tabId, @Nullable String description) {
             Tab tab = getTabNN(tabId);
             ((TabImpl) tab).getTabbarTab()
                     .setDescription(description);
@@ -624,7 +629,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
         }
 
         @Override
-        public void setTabIcon(String tabId, Resource icon) {
+        public void setTabIcon(String tabId, @Nullable Resource icon) {
             getTabNN(tabId).setIcon(icon);
         }
 
@@ -699,6 +704,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
             return tabSheet.tabbedHeader.getTab(position).getId();
         }
 
+        @Nullable
         @Override
         public Component getSelectedTab() {
             return tabSheet.selected != null ?
@@ -731,6 +737,7 @@ public class JmixManagedTabSheet extends JmixTabSheetCssLayout
             tabSheet.removeComponent(component);
         }
 
+        @Nullable
         @Override
         public Component getPreviousTab(Component tab) {
             return tabSheet.tabbedHeader.getPreviousTab(tab);

@@ -21,6 +21,7 @@ import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.MessageTools;
 import io.jmix.core.security.Security;
 import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.AppMenu;
@@ -32,6 +33,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -183,6 +186,7 @@ public class MenuBuilder {
         }
     }
 
+    @Nullable
     protected Consumer<AppMenu.MenuItem> createMenuBarCommand(final MenuItem item) {
         if (CollectionUtils.isNotEmpty(item.getChildren()) || item.isMenu())     //check item is menu
         {
@@ -215,7 +219,7 @@ public class MenuBuilder {
     }
 
     protected void assignStyleName(AppMenu.MenuItem menuItem, MenuItem conf) {
-        if (conf.getStylename() != null) {
+        if (StringUtils.isNotEmpty(conf.getStylename())) {
             menuItem.setStyleName("ms " + conf.getStylename());
         }
     }
@@ -245,10 +249,14 @@ public class MenuBuilder {
         @Override
         public void accept(AppMenu.MenuItem menuItem) {
             AppMenu menu = menuItem.getMenu();
-            FrameOwner frameOwner = menu.getFrame().getFrameOwner();
-
-            MenuItemCommand command = menuItemCommands.create(frameOwner, item);
-            command.run();
+            Frame frame = menu.getFrame();
+            if (frame != null) {
+                FrameOwner frameOwner = frame.getFrameOwner();
+                MenuItemCommand command = menuItemCommands.create(frameOwner, item);
+                if (command != null) {
+                    command.run();
+                }
+            }
         }
     }
 }

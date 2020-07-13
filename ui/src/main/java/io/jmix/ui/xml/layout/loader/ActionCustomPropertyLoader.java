@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -59,7 +60,8 @@ public class ActionCustomPropertyLoader {
         }
     }
 
-    protected Object parseStringValue(String stringValue, Type propType, Type genericParameterType) {
+    @Nullable
+    protected Object parseStringValue(String stringValue, Type propType, @Nullable Type genericParameterType) {
         Object value = null;
 
         if (String.class == propType) {
@@ -115,6 +117,7 @@ public class ActionCustomPropertyLoader {
         return org.springframework.util.NumberUtils.parseNumber(stringValue, numberType);
     }
 
+    @Nullable
     private Object parseList(String stringValue, Type genericParameterType) {
         if (genericParameterType instanceof ParameterizedType) {
             Type itemType = ((ParameterizedType) genericParameterType).getActualTypeArguments()[0];
@@ -125,5 +128,4 @@ public class ActionCustomPropertyLoader {
         }
         return null;
     }
-
 }

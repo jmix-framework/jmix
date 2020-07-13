@@ -45,6 +45,7 @@ import io.jmix.ui.widget.data.TreeTableContainer;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -359,7 +360,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     @Override
     public Object[] getEditableColumns() {
         if (editableColumns == null) {
-            return null;
+            editableColumns = new LinkedList<>();
         }
         return editableColumns.toArray();
     }
@@ -961,7 +962,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     }
 
     @Override
-    public void setColumnDescription(Object columnId, String description) {
+    public void setColumnDescription(Object columnId, @Nullable String description) {
         if (description != null) {
             if (columnDescriptions == null) {
                 columnDescriptions = new HashMap<>();
@@ -977,6 +978,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
         }
     }
 
+    @Nullable
     @Override
     public String getAggregationDescription(Object columnId) {
         if (aggregationTooltips != null) {
@@ -986,7 +988,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     }
 
     @Override
-    public void setAggregationDescription(Object columnId, String tooltip) {
+    public void setAggregationDescription(Object columnId, @Nullable String tooltip) {
         if (tooltip != null) {
             if (aggregationTooltips == null) {
                 aggregationTooltips = new HashMap<>();
@@ -1003,6 +1005,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
         }
     }
 
+    @Nullable
     @Override
     public String getColumnDescription(Object columnId) {
         if (columnDescriptions != null) {

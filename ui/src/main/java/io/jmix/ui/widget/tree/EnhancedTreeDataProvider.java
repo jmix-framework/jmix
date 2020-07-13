@@ -16,11 +16,13 @@
 
 package io.jmix.ui.widget.tree;
 
+import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public interface EnhancedTreeDataProvider<T> {
 
     Stream<T> getItems();
 
+    @Nullable
     T getParent(T item);
 }

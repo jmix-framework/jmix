@@ -97,13 +97,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         return false;
     }
 
+    @Nullable
     @Override
     public Frame getFrame() {
         return frame;
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         this.frame = frame;
 
         if (frame instanceof FrameImplementation) {
@@ -185,13 +186,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         }
     }
 
+    @Nullable
     @Override
     public Component getParent() {
         return parent;
     }
 
     @Override
-    public void setParent(Component parent) {
+    public void setParent(@Nullable Component parent) {
         if (this.parent != parent) {
             if (isAttached()) {
                 detached();
@@ -306,13 +308,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         return icon;
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return component.getCaption();
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         if (isCaptionAsHtml()) {
             caption = sanitize(caption);
         }
@@ -334,13 +337,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         }
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return component.getDescription();
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         if (isDescriptionAsHtml()) {
             description = sanitize(description);
         }
@@ -365,7 +369,7 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     }
 
     @Override
-    public void setIcon(String icon) {
+    public void setIcon(@Nullable String icon) {
         this.icon = icon;
 
         if (StringUtils.isNotEmpty(icon)) {
@@ -464,13 +468,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         return component;
     }
 
+    @Nullable
     @Override
     public Element getXmlDescriptor() {
         return element;
     }
 
     @Override
-    public void setXmlDescriptor(Element element) {
+    public void setXmlDescriptor(@Nullable Element element) {
         this.element = element;
     }
 
@@ -577,7 +582,7 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
         return false;
     }
 
-    protected void setValidationError(String errorMessage) {
+    protected void setValidationError(@Nullable String errorMessage) {
         if (getComposition() instanceof AbstractComponent) {
             AbstractComponent composition = (AbstractComponent) getComposition();
             if (errorMessage == null) {

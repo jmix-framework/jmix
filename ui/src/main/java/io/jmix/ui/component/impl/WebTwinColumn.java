@@ -29,6 +29,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -72,7 +74,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     }
 
     @Override
-    public void setOptions(Options<V> options) {
+    public void setOptions(@Nullable Options<V> options) {
         if (this.optionsBinding != null) {
             this.optionsBinding.unbind();
             this.optionsBinding = null;
@@ -105,7 +107,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     }
 
     @Override
-    protected Set<V> convertToPresentation(Collection<V> modelValue) throws ConversionException {
+    protected Set<V> convertToPresentation(@Nullable Collection<V> modelValue) throws ConversionException {
         if (modelValue instanceof Set) {
             return (Set<V>) modelValue;
         }
@@ -115,7 +117,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     }
 
     @Override
-    protected Collection<V> convertToModel(Set<V> componentRawValue) throws ConversionException {
+    protected Collection<V> convertToModel(@Nullable Set<V> componentRawValue) throws ConversionException {
         Stream<V> items;
         if (optionsBinding == null) {
             items = Stream.empty();
@@ -142,13 +144,14 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
         return items.collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
+    @Nullable
     @Override
     public Options<V> getOptions() {
         return optionsBinding != null ? optionsBinding.getSource() : null;
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super V, String> captionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super V, String> captionProvider) {
         if (this.optionCaptionProvider != captionProvider) {
             this.optionCaptionProvider = captionProvider;
 
@@ -156,7 +159,8 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
         }
     }
 
-    protected String generateItemCaption(V item) {
+    @Nullable
+    protected String generateItemCaption(@Nullable V item) {
         if (item == null) {
             return null;
         }
@@ -177,6 +181,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
         return metadataTools.format(item);
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;

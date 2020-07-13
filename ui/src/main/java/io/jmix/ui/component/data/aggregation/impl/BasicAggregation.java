@@ -18,6 +18,7 @@ package io.jmix.ui.component.data.aggregation.impl;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
@@ -39,11 +40,13 @@ public class BasicAggregation<T> implements Aggregation<T> {
         throw new UnsupportedOperationException();
     }
 
+    @Nullable
     @Override
     public T min(Collection<T> items) {
         throw new UnsupportedOperationException();
     }
 
+    @Nullable
     @Override
     public T max(Collection<T> items) {
         throw new UnsupportedOperationException();

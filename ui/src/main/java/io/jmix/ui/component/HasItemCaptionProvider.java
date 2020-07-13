@@ -19,6 +19,7 @@ package io.jmix.ui.component;
 import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -33,11 +34,12 @@ public interface HasItemCaptionProvider<I> extends Component {
      *
      * @param itemCaptionProvider caption provider for item
      */
-    void setItemCaptionProvider(Function<? super I, String> itemCaptionProvider);
+    void setItemCaptionProvider(@Nullable Function<? super I, String> itemCaptionProvider);
 
     /**
      * @return caption provider for item
      */
+    @Nullable
     Function<? super I, String> getItemCaptionProvider();
 
     /**
@@ -46,6 +48,7 @@ public interface HasItemCaptionProvider<I> extends Component {
      * @deprecated use {@link HasItemCaptionProvider#getItemCaptionProvider} instead
      */
     @Deprecated
+    @Nullable
     default CaptionMode getCaptionMode() {
         Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();
 
@@ -64,7 +67,7 @@ public interface HasItemCaptionProvider<I> extends Component {
      * @deprecated use {@link HasItemCaptionProvider#setItemCaptionProvider(Function)} instead
      */
     @Deprecated
-    default void setCaptionMode(CaptionMode captionMode) {
+    default void setCaptionMode(@Nullable CaptionMode captionMode) {
         Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();
 
         String captionProperty = null;
@@ -86,6 +89,7 @@ public interface HasItemCaptionProvider<I> extends Component {
      * @deprecated use {@link HasItemCaptionProvider#getItemCaptionProvider} instead
      */
     @Deprecated
+    @Nullable
     default String getCaptionProperty() {
         Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();
 
@@ -104,7 +108,7 @@ public interface HasItemCaptionProvider<I> extends Component {
      * @deprecated use {@link HasItemCaptionProvider#setItemCaptionProvider(Function)} instead
      */
     @Deprecated
-    default void setCaptionProperty(String captionProperty) {
+    default void setCaptionProperty(@Nullable String captionProperty) {
         CaptionMode captionMode = null;
 
         Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();

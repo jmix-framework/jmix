@@ -161,7 +161,8 @@ public class JmixUidlWriter extends UidlWriter {
         return resolver.translateToWebPath(webJarPath);
     }
 
-    protected String getWebJarStaticResourcePath(String overridePath, String resource) {
+    @Nullable
+    protected String getWebJarStaticResourcePath(@Nullable String overridePath, String resource) {
         if (overridePath == null || overridePath.isEmpty()) {
             return null;
         }

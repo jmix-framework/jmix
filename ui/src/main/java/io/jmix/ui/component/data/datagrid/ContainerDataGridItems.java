@@ -95,11 +95,13 @@ public class ContainerDataGridItems<E extends JmixEntity>
         return BindingState.ACTIVE;
     }
 
+    @Nullable
     @Override
     public Object getItemId(E item) {
         return EntityValues.getId(item);
     }
 
+    @Nullable
     @Override
     public E getItem(@Nullable Object itemId) {
         return itemId == null ? null : container.getItemOrNull(itemId);

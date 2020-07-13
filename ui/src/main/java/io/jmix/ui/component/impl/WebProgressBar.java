@@ -19,6 +19,8 @@ package io.jmix.ui.component.impl;
 import io.jmix.ui.component.ProgressBar;
 import io.jmix.ui.component.data.ConversionException;
 
+import javax.annotation.Nullable;
+
 /**
  * Web realization of progress bar depending on vaadin {@link ProgressBar} component.
  * <br>
@@ -36,16 +38,16 @@ public class WebProgressBar extends WebAbstractViewComponent<com.vaadin.ui.Progr
     }
 
     @Override
-    protected void setValueToPresentation(Float value) {
+    protected void setValueToPresentation(@Nullable Float value) {
         if (hasValidationError()) {
             setValidationError(null);
         }
 
-        component.setValue(value);
+        component.setValue(value != null ? value : DEFAULT_VALUE);
     }
 
     @Override
-    protected Float convertToPresentation(Double modelValue) throws ConversionException {
+    protected Float convertToPresentation(@Nullable Double modelValue) throws ConversionException {
         return modelValue != null ? modelValue.floatValue() : DEFAULT_VALUE;
     }
 

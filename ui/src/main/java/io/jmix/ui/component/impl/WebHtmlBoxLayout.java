@@ -108,7 +108,7 @@ public class WebHtmlBoxLayout extends WebAbstractComponent<JmixCustomLayout> imp
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {

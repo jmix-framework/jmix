@@ -17,7 +17,6 @@
 package io.jmix.ui;
 
 import com.vaadin.spring.annotation.VaadinSessionScope;
-import io.jmix.core.CoreProperties;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.LoginException;
 import io.jmix.core.security.UserRepository;
@@ -40,9 +39,6 @@ public class JmixApp extends App {
 
     @Autowired
     protected UserRepository userRepository;
-
-    @Autowired
-    protected CoreProperties coreProperties;
 
     @Override
     public void loginOnStart() throws LoginException {

@@ -61,7 +61,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     }
 
     @Override
-    public void setDataContext(DataContext dataContext) {
+    public void setDataContext(@Nullable DataContext dataContext) {
         this.dataContext = dataContext;
     }
 

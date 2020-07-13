@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -42,7 +41,6 @@ public interface OrderedContainer extends ComponentContainer {
      * @param index component index
      * @return the component at the given index. Throws exception if not found.
      */
-    @Nonnull
     default Component getComponentNN(int index) {
         Component component = getComponent(index);
         if (component == null) {

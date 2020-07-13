@@ -94,8 +94,7 @@ public class DDFormLayout extends FormLayout
             // Get over which component (if any) the drop was made and the
             // index of it
             if (getData(Constants.DROP_DETAIL_TO) != null) {
-                index = Integer
-                        .valueOf(getData(Constants.DROP_DETAIL_TO).toString());
+                index = Integer.parseInt(getData(Constants.DROP_DETAIL_TO).toString());
                 if (index >= 0 && index < components.size()) {
                     over = components.get(index);
                 }

@@ -26,6 +26,8 @@ import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 
+import javax.annotation.Nullable;
+
 /**
  * A renderer for UI components.
  */
@@ -39,6 +41,7 @@ public class WebComponentRenderer<T extends JmixEntity> extends WebAbstractDataG
         return new ComponentRenderer();
     }
 
+    @Nullable
     @Override
     public ValueProvider<Component, com.vaadin.ui.Component> getPresentationValueProvider() {
         return (ValueProvider<Component, com.vaadin.ui.Component>) value ->

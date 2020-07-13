@@ -25,6 +25,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Label;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements PopupView {
@@ -97,7 +98,7 @@ public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (popupContent != null && frame != null) {
@@ -220,13 +221,13 @@ public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         super.setCaption(caption);
         setIconStyle();
     }
 
     @Override
-    public void setIcon(String icon) {
+    public void setIcon(@Nullable String icon) {
         super.setIcon(icon);
         setIconStyle();
     }

@@ -18,10 +18,14 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.action.Action;
 
+import javax.annotation.Nullable;
+
 /**
  * Component supporting an action.
  */
 public interface ActionOwner {
+    @Nullable
     Action getAction();
-    void setAction(Action action);
+
+    void setAction(@Nullable Action action);
 }

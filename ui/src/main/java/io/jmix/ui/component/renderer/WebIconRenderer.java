@@ -31,6 +31,8 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 @Component(DataGrid.IconRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebIconRenderer<T extends JmixEntity>
@@ -57,6 +59,7 @@ public class WebIconRenderer<T extends JmixEntity>
         return new JmixIconRenderer();
     }
 
+    @Nullable
     @Override
     public ValueProvider<Icons.Icon, Resource> getPresentationValueProvider() {
         return (ValueProvider<Icons.Icon, Resource>) icon -> {

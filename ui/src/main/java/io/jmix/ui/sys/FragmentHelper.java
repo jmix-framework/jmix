@@ -34,7 +34,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
@@ -121,7 +120,6 @@ public class FragmentHelper {
                 return src;
             }
 
-            @Nonnull
             @Override
             public Class<? extends FrameOwner> getControllerClass(WindowInfo wi) {
                 return fragmentClass;

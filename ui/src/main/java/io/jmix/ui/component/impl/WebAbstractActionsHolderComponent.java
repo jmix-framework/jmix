@@ -133,7 +133,7 @@ public abstract class WebAbstractActionsHolderComponent<T extends com.vaadin.ui.
         button.setCaption(caption);
     }
 
-    protected void setContextMenuButtonIcon(JmixButton button, String icon) {
+    protected void setContextMenuButtonIcon(JmixButton button, @Nullable String icon) {
         if (!StringUtils.isEmpty(icon)) {
             Resource iconResource = getIconResource(icon);
             button.setIcon(iconResource);
@@ -227,23 +227,21 @@ public abstract class WebAbstractActionsHolderComponent<T extends com.vaadin.ui.
     protected abstract JmixButton createContextMenuButton();
 
     @Override
-    public void removeAction(@Nullable Action action) {
+    public void removeAction(Action action) {
         if (actionList.remove(action)) {
             shortcutsDelegate.removeAction(action);
 
-            if (action != null) {
-                action.removePropertyChangeListener(actionPropertyChangeListener);
+            action.removePropertyChangeListener(actionPropertyChangeListener);
 
-                Button button = actionButtons.remove(action);
-                if (button != null) {
-                    contextMenuPopup.removeComponent(button);
-                }
+            Button button = actionButtons.remove(action);
+            if (button != null) {
+                contextMenuPopup.removeComponent(button);
             }
         }
     }
 
     @Override
-    public void removeAction(@Nullable String id) {
+    public void removeAction(String id) {
         Action action = getAction(id);
         if (action != null) {
             removeAction(action);

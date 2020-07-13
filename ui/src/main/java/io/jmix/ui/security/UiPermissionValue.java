@@ -16,6 +16,8 @@
 
 package io.jmix.ui.security;
 
+import javax.annotation.Nullable;
+
 /**
  * Possible values of UI permission
  */
@@ -35,6 +37,7 @@ public enum UiPermissionValue {
         return value;
     }
 
+    @Nullable
     public static UiPermissionValue fromId(int id) {
         for (UiPermissionValue uiPermissionValue : values()) {
             if (id == uiPermissionValue.value)

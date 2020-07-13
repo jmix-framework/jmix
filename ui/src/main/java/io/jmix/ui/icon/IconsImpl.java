@@ -91,6 +91,7 @@ public class IconsImpl implements Icons {
         }
     }
 
+    @Nullable
     @Override
     public String get(@Nullable Icon icon) {
         if (icon == null)
@@ -99,6 +100,7 @@ public class IconsImpl implements Icons {
         return get(icon.name());
     }
 
+    @Nullable
     @Override
     public String get(@Nullable String icon) {
         if (StringUtils.isEmpty(icon))

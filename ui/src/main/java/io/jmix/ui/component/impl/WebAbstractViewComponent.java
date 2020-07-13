@@ -24,6 +24,7 @@ import io.jmix.ui.component.data.*;
 import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.data.value.ValueBinder;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class WebAbstractViewComponent<T extends com.vaadin.ui.Component, P, V>
@@ -32,13 +33,14 @@ public abstract class WebAbstractViewComponent<T extends com.vaadin.ui.Component
     protected V internalValue;
     protected ValueBinding<V> valueBinding;
 
+    @Nullable
     @Override
     public ValueSource<V> getValueSource() {
         return valueBinding != null ? valueBinding.getSource() : null;
     }
 
     @Override
-    public void setValueSource(ValueSource<V> valueSource) {
+    public void setValueSource(@Nullable ValueSource<V> valueSource) {
         if (this.valueBinding != null) {
             valueBinding.unbind();
 
@@ -87,13 +89,14 @@ public abstract class WebAbstractViewComponent<T extends com.vaadin.ui.Component
         return getEventHub().subscribe(ValueChangeEvent.class, (Consumer) listener);
     }
 
+    @Nullable
     @Override
     public V getValue() {
         return internalValue;
     }
 
     @Override
-    public void setValue(V value) {
+    public void setValue(@Nullable V value) {
         setValueToPresentation(convertToPresentation(value));
 
         V oldValue = internalValue;
@@ -105,14 +108,15 @@ public abstract class WebAbstractViewComponent<T extends com.vaadin.ui.Component
         }
     }
 
-    protected abstract void setValueToPresentation(P value);
+    protected abstract void setValueToPresentation(@Nullable P value);
 
     @SuppressWarnings("unchecked")
-    protected P convertToPresentation(V modelValue) throws ConversionException {
+    @Nullable
+    protected P convertToPresentation(@Nullable V modelValue) throws ConversionException {
         return (P) modelValue;
     }
 
-    protected boolean fieldValueEquals(V value, V oldValue) {
+    protected boolean fieldValueEquals(@Nullable V value, @Nullable V oldValue) {
         return EntityValues.propertyValueEquals(oldValue, value);
     }
 }

@@ -35,7 +35,7 @@ public class EmptyTreeDataGridItems<E extends JmixEntity> extends EmptyDataGridI
     }
 
     @Override
-    public Stream<E> getChildren(E item) {
+    public Stream<E> getChildren(@Nullable E item) {
         return Stream.empty();
     }
 

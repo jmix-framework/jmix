@@ -97,6 +97,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * @deprecated use {@link TokenList#getLookupFieldOptionsCaptionProvider()} instead
      */
     @Deprecated
+    @Nullable
     String getOptionsCaptionProperty();
 
     /**
@@ -107,7 +108,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * @deprecated use {@link TokenList#setLookupFieldOptionsCaptionProvider(Function)} instead
      */
     @Deprecated
-    void setOptionsCaptionProperty(String optionsCaptionProperty);
+    void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty);
 
     /**
      * Sets whether options should be refreshed after lookup window closing.
@@ -126,6 +127,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      */
     @SuppressWarnings("rawtypes")
     @Deprecated
+    @Nullable
     default List getOptionsList() {
         Options<V> options = getOptions();
         if (options instanceof ListEntityOptions) {
@@ -148,6 +150,7 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Deprecated
+    @Nullable
     default Map<String, ?> getOptionsMap() {
         Options options = getOptions();
         if (options instanceof MapEntityOptions) {

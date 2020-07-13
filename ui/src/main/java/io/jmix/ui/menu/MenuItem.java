@@ -21,6 +21,7 @@ import io.jmix.ui.component.KeyCombination;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class MenuItem {
     private KeyCombination shortcut;
     private boolean isMenu = false;
 
-    public MenuItem(MenuItem parent, String id) {
+    public MenuItem(@Nullable MenuItem parent, String id) {
         this.parent = parent;
         this.id = id;
     }
@@ -66,6 +67,7 @@ public class MenuItem {
     }
 
     /** Parent item. Null if this is root item. */
+    @Nullable
     public MenuItem getParent() {
         return parent;
     }
@@ -139,28 +141,30 @@ public class MenuItem {
              return true;
         } else {
             boolean screenPermitted = security.isScreenPermitted(id);
+            /* todo security
             if (screenPermitted) {
                 Element permissionsElem = descriptor.element("permissions");
                 if (permissionsElem != null) {
                     for (Element element : permissionsElem.elements("permission")) {
                         PermissionType type = PermissionType.valueOf(element.attributeValue("type"));
                         String target = element.attributeValue("target");
-                        // todo security
-                        // screenPermitted = security.isPermitted(type, target);
+                        screenPermitted = security.isPermitted(type, target);
                         if (!screenPermitted)
                             break;
                     }
                 }
             }
+             */
             return screenPermitted;
         }
     }
 
+    @Nullable
     public KeyCombination getShortcut() {
         return shortcut;
     }
 
-    public void setShortcut(KeyCombination shortcut) {
+    public void setShortcut(@Nullable KeyCombination shortcut) {
         this.shortcut = shortcut;
     }
 
@@ -172,11 +176,12 @@ public class MenuItem {
         this.separator = separator;
     }
 
+    @Nullable
     public String getIcon() {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(@Nullable String icon) {
         this.icon = icon;
     }
 

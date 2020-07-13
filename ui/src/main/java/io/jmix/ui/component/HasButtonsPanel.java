@@ -16,10 +16,14 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * Component having a buttons panel.
  */
 public interface HasButtonsPanel {
+    @Nullable
     ButtonsPanel getButtonsPanel();
-    void setButtonsPanel(ButtonsPanel panel);
+
+    void setButtonsPanel(@Nullable ButtonsPanel panel);
 }

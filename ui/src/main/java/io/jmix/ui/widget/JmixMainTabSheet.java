@@ -31,6 +31,7 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.TabSheet;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -163,6 +164,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
         getState().hasActionsHandlers = actionHandlers != null && !actionHandlers.isEmpty();
     }
 
+    @Nullable
     public Component getPreviousTab(Component tab) {
         if ((!openedComponents.empty()) && (getSelectedTab().equals(tab))) {
             Component c = openedComponents.pop();
@@ -388,7 +390,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
         }
 
         @Override
-        public void setTabDescription(String tabId, String description) {
+        public void setTabDescription(String tabId, @Nullable String description) {
             getTabNN(tabId).setDescription(description);
         }
 
@@ -434,7 +436,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
         }
 
         @Override
-        public void setTabIcon(String tabId, Resource icon) {
+        public void setTabIcon(String tabId, @Nullable Resource icon) {
             getTabNN(tabId).setIcon(icon);
         }
 
@@ -480,6 +482,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
             return tabSheet.tabIds.inverse().get(tab);
         }
 
+        @Nullable
         @Override
         public Component getSelectedTab() {
             return tabSheet.getSelectedTab();
@@ -510,6 +513,7 @@ public class JmixMainTabSheet extends DDTabSheet implements Action.Container, Ha
             tabSheet.removeComponent(component);
         }
 
+        @Nullable
         @Override
         public Component getPreviousTab(Component tab) {
             return tabSheet.getPreviousTab(tab);

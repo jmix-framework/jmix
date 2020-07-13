@@ -22,6 +22,7 @@ import com.vaadin.server.PaintTarget;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +85,7 @@ public class JmixMenuBar extends com.vaadin.ui.MenuBar {
         }
     }
 
-    public MenuItem createMenuItem(String caption, Resource icon, Command command) {
+    public MenuItem createMenuItem(String caption, @Nullable Resource icon, @Nullable Command command) {
         return new MenuItem(caption, icon, command) {
             @Override
             public List<MenuItem> getChildren() {

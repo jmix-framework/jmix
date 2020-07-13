@@ -21,7 +21,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -41,7 +40,6 @@ public interface InstanceContainer<E extends JmixEntity> {
      *
      * @throws IllegalStateException if there is no entity in the container
      */
-    @Nonnull
     E getItem();
 
     /**

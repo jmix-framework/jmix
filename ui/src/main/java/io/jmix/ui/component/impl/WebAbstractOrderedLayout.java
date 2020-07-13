@@ -110,7 +110,7 @@ public class WebAbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {
@@ -155,13 +155,14 @@ public class WebAbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends
         return ComponentsHelper.getComponents(this);
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return getComposition().getDescription();
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         if (getComposition() instanceof AbstractComponent) {
             ((AbstractComponent) getComposition()).setDescription(description);
         }
@@ -189,6 +190,7 @@ public class WebAbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends
         return () -> removeLayoutClickListener(listener);
     }
 
+    @Nullable
     protected Component findChildComponent(ComponentContainer layout, com.vaadin.ui.Component clickedComponent) {
         for (Component component : layout.getComponents()) {
             if (component.unwrapComposition(com.vaadin.ui.Component.class) == clickedComponent) {

@@ -46,8 +46,7 @@ public class ShowInfoAction extends BaseAction {
 
     @Override
     public void actionPerform(Component component) {
-        if (component instanceof Component.BelongToFrame
-                && component instanceof ListComponent) {
+        if (component instanceof ListComponent) {
 
             JmixEntity selectedItem = ((ListComponent) component).getSingleSelected();
             if (selectedItem != null) {

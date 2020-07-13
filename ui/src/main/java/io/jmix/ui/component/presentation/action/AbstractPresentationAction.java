@@ -22,13 +22,15 @@ import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.widget.JmixEnhancedTable;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractPresentationAction extends AbstractAction {
 
     protected Table table;
     protected JmixEnhancedTable tableImpl;
     protected ComponentSettingsBinder settingsBinder;
 
-    public AbstractPresentationAction(Table table, String id, ComponentSettingsBinder settingsBinder) {
+    public AbstractPresentationAction(Table table, String id, @Nullable ComponentSettingsBinder settingsBinder) {
         super(id);
 
         this.table = table;

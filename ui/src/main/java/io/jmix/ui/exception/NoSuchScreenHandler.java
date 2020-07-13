@@ -17,7 +17,6 @@ package io.jmix.ui.exception;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.NoSuchScreenException;
-// import io.jmix.ui.component.compatibility.WindowManager;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +39,7 @@ public class NoSuchScreenHandler extends AbstractGenericExceptionHandler impleme
 
     @Override
     protected void doHandle(String className, String message, @Nullable Throwable throwable/*, WindowManager windowManager*/) {
-        String msg = messages.getMessage("noSuchScreen.message");
+        // String msg = messages.getMessage("noSuchScreen.message");
         /*
         TODO: legacy-ui
         windowManager.showNotification(msg,

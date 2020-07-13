@@ -29,6 +29,7 @@ import com.vaadin.ui.components.grid.EditorImpl;
 import com.vaadin.util.ReflectTools;
 import io.jmix.ui.widget.JmixEnhancedGrid;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -53,13 +54,14 @@ public class JmixEditorImpl<T> extends EditorImpl<T> {
      *
      * @param handler handler function
      */
-    public void setCrossFieldValidationHandler(Function<Map<String, Object>, String> handler) {
+    public void setCrossFieldValidationHandler(@Nullable Function<Map<String, Object>, String> handler) {
         this.crossFieldValidationHandler = handler;
     }
 
     /**
      * @return cross field validation handler
      */
+    @Nullable
     public Function<Map<String, Object>, String> getCrossFieldValidationHandler() {
         return crossFieldValidationHandler;
     }

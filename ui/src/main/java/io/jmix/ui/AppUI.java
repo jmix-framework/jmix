@@ -52,7 +52,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
@@ -473,6 +472,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     /**
      * @return current AppUI
      */
+    @Nullable
     public static AppUI getCurrent() {
         return (AppUI) UI.getCurrent();
     }
@@ -492,7 +492,6 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
         return topLevelWindow;
     }
 
-    @Nonnull
     public RootWindow getTopLevelWindowNN() {
         if (topLevelWindow == null) {
             throw new IllegalStateException("UI topLevelWindow is null");
@@ -505,7 +504,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
      * INTERNAL.
      * Set currently displayed top-level window.
      */
-    public void setTopLevelWindow(RootWindow window) {
+    public void setTopLevelWindow(@Nullable RootWindow window) {
         if (this.topLevelWindow != window) {
             this.topLevelWindow = window;
 

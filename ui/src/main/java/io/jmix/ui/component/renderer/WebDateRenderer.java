@@ -26,6 +26,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -60,7 +61,7 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEn
         this(formatString, locale, "");
     }
 
-    public WebDateRenderer(String formatString, Locale locale, String nullRepresentation) {
+    public WebDateRenderer(String formatString, @Nullable Locale locale, String nullRepresentation) {
         super(nullRepresentation);
 
         this.formatString = formatString;

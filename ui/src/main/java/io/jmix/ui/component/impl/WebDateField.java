@@ -47,6 +47,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.time.*;
 import java.util.*;
 import java.util.function.Consumer;
@@ -383,7 +385,7 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @Override
-    protected void setValueToPresentation(LocalDateTime value) {
+    protected void setValueToPresentation(@Nullable LocalDateTime value) {
         updatingInstance = true;
         try {
             if (value == null) {
@@ -399,6 +401,7 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     protected V constructModelValue() {
         LocalDate dateValue = dateField.getValue();
         if (dateValue == null) {
@@ -422,15 +425,16 @@ public class WebDateField<V extends Comparable<V>>
                 datatype == null ? Date.class : datatype.getJavaClass());
     }
 
+    @Nullable
     @Override
-    protected LocalDateTime convertToPresentation(V modelValue) throws ConversionException {
+    protected LocalDateTime convertToPresentation(@Nullable V modelValue) throws ConversionException {
         if (modelValue == null) {
             return null;
         }
         return convertToLocalDateTime(modelValue, zoneId);
     }
 
-    protected LocalDateTime convertToLocalDateTime(Object date, ZoneId zoneId) {
+    protected LocalDateTime convertToLocalDateTime(Object date, @Nullable ZoneId zoneId) {
         Preconditions.checkNotNullArgument(date);
         ZonedDateTime zonedDateTime = dateTimeTransformations.transformToZDT(date);
         if (dateTimeTransformations.isDateTypeSupportsTimeZones(date.getClass())) {
@@ -439,7 +443,7 @@ public class WebDateField<V extends Comparable<V>>
         return zonedDateTime.toLocalDateTime();
     }
 
-    protected Object convertFromLocalDateTime(LocalDateTime localDateTime, ZoneId fromZoneId, Class javaType) {
+    protected Object convertFromLocalDateTime(LocalDateTime localDateTime, @Nullable ZoneId fromZoneId, Class javaType) {
         if (fromZoneId == null || !dateTimeTransformations.isDateTypeSupportsTimeZones(javaType)) {
             fromZoneId = ZoneId.systemDefault();
         }
@@ -448,7 +452,7 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         super.setDescription(description);
         dateField.setDescription(description);
         timeField.setDescription(description);
@@ -523,7 +527,7 @@ public class WebDateField<V extends Comparable<V>>
     }
 
     @Override
-    public void setParent(Component parent) {
+    public void setParent(@Nullable Component parent) {
         if (this.parent instanceof EditableChangeNotifier
                 && parentEditableChangeSubscription != null) {
             parentEditableChangeSubscription.remove();
@@ -617,6 +621,7 @@ public class WebDateField<V extends Comparable<V>>
         }
     }
 
+    @Nullable
     protected ErrorMessage getErrorMessage() {
         return (isEditableWithParent() && isRequired() && isEmpty())
                 ? new UserError(getRequiredMessage())

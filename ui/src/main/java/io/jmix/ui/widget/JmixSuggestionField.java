@@ -208,11 +208,12 @@ public class JmixSuggestionField<T> extends AbstractField<T> {
         return suggestionsLimit;
     }
 
+    @Nullable
     public String getInputPrompt() {
         return getState(false).inputPrompt;
     }
 
-    public void setInputPrompt(String inputPrompt) {
+    public void setInputPrompt(@Nullable String inputPrompt) {
         if (!Objects.equals(inputPrompt, getState(false).inputPrompt)) {
             getState().inputPrompt = inputPrompt;
         }

@@ -182,7 +182,7 @@ public class StandardLookup<T extends JmixEntity> extends Screen implements Look
 
     @Override
     public void setLookupComponentMultiSelect(boolean multiSelect) {
-        LookupComponent<T> lookupComponent = getLookupComponent();
+        // LookupComponent<T> lookupComponent = getLookupComponent();
 
         // todo implement
         /*if (lookupComponent instanceof Table) {

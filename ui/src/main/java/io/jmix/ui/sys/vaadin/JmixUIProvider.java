@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -36,6 +38,7 @@ public class JmixUIProvider extends SpringUIProvider {
         super(vaadinSession);
     }
 
+    @Nullable
     @Override
     public WidgetsetInfo getWidgetsetInfo(UICreateEvent event) {
         Widgetset uiWidgetset = getAnnotationFor(event.getUIClass(), Widgetset.class);
@@ -62,10 +65,12 @@ public class JmixUIProvider extends SpringUIProvider {
             return info;
         } else {
             // Fourth case: we have an AppWidgetset.gwt.xml file
-            InputStream resource = event.getUIClass()
-                    .getResourceAsStream("/" + APP_WIDGETSET_NAME + ".gwt.xml");
-            if (resource != null) {
-                return new WidgetsetInfoImpl(false, null, APP_WIDGETSET_NAME);
+            try (InputStream resource = event.getUIClass().getResourceAsStream("/" + APP_WIDGETSET_NAME + ".gwt.xml")){
+                if (resource != null) {
+                    return new WidgetsetInfoImpl(false, null, APP_WIDGETSET_NAME);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("AppWidgetset.gwt.xml file I/O exception", e);
             }
         }
 
@@ -81,12 +86,12 @@ public class JmixUIProvider extends SpringUIProvider {
         return value;
     }
 
-    protected class WidgetsetInfoImpl implements WidgetsetInfo {
+    protected static class WidgetsetInfoImpl implements WidgetsetInfo {
         private final boolean cdn;
         private final String widgetsetUrl;
         private final String widgetsetName;
 
-        public WidgetsetInfoImpl(boolean cdn, String widgetsetUrl,
+        public WidgetsetInfoImpl(boolean cdn, @Nullable String widgetsetUrl,
                                  String widgetsetName) {
 
             this.cdn = cdn;
@@ -103,6 +108,7 @@ public class JmixUIProvider extends SpringUIProvider {
             return cdn;
         }
 
+        @Nullable
         @Override
         public String getWidgetsetUrl() {
             return widgetsetUrl;
@@ -114,6 +120,7 @@ public class JmixUIProvider extends SpringUIProvider {
         }
     }
 
+    @Nullable
     private WidgetsetInfo getWidgetsetClassInfo() {
         Class<WidgetsetInfo> cls = findWidgetsetClass();
         if (cls != null) {
@@ -135,6 +142,7 @@ public class JmixUIProvider extends SpringUIProvider {
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     private Class<WidgetsetInfo> findWidgetsetClass() {
         try {
             // We cannot naively use Class.forName without getting the correct

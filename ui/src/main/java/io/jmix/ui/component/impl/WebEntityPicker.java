@@ -89,7 +89,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void setValue(V value) {
+    public void setValue(@Nullable V value) {
         checkValueType(value);
 
         super.setValue(value);
@@ -114,7 +114,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
         refreshActionsState();
     }
 
-    protected void checkValueType(V value) {
+    protected void checkValueType(@Nullable V value) {
         if (value != null) {
             MetaClass metaClass = getMetaClass();
             if (metaClass == null) {
@@ -165,6 +165,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
         };
     }
 
+    @Nullable
     @Override
     public MetaClass getMetaClass() {
         ValueSource<V> valueSource = getValueSource();
@@ -177,7 +178,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void setMetaClass(MetaClass metaClass) {
+    public void setMetaClass(@Nullable MetaClass metaClass) {
         ValueSource<V> valueSource = getValueSource();
         if (valueSource != null) {
             throw new IllegalStateException("ValueSource is not null");
@@ -186,17 +187,18 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
         this.optionCaptionProvider = optionCaptionProvider;
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;
     }
 
     @Override
-    public void setOptionIconProvider(Function<? super V, String> optionIconProvider) {
+    public void setOptionIconProvider(@Nullable Function<? super V, String> optionIconProvider) {
         if (this.iconProvider != optionIconProvider) {
             this.iconProvider = optionIconProvider;
 
@@ -207,6 +209,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
         }
     }
 
+    @Nullable
     protected Resource generateOptionIcon(V item) {
         if (iconProvider == null) {
             return null;
@@ -224,6 +227,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
         return getIconResource(resourceId);
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionIconProvider() {
         return iconProvider;
@@ -358,16 +362,14 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void removeAction(@Nullable Action action) {
+    public void removeAction(Action action) {
         if (actions.remove(action)) {
             actionHandler.removeAction(action);
 
-            if (action != null) {
-                JmixButton button = actionButtons.remove(action);
-                component.removeButton(button);
+            JmixButton button = actionButtons.remove(action);
+            component.removeButton(button);
 
-                action.removePropertyChangeListener(actionPropertyChangeListener);
-            }
+            action.removePropertyChangeListener(actionPropertyChangeListener);
 
             if (action instanceof EntityPicker.EntityPickerAction) {
                 ((EntityPickerAction) action).setEntityPicker(null);
@@ -376,7 +378,7 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void removeAction(@Nullable String id) {
+    public void removeAction(String id) {
         Action action = getAction(id);
         if (action != null) {
             removeAction(action);
@@ -500,12 +502,14 @@ public class WebEntityPicker<V extends JmixEntity> extends WebV8AbstractField<Jm
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
-        UiControllerUtils.getScreen(frame.getFrameOwner())
-                .addAfterShowListener(afterShowEvent ->
-                        refreshActionsState());
+        if (frame != null) {
+            UiControllerUtils.getScreen(frame.getFrameOwner())
+                    .addAfterShowListener(afterShowEvent ->
+                            refreshActionsState());
+        }
     }
 
     public class WebEntityPickerActionHandler implements com.vaadin.event.Action.Handler {

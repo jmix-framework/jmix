@@ -49,8 +49,8 @@ public interface LayoutClickNotifier {
         private final Component clickedComponent;
         private final MouseEventDetails mouseEventDetails;
 
-        public LayoutClickEvent(ComponentContainer layout,
-                                Component childComponent, Component clickedComponent, MouseEventDetails mouseEventDetails) {
+        public LayoutClickEvent(ComponentContainer layout, @Nullable Component childComponent,
+                                @Nullable Component clickedComponent, MouseEventDetails mouseEventDetails) {
             super(layout);
             this.childComponent = childComponent;
             this.mouseEventDetails = mouseEventDetails;
@@ -68,6 +68,7 @@ public interface LayoutClickNotifier {
          *
          * @return direct child Component of the layout which contains the clicked Component, null if none found
          */
+        @Nullable
         public Component getChildComponent() {
             return childComponent;
         }

@@ -23,6 +23,7 @@ import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.TreeItems;
 import io.jmix.ui.widget.tree.EnhancedTreeDataProvider;
 
+import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public class TreeDataProvider<T> extends AbstractDataProvider<T, SerializablePredicate<T>>
@@ -127,6 +128,7 @@ public class TreeDataProvider<T> extends AbstractDataProvider<T, SerializablePre
         return treeItems.getItems();
     }
 
+    @Nullable
     @Override
     public T getParent(T item) {
         if (treeItems.getState() == BindingState.INACTIVE) {

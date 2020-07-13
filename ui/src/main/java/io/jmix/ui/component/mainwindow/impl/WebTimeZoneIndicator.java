@@ -40,8 +40,8 @@ public class WebTimeZoneIndicator extends WebAbstractComponent<Label> implements
     public void setBeanLocator(BeanLocator beanLocator) {
         super.setBeanLocator(beanLocator);
 
-        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
-        TimeZone timeZone = currentAuthentication.getTimeZone();
+        // CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
+        // TimeZone timeZone = currentAuthentication.getTimeZone();
         // todo TimeZones
 //        TimeZones timeZones = beanLocator.get(TimeZones.NAME);
 //        component.setValue(timeZones.getDisplayNameShort(timeZone));

@@ -16,10 +16,10 @@
 
 package io.jmix.ui;
 
+import io.jmix.ui.component.AppWorkArea;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.util.OperationResult;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
@@ -164,7 +164,6 @@ public interface Screens {
          * @return the root screen of UI
          * @throws IllegalStateException in case there is no root screen in UI
          */
-        @Nonnull
         Screen getRootScreen();
 
         /**

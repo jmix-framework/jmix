@@ -20,6 +20,8 @@ import com.vaadin.server.ClientConnector;
 import io.jmix.ui.component.RootWindow;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
+
 public class WebRootWindow extends WebWindow implements RootWindow {
     public WebRootWindow() {
         setSizeFull();
@@ -36,7 +38,7 @@ public class WebRootWindow extends WebWindow implements RootWindow {
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         super.setCaption(caption);
 
         if (component.isAttached()) {

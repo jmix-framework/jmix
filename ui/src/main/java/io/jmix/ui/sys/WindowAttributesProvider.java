@@ -19,7 +19,6 @@ package io.jmix.ui.sys;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.screen.FrameOwner;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface WindowAttributesProvider {
@@ -29,7 +28,6 @@ public interface WindowAttributesProvider {
     @Nullable
     String getTemplate(WindowInfo windowInfo);
 
-    @Nonnull
     Class<? extends FrameOwner> getControllerClass(WindowInfo windowInfo);
 
     WindowInfo resolve(WindowInfo windowInfo);

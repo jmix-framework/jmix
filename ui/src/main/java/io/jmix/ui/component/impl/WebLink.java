@@ -20,6 +20,8 @@ import io.jmix.ui.widget.JmixLink;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Resource;
 
+import javax.annotation.Nullable;
+
 public class WebLink extends WebAbstractComponent<JmixLink> implements Link {
 
     public WebLink() {
@@ -28,10 +30,11 @@ public class WebLink extends WebAbstractComponent<JmixLink> implements Link {
     }
 
     @Override
-    public void setUrl(String url) {
+    public void setUrl(@Nullable String url) {
         component.setResource(new ExternalResource(url));
     }
 
+    @Nullable
     @Override
     public String getUrl() {
         Resource resource = component.getResource();

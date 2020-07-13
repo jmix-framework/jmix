@@ -633,6 +633,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         }
     }
 
+    @Nullable
     protected String loadCaption(Element element) {
         if (element.attribute("caption") != null) {
             String caption = element.attributeValue("caption");

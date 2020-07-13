@@ -25,6 +25,7 @@ import io.jmix.ui.screen.ScreenOptions;
 import org.dom4j.Element;
 import org.springframework.core.env.Environment;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -44,6 +45,7 @@ public interface ComponentLoader<T extends Component> {
 
         ScreenData getScreenData();
 
+        @Nullable
         ComponentContext getParent();
         Frame getFrame();
 

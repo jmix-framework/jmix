@@ -20,6 +20,7 @@ import io.jmix.ui.widget.client.popupview.JmixPopupViewState;
 import io.jmix.ui.widget.client.popupview.PopupPosition;
 import com.vaadin.ui.PopupView;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class JmixPopupView extends PopupView {
@@ -38,7 +39,7 @@ public class JmixPopupView extends PopupView {
         return (JmixPopupViewState) super.getState(markAsDirty);
     }
 
-    public void setPopupPosition(PopupPosition position) {
+    public void setPopupPosition(@Nullable PopupPosition position) {
         if (!Objects.equals(position, getPopupPosition())) {
             getState(true).popupPosition = position;
             if (position != null) {
@@ -47,6 +48,7 @@ public class JmixPopupView extends PopupView {
         }
     }
 
+    @Nullable
     public PopupPosition getPopupPosition() {
         return getState(false).popupPosition;
     }

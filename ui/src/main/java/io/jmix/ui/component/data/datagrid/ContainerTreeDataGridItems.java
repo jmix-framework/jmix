@@ -42,7 +42,7 @@ public class ContainerTreeDataGridItems<E extends JmixEntity>
     }
 
     @Override
-    public Stream<E> getChildren(E item) {
+    public Stream<E> getChildren(@Nullable E item) {
         if (item == null) {
             // root items
             return container.getItems().stream()

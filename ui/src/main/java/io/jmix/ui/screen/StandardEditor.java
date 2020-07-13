@@ -174,7 +174,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
             throw new IllegalStateException("No DataContext defined. Make sure the editor screen XML descriptor has <data> element");
         }
 
-        String screenId = getScreenContext().getWindowInfo().getId();
+        // String screenId = getScreenContext().getWindowInfo().getId();
 
         InstanceLoader instanceLoader = null;
         InstanceContainer<T> editedEntityContainer = getEditedEntityContainer();

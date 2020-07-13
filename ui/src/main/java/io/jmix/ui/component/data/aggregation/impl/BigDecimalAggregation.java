@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.component.data.aggregation.impl;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 
 public class BigDecimalAggregation extends BasicNumberAggregation<BigDecimal> {
@@ -23,8 +24,9 @@ public class BigDecimalAggregation extends BasicNumberAggregation<BigDecimal> {
         super(BigDecimal.class);
     }
 
+    @Nullable
     @Override
-    public BigDecimal convert(Double result) {
+    public BigDecimal convert(@Nullable Double result) {
         return result == null ? null : BigDecimal.valueOf(result);
     }
 }

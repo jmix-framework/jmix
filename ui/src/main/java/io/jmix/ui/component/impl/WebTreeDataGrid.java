@@ -93,7 +93,7 @@ public class WebTreeDataGrid<E extends JmixEntity> extends WebAbstractDataGrid<J
     }
 
     @Override
-    public void setItems(DataGridItems<E> dataGridItems) {
+    public void setItems(@Nullable DataGridItems<E> dataGridItems) {
         if (dataGridItems != null
                 && !(dataGridItems instanceof TreeDataGridItems)) {
             throw new IllegalArgumentException("TreeDataGrid supports only TreeDataGridItems data binding");

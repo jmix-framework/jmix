@@ -18,6 +18,7 @@ package io.jmix.ui.component.data.table;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.TableItems;
@@ -59,6 +60,7 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
         return null;
     }
 
+    @Nullable
     @Override
     public Object getItemValue(Object itemId, Object propertyId) {
         return null;
@@ -76,7 +78,7 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
 
     @Override
     public Class<?> getType(Object propertyId) {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -96,17 +98,17 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
 
     @Override
     public Subscription addValueChangeListener(Consumer<ValueChangeEvent<E>> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
     @Override
     public Subscription addItemSetChangeListener(Consumer<ItemSetChangeEvent<E>> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
     @Override
     public Subscription addSelectedItemChangeListener(Consumer<SelectedItemChangeEvent<E>> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
     @Override
@@ -121,24 +123,28 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
 
     @Override
     public Subscription addStateChangeListener(Consumer<StateChangeEvent> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
+    @Nullable
     @Override
-    public Object nextItemId(Object itemId) {
+    public Object nextItemId(@Nullable Object itemId) {
         return null;
     }
 
+    @Nullable
     @Override
-    public Object prevItemId(Object itemId) {
+    public Object prevItemId(@Nullable Object itemId) {
         return null;
     }
 
+    @Nullable
     @Override
     public Object firstItemId() {
         return null;
     }
 
+    @Nullable
     @Override
     public Object lastItemId() {
         return null;

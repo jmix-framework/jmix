@@ -195,13 +195,14 @@ public class CompositeComponent<T extends Component>
         ((HasDebugId) getComposition()).setDebugId(id);
     }
 
+    @Nullable
     @Override
     public Component getParent() {
         return getComposition().getParent();
     }
 
     @Override
-    public void setParent(Component parent) {
+    public void setParent(@Nullable Component parent) {
         if (getComposition().getParent() != parent) {
             if (isAttached()) {
                 detached();
@@ -387,13 +388,14 @@ public class CompositeComponent<T extends Component>
         getComposition().withUnwrappedComposition(internalCompositionClass, action);
     }
 
+    @Nullable
     @Override
     public Frame getFrame() {
         return frame;
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         this.frame = frame;
 
         if (frame instanceof FrameImplementation) {

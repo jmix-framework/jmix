@@ -64,7 +64,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
@@ -525,7 +524,8 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         }
     }
 
-    protected String getIconPath(String icon) {
+    @Nullable
+    protected String getIconPath(@Nullable String icon) {
         if (icon == null || icon.isEmpty()) {
             return null;
         }
@@ -575,7 +575,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return loadInvokeAction(actionsHolder, element, id, shouldTrackSelection, invokeMethod);
     }
 
-    @Nonnull
     protected String loadActionId(Element element) {
         String id = element.attributeValue("id");
         if (id == null) {
@@ -718,6 +717,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return shortcut;
     }
 
+    @Nullable
     protected String loadShortcutFromFQNConfig(String shortcut) {
         if (shortcut.contains("#")) {
             String[] splittedShortcut = shortcut.split("#");
@@ -735,33 +735,29 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e);
             }
-            if (beanClass != null) {
-                //noinspection unchecked
-                Object bean = beanLocator.get(beanClass);
 
-                try {
-                    String shortcutValue = (String) MethodUtils.invokeMethod(bean, methodName);
-                    if (StringUtils.isNotEmpty(shortcutValue)) {
-                        return shortcutValue;
-                    }
-                } catch (NoSuchMethodException e) {
-                    String message = String.format("An error occurred while loading shortcut: " +
-                            "can't find method \"%s\" in \"%s\"", methodName, classFqn);
-                    throw new GuiDevelopmentException(message, context);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    String message = String.format("An error occurred while loading shortcut: " +
-                            "can't invoke method \"%s\" in \"%s\"", methodName, classFqn);
-                    throw new GuiDevelopmentException(message, context);
+            //noinspection unchecked
+            Object bean = beanLocator.get(beanClass);
+
+            try {
+                String shortcutValue = (String) MethodUtils.invokeMethod(bean, methodName);
+                if (StringUtils.isNotEmpty(shortcutValue)) {
+                    return shortcutValue;
                 }
-            } else {
+            } catch (NoSuchMethodException e) {
                 String message = String.format("An error occurred while loading shortcut: " +
-                        "can't find config interface \"%s\"", classFqn);
+                        "can't find method \"%s\" in \"%s\"", methodName, classFqn);
+                throw new GuiDevelopmentException(message, context);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                String message = String.format("An error occurred while loading shortcut: " +
+                        "can't invoke method \"%s\" in \"%s\"", methodName, classFqn);
                 throw new GuiDevelopmentException(message, context);
             }
         }
         return null;
     }
 
+    @Nullable
     protected String loadShortcutFromAlias(String shortcut) {
         // todo shortcuts https://github.com/jmix-framework/jmix/issues/312
 //        if (shortcut.endsWith("_SHORTCUT}")) {
@@ -777,6 +773,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return null;
     }
 
+    @Nullable
     protected String loadShortcutFromConfig(String shortcut) {
         if (shortcut.contains(".")) {
             String shortcutPropertyKey = shortcut.substring(2, shortcut.length() - 1);
@@ -928,6 +925,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return Optional.empty();
     }
 
+    @Nullable
     protected String getParentDataContainer(Element element) {
         Element parent = element.getParent();
         while (parent != null) {

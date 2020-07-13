@@ -142,7 +142,7 @@ public class WebFragment extends WebVBoxLayout implements Fragment, FragmentImpl
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         this.frame = frame;
 
         if (frame instanceof FrameImplementation) {
@@ -285,12 +285,12 @@ public class WebFragment extends WebVBoxLayout implements Fragment, FragmentImpl
     }
 
     @Override
-    public void removeAction(@Nullable Action action) {
+    public void removeAction(Action action) {
         actionsHolder.removeAction(action);
     }
 
     @Override
-    public void removeAction(@Nullable String id) {
+    public void removeAction(String id) {
         actionsHolder.removeAction(id);
     }
 

@@ -23,6 +23,7 @@ import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.ItemCaptionGenerator;
 import com.vaadin.ui.StyleGenerator;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.stream.Stream;
 
@@ -134,11 +135,12 @@ public class JmixComboBoxPickerField<T> extends JmixPickerField<T> {
         getFieldInternal().setItemIconGenerator(itemIconGenerator);
     }
 
+    @Nullable
     public String getPlaceholder() {
         return getFieldInternal().getPlaceholder();
     }
 
-    public void setPlaceholder(String placeholder) {
+    public void setPlaceholder(@Nullable String placeholder) {
         getFieldInternal().setPlaceholder(placeholder);
     }
 

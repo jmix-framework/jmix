@@ -24,7 +24,6 @@ import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -210,7 +209,6 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Returns invoking screen.
      */
-    @Nonnull
     public FrameOwner getOrigin() {
         return origin;
     }

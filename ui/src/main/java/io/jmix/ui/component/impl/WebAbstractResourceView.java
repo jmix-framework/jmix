@@ -22,6 +22,7 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Resource;
 import io.jmix.ui.component.ResourceView;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class WebAbstractResourceView<T extends AbstractEmbedded> extends WebAbstractComponent<T>
@@ -38,20 +39,21 @@ public abstract class WebAbstractResourceView<T extends AbstractEmbedded> extend
         };
     }
 
+    @Nullable
     @Override
     public Resource getSource() {
         return resource;
     }
 
     @Override
-    public void setSource(Resource resource) {
+    public void setSource(@Nullable Resource resource) {
         if (SharedUtil.equals(this.resource, resource)) {
             return;
         }
         updateValue(resource);
     }
 
-    protected void updateValue(Resource value) {
+    protected void updateValue(@Nullable Resource value) {
         Resource oldValue = this.resource;
         if (oldValue != null) {
             ((WebAbstractResource) oldValue).setResourceUpdatedHandler(null);

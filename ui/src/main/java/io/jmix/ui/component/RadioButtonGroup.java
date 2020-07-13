@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.Options;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -32,17 +33,19 @@ public interface RadioButtonGroup<I> extends OptionsField<I, I>, LookupComponent
     /**
      * @return icon provider of the LookupField.
      */
+    @Nullable
     Function<? super I, String> getOptionIconProvider();
     /**
      * Set the icon provider for the LookupField.
      *
      * @param optionIconProvider provider which provides icons for options
      */
-    void setOptionIconProvider(Function<? super I, String> optionIconProvider);
+    void setOptionIconProvider(@Nullable Function<? super I, String> optionIconProvider);
 
     /**
      * @return option description provider
      */
+    @Nullable
     Function<? super I, String> getOptionDescriptionProvider();
 
     /**
@@ -50,5 +53,5 @@ public interface RadioButtonGroup<I> extends OptionsField<I, I>, LookupComponent
      *
      * @param optionDescriptionProvider provider which provides descriptions for options
      */
-    void setOptionDescriptionProvider(Function<? super I, String> optionDescriptionProvider);
+    void setOptionDescriptionProvider(@Nullable Function<? super I, String> optionDescriptionProvider);
 }

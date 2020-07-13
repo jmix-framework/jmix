@@ -16,7 +16,6 @@
 
 package io.jmix.ui.executor;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -48,6 +47,5 @@ public interface TaskLifeCycle<T> {
     /**
      * @return execution parameters that was set by {@link BackgroundTask#getParams()}
      */
-    @Nonnull
     Map<String, Object> getParams();
 }

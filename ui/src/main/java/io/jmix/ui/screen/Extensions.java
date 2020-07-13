@@ -19,7 +19,6 @@ package io.jmix.ui.screen;
 import com.google.common.collect.ImmutableMap;
 import io.jmix.core.BeanLocator;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -85,7 +84,6 @@ public final class Extensions {
      * @return extension
      * @throws IllegalStateException in case extension class is not registered
      */
-    @Nonnull
     public static <T> T get(FrameOwner frameOwner, Class<T> extensionClass) {
         Optional<T> optional = getOptional(frameOwner, extensionClass);
         if (!optional.isPresent()) {

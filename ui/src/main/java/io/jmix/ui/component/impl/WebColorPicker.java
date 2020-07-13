@@ -25,6 +25,8 @@ import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, Color, String>
         implements ColorPicker, InitializingBean {
 
@@ -127,8 +129,9 @@ public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, C
         return component.getButtonCaption();
     }
 
+    @Nullable
     @Override
-    protected String convertToModel(Color componentRawValue) throws ConversionException {
+    protected String convertToModel(@Nullable Color componentRawValue) throws ConversionException {
         if (componentRawValue == null) {
             return null;
         }
@@ -145,8 +148,9 @@ public class WebColorPicker extends WebV8AbstractField<JmixColorPickerWrapper, C
         return redString + greenString + blueString;
     }
 
+    @Nullable
     @Override
-    protected Color convertToPresentation(String modelValue) throws ConversionException {
+    protected Color convertToPresentation(@Nullable String modelValue) throws ConversionException {
         if (modelValue == null) {
             return null;
         }

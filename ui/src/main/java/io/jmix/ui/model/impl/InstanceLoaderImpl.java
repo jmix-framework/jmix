@@ -67,7 +67,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     }
 
     @Override
-    public void setDataContext(DataContext dataContext) {
+    public void setDataContext(@Nullable DataContext dataContext) {
         this.dataContext = dataContext;
     }
 

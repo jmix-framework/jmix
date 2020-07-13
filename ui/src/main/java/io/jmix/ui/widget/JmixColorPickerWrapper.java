@@ -24,7 +24,8 @@ import java.util.Objects;
 
 public class JmixColorPickerWrapper extends CustomField<Color> {
 
-    protected JmixColorPicker field;
+    @SuppressWarnings("UnusedAssignment")
+    protected JmixColorPicker field = null;
 
     // The internalValue is used to store the 'null' value,
     // because the ColorPicker doesn't accept null values

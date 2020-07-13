@@ -21,7 +21,8 @@ import com.vaadin.ui.CustomField;
 import com.vaadin.ui.Slider;
 
 public class JmixSlider<V extends Number> extends CustomField<V> {
-    protected Slider slider;
+    @SuppressWarnings("UnusedAssignment")
+    protected Slider slider = null;
     protected V internalValue;
 
     public JmixSlider() {

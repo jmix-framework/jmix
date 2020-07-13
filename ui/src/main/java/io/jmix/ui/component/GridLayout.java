@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -60,7 +59,6 @@ public interface GridLayout extends ComponentContainer, HasSpacing, HasMargin, C
      * @param rowIndex    the row index, starting from 0 for the topmost row.
      * @return component. Throws exception if not found.
      */
-    @Nonnull
     default Component getComponentNN(int columnIndex, int rowIndex) {
         Component component = getComponent(columnIndex, rowIndex);
         if (component == null) {

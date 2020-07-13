@@ -128,13 +128,14 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         return ComponentsHelper.getComponents(this);
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return getComposition().getDescription();
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         if (getComposition() instanceof AbstractComponent) {
             ((AbstractComponent) getComposition()).setDescription(description);
         }
@@ -253,13 +254,14 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
             return getVaadinTab().getStyleName();
         }
 
+        @Nullable
         @Override
         public String getIcon() {
             return icon;
         }
 
         @Override
-        public void setIcon(String icon) {
+        public void setIcon(@Nullable String icon) {
             this.icon = icon;
             if (!StringUtils.isEmpty(icon)) {
                 Resource iconResource = AppBeans.get(IconResolver.class)
@@ -414,7 +416,7 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {
@@ -428,6 +430,7 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
         }
     }
 
+    @Nullable
     @Override
     public Tab getSelectedTab() {
         com.vaadin.ui.Component component = this.component.getSelectedTab();

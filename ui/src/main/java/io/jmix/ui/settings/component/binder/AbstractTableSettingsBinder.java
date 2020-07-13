@@ -290,7 +290,9 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
             return true;
         }
 
-        settingsSortAscending = settingsSortAscending == null ? true : settingsSortAscending;
+        if (settingsSortAscending == null) {
+            settingsSortAscending = true;
+        }
 
         return sortInfo.getAscending() != settingsSortAscending;
     }

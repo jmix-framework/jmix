@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * Interface for UI components that support a textual input prompt.
  */
@@ -23,6 +25,7 @@ public interface HasInputPrompt {
     /**
      * @return current input prompt.
      */
+    @Nullable
     String getInputPrompt();
 
     /**
@@ -31,5 +34,5 @@ public interface HasInputPrompt {
      *
      * @param inputPrompt input prompt
      */
-    void setInputPrompt(String inputPrompt);
+    void setInputPrompt(@Nullable String inputPrompt);
 }

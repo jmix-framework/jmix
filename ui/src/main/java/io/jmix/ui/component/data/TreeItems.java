@@ -29,12 +29,14 @@ public interface TreeItems<T> extends DataUnit {
      * @param item the item for obtaining the id
      * @return the id on the given item
      */
+    @Nullable
     Object getItemId(T item);
 
     /**
      * @param itemId the item id
      * @return the item by the given id
      */
+    @Nullable
     T getItem(@Nullable Object itemId);
 
     /**

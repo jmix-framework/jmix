@@ -17,6 +17,7 @@ import io.jmix.ui.widget.client.addon.aceeditor.*;
 import name.fraser.neil.plaintext.diff_match_patch;
 import name.fraser.neil.plaintext.diff_match_patch.Patch;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 
@@ -60,9 +61,10 @@ public class ServerSideDocDiff {
 	
 
 	// XXX Unnecessary copy-pasting
+	@Nullable
 	private static SetDiff<AceAnnotation.MarkerAnnotation, TransportDoc.TransportMarkerAnnotation> diffMA(
-			Set<AceAnnotation.MarkerAnnotation> anns1,
-			Set<AceAnnotation.MarkerAnnotation> anns2) {
+			@Nullable Set<AceAnnotation.MarkerAnnotation> anns1,
+			@Nullable Set<AceAnnotation.MarkerAnnotation> anns2) {
 		if (anns2 == null && anns1 != null) {
 			return null;
 		}
@@ -76,9 +78,10 @@ public class ServerSideDocDiff {
 	}
 
 	// XXX Unnecessary copy-pasting
+	@Nullable
 	private static SetDiff<AceAnnotation.RowAnnotation, TransportDoc.TransportRowAnnotation> diffRA(
-			Set<AceAnnotation.RowAnnotation> anns1,
-			Set<AceAnnotation.RowAnnotation> anns2) {
+			@Nullable Set<AceAnnotation.RowAnnotation> anns1,
+			@Nullable Set<AceAnnotation.RowAnnotation> anns2) {
 		if (anns2 == null && anns1 != null) {
 			return null;
 		}
@@ -101,20 +104,22 @@ public class ServerSideDocDiff {
 	}
 	
 	// XXX Unnecessary copy-pasting
+	@Nullable
 	private static SetDiff<AceAnnotation.RowAnnotation, TransportDoc.TransportRowAnnotation> rowAnnsFromTransport(
-			TransportDiff.TransportSetDiffForRowAnnotations rowAnnDiff) {
+			@Nullable TransportDiff.TransportSetDiffForRowAnnotations rowAnnDiff) {
 		return rowAnnDiff==null ? null : SetDiff.fromTransport(rowAnnDiff);
 	}
 	
 	// XXX Unnecessary copy-pasting
+	@Nullable
 	private static SetDiff<AceAnnotation.MarkerAnnotation, TransportDoc.TransportMarkerAnnotation> markerAnnsFromTransport(
-			TransportDiff.TransportSetDiffForMarkerAnnotations markerAnnDiff) {
+			@Nullable TransportDiff.TransportSetDiffForMarkerAnnotations markerAnnDiff) {
 		return markerAnnDiff==null ? null :  SetDiff.fromTransport(markerAnnDiff);
 	}
 
-	public ServerSideDocDiff(LinkedList<Patch> patches, MarkerSetDiff markerSetDiff,
-			SetDiff<AceAnnotation.RowAnnotation, TransportDoc.TransportRowAnnotation> rowAnnDiff,
-			SetDiff<AceAnnotation.MarkerAnnotation, TransportDoc.TransportMarkerAnnotation> markerAnnDiff) {
+	public ServerSideDocDiff(LinkedList<Patch> patches, @Nullable MarkerSetDiff markerSetDiff,
+			@Nullable SetDiff<AceAnnotation.RowAnnotation, TransportDoc.TransportRowAnnotation> rowAnnDiff,
+			@Nullable SetDiff<AceAnnotation.MarkerAnnotation, TransportDoc.TransportMarkerAnnotation> markerAnnDiff) {
 		this.patches = patches;
 		this.markerSetDiff = markerSetDiff;
 		this.rowAnnDiff = rowAnnDiff;

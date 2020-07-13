@@ -67,6 +67,7 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
      * @deprecated Use {@link #getValueSource()} instead
      */
     @Deprecated
+    @Nullable
     default MetaProperty getMetaProperty() {
         ValueSource<V> valueSource = getValueSource();
         if (valueSource instanceof ContainerValueSource) {
@@ -81,6 +82,7 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
      * @deprecated Use {@link #getValueSource()} instead
      */
     @Deprecated
+    @Nullable
     default MetaPropertyPath getMetaPropertyPath() {
         ValueSource<V> valueSource = getValueSource();
         if (valueSource instanceof ContainerValueSource) {

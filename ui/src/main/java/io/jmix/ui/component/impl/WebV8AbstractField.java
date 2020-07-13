@@ -73,6 +73,7 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
         }
     }
 
+    @Nullable
     protected ErrorMessage getErrorMessage() {
         return (isEditableWithParent() && isRequired() && isEmpty())
                 ? new UserError(getRequiredMessage())
@@ -90,7 +91,7 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
     }
 
     @Override
-    public void setParent(Component parent) {
+    public void setParent(@Nullable Component parent) {
         if (this.parent instanceof EditableChangeNotifier
                 && parentEditableChangeListener != null) {
             parentEditableChangeListener.remove();

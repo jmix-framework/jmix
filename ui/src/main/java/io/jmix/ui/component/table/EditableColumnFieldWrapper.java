@@ -23,7 +23,8 @@ import io.jmix.ui.component.Field;
 
 public class EditableColumnFieldWrapper extends CustomField {
 
-    protected Component component;
+    @SuppressWarnings("UnusedAssignment")
+    protected Component component = null;
 
     public EditableColumnFieldWrapper(Component component, io.jmix.ui.component.Component columnComponent) {
         this.component = component;

@@ -33,7 +33,6 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -67,6 +66,7 @@ public interface Table<E extends JmixEntity>
 
     List<Column<E>> getColumns();
 
+    @Nullable
     Column<E> getColumn(String id);
 
     /**
@@ -104,8 +104,9 @@ public interface Table<E extends JmixEntity>
      */
     Map<Object, Object> getAggregationResults();
 
-    void setItems(TableItems<E> tableItems);
+    void setItems(@Nullable TableItems<E> tableItems);
     @Override
+    @Nullable
     TableItems<E> getItems();
 
     void setRequired(Column<E> column, boolean required, String message);
@@ -441,7 +442,7 @@ public interface Table<E extends JmixEntity>
      *
      * @see #setRowHeaderWidth(int)
      */
-    void setIconProvider(Function<? super E, String> iconProvider);
+    void setIconProvider(@Nullable Function<? super E, String> iconProvider);
 
     /**
      * Sets the item description provider that is used for generating tooltip descriptions for items.
@@ -524,6 +525,7 @@ public interface Table<E extends JmixEntity>
          * @param entity an entity instance represented by the current row
          * @return a component to be rendered inside of the cell
          */
+        @Nullable
         Component generateCell(E entity);
     }
 
@@ -896,12 +898,10 @@ public interface Table<E extends JmixEntity>
             return null;
         }
 
-        @Nonnull
         public MetaPropertyPath getBoundPropertyNN() {
             return ((MetaPropertyPath) id);
         }
 
-        @Nonnull
         public String getStringId() {
             if (id instanceof MetaPropertyPath) {
                 return ((MetaPropertyPath) id).toPathString();
@@ -918,6 +918,7 @@ public interface Table<E extends JmixEntity>
         /**
          * @return value provider function
          */
+        @Nullable
         public Function<T, Object> getValueProvider() {
             return valueProvider;
         }
@@ -928,7 +929,7 @@ public interface Table<E extends JmixEntity>
          *
          * @param valueProvider a callback interface for providing column values from a given source
          */
-        public void setValueProvider(Function<T, Object> valueProvider) {
+        public void setValueProvider(@Nullable Function<T, Object> valueProvider) {
             this.valueProvider = valueProvider;
         }
 
@@ -954,26 +955,28 @@ public interface Table<E extends JmixEntity>
             return String.valueOf(id);
         }
 
+        @Nullable
         @Override
         public String getCaption() {
             return caption;
         }
 
         @Override
-        public void setCaption(String caption) {
+        public void setCaption(@Nullable String caption) {
             this.caption = caption;
             if (owner != null) {
                 ((ColumnManager) owner).setColumnCaption(this, caption);
             }
         }
 
+        @Nullable
         @Override
         public String getDescription() {
             return description;
         }
 
         @Override
-        public void setDescription(String description) {
+        public void setDescription(@Nullable String description) {
             this.description = description;
             if (owner != null) {
                 ((ColumnManager) owner).setColumnDescription(this, description);
@@ -1007,13 +1010,14 @@ public interface Table<E extends JmixEntity>
             this.type = type;
         }
 
+        @Nullable
         @Override
         public Formatter getFormatter() {
             return formatter;
         }
 
         @Override
-        public void setFormatter(Formatter formatter) {
+        public void setFormatter(@Nullable Formatter formatter) {
             this.formatter = formatter;
         }
 
@@ -1091,11 +1095,12 @@ public interface Table<E extends JmixEntity>
             this.maxTextLength = maxTextLength;
         }
 
+        @Nullable
         public Table getOwner() {
             return owner;
         }
 
-        public void setOwner(Table owner) {
+        public void setOwner(@Nullable Table owner) {
             this.owner = owner;
         }
 
@@ -1114,13 +1119,14 @@ public interface Table<E extends JmixEntity>
             return id.hashCode();
         }
 
+        @Nullable
         @Override
         public Element getXmlDescriptor() {
             return element;
         }
 
         @Override
-        public void setXmlDescriptor(Element element) {
+        public void setXmlDescriptor(@Nullable Element element) {
             this.element = element;
         }
 
@@ -1303,7 +1309,7 @@ public interface Table<E extends JmixEntity>
 
         @Override
         public String getId() {
-            return null;
+            return text;
         }
 
         @Override
@@ -1311,13 +1317,14 @@ public interface Table<E extends JmixEntity>
             throw new UnsupportedOperationException();
         }
 
+        @Nullable
         @Override
         public Component getParent() {
             return parent;
         }
 
         @Override
-        public void setParent(Component parent) {
+        public void setParent(@Nullable Component parent) {
             this.parent = parent;
         }
 
@@ -1402,7 +1409,7 @@ public interface Table<E extends JmixEntity>
 
         @Override
         public String getStyleName() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -1422,7 +1429,7 @@ public interface Table<E extends JmixEntity>
 
         @Override
         public <X> X unwrap(Class<X> internalComponentClass) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Nullable
@@ -1437,7 +1444,7 @@ public interface Table<E extends JmixEntity>
 
         @Override
         public <X> X unwrapComposition(Class<X> internalCompositionClass) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Nullable

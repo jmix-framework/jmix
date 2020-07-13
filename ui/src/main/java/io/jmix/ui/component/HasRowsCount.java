@@ -18,14 +18,17 @@ package io.jmix.ui.component;
 
 import io.jmix.core.DataLoadContext;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
  * Component having a {@link RowsCount} component.
  */
 public interface HasRowsCount {
+    @Nullable
     RowsCount getRowsCount();
-    void setRowsCount(RowsCount rowsCount);
+
+    void setRowsCount(@Nullable RowsCount rowsCount);
 
     /**
      * Sets RowsCount delegate which is used to get the total number of rows when user clicks "total count" or "last page".

@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
+import com.google.common.collect.ImmutableList;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.shared.ui.ValueChangeMode;
@@ -35,7 +36,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -47,7 +51,7 @@ public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, S
         implements MaskedField<V>, InitializingBean {
 
     protected static final char PLACE_HOLDER = '_';
-    protected static final Character[] MASK_SYMBOLS = new Character[]{'#', 'U', 'L', '?', 'A', '*', 'H', 'h', '~'};
+    protected static final List<Character> MASK_SYMBOLS = ImmutableList.of('#', 'U', 'L', '?', 'A', '*', 'H', 'h', '~');
 
     protected ShortcutListener enterShortcutListener;
     protected String nullRepresentation;
@@ -88,7 +92,7 @@ public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, S
 
             if (c == '\'') {
                 valueBuilder.append(mask.charAt(++i));
-            } else if (ArrayUtils.contains(MASK_SYMBOLS, c)) {
+            } else if (MASK_SYMBOLS.contains(c)) {
                 valueBuilder.append(PLACE_HOLDER);
             } else {
                 valueBuilder.append(c);
@@ -150,7 +154,7 @@ public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, S
     }
 
     @Override
-    protected String convertToPresentation(V modelValue) throws ConversionException {
+    protected String convertToPresentation(@Nullable V modelValue) throws ConversionException {
         if (datatype != null) {
             return nullToEmpty(datatype.format(modelValue, locale));
         }
@@ -168,8 +172,9 @@ public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, S
         return nullToEmpty(super.convertToPresentation(modelValue));
     }
 
+    @Nullable
     @Override
-    protected V convertToModel(String componentRawValue) throws ConversionException {
+    protected V convertToModel(@Nullable String componentRawValue) throws ConversionException {
         String value = emptyToNull(componentRawValue);
 
         if (datatype != null) {

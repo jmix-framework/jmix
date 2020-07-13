@@ -18,12 +18,15 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.ui.component.Component;
 
+import javax.annotation.Nullable;
+
 /**
  * {@link CompositeComponent} having a description.
  * Default implementations delegate their execution to {@link CompositeComponent#getComposition()}.
  */
 public interface CompositeWithDescription extends Component.HasDescription {
 
+    @Nullable
     @Override
     default String getDescription() {
         Component.HasDescription hasDescription =
@@ -32,7 +35,7 @@ public interface CompositeWithDescription extends Component.HasDescription {
     }
 
     @Override
-    default void setDescription(String description) {
+    default void setDescription(@Nullable String description) {
         Component.HasDescription hasDescription =
                 (Component.HasDescription) ((CompositeComponent) this).getComposition();
         hasDescription.setDescription(description);

@@ -27,6 +27,7 @@ import io.jmix.ui.component.table.TreeTableDataContainer;
 import io.jmix.ui.widget.JmixTreeTable;
 import io.jmix.ui.widget.data.AggregationContainer;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,7 +48,7 @@ public class WebTreeTable<E extends JmixEntity> extends WebAbstractTable<JmixTre
     }
 
     @Override
-    public void setItems(TableItems<E> tableItems) {
+    public void setItems(@Nullable TableItems<E> tableItems) {
         if (tableItems != null &&
                 !(tableItems instanceof TreeTableItems)) {
             throw new IllegalArgumentException("TreeTable supports only TreeTableItems data binding");
@@ -110,12 +111,13 @@ public class WebTreeTable<E extends JmixEntity> extends WebAbstractTable<JmixTre
         }
     }
 
+    @Nullable
     protected TreeTableItems<E> getTreeTableSource() {
         return ((TreeTableItems) getItems());
     }
 
     @Override
-    public void setIconProvider(Function<? super E, String> iconProvider) {
+    public void setIconProvider(@Nullable Function<? super E, String> iconProvider) {
         this.iconProvider = iconProvider;
         // do not change row header mode
         component.refreshRowCache();

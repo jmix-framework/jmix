@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 
 /**
@@ -32,7 +33,7 @@ public class ShortcutTriggeredEvent extends EventObject {
      * @param target the component which was focused when the Event occurred
      * @throws IllegalArgumentException if source is null
      */
-    public ShortcutTriggeredEvent(Component source, Component target) {
+    public ShortcutTriggeredEvent(Component source, @Nullable Component target) {
         super(source);
         this.target = target;
     }
@@ -45,6 +46,7 @@ public class ShortcutTriggeredEvent extends EventObject {
     /**
      * @return the component which was focused when the Event occurred
      */
+    @Nullable
     public Component getTarget() {
         return target;
     }

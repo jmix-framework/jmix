@@ -37,6 +37,7 @@ public interface HasTablePresentations {
     void applyPresentation(Object id);
     void applyPresentationAsDefault(Object id);
 
+    @Nullable
     Object getDefaultPresentationId();
 
     /**

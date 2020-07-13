@@ -55,7 +55,7 @@ public class WindowCreationHelper {
             return;
         }
 
-        String screenId = window.getId();
+        // String screenId = window.getId();
         // todo UI permissions
         /*Map<String, Integer> uiPermissions = userSession.getPermissionsByType(PermissionType.UI);
         for (Map.Entry<String, Integer> permissionEntry : uiPermissions.entrySet()) {

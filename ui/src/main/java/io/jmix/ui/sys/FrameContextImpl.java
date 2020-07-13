@@ -30,6 +30,7 @@ import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -82,6 +83,7 @@ public class FrameContextImpl implements FrameContext {
         return (T) getParams().get(param);
     }
 
+    @Nullable
     @Override
     public <T> T getValue(String property) {
         String[] elements = ValuePathHelper.parse(property);
@@ -132,6 +134,7 @@ public class FrameContextImpl implements FrameContext {
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     protected <T> T getValue(Component component) {
         if (component instanceof HasValue) {
             return (T) ((HasValue) component).getValue();

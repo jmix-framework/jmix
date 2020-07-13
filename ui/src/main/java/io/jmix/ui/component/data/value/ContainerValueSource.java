@@ -32,6 +32,7 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.model.*;
 import org.apache.commons.collections4.CollectionUtils;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -138,6 +139,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
         return metaPropertyPath;
     }
 
+    @Nullable
     @Override
     public E getItem() {
         return container.getItemOrNull();
@@ -148,6 +150,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
         return dataModelSecurityEnabled;
     }
 
+    @Nullable
     @Override
     public V getValue() {
         E item = container.getItemOrNull();
@@ -158,7 +161,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
     }
 
     @Override
-    public void setValue(V value) {
+    public void setValue(@Nullable V value) {
         E item = container.getItemOrNull();
         if (item != null) {
             if (canUpdateMasterRefs()) {
@@ -245,7 +248,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
                 && !inverseProperty.getRange().getCardinality().isMany();
     }
 
-    protected void updateMasterRefs(V value) {
+    protected void updateMasterRefs(@Nullable V value) {
         DataContext dataContext = getDataContext();
         if (dataContext == null) {
             return;
@@ -291,7 +294,8 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
         container.unmute();
     }
 
-    protected Collection<? extends V> copyPropertyCollection(Collection<? extends V> propertyValue) {
+    @Nullable
+    protected Collection<? extends V> copyPropertyCollection(@Nullable Collection<? extends V> propertyValue) {
         if (propertyValue == null) {
             return null;
         }
@@ -307,6 +311,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
         return new LinkedHashSet<>(propertyValue);
     }
 
+    @Nullable
     protected DataContext getDataContext() {
         DataLoader loader = container instanceof HasLoader
                 ? ((HasLoader) container).getLoader()
@@ -317,6 +322,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
                 : null;
     }
 
+    @Nullable
     protected MetaProperty getInverseProperty() {
         MetaPropertyPath mpp = getEntityMetaClass().getPropertyPath(metaPropertyPath.toPathString());
         if (mpp == null) {

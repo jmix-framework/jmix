@@ -38,7 +38,7 @@ public class QueryFilter extends FilterParser implements Serializable {
         super(element);
     }
 
-    public static QueryFilter merge(QueryFilter src1, QueryFilter src2) {
+    public static QueryFilter merge(@Nullable QueryFilter src1, @Nullable QueryFilter src2) {
         if (src1 == null || src2 == null)
             throw new IllegalArgumentException("Source query filter is null");
 
@@ -82,7 +82,7 @@ public class QueryFilter extends FilterParser implements Serializable {
         return query;
     }
 
-    protected boolean paramValueIsOk(Object value) {
+    protected boolean paramValueIsOk(@Nullable Object value) {
         if (value instanceof String)
             return !StringUtils.isBlank((String) value);
         else return value != null;
@@ -136,6 +136,7 @@ public class QueryFilter extends FilterParser implements Serializable {
         }
     }
 
+    @Nullable
     public io.jmix.core.querycondition.Condition  toQueryCondition(Set<String> parameters) {
         Condition condition = actualizeForQueryConditions(root, parameters);
         return condition == null ? null : createQueryCondition(condition);
@@ -148,6 +149,7 @@ public class QueryFilter extends FilterParser implements Serializable {
                 .collect(Collectors.toSet());
     }
 
+    @Nullable
     protected Condition actualizeForQueryConditions(Condition src, Set<String> parameters) {
         Condition copy = src.copy();
         List<Condition> list = new ArrayList<>();

@@ -19,6 +19,7 @@ package io.jmix.ui.component.table;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Property;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,11 +35,12 @@ public class TableItemWrapper implements Item {
         this.tableDataContainer = tableDataContainer;
     }
 
+    @Nullable
     public Object getItemId() {
         return itemId;
     }
 
-    public void setItemId(Object itemId) {
+    public void setItemId(@Nullable Object itemId) {
         this.itemId = itemId;
     }
 

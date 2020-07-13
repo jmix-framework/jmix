@@ -19,6 +19,7 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.JmixEntity;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -55,6 +56,7 @@ public interface FrameContext {
      *                 <br>If the value is an {@link EnumClass} and remaining
      *                 property path is "id", return EnumClass.getId() value.
      */
+    @Nullable
     <T> T getValue(String property);
 
     /**

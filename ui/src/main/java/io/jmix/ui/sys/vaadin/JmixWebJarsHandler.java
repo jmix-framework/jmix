@@ -164,6 +164,7 @@ public class JmixWebJarsHandler implements RequestHandler {
         return false;
     }
 
+    @Nullable
     protected URL getStaticResourceUrl(String path) throws IOException {
         URL resourceUrl = servletContext.getResource(path);
 
@@ -193,6 +194,7 @@ public class JmixWebJarsHandler implements RequestHandler {
         return cacheTime;
     }
 
+    @Nullable
     protected String checkResourcePath(String uri) {
         if (uri.endsWith("/")) {
             return String.format("Directory loading is forbidden: %s", uri);

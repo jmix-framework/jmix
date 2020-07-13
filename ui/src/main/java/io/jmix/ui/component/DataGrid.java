@@ -125,7 +125,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @see #addColumn(Column, int)
      * @see #addColumn(String, MetaPropertyPath, int)
      */
-    Column<E> addColumn(String id, MetaPropertyPath propertyPath);
+    Column<E> addColumn(String id, @Nullable MetaPropertyPath propertyPath);
 
     /**
      * Creates new column with given Id and property at the specified index,
@@ -140,7 +140,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @see #addColumn(Column, int)
      * @see #addColumn(String, MetaPropertyPath)
      */
-    Column<E> addColumn(String id, MetaPropertyPath propertyPath, int index);
+    Column<E> addColumn(String id, @Nullable MetaPropertyPath propertyPath, int index);
 
     /**
      * Removes the given column from DataGrid or do nothing if column is {@code null}.
@@ -1212,7 +1212,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      *
      * @param detailsGenerator the details generator to set
      */
-    void setDetailsGenerator(DetailsGenerator<E> detailsGenerator);
+    void setDetailsGenerator(@Nullable DetailsGenerator<E> detailsGenerator);
 
     /**
      * Checks whether details are visible for the given item.
@@ -1563,7 +1563,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param locale     the locale to use for conversion. Can be null
          * @return the converted value compatible with the source type
          */
-        M convertToModel(P value, Class<? extends M> targetType, Locale locale);
+        M convertToModel(@Nullable P value, Class<? extends M> targetType, @Nullable Locale locale);
 
         /**
          * Converts the given value from source type to target type.
@@ -1574,7 +1574,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param locale     the locale to use for conversion. Can be null
          * @return the converted value compatible with the source type
          */
-        P convertToPresentation(M value, Class<? extends P> targetType, Locale locale);
+        P convertToPresentation(@Nullable M value, Class<? extends P> targetType, @Nullable Locale locale);
 
         /**
          * The source type of the converter.
@@ -2035,7 +2035,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param columnId  id of the clicked DataGrid column
          */
         public ItemClickEvent(DataGrid component,
-                              MouseEventDetails details, E item, Object itemId, String columnId) {
+                              MouseEventDetails details, E item, @Nullable Object itemId, @Nullable String columnId) {
             super(component, details);
 
             this.item = item;
@@ -2053,6 +2053,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return an item Id
          */
+        @Nullable
         public Object getItemId() {
             return itemId;
         }
@@ -2060,6 +2061,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return id of the clicked DataGrid column
          */
+        @Nullable
         public String getColumnId() {
             return columnId;
         }
@@ -2840,6 +2842,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @return the renderer
          */
+        @Nullable
         Renderer getRenderer();
 
         /**
@@ -2849,7 +2852,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param renderer the renderer to use
          * @see #setRenderer(Renderer, Function)
          */
-        void setRenderer(Renderer renderer);
+        void setRenderer(@Nullable Renderer renderer);
 
         /**
          * Sets the renderer for this column. If given renderer is null, then
@@ -2864,7 +2867,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param presentationProvider the presentation provider to use
          * @see #setRenderer(Renderer)
          */
-        void setRenderer(Renderer renderer, Function presentationProvider);
+        void setRenderer(@Nullable Renderer renderer, @Nullable Function presentationProvider);
 
         /**
          * @return a function to get presentations from the value of this column
@@ -2875,6 +2878,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @deprecated use {@link #getPresentationProvider()} instead
          */
         @Deprecated
+        @Nullable
         @Override
         Formatter getFormatter();
 
@@ -2886,7 +2890,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          */
         @Deprecated
         @Override
-        void setFormatter(Formatter formatter);
+        void setFormatter(@Nullable Formatter formatter);
 
         /**
          * Returns the converter instance used by this column.
@@ -2951,12 +2955,13 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @deprecated Use {{@link #setEditFieldGenerator(Function)}} instead
          */
         @Deprecated
-        void setEditorFieldGenerator(ColumnEditorFieldGenerator fieldFactory);
+        void setEditorFieldGenerator(@Nullable ColumnEditorFieldGenerator fieldFactory);
 
         /**
          * @return field generator that generates a component
          * for this column in {@link DataGrid} editor
          */
+        @Nullable
         Function<EditorFieldGenerationContext<E>, Field<?>> getEditFieldGenerator();
 
         /**
@@ -3011,12 +3016,13 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * @return The DataGrid this column belongs to
          */
+        @Nullable
         DataGrid<E> getOwner();
 
         /**
          * @param owner The DataGrid this column belongs to
          */
-        void setOwner(DataGrid<E> owner);
+        void setOwner(@Nullable DataGrid<E> owner);
 
         /**
          * INTERNAL
@@ -3033,6 +3039,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @return aggregation info
          * @see DataGrid#setAggregatable(boolean)
          */
+        @Nullable
         AggregationInfo getAggregation();
 
         /**
@@ -3041,7 +3048,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @param info aggregation info
          * @see DataGrid#setAggregatable(boolean)
          */
-        void setAggregation(AggregationInfo info);
+        void setAggregation(@Nullable AggregationInfo info);
 
         /**
          * @return value description for aggregation row cells

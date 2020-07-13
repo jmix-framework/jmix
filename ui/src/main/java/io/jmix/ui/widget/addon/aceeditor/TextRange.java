@@ -15,22 +15,23 @@ package io.jmix.ui.widget.addon.aceeditor;
 
 import io.jmix.ui.widget.client.addon.aceeditor.AceRange;
 import io.jmix.ui.widget.client.addon.aceeditor.Util;
+import org.apache.commons.lang3.StringUtils;
 
 public class TextRange extends AceRange {
 
 	private final String text;
 	int start = -1;
 	int end = -1;
-	
+
 	public TextRange(String text, int row1, int col1, int row2, int col2) {
 		super(row1, col1, row2, col2);
 		this.text = text;
 	}
-	
+
 	public TextRange(String text, AceRange range) {
 		this(text, range.getStartRow(), range.getStartCol(), range.getEndRow(), range.getEndCol());
 	}
-	
+
 	public TextRange(String text, int start, int end) {
 		this(text, AceRange.fromPositions(start, end, text));
 	}
@@ -48,13 +49,29 @@ public class TextRange extends AceRange {
 		}
 		return end;
 	}
-	
+
 	public int getCursorPosition() {
 		return getEnd();
 	}
-	
+
 	public TextRange withNewText(String newText) {
 		return new TextRange(newText, getStart(), getEnd());
 	}
-	
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof TextRange) {
+            TextRange obj = (TextRange) o;
+            return super.equals(o)
+                    && StringUtils.equals(text, obj.text)
+                    && start == obj.start
+                    && end == obj.end;
+        }
+        return false;
+    }
+
+	@Override
+	public int hashCode() {
+		return super.hashCode() + start + end;
+	}
 }

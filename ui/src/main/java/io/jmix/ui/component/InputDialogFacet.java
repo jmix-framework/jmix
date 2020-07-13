@@ -23,6 +23,7 @@ import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.meta.*;
 import io.jmix.ui.screen.CloseAction;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -50,11 +51,12 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * @param caption caption
      */
     @StudioProperty(type = PropertyType.LOCALIZED_STRING)
-    void setCaption(String caption);
+    void setCaption(@Nullable String caption);
 
     /**
      * @return dialog caption
      */
+    @Nullable
     String getCaption();
 
     /**
@@ -127,11 +129,12 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * @param dialogActions one of {@link DialogActions} values
      */
     @StudioProperty(type = PropertyType.ENUMERATION)
-    void setDialogActions(DialogActions dialogActions);
+    void setDialogActions(@Nullable DialogActions dialogActions);
 
     /**
      * @return set of predefined actions used in dialog
      */
+    @Nullable
     DialogActions getDialogActions();
 
     /**

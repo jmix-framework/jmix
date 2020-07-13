@@ -130,6 +130,7 @@ public class ContainerTableItems<E extends JmixEntity> implements EntityTableIte
         }
     }
 
+    @Nullable
     @Override
     public Object getItemValue(Object itemId, Object propertyId) {
         MetaPropertyPath propertyPath = (MetaPropertyPath) propertyId;
@@ -201,8 +202,9 @@ public class ContainerTableItems<E extends JmixEntity> implements EntityTableIte
         return container.getEntityMetaClass();
     }
 
+    @Nullable
     @Override
-    public Object nextItemId(Object itemId) {
+    public Object nextItemId(@Nullable Object itemId) {
         if (itemId == null)
             return null;
         List<E> items = container.getItems();
@@ -210,20 +212,23 @@ public class ContainerTableItems<E extends JmixEntity> implements EntityTableIte
         return index == items.size() - 1 ? null : EntityValues.getIdOrEntity(items.get(index + 1));
     }
 
+    @Nullable
     @Override
-    public Object prevItemId(Object itemId) {
+    public Object prevItemId(@Nullable Object itemId) {
         if (itemId == null)
             return null;
         int index = container.getItemIndex(itemId);
         return index <= 0 ? null : EntityValues.getIdOrEntity(container.getItems().get(index - 1));
     }
 
+    @Nullable
     @Override
     public Object firstItemId() {
         List<E> items = container.getItems();
         return items.isEmpty() ? null : EntityValues.getIdOrEntity(items.get(0));
     }
 
+    @Nullable
     @Override
     public Object lastItemId() {
         List<E> items = container.getItems();

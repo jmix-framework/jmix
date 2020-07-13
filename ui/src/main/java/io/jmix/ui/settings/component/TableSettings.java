@@ -16,6 +16,7 @@
 
 package io.jmix.ui.settings.component;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
@@ -51,19 +52,21 @@ public class TableSettings implements ComponentSettings, ComponentSettings.HasSe
         this.textSelection = textPresentation;
     }
 
+    @Nullable
     public String getSortProperty() {
         return sortProperty;
     }
 
-    public void setSortProperty(String sortProperty) {
+    public void setSortProperty(@Nullable String sortProperty) {
         this.sortProperty = sortProperty;
     }
 
+    @Nullable
     public Boolean getSortAscending() {
         return sortAscending;
     }
 
-    public void setSortAscending(Boolean sortAscending) {
+    public void setSortAscending(@Nullable Boolean sortAscending) {
         this.sortAscending = sortAscending;
     }
 

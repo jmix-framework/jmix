@@ -156,7 +156,7 @@ public class WebGroupBox extends WebAbstractComponent<JmixGroupBox> implements G
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {

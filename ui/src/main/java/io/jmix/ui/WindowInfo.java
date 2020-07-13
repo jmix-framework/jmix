@@ -23,7 +23,6 @@ import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.sys.WindowAttributesProvider;
 import org.dom4j.Element;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -44,8 +43,8 @@ public class WindowInfo {
 
     private final RouteDefinition routeDefinition;
 
-    protected WindowInfo(String id, WindowAttributesProvider windowAttributesProvider,
-                         Element descriptor, String screenClassName, RouteDefinition routeDefinition) {
+    protected WindowInfo(String id, @Nullable WindowAttributesProvider windowAttributesProvider,
+                         @Nullable Element descriptor, @Nullable String screenClassName, RouteDefinition routeDefinition) {
         this.id = id;
         this.windowAttributesProvider = windowAttributesProvider;
         this.descriptor = descriptor;
@@ -58,7 +57,7 @@ public class WindowInfo {
     }
 
     public WindowInfo(String id, WindowAttributesProvider windowAttributesProvider, Element descriptor,
-                      RouteDefinition routeDefinition) {
+                      @Nullable RouteDefinition routeDefinition) {
         checkNotNullArgument(id);
         checkNotNullArgument(descriptor);
 
@@ -102,7 +101,6 @@ public class WindowInfo {
         return windowAttributesProvider.resolve(this);
     }
 
-    @Nonnull
     public Class<? extends FrameOwner> getControllerClass() {
         return windowAttributesProvider.getControllerClass(this);
     }

@@ -35,7 +35,8 @@ public class JmixResizableTextAreaWrapper extends CustomField {
         void onResize(String oldWidth, String oldHeight, String width, String height);
     }
 
-    protected final JmixTextArea textArea;
+    @SuppressWarnings("UnusedAssignment")
+    protected JmixTextArea textArea = null;
 
     public JmixResizableTextAreaWrapper(JmixTextArea txtArea) {
         this.textArea = txtArea;

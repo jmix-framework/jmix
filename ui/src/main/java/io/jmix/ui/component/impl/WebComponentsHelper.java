@@ -300,6 +300,7 @@ public class WebComponentsHelper {
         return findChildComponent(components, vaadinSource, target);
     }*/
 
+    @Nullable
     protected static io.jmix.ui.component.Component findChildComponent(
             Collection<io.jmix.ui.component.Component> components,
             Component vaadinSource, Component target) {
@@ -342,6 +343,7 @@ public class WebComponentsHelper {
     /**
      * @return the direct child component of the layout which contains the component involved to event
      */
+    @Nullable
     protected static Component getDirectChildComponent(Component targetComponent, Component vaadinSource) {
         while (targetComponent != null
                 && targetComponent.getParent() != vaadinSource) {

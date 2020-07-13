@@ -18,12 +18,15 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.ui.component.Component;
 
+import javax.annotation.Nullable;
+
 /**
  * {@link CompositeComponent} having a caption.
  * Default implementations delegate their execution to {@link CompositeComponent#getComposition()}.
  */
 public interface CompositeWithCaption extends CompositeWithDescription, Component.HasCaption {
 
+    @Nullable
     @Override
     default String getCaption() {
         Component.HasCaption hasCaption = (Component.HasCaption) ((CompositeComponent) this).getComposition();
@@ -31,7 +34,7 @@ public interface CompositeWithCaption extends CompositeWithDescription, Componen
     }
 
     @Override
-    default void setCaption(String caption) {
+    default void setCaption(@Nullable String caption) {
         Component.HasCaption hasCaption = (Component.HasCaption) ((CompositeComponent) this).getComposition();
         hasCaption.setCaption(caption);
     }

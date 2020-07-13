@@ -30,7 +30,7 @@ public class RelatedEntitiesBean implements RelatedEntitiesAPI {
 
     @Override
     public RelatedEntitiesBuilder builder(FrameOwner frameOwner) {
-        return null;
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

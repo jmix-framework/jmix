@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -129,7 +131,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         return metadataTools.format(item);
     }
 
-    protected String generateItemCaption(V item) {
+    protected String generateItemCaption(@Nullable V item) {
         if (item == null) {
             return "";
         }
@@ -141,6 +143,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         return generateDefaultItemCaption(item);
     }
 
+    @Nullable
     protected String generateItemStylename(V item) {
         if (optionStyleProvider == null) {
             return null;
@@ -179,6 +182,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
     }
 
+    @Nullable
     @Override
     public V getValue() {
         return internalValue;
@@ -213,13 +217,14 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         setInputPrompt(null);
     }
 
+    @Nullable
     @Override
     public Options<V> getOptions() {
         return optionsBinding != null ? optionsBinding.getSource() : null;
     }
 
     @Override
-    public void setOptions(Options<V> options) {
+    public void setOptions(@Nullable Options<V> options) {
         if (this.optionsBinding != null) {
             this.optionsBinding.unbind();
             this.optionsBinding = null;
@@ -237,7 +242,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
         if (this.optionCaptionProvider != optionCaptionProvider) {
             this.optionCaptionProvider = optionCaptionProvider;
 
@@ -246,6 +251,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionCaptionProvider() {
         return optionCaptionProvider;
@@ -320,7 +326,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionIconProvider(Function<? super V, String> optionIconProvider) {
+    public void setOptionIconProvider(@Nullable Function<? super V, String> optionIconProvider) {
         if (this.optionIconProvider != optionIconProvider) {
             this.optionIconProvider = optionIconProvider;
 
@@ -332,11 +338,13 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionIconProvider() {
         return optionIconProvider;
     }
 
+    @Nullable
     protected Resource generateOptionIcon(V item) {
         String resourceId;
         try {
@@ -352,7 +360,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionImageProvider(Function<? super V, io.jmix.ui.component.Resource> optionImageProvider) {
+    public void setOptionImageProvider(@Nullable Function<? super V, io.jmix.ui.component.Resource> optionImageProvider) {
         if (this.optionImageProvider != optionImageProvider) {
             this.optionImageProvider = optionImageProvider;
 
@@ -364,11 +372,13 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, io.jmix.ui.component.Resource> getOptionImageProvider() {
         return optionImageProvider;
     }
 
+    @Nullable
     protected Resource generateOptionImage(V item) {
         io.jmix.ui.component.Resource resource;
         try {
@@ -384,13 +394,14 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
                 : null;
     }
 
+    @Nullable
     @Override
     public String getInputPrompt() {
         return component.getPlaceholder();
     }
 
     @Override
-    public void setInputPrompt(String inputPrompt) {
+    public void setInputPrompt(@Nullable String inputPrompt) {
         if (StringUtils.isNotBlank(inputPrompt)) {
             setNullSelectionCaption(generateItemCaption(null));
         }
@@ -434,7 +445,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setOptionStyleProvider(Function<? super V, String> optionStyleProvider) {
+    public void setOptionStyleProvider(@Nullable Function<? super V, String> optionStyleProvider) {
         if (this.optionStyleProvider != optionStyleProvider) {
             this.optionStyleProvider = optionStyleProvider;
 
@@ -446,6 +457,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
     }
 
+    @Nullable
     @Override
     public Function<? super V, String> getOptionStyleProvider() {
         return optionStyleProvider;

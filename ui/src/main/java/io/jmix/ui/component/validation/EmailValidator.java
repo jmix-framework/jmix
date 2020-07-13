@@ -17,7 +17,6 @@ package io.jmix.ui.component.validation;
 
 import io.jmix.core.BeanLocator;
 import io.jmix.core.BeanValidation;
-import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +45,7 @@ public class EmailValidator extends AbstractValidator<String> {
 
     public static final String NAME = "ui_EmailValidator";
 
-    protected Messages messages;
-    protected MessageTools messageTools;
     protected Validator validator;
-
-    protected String message;
 
     public EmailValidator() {
     }
@@ -58,11 +53,6 @@ public class EmailValidator extends AbstractValidator<String> {
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
-    }
-
-    @Autowired
-    protected void setMessageTools(MessageTools messageTools) {
-        this.messageTools = messageTools;
     }
 
     @Autowired

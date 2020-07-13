@@ -18,7 +18,6 @@ package io.jmix.ui.navigation;
 
 import io.jmix.core.common.util.URLEncodeUtils;
 
-import javax.annotation.Nonnull;
 import java.util.UUID;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -48,7 +47,6 @@ public final class UrlIdSerializer {
      * @return serialized string representation of id
      * @throws IllegalArgumentException if null id is passed or it has an unsupported type
      */
-    @Nonnull
     public static String serializeId(Object id) {
         checkNotNullArgument(id, "Id cannot be null");
 
@@ -80,7 +78,6 @@ public final class UrlIdSerializer {
      * @return deserialized id
      * @throws IllegalArgumentException if null id and/or type are passed or the given id type is not supported
      */
-    @Nonnull
     public static Object deserializeId(Class idClass, String serializedId) {
         checkNotNullArgument(idClass, "Unable to deserialize id without its type");
         checkNotNullArgument(serializedId, "Unable to deserialize null id");

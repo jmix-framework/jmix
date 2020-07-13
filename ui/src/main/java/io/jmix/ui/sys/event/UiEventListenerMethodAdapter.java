@@ -33,6 +33,7 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -98,7 +99,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
     }
 
     @Override
-    public boolean supportsSourceType(Class<?> sourceType) {
+    public boolean supportsSourceType(@Nullable Class<?> sourceType) {
         return true;
     }
 
@@ -115,7 +116,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
         return this.order;
     }
 
-    protected List<ResolvableType> resolveDeclaredEventTypes(Method method, EventListener ann) {
+    protected List<ResolvableType> resolveDeclaredEventTypes(Method method, @Nullable EventListener ann) {
         int count = method.getParameterTypes().length;
         if (count > 1) {
             throw new IllegalStateException(
@@ -162,6 +163,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
      * return {@code null} to indicate that no suitable arguments could be resolved and
      * therefore the method should not be invoked at all for the specified event.
      */
+    @Nullable
     protected Object[] resolveArguments(ApplicationEvent event) {
         ResolvableType declaredEventType = getResolvableType(event);
         if (declaredEventType == null || declaredEventType.getRawClass() == null) {
@@ -194,7 +196,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
         }
     }
 
-    protected void publishEvent(Object instance, Object event) {
+    protected void publishEvent(Object instance, @Nullable Object event) {
         if (event != null) {
             if (event instanceof ApplicationEvent) {
                 this.events.publish((ApplicationEvent) event);
@@ -204,7 +206,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
         }
     }
 
-    protected boolean shouldHandle(ApplicationEvent event, Object[] args) {
+    protected boolean shouldHandle(ApplicationEvent event, @Nullable Object[] args) {
         if (args == null) {
             return false;
         }
@@ -218,7 +220,8 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
     /**
      * Invoke the event listener method with the given argument values.
      */
-    protected Object doInvoke(Object instance, Object... args) {
+    @Nullable
+    protected Object doInvoke(Object instance, @Nullable Object... args) {
         ReflectionUtils.makeAccessible(this.bridgedMethod);
         try {
             return this.bridgedMethod.invoke(instance, args);
@@ -245,6 +248,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
      * annotation or any matching attribute on a composed annotation that
      * is meta-annotated with {@code @EventListener}.
      */
+    @Nullable
     protected String getCondition() {
         return null;
     }
@@ -271,7 +275,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
      * beans, and others). Event listener beans that require proxying should prefer
      * class-based proxy mechanisms.
      */
-    protected void assertTargetBean(Method method, Object targetBean, Object[] args) {
+    protected void assertTargetBean(Method method, Object targetBean, @Nullable Object[] args) {
         Class<?> methodDeclaringClass = method.getDeclaringClass();
         Class<?> targetBeanClass = targetBean.getClass();
         if (!methodDeclaringClass.isAssignableFrom(targetBeanClass)) {
@@ -283,21 +287,24 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
         }
     }
 
-    protected String getInvocationErrorMessage(Object bean, String message, Object[] resolvedArgs) {
+    protected String getInvocationErrorMessage(Object bean, String message, @Nullable Object[] resolvedArgs) {
         StringBuilder sb = new StringBuilder(getDetailedErrorMessage(bean, message));
-        sb.append("Resolved arguments: \n");
-        for (int i = 0; i < resolvedArgs.length; i++) {
-            sb.append("[").append(i).append("] ");
-            if (resolvedArgs[i] == null) {
-                sb.append("[null] \n");
-            } else {
-                sb.append("[type=").append(resolvedArgs[i].getClass().getName()).append("] ");
-                sb.append("[value=").append(resolvedArgs[i]).append("]\n");
+        if (resolvedArgs != null) {
+            sb.append("Resolved arguments: \n");
+            for (int i = 0; i < resolvedArgs.length; i++) {
+                sb.append("[").append(i).append("] ");
+                if (resolvedArgs[i] == null) {
+                    sb.append("[null] \n");
+                } else {
+                    sb.append("[type=").append(resolvedArgs[i].getClass().getName()).append("] ");
+                    sb.append("[value=").append(resolvedArgs[i]).append("]\n");
+                }
             }
         }
         return sb.toString();
     }
 
+    @Nullable
     protected ResolvableType getResolvableType(ApplicationEvent event) {
         ResolvableType payloadType = null;
         if (event instanceof PayloadApplicationEvent) {

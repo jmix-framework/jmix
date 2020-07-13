@@ -18,6 +18,7 @@ package io.jmix.ui.component.data.aggregation;
 
 import io.jmix.ui.component.AggregationInfo;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
@@ -27,8 +28,10 @@ public interface Aggregation<T> {
 
     T avg(Collection<T> items);
 
+    @Nullable
     T min(Collection<T> items);
 
+    @Nullable
     T max(Collection<T> items);
 
     int count(Collection<T> items);

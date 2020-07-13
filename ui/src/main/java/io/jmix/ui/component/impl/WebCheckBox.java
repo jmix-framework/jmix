@@ -20,6 +20,8 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Form;
 import io.jmix.ui.widget.JmixCheckBox;
 
+import javax.annotation.Nullable;
+
 public class WebCheckBox extends WebV8AbstractField<com.vaadin.ui.CheckBox, Boolean, Boolean> implements CheckBox {
     public WebCheckBox() {
         this.component = createComponent();
@@ -33,7 +35,7 @@ public class WebCheckBox extends WebV8AbstractField<com.vaadin.ui.CheckBox, Bool
     }
 
     @Override
-    public void setValue(Boolean value) {
+    public void setValue(@Nullable Boolean value) {
         if (value == null) {
             super.setValue(Boolean.FALSE);
         } else {
@@ -62,7 +64,7 @@ public class WebCheckBox extends WebV8AbstractField<com.vaadin.ui.CheckBox, Bool
     }
 
     @Override
-    public void setParent(Component parent) {
+    public void setParent(@Nullable Component parent) {
         super.setParent(parent);
 
         if (parent instanceof Form

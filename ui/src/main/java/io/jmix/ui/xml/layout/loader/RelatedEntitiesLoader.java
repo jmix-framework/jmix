@@ -46,9 +46,10 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
         loadAlign(resultComponent, element);
         loadCss(resultComponent, element);
 
-        String openType = element.attributeValue("openType");
         /*
         TODO: legacy-ui
+        String openType = element.attributeValue("openType");
+
         if (StringUtils.isNotEmpty(openType)) {
             resultComponent.setOpenType(OpenType.valueOf(openType));
         }*/

@@ -177,7 +177,7 @@ public class WebGridLayout extends WebAbstractComponent<JmixGridLayout> implemen
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {
@@ -266,6 +266,7 @@ public class WebGridLayout extends WebAbstractComponent<JmixGridLayout> implemen
         return () -> removeLayoutClickListener(listener);
     }
 
+    @Nullable
     protected Component findChildComponent(com.vaadin.ui.Component vComponent) {
         for (Component component : getComponents()) {
             if (component.unwrapComposition(com.vaadin.ui.Component.class) == vComponent) {

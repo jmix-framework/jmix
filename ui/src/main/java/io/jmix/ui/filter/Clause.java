@@ -120,6 +120,7 @@ public class Clause extends Condition {
         return operator;
     }
 
+    @Nullable
     public ConditionType getType() {
         try {
             return type == null ? null : ConditionType.valueOf(type);

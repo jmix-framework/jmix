@@ -18,6 +18,7 @@ package io.jmix.ui.component.data.datagrid;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
@@ -93,17 +94,17 @@ public class EmptyDataGridItems<E extends JmixEntity>
 
     @Override
     public Subscription addValueChangeListener(Consumer<ValueChangeEvent<E>> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
     @Override
     public Subscription addItemSetChangeListener(Consumer<ItemSetChangeEvent<E>> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
     @Override
     public Subscription addSelectedItemChangeListener(Consumer<SelectedItemChangeEvent<E>> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
     @Override
@@ -118,7 +119,7 @@ public class EmptyDataGridItems<E extends JmixEntity>
 
     @Override
     public Subscription addStateChangeListener(Consumer<StateChangeEvent> listener) {
-        return null;
+        return VoidSubscription.INSTANCE;
     }
 
     @Override

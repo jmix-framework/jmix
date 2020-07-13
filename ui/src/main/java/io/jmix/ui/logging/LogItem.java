@@ -30,7 +30,7 @@ public class LogItem {
     private Throwable throwable;
     private String fullStackTrace;
 
-    public LogItem(Date timestamp, LogLevel level, String message, Throwable throwable) {
+    public LogItem(Date timestamp, LogLevel level, String message, @Nullable Throwable throwable) {
         this.timestamp = timestamp;
         this.level = level;
         this.message = message;

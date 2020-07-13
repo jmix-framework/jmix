@@ -44,7 +44,6 @@ import io.jmix.ui.widget.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
@@ -130,13 +129,12 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         initialLayout.setFrame(frame);
     }
 
-    @Nonnull
     @Override
     public VBoxLayout getInitialLayout() {
         return initialLayout;

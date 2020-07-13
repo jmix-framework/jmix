@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import javax.annotation.Nullable;
+
 /**
  * HTML link component.
  */
@@ -24,7 +26,8 @@ public interface Link extends Component, Component.HasCaption, Component.BelongT
 
     String NAME = "link";
 
-    void setUrl(String url);
+    void setUrl(@Nullable String url);
+    @Nullable
     String getUrl();
 
     void setTarget(String target);

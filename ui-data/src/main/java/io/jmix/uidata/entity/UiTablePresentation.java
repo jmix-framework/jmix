@@ -24,6 +24,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.annotation.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -124,11 +125,12 @@ public class UiTablePresentation extends BaseUuidEntity implements TablePresenta
         this.settings = settings;
     }
 
+    @Nullable
     public String getUserLogin() {
         return userLogin;
     }
 
-    public void setUserLogin(String userLogin) {
+    public void setUserLogin(@Nullable String userLogin) {
         this.userLogin = userLogin;
     }
 

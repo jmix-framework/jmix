@@ -22,6 +22,7 @@ import com.vaadin.v7.data.util.ContainerHierarchicalWrapper;
 import io.jmix.ui.widget.data.AggregationContainer;
 import io.jmix.ui.widget.data.TreeTableContainer;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
@@ -151,6 +152,7 @@ public class NullTreeTableContainer extends ContainerHierarchicalWrapper
         return inline.size();
     }
 
+    @Nullable
     @Override
     public Object nextItemId(Object itemId) {
         if (itemId == null) {
@@ -163,6 +165,7 @@ public class NullTreeTableContainer extends ContainerHierarchicalWrapper
         return inline.get(index + 1);
     }
 
+    @Nullable
     @Override
     public Object prevItemId(Object itemId) {
         if (itemId == null) {
@@ -175,11 +178,13 @@ public class NullTreeTableContainer extends ContainerHierarchicalWrapper
         return inline.get(index - 1);
     }
 
+    @Nullable
     @Override
     public Object firstItemId() {
         return first;
     }
 
+    @Nullable
     @Override
     public Object lastItemId() {
         return inline.peekLast();
@@ -210,14 +215,14 @@ public class NullTreeTableContainer extends ContainerHierarchicalWrapper
         throw new IllegalArgumentException(ERROR_MESSAGE);
     }
 
-    public boolean isExpanded(Object itemId) {
+    public boolean isExpanded(@Nullable Object itemId) {
         if (itemId == null) {
             throw new IllegalArgumentException("Item id cannot be NULL");
         }
         return expanded.contains(itemId);
     }
 
-    public boolean setExpanded(Object itemId) {
+    public boolean setExpanded(@Nullable Object itemId) {
         if (itemId == null) {
             throw new IllegalArgumentException("Item id cannot be NULL");
         }
@@ -269,6 +274,7 @@ public class NullTreeTableContainer extends ContainerHierarchicalWrapper
         makeInlineElements(inline, rootItemIds());
     }
 
+    @Nullable
     protected LinkedList<Object> getInlineChildren(Object itemId) {
         if (areChildrenAllowed(itemId)) {
             LinkedList<Object> inlineChildren = new LinkedList<>();
@@ -280,7 +286,7 @@ public class NullTreeTableContainer extends ContainerHierarchicalWrapper
         return null;
     }
 
-    private void makeInlineElements(List<Object> inline, Collection elements) {
+    private void makeInlineElements(List<Object> inline, @Nullable Collection elements) {
         if (elements != null) {
             for (Object e : elements) {
                 inline.add(e);

@@ -195,6 +195,7 @@ public class WebEditorScreenFacet<E extends JmixEntity, S extends Screen & Edito
         return entity;
     }
 
+    @Nullable
     protected DataContext getParentDataContext() {
         return parentDataContextProvider != null
                 ? parentDataContextProvider.get()

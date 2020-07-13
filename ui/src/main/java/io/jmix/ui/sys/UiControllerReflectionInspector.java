@@ -284,6 +284,7 @@ public class UiControllerReflectionInspector {
         return list;
     }
 
+    @Nullable
     protected Class injectionAnnotation(AnnotatedElement element) {
         if (element.isAnnotationPresent(Named.class)) {
             return Named.class;

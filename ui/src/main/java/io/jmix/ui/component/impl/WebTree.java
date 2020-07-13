@@ -264,13 +264,14 @@ public class WebTree<E extends JmixEntity>
         this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
     }
 
+    @Nullable
     @Override
     public TreeItems<E> getItems() {
         return this.dataBinding != null ? this.dataBinding.getTreeItems() : null;
     }
 
     @Override
-    public void setItems(TreeItems<E> treeItems) {
+    public void setItems(@Nullable TreeItems<E> treeItems) {
         if (this.dataBinding != null) {
             this.dataBinding.unbind();
             this.dataBinding = null;
@@ -471,7 +472,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void removeAction(@Nullable Action action) {
+    public void removeAction(Action action) {
         if (actionList.remove(action)) {
             WebAbstractDataGrid.ActionMenuItemWrapper menuItemWrapper = null;
             for (WebAbstractDataGrid.ActionMenuItemWrapper menuItem : contextMenuItems) {
@@ -491,7 +492,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void removeAction(@Nullable String id) {
+    public void removeAction(String id) {
         Action action = getAction(id);
         if (action != null) {
             removeAction(action);
@@ -613,13 +614,14 @@ public class WebTree<E extends JmixEntity>
         return component.isExpanded(getItems().getItem(itemId));
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return getComposition().getCaption();
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         getComposition().setCaption(caption);
     }
 
@@ -633,13 +635,14 @@ public class WebTree<E extends JmixEntity>
         ((com.vaadin.ui.AbstractComponent) getComposition()).setCaptionAsHtml(captionAsHtml);
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return getComposition().getDescription();
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         if (getComposition() instanceof AbstractComponent) {
             ((AbstractComponent) getComposition()).setDescription(description);
         }
@@ -653,6 +656,7 @@ public class WebTree<E extends JmixEntity>
         return Collections.emptyList();
     }
 
+    @Nullable
     @Override
     public ButtonsPanel getButtonsPanel() {
         return buttonsPanel;
@@ -664,7 +668,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setButtonsPanel(ButtonsPanel panel) {
+    public void setButtonsPanel(@Nullable ButtonsPanel panel) {
         if (buttonsPanel != null && topPanel != null) {
             topPanel.removeComponent(buttonsPanel.unwrap(com.vaadin.ui.Component.class));
             buttonsPanel.setParent(null);
@@ -768,7 +772,7 @@ public class WebTree<E extends JmixEntity>
 
     @Override
     public void refresh() {
-        TreeItems<E> treeItems = getItems();
+        // TreeItems<E> treeItems = getItems();
         /*
         TODO: legacy-ui
         if (treeItems instanceof DatasourceTreeItems) {
@@ -842,6 +846,7 @@ public class WebTree<E extends JmixEntity>
         }
     }
 
+    @Nullable
     protected String getGeneratedStyle(E item) {
         if (styleProviders == null) {
             return null;
@@ -868,7 +873,7 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setIconProvider(Function<? super E, String> iconProvider) {
+    public void setIconProvider(@Nullable Function<? super E, String> iconProvider) {
         if (this.iconProvider != iconProvider) {
             this.iconProvider = iconProvider;
 
@@ -880,7 +885,8 @@ public class WebTree<E extends JmixEntity>
         }
     }
 
-    protected Resource getItemIcon(E item) {
+    @Nullable
+    protected Resource getItemIcon(@Nullable E item) {
         if (item == null) {
             return null;
         }
@@ -987,11 +993,12 @@ public class WebTree<E extends JmixEntity>
     }
 
     @Override
-    public void setDetailsGenerator(Tree.DetailsGenerator<? super E> generator) {
+    public void setDetailsGenerator(@Nullable Tree.DetailsGenerator<? super E> generator) {
         detailsGenerator = generator;
         component.getCompositionRoot().setDetailsGenerator(generator != null ? this::getItemDetails : null);
     }
 
+    @Nullable
     protected com.vaadin.ui.Component getItemDetails(E entity) {
         Component detailsComponent = detailsGenerator.getDetails(entity);
         return detailsComponent != null ? detailsComponent.unwrapComposition(com.vaadin.ui.Component.class) : null;
@@ -1201,6 +1208,7 @@ public class WebTree<E extends JmixEntity>
             return Stream.empty();
         }
 
+        @Nullable
         @Override
         public T getParent(T item) {
             return null;

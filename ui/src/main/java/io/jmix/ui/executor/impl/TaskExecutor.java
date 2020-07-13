@@ -19,6 +19,8 @@ package io.jmix.ui.executor.impl;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.ExecutedOnUIThread;
 
+import javax.annotation.Nullable;
+
 public interface TaskExecutor<T, V> {
     @ExecutedOnUIThread
     void startExecution();
@@ -27,6 +29,7 @@ public interface TaskExecutor<T, V> {
     boolean cancelExecution();
 
     @ExecutedOnUIThread
+    @Nullable
     V getResult();
 
     BackgroundTask<T, V> getTask();

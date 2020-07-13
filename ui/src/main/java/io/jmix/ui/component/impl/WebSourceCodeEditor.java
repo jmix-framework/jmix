@@ -29,6 +29,7 @@ import io.jmix.ui.widget.addon.aceeditor.Suggestion;
 import io.jmix.ui.widget.addon.aceeditor.SuggestionExtension;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -188,6 +189,7 @@ public class WebSourceCodeEditor extends WebV8AbstractField<JmixSourceCodeEditor
         return component.isHandleTabKey();
     }
 
+    @Nullable
     @Override
     public String getValue() {
         String value = super.getValue();

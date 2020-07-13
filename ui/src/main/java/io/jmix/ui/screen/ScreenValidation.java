@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
@@ -163,7 +165,7 @@ public class ScreenValidation {
      * @param item   item to validate
      * @return validation errors
      */
-    public ValidationErrors validateCrossFieldRules(@SuppressWarnings("unused") FrameOwner origin, JmixEntity item) {
+    public ValidationErrors validateCrossFieldRules(@SuppressWarnings("unused") @Nullable FrameOwner origin, JmixEntity item) {
         ValidationErrors errors = new ValidationErrors();
 
         Validator validator = beanValidation.getValidator();

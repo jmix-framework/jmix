@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -74,6 +76,7 @@ public class WebHistory implements History {
         return history.get(now);
     }
 
+    @Nullable
     @Override
     public NavigationState getNow() {
         if (checkNotNativeUrlHandlingMode()) {
@@ -85,6 +88,7 @@ public class WebHistory implements History {
                 : null;
     }
 
+    @Nullable
     @Override
     public NavigationState getPrevious() {
         if (checkNotNativeUrlHandlingMode()) {
@@ -96,6 +100,7 @@ public class WebHistory implements History {
                 : null;
     }
 
+    @Nullable
     @Override
     public NavigationState getNext() {
         if (checkNotNativeUrlHandlingMode()) {

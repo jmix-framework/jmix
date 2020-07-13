@@ -18,6 +18,7 @@ package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.UiControllerProperty;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -25,6 +26,7 @@ import io.jmix.ui.xml.layout.ComponentLoader.InitTask;
 import io.jmix.ui.xml.layout.ComponentLoader.InjectTask;
 import io.jmix.ui.xml.layout.ComponentLoader.PostInitTask;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class ComponentLoaderContext implements ComponentLoader.ComponentContext {
@@ -50,6 +52,11 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
 
     public ComponentLoaderContext(ScreenOptions options) {
         this.options = options;
+
+        this.parameters = Collections.emptyMap();
+        if (options instanceof MapScreenOptions) {
+            parameters = ((MapScreenOptions) options).getParams();
+        }
     }
 
     @Override
@@ -111,12 +118,13 @@ public class ComponentLoaderContext implements ComponentLoader.ComponentContext 
         postInitTasks.add(task);
     }
 
+    @Nullable
     @Override
     public ComponentLoader.ComponentContext getParent() {
         return parent;
     }
 
-    public void setParent(ComponentLoader.ComponentContext parent) {
+    public void setParent(@Nullable ComponentLoader.ComponentContext parent) {
         this.parent = parent;
     }
 

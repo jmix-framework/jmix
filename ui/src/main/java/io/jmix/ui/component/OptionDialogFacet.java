@@ -21,6 +21,8 @@ import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
 
+import javax.annotation.Nullable;
+
 /**
  * Prepares and shows option dialogs.
  */
@@ -42,11 +44,12 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      * @param caption caption
      */
     @StudioProperty(type = PropertyType.LOCALIZED_STRING)
-    void setCaption(String caption);
+    void setCaption(@Nullable String caption);
 
     /**
      * @return dialog caption
      */
+    @Nullable
     String getCaption();
 
     /**
@@ -55,11 +58,12 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      * @param message message
      */
     @StudioProperty(type = PropertyType.LOCALIZED_STRING)
-    void setMessage(String message);
+    void setMessage(@Nullable String message);
 
     /**
      * @return dialog message
      */
+    @Nullable
     String getMessage();
 
     /**

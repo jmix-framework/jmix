@@ -60,10 +60,11 @@ public class WebInputDialogFacet extends WebAbstractFacet implements InputDialog
     protected InputDialog inputDialog;
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         this.caption = caption;
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption;
@@ -120,10 +121,11 @@ public class WebInputDialogFacet extends WebAbstractFacet implements InputDialog
     }
 
     @Override
-    public void setDialogActions(DialogActions dialogActions) {
+    public void setDialogActions(@Nullable DialogActions dialogActions) {
         this.dialogActions = dialogActions;
     }
 
+    @Nullable
     @Override
     public DialogActions getDialogActions() {
         return dialogActions;

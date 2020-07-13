@@ -24,6 +24,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -47,7 +48,7 @@ public class WebClickableTextRenderer<T extends JmixEntity>
         this(listener, "");
     }
 
-    public WebClickableTextRenderer(Consumer<DataGrid.RendererClickEvent<T>> listener, String nullRepresentation) {
+    public WebClickableTextRenderer(@Nullable Consumer<DataGrid.RendererClickEvent<T>> listener, String nullRepresentation) {
         super(listener);
         this.nullRepresentation = nullRepresentation;
     }

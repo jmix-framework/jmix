@@ -33,6 +33,8 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -204,7 +206,8 @@ public class OptionDialogFacetProvider
         facet.setHtmlSanitizerEnabled(htmlSanitizerEnabled);
     }
 
-    protected String loadResourceString(ComponentLoader.ComponentContext context, String caption) {
+    @Nullable
+    protected String loadResourceString(ComponentLoader.ComponentContext context, @Nullable String caption) {
         if (isEmpty(caption)) {
             return caption;
         }
@@ -216,7 +219,8 @@ public class OptionDialogFacetProvider
         return messageTools.loadString(screenClass.getPackage().getName(), caption);
     }
 
-    protected String getIconPath(ComponentLoader.ComponentContext context, String icon) {
+    @Nullable
+    protected String getIconPath(ComponentLoader.ComponentContext context, @Nullable String icon) {
         if (icon == null || icon.isEmpty()) {
             return null;
         }
@@ -235,7 +239,8 @@ public class OptionDialogFacetProvider
         return iconPath;
     }
 
-    protected String loadThemeString(String value) {
+    @Nullable
+    protected String loadThemeString(@Nullable String value) {
         if (value != null
                 && value.startsWith(ThemeConstants.PREFIX)) {
             value = themeConstantsManager.getConstants()

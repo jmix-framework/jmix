@@ -35,6 +35,7 @@ import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import com.vaadin.util.ReflectTools;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -139,7 +140,8 @@ public class ContextMenu extends AbstractExtension {
         }
     }
 
-    private List<ContextMenuItemState> convertItemsToState(List<MenuItem> items,
+    @Nullable
+    private List<ContextMenuItemState> convertItemsToState(@Nullable List<MenuItem> items,
                                                            Map<Integer, MenuItem> itemRegistry) {
         if (items == null || items.size() == 0) {
             return null;
@@ -194,11 +196,11 @@ public class ContextMenu extends AbstractExtension {
         return rootItem.addItem(caption);
     }
 
-    public MenuItem addItem(String caption, Command command) {
+    public MenuItem addItem(String caption, @Nullable Command command) {
         return rootItem.addItem(caption, command);
     }
 
-    public MenuItem addItem(String caption, Resource icon, Command command) {
+    public MenuItem addItem(String caption, Resource icon, @Nullable Command command) {
         return rootItem.addItem(caption, icon, command);
     }
 

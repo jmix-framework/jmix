@@ -18,7 +18,6 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.action.Action;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
@@ -39,12 +38,12 @@ public interface ActionsHolder extends Component, HasSubParts {
     /**
      * Remove the action from the component
      */
-    void removeAction(@Nullable Action action);
+    void removeAction(Action action);
 
     /**
      * Remove the action by its ID. If there is no action with that ID, nothing happens.
      */
-    void removeAction(@Nullable String id);
+    void removeAction(String id);
 
     /**
      * Remove all actions from the component
@@ -66,7 +65,6 @@ public interface ActionsHolder extends Component, HasSubParts {
      * @return an action by its ID
      * @throws IllegalArgumentException if not found
      */
-    @Nonnull
     default Action getActionNN(String id) {
         Action action = getAction(id);
         if (action == null) {

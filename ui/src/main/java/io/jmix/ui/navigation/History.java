@@ -44,6 +44,7 @@ public interface History {
     /**
      * @return current history entry
      */
+    @Nullable
     NavigationState getNow();
 
     /**

@@ -281,7 +281,7 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
         InputParameter parameter;
 
         Class clazz = loadParamClass(paramEl, classFqn, context);
-        MetaClass entityClass = metadata.getClass(clazz);
+        MetaClass entityClass = metadata.findClass(clazz);
 
         if (entityClass != null) {
             parameter = InputParameter.entityParameter(paramId, clazz)
@@ -386,7 +386,8 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
         }
     }
 
-    protected String loadResourceString(ComponentLoader.ComponentContext context, String caption) {
+    @Nullable
+    protected String loadResourceString(ComponentLoader.ComponentContext context, @Nullable String caption) {
         if (isEmpty(caption)) {
             return caption;
         }
@@ -398,7 +399,8 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
         return messageTools.loadString(screenClass.getPackage().getName(), caption);
     }
 
-    protected String getIconPath(ComponentLoader.ComponentContext context, String icon) {
+    @Nullable
+    protected String getIconPath(ComponentLoader.ComponentContext context, @Nullable String icon) {
         if (icon == null || icon.isEmpty()) {
             return null;
         }
@@ -417,7 +419,8 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
         return iconPath;
     }
 
-    protected String loadThemeString(String value) {
+    @Nullable
+    protected String loadThemeString(@Nullable String value) {
         if (value != null && value.startsWith(ThemeConstants.PREFIX)) {
             value = themeConstantsManager.getConstants()
                     .get(value.substring(ThemeConstants.PREFIX.length()));

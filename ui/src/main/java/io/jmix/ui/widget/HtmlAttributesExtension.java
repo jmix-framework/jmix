@@ -26,6 +26,7 @@ import io.jmix.ui.widget.client.html.HtmlAttributesClientRpc;
 import io.jmix.ui.widget.client.html.HtmlAttributesExtensionState;
 import org.apache.commons.collections4.CollectionUtils;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class HtmlAttributesExtension extends AbstractExtension {
@@ -78,10 +79,12 @@ public class HtmlAttributesExtension extends AbstractExtension {
         addOrUpdate(attributes, AttributeInfo.dom(attributeName, value));
     }
 
+    @Nullable
     public String getDomAttribute(String attributeName) {
         return getDomAttribute(HtmlAttributesExtensionState.DEFAULT_SELECTOR, attributeName);
     }
 
+    @Nullable
     public String getDomAttribute(String querySelector, String attributeName) {
         return getAttributeValue(querySelector, attributeName, AttributeType.DOM);
     }
@@ -127,10 +130,12 @@ public class HtmlAttributesExtension extends AbstractExtension {
         addOrUpdate(attributes, AttributeInfo.css(propertyName, value));
     }
 
+    @Nullable
     public String getCssProperty(String propertyName) {
         return getCssProperty(HtmlAttributesExtensionState.DEFAULT_SELECTOR, propertyName);
     }
 
+    @Nullable
     public String getCssProperty(String querySelector, String propertyName) {
         return getAttributeValue(querySelector, propertyName, AttributeType.CSS);
     }
@@ -154,6 +159,7 @@ public class HtmlAttributesExtension extends AbstractExtension {
         }
     }
 
+    @Nullable
     protected String getAttributeValue(String querySelector, String attributeName, AttributeType type) {
         Set<AttributeInfo> attributes = getState(false).attributes.get(querySelector);
         if (CollectionUtils.isNotEmpty(attributes)) {

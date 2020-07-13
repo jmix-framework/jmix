@@ -41,10 +41,11 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
      *
      * @param button button that should trigger show/hide of side panel
      */
-    void setSidePanelToggleButton(Button button);
+    void setSidePanelToggleButton(@Nullable Button button);
     /**
      * @return side panel toggle button
      */
+    @Nullable
     Button getSidePanelToggleButton();
 
     /**
@@ -218,13 +219,14 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
         /**
          * @return icon name
          */
+        @Nullable
         String getIcon();
         /**
          * Set icon.
          *
          * @param icon icon name
          */
-        void setIcon(String icon);
+        void setIcon(@Nullable String icon);
 
         /**
          * @return true if caption is inserted to DOM as HTML
@@ -303,13 +305,14 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
         /**
          * @return item command
          */
+        @Nullable
         Consumer<MenuItem> getCommand();
         /**
          * Set item command
          *
          * @param command item command
          */
-        void setCommand(Consumer<MenuItem> command);
+        void setCommand(@Nullable Consumer<MenuItem> command);
 
         /**
          * Add menu item to the end of children list.

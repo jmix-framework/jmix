@@ -20,6 +20,7 @@ import com.vaadin.v7.data.util.ContainerOrderedWrapper;
 import io.jmix.ui.widget.data.AggregationContainer;
 import io.jmix.ui.widget.data.GroupTableContainer;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -63,11 +64,13 @@ public class NullGroupTableContainer extends ContainerOrderedWrapper
         throw new IllegalStateException(ERROR_MESSAGE);
     }
 
+    @Nullable
     @Override
     public Object getGroupProperty(Object itemId) {
         throw new IllegalStateException(ERROR_MESSAGE);
     }
 
+    @Nullable
     @Override
     public Object getGroupPropertyValue(Object itemId) {
         throw new IllegalStateException(ERROR_MESSAGE);

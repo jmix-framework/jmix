@@ -31,6 +31,8 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -141,13 +143,14 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
         return super.convertToModel(componentRawValue);
     }
 
+    @Nullable
     @Override
     public V getValue() {
         return internalValue;
     }
 
     @Override
-    public void setValue(V value) {
+    public void setValue(@Nullable V value) {
         setValueToPresentation(convertToPresentation(value));
     }
 
@@ -161,7 +164,7 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
         return equalCollections((Collection<V>) value, (Collection<V>) oldValue);
     }
 
-    protected boolean equalCollections(Collection<V> a, Collection<V> b) {
+    protected boolean equalCollections(@Nullable Collection<V> a, @Nullable Collection<V> b) {
         if (a == null && b == null) {
             return true;
         }
@@ -180,9 +183,10 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
         return (List<I>) container.getItemIds();
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     @Override
-    protected Object convertToPresentation(V modelValue) {
+    protected Object convertToPresentation(@Nullable V modelValue) {
         if (isMultiSelect()) {
             if (modelValue instanceof List) {
                 return new LinkedHashSet<I>((Collection<? extends I>) modelValue);
@@ -192,13 +196,14 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
         return super.convertToPresentation(modelValue);
     }
 
+    @Nullable
     @Override
     public Options<I> getOptions() {
         return optionsBinding != null ? optionsBinding.getSource() : null;
     }
 
     @Override
-    public void setOptions(Options<I> options) {
+    public void setOptions(@Nullable Options<I> options) {
         if (this.optionsBinding != null) {
             this.optionsBinding.unbind();
             this.optionsBinding = null;
@@ -223,7 +228,7 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
     }
 
     @Override
-    protected void setValueToPresentation(Object value) {
+    protected void setValueToPresentation(@Nullable Object value) {
         component.setValueToComponent(value);
     }
 
@@ -243,12 +248,13 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
     }
 
     @Override
-    public void setOptionCaptionProvider(Function<? super I, String> optionCaptionProvider) {
+    public void setOptionCaptionProvider(@Nullable Function<? super I, String> optionCaptionProvider) {
         this.optionCaptionProvider = optionCaptionProvider;
 
         component.markAsDirty();
     }
 
+    @Nullable
     @Override
     public Function<? super I, String> getOptionCaptionProvider() {
         return optionCaptionProvider;

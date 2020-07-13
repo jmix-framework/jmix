@@ -39,7 +39,7 @@ public class EntityAccessExceptionHandler extends AbstractGenericExceptionHandle
 
     @Override
     protected void doHandle(String className, String message, @Nullable Throwable throwable/*, WindowManager windowManager TODO: legacy-ui */) {
-        String msg = messages.formatMessage("", "entityAccessException.message");
+        // String msg = messages.formatMessage("", "entityAccessException.message");
         // TODO: legacy-ui
         // windowManager.showNotification(msg, Frame.NotificationType.WARNING);
     }

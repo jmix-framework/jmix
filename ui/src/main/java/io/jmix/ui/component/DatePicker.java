@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 
+import javax.annotation.Nullable;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,6 +59,7 @@ public interface DatePicker<V> extends Field<V>, HasDatatype<V>, Component.Focus
      */
     void setResolution(Resolution resolution);
 
+    @Nullable
     @Override
     V getValue();
 }

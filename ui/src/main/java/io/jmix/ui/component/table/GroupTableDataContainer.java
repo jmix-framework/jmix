@@ -21,6 +21,7 @@ import io.jmix.ui.component.data.GroupTableItems;
 import io.jmix.ui.gui.data.GroupInfo;
 import io.jmix.ui.widget.data.GroupTableContainer;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class GroupTableDataContainer<I> extends SortableDataContainer<I> implements GroupTableContainer {
@@ -109,6 +110,7 @@ public class GroupTableDataContainer<I> extends SortableDataContainer<I> impleme
         return Collections.emptyList();
     }
 
+    @Nullable
     @Override
     public Object getGroupProperty(Object id) {
         if (isGroup(id)) {
@@ -117,6 +119,7 @@ public class GroupTableDataContainer<I> extends SortableDataContainer<I> impleme
         return null;
     }
 
+    @Nullable
     @Override
     public Object getGroupPropertyValue(Object id) {
         if (isGroup(id)) {

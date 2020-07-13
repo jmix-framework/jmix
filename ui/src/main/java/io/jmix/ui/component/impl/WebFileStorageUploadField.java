@@ -169,8 +169,9 @@ public class WebFileStorageUploadField<T> extends WebAbstractSingleFileUploadFie
         super.onUploadFailed(event);
     }
 
+    @Nullable
     @Override
-    protected String convertToPresentation(T modelValue) throws ConversionException {
+    protected String convertToPresentation(@Nullable T modelValue) throws ConversionException {
         return modelValue == null ? null : getFileNameByValue(modelValue);
     }
 

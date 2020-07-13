@@ -71,7 +71,7 @@ public class MainTabSheetActionHandler implements Action.Handler {
         if (target != null) {
             UiProperties properties = AppBeans.get(UiProperties.class);
 
-            CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+            // CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
             // todo permissions
 //            if (userSession.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION) &&
 //                    findEditor((Layout) target) != null) {

@@ -20,7 +20,6 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Stream;
@@ -103,7 +102,6 @@ public interface Frame
      * @param id facet ID
      * @return facet instance
      */
-    @Nonnull
     default Facet getFacetNN(String id) {
         Facet facet = getFacet(id);
         if (facet == null) {

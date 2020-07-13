@@ -65,7 +65,7 @@ public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoa
     }
 
     @Override
-    public void setDataContext(DataContext dataContext) {
+    public void setDataContext(@Nullable DataContext dataContext) {
         this.dataContext = dataContext;
     }
 

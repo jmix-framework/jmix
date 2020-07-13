@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
@@ -31,6 +32,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
     /**
      * @return {@link Resource} instance
      */
+    @Nullable
     Resource getSource();
 
     /**
@@ -38,7 +40,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
      *
      * @param resource Resource instance
      */
-    void setSource(Resource resource);
+    void setSource(@Nullable Resource resource);
 
     /**
      * Creates the resource with the given <code>type</code> and sets it to the component.
@@ -87,7 +89,7 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
         protected Resource oldSource;
         protected Resource newSource;
 
-        public SourceChangeEvent(ResourceView source, Resource oldSource, Resource newSource) {
+        public SourceChangeEvent(ResourceView source, @Nullable Resource oldSource, @Nullable Resource newSource) {
             super(source);
 
             this.oldSource = oldSource;
@@ -99,10 +101,12 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
             return (ResourceView) super.getSource();
         }
 
+        @Nullable
         public Resource getOldSource() {
             return oldSource;
         }
 
+        @Nullable
         public Resource getNewSource() {
             return newSource;
         }

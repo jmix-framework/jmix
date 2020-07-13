@@ -22,7 +22,6 @@ import com.vaadin.event.dd.acceptcriteria.Not;
 import com.vaadin.shared.ui.dd.VerticalDropLocation;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.SingleComponentContainer;
 import com.vaadin.ui.VerticalSplitPanel;
 
 /**
@@ -58,10 +57,8 @@ public class DefaultVerticalSplitPanelDropHandler
                 .getSourceComponent();
 
         // Detach from old source
-        if (source instanceof ComponentContainer) {
-            ((ComponentContainer) source).removeComponent(component);
-        } else if (source instanceof SingleComponentContainer) {
-            ((SingleComponentContainer) source).setContent(null);
+        if (source != null) {
+            source.removeComponent(component);
         }
 
         if (details.getDropLocation() == VerticalDropLocation.TOP) {

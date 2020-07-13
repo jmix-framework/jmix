@@ -25,6 +25,8 @@ import io.jmix.ui.component.Window;
 import io.jmix.ui.sys.ValuePathHelper;
 import io.jmix.ui.xml.layout.ComponentLoader;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractAssignActionPostInitTask implements ComponentLoader.PostInitTask {
     protected Component component;
     protected String actionId;
@@ -92,7 +94,12 @@ public abstract class AbstractAssignActionPostInitTask implements ComponentLoade
 
     protected abstract void addAction(Action action);
 
-    protected Action getActionRecursively(Frame frame, String actionId) {
+    @Nullable
+    protected Action getActionRecursively(@Nullable Frame frame, String actionId) {
+        if (frame == null) {
+            return null;
+        }
+
         Action action = frame.getAction(actionId);
         if (action == null) {
             Frame parentFrame = frame.getFrame();

@@ -74,8 +74,8 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
             component = new JmixHorizontalSplitPanel() {
                 @Override
                 public void setSplitPosition(float pos, Unit unit, boolean reverse) {
-                    currentPosition = this.getSplitPosition();
-                    inverse = this.isSplitPositionReversed();
+                    currentPosition = super.getSplitPosition();
+                    inverse = super.isSplitPositionReversed();
 
                     super.setSplitPosition(pos, unit, reverse);
                 }
@@ -84,8 +84,8 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
             component = new JmixVerticalSplitPanel() {
                 @Override
                 public void setSplitPosition(float pos, Unit unit, boolean reverse) {
-                    currentPosition = this.getSplitPosition();
-                    inverse = this.isSplitPositionReversed();
+                    currentPosition = super.getSplitPosition();
+                    inverse = super.isSplitPositionReversed();
 
                     super.setSplitPosition(pos, unit, reverse);
                 }
@@ -124,7 +124,7 @@ public class WebSplitPanel extends WebAbstractComponent<AbstractSplitPanel> impl
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
 
         if (frame != null) {

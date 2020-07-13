@@ -87,6 +87,7 @@ public class MenuItemCommands {
      * @param item menu item
      * @return command
      */
+    @Nullable
     public MenuItemCommand create(FrameOwner origin, MenuItem item) {
         Map<String, Object> params = loadParams(item);
         List<UiControllerProperty> properties = loadProperties(item.getDescriptor());
@@ -110,7 +111,7 @@ public class MenuItemCommands {
         return Collections.emptyMap();
     }
 
-    protected List<UiControllerProperty> loadProperties(Element menuItemDescriptor) {
+    protected List<UiControllerProperty> loadProperties(@Nullable Element menuItemDescriptor) {
         if (menuItemDescriptor == null) {
             return Collections.emptyList();
         }
@@ -286,7 +287,9 @@ public class MenuItemCommands {
                     screen, properties);
             propertyInjector.inject();
 
-            screens.showFromNavigation(screen);
+            if (screen != null) {
+                screens.showFromNavigation(screen);
+            }
 
             sample.stop(UiMonitoring.createMenuTimer(meterRegistry, item.getId()));
         }

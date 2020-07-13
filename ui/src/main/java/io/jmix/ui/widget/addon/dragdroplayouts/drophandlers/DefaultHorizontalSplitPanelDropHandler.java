@@ -23,7 +23,6 @@ import com.vaadin.shared.ui.dd.HorizontalDropLocation;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.SingleComponentContainer;
 
 /**
  * Defalt drop handler for horizontal split panels
@@ -59,10 +58,8 @@ public class DefaultHorizontalSplitPanelDropHandler
                 .getTarget();
 
         // Detach from old source
-        if (source instanceof ComponentContainer) {
-            ((ComponentContainer) source).removeComponent(component);
-        } else if (source instanceof SingleComponentContainer) {
-            ((SingleComponentContainer) source).setContent(null);
+        if (source != null) {
+            source.removeComponent(component);
         }
 
         if (details.getDropLocation() == HorizontalDropLocation.LEFT) {

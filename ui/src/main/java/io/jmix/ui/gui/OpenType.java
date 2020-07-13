@@ -22,6 +22,8 @@ import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.SizeWithUnit;
 import io.jmix.ui.screen.OpenMode;
 
+import javax.annotation.Nullable;
+
 /**
  * How to open a screen: {@link #NEW_TAB}, {@link #THIS_TAB}, {@link #DIALOG}, {@link #NEW_WINDOW}.
  * <p>
@@ -160,6 +162,7 @@ public final class OpenType {
         return instance;
     }
 
+    @Nullable
     public String getHeightString() {
         if (height == null) {
             return null;
@@ -182,6 +185,7 @@ public final class OpenType {
         return width;
     }
 
+    @Nullable
     public String getWidthString() {
         if (width == null) {
             return null;

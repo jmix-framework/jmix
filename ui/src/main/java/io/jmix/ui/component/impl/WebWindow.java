@@ -397,12 +397,12 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
     }
 
     @Override
-    public void removeAction(@Nullable Action action) {
+    public void removeAction(Action action) {
         actionsHolder.removeAction(action);
     }
 
     @Override
-    public void removeAction(@Nullable String id) {
+    public void removeAction(String id) {
         actionsHolder.removeAction(id);
     }
 
@@ -527,6 +527,7 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         this.context = (WindowContext) ctx;
     }
 
+    @Nullable
     protected Component.Focusable getComponentToFocus(Iterator<Component> componentsIterator) {
         while (componentsIterator.hasNext()) {
             Component child = componentsIterator.next();
@@ -619,13 +620,14 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         publish(BeforeCloseEvent.class, event);
     }
 
+    @Nullable
     @Override
     public Element getXmlDescriptor() {
         return element;
     }
 
     @Override
-    public void setXmlDescriptor(Element element) {
+    public void setXmlDescriptor(@Nullable Element element) {
         this.element = element;
     }
 
@@ -750,13 +752,14 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         }
     }
 
+    @Nullable
     @Override
     public Component getParent() {
         return null;
     }
 
     @Override
-    public void setParent(Component parent) {
+    public void setParent(@Nullable Component parent) {
     }
 
     @Override
@@ -914,33 +917,36 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         return false;
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption;
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         this.caption = caption;
     }
 
+    @Nullable
     @Override
     public String getDescription() {
         return description;
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         this.description = description;
     }
 
+    @Nullable
     @Override
     public Frame getFrame() {
         return this;
     }
 
     @Override
-    public void setFrame(Frame frame) {
+    public void setFrame(@Nullable Frame frame) {
         throw new UnsupportedOperationException();
     }
 
@@ -949,13 +955,14 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
         return actionsPermissions;
     }
 
+    @Nullable
     @Override
     public String getIcon() {
         return icon;
     }
 
     @Override
-    public void setIcon(String icon) {
+    public void setIcon(@Nullable String icon) {
         this.icon = icon;
     }
 

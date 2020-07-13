@@ -18,12 +18,14 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.component.formatter.Formatter;
 
+import javax.annotation.Nullable;
+
 /**
  * Object having a formatter.
  */
 public interface HasFormatter<V> {
-
+    @Nullable
     Formatter<V> getFormatter();
 
-    void setFormatter(Formatter<? super V> formatter);
+    void setFormatter(@Nullable Formatter<? super V> formatter);
 }

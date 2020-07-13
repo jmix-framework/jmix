@@ -351,6 +351,8 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
             case MENU_ITEM_EXPANDED:
                 markMenuStructureAsDirty();
                 break;
+            default:
+                break;
         }
     }
 
@@ -467,11 +469,12 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
             }
         }
 
+        @Nullable
         public Resource getIcon() {
             return icon;
         }
 
-        public void setIcon(Resource icon) {
+        public void setIcon(@Nullable Resource icon) {
             if (this.icon != icon) {
                 Resource oldIcon = this.icon;
                 this.icon = icon;
@@ -576,11 +579,12 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
             }
         }
 
+        @Nullable
         public Consumer<MenuItemTriggeredEvent> getCommand() {
             return command;
         }
 
-        public void setCommand(Consumer<MenuItemTriggeredEvent> command) {
+        public void setCommand(@Nullable Consumer<MenuItemTriggeredEvent> command) {
             if (this.command != command) {
                 Consumer<MenuItemTriggeredEvent> oldCommand = this.command;
                 this.command = command;
@@ -649,11 +653,12 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
             return !children.isEmpty();
         }
 
+        @Nullable
         public MenuItem getParent() {
             return parent;
         }
 
-        public void setParent(MenuItem parent) {
+        public void setParent(@Nullable MenuItem parent) {
             this.parent = parent;
         }
 

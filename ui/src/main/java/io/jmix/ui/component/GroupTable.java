@@ -161,18 +161,22 @@ public interface GroupTable<E extends JmixEntity> extends Table<E> {
         protected GroupInfo groupInfo;
 
         public GroupAggregationDistributionContext(Column column, Object value, Collection<V> scope,
-                                                   GroupInfo groupInfo, boolean isTotalAggregation) {
+                                                   @Nullable GroupInfo groupInfo, boolean isTotalAggregation) {
             super(column, value, scope, isTotalAggregation);
 
             this.groupInfo = groupInfo;
         }
 
+        @Nullable
         public GroupInfo getGroupInfo() {
             return groupInfo;
         }
 
+        @Nullable
         public String getGroupPropertyPath() {
-            return groupInfo.getProperty().toString();
+            return groupInfo != null
+                    ? groupInfo.getProperty().toString()
+                    : null;
         }
     }
 }

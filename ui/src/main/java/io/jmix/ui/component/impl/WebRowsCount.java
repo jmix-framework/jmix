@@ -143,6 +143,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
             onLastClickRegistration.remove();
     }
 
+    @Nullable
     @Override
     public ListComponent getOwner() {
         if (target instanceof ListComponent) {
@@ -152,7 +153,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
     }
 
     @Override
-    public void setOwner(ListComponent owner) {
+    public void setOwner(@Nullable ListComponent owner) {
         if (owner instanceof RowsCountTarget) {
             this.target = (RowsCountTarget) owner;
         }

@@ -496,7 +496,7 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
         return !groupped || !items.isGroup(itemId);
     }
 
-    protected String formatGroupPropertyValue(Object groupId, Object groupValue) {
+    protected String formatGroupPropertyValue(Object groupId, @Nullable Object groupValue) {
         return groupPropertyValueFormatter != null
                 ? groupPropertyValueFormatter.format(groupId, groupValue)
                 : (groupValue == null ? "" : groupValue.toString());
@@ -669,11 +669,13 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
         return ((GroupTableContainer) items).getChildren(id);
     }
 
+    @Nullable
     @Override
     public Object getGroupProperty(Object itemId) {
         return ((GroupTableContainer) items).getGroupProperty(itemId);
     }
 
+    @Nullable
     @Override
     public Object getGroupPropertyValue(Object itemId) {
         return ((GroupTableContainer) items).getGroupPropertyValue(itemId);

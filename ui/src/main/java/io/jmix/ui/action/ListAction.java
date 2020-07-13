@@ -72,7 +72,7 @@ public class ListAction extends BaseAction implements Action.HasTarget {
      * @param icon icon
      * @return current instance of action
      */
-    public ListAction withIcon(String icon) {
+    public ListAction withIcon(@Nullable String icon) {
         this.icon = icon;
         return this;
     }
@@ -83,7 +83,7 @@ public class ListAction extends BaseAction implements Action.HasTarget {
      * @param shortcut shortcut
      * @return current instance of action
      */
-    public ListAction withShortcut(String shortcut) {
+    public ListAction withShortcut(@Nullable String shortcut) {
         if (shortcut != null) {
             this.shortcut = KeyCombination.create(shortcut);
         }

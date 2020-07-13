@@ -100,6 +100,7 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
         }
     }
 
+    @Nullable
     @Override
     public String getCaption() {
         return caption;

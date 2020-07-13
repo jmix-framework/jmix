@@ -34,6 +34,7 @@ import io.jmix.ui.settings.component.SettingsWrapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -299,7 +300,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         return false;
     }
 
-    protected boolean isSortPropertySettingsChanged(DataGrid dataGrid, String settingsSortColumnId, DataGrid.SortDirection settingsSort) {
+    protected boolean isSortPropertySettingsChanged(DataGrid dataGrid, @Nullable String settingsSortColumnId, @Nullable DataGrid.SortDirection settingsSort) {
         List<GridSortOrder> sortOrders = getGrid(dataGrid).getSortOrder();
 
         String columnId = null;
@@ -315,12 +316,8 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         com.vaadin.shared.data.sort.SortDirection settingsGridSort =
                 settingsSort != null ? WebWrapperUtils.convertToGridSortDirection(settingsSort) : null;
 
-        if (!Objects.equals(columnId, settingsSortColumnId)
-                || !Objects.equals(sort, settingsGridSort)) {
-            return true;
-        }
-
-        return false;
+        return !Objects.equals(columnId, settingsSortColumnId)
+                || !Objects.equals(sort, settingsGridSort);
     }
 
     protected DataGridSettings createSettings() {

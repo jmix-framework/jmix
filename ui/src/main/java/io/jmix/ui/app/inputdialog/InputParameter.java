@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Field;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.sql.Time;
@@ -76,6 +77,7 @@ public class InputParameter {
     /**
      * @return field caption
      */
+    @Nullable
     public String getCaption() {
         return caption;
     }
@@ -86,7 +88,7 @@ public class InputParameter {
      * @param caption caption
      * @return input parameter
      */
-    public InputParameter withCaption(String caption) {
+    public InputParameter withCaption(@Nullable String caption) {
         this.caption = caption;
         return this;
     }
@@ -167,6 +169,7 @@ public class InputParameter {
     /**
      * @return default value
      */
+    @Nullable
     public Object getDefaultValue() {
         return defaultValue;
     }
@@ -177,7 +180,7 @@ public class InputParameter {
      * @param defaultValue default value
      * @return input parameter
      */
-    public InputParameter withDefaultValue(Object defaultValue) {
+    public InputParameter withDefaultValue(@Nullable Object defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }

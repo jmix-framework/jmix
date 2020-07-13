@@ -23,6 +23,7 @@ import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
 
+import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
@@ -82,6 +83,7 @@ public class WebFrameActionsHolder implements com.vaadin.event.Action.Handler {
         }
     }
 
+    @Nullable
     protected com.vaadin.event.ShortcutAction createShortcutAction(Action action) {
         KeyCombination keyCombination = action.getShortcutCombination();
         if (keyCombination != null) {
@@ -95,7 +97,7 @@ public class WebFrameActionsHolder implements com.vaadin.event.Action.Handler {
         }
     }
 
-    public void removeAction(Action action) {
+    public void removeAction(@Nullable Action action) {
         if (actionList.remove(action)) {
             actions.inverse().remove(action);
 
@@ -121,6 +123,7 @@ public class WebFrameActionsHolder implements com.vaadin.event.Action.Handler {
         return Collections.unmodifiableCollection(actionList);
     }
 
+    @Nullable
     public Action getAction(String id) {
         for (Action action : getActions()) {
             if (Objects.equals(action.getId(), id)) {
@@ -141,6 +144,7 @@ public class WebFrameActionsHolder implements com.vaadin.event.Action.Handler {
         return orderedActions.toArray(new com.vaadin.event.Action[0]);
     }
 
+    @Nullable
     public Action getAction(com.vaadin.event.Action actionImpl) {
         return actions.get(actionImpl);
     }

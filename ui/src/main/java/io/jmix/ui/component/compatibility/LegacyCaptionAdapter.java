@@ -25,6 +25,7 @@ import io.jmix.ui.component.CaptionMode;
 import io.jmix.ui.component.HasItemCaptionProvider;
 import io.jmix.ui.component.HasOptionCaptionProvider;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -43,7 +44,7 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
     protected Metadata metadata = AppBeans.get(Metadata.NAME);
     protected MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
 
-    public LegacyCaptionAdapter(CaptionMode captionMode, String captionProperty) {
+    public LegacyCaptionAdapter(@Nullable CaptionMode captionMode, @Nullable String captionProperty) {
         this.captionMode = captionMode;
         this.captionProperty = captionProperty;
     }
@@ -71,19 +72,21 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
         return metadataTools.getInstanceName(entity);
     }
 
+    @Nullable
     public CaptionMode getCaptionMode() {
         return captionMode;
     }
 
-    public void setCaptionMode(CaptionMode captionMode) {
+    public void setCaptionMode(@Nullable CaptionMode captionMode) {
         this.captionMode = captionMode;
     }
 
+    @Nullable
     public String getCaptionProperty() {
         return captionProperty;
     }
 
-    public void setCaptionProperty(String captionProperty) {
+    public void setCaptionProperty(@Nullable String captionProperty) {
         this.captionProperty = captionProperty;
     }
 }

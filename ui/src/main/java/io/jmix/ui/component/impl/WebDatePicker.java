@@ -31,6 +31,8 @@ import com.vaadin.ui.InlineDateField;
 import io.jmix.ui.widget.JmixInlineDateField;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import java.time.*;
 import java.util.Date;
 
@@ -95,9 +97,10 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
         }
     }
 
+    @Nullable
     @SuppressWarnings("unchecked")
     @Override
-    protected V convertToModel(LocalDate componentRawValue) throws ConversionException {
+    protected V convertToModel(@Nullable LocalDate componentRawValue) throws ConversionException {
         if (componentRawValue == null) {
             return null;
         }
@@ -112,8 +115,9 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
         return (V) convertFromLocalDateTime(localDateTime, datatype == null ? Date.class : datatype.getJavaClass());
     }
 
+    @Nullable
     @Override
-    protected LocalDate convertToPresentation(V modelValue) throws ConversionException {
+    protected LocalDate convertToPresentation(@Nullable V modelValue) throws ConversionException {
         if (modelValue == null) {
             return null;
         }

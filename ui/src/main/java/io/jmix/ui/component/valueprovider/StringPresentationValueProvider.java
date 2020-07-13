@@ -20,12 +20,14 @@ import com.vaadin.data.ValueProvider;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 
+import javax.annotation.Nullable;
+
 public class StringPresentationValueProvider<T> implements ValueProvider<T, String> {
 
     protected MetaProperty metaProperty;
     protected MetadataTools metadataTools;
 
-    public StringPresentationValueProvider(MetaProperty metaProperty, MetadataTools metadataTools) {
+    public StringPresentationValueProvider(@Nullable MetaProperty metaProperty, MetadataTools metadataTools) {
         this.metaProperty = metaProperty;
         this.metadataTools = metadataTools;
     }
@@ -37,6 +39,7 @@ public class StringPresentationValueProvider<T> implements ValueProvider<T, Stri
                 : metadataTools.format(value);
     }
 
+    @Nullable
     public MetaProperty getMetaProperty() {
         return metaProperty;
     }

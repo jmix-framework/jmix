@@ -22,6 +22,7 @@ import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.component.impl.WebWrapperUtils;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 public abstract class WebAbstractClickableRenderer<T extends JmixEntity, V> extends WebAbstractDataGrid.AbstractRenderer<T, V>
@@ -33,17 +34,19 @@ public abstract class WebAbstractClickableRenderer<T extends JmixEntity, V> exte
         this(null);
     }
 
-    public WebAbstractClickableRenderer(Consumer<DataGrid.RendererClickEvent<T>> listener) {
-        super(null);
+    public WebAbstractClickableRenderer(@Nullable Consumer<DataGrid.RendererClickEvent<T>> listener) {
+        super("");
         this.listener = listener;
     }
 
     protected ClickableRenderer.RendererClickListener<T> createClickListenerWrapper(Consumer<DataGrid.RendererClickEvent<T>> listener) {
         return (ClickableRenderer.RendererClickListener<T>) e -> {
-            DataGrid.Column column = getColumnByGridColumn(e.getColumn());
-            DataGrid.RendererClickEvent<T> event = new DataGrid.RendererClickEvent<>(getDataGrid(),
-                    WebWrapperUtils.toMouseEventDetails(e), e.getItem(), column.getId());
-            listener.accept(event);
+            if (getDataGrid() != null) {
+                DataGrid.Column column = getColumnByGridColumn(e.getColumn());
+                DataGrid.RendererClickEvent<T> event = new DataGrid.RendererClickEvent<>(getDataGrid(),
+                        WebWrapperUtils.toMouseEventDetails(e), e.getItem(), column.getId());
+                listener.accept(event);
+            }
         };
     }
 

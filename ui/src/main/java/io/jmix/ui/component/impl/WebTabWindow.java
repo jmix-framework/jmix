@@ -56,7 +56,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
     }
 
     @Override
-    public void setIcon(String icon) {
+    public void setIcon(@Nullable String icon) {
         super.setIcon(icon);
 
         if (component.isAttached()) {
@@ -81,7 +81,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
     }
 
     @Override
-    public void setCaption(String caption) {
+    public void setCaption(@Nullable String caption) {
         super.setCaption(caption);
 
         if (component.isAttached()) {
@@ -90,7 +90,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
     }
 
     @Override
-    public void setDescription(String description) {
+    public void setDescription(@Nullable String description) {
         super.setDescription(description);
 
         if (component.isAttached()) {

@@ -37,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
@@ -160,6 +161,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     protected void onFileNameClick(Button.ClickEvent e) {
     }
 
+    @Nullable
     public String getFileName() {
         if (fileName == null) {
             return null;
@@ -234,7 +236,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
         } else {
             int maxUploadSizeMb = beanLocator.get(UiProperties.class).getMaxUploadSizeMb();
 
-            return maxUploadSizeMb * BYTES_IN_MEGABYTE;
+            return (long) maxUploadSizeMb * BYTES_IN_MEGABYTE;
         }
     }
 
@@ -393,17 +395,18 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     }
 
     @Override
-    public void setClearButtonCaption(String caption) {
+    public void setClearButtonCaption(@Nullable String caption) {
         component.setClearButtonCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getClearButtonCaption() {
         return component.getClearButtonCaption();
     }
 
     @Override
-    public void setClearButtonIcon(String icon) {
+    public void setClearButtonIcon(@Nullable String icon) {
         if (icon != null) {
             IconResolver iconResolver = beanLocator.get(IconResolver.NAME);
             Resource iconResource = iconResolver.getIconResource(icon);
@@ -413,6 +416,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
         }
     }
 
+    @Nullable
     @Override
     public String getClearButtonIcon() {
         return component.getClearButtonIcon();
@@ -449,17 +453,18 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     }
 
     @Override
-    public void setUploadButtonCaption(String caption) {
+    public void setUploadButtonCaption(@Nullable String caption) {
         component.setUploadButtonCaption(caption);
     }
 
+    @Nullable
     @Override
     public String getUploadButtonCaption() {
         return component.getUploadButtonCaption();
     }
 
     @Override
-    public void setUploadButtonIcon(String icon) {
+    public void setUploadButtonIcon(@Nullable String icon) {
         if (!StringUtils.isEmpty(icon)) {
             IconResolver iconResolver = beanLocator.get(IconResolver.class);
             component.setUploadButtonIcon(iconResolver.getIconResource(icon));
@@ -468,16 +473,18 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
         }
     }
 
+    @Nullable
     @Override
     public String getUploadButtonIcon() {
         return component.getUploadButtonIcon();
     }
 
     @Override
-    public void setUploadButtonDescription(String description) {
+    public void setUploadButtonDescription(@Nullable String description) {
         component.setUploadButtonDescription(description);
     }
 
+    @Nullable
     @Override
     public String getUploadButtonDescription() {
         return component.getUploadButtonDescription();

@@ -22,7 +22,7 @@ apply plugin: 'io.jmix'
 group = 'io.jmix.dynattr'
 
 dependencies {
-    api platform(project(':jmix-platform'))
+    api platform(project(':platform'))
     api project(':modules:data')
 
     implementation 'com.google.code.gson:gson'

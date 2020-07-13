@@ -22,7 +22,7 @@ apply plugin: 'io.jmix'
 group = 'io.jmix.audit'
 
 dependencies {
-    api platform(project(':jmix-platform'))
+    api platform(project(':platform'))
 
     api project(':modules:data')
     implementation 'org.springframework:spring-orm'

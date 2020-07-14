@@ -105,7 +105,7 @@ public class MainTabSheetActionHandler implements Action.Handler {
 
     protected void showInfo(Object target) {
         // todo show info
-        /*AbstractEditor editor = (AbstractEditor) findEditor((Layout) target);
+        /*Window.Editor editor = findEditor((Layout) target);
         Entity entity = editor.getItem();
 
         Metadata metadata = AppBeans.get(Metadata.NAME);
@@ -156,8 +156,16 @@ public class MainTabSheetActionHandler implements Action.Handler {
         for (Object component : layout) {
             if (component instanceof WindowBreadCrumbs) {
                 WindowBreadCrumbs breadCrumbs = (WindowBreadCrumbs) component;
-                if (breadCrumbs.getCurrentWindow() instanceof Window.Editor)
-                    return (Window.Editor) breadCrumbs.getCurrentWindow();
+                if (breadCrumbs.getCurrentWindow() != null) {
+                    Screen frameOwner = breadCrumbs.getCurrentWindow().getFrameOwner();
+                    if (frameOwner instanceof Window.Editor) {
+                        return (Window.Editor) frameOwner;
+                    }
+
+                    if (frameOwner instanceof EditorScreen) {
+                        return new ScreenEditorWrapper(frameOwner);
+                    }
+                }
             }
         }
         return null;

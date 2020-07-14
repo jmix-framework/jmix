@@ -121,4 +121,22 @@ class MetadataToolsTest extends Specification {
         petCopy.owner == owner
         !petCopy.owner.is(owner)
     }
+
+    def "related properties"() {
+        List<String> properties
+
+        when:
+        properties = metadataTools.getRelatedProperties(Pet, 'description')
+
+        then:
+        properties[0] == 'name'
+        properties[1] == 'nick'
+
+        when:
+        properties = metadataTools.getRelatedProperties(Pet, 'description2')
+
+        then:
+        properties[0] == 'name'
+        properties[1] == 'nick'
+    }
 }

@@ -34,8 +34,13 @@ public class Pet extends StandardEntity {
     @ModelProperty
     private String nick;
 
-    @ModelProperty
+    @ModelProperty(related = "name, nick")
     public String getDescription() {
+        return "Name: " + name + ", nick: " + nick;
+    }
+
+    @ModelProperty(related = {"name", "nick"})
+    public String getDescription2() {
         return "Name: " + name + ", nick: " + nick;
     }
 

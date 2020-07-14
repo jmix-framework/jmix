@@ -18,6 +18,7 @@ package io.jmix.ui.screen;
 
 import io.jmix.core.JmixEntity;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -41,13 +42,14 @@ public interface LookupScreen<E extends JmixEntity> {
     /**
      * @return selection handler
      */
+    @Nullable
     Consumer<Collection<E>> getSelectHandler();
     /**
      * Sets selection handler for screen.
      *
      * @param selectHandler selection handler
      */
-    void setSelectHandler(Consumer<Collection<E>> selectHandler);
+    void setSelectHandler(@Nullable Consumer<Collection<E>> selectHandler);
 
     /**
      * @return selection validator

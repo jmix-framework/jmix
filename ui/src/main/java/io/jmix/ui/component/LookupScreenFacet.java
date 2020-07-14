@@ -24,6 +24,7 @@ import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.screen.LookupScreen;
 import io.jmix.ui.screen.Screen;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -48,11 +49,12 @@ public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
      * Sets select handler for the lookup screen.
      */
     @StudioDelegate
-    void setSelectHandler(Consumer<Collection<E>> selectHandler);
+    void setSelectHandler(@Nullable Consumer<Collection<E>> selectHandler);
 
     /**
      * @return lookup screen select handler
      */
+    @Nullable
     Consumer<Collection<E>> getSelectHandler();
 
     /**

@@ -24,6 +24,7 @@ import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -114,7 +115,7 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Sets selection handler for the lookup screen and returns the builder for chaining.
      */
-    public LookupBuilder<E> withSelectHandler(Consumer<Collection<E>> selectHandler) {
+    public LookupBuilder<E> withSelectHandler(@Nullable Consumer<Collection<E>> selectHandler) {
         this.selectHandler = selectHandler;
         return this;
     }

@@ -24,6 +24,7 @@ import io.jmix.ui.component.LookupScreenFacet;
 import io.jmix.ui.screen.LookupScreen;
 import io.jmix.ui.screen.Screen;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -39,10 +40,11 @@ public class WebLookupScreenFacet<E extends JmixEntity, S extends Screen & Looku
     protected Function<Collection<E>, Collection<E>> transformation;
 
     @Override
-    public void setSelectHandler(Consumer<Collection<E>> selectHandler) {
+    public void setSelectHandler(@Nullable Consumer<Collection<E>> selectHandler) {
         this.selectHandler = selectHandler;
     }
 
+    @Nullable
     @Override
     public Consumer<Collection<E>> getSelectHandler() {
         return selectHandler;

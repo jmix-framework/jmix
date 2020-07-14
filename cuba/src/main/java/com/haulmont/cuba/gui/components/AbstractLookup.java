@@ -27,6 +27,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -140,6 +141,7 @@ public class AbstractLookup extends AbstractWindow implements Window.Lookup {
         selectAction.actionPerform(getLookupComponent());
     }
 
+    @Nullable
     @Override
     public Consumer<Collection> getSelectHandler() {
         return lookupHandler;
@@ -156,7 +158,7 @@ public class AbstractLookup extends AbstractWindow implements Window.Lookup {
     }
 
     @Override
-    public void setSelectHandler(Consumer lookupHandler) {
+    public void setSelectHandler(@Nullable Consumer lookupHandler) {
         this.lookupHandler = lookupHandler;
 
         if (lookupHandler != null) {

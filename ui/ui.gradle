@@ -44,6 +44,7 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
+    testImplementation project(':modules:ui-test-assist')
     testImplementation project(':modules:data')
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'

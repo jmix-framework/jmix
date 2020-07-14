@@ -21,6 +21,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.vaadin.client.BrowserInfo;
 import io.jmix.ui.widget.client.caption.CaptionHolder;
 import io.jmix.ui.widget.client.caption.JmixCaptionWidget;
 import io.jmix.ui.widget.client.gridlayout.JmixGridLayoutSlot;
@@ -406,6 +407,12 @@ public class JmixFieldGroupLayoutComponentSlot extends JmixGridLayoutSlot
         rightCaption.addClassName(INDICATORS_CLASSNAME);
         rightCaption.getStyle().setDisplay(Style.Display.INLINE_BLOCK);
         rightCaption.getStyle().setPosition(Style.Position.ABSOLUTE);
+
+        // Fix Safari not aligning the context help icon correctly
+        if (BrowserInfo.get().isSafari()) {
+            rightCaption.getStyle().setTop(0, Style.Unit.PX);
+            rightCaption.getStyle().setRight(0, Style.Unit.PX);
+        }
 
         return rightCaption;
     }

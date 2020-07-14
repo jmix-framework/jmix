@@ -16,6 +16,7 @@
 
 package io.jmix.audit;
 
+import com.google.common.base.Strings;
 import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;
@@ -213,7 +214,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         Properties properties = new Properties();
 
         for (EntityLogAttr attr : itemToSave.getAttributes()) {
-            properties.setProperty(attr.getName(), attr.getValue());
+            properties.setProperty(attr.getName(), Strings.nullToEmpty(attr.getValue()));
             if (attr.getValueId() != null) {
                 properties.setProperty(attr.getName() + EntityLogAttr.VALUE_ID_SUFFIX, attr.getValueId());
             }

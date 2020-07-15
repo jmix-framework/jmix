@@ -20,13 +20,14 @@ package com.haulmont.cuba.gui.components.filter.edit;
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.Filter;
+import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.core.AppBeans;
 import io.jmix.ui.component.*;
 import io.jmix.ui.theme.ThemeConstants;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +101,10 @@ public abstract class ConditionFrame<T extends AbstractCondition> extends Abstra
                 defaultValueLayout.remove(defaultValueComponent);
             }
             if (condition.getParam() != null) {
-                defaultValueComponent = condition.getParam().createEditComponentForDefaultValue();
+                FilterDataContext filterDataContext = new FilterDataContext(this);
+                defaultValueComponent = condition.getParam().createEditComponentForDefaultValue(filterDataContext);
+                //load options for lookup fields
+                filterDataContext.loadAll();
                 defaultValueLayout.add(defaultValueComponent);
                 defaultValueComponent.setAlignment(Alignment.MIDDLE_LEFT);
                 if (defaultValueComponent instanceof TextField) {

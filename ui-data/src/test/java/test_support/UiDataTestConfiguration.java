@@ -21,17 +21,20 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
+import io.jmix.ui.settings.component.binder.ResizableTextAreaSettingsBinder;
 import io.jmix.uidata.UiDataConfiguration;
 import io.jmix.uidata.UiSettingsCache;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import test_support.custom_settings.TestResizableTextAreaBinder;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -42,6 +45,7 @@ import javax.sql.DataSource;
 public class UiDataTestConfiguration {
 
     @Bean
+    @Primary
     DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
@@ -62,8 +66,19 @@ public class UiDataTestConfiguration {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
     }
 
+    @Bean
+    @Primary
+    JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
     @Bean(UiSettingsCache.NAME)
     UiSettingsCache uiSettingsCache() {
         return new TestUiSettingsCache();
+    }
+
+    @Bean(ResizableTextAreaSettingsBinder.NAME)
+    TestResizableTextAreaBinder resizableTextAreaBinder() {
+        return new TestResizableTextAreaBinder();
     }
 }

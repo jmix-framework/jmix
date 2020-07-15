@@ -30,15 +30,15 @@ class ScreenSpecification extends UiTestAssistSpecification {
 
     @Override
     void setup() {
-        exportScreensPackages(['io.jmix.ui.app.main'])
+        exportScreensPackages(['io.jmix.ui.testassist.app.main'])
     }
 
     protected Screens getScreens() {
         vaadinUi.screens
     }
 
-    protected Screen showMainScreen() {
-        def mainScreen = screens.create("main", OpenMode.ROOT)
+    protected Screen showTestMainScreen() {
+        def mainScreen = screens.create("testMainScreen", OpenMode.ROOT)
         screens.show(mainScreen)
         mainScreen
     }

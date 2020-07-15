@@ -37,14 +37,14 @@ public class ComponentSettingsRegistry implements InitializingBean {
     public static final String NAME = "uidata_ComponentSettingsRegistry";
 
     @Inject
-    protected List<ComponentSettingsBinder> settings;
+    protected List<ComponentSettingsBinder> binders;
 
     protected Map<Class<? extends Component>, Class<? extends ComponentSettings>> settingsClasses = new ConcurrentHashMap<>();
     protected Map<Class<? extends ComponentSettings>, Class<? extends ComponentSettingsBinder>> binderClasses = new ConcurrentHashMap<>();
 
     @Override
     public void afterPropertiesSet() {
-        for (ComponentSettingsBinder binder : settings) {
+        for (ComponentSettingsBinder binder : binders) {
             register(binder);
         }
     }

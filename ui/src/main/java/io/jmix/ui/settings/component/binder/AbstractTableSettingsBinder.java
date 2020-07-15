@@ -118,6 +118,11 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
                             }
                         }
                     }
+                } else if (table.getSortInfo() != null) {
+                    TableItems tableItems = table.getItems();
+                    if (tableItems instanceof TableItems.Sortable) {
+                        ((TableItems.Sortable) tableItems).resetSortOrder();
+                    }
                 }
             }
         }

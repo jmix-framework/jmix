@@ -74,6 +74,7 @@ import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.settings.component.SettingsWrapperImpl;
 import io.jmix.ui.settings.component.TableSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
 import io.jmix.ui.settings.component.binder.TableSettingsBinder;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShowInfoAction;
@@ -2622,10 +2623,14 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         return usePresentations;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void resetPresentation() {
         if (defaultTableSettings != null) {
-            getSettingsBinder().applySettings(this, new SettingsWrapperImpl(defaultTableSettings));
+            DataLoadingSettingsBinder binder = (DataLoadingSettingsBinder) getSettingsBinder();
+            binder.applySettings(this, new SettingsWrapperImpl(defaultTableSettings));
+            binder.applyDataLoadingSettings(this, new SettingsWrapperImpl(defaultTableSettings));
+
             if (presentations != null) {
                 presentations.setCurrent(null);
             }
@@ -2684,9 +2689,12 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void applyPresentationSettings(TablePresentation p) {
         ComponentSettings settings = getSettingsFromPresentation(p);
-        getSettingsBinder().applySettings(this, new SettingsWrapperImpl(settings));
+        DataLoadingSettingsBinder binder = (DataLoadingSettingsBinder) getSettingsBinder();
+        binder.applySettings(this, new SettingsWrapperImpl(settings));
+        binder.applyDataLoadingSettings(this, new SettingsWrapperImpl(settings));
     }
 
     protected ComponentSettings getSettingsFromPresentation(TablePresentation p) {

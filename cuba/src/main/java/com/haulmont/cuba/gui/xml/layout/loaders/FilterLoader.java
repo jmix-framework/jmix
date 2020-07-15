@@ -24,11 +24,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.FilterImplementation;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.model.BaseCollectionLoader;
-import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.KeyValueCollectionLoader;
-import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -147,16 +143,17 @@ public class FilterLoader extends AbstractComponentLoader<Filter> {
         }
 
         getComponentContext().addPostInitTask((context1, window) -> {
-            ((FilterImplementation) resultComponent).loadFiltersAndApplyDefault();
-            String defaultMode = element.attributeValue("defaultMode");
-            if (FTS_MODE_VALUE.equals(defaultMode)) {
-                resultComponent.switchFilterMode(FilterDelegate.FilterMode.FTS_MODE);
-            }
-
             String controlsLayoutTemplate = element.attributeValue("controlsLayoutTemplate");
             if (!Strings.isNullOrEmpty(controlsLayoutTemplate)) {
                 resultComponent.setControlsLayoutTemplate(controlsLayoutTemplate);
                 resultComponent.createLayout();
+            }
+
+            ((FilterImplementation) resultComponent).loadFiltersAndApplyDefault();
+
+            String defaultMode = element.attributeValue("defaultMode");
+            if (FTS_MODE_VALUE.equals(defaultMode)) {
+                resultComponent.switchFilterMode(FilterDelegate.FilterMode.FTS_MODE);
             }
         });
     }

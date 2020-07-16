@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.fragments
 
-import io.jmix.ui.app.main.MainScreen
+import com.haulmont.cuba.web.app.main.MainScreen
 import io.jmix.ui.component.AttachEvent
 import io.jmix.ui.component.Fragment
 import io.jmix.ui.screen.OpenMode

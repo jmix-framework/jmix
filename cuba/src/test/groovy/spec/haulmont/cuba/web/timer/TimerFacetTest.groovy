@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.timer
 
-import io.jmix.ui.app.main.MainScreen
+import com.haulmont.cuba.web.app.main.MainScreen
 import io.jmix.ui.component.Timer
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.widget.JmixTimer

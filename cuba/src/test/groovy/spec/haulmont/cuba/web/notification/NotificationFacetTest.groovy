@@ -16,11 +16,11 @@
 
 package spec.haulmont.cuba.web.notification
 
+import com.haulmont.cuba.web.app.main.MainScreen
 import com.vaadin.server.Extension
 import com.vaadin.ui.Notification
 import io.jmix.ui.GuiDevelopmentException
 import io.jmix.ui.Notifications
-import io.jmix.ui.app.main.MainScreen
 import io.jmix.ui.component.ContentMode
 import io.jmix.ui.component.impl.WebButton
 import io.jmix.ui.component.impl.WebNotificationFacet

@@ -19,7 +19,7 @@ package spec.haulmont.cuba.web.dataloadcoordinator
 import com.haulmont.cuba.core.model.Address
 import com.haulmont.cuba.core.model.Owner
 import com.haulmont.cuba.core.model.OwnerCategory
-import io.jmix.ui.app.main.MainScreen
+import com.haulmont.cuba.web.app.main.MainScreen
 import io.jmix.ui.component.DataLoadCoordinator
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec

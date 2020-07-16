@@ -22,15 +22,12 @@ import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.xml.layout.loader.TreeTableLoader;
 import org.dom4j.Element;
 
 import java.util.List;
 
-import java.lang.reflect.Constructor;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
@@ -41,13 +38,13 @@ public class CubaTreeTableLoader extends TreeTableLoader {
         super.loadComponent();
 
         ComponentLoaderHelper.loadSettingsEnabled((TreeTable) resultComponent, element);
-        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getHotDeployManager());
+        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getClassManager());
     }
 
     @Override
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        return ComponentLoaderHelper.loadFormatter(element, getHotDeployManager(), getContext());
+        return ComponentLoaderHelper.loadFormatter(element, getClassManager(), getContext());
     }
 
     @Override
@@ -87,7 +84,7 @@ public class CubaTreeTableLoader extends TreeTableLoader {
 
         List<Table.Column> columns = resultComponent.getColumns();
         for (io.jmix.ui.component.Table.Column column : columns) {
-            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getHotDeployManager(), getMessages());
+            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getClassManager(), getMessages());
         }
     }
 

@@ -95,7 +95,7 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
     @Override
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        return ComponentLoaderHelper.loadFormatter(element, getHotDeployManager(), getContext());
+        return ComponentLoaderHelper.loadFormatter(element, getClassManager(), getContext());
     }
 
     @Nullable
@@ -103,7 +103,7 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
     protected io.jmix.ui.component.DataGrid.Renderer loadRenderer(Element columnElement) {
         io.jmix.ui.component.DataGrid.Renderer renderer = super.loadRenderer(columnElement);
         if (renderer == null && columnElement.element("renderer") != null) {
-            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"), context, getHotDeployManager(), beanLocator);
+            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"), context, getClassManager(), beanLocator);
         }
 
         return renderer;

@@ -30,7 +30,7 @@ public class CubaSuggestionFieldLoader extends SuggestionFieldLoader {
     public void loadComponent() {
         super.loadComponent();
 
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

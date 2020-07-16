@@ -41,6 +41,6 @@ public class CubaLabelLoader extends LabelLoader {
     @Override
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        return ComponentLoaderHelper.loadFormatter(element, getHotDeployManager(), getContext());
+        return ComponentLoaderHelper.loadFormatter(element, getClassManager(), getContext());
     }
 }

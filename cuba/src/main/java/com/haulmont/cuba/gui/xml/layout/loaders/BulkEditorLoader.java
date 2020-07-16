@@ -70,7 +70,7 @@ public class BulkEditorLoader extends AbstractComponentLoader<BulkEditor> {
     }
 
     protected Field.Validator loadValidator(Element validatorElement) {
-        Consumer<?> consumer = ComponentLoaderHelper.loadValidator(validatorElement, context, getHotDeployManager());
+        Consumer<?> consumer = ComponentLoaderHelper.loadValidator(validatorElement, context, getClassManager());
         if (!(consumer instanceof Field.Validator)) {
             throw new GuiDevelopmentException(
                     "BulkEditor validator must implement io.jmix.ui.component.Field.Validator", context);

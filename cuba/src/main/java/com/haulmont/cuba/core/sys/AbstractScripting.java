@@ -25,7 +25,7 @@ import groovy.util.GroovyScriptEngine;
 import groovy.util.ResourceConnector;
 import groovy.util.ResourceException;
 import groovy.util.ScriptException;
-import io.jmix.core.HotDeployManager;
+import io.jmix.core.ClassManager;
 import io.jmix.core.ScriptExecutionPolicy;
 import io.jmix.core.impl.SpringBeanLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +59,7 @@ public abstract class AbstractScripting implements Scripting {
     private static final Pattern IMPORT_PATTERN = Pattern.compile("\\bimport\\b\\s+");
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("\\bpackage\\b\\s+.+");
     private final Environment environment;
-    protected HotDeployManager hotDeployManager;
+    protected ClassManager classManager;
     protected SpringBeanLoader springBeanLoader;
     protected String groovyClassPath;
 
@@ -71,10 +71,10 @@ public abstract class AbstractScripting implements Scripting {
 
     public AbstractScripting(Environment environment,
                              String confDir,
-                             HotDeployManager hotDeployManager,
+                             ClassManager classManager,
                              SpringBeanLoader springBeanLoader) {
         this.environment = environment;
-        this.hotDeployManager = hotDeployManager;
+        this.classManager = classManager;
         this.springBeanLoader = springBeanLoader;
 
         StringBuilder groovyClassPathBuilder = new StringBuilder(confDir).append(File.pathSeparator);
@@ -178,7 +178,7 @@ public abstract class AbstractScripting implements Scripting {
         CompilerConfiguration cc = new CompilerConfiguration();
         cc.setClasspath(groovyClassPath);
         cc.setRecompileGroovySource(true);
-        GroovyShell shell = new GroovyShell(hotDeployManager.getJavaClassLoader(), new Binding(), cc);
+        GroovyShell shell = new GroovyShell(classManager.getJavaClassLoader(), new Binding(), cc);
         //noinspection UnnecessaryLocalVariable
         Script script = shell.parse(result);
         return script;
@@ -308,13 +308,13 @@ public abstract class AbstractScripting implements Scripting {
 
     @Override
     public boolean removeClass(String name) {
-        return getGroovyClassLoader().removeClass(name) || hotDeployManager.removeClass(name);
+        return getGroovyClassLoader().removeClass(name) || classManager.removeClass(name);
     }
 
     @Override
     public void clearCache() {
         getGroovyClassLoader().clearCache();
-        hotDeployManager.clearCache();
+        classManager.clearCache();
         getPool().clear();
         GroovyScriptEngine gse = getGroovyScriptEngine();
         try {
@@ -436,7 +436,7 @@ public abstract class AbstractScripting implements Scripting {
     protected class CubaGroovyClassLoader extends GroovyClassLoader {
 
         public CubaGroovyClassLoader(CompilerConfiguration cc) {
-            super(AbstractScripting.this.hotDeployManager.getJavaClassLoader(), cc);
+            super(AbstractScripting.this.classManager.getJavaClassLoader(), cc);
         }
 
         public boolean removeClass(String className) {

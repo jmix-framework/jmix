@@ -35,7 +35,7 @@ public class CubaGroupTableLoader extends GroupTableLoader {
         super.loadComponent();
 
         ComponentLoaderHelper.loadSettingsEnabled((GroupTable) resultComponent, element);
-        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getHotDeployManager());
+        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getClassManager());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class CubaGroupTableLoader extends GroupTableLoader {
 
         List<Table.Column> columns = resultComponent.getColumns();
         for (io.jmix.ui.component.Table.Column column : columns) {
-            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getHotDeployManager(), getMessages());
+            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getClassManager(), getMessages());
         }
     }
 

@@ -61,7 +61,7 @@ public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
             searchPickerField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
         }
 
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @Override

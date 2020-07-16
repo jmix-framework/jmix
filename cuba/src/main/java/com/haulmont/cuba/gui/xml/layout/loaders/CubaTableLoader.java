@@ -26,8 +26,6 @@ import org.dom4j.Element;
 
 import java.util.List;
 
-import java.lang.reflect.Constructor;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
@@ -38,13 +36,13 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
         super.loadComponent();
 
         ComponentLoaderHelper.loadSettingsEnabled((Table) resultComponent, element);
-        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getHotDeployManager());
+        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getClassManager());
     }
 
     @Override
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        return ComponentLoaderHelper.loadFormatter(element, getHotDeployManager(), getContext());
+        return ComponentLoaderHelper.loadFormatter(element, getClassManager(), getContext());
     }
 
     @Override
@@ -84,7 +82,7 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
 
         List<io.jmix.ui.component.Table.Column> columns = resultComponent.getColumns();
         for (io.jmix.ui.component.Table.Column column : columns) {
-            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getHotDeployManager(), getMessages());
+            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getClassManager(), getMessages());
         }
     }
 

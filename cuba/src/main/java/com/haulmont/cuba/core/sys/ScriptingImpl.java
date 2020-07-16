@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.sys;
 
 import com.haulmont.cuba.core.global.Scripting;
 import io.jmix.core.CoreProperties;
-import io.jmix.core.HotDeployManager;
+import io.jmix.core.ClassManager;
 import io.jmix.core.impl.SpringBeanLoader;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -32,10 +32,10 @@ public class ScriptingImpl extends AbstractScripting {
 
     @Autowired
     public ScriptingImpl(Environment environment,
-                         HotDeployManager hotDeployManager,
+                         ClassManager classManager,
                          CoreProperties properties,
                          SpringBeanLoader springBeanLoader) {
-        super(environment, properties.getConfDir(), hotDeployManager, springBeanLoader);
+        super(environment, properties.getConfDir(), classManager, springBeanLoader);
         scriptEngineRoots = new String[] { properties.getConfDir(), properties.getDbDir() };
     }
 

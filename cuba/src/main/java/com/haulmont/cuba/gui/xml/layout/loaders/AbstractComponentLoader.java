@@ -18,11 +18,9 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
-import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.formatter.Formatter;
 import org.dom4j.Element;
-import org.apache.commons.lang3.StringUtils;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -43,6 +41,6 @@ public abstract class AbstractComponentLoader<T extends Component>
 
     @Override
     protected Formatter<?> loadFormatter(Element element) {
-        return ComponentLoaderHelper.loadFormatter(element, getHotDeployManager(), getContext());
+        return ComponentLoaderHelper.loadFormatter(element, getClassManager(), getContext());
     }
 }

@@ -35,7 +35,7 @@ public class CubaResizableTextAreaLoader extends ResizableTextAreaLoader {
             ComponentLoaderHelper.loadSettingsEnabled((ResizableTextArea) resultComponent, element);
         }
 
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

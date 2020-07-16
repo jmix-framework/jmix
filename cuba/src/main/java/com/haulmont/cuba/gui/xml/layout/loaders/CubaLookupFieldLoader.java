@@ -44,7 +44,7 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
         LookupField lookupField = (LookupField) resultComponent;
 
         loadNewOptionAllowed(lookupField, element);
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     protected void loadNewOptionAllowed(LookupField lookupField, Element element) {

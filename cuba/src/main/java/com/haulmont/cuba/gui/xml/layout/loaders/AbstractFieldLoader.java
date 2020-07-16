@@ -30,7 +30,7 @@ public abstract class AbstractFieldLoader<T extends Field>
     public void loadComponent() {
         super.loadComponent();
 
-        ComponentLoaderHelper.loadValidators(resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators(resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @Override

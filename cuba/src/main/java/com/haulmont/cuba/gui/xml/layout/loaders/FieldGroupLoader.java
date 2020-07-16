@@ -559,7 +559,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
         if (validatorElements != null) {
             if (!validatorElements.isEmpty()) {
                 for (Element validatorElement : validatorElements) {
-                    Consumer<?> validator = ComponentLoaderHelper.loadValidator(validatorElement, context, getHotDeployManager());
+                    Consumer<?> validator = ComponentLoaderHelper.loadValidator(validatorElement, context, getClassManager());
                     field.addValidator(validator);
                 }
             }

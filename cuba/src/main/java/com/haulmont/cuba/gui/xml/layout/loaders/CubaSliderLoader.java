@@ -30,7 +30,7 @@ public class CubaSliderLoader extends SliderLoader {
     public void loadComponent() {
         super.loadComponent();
 
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

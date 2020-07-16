@@ -46,7 +46,7 @@ public class CubaOptionsGroupLoader extends AbstractOptionsBaseLoader<OptionsGro
         loadOptionsEnum(resultComponent, element);
         loadTabIndex(resultComponent, element);
 
-        ComponentLoaderHelper.loadValidators(resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators(resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

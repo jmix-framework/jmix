@@ -51,7 +51,7 @@ public class CubaLookupPickerFieldLoader extends EntityComboBoxLoader {
         super.loadComponent();
 
         loadNewOptionAllowed(getResultComponent(), element);
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getHotDeployManager(), getMessages());
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     protected void loadNewOptionAllowed(LookupPickerField lookupPickerField, Element element) {

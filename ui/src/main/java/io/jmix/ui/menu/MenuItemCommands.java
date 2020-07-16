@@ -67,7 +67,7 @@ public class MenuItemCommands {
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
-    protected HotDeployManager hotDeployManager;
+    protected ClassManager classManager;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -428,7 +428,7 @@ public class MenuItemCommands {
 
             Timer.Sample sample = Timer.start(meterRegistry);
 
-            Class<?> clazz = hotDeployManager.findClass(runnableClass);
+            Class<?> clazz = classManager.findClass(runnableClass);
             if (clazz == null) {
                 throw new IllegalStateException(String.format("Can't load class: %s", runnableClass));
             }

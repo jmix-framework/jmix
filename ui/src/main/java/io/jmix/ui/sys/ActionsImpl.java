@@ -16,7 +16,7 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.core.HotDeployManager;
+import io.jmix.core.ClassManager;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -32,7 +32,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -49,7 +48,7 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
     protected List<ActionsConfiguration> configurations = Collections.emptyList();
 
     @Autowired
-    protected HotDeployManager hotDeployManager;
+    protected ClassManager classManager;
     @Autowired
     protected ApplicationContext applicationContext;
 
@@ -181,7 +180,7 @@ public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshe
             classes.clear();
 
             for (Map.Entry<String, String> entry : squashedMap.entrySet()) {
-                Class clazz = hotDeployManager.loadClass(entry.getValue());
+                Class clazz = classManager.loadClass(entry.getValue());
                 classes.put(entry.getKey(), clazz);
             }
 

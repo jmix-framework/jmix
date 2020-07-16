@@ -80,7 +80,7 @@ public class WindowConfig {
     @Autowired
     protected Resources resources;
     @Autowired
-    protected HotDeployManager hotDeployManager;
+    protected ClassManager classManager;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -199,7 +199,7 @@ public class WindowConfig {
 
     @SuppressWarnings("unchecked")
     protected Class<? extends FrameOwner> loadDefinedScreenClass(String className) {
-        return (Class<? extends FrameOwner>) hotDeployManager.loadClass(className);
+        return (Class<? extends FrameOwner>) classManager.loadClass(className);
     }
 
     protected void checkInitialized() {

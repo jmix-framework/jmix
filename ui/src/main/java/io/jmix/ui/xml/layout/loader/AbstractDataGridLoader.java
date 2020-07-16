@@ -800,7 +800,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     protected void loadStrategyClass(AggregationInfo aggregation, Element aggregationElement) {
         String strategyClass = aggregationElement.attributeValue("strategyClass");
         if (StringUtils.isNotEmpty(strategyClass)) {
-            Class<?> aggregationClass = getHotDeployManager().findClass(strategyClass);
+            Class<?> aggregationClass = getClassManager().findClass(strategyClass);
             if (aggregationClass == null) {
                 throw new GuiDevelopmentException(String.format("Class %s is not found", strategyClass), context);
             }

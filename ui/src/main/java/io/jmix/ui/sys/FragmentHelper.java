@@ -17,7 +17,7 @@
 package io.jmix.ui.sys;
 
 import io.jmix.core.BeanLocator;
-import io.jmix.core.HotDeployManager;
+import io.jmix.core.ClassManager;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
@@ -55,7 +55,7 @@ public class FragmentHelper {
     @Autowired
     protected ScreenXmlLoader screenXmlLoader;
     @Autowired
-    protected HotDeployManager hotDeployManager;
+    protected ClassManager classManager;
 
     public static final String NAME = "jmix_FragmentHelper";
 
@@ -103,7 +103,7 @@ public class FragmentHelper {
 
         String className = windowElement.attributeValue("class");
         if (StringUtils.isNotEmpty(className)) {
-            fragmentClass = (Class<? extends ScreenFragment>) hotDeployManager.loadClass(className);
+            fragmentClass = (Class<? extends ScreenFragment>) classManager.loadClass(className);
         } else {
             // fragmentClass = AbstractFrame.class; todo
             throw new UnsupportedOperationException();

@@ -51,8 +51,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -579,7 +577,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
             String strategyClass = aggregationElement.attributeValue("strategyClass");
             if (StringUtils.isNotEmpty(strategyClass)) {
-                Class<?> aggregationClass = getHotDeployManager().findClass(strategyClass);
+                Class<?> aggregationClass = getClassManager().findClass(strategyClass);
                 if (aggregationClass == null) {
                     throw new GuiDevelopmentException(String.format("Class %s is not found", strategyClass), context);
                 }

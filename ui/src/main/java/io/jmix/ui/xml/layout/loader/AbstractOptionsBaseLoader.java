@@ -40,7 +40,7 @@ public abstract class AbstractOptionsBaseLoader<T extends OptionsField> extends 
     protected void loadOptionsEnum(T resultComponent, Element element) {
         String optionsEnumClass = element.attributeValue("optionsEnum");
         if (StringUtils.isNotEmpty(optionsEnumClass)) {
-            resultComponent.setOptionsEnum(getHotDeployManager().findClass(optionsEnumClass));
+            resultComponent.setOptionsEnum(getClassManager().findClass(optionsEnumClass));
         }
     }
 

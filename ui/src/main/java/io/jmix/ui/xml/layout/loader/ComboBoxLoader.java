@@ -76,7 +76,7 @@ public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
     protected void loadOptionsEnum(ComboBox resultComponent, Element element) {
         String optionsEnumClass = element.attributeValue("optionsEnum");
         if (StringUtils.isNotEmpty(optionsEnumClass)) {
-            resultComponent.setOptionsEnum(getHotDeployManager().findClass(optionsEnumClass));
+            resultComponent.setOptionsEnum(getClassManager().findClass(optionsEnumClass));
         }
     }
 

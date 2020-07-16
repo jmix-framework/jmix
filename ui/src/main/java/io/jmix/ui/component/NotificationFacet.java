@@ -29,14 +29,15 @@ import java.util.function.Supplier;
  * Prepares and shows notifications.
  */
 @StudioFacet(
+        xmlElement = "notification",
         caption = "Notification",
         description = "Prepares and shows notifications",
         defaultProperty = "caption",
-        defaultEvent = "CloseEvent"
+        category = "Non-visual"
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "id", required = true)
+                @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
         }
 )
 public interface NotificationFacet extends Facet {
@@ -144,7 +145,7 @@ public interface NotificationFacet extends Facet {
      *
      * @param actionId action id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_ID)
+    @StudioProperty(type = PropertyType.COMPONENT_REF)
     void setActionTarget(String actionId);
 
     /**
@@ -158,7 +159,7 @@ public interface NotificationFacet extends Facet {
      *
      * @param buttonId button id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_ID)
+    @StudioProperty(type = PropertyType.COMPONENT_REF)
     void setButtonTarget(String buttonId);
 
     /**
@@ -184,7 +185,6 @@ public interface NotificationFacet extends Facet {
      *
      * @param captionProvider notification caption provider
      */
-    @StudioDelegate
     void setCaptionProvider(Supplier<String> captionProvider);
 
     /**
@@ -197,7 +197,6 @@ public interface NotificationFacet extends Facet {
      *
      * @param descriptionProvider notification description provider
      */
-    @StudioDelegate
     void setDescriptionProvider(Supplier<String> descriptionProvider);
 
     /**
@@ -211,7 +210,6 @@ public interface NotificationFacet extends Facet {
      * @param listener close event listener
      * @return close event subscription
      */
-    @StudioEvent
     Subscription addCloseListener(Consumer<CloseEvent> listener);
 
     /**

@@ -19,7 +19,6 @@ package io.jmix.ui.action;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.meta.StudioDelegate;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -182,7 +181,6 @@ public class BaseAction extends AbstractAction implements Action.SecuredAction {
      *
      * @param enabledRule boolean rule for the action enabled state
      */
-    @StudioDelegate
     public void addEnabledRule(EnabledRule enabledRule) {
         checkNotNullArgument(enabledRule);
 

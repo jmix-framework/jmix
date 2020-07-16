@@ -32,7 +32,6 @@ import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.ui.meta.StudioDelegate;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
@@ -145,7 +144,6 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier) {
         screenInitializer.setScreenOptionsSupplier(screenOptionsSupplier);
     }
@@ -162,7 +160,6 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setScreenConfigurer(Consumer<Screen> screenConfigurer) {
         screenInitializer.setScreenConfigurer(screenConfigurer);
     }
@@ -180,7 +177,6 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
@@ -198,7 +194,6 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setNewEntitySupplier(Supplier<E> newEntitySupplier) {
         this.newEntitySupplier = newEntitySupplier;
     }
@@ -215,7 +210,6 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setInitializer(Consumer<E> initializer) {
         this.initializer = initializer;
     }
@@ -231,7 +225,6 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setAfterCommitHandler(Consumer<E> afterCommitHandler) {
         this.afterCommitHandler = afterCommitHandler;
     }

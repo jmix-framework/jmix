@@ -26,7 +26,6 @@ import java.lang.annotation.*;
  * direct or indirect subclass of {@link Action}.
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.TYPE)
 public @interface StudioAction {
     /**

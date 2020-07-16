@@ -16,6 +16,10 @@
 
 package io.jmix.ui.meta;
 
+import io.jmix.ui.component.FlowBoxLayout;
+import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.VBoxLayout;
+
 /**
  * Specifies standard container type for emulation in Studio Screen Designer.
  */
@@ -35,23 +39,9 @@ public enum ContainerType {
     HORIZONTAL,
 
     /**
-     * CSS layout.
-     *
-     * @see CssLayout
-     */
-    CSS,
-
-    /**
      * Directional flow layout.
      *
      * @see FlowBoxLayout
      */
-    FLOW,
-
-    /**
-     * Grid layout.
-     *
-     * @see GridLayout
-     */
-    GRID
+    FLOW
 }

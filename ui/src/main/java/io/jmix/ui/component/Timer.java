@@ -18,7 +18,6 @@ package io.jmix.ui.component;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.compatibility.TimerActionListenerWrapper;
 import io.jmix.ui.component.compatibility.TimerStopListenerWrapper;
-import io.jmix.ui.meta.*;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -26,18 +25,6 @@ import java.util.function.Consumer;
 /**
  * Client-side timer component that fires events at fixed intervals.
  */
-@StudioFacet(
-        caption = "Timer",
-        description = "Client-side timer component that fires events at fixed intervals.",
-        defaultEvent = "TimerActionEvent",
-        defaultProperty = "delay"
-)
-@StudioProperties(
-        properties = {
-                @StudioProperty(name = "id", required = true),
-                @StudioProperty(name = "autostart", type = PropertyType.BOOLEAN, caption = "Auto Start")
-        }
-)
 public interface Timer extends Facet {
 
     String NAME = "timer";
@@ -51,7 +38,6 @@ public interface Timer extends Facet {
      *
      * @param repeating repeating flag
      */
-    @StudioProperty
     void setRepeating(boolean repeating);
 
     /**
@@ -61,7 +47,6 @@ public interface Timer extends Facet {
     /**
      * @param delayMs delay in milliseconds.
      */
-    @StudioProperty(required = true)
     void setDelay(int delayMs);
 
     /**
@@ -80,7 +65,6 @@ public interface Timer extends Facet {
      * @param listener listener
      * @return subscription
      */
-    @StudioEvent
     Subscription addTimerActionListener(Consumer<TimerActionEvent> listener);
 
     /**
@@ -89,7 +73,6 @@ public interface Timer extends Facet {
      * @param listener listener
      * @return subscription
      */
-    @StudioEvent
     Subscription addTimerStopListener(Consumer<TimerStopEvent> listener);
 
     /**

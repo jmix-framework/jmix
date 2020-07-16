@@ -17,7 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.JmixEntity;
-import io.jmix.ui.meta.StudioDelegate;
+import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
@@ -34,12 +34,14 @@ import java.util.function.Predicate;
  * Prepares and shows lookup screens.
  */
 @StudioFacet(
+        xmlElement = "lookupScreen",
         caption = "Lookup Screen",
-        description = "Prepares and shows lookup screens"
+        description = "Prepares and shows lookup screens",
+        category = "Non-visual"
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "id", required = true)
+                @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
         }
 )
 public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
@@ -48,7 +50,6 @@ public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
     /**
      * Sets select handler for the lookup screen.
      */
-    @StudioDelegate
     void setSelectHandler(@Nullable Consumer<Collection<E>> selectHandler);
 
     /**
@@ -60,7 +61,6 @@ public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
     /**
      * Sets select validator for the lookup screen.
      */
-    @StudioDelegate
     void setSelectValidator(Predicate<LookupScreen.ValidationContext<E>> selectValidator);
 
     /**
@@ -73,7 +73,6 @@ public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
      * <p>
      * Applied only if either field or container or listComponent is assigned.
      */
-    @StudioDelegate
     void setTransformation(Function<Collection<E>, Collection<E>> transformation);
 
     /**

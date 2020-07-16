@@ -18,7 +18,6 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.meta.PropertyType;
-import io.jmix.ui.meta.StudioEvent;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperty;
 
@@ -30,8 +29,10 @@ import java.util.function.Consumer;
  * Copies the text content to the clipboard on button click.
  */
 @StudioFacet(
+        xmlElement = "clipboardTrigger",
         caption = "ClipboardTrigger",
-        description = "Copies the text content of the input to the clipboard on button click."
+        description = "Copies the text content of the input to the clipboard on button click.",
+        category = "Non-visual"
 )
 public interface ClipboardTrigger extends Facet {
 
@@ -70,7 +71,6 @@ public interface ClipboardTrigger extends Facet {
      * @param listener listener
      * @return subscription
      */
-    @StudioEvent
     Subscription addCopyListener(Consumer<CopyEvent> listener);
 
     /**

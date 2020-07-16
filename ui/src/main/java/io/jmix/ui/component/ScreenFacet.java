@@ -20,7 +20,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.ui.Screens;
 import io.jmix.ui.meta.PropertyType;
-import io.jmix.ui.meta.StudioDelegate;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperties;
 import io.jmix.ui.meta.StudioProperty;
@@ -37,13 +36,15 @@ import java.util.function.Supplier;
  * Prepares and shows screens.
  */
 @StudioFacet(
+        xmlElement = "screen",
         caption = "Screen",
         description = "Prepares and shows screens",
-        defaultProperty = "screenId"
+        defaultProperty = "screenId",
+        category = "Non-visual"
 )
 @StudioProperties(
         properties = {
-                @StudioProperty(name = "id", required = true)
+                @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
         }
 )
 public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
@@ -91,7 +92,6 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      *
      * @param optionsProvider screen options provider
      */
-    @StudioDelegate
     void setOptionsProvider(Supplier<ScreenOptions> optionsProvider);
 
     /**
@@ -121,7 +121,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      *
      * @param actionId action id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_ID)
+    @StudioProperty(type = PropertyType.COMPONENT_REF)
     void setActionTarget(String actionId);
 
     /**
@@ -134,7 +134,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
      *
      * @param buttonId button id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_ID)
+    @StudioProperty(type = PropertyType.COMPONENT_REF)
     void setButtonTarget(String buttonId);
 
     /**

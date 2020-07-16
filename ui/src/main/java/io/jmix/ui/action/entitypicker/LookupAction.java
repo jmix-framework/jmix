@@ -30,7 +30,6 @@ import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.ui.meta.StudioDelegate;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
@@ -147,7 +146,6 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier) {
         screenInitializer.setScreenOptionsSupplier(screenOptionsSupplier);
     }
@@ -164,7 +162,6 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setScreenConfigurer(Consumer<Screen> screenConfigurer) {
         screenInitializer.setScreenConfigurer(screenConfigurer);
     }
@@ -181,7 +178,6 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
@@ -197,7 +193,6 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setSelectValidator(Predicate<LookupScreen.ValidationContext<E>> selectValidator) {
         this.selectValidator = selectValidator;
     }
@@ -213,7 +208,6 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setTransformation(Function<Collection<E>, Collection<E>> transformation) {
         this.transformation = transformation;
     }

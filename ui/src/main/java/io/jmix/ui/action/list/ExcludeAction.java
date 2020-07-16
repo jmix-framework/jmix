@@ -29,7 +29,6 @@ import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.ui.meta.StudioDelegate;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Nested;
@@ -132,7 +131,6 @@ public class ExcludeAction<E extends JmixEntity> extends SecuredListAction imple
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setAfterActionPerformedHandler(Consumer<RemoveOperation.AfterActionPerformedEvent<E>> afterActionPerformedHandler) {
         this.afterActionPerformedHandler = afterActionPerformedHandler;
     }
@@ -148,7 +146,6 @@ public class ExcludeAction<E extends JmixEntity> extends SecuredListAction imple
      * }
      * </pre>
      */
-    @StudioDelegate
     public void setActionCancelledHandler(Consumer<RemoveOperation.ActionCancelledEvent<E>> actionCancelledHandler) {
         this.actionCancelledHandler = actionCancelledHandler;
     }

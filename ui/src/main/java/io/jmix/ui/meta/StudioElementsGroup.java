@@ -19,26 +19,19 @@ package io.jmix.ui.meta;
 import java.lang.annotation.*;
 
 /**
- * Indicates that the annotated method should be shown in Studio Screen Designer as UI component event. <br>
- * Annotated methods must be named as {@code addSomeListener} and have ony one parameter with type of the event.
+ * Indicates that the annotated method should be shown in Studio Screen Designer
+ * as a nested group of elements of UI component, e.g. columns, actions, fields.
  */
 @Documented
-@Retention(RetentionPolicy.CLASS)
-@Target(ElementType.METHOD)
-public @interface StudioEvent {
+public @interface StudioElementsGroup {
 
     /**
-     * @return caption of the event in Screen Designer Events
+     * @return target XML element name
      */
-    String caption() default "";
+    String xmlElement() default "";
 
     /**
-     * @return description of the event in Screen Designer Events
+     * @return Component Hierarchy icon, SVG or PNG
      */
-    String description() default "";
-
-    /**
-     * @return category of the event in Screen Designer Events, e.g. Data, Interaction, Lifecycle
-     */
-    String category() default "";
+    String icon() default "";
 }

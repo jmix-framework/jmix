@@ -19,7 +19,6 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.StyleGenerator;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
@@ -40,7 +39,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -72,8 +70,6 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     protected IconResolver iconResolver;
 
     protected OptionsBinding<V> optionsBinding;
-
-    protected Locale locale;
 
     public WebComboBox() {
         this.component = createComponent();
@@ -108,10 +104,6 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         initComponent(component);
 
         setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
-
-        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.class);
-
-        this.locale = currentAuthentication.getLocale();
     }
 
     protected void initComponent(JmixComboBox<V> component) {
@@ -162,14 +154,10 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
 
         if (filterMode == FilterMode.STARTS_WITH) {
-            return itemCaption
-                    .toLowerCase(locale)
-                    .startsWith(filterText.toLowerCase(locale));
+            return StringUtils.startsWithIgnoreCase(itemCaption, filterText);
         }
 
-        return itemCaption
-                .toLowerCase(locale)
-                .contains(filterText.toLowerCase(locale));
+        return StringUtils.containsIgnoreCase(itemCaption, filterText);
     }
 
     @Override

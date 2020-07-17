@@ -20,7 +20,6 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.SecuredActionsHolder;
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -70,8 +68,6 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
 
     protected boolean refreshOptionsOnLookupClose = false;
 
-    protected Locale locale;
-
     public WebEntityComboBox() {
     }
 
@@ -83,11 +79,6 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
     @Override
     public JmixComboBoxPickerField<V> getComponent() {
         return (JmixComboBoxPickerField<V>) super.getComponent();
-    }
-
-    @Autowired
-    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
-        this.locale = currentAuthentication.getLocale();
     }
 
     @Autowired
@@ -398,14 +389,10 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
         }
 
         if (filterMode == FilterMode.STARTS_WITH) {
-            return itemCaption
-                    .toLowerCase(locale)
-                    .startsWith(filterText.toLowerCase(locale));
+            return StringUtils.startsWithIgnoreCase(itemCaption, filterText);
         }
 
-        return itemCaption
-                .toLowerCase(locale)
-                .contains(filterText.toLowerCase(locale));
+        return StringUtils.containsIgnoreCase(itemCaption, filterText);
     }
 
     @Override

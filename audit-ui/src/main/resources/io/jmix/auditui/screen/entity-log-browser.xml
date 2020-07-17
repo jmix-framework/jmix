@@ -132,8 +132,7 @@
                         <table id="entityLogTable" width="100%" dataContainer="entityLogDc">
                             <columns>
                                 <column id="eventTs" caption="msg://when">
-                                    <formatter class="io.jmix.ui.component.formatter.DateFormatter"
-                                               format="msg://dateTimeWithSeconds"/>
+                                    <dateFormatter format="msg:///dateTimeWithSeconds"/>
                                 </column>
                                 <column id="user" caption="msg://user"/>
                                 <column id="type" caption="msg://changeType"/>

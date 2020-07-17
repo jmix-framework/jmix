@@ -28,10 +28,6 @@ import org.springframework.stereotype.Component;
  * The formatter formats the string that contains the class path, where the packages are separated by dots,
  * into a string that is the class name.
  * <p>
- * Example usage:
- * <pre>
- *      &lt;formatter name=&quot;ui_ClassNameFormatter&quot;/&gt;
- * </pre>
  * Use {@link BeanLocator} when creating the formatter programmatically.
  */
 @Component(ClassNameFormatter.NAME)

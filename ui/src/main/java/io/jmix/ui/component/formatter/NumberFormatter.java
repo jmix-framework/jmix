@@ -22,7 +22,6 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.security.CurrentAuthentication;
-import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -33,13 +32,8 @@ import java.text.DecimalFormat;
 /**
  * Number formatter to be used in screen descriptors and controllers.
  * <p>
- * If defined in XML together with {@code format} attribute, uses this format, otherwise formats by means of
- * {@link Datatype#format(Object, java.util.Locale)}.
+ * This formatter formats the {@link Number} value into a string depending on the format string.
  * <p>
- * Example usage:
- * <pre>
- *      &lt;formatter name=&quot;ui_NumberFormatter&quot; format=&quot;%f&quot;/&gt;
- * </pre>
  * Use {@link BeanLocator} when creating the formatter programmatically.
  */
 @Component(NumberFormatter.NAME)
@@ -48,18 +42,21 @@ public class NumberFormatter implements Formatter<Number> {
 
     public static final String NAME = "ui_NumberFormatter";
 
-    private Element element;
+    protected String format;
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected Messages messages;
 
-    public NumberFormatter() {
-    }
-
-    public NumberFormatter(Element element) {
-        this.element = element;
+    /**
+     * Sets the format string describing the number format which will be used to create {@link DecimalFormat} instance.
+     * It can be either a format string, or a key in message pack.
+     *
+     * @param format a format string or a key in message pack
+     */
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     @Override
@@ -67,21 +64,20 @@ public class NumberFormatter implements Formatter<Number> {
         if (value == null) {
             return null;
         }
-        String pattern = element != null ? element.attributeValue("format") : null;
 
-        if (pattern == null) {
+        if (format == null) {
             Datatype datatype = Datatypes.getNN(value.getClass());
             return datatype.format(value, currentAuthentication.getLocale());
         } else {
-            if (pattern.startsWith("msg://")) {
-                pattern = messages.getMessage(pattern.substring(6));
+            if (format.startsWith("msg://")) {
+                format = messages.getMessage(format.substring(6));
             }
             FormatStrings formatStrings = Datatypes.getFormatStrings(currentAuthentication.getLocale());
             if (formatStrings == null)
                 throw new IllegalStateException("FormatStrings are not defined for " +
                         LocaleResolver.localeToString(currentAuthentication.getLocale()));
-            DecimalFormat format = new DecimalFormat(pattern, formatStrings.getFormatSymbols());
-            return format.format(value);
+            DecimalFormat decimalFormat = new DecimalFormat(format, formatStrings.getFormatSymbols());
+            return decimalFormat.format(value);
         }
     }
 }

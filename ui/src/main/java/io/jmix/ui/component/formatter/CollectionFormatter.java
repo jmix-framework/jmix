@@ -32,10 +32,6 @@ import java.util.stream.Collectors;
  * <p>
  * This formatter formats collection into a string where the elements of the collection are separated by commas.
  * <p>
- * Example usage:
- * <pre>
- *      &lt;formatter name=&quot;ui_CollectionFormatter&quot;/&gt;
- * </pre>
  * Use {@link BeanLocator} when creating the formatter programmatically.
  */
 @Component(CollectionFormatter.NAME)

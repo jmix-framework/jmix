@@ -1241,13 +1241,41 @@
         <xs:attribute name="positionY" type="xs:integer"/>
     </xs:complexType>
 
-    <xs:complexType name="formatterType">
-        <xs:attribute name="class" type="xs:string"/>
-        <xs:attribute name="format" type="xs:string"/>
-        <xs:attribute name="type" type="xs:string"/>
-        <xs:attribute name="useUserTimezone" type="xs:boolean"/>
-        <xs:attribute name="name" type="xs:string"/>
+    <xs:group name="formatters">
+        <xs:sequence>
+            <xs:choice maxOccurs="1">
+                <xs:element name="classNameFormatter" minOccurs="0"/>
+                <xs:element name="collectionFormatter" minOccurs="0"/>
+                <xs:element name="customFormatter" minOccurs="0" type="customFormatterType"/>
+                <xs:element name="dateFormatter" minOccurs="0" type="dateFormatterType"/>
+                <xs:element name="numberFormatter" minOccurs="0" type="formattableFormatterType"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="customFormatterType">
+        <xs:attribute name="bean" type="xs:string" use="required"/>
     </xs:complexType>
+
+    <xs:complexType name="formattableFormatterType">
+        <xs:attribute name="format" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="dateFormatterType">
+        <xs:complexContent>
+            <xs:extension base="formattableFormatterType">
+                <xs:attribute name="type" type="formatterDateType"/>
+                <xs:attribute name="useUserTimezone" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:simpleType name="formatterDateType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DATE"/>
+            <xs:enumeration value="DATETIME"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="rendererType">
         <xs:attribute name="nullRepresentation" type="xs:string"/>
@@ -1529,7 +1557,7 @@
     <!-- Label -->
     <xs:complexType name="labelComponent">
         <xs:sequence>
-            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+            <xs:group ref="formatters" minOccurs="0"/>
         </xs:sequence>
 
         <xs:attributeGroup ref="hasId"/>
@@ -1707,7 +1735,7 @@
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
                 <xs:sequence>
-                    <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+                    <xs:group ref="formatters" minOccurs="0"/>
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasBuffered"/>
@@ -2386,11 +2414,10 @@
     <!-- Table.Column -->
     <xs:complexType name="tableColumnComponent">
         <xs:sequence>
-            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
             <xs:element name="aggregation" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+                        <xs:group ref="formatters" minOccurs="0"/>
                     </xs:sequence>
                     <xs:attribute name="type" type="aggregation"/>
                     <xs:attribute name="editable" type="xs:boolean"/>
@@ -2398,6 +2425,7 @@
                     <xs:attribute name="valueDescription" type="resourceString"/>
                 </xs:complexType>
             </xs:element>
+            <xs:group ref="formatters" minOccurs="0"/>
         </xs:sequence>
 
         <xs:attributeGroup ref="requiresId"/>
@@ -2504,17 +2532,17 @@
     <!-- DataGrid.Column -->
     <xs:complexType name="dataGridColumnComponent">
         <xs:sequence>
-            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
             <xs:element name="aggregation" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+                        <xs:group ref="formatters" minOccurs="0"/>
                     </xs:sequence>
                     <xs:attribute name="type" type="aggregation"/>
                     <xs:attribute name="strategyClass" type="xs:string"/>
                     <xs:attribute name="valueDescription" type="resourceString"/>
                 </xs:complexType>
             </xs:element>
+            <xs:group ref="formatters" minOccurs="0"/>
             <xs:group ref="renderers" minOccurs="0"/>
         </xs:sequence>
 
@@ -2662,7 +2690,7 @@
         <xs:sequence>
             <xs:group ref="layoutOrComponent"/>
 
-            <xs:element name="formatter" minOccurs="0" type="formatterType"/>
+            <xs:group ref="formatters" minOccurs="0"/>
         </xs:sequence>
 
         <xs:attributeGroup ref="hasId"/>

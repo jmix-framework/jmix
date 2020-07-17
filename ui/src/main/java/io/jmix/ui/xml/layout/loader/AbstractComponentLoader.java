@@ -37,6 +37,7 @@ import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.HasTablePresentations;
+import io.jmix.ui.component.formatter.FormatterLoadFactory;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
@@ -804,37 +805,13 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        Element formatterElement = element.element("formatter");
-        if (formatterElement != null) {
-            String name = formatterElement.attributeValue("name");
-
-            if (StringUtils.isNotEmpty(name)) {
-                try {
-                    return (Formatter<?>) beanLocator.getPrototype(name, formatterElement);
-                } catch (BeanCreationException e) {
-                    return (Formatter<?>) beanLocator.getPrototype(name);
-                }
+        FormatterLoadFactory loadFactory = beanLocator.get(FormatterLoadFactory.NAME);
+        for (Element childElement : element.elements()) {
+            if (loadFactory.isFormatter(childElement)) {
+                return loadFactory.createFormatter(childElement);
             }
-
-            String className = formatterElement.attributeValue("class");
-
-            if (StringUtils.isEmpty(className)) {
-                throw new GuiDevelopmentException("Formatter's attributes 'name' and 'class' are not specified", context);
-            }
-
-            Class<?> aClass = getClassManager().findClass(className);
-            if (aClass == null) {
-                throw new GuiDevelopmentException(String.format("Class %s is not found", className), context);
-            }
-
-            try {
-                return (Formatter<?>) beanLocator.getPrototype(aClass, formatterElement);
-            } catch (BeanCreationException e) {
-                return (Formatter<?>) beanLocator.getPrototype(aClass);
-            }
-        } else {
-            return null;
         }
+        return null;
     }
 
     protected void loadOrientation(HasOrientation component, Element element) {

@@ -19,12 +19,19 @@ package com.haulmont.cuba.gui.components.formatters;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
+import org.dom4j.Element;
 
 /**
  * @deprecated Use {@link io.jmix.ui.component.formatter.NumberFormatter} instead
  */
 @Deprecated
 public class NumberFormatter extends io.jmix.ui.component.formatter.NumberFormatter {
+
+    public NumberFormatter(Element element) {
+        super();
+
+        setFormat(element.attributeValue("format"));
+    }
 
     @Override
     public String apply(Number value) {

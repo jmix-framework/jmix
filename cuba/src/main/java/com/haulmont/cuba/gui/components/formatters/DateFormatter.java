@@ -30,7 +30,11 @@ import java.util.Date;
 public class DateFormatter extends io.jmix.ui.component.formatter.DateFormatter {
 
     public DateFormatter(Element element) {
-        super(element);
+        super();
+
+        setFormat(element.attributeValue("format"));
+        setType(element.attributeValue("type"));
+        setUseUserTimezone(Boolean.parseBoolean(element.attributeValue("useUserTimezone")));
     }
 
     @Override

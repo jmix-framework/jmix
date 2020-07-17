@@ -18,13 +18,13 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <layout>
         <label id="dateFormatterField">
-            <formatter class="io.jmix.ui.component.formatter.DateFormatter" format="yyyy-MM-dd"/>
+            <dateFormatter format="yyyy-MM-dd"/>
         </label>
         <label id="dateTimeFormatterField">
-            <formatter name="ui_DateFormatter" type="DATETIME"/>
+            <dateFormatter type="DATETIME"/>
         </label>
         <label id="numberFormatterField">
-            <formatter class="io.jmix.ui.component.formatter.NumberFormatter" format="#,###"/>
+            <numberFormatter format="#,###"/>
         </label>
         <label id="defaultNumberFormatterField"/>
     </layout>

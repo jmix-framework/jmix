@@ -23,7 +23,6 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.SecuredActionsHolder;
@@ -41,7 +40,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,19 +76,12 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
 
     protected SearchNotifications searchNotifications = createSearchNotifications();
 
-    protected Locale locale;
-
     public WebSearchPickerField() {
     }
 
     @Override
     protected JmixPickerField<V> createComponent() {
         return new JmixSearchSelectPickerField<>();
-    }
-
-    @Inject
-    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
-        this.locale = currentAuthentication.getLocale();
     }
 
     @Inject
@@ -539,14 +530,10 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
         }
 
         if (filterMode == FilterMode.STARTS_WITH) {
-            return itemCaption
-                    .toLowerCase(locale)
-                    .startsWith(filterText.toLowerCase(locale));
+            return StringUtils.startsWithIgnoreCase(itemCaption, filterText);
         }
 
-        return itemCaption
-                .toLowerCase(locale)
-                .contains(filterText.toLowerCase(locale));
+        return StringUtils.containsIgnoreCase(itemCaption, filterText);
     }
 
     @Override

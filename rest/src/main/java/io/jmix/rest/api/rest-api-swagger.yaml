@@ -399,7 +399,7 @@ definitions:
         type: string
         example: sample-file.docx
       size:
-        type: long
+        type: number
         example: 105396
 
   viewInfo:
@@ -471,14 +471,14 @@ securityDefinitions:
 
 security:
   - oauth2:
-    - rest-api
+      - rest-api
 
 ################################################################################
 #                                   Paths                                      #
 ################################################################################
 paths:
 
-############################### token ##########################################
+  ############################### token ##########################################
   /oauth/token:
     post:
       tags:
@@ -560,7 +560,7 @@ paths:
       security:
         - tokenEndpointBasic: []
 
-############################### Entities ###################################
+  ############################### Entities ###################################
   /entities/{entityName}:
     parameters:
       - $ref: '#/parameters/entityNameParam'
@@ -719,6 +719,8 @@ paths:
 
 
   /entities/{entityName}/search:
+    parameters:
+      - $ref: '#/parameters/entityNameParam'
     get:
       tags:
         - Entities
@@ -796,11 +798,6 @@ paths:
         * notIn
 
       parameters:
-        - $ref: '#/parameters/entityNameParam'
-        - name: entityName
-          description: |
-            A JSON object with filter conditions
-          in: path
         - name: filter
           in: query
           description: JSON with filter definition
@@ -906,7 +903,7 @@ paths:
         404:
           $ref: '#/responses/metaClassNotFoundResponse'
 
-############################### Queries ########################################
+  ############################### Queries ########################################
   /queries/{entityName}:
     parameters:
       - $ref: '#/parameters/entityNameParam'
@@ -1050,7 +1047,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
 
-############################### Services #######################################
+  ############################### Services #######################################
   /services/{serviceName}:
     parameters:
       - $ref: '#/parameters/serviceNameParam'
@@ -1129,7 +1126,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
 
-############################### Files ##########################################
+  ############################### Files ##########################################
 
   /files:
     post:
@@ -1180,6 +1177,7 @@ paths:
           description: |
             FileDescriptor identifier
           default: ""
+          required: true
         - name: attachment
           in: query
           type: boolean
@@ -1195,7 +1193,7 @@ paths:
           description: File with the given ID not found
 
 
-############################### Metadata #######################################
+  ############################### Metadata #######################################
   /metadata/entities:
     get:
       tags:
@@ -1327,7 +1325,7 @@ paths:
             items:
               $ref: '#/definitions/datatype'
 
-############################### Messages #######################################
+  ############################### Messages #######################################
   /messages/entities:
     get:
       tags:
@@ -1403,7 +1401,7 @@ paths:
           schema:
             $ref: '#/definitions/error'
 
-############################### Permissions ####################################
+  ############################### Permissions ####################################
   /permissions:
     get:
       tags:
@@ -1420,7 +1418,7 @@ paths:
               $ref: '#/definitions/permission'
 
 
-############################### User info #####################################
+  ############################### User info #####################################
   /userInfo:
     get:
       tags:
@@ -1433,7 +1431,7 @@ paths:
           schema:
             $ref: '#/definitions/userInfo'
 
-############################### Documentation #################################
+  ############################### Documentation #################################
   /docs/swagger.{format}:
     get:
       tags:
@@ -1446,6 +1444,7 @@ paths:
           type: string
           description: swagger format (json or yaml)
           default: yaml
+          required: true
       responses:
         200:
           description: Success

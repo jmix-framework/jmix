@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * Class that defines parameters for loading entities from the database via {@link DataManager}.
  * <p>Typical usage:
  * <pre>
-    LoadContext&lt;User&gt; context = new LoadContext(User.class).setQuery(
+    LoadContext&lt;User&gt; context = new LoadContext(userMetaClass).setQuery(
             new LoadContext.Query("select u from sec$User u where u.login like :login")
                     .setParameter("login", "a%")
                     .setMaxResults(10))
@@ -45,7 +45,7 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
 
     private static final long serialVersionUID = -3406772812465222907L;
 
-    protected String metaClass;
+    protected MetaClass metaClass;
     protected Query query;
     protected FetchPlan fetchPlan;
     protected Object id;
@@ -66,31 +66,16 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
      */
     public LoadContext(MetaClass metaClass) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
-        this.metaClass = AppBeans.get(ExtendedEntities.class).getEffectiveMetaClass(metaClass).getName();
-    }
-
-    /**
-     * @param javaClass class of the loaded entities
-     */
-    public LoadContext(Class<E> javaClass) {
-        Preconditions.checkNotNullArgument(javaClass, "javaClass is null");
-        this.metaClass = AppBeans.get(ExtendedEntities.class).getEffectiveMetaClass(javaClass).getName();
+        this.metaClass = metaClass;
     }
 
     protected LoadContext() {
     }
 
     /**
-     * @return name of metaclass of the loaded entities
+     * @return metaclass of the loaded entities
      */
-    public String getMetaClass() {
-        return metaClass;
-    }
-
-    /**
-     * @return name of metaclass of the loaded entities
-     */
-    public String getEntityMetaClass() {
+    public MetaClass getEntityMetaClass() {
         return metaClass;
     }
 

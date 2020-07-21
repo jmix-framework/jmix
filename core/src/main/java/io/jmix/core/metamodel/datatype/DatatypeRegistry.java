@@ -33,6 +33,8 @@ public interface DatatypeRegistry {
      */
     Datatype get(String id);
 
+    Datatype find(String id);
+
     /**
      * Get Datatype instance by the corresponding Java class. This method tries to find matching supertype too.
      * @return Datatype instance or null if not found

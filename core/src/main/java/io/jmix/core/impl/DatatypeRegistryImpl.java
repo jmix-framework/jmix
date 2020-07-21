@@ -22,10 +22,10 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.DatatypeDefUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @Component(DatatypeRegistry.NAME)
@@ -45,10 +45,15 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
 
     @Override
     public Datatype get(String id) {
-        Datatype datatype = datatypeById.get(id);
+        Datatype datatype = find(id);
         if (datatype == null)
             throw new IllegalArgumentException("Datatype '" + id + "' is not found");
         return datatype;
+    }
+
+    @Override
+    public Datatype find(String id) {
+        return datatypeById.get(id);
     }
 
     @Nullable

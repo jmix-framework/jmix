@@ -16,10 +16,6 @@
 
 package io.jmix.core.impl.jpql.model;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.MessageTools;
-import io.jmix.core.metamodel.model.MetaClass;
-
 public class EntityBuilder {
     private JpqlEntityModelImpl entityModel;
 
@@ -32,13 +28,6 @@ public class EntityBuilder {
 
     public JpqlEntityModel produceImmediately(String entityName) {
         return new JpqlEntityModelImpl(entityName);
-    }
-
-    public EntityBuilder startNewEntity(MetaClass metaClass) {
-        entityModel = new JpqlEntityModelImpl(metaClass.getName());
-        entityModel.setUserFriendlyName(AppBeans.get(MessageTools.class).getEntityCaption(metaClass));
-
-        return this;
     }
 
     public JpqlEntityModel produceImmediately(String entityName, String... stringAttributeNames) {

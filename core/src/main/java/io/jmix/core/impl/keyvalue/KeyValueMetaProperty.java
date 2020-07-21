@@ -16,17 +16,7 @@
 
 package io.jmix.core.impl.keyvalue;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
-import io.jmix.core.JmixEntity;
-import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.*;
-import io.jmix.core.metamodel.model.impl.ClassRange;
-import io.jmix.core.metamodel.model.impl.DatatypeRange;
-import io.jmix.core.metamodel.model.impl.EnumerationRange;
 import io.jmix.core.metamodel.model.impl.MetadataObjectImpl;
 
 import java.io.Serializable;
@@ -48,39 +38,13 @@ public class KeyValueMetaProperty extends MetadataObjectImpl implements MetaProp
     protected final Type type;
     protected Store store;
 
-    public KeyValueMetaProperty(MetaClass metaClass, String name, Class javaClass) {
+    public KeyValueMetaProperty(MetaClass metaClass, String name, Class javaClass, Range range, Type type) {
+        this.metaClass = metaClass;
         this.name = name;
+        this.range = range;
         this.javaClass = javaClass;
-        this.metaClass = metaClass;
+        this.type = type;
         this.mandatory = false;
-
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        Session metadataSession = metadata.getSession();
-        if (JmixEntity.class.isAssignableFrom(javaClass)) {
-            range = new ClassRange(metadataSession.findClass(javaClass));
-            this.type = Type.ASSOCIATION;
-        } else if (EnumClass.class.isAssignableFrom(javaClass)) {
-            @SuppressWarnings("unchecked")
-            EnumerationImpl enumeration = new EnumerationImpl(javaClass);
-            this.range = new EnumerationRange(enumeration);
-            this.type = Type.ENUM;
-        } else {
-            @SuppressWarnings("unchecked")
-            Datatype datatype = Datatypes.getNN(javaClass);
-
-            this.range = new DatatypeRange(datatype);
-            this.type = Type.DATATYPE;
-        }
-    }
-
-    public KeyValueMetaProperty(MetaClass metaClass, String name, Datatype datatype) {
-        this.name = name;
-        this.javaClass = datatype.getJavaClass();
-        this.metaClass = metaClass;
-        this.mandatory = false;
-
-        this.range = new DatatypeRange(datatype);
-        this.type = Type.DATATYPE;
     }
 
     @Override

@@ -28,6 +28,7 @@ import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.annotation.NumberFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.*;
@@ -39,11 +40,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.lang.annotation.Annotation;
@@ -72,12 +73,15 @@ public class MetaModelLoader {
 
     protected Stores stores;
 
+    protected FormatStringsRegistry formatStringsRegistry;
+
     private static final Logger log = LoggerFactory.getLogger(MetaModelLoader.class);
 
     @Autowired
-    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores) {
+    public MetaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
         this.datatypes = datatypes;
         this.stores = stores;
+        this.formatStringsRegistry = formatStringsRegistry;
     }
 
     public void loadModel(Session session, Set<String> classNames) {
@@ -857,7 +861,7 @@ public class MetaModelLoader {
         NumberFormat numberFormat = metaProperty.getAnnotatedElement().getAnnotation(NumberFormat.class);
         if (numberFormat != null) {
             if (Number.class.isAssignableFrom(type)) {
-                return new AdaptiveNumberDatatype(type, numberFormat);
+                return new AdaptiveNumberDatatype(type, numberFormat, formatStringsRegistry);
             } else {
                 log.warn("NumberFormat annotation is ignored because " + metaProperty + " is not a Number");
             }

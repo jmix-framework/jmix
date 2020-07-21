@@ -27,7 +27,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -66,6 +66,9 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     @Autowired
     protected EntityStates entityStates;
+
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
 
     protected ThreadLocal<EntitySerializationContext> context =
             ThreadLocal.withInitial(EntitySerializationContext::new);
@@ -266,7 +269,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                 JsonObject serializedIdEntity = serializeEntity((JmixEntity) EntityValues.getId(entity), null, Collections.emptySet());
                 jsonObject.add("id", serializedIdEntity);
             } else {
-                Datatype idDatatype = Datatypes.getNN(primaryKeyProperty.getJavaType());
+                Datatype idDatatype = datatypeRegistry.get(primaryKeyProperty.getJavaType());
                 jsonObject.addProperty("id", idDatatype.format(EntityValues.getId(entity)));
             }
         }
@@ -425,7 +428,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                     } else {
                         String idString = idJsonElement.getAsJsonPrimitive().getAsString();
                         try {
-                            Datatype pkDatatype = Datatypes.getNN(primaryKeyProperty.getJavaType());
+                            Datatype pkDatatype = datatypeRegistry.get(primaryKeyProperty.getJavaType());
                             pkValue = pkDatatype.parse(idString);
                         } catch (ParseException e) {
                             throw new EntitySerializationException(e);
@@ -436,7 +439,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                     JsonElement pkElement = jsonObject.get(primaryKeyProperty.getName());
                     if (pkElement != null && pkElement.isJsonPrimitive()) {
                         try {
-                            Datatype pkDatatype = Datatypes.getNN(primaryKeyProperty.getJavaType());
+                            Datatype pkDatatype = datatypeRegistry.get(primaryKeyProperty.getJavaType());
                             pkValue = pkDatatype.parse(pkElement.getAsJsonPrimitive().getAsString());
                         } catch (ParseException e) {
                             throw new EntitySerializationException(e);
@@ -658,12 +661,12 @@ public class EntitySerializationImpl implements EntitySerialization {
         }*/
     }
 
-    protected static class DateSerializer implements JsonSerializer<Date> {
+    protected class DateSerializer implements JsonSerializer<Date> {
 
         private final Datatype<Date> dateDatatype;
 
         public DateSerializer() {
-            dateDatatype = Datatypes.get(Date.class);
+            dateDatatype = datatypeRegistry.get(Date.class);
         }
 
         @Override
@@ -673,12 +676,12 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
     }
 
-    protected static class DateDeserializer implements JsonDeserializer<Date> {
+    protected class DateDeserializer implements JsonDeserializer<Date> {
 
         private final Datatype<Date> dateDatatype;
 
         public DateDeserializer() {
-            dateDatatype = Datatypes.get(Date.class);
+            dateDatatype = datatypeRegistry.get(Date.class);
         }
 
         @Override

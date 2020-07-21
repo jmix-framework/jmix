@@ -29,16 +29,7 @@ public class EntityAccessException extends RuntimeException {
         super(ERR_MESSAGE_1 + ERR_MESSAGE_2);
     }
 
-    public EntityAccessException(Class entityClass, Object entityId) {
-        super(ERR_MESSAGE_1 + getEntityName(entityClass) + "-" + entityId + " " + ERR_MESSAGE_2);
-    }
-
     public EntityAccessException(MetaClass metaClass, Object entityId) {
         super(ERR_MESSAGE_1 + metaClass.getName() + "-" + entityId + " " + ERR_MESSAGE_2);
-    }
-
-    protected static String getEntityName(Class entityClass) {
-        MetaClass metaClass = AppBeans.get(Metadata.class).findClass(entityClass);
-        return metaClass != null ? metaClass.getName() : "<not an entity>";
     }
 }

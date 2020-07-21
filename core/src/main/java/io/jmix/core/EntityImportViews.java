@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-package io.jmix.core.common.xmlparsing;
+package io.jmix.core;
 
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-@Component
-public class Dom4jToolsShutdownListener {
+/**
+ * Factory for {@link EntityImportViewBuilder}.
+ */
+@Component(EntityImportViews.NAME)
+public class EntityImportViews {
+
+    public static final String NAME = "core_EntityImportViews";
 
     @Autowired
-    protected BeanFactory beanFactory;
+    protected ObjectProvider<EntityImportViewBuilder> entityImportViewBuilderProvider;
 
-    @EventListener(ContextClosedEvent.class)
-    public void appContextStopped() {
-        ((Dom4jTools) beanFactory.getBean(Dom4jTools.NAME)).shutdown();
+    /**
+     * Returns {@link EntityImportViewBuilder} builder for the given entity class.
+     */
+    public EntityImportViewBuilder builder(Class<? extends JmixEntity> entityClass) {
+        return entityImportViewBuilderProvider.getObject(entityClass);
     }
-
 }

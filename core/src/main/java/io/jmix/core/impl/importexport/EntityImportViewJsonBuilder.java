@@ -24,9 +24,9 @@ import io.jmix.core.metamodel.model.MetaClass;
 /**
  * Class that is used for building an {@link EntityImportView} based on the JSON object that represents an entity.
  */
-public interface EntityImportViewBuilder {
+public interface EntityImportViewJsonBuilder {
 
-    String NAME = "core_EntityImportViewBuilder";
+    String NAME = "core_EntityImportViewJsonBuilder";
 
     /**
      * Builds an {@link EntityImportView} that contains all fields that are presented in the JSON object.

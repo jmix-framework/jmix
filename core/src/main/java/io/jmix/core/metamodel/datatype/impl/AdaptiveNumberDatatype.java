@@ -20,7 +20,6 @@ import io.jmix.core.metamodel.annotation.NumberFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
-import io.jmix.core.AppBeans;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -37,14 +36,18 @@ public class AdaptiveNumberDatatype extends NumberDatatype implements Datatype<N
 
     protected Class<?> type;
 
-    public AdaptiveNumberDatatype(Class<?> type, NumberFormat numberFormat) {
+    protected FormatStringsRegistry formatStringsRegistry;
+
+    public AdaptiveNumberDatatype(Class<?> type, NumberFormat numberFormat, FormatStringsRegistry formatStringsRegistry) {
         super(numberFormat.pattern(), numberFormat.decimalSeparator(), numberFormat.groupingSeparator());
         this.type = type;
+        this.formatStringsRegistry = formatStringsRegistry;
     }
 
-    public AdaptiveNumberDatatype(Class<?> type, String pattern, String decimalSeparator, String groupingSeparator) {
+    public AdaptiveNumberDatatype(Class<?> type, String pattern, String decimalSeparator, String groupingSeparator, FormatStringsRegistry formatStringsRegistry) {
         super(pattern, decimalSeparator, groupingSeparator);
         this.type = type;
+        this.formatStringsRegistry = formatStringsRegistry;
     }
 
     @Override
@@ -55,7 +58,7 @@ public class AdaptiveNumberDatatype extends NumberDatatype implements Datatype<N
     }
 
     protected java.text.NumberFormat createLocalizedFormat(Locale locale) {
-        FormatStrings formatStrings = AppBeans.get(FormatStringsRegistry.class).getFormatStringsOrNull(locale);
+        FormatStrings formatStrings = formatStringsRegistry.getFormatStringsOrNull(locale);
         if (formatStrings == null) {
             return createFormat();
         }

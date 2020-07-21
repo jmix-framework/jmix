@@ -131,7 +131,7 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
         }
 
         BaseUser user = currentAuthentication.getUser();
-        lockInfo = new LockInfo(user.getKey(), user.getUsername(), name, id);
+        lockInfo = new LockInfo(user.getKey(), user.getUsername(), name, id, timeSource.currentTimestamp());
         locks.put(key, lockInfo);
         log.debug("Locked " + name + "/" + id);
 
@@ -157,7 +157,7 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
         if (lockInfo != null) {
             log.debug("Unlocked " + name + "/" + id);
 
-            clusterManager.send(new LockInfo(null, null, name, id));
+            clusterManager.send(new LockInfo(null, null, name, id, timeSource.currentTimestamp()));
         }
     }
 

@@ -18,15 +18,28 @@ package io.jmix.core;
 
 import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.TemporalType;
 import java.util.*;
 import java.util.function.Consumer;
 
+@Component(FluentLoader.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentLoader<E extends JmixEntity> {
 
+    public static final String NAME = "core_FluentLoader";
+
     private Class<E> entityClass;
+    private MetaClass metaClass;
 
     private DataManager dataManager;
 
@@ -37,22 +50,39 @@ public class FluentLoader<E extends JmixEntity> {
     private boolean softDeletion = true;
     private boolean dynamicAttributes;
 
+    @Autowired
     private Metadata metadata;
+
+    @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
-    public FluentLoader(Class<E> entityClass, DataManager dataManager) {
-        this.entityClass = entityClass;
-        this.dataManager = dataManager;
+    @Autowired
+    private BeanFactory beanFactory;
 
-        metadata = AppBeans.get(Metadata.class);
-        fetchPlanRepository = AppBeans.get(FetchPlanRepository.class);
+    @Autowired
+    private ObjectProvider<FetchPlanBuilder> fetchPlanBuilderProvider;
+
+    @Autowired
+    public void setDataManager(DataManager dataManager) {
+        this.dataManager = dataManager;
+    }
+
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    public FluentLoader(Class<E> entityClass) {
+        this.entityClass = entityClass;
+    }
+
+    @PostConstruct
+    private void init() {
+        this.metaClass = metadata.getClass(entityClass);
     }
 
     LoadContext<E> createLoadContext() {
-        LoadContext<E> loadContext = new LoadContext<>(entityClass);
+        MetaClass metaClass = metadata.getClass(entityClass);
+        LoadContext<E> loadContext = new LoadContext<>(metaClass);
         initCommonLoadContextParameters(loadContext);
 
-        String entityName = metadata.getClass(entityClass).getName();
+        String entityName = metaClass.getName();
         String queryString = String.format("select e from %s e", entityName);
         loadContext.setQuery(new LoadContext.Query(queryString));
 
@@ -81,7 +111,7 @@ public class FluentLoader<E extends JmixEntity> {
 
     private void createFetchPlanBuilder() {
         if (fetchPlanBuilder == null) {
-            fetchPlanBuilder = AppBeans.getPrototype(FetchPlanBuilder.NAME, entityClass);
+            fetchPlanBuilder = fetchPlanBuilderProvider.getObject(entityClass);
         }
     }
 
@@ -228,14 +258,14 @@ public class FluentLoader<E extends JmixEntity> {
      * Sets the query text.
      */
     public ByQuery<E> query(String queryString) {
-        return new ByQuery<>(this, queryString);
+        return new ByQuery<>(this, queryString, beanFactory);
     }
 
     /**
      * Sets the query with positional parameters (e.g. {@code "e.name = ?1 and e.status = ?2"}).
      */
     public ByQuery<E> query(String queryString, Object... parameters) {
-        return new ByQuery<>(this, queryString, parameters);
+        return new ByQuery<>(this, queryString, parameters, beanFactory);
     }
 
     public static class ById<E extends JmixEntity> {
@@ -249,7 +279,7 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         LoadContext<E> createLoadContext() {
-            LoadContext<E> loadContext = new LoadContext(loader.entityClass).setId(id);
+            LoadContext<E> loadContext = new LoadContext(loader.metaClass).setId(id);
             loader.initCommonLoadContextParameters(loadContext);
             return loadContext;
         }
@@ -372,7 +402,7 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         LoadContext<E> createLoadContext() {
-            LoadContext<E> loadContext = new LoadContext(loader.entityClass).setIds(ids);
+            LoadContext<E> loadContext = new LoadContext(loader.metaClass).setIds(ids);
             loader.initCommonLoadContextParameters(loadContext);
             return loadContext;
         }
@@ -523,15 +553,17 @@ public class FluentLoader<E extends JmixEntity> {
         private int maxResults;
         private boolean cacheable;
         private Condition condition;
+        private BeanFactory beanFactory;
 
-        ByQuery(FluentLoader<E> loader, String queryString) {
+        ByQuery(FluentLoader<E> loader, String queryString, BeanFactory beanFactory) {
+            this.beanFactory = beanFactory;
             Preconditions.checkNotEmptyString(queryString, "queryString is empty");
             this.loader = loader;
             this.queryString = queryString;
         }
 
-        ByQuery(FluentLoader<E> loader, String queryString, Object[] positionalParams) {
-            this(loader, queryString);
+        ByQuery(FluentLoader<E> loader, String queryString, Object[] positionalParams, BeanFactory beanFactory) {
+            this(loader, queryString, beanFactory);
             processPositionalParams(positionalParams);
         }
 
@@ -549,10 +581,10 @@ public class FluentLoader<E extends JmixEntity> {
         LoadContext<E> createLoadContext() {
             Preconditions.checkNotEmptyString(queryString, "query is empty");
 
-            LoadContext<E> loadContext = new LoadContext(loader.entityClass);
+            LoadContext<E> loadContext = new LoadContext(loader.metaClass);
             loader.initCommonLoadContextParameters(loadContext);
 
-            String processedQuery = AppBeans.get(QueryStringProcessor.class).process(queryString, loader.entityClass);
+            String processedQuery = beanFactory.getBean(QueryStringProcessor.class).process(queryString, loader.entityClass);
             LoadContext.Query query = new LoadContext.Query(processedQuery);
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());

@@ -16,9 +16,7 @@
 
 package io.jmix.core.pessimisticlocking;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -54,18 +52,17 @@ public class LockInfo implements JmixEntity, HasUuid {
         this.id = UuidProvider.createUuid();
         this.objectType = null;
         this.objectId = null;
-        TimeSource timeSource = AppBeans.get(TimeSource.NAME);
-        this.since = timeSource.currentTimestamp();
+        this.since = null;
         this.userKey = null;
         this.userName = null;
     }
 
-    public LockInfo(@Nullable String userKey, @Nullable String userName, String objectType, String objectId) {
+    public LockInfo(@Nullable String userKey, @Nullable String userName, String objectType, String objectId,
+                    Date since) {
         this.id = UuidProvider.createUuid();
         this.objectType = objectType;
         this.objectId = objectId;
-        TimeSource timeSource = AppBeans.get(TimeSource.NAME);
-        this.since = timeSource.currentTimestamp();
+        this.since = since;
         this.userKey = userKey;
         this.userName = userName;
     }

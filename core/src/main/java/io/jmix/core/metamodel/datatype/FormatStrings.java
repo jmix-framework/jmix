@@ -20,7 +20,7 @@ import java.text.DecimalFormatSymbols;
 
 /**
  * Localized format strings container. <br>
- * An instance of this class can be acquired through {@link Datatypes#getFormatStrings(java.util.Locale)}.
+ * An instance of this class can be acquired through {@link FormatStringsRegistry}.
  */
 public class FormatStrings {
 

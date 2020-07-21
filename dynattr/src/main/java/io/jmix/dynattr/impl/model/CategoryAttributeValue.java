@@ -18,11 +18,9 @@
 package io.jmix.dynattr.impl.model;
 
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
-import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -223,45 +221,6 @@ public class CategoryAttributeValue extends StandardEntity {
 
     public void setTransientCollectionValue(List<Object> transientCollectionValue) {
         this.transientCollectionValue = transientCollectionValue;
-    }
-
-    //todo eude support enumerations
-    public void setValue(Object value) {
-        if (value == null) {
-            stringValue = null;
-            intValue = null;
-            doubleValue = null;
-            decimalValue = null;
-            booleanValue = null;
-            dateValue = null;
-            dateWithoutTimeValue = null;
-            entityValue.setObjectEntityId(null);
-            transientEntityValue = null;
-            transientCollectionValue = null;
-        } else if (value instanceof LocalDate) {
-            setDateWithoutTimeValue((LocalDate) value);
-        } else if (value instanceof Date) {
-            setDateValue((Date) value);
-        } else if (value instanceof Integer) {
-            setIntValue((Integer) value);
-        } else if (value instanceof Double) {
-            setDoubleValue((Double) value);
-        } else if (value instanceof BigDecimal) {
-            setDecimalValue((BigDecimal) value);
-        } else if (value instanceof Boolean) {
-            setBooleanValue((Boolean) value);
-        } else if (value instanceof JmixEntity) {
-            ReferenceToEntitySupport referenceToEntitySupport = AppBeans.get(ReferenceToEntitySupport.class);
-            Object referenceId = referenceToEntitySupport.getReferenceId((JmixEntity) value);
-            entityValue.setObjectEntityId(referenceId);
-            setTransientEntityValue((JmixEntity) value);
-        } else if (value instanceof String) {
-            setStringValue((String) value);
-        } else if (value instanceof List) {
-            setTransientCollectionValue((List<Object>) value);
-        } else {
-            throw new IllegalArgumentException("Unsupported value type " + value.getClass());
-        }
     }
 
     public Object getValue() {

@@ -17,7 +17,7 @@
 package io.jmix.dynattrui.screen.categoryattr;
 
 import io.jmix.core.*;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
@@ -73,6 +73,8 @@ public class CategoryAttrsFragment extends ScreenFragment {
     protected Button moveUpBtn;
     @Autowired
     protected Button moveDownBtn;
+    @Autowired
+    protected FormatStringsRegistry formatStringsRegistry;
 
     @Install(to = "categoryAttrsTable.defaultValue", subject = "columnGenerator")
     protected Label<String> categoryAttrsTableDefaultValueColumnGenerator(CategoryAttribute attribute) {
@@ -90,7 +92,7 @@ public class CategoryAttrsFragment extends ScreenFragment {
             case DATE:
                 Date dateTime = attribute.getDefaultDate();
                 if (dateTime != null) {
-                    String dateTimeFormat = Datatypes.getFormatStringsNN(currentAuthentication.getLocale()).getDateTimeFormat();
+                    String dateTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateTimeFormat();
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateTimeFormat);
                     defaultValue = simpleDateFormat.format(dateTime);
                 } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
@@ -100,7 +102,7 @@ public class CategoryAttrsFragment extends ScreenFragment {
             case DATE_WITHOUT_TIME:
                 LocalDate dateWoTime = attribute.getDefaultDateWithoutTime();
                 if (dateWoTime != null) {
-                    String dateWoTimeFormat = Datatypes.getFormatStringsNN(currentAuthentication.getLocale()).getDateFormat();
+                    String dateWoTimeFormat = formatStringsRegistry.getFormatStrings(currentAuthentication.getLocale()).getDateFormat();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateWoTimeFormat);
                     defaultValue = dateWoTime.format(formatter);
                 } else if (BooleanUtils.isTrue(attribute.getDefaultDateIsCurrent())) {
@@ -125,7 +127,7 @@ public class CategoryAttrsFragment extends ScreenFragment {
                     defaultValue = "";
                     if (attribute.getObjectDefaultEntityId() != null) {
                         MetaClass metaClass = metadata.getClass(entityClass);
-                        LoadContext<JmixEntity> lc = new LoadContext(attribute.getJavaType());
+                        LoadContext<JmixEntity> lc = new LoadContext(metadata.getClass(attribute.getJavaType()));
                         FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
                         lc.setFetchPlan(fetchPlan);
                         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);

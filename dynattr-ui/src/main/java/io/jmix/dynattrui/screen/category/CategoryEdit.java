@@ -25,24 +25,13 @@ import io.jmix.dynattrui.screen.categoryattr.CategoryAttrsFragment;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.dynattrui.screen.location.AttributeLocationFragment;
 import io.jmix.ui.Fragments;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Fragment;
-import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.TabSheet;
-import io.jmix.ui.component.VBoxLayout;
+import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.EditedEntityContainer;
-import io.jmix.ui.screen.LoadDataBeforeShow;
-import io.jmix.ui.screen.StandardEditor;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.Target;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
-
+import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +71,8 @@ public class CategoryEdit extends StandardEditor<Category> {
     protected InstanceContainer<Category> categoryDc;
     @Autowired
     protected CollectionContainer<CategoryAttribute> categoryAttributesDc;
+    @Autowired
+    private Metadata metadata;
 
     protected AttributeLocalizationFragment localizationFragment;
     protected AttributeLocationFragment attributeLocationFragment;
@@ -114,7 +105,7 @@ public class CategoryEdit extends StandardEditor<Category> {
             FetchPlan fetchPlan = fetchPlans.builder(Category.class)
                     .add("isDefault")
                     .build();
-            LoadContext<Category> lc = new LoadContext<>(Category.class)
+            LoadContext<Category> lc = new LoadContext(metadata.getClass(Category.class))
                     .setFetchPlan(fetchPlan);
             Category category = getEditedEntity();
             lc.setQueryString("select c from sys_Category c where c.entityType = :entityType and not c.id = :id")

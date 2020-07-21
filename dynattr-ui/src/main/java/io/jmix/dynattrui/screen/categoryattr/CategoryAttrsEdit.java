@@ -25,7 +25,8 @@ import com.google.gson.GsonBuilder;
 import io.jmix.core.*;
 import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeType;
@@ -217,6 +218,12 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected CollectionContainer<TargetScreenComponent> targetScreensDc;
     @Autowired
     protected InstanceContainer<CategoryAttributeConfiguration> configurationDc;
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
+    @Autowired
+    protected FormatStringsRegistry formatStringsRegistry;
+    @Autowired
+    protected JpqlSuggestionFactory jpqlSuggestionFactory;
 
     protected AttributeLocalizationFragment localizationFragment;
 
@@ -507,9 +514,10 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         String formatPattern = getEditedEntity().getConfiguration().getNumberFormatPattern();
         Datatype datatype;
         if (!Strings.isNullOrEmpty(formatPattern)) {
-            datatype = new AdaptiveNumberDatatype(BigDecimal.class, formatPattern, "", "");
+            datatype = new AdaptiveNumberDatatype(BigDecimal.class, formatPattern, "", "",
+                    formatStringsRegistry);
         } else {
-            datatype = Datatypes.get(BigDecimal.class);
+            datatype = datatypeRegistry.find(BigDecimal.class);
         }
 
         defaultDecimalField.setDatatype(datatype);
@@ -672,7 +680,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         if (javaClass != null) {
             MetaClass metaClass = metadata.getClass(javaClass);
             if (attribute.getObjectDefaultEntityId() != null) {
-                LoadContext<JmixEntity> lc = new LoadContext(attribute.getJavaType());
+                LoadContext<JmixEntity> lc = new LoadContext(metadata.getClass(attribute.getJavaType()));
                 FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME);
                 lc.setFetchPlan(fetchPlan);
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
@@ -806,7 +814,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         String query = queryBuilder.toString();
         query = query.replace("{E}", entityAlias);
 
-        return JpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition);
+        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition);
     }
 
     protected void centerDialogWindow() {

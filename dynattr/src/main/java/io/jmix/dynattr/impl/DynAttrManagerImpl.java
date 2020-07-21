@@ -41,6 +41,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -114,10 +116,10 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 for (CategoryAttributeValue attributeValue : attributeValues) {
                     String attributeName = attributeValue.getCode();
                     if (changes.isDeleted(attributeName)) {
-                        attributeValue.setValue(null);
+                        setValueToCategoryAttributeValue(attributeValue, null);
                         entityManager.remove(attributeValue);
                     } else if (changes.isUpdated(attributeName)) {
-                        attributeValue.setValue(dynamicModel.getValue(attributeName));
+                        setValueToCategoryAttributeValue(attributeValue, dynamicModel.getValue(attributeName));
 
                         if (BooleanUtils.isTrue(attributeValue.getCategoryAttribute().getIsCollection())) {
                             doStoreCollectionValue(attributeValue);
@@ -130,7 +132,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                         dynAttrMetadata.getAttributeByCode(metaClass, attributeName)
                                 .ifPresent(attribute -> {
                                     CategoryAttributeValue attributeValue = metadata.create(CategoryAttributeValue.class);
-                                    attributeValue.setValue(dynamicModel.getValue(attributeName));
+                                    setValueToCategoryAttributeValue(attributeValue, dynamicModel.getValue(attributeName));
                                     attributeValue.setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
                                     attributeValue.setCode(attributeName);
                                     attributeValue.setCategoryAttribute((CategoryAttribute) attribute.getSource());
@@ -175,7 +177,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
         for (Object value : newCollection) {
             CategoryAttributeValue childValue = metadata.create(CategoryAttributeValue.class);
             childValue.setParent(collectionAttributeValue);
-            childValue.setValue(value);
+            setValueToCategoryAttributeValue(childValue, value);
             if (collectionAttributeValue.getObjectEntityId() != null) {
                 childValue.setObjectEntityId(collectionAttributeValue.getObjectEntityId());
             }
@@ -459,5 +461,42 @@ public class DynAttrManagerImpl implements DynAttrManager {
             }
         }
         return classes;
+    }
+
+    protected void setValueToCategoryAttributeValue(CategoryAttributeValue cav, @Nullable Object value) {
+        if (value == null) {
+            cav.setStringValue(null);
+            cav.setIntValue(null);
+            cav.setDoubleValue(null);
+            cav.setDecimalValue(null);
+            cav.setBooleanValue(null);
+            cav.setDateValue(null);
+            cav.setDateWithoutTimeValue(null);
+            cav.getEntityValue().setObjectEntityId(null);
+            cav.setTransientEntityValue(null);
+            cav.setTransientCollectionValue(null);
+        } else if (value instanceof LocalDate) {
+            cav.setDateWithoutTimeValue((LocalDate) value);
+        } else if (value instanceof Date) {
+            cav.setDateValue((Date) value);
+        } else if (value instanceof Integer) {
+            cav.setIntValue((Integer) value);
+        } else if (value instanceof Double) {
+            cav.setDoubleValue((Double) value);
+        } else if (value instanceof BigDecimal) {
+            cav.setDecimalValue((BigDecimal) value);
+        } else if (value instanceof Boolean) {
+            cav.setBooleanValue((Boolean) value);
+        } else if (value instanceof JmixEntity) {
+            Object referenceId = referenceToEntitySupport.getReferenceId((JmixEntity) value);
+            cav.getEntityValue().setObjectEntityId(referenceId);
+            cav.setTransientEntityValue((JmixEntity) value);
+        } else if (value instanceof String) {
+            cav.setStringValue((String) value);
+        } else if (value instanceof List) {
+            cav.setTransientCollectionValue((List<Object>) value);
+        } else {
+            throw new IllegalArgumentException("Unsupported value type " + value.getClass());
+        }
     }
 }

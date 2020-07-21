@@ -121,6 +121,9 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
     @Autowired
     protected Downloader exportDisplay;
 
+    @Autowired
+    protected EntityImportViews entityImportViews;
+
     //TODO filter implementation component (Filter in Table/DataGrid #221)
     protected Component filter;
     protected Table entitiesTable;
@@ -369,8 +372,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
     }
 
     protected EntityImportView createEntityImportView(MetaClass metaClass) {
-        Class<? extends JmixEntity> javaClass = metaClass.getJavaClass();
-        EntityImportView entityImportView = new EntityImportView(javaClass);
+        EntityImportViewBuilder viewBuilder = entityImportViews.builder(metaClass.getJavaClass());
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (!metadataTools.isPersistent(metaProperty)) {
@@ -380,22 +382,22 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
             switch (metaProperty.getType()) {
                 case DATATYPE:
                 case ENUM:
-                    entityImportView.addLocalProperty(metaProperty.getName());
+                    viewBuilder.addLocalProperty(metaProperty.getName());
                     break;
                 case ASSOCIATION:
                 case COMPOSITION:
                     Range.Cardinality cardinality = metaProperty.getRange().getCardinality();
                     if (cardinality == Range.Cardinality.MANY_TO_ONE) {
-                        entityImportView.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                        viewBuilder.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     } else if (cardinality == Range.Cardinality.ONE_TO_ONE) {
-                        entityImportView.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                        viewBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     }
                     break;
                 default:
                     throw new IllegalStateException("unknown property type");
             }
         }
-        return entityImportView;
+        return viewBuilder.build();
     }
 
     protected boolean readPermitted(MetaClass metaClass) {

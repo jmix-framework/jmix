@@ -41,7 +41,7 @@ public class InspectorFetchPlanBuilder {
     @Autowired
     protected FetchPlans fetchPlans;
 
-    protected final FetchPlanBuilder fetchPlanBuilder;
+    protected FetchPlanBuilder fetchPlanBuilder;
 
     protected Class<? extends JmixEntity> entityClass;
     protected MetaClass metaClass;
@@ -56,12 +56,12 @@ public class InspectorFetchPlanBuilder {
 
     protected InspectorFetchPlanBuilder(Class<? extends JmixEntity> entityClass) {
         this.entityClass = entityClass;
-        this.fetchPlanBuilder = fetchPlans.builder(entityClass);
     }
 
     @PostConstruct
     protected void postConstruct() {
         metaClass = metadata.getClass(entityClass);
+        fetchPlanBuilder = fetchPlans.builder(entityClass);
     }
 
     public InspectorFetchPlanBuilder withCollections(boolean withCollections) {

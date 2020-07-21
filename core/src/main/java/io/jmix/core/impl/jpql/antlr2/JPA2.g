@@ -62,6 +62,7 @@ package io.jmix.core.impl.jpql.antlr2;
 import io.jmix.core.impl.jpql.tree.QueryNode;
 import io.jmix.core.impl.jpql.tree.SelectedItemNode;
 import io.jmix.core.impl.jpql.tree.PathNode;
+import io.jmix.core.impl.jpql.tree.TreatPathNode;
 import io.jmix.core.impl.jpql.tree.FromNode;
 import io.jmix.core.impl.jpql.tree.SelectionSourceNode;
 import io.jmix.core.impl.jpql.tree.IdentificationVariableNode;
@@ -127,7 +128,7 @@ join_association_path_expression
      : identification_variable '.' (field'.')* field?
          -> ^(T_SELECTED_FIELD<PathNode>[$identification_variable.text] (field)*)
      |  'TREAT(' identification_variable '.' (field'.')* field? AS subtype ')'
-         -> ^(T_SELECTED_FIELD<PathNode>[$identification_variable.text] (field)*)
+         -> ^(T_SELECTED_FIELD<TreatPathNode>[$identification_variable.text, $subtype.text] (field)*)
      | entity_name;
 //End : here we have simplified joins
 

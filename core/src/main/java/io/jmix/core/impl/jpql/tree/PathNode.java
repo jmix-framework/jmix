@@ -29,7 +29,7 @@ import java.util.List;
 import static io.jmix.core.impl.jpql.JPATreeNodes.createWord;
 
 public class PathNode extends BaseCustomNode {
-    private String entityVariableName;
+    protected String entityVariableName;
 
     public PathNode(Token token, String entityVariableName) {
         super(token);
@@ -46,9 +46,13 @@ public class PathNode extends BaseCustomNode {
 
     @Override
     public PathNode dupNode() {
-        PathNode result = new PathNode(token, entityVariableName);
+        PathNode result = createDuplicate();
         dupChildren(result);
         return result;
+    }
+
+    protected PathNode createDuplicate() {
+        return new PathNode(token, entityVariableName);
     }
 
     public Pointer resolvePointer(DomainModel model, QueryVariableContext queryVC) {

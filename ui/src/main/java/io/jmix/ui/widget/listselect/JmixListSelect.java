@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget;
+package io.jmix.ui.widget.listselect;
 
 import com.vaadin.server.AbstractErrorMessage;
 import com.vaadin.server.CompositeErrorMessage;
@@ -28,8 +28,10 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * Vaadin 7 component. Is used for supporting OptionsList component in compatibility module.
+ */
 public class JmixListSelect extends ListSelect {
-
     protected Function<Object, String> itemCaptionGenerator;
 
     protected Consumer<Object> doubleClickHandler;

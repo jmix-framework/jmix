@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,27 +22,12 @@ import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
- * Simple list select component.
+ * Base interface for OptionsList base components.
  *
- * @param <V> value type: single type or {@code Collection<I>}
+ * @param <V> value type: single value or {@code Collection<I>}
  * @param <I> item type
  */
-public interface OptionsList<V, I> extends OptionsField<V, I>, Component.Focusable {
-    String NAME = "optionsList";
-
-    boolean isMultiSelect();
-
-    void setMultiSelect(boolean multiselect);
-
-    /**
-     * Sets visibility for first null element in list.
-     */
-    void setNullOptionVisible(boolean nullOptionVisible);
-
-    /**
-     * @return true if first null element is visible.
-     */
-    boolean isNullOptionVisible();
+public interface SelectList<V, I> extends OptionsField<V, I>, Component.Focusable {
 
     /**
      * Adds a listener that is fired when user double-clicks on a list item.
@@ -59,14 +44,14 @@ public interface OptionsList<V, I> extends OptionsField<V, I>, Component.Focusab
     class DoubleClickEvent<I> extends EventObject {
         protected I item;
 
-        public DoubleClickEvent(OptionsList source, I item) {
+        public DoubleClickEvent(SelectList source, I item) {
             super(source);
             this.item = item;
         }
 
         @Override
-        public OptionsList getSource() {
-            return (OptionsList) super.getSource();
+        public SelectList getSource() {
+            return (SelectList) super.getSource();
         }
 
         public I getItem() {

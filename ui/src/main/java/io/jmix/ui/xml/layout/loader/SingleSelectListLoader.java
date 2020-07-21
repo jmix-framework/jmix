@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.component.OptionsList;
-import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Element;
+import io.jmix.ui.component.SingleSelectList;
 
-public class OptionsListLoader extends AbstractOptionsBaseLoader<OptionsList> {
+public class SingleSelectListLoader extends AbstractSelectListLoader<SingleSelectList> {
+
     @Override
     public void createComponent() {
-        resultComponent = factory.create(OptionsList.NAME);
+        resultComponent = factory.create(SingleSelectList.NAME);
         loadId(resultComponent, element);
     }
 
@@ -31,20 +30,8 @@ public class OptionsListLoader extends AbstractOptionsBaseLoader<OptionsList> {
     public void loadComponent() {
         super.loadComponent();
 
-        String multiselect = element.attributeValue("multiselect");
-        if (StringUtils.isNotEmpty(multiselect)) {
-            resultComponent.setMultiSelect(Boolean.parseBoolean(multiselect));
-        }
-
-        loadCaptionProperty(resultComponent, element);
-        loadOptionsEnum(resultComponent, element);
-        loadNullOptionVisible(resultComponent, element);
-        loadTabIndex(resultComponent, element);
-    }
-
-    protected void loadNullOptionVisible(OptionsList resultComponent, Element element) {
         String nullOptionVisible = element.attributeValue("nullOptionVisible");
-        if (StringUtils.isNotEmpty(nullOptionVisible)) {
+        if (nullOptionVisible != null) {
             resultComponent.setNullOptionVisible(Boolean.parseBoolean(nullOptionVisible));
         }
     }

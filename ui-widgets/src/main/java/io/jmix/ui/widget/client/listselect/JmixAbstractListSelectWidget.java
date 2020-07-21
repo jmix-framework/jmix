@@ -18,23 +18,18 @@ package io.jmix.ui.widget.client.listselect;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.OptionElement;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.vaadin.client.WidgetUtil;
-import com.vaadin.v7.client.ui.VListSelect;
+import com.vaadin.client.ui.VListSelect;
 
 import java.util.function.Consumer;
 
-/**
- * Vaadin 7 component. Is used for supporting OptionsList component in compatibility module.
- */
-public class JmixListSelectWidget extends VListSelect {
+public abstract class JmixAbstractListSelectWidget extends VListSelect {
 
     protected Consumer<Integer> doubleClickListener;
 
-    public JmixListSelectWidget() {
-        getOptionsContainer().addDoubleClickHandler(event -> {
-            if (!isEnabled() || isReadonly()) {
+    public JmixAbstractListSelectWidget() {
+        select.addDoubleClickHandler(event -> {
+            if (!isEnabled() || isReadOnly()) {
                 return;
             }
 
@@ -46,27 +41,26 @@ public class JmixListSelectWidget extends VListSelect {
         });
     }
 
+    public Consumer<Integer> getDoubleClickListener() {
+        return doubleClickListener;
+    }
+
+    public void setDoubleClickListener(Consumer<Integer> doubleClickListener) {
+        this.doubleClickListener = doubleClickListener;
+    }
+
     @Override
     protected void updateEnabledState() {
         select.setEnabled(isEnabled());
-        select.setStyleName("v-readonly", isReadonly());
+        select.setStyleName("v-readonly", isReadOnly());
     }
 
     @Override
-    public void onClick(ClickEvent event) {
-        if (!isEnabled() || isReadonly()) {
+    protected void selectionEvent(Object source) {
+        if (!isEnabled() || isReadOnly()) {
             return;
         }
 
-        super.onClick(event);
-    }
-
-    @Override
-    public void onChange(ChangeEvent event) {
-        if (!isEnabled() || isReadonly()) {
-            return;
-        }
-
-        super.onChange(event);
+        super.selectionEvent(source);
     }
 }

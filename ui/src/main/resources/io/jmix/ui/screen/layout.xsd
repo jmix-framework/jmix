@@ -2094,12 +2094,11 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- OptionsList -->
-    <xs:complexType name="optionsListComponent">
+    <!-- SingleSelectList -->
+    <xs:complexType name="singleSelectListComponent">
         <xs:complexContent>
             <xs:extension base="optionsBaseFieldComponent">
                 <xs:attribute name="nullOptionVisible" type="xs:boolean"/>
-                <xs:attribute name="multiselect" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3733,7 +3732,8 @@
                 <xs:element name="colorPicker" type="colorPickerComponent"/>
                 <xs:element name="radioButtonGroup" type="radioButtonGroupComponent"/>
                 <xs:element name="checkBoxGroup" type="checkBoxGroupComponent"/>
-                <xs:element name="optionsList" type="optionsListComponent"/>
+                <xs:element name="multiSelectList" type="optionsBaseFieldComponent"/>
+                <xs:element name="singleSelectList" type="singleSelectListComponent"/>
                 <xs:element name="progressBar" type="progressBarComponent"/>
 
                 <xs:element name="fileUpload" type="fileUploadComponent"/>

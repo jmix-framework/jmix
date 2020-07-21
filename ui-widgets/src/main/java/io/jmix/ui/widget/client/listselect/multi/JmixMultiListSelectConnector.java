@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.listselect;
+package io.jmix.ui.widget.client.listselect.multi;
 
+import com.vaadin.client.ui.listselect.ListSelectConnector;
+import io.jmix.ui.widget.listselect.JmixMultiListSelect;
 import com.vaadin.shared.ui.Connect;
-import com.vaadin.v7.client.ui.listselect.ListSelectConnector;
-import io.jmix.ui.widget.listselect.JmixListSelect;
+import io.jmix.ui.widget.client.listselect.JmixListSelectServerRpc;
 
-/**
- * Vaadin 7 component. Is used for supporting OptionsList component in compatibility module.
- */
-@Connect(value = JmixListSelect.class)
-public class JmixListSelectConnector extends ListSelectConnector {
+@Connect(value = JmixMultiListSelect.class)
+public class JmixMultiListSelectConnector extends ListSelectConnector {
 
     @Override
     protected void init() {
         super.init();
 
-        getWidget().doubleClickListener = (itemIndex) -> getRpcProxy(JmixListSelectServerRpc.class).onDoubleClick(itemIndex);
+        getWidget().setDoubleClickListener((itemIndex) ->
+                getRpcProxy(JmixListSelectServerRpc.class).onDoubleClick(itemIndex));
     }
 
     @Override
-    public JmixListSelectWidget getWidget() {
-        return (JmixListSelectWidget) super.getWidget();
+    public JmixMultiListSelectWidget getWidget() {
+        return (JmixMultiListSelectWidget) super.getWidget();
     }
 }

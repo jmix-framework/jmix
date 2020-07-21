@@ -16,21 +16,17 @@
 
 package datatypes
 
-import test_support.AppContextTestExecutionListener
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.datatype.impl.*
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
+import test_support.AppContextTestExecutionListener
 
-import org.springframework.beans.factory.annotation.Autowired
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.OffsetTime
+import java.time.*
 
 @ContextConfiguration(classes = [CoreConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
@@ -52,6 +48,7 @@ class DatatypeRegistryTest extends Specification {
         context.getBean('core_BigDecimalDatatype', BigDecimalDatatype)
         context.getBean('core_DoubleDatatype', DoubleDatatype)
         context.getBean('core_StringDatatype', StringDatatype)
+        context.getBean('core_CharacterDatatype', CharacterDatatype)
         context.getBean('core_DateTimeDatatype', DateTimeDatatype)
         context.getBean('core_DateDatatype', DateDatatype)
         context.getBean('core_TimeDatatype', TimeDatatype)

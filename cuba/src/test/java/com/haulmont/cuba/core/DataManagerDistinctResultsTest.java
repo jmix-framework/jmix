@@ -18,6 +18,7 @@
 package com.haulmont.cuba.core;
 
 import com.google.common.collect.Iterables;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.model.common.Group;
@@ -25,16 +26,15 @@ import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.*;
-import io.jmix.data.DataProperties;
 import io.jmix.data.DataConfigPropertiesAccess;
+import io.jmix.data.DataProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.UUID;

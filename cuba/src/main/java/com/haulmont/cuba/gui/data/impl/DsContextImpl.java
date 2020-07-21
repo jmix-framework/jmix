@@ -15,13 +15,13 @@
  */
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.data.impl.compatibility.DsContextCommitListenerWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.AppBeans;
-import com.haulmont.cuba.core.global.CommitContext;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;

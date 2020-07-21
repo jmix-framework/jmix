@@ -16,23 +16,23 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.app.events.AttributeChanges;
+import com.haulmont.cuba.core.app.events.EntityChangedEvent;
 import com.haulmont.cuba.core.entity.contracts.Id;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.model.sales.OrderLine;
 import com.haulmont.cuba.core.model.sales.Product;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.app.events.AttributeChanges;
-import com.haulmont.cuba.core.app.events.EntityChangedEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -16,17 +16,19 @@
 
 package spec.haulmont.cuba.core.data_events
 
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.Transaction
+import com.haulmont.cuba.core.TransactionalDataManager
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
 import com.haulmont.cuba.core.testsupport.TestSupport
-import io.jmix.core.*
-import com.haulmont.cuba.core.Persistence
-import com.haulmont.cuba.core.Transaction
-import com.haulmont.cuba.core.TransactionalDataManager
-import spec.haulmont.cuba.core.CoreTestSpecification
-
+import io.jmix.core.EntityStates
+import io.jmix.core.Events
+import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
+import spec.haulmont.cuba.core.CoreTestSpecification
 
 class AllDataEventsTest extends CoreTestSpecification {
     private TestEntityChangedEventListener listener

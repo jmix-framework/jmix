@@ -16,16 +16,19 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.model.fetchjoin.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.*;
+import io.jmix.core.FetchMode;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

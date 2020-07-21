@@ -1,10 +1,15 @@
 package spec.haulmont.cuba.core.data_events
 
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.entity.contracts.Id
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.CommitContext
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.entitychangedevent.EceTestProduct
 import com.haulmont.cuba.core.model.entitychangedevent.TestProductChangeListener
-import io.jmix.core.*
+import io.jmix.core.EntitySet
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 
 /*
  * Copyright 2019 Haulmont.
@@ -22,12 +27,7 @@ import io.jmix.core.*
  * limitations under the License.
  */
 
-import com.haulmont.cuba.core.Persistence
-import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
-import com.haulmont.cuba.core.entity.contracts.Id
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class EntityChangedEventVersionTest extends CoreTestSpecification {
 

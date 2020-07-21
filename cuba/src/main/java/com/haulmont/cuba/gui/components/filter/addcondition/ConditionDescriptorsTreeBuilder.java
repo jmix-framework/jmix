@@ -18,16 +18,12 @@
 package com.haulmont.cuba.gui.components.filter.addcondition;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.filter.ConditionsTree;
-import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescriptor;
-import com.haulmont.cuba.gui.components.filter.descriptor.CustomConditionCreator;
-import com.haulmont.cuba.gui.components.filter.descriptor.CustomConditionDescriptor;
-import com.haulmont.cuba.gui.components.filter.descriptor.HeaderConditionDescriptor;
-import com.haulmont.cuba.gui.components.filter.descriptor.PropertyConditionDescriptor;
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.gui.components.filter.descriptor.*;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryParser;
 import io.jmix.core.QueryTransformerFactory;
@@ -52,11 +48,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**

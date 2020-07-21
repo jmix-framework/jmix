@@ -16,10 +16,10 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.exception.ExceptionUtils;

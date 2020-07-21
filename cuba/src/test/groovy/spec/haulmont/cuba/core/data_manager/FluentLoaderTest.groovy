@@ -135,7 +135,7 @@ class FluentLoaderTest extends CoreTestSpecification {
 
         then:
 
-        loadContext.metaClass == 'test$Customer'
+        loadContext.entityMetaClass.name == 'test$Customer'
         loadContext.query.queryString == 'select e from test$Customer e'
         loadContext.softDeletion
         !loadContext.query.cacheable

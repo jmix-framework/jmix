@@ -15,10 +15,10 @@
  */
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
 import io.jmix.core.Messages;
@@ -29,10 +29,10 @@ import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

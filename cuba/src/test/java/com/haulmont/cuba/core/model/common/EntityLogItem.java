@@ -17,14 +17,11 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.entity.Creatable;
-import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.AppBeans;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 
@@ -112,8 +109,7 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
     private String changes;
 
     @PostConstruct
-    public void init() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
+    public void init(Metadata metadata) {
         entityRef = metadata.create(ReferenceToEntity.class);
     }
 
@@ -151,18 +147,6 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
 
     public void setEntity(String entity) {
         this.entity = entity;
-    }
-
-    @ModelProperty
-    public String getDisplayedEntityName() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        Messages messages = AppBeans.get(Messages.NAME);
-        MetaClass metaClass = metadata.getSession().findClass(entity);
-        if (metaClass != null) {
-            metaClass = metadata.getExtendedEntities().getEffectiveMetaClass(metaClass);
-            return messages.getTools().getEntityCaption(metaClass);
-        }
-        return entity;
     }
 
     public Date getEventTs() {
@@ -219,16 +203,5 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
 
     public void setEntityInstanceName(String entityInstanceName) {
         this.entityInstanceName = entityInstanceName;
-    }
-
-    public void setObjectEntityId(Object entity) {
-        if (entityRef == null) {
-            entityRef = AppBeans.get(Metadata.class).create(ReferenceToEntity.class);
-        }
-        entityRef.setObjectEntityId(entity);
-    }
-
-    public Object getObjectEntityId() {
-        return entityRef == null ? null : entityRef.getObjectEntityId();
     }
 }

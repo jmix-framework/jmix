@@ -16,10 +16,10 @@
 
 package com.haulmont.cuba.core;
 
-import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.EntityLoadInfo;
 import com.haulmont.cuba.core.global.EntityLoadInfoBuilder;
+import com.haulmont.cuba.core.testsupport.CoreTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

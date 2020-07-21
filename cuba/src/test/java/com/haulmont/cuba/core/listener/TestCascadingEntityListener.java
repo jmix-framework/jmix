@@ -20,8 +20,8 @@ import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.core.AppBeans;
 import io.jmix.core.FetchPlan;
 
 import java.sql.Connection;

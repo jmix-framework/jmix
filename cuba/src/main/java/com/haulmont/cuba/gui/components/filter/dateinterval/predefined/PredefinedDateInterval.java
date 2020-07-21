@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.gui.components.filter.dateinterval.predefined;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
-import io.jmix.core.AppBeans;
 
 /**
  * Parent class for predefined date intervals that are used by the "In interval" date condition of the generic filter

@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.global.validation;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.EntityStates;
 import io.jmix.core.JmixEntity;
 import org.slf4j.LoggerFactory;

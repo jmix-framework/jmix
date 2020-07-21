@@ -16,15 +16,15 @@
 
 package com.haulmont.cuba.gui.components.listeditor;
 
+import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
-import io.jmix.core.AppBeans;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.JmixEntity;
-import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
-import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
-import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.security.global.UserSession;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
 import io.jmix.ui.component.ListEditor;
 
 import javax.annotation.Nullable;

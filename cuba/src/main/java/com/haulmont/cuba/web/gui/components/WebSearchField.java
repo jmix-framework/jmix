@@ -16,11 +16,11 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.SearchField;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.options.DatasourceOptions;
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;

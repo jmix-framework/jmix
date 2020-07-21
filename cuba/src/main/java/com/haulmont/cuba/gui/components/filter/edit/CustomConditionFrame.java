@@ -18,30 +18,20 @@
 package com.haulmont.cuba.gui.components.filter.edit;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
-import com.haulmont.cuba.gui.components.filter.ConditionsTree;
-import com.haulmont.cuba.gui.components.filter.FilterHelper;
-import com.haulmont.cuba.gui.components.filter.Param;
-import com.haulmont.cuba.gui.components.filter.ParamType;
+import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.components.filter.*;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.impl.jpql.DomainModel;
 import io.jmix.core.impl.jpql.DomainModelBuilder;
 import io.jmix.core.impl.jpql.DomainModelWithCaptionsBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
-import com.haulmont.cuba.security.global.UserSession;
-import com.haulmont.cuba.core.global.UserSessionSource;
-import io.jmix.ui.component.CheckBox;
-import io.jmix.ui.component.DateField;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.Label;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.SourceCodeEditor;
-import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.autocomplete.impl.HintProvider;
@@ -51,18 +41,11 @@ import io.jmix.ui.component.autocomplete.impl.Option;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,6 +89,9 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
 
     @Autowired
     protected UserSessionSource userSessionSource;
+
+    @Autowired
+    protected JpqlSuggestionFactory jpqlSuggestionFactory;
 
     protected boolean initializing;
 
@@ -491,7 +477,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
         String query = queryBuilder.toString();
         query = query.replace("{E}", entityAlias);
 
-        return JpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition);
+        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition);
     }
 
     protected List<Suggestion> requestHintParamWhere(SourceCodeEditor sender, String text, int senderCursorPosition) {
@@ -518,7 +504,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
         DomainModelBuilder builder = AppBeans.get(DomainModelWithCaptionsBuilder.NAME);
         DomainModel domainModel = builder.produce();
 
-        return JpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition, new ExtHintProvider(domainModel));
+        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition, new ExtHintProvider(domainModel));
     }
 
     public void getJoinClauseHelp() {

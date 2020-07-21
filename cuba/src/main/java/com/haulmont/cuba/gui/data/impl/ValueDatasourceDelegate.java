@@ -16,10 +16,11 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
-import io.jmix.core.impl.keyvalue.KeyValueMetaProperty;
+import io.jmix.core.impl.keyvalue.KeyValueMetaPropertyBuilder;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.Enumeration;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -59,21 +60,24 @@ public class ValueDatasourceDelegate {
     public void addProperty(String name) {
         checkNotNullArgument(name, "name is null");
 
-        ((KeyValueMetaClass) ds.metaClass).addProperty(new KeyValueMetaProperty(ds.metaClass, name, String.class));
+        ((KeyValueMetaClass) ds.metaClass).addProperty(AppBeans.get(KeyValueMetaPropertyBuilder.class)
+                .build(ds.metaClass, name, String.class));
     }
 
     public void addProperty(String name, Class type) {
         checkNotNullArgument(name, "name is null");
         checkNotNullArgument(type, "type is null");
 
-        ((KeyValueMetaClass) ds.metaClass).addProperty(new KeyValueMetaProperty(ds.metaClass, name, type));
+        ((KeyValueMetaClass) ds.metaClass).addProperty(AppBeans.get(KeyValueMetaPropertyBuilder.class)
+                .build(ds.metaClass, name, type));
     }
 
     public void addProperty(String name, Datatype datatype) {
         checkNotNullArgument(name, "name is null");
         checkNotNullArgument(datatype, "type is null");
 
-        ((KeyValueMetaClass) ds.metaClass).addProperty(new KeyValueMetaProperty(ds.metaClass, name, datatype));
+        ((KeyValueMetaClass) ds.metaClass).addProperty(AppBeans.get(KeyValueMetaPropertyBuilder.class)
+                .build(ds.metaClass, name, datatype));
     }
 
     protected void loadData(Map<String, Object> params) {

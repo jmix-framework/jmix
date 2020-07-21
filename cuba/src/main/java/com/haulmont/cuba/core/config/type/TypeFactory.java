@@ -19,12 +19,12 @@
 
 package com.haulmont.cuba.core.config.type;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import com.haulmont.cuba.core.config.ConfigUtil;
 import com.haulmont.cuba.core.config.EnumStore;
 import com.haulmont.cuba.core.config.EnumStoreMode;
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.AppBeans;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import org.apache.commons.lang3.ClassUtils;
 
 import javax.annotation.Nullable;

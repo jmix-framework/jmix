@@ -16,22 +16,17 @@
 
 package com.haulmont.cuba.gui.components;
 
-import com.haulmont.cuba.gui.components.filter.Param;
-import io.jmix.core.AppBeans;
-import com.haulmont.cuba.security.global.UserSession;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.components.filter.Param;
+import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.filter.ParameterInfo;
 import io.jmix.ui.filter.ParametersHelper;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataLoader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class FilterDataContext {

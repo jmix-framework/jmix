@@ -17,16 +17,16 @@
 
 package com.haulmont.cuba.gui.components.filter;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.FilterConditionUtils;
 import com.haulmont.cuba.gui.components.filter.condition.GroupCondition;
 import com.haulmont.cuba.gui.components.filter.dateinterval.DateIntervalValue;
 import com.haulmont.cuba.security.entity.FilterEntity;
-import io.jmix.core.AppBeans;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.datastruct.Node;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;

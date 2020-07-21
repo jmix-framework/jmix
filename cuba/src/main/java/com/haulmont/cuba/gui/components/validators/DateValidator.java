@@ -15,12 +15,12 @@
  */
 package com.haulmont.cuba.gui.components.validators;
 
+import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.gui.components.Field;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import org.dom4j.Element;

@@ -15,15 +15,15 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.AppBeans;
 import io.jmix.core.ExtendedEntities;
-import io.jmix.core.Messages;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -37,8 +37,8 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Collections;

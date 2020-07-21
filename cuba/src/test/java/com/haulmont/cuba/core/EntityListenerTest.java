@@ -16,6 +16,7 @@
  */
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.listener.*;
 import com.haulmont.cuba.core.model.common.FileDescriptor;
 import com.haulmont.cuba.core.model.common.Group;
@@ -23,16 +24,15 @@ import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.data.impl.EntityListenerManager;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;

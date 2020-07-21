@@ -15,11 +15,11 @@
  */
 package com.haulmont.cuba.core.sys;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.Events;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.sys.events.AppContextInitializedEvent;
 import com.haulmont.cuba.core.sys.events.AppContextStartedEvent;
 import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
+import io.jmix.core.Events;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;

@@ -15,13 +15,13 @@
  */
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.AppBeans;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.App;

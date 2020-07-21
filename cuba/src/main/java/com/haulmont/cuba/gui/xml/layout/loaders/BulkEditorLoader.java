@@ -17,14 +17,14 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Splitter;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
-import io.jmix.core.AppBeans;
 import io.jmix.core.security.Security;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;

@@ -18,11 +18,11 @@
 package com.haulmont.cuba.gui.components.filter.descriptor;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.FilterConditionUtils;
 import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
-import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.KeyValueEntity;

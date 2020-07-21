@@ -17,25 +17,27 @@
 package com.haulmont.cuba.core.global.impl;
 
 import com.haulmont.cuba.CubaProperties;
-import io.jmix.core.JmixEntity;
+import com.haulmont.cuba.core.entity.contracts.Id;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
-import io.jmix.core.entity.KeyValueEntity;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.EntityValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 @Component(DataManager.NAME)
 public class CubaDataManager implements DataManager {
@@ -62,6 +64,9 @@ public class CubaDataManager implements DataManager {
 
     @Autowired
     protected BeanValidation beanValidation;
+
+    @Autowired
+    protected BeanLocator beanLocator;
 
     @Nullable
     @Override
@@ -160,6 +165,11 @@ public class CubaDataManager implements DataManager {
     }
 
     @Override
+    public <T extends JmixEntity, K> void remove(Id<T, K> entityId) {
+        remove(getReference(entityId));
+    }
+
+    @Override
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
         return delegate.loadValues(context);
     }
@@ -172,6 +182,22 @@ public class CubaDataManager implements DataManager {
     @Override
     public io.jmix.core.DataManager getDelegate() {
         return delegate;
+    }
+
+    @Override
+    public <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
+        FluentLoader<E> loader = beanLocator.getPrototype(FluentLoader.class, entityClass);
+        loader.setDataManager(getDelegate());
+        loader.joinTransaction(false);
+        return loader;
+    }
+
+    @Override
+    public <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
+        FluentLoader<E> loader = beanLocator.getPrototype(FluentLoader.class, entityId.getEntityClass());
+        loader.setDataManager(getDelegate());
+        loader.joinTransaction(false);
+        return loader.id(entityId.getValue());
     }
 
     @Override
@@ -201,6 +227,12 @@ public class CubaDataManager implements DataManager {
                 validateEntity(entity, context.getValidationGroups());
             }
         }
+    }
+
+    @Override
+    public <T extends JmixEntity, K> T getReference(Id<T, K> entityId) {
+        Preconditions.checkNotNullArgument(entityId, "entityId is null");
+        return getReference(entityId.getEntityClass(), entityId.getValue());
     }
 
     protected void validateEntity(JmixEntity entity, List<Class> validationGroups) {

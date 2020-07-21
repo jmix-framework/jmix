@@ -16,18 +16,13 @@
  */
 package com.haulmont.cuba.gui.components.filter;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import io.jmix.core.AppBeans;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.BoxLayout;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.HBoxLayout;
-import io.jmix.ui.component.Label;
-import io.jmix.ui.component.LinkButton;
-import io.jmix.ui.component.VBoxLayout;
+import io.jmix.ui.component.*;
 
 import java.util.Date;
 

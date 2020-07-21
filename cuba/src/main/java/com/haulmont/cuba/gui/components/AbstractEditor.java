@@ -46,9 +46,9 @@ import io.jmix.ui.screen.ReadOnlyScreensSupport;
 import io.jmix.ui.util.OperationResult;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
@@ -223,7 +223,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
         }
 
         if (item == null) {
-            throw new EntityAccessException(entityClass, entityId);
+            throw new EntityAccessException(metadata.getClassNN(entityClass), entityId);
         }
 
         if (PersistenceHelper.isNew(item)

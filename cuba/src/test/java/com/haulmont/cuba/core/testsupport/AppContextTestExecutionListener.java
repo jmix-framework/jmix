@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.testsupport;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.TestExecutionListener;
 

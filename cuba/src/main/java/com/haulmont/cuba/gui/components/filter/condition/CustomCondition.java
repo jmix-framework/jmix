@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.gui.components.filter.condition;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
 import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescriptor;
 import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEditor;
 import com.haulmont.cuba.gui.components.filter.operationedit.CustomOperationEditor;
-import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;

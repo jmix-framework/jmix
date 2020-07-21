@@ -17,9 +17,9 @@
 
 package com.haulmont.cuba.core.listener;
 
-import com.haulmont.cuba.core.model.common.Server;
-import io.jmix.core.AppBeans;
 import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.model.common.Server;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Connection;

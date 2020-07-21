@@ -16,23 +16,24 @@
 
 package spec.haulmont.cuba.core.extended_entities
 
-
 import io.jmix.core.ExtendedEntities
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass
-import io.jmix.core.impl.keyvalue.KeyValueMetaProperty
-import spec.haulmont.cuba.core.CoreTestSpecification
-
+import io.jmix.core.impl.keyvalue.KeyValueMetaPropertyBuilder
 import org.springframework.beans.factory.annotation.Autowired
+import spec.haulmont.cuba.core.CoreTestSpecification
 
 class ExtendedEntitiesTest extends CoreTestSpecification {
     @Autowired
     private ExtendedEntities extendedEntities
 
+    @Autowired
+    private KeyValueMetaPropertyBuilder keyValueMetaPropertyBuilder;
+
     def "KeyValueEntity cannot be extended so always return the same meta-class"() {
 
         def metaClass = new KeyValueMetaClass()
-        metaClass.addProperty(new KeyValueMetaProperty(metaClass, 'foo', String.class))
-        metaClass.addProperty(new KeyValueMetaProperty(metaClass, 'bar', String.class))
+        metaClass.addProperty(keyValueMetaPropertyBuilder.build(metaClass, 'foo', String.class))
+        metaClass.addProperty(keyValueMetaPropertyBuilder.build(metaClass, 'bar', String.class))
 
         expect:
 

@@ -16,6 +16,10 @@
 
 package spec.haulmont.cuba.core.data_manager
 
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.Transaction
+import com.haulmont.cuba.core.TransactionalDataManager
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.model.embedded.AddressEmbedded
 import com.haulmont.cuba.core.model.embedded.AddressEmbeddedContainer
 import com.haulmont.cuba.core.model.sales.Customer
@@ -23,16 +27,14 @@ import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.TestCustomerListener
 import com.haulmont.cuba.core.testsupport.TestSupport
-import io.jmix.core.*
-import com.haulmont.cuba.core.Persistence
-import com.haulmont.cuba.core.Transaction
-import com.haulmont.cuba.core.TransactionalDataManager
+import io.jmix.core.EntityStates
+import io.jmix.core.FetchPlan
+import io.jmix.core.FetchPlanRepository
+import io.jmix.core.Metadata
 import io.jmix.data.impl.EntityListenerManager
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import spec.haulmont.cuba.core.CoreTestSpecification
-
-import org.springframework.beans.factory.annotation.Autowired
-
 
 class DataManagerTransactionalTest extends CoreTestSpecification {
     @Autowired

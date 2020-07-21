@@ -18,8 +18,10 @@
 package com.haulmont.cuba.gui.components.filter.edit;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.Filter;
@@ -30,13 +32,11 @@ import com.haulmont.cuba.gui.components.filter.GroupType;
 import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescriptor;
 import com.haulmont.cuba.security.entity.FilterEntity;
-import io.jmix.core.AppBeans;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaProperty;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
@@ -45,8 +45,8 @@ import io.jmix.ui.theme.ThemeConstants;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.*;
 import java.util.stream.Collectors;
 

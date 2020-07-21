@@ -18,11 +18,11 @@
 package com.haulmont.cuba.gui.components.filter.filterselect;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.security.entity.FilterEntity;
-import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;
@@ -32,8 +32,8 @@ import io.jmix.ui.component.TextField;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.layout.ComponentsFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -17,9 +17,9 @@
 package com.haulmont.cuba.gui.components.filter.dateinterval;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.filter.dateinterval.predefined.PredefinedDateInterval;
-import io.jmix.core.AppBeans;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

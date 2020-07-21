@@ -17,12 +17,12 @@
 package com.haulmont.cuba.gui.components;
 
 import com.google.common.reflect.TypeToken;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.compatibility.PickerFieldFieldListenerWrapper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
-import io.jmix.core.AppBeans;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;

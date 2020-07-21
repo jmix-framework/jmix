@@ -16,8 +16,8 @@
 
 package spec.haulmont.cuba.core.data_manager
 
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.model.sales.Order
-import io.jmix.core.AppBeans
 import io.jmix.core.QueryStringProcessor
 import spec.haulmont.cuba.core.CoreTestSpecification
 

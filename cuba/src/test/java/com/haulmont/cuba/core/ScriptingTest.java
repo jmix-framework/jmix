@@ -17,12 +17,11 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import groovy.lang.Binding;
-import com.haulmont.cuba.core.global.Scripting;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,7 +39,7 @@ public class ScriptingTest {
 
         Binding binding = new Binding();
         binding.setVariable("instance", new User());
-        Boolean boolResult = scripting.evaluateGroovy("import io.jmix.core.AppBeans\n" +
+        Boolean boolResult = scripting.evaluateGroovy("import com.haulmont.cuba.core.global.AppBeans\n" +
                 "import io.jmix.core.EntityStates\n" +
                 "return AppBeans.get(EntityStates.class).isNew(instance)", binding);
         assertTrue(boolResult);
@@ -66,7 +65,7 @@ public class ScriptingTest {
         Binding binding = new Binding();
         binding.setVariable("instance", new User());
         Boolean result = scripting.evaluateGroovy("package com.haulmont.cuba.core\n" +
-                "import io.jmix.core.AppBeans\n" +
+                "import com.haulmont.cuba.core.global.AppBeans\n" +
                 "import io.jmix.core.EntityStates\n" +
                 "return AppBeans.get(EntityStates.class).isNew(instance)", binding);
         assertTrue(result);

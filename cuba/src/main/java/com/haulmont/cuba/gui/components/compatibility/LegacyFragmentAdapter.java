@@ -16,11 +16,11 @@
 
 package com.haulmont.cuba.gui.components.compatibility;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.data.DsContext;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.compatibility.CubaFragmentAdapter;

@@ -15,11 +15,11 @@
  */
 package com.haulmont.cuba.gui.components.actions;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -33,8 +33,8 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import org.springframework.context.annotation.Scope;
 
 import java.util.HashSet;

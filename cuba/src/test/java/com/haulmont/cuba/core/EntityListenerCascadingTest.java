@@ -15,12 +15,12 @@
  */
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.listener.TestCascadingEntityListener;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.AppBeans;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import io.jmix.data.impl.EntityListenerManager;

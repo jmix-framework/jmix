@@ -17,7 +17,7 @@
 package spec.haulmont.cuba.components.formatters
 
 
-import io.jmix.core.metamodel.datatype.Datatypes
+import com.haulmont.chile.core.datatypes.Datatypes
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.ui.component.Label
 import io.jmix.ui.component.formatter.DateFormatter

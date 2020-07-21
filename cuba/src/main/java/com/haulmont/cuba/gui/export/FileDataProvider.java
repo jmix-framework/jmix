@@ -18,7 +18,7 @@ package com.haulmont.cuba.gui.export;
 
 import com.haulmont.cuba.core.app.CubaFileStorage;
 import com.haulmont.cuba.core.entity.FileDescriptor;
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 
 /**
  * Data provider for FileDescriptor

@@ -16,19 +16,21 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.model.Many2ManyA;
 import com.haulmont.cuba.core.model.Many2ManyB;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.*;
+import io.jmix.core.DeletePolicyException;
+import io.jmix.core.Metadata;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;

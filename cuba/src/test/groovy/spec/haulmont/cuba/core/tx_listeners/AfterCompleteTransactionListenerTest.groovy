@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.core.tx_listeners
 
 import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.Role
@@ -24,7 +25,6 @@ import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.model.common.UserRole
 import com.haulmont.cuba.core.testsupport.TestSupport
 import com.haulmont.cuba.core.tx_listener.TestAfterCompleteTxListener
-import io.jmix.core.AppBeans
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlan
 import org.springframework.beans.factory.annotation.Autowired

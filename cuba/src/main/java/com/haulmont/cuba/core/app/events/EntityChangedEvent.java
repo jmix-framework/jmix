@@ -17,10 +17,10 @@
 package com.haulmont.cuba.core.app.events;
 
 import com.haulmont.cuba.core.entity.contracts.Id;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.AppBeans;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.ExtendedEntities;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.context.ApplicationEvent;

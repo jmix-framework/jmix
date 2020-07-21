@@ -16,11 +16,14 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -28,8 +31,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
-import com.haulmont.cuba.security.global.UserSession;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.FrameContext;
@@ -542,7 +543,7 @@ public abstract class AbstractCollectionDatasource<T extends JmixEntity, K>
             String queryString = getJPQLQuery(getTemplateParams(params));
             q = context.setQueryString(queryString);
             // Pass only parameters used in the resulting query
-            QueryParser parser = QueryTransformerFactory.createParser(queryString);
+            QueryParser parser = AppBeans.get(QueryTransformerFactory.class).parser(queryString);
             Set<String> paramNames = parser.getParamNames();
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
                 if (paramNames.contains(entry.getKey()))

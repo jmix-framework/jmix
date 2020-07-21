@@ -18,21 +18,18 @@ package com.haulmont.cuba.core.sys;
 
 import com.haulmont.cuba.core.TransactionalDataManager;
 import com.haulmont.cuba.core.Transactions;
-import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.core.entity.contracts.Id;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
-import io.jmix.core.JmixEntity;
+import com.haulmont.cuba.core.global.*;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.KeyValueEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.haulmont.cuba.core.entity.contracts.Id;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -51,17 +48,24 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     @Autowired
     private EntityStates entityStates;
 
-    @Inject
+    @Autowired
     private TransactionalActionFactory transactionalActionFactory;
+
+    @Autowired
+    protected BeanLocator beanLocator;
 
     @Override
     public <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
-        return new FluentLoader<>(entityClass, dataManager.getDelegate());
+        FluentLoader<E> fluentLoader = beanLocator.getPrototype(FluentLoader.class, entityClass);
+        fluentLoader.setDataManager(dataManager.getDelegate());
+        return fluentLoader;
     }
 
     @Override
     public <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
-        return new FluentLoader<>(entityId.getEntityClass(), dataManager.getDelegate()).id(entityId.getValue());
+        FluentLoader<E> fluentLoader = beanLocator.getPrototype(FluentLoader.class, entityId.getEntityClass());
+        fluentLoader.setDataManager(dataManager.getDelegate());
+        return fluentLoader.id(entityId.getValue());
     }
 
     @Override
@@ -146,7 +150,7 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
 
     @Override
     public TransactionalDataManager secure() {
-        return new Secure(dataManager, transactions);
+        return new Secure(dataManager, transactions, beanLocator);
     }
 
     @Override
@@ -161,9 +165,10 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
 
     private static class Secure extends TransactionalDataManagerBean {
 
-        public Secure(DataManager dataManager, Transactions transactions) {
+        public Secure(DataManager dataManager, Transactions transactions, BeanLocator beanLocator) {
             this.dataManager = dataManager.secure();
             this.transactions = transactions;
+            this.beanLocator = beanLocator;
         }
     }
 }

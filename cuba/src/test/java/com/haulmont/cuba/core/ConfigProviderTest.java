@@ -18,21 +18,21 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.config.TestBeanToInjectConfig;
 import com.haulmont.cuba.core.config.TestConfig;
+import com.haulmont.cuba.core.entity.Config;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Configuration;
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.RoleType;
 import com.haulmont.cuba.core.model.common.User;
+import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.AppBeans;
-import com.haulmont.cuba.core.global.Configuration;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.sys.AppContext;
-import com.haulmont.cuba.core.entity.Config;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

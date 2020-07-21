@@ -18,27 +18,18 @@ package com.haulmont.cuba.gui.components.filter.dateinterval;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.OptionsGroup;
 import com.haulmont.cuba.gui.components.filter.dateinterval.predefined.PredefinedDateInterval;
-import io.jmix.core.AppBeans;
-import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.ui.WindowParam;
-import io.jmix.ui.component.CheckBox;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.OptionsField;
-import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.*;
 import io.jmix.ui.theme.ThemeConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Windows that is used for editing the "In interval" date condition of the generic filter component

@@ -16,8 +16,8 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
-import io.jmix.core.AppBeans;
 import io.jmix.core.entity.annotation.EnableRestore;
 
 import javax.persistence.*;

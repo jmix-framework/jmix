@@ -16,24 +16,25 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.listener.BeforeDeleteEntityListener;
+import com.haulmont.cuba.core.listener.BeforeUpdateEntityListener;
 import com.haulmont.cuba.core.model.CascadeDeletionPolicyEntity;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.data.impl.EntityListenerManager;
-import com.haulmont.cuba.core.listener.BeforeDeleteEntityListener;
-import com.haulmont.cuba.core.listener.BeforeUpdateEntityListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @CoreTest
 public class CascadeDeletionPolicyTest {

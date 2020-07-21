@@ -15,7 +15,6 @@
  */
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 

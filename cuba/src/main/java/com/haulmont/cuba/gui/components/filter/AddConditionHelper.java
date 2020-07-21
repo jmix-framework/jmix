@@ -18,6 +18,7 @@
 package com.haulmont.cuba.gui.components.filter;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.Filter;
@@ -29,7 +30,6 @@ import com.haulmont.cuba.gui.components.filter.descriptor.CustomConditionCreator
 import com.haulmont.cuba.gui.components.filter.descriptor.DynamicAttributesConditionCreator;
 import com.haulmont.cuba.gui.components.filter.edit.CustomConditionEditor;
 import com.haulmont.cuba.gui.components.filter.edit.DynamicAttributesConditionEditor;
-import io.jmix.core.AppBeans;
 import io.jmix.core.common.datastruct.Tree;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;

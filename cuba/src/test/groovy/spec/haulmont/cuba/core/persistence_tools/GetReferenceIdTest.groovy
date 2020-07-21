@@ -17,10 +17,10 @@
 package spec.haulmont.cuba.core.persistence_tools
 
 import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.testsupport.TestSupport
-import io.jmix.core.AppBeans
 import io.jmix.core.FetchPlan
 import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata

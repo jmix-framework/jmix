@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.core.sys.events;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.sys.AppContext;
-import io.jmix.core.AppBeans;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 

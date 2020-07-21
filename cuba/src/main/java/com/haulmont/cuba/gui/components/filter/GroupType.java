@@ -17,8 +17,8 @@
 
 package com.haulmont.cuba.gui.components.filter;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
-import io.jmix.core.AppBeans;
 
 /**
  * Generic filter grouping condition type.

@@ -16,10 +16,10 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.google.common.base.Preconditions;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.common.collections.ReadOnlyLinkedMapValuesView;
 import io.jmix.core.entity.EntityValues;

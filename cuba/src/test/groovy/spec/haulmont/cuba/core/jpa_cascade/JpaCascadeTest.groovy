@@ -17,21 +17,20 @@
 package spec.haulmont.cuba.core.jpa_cascade
 
 import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeBar
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeFoo
 import com.haulmont.cuba.core.model.jpa_cascade.JpaCascadeItem
-import io.jmix.core.AppBeans
 import io.jmix.core.EntityStates
 import io.jmix.core.Metadata
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.data.impl.EntityListenerManager
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import spec.haulmont.cuba.core.CoreTestSpecification
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class JpaCascadeTest extends CoreTestSpecification {
     @Autowired

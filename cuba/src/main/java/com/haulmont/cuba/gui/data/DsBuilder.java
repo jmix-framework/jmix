@@ -15,10 +15,14 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.*;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.gui.data.impl.*;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import com.haulmont.cuba.gui.data.impl.*;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

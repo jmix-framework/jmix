@@ -19,7 +19,9 @@ package com.haulmont.cuba.gui.components.filter;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.UserSessionSource;
@@ -39,7 +41,6 @@ import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.entity.annotation.LookupType;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
-import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.DynAttrUtils;
@@ -142,6 +143,8 @@ public class Param {
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
 
     protected ThemeConstants theme;
 
@@ -942,7 +945,7 @@ public class Param {
 
         String query = String.format("select e from %s e", metaClass.getName());
         if (!Strings.isNullOrEmpty(entityWhere)) {
-            QueryTransformer queryTransformer = QueryTransformerFactory.createTransformer(query);
+            QueryTransformer queryTransformer = queryTransformerFactory.transformer(query);
             queryTransformer.addWhere(entityWhere);
             query = queryTransformer.getResult();
         }

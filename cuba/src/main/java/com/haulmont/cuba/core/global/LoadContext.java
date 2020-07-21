@@ -16,9 +16,11 @@
 package com.haulmont.cuba.core.global;
 
 
-import io.jmix.core.*;
-import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Sort;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 
@@ -69,7 +71,7 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
      */
     public LoadContext(MetaClass metaClass) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
-        this.metaClass = AppBeans.get(ExtendedEntities.class).getEffectiveMetaClass(metaClass).getName();
+        this.metaClass = metaClass;
     }
 
     /**
@@ -77,7 +79,7 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
      */
     public LoadContext(Class<E> javaClass) {
         Preconditions.checkNotNullArgument(javaClass, "javaClass is null");
-        this.metaClass = AppBeans.get(ExtendedEntities.class).getEffectiveMetaClass(javaClass).getName();
+        this.metaClass = AppBeans.get(Metadata.class).getClassNN(javaClass);
     }
 
     protected LoadContext() {
@@ -140,9 +142,8 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
      * @return this instance for chaining
      */
     public LoadContext<E> setFetchPlan(String fetchPlanName) {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
         FetchPlanRepository fetchPlanRepository = AppBeans.get(FetchPlanRepository.NAME);
-        this.fetchPlan = fetchPlanRepository.getFetchPlan(metadata.getSession().findClass(metaClass), fetchPlanName);
+        this.fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName);
         return this;
     }
 

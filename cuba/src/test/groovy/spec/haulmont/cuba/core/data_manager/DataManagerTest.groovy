@@ -18,6 +18,7 @@ package spec.haulmont.cuba.core.data_manager
 
 import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.entity.contracts.Id
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.model.common.Group

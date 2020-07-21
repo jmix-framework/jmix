@@ -18,16 +18,16 @@
 package com.haulmont.cuba.gui.components.filter;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
 import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
-import io.jmix.core.AppBeans;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Component;

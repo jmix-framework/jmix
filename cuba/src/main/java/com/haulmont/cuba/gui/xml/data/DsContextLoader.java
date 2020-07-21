@@ -16,24 +16,18 @@
 
 package com.haulmont.cuba.gui.xml.data;
 
-import com.haulmont.cuba.gui.data.CollectionDatasource;
-import com.haulmont.cuba.gui.data.DataSupplier;
-import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.data.DsBuilder;
-import com.haulmont.cuba.gui.data.DsContext;
-import com.haulmont.cuba.gui.data.GroupDatasource;
-import com.haulmont.cuba.gui.data.HierarchicalDatasource;
-import io.jmix.core.AppBeans;
+import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Scripting;
+import com.haulmont.cuba.gui.data.*;
+import com.haulmont.cuba.gui.data.impl.*;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Metadata;
-import com.haulmont.cuba.core.global.Scripting;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.filter.QueryFilter;
-import com.haulmont.cuba.gui.data.impl.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -393,7 +387,7 @@ public class DsContextLoader {
             String query = queryElem.getText();
             if (!StringUtils.isBlank(query)) {
                 if (filterElem != null)
-                    datasource.setQuery(query, new QueryFilter(filterElem));
+                    datasource.setQuery(query, AppBeans.getPrototype(QueryFilter.NAME, filterElem));
                 else
                     datasource.setQuery(query);
             }

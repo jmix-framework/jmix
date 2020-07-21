@@ -16,16 +16,16 @@
 
 package spec.haulmont.cuba.core.localdatetime
 
-import com.haulmont.cuba.core.model.LocalDateTimeEntity
-import io.jmix.core.AppBeans
-import com.haulmont.cuba.core.global.DataManager
-import io.jmix.core.Metadata
-import io.jmix.core.FetchPlan
 import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.AppBeans
+import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.model.LocalDateTimeEntity
+import io.jmix.core.FetchPlan
+import io.jmix.core.Metadata
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
 
-import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime

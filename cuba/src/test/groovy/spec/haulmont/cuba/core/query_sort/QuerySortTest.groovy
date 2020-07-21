@@ -1,8 +1,7 @@
 package spec.haulmont.cuba.core.query_sort
 
-
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.testsupport.TestJpqlSortExpressionProvider
-import io.jmix.core.AppBeans
 import io.jmix.core.Metadata
 import io.jmix.core.Sort
 import io.jmix.data.impl.JpqlQueryBuilder

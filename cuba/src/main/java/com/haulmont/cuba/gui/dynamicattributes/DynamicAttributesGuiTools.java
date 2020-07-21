@@ -17,6 +17,7 @@
 
 package com.haulmont.cuba.gui.dynamicattributes;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
@@ -66,8 +67,8 @@ public class DynamicAttributesGuiTools {
     protected BeanLocator beanLocator;
 
     /**
-     * Method checks whether any class in the view hierarchy contains dynamic attributes that must be displayed on
-     * the current screen
+     * Method checks whether any class in the view hierarchy contains dynamic attributes that must be displayed on the
+     * current screen
      */
     public boolean screenContainsDynamicAttributes(FetchPlan fetchPlan, String screenId) {
         Set<Class> classesWithDynamicAttributes = collectEntityClassesWithDynamicAttributes(fetchPlan);

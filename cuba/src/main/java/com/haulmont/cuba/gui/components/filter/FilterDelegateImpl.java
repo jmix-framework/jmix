@@ -20,11 +20,10 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.haulmont.cuba.CubaProperties;
-import com.haulmont.cuba.core.global.Configuration;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.PersistenceHelper;
-import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
@@ -42,6 +41,7 @@ import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.settings.SettingsImpl;
+import io.jmix.core.DataManager;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.common.datastruct.Pair;
@@ -77,11 +77,11 @@ import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -139,6 +139,12 @@ public class FilterDelegateImpl implements FilterDelegate {
 
     @Autowired
     protected BeanLocator beanLocator;
+
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
+
+    @Autowired
+    protected QueryFilters queryFilters;
 
     // protected FtsFilterHelper ftsFilterHelper; todo fts
     protected AddConditionHelper addConditionHelper;
@@ -1497,7 +1503,7 @@ public class FilterDelegateImpl implements FilterDelegate {
             query = String.format("select e from %s e", metaClassName);
             adapter.setQuery(query);
         }
-        QueryParser parser = QueryTransformerFactory.createParser(query);
+        QueryParser parser = queryTransformerFactory.parser(query);
         return parser.getEntityAlias(metaClassName);
     }
 
@@ -1509,9 +1515,9 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         if (getResultingManualApplyRequired()) {
             // set initial denying condition to get empty datasource before explicit filter applying
-            QueryFilter queryFilter = new QueryFilter(new DenyingClause());
+            QueryFilter queryFilter = queryFilters.createQueryFilter(new DenyingClause());
             if (dsQueryFilter != null) {
-                queryFilter = QueryFilter.merge(dsQueryFilter, queryFilter);
+                queryFilter = queryFilters.merge(dsQueryFilter, queryFilter);
             }
             datasource.setQueryFilter(queryFilter);
         }
@@ -1872,10 +1878,10 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         if (!Strings.isNullOrEmpty(currentFilterXml)) {
             Element element = dom4JTools.readDocument(currentFilterXml).getRootElement();
-            QueryFilter queryFilter = new QueryFilter(element);
+            QueryFilter queryFilter = queryFilters.createQueryFilter(element);
 
             if (dsQueryFilter != null) {
-                queryFilter = QueryFilter.merge(dsQueryFilter, queryFilter);
+                queryFilter = queryFilters.merge(dsQueryFilter, queryFilter);
             }
 
             adapter.setQueryFilter(queryFilter);

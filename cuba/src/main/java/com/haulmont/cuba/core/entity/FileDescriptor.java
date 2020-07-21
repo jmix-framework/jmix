@@ -16,10 +16,10 @@
  */
 package com.haulmont.cuba.core.entity;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;

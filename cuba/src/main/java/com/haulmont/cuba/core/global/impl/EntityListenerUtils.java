@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.core.global.impl;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
+import com.haulmont.cuba.core.global.AppBeans;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 
 import java.sql.Connection;
 

@@ -16,16 +16,17 @@
 
 package spec.haulmont.cuba.core.deletepolicy
 
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToMany_First
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
-import io.jmix.core.*
-import com.haulmont.cuba.core.Persistence
+import io.jmix.core.FetchPlan
+import io.jmix.core.Metadata
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class DeletePolicy_Unlink_OneToManyTest extends CoreTestSpecification {
     @Autowired

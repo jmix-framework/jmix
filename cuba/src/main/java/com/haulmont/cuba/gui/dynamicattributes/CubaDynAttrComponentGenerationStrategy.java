@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrui.MsgBundleTools;
@@ -49,9 +50,10 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
                                                   ScreensHelper screensHelper,
                                                   Actions actions,
                                                   AttributeDependencies attributeDependencies,
+                                                  FormatStringsRegistry formatStringsRegistry,
                                                   BeanLocator beanLocator) {
-        super(messages, uiComponents, dynamicModelMetadata, msgBundleTools, optionsLoader,
-                attributeValidators, windowConfig, screensHelper, actions, attributeDependencies, beanLocator);
+        super(messages, uiComponents, dynamicModelMetadata, msgBundleTools, optionsLoader, attributeValidators,
+                windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry, beanLocator);
     }
 
     @Override

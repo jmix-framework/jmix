@@ -16,6 +16,7 @@
 package spec.haulmont.cuba.core.entity_listeners
 
 import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.listener.TestUserDetachListener
@@ -23,7 +24,10 @@ import com.haulmont.cuba.core.listener.TestUserEntityListener
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.testsupport.TestSupport
-import io.jmix.core.*
+import io.jmix.core.EntityStates
+import io.jmix.core.FetchPlan
+import io.jmix.core.FetchPlanRepository
+import io.jmix.core.Metadata
 import io.jmix.data.impl.EntityListenerManager
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification

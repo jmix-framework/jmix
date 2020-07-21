@@ -17,25 +17,21 @@
 
 package com.haulmont.cuba.gui.components.filter.addcondition;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescriptor;
 import com.haulmont.cuba.gui.components.filter.descriptor.HeaderConditionDescriptor;
 import com.haulmont.cuba.gui.components.filter.descriptor.PropertyConditionDescriptor;
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.action.AbstractAction;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.Tree;
+import io.jmix.ui.component.*;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;

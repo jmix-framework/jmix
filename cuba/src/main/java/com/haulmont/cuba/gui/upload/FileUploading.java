@@ -19,9 +19,9 @@ package com.haulmont.cuba.gui.upload;
 
 import com.haulmont.cuba.core.app.CubaFileStorage;
 import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.FileStorageException;
 import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.AppBeans;
 import io.jmix.core.TimeSource;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.upload.TemporaryStorage;

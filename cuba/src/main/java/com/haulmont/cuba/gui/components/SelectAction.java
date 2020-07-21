@@ -15,10 +15,10 @@
  */
 package com.haulmont.cuba.gui.components;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;

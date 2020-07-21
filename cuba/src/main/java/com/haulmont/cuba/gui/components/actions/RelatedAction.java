@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components.actions;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -28,9 +28,8 @@ import io.jmix.ui.component.RelatedEntities;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.relatedentities.RelatedEntitiesAPI;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.annotation.Scope;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
 /**
  * Action used in {@link RelatedEntities} visual component.

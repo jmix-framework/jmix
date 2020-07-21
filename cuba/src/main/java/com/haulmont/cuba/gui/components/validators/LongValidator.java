@@ -15,19 +15,14 @@
  */
 package com.haulmont.cuba.gui.components.validators;
 
+import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.gui.components.Field;
 import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
-import io.jmix.ui.component.validation.MaxValidator;
-import io.jmix.ui.component.validation.MinValidator;
-import io.jmix.ui.component.validation.NegativeOrZeroValidator;
-import io.jmix.ui.component.validation.NegativeValidator;
-import io.jmix.ui.component.validation.PositiveOrZeroValidator;
-import io.jmix.ui.component.validation.PositiveValidator;
+import io.jmix.ui.component.validation.*;
 import org.dom4j.Element;
 
 import java.text.ParseException;

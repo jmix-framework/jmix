@@ -16,19 +16,12 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
-import io.jmix.ui.Dialogs;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.Screens;
-import io.jmix.ui.WebBrowserTools;
-import io.jmix.ui.WindowConfig;
-import io.jmix.ui.WindowInfo;
+import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.Component;

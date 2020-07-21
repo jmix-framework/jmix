@@ -16,8 +16,8 @@
  */
 package com.haulmont.cuba.gui.components.filter.operationedit;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import io.jmix.core.AppBeans;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;

@@ -16,12 +16,10 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.JmixEntity;
-import io.jmix.core.entity.KeyValueEntity;
-import io.jmix.core.*;
-import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.core.entity.contracts.Id;
+import io.jmix.core.*;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -169,9 +167,7 @@ public interface DataManager {
      *
      * @param entityId entity id
      */
-    default <T extends JmixEntity, K> void remove(Id<T, K> entityId) {
-        remove(getReference(entityId));
-    }
+    <T extends JmixEntity, K> void remove(Id<T, K> entityId);
 
     /**
      * Loads list of key-value pairs.
@@ -214,11 +210,7 @@ public interface DataManager {
      *
      * @param entityClass class of entity that needs to be loaded
      */
-    default <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
-        FluentLoader<E> loader = new FluentLoader<>(entityClass, getDelegate());
-        loader.joinTransaction(false);
-        return loader;
-    }
+    <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass);
 
     /**
      * Entry point to the fluent API for loading entities.
@@ -230,11 +222,7 @@ public interface DataManager {
      *
      * @param entityId {@link Id} of entity that needs to be loaded
      */
-    default <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
-        FluentLoader<E> loader = new FluentLoader<>(entityId.getEntityClass(), getDelegate());
-        loader.joinTransaction(false);
-        return loader.id(entityId.getValue());
-    }
+    <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId);
 
     /**
      * Entry point to the fluent API for loading scalar values.
@@ -255,11 +243,7 @@ public interface DataManager {
      *
      * @param queryString query string
      */
-    default FluentValuesLoader loadValues(String queryString) {
-        FluentValuesLoader loader = new FluentValuesLoader(queryString, getDelegate());
-        loader.joinTransaction(false);
-        return loader;
-    }
+    FluentValuesLoader loadValues(String queryString);
 
     /**
      * Entry point to the fluent API for loading a single scalar value.
@@ -278,11 +262,7 @@ public interface DataManager {
      * @param queryString query string
      * @param valueClass  type of the returning value
      */
-    default <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        FluentValueLoader<T> loader = new FluentValueLoader<>(queryString, valueClass, getDelegate());
-        loader.joinTransaction(false);
-        return loader;
-    }
+    <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass);
 
     /**
      * Creates a new entity instance in memory. This is a shortcut to {@code Metadata.create()}.
@@ -316,8 +296,5 @@ public interface DataManager {
      * @param entityId id of an existing object
      * @see #getReference(Class, Object)
      */
-    default <T extends JmixEntity, K> T getReference(Id<T, K> entityId) {
-        Preconditions.checkNotNullArgument(entityId, "entityId is null");
-        return getReference(entityId.getEntityClass(), entityId.getValue());
-    }
+    <T extends JmixEntity, K> T getReference(Id<T, K> entityId);
 }

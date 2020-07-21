@@ -16,9 +16,9 @@
 
 package io.jmix.data.event;
 
-import io.jmix.core.*;
+import io.jmix.core.Id;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;
@@ -60,15 +60,17 @@ public class EntityChangedEvent<E extends JmixEntity> extends ApplicationEvent i
     private Id<E> entityId;
     private Type type;
     private AttributeChanges changes;
+    private MetaClass originalMetaClass;
 
     /**
      * INTERNAL.
      */
-    public EntityChangedEvent(Object source, Id<E> entityId, Type type, AttributeChanges changes) {
+    public EntityChangedEvent(Object source, Id<E> entityId, Type type, AttributeChanges changes, MetaClass originalMetaClass) {
         super(source);
         this.entityId = entityId;
         this.type = type;
         this.changes = changes;
+        this.originalMetaClass = originalMetaClass;
     }
 
     /**
@@ -104,16 +106,8 @@ public class EntityChangedEvent<E extends JmixEntity> extends ApplicationEvent i
      */
     @Override
     public ResolvableType getResolvableType() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entityId.getEntityClass()));
-        MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-        if (pkProperty == null) {
-            throw new IllegalStateException("Unable to send EntityChangedEvent for " + metaClass + " because it has no primary key");
-        }
         return ResolvableType.forClassWithGenerics(getClass(),
-                ResolvableType.forClass(metaClass.getJavaClass()));
+                ResolvableType.forClass(originalMetaClass.getJavaClass()));
     }
 
     @Override

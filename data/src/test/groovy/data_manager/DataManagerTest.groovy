@@ -16,15 +16,14 @@
 
 package data_manager
 
+import io.jmix.core.*
+import org.springframework.beans.factory.annotation.Autowired
+import test_support.DataSpec
 import test_support.entity.TestAppEntity
 import test_support.entity.TestCompositeKeyEntity
 import test_support.entity.TestEntityKey
 import test_support.entity.sales.Product
 import test_support.entity.sec.User
-import io.jmix.core.*
-import test_support.DataSpec
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class DataManagerTest extends DataSpec {
 
@@ -72,8 +71,9 @@ class DataManagerTest extends DataSpec {
 
         when:
 
-        def loadContext = new LoadContext(Product).setIds([product1.id, product2.id])
-        def list = dataManager.loadList(loadContext)
+        def list = dataManager.load(Product)
+                .ids([product1.id, product2.id])
+                .list()
 
         then:
 
@@ -87,8 +87,9 @@ class DataManagerTest extends DataSpec {
 
         when:
 
-        def loadContext = new LoadContext(Product).setIds([product1.id, UUID.randomUUID()])
-        dataManager.loadList(loadContext)
+        dataManager.load(Product)
+                .ids([product1.id, UUID.randomUUID()])
+                .list()
 
         then:
 
@@ -107,8 +108,9 @@ class DataManagerTest extends DataSpec {
 
         when:
 
-        def loadContext = new LoadContext(TestCompositeKeyEntity).setIds([id1, id2])
-        def list = dataManager.loadList(loadContext)
+        def list = dataManager.load(TestCompositeKeyEntity)
+                .ids([id1, id2])
+                .list()
 
         then:
 

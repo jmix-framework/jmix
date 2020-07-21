@@ -19,12 +19,12 @@ package test_support;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -52,7 +52,7 @@ public class TestInMemoryDataStore implements DataStore {
     @Nullable
     @Override
     public <E extends JmixEntity> E load(LoadContext<E> context) {
-        Map<Object, JmixEntity> instances = entities.get(context.getMetaClass());
+        Map<Object, JmixEntity> instances = entities.get(context.getEntityMetaClass().getName());
         if (instances == null)
             return null;
         else
@@ -61,7 +61,7 @@ public class TestInMemoryDataStore implements DataStore {
 
     @Override
     public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
-        Map<Object, JmixEntity> instances = entities.get(context.getMetaClass());
+        Map<Object, JmixEntity> instances = entities.get(context.getEntityMetaClass().getName());
         if (instances == null)
             return Collections.emptyList();
         else
@@ -70,7 +70,7 @@ public class TestInMemoryDataStore implements DataStore {
 
     @Override
     public long getCount(LoadContext<? extends JmixEntity> context) {
-        Map<Object, JmixEntity> instances = entities.get(context.getMetaClass());
+        Map<Object, JmixEntity> instances = entities.get(context.getEntityMetaClass().getName());
         if (instances == null)
             return 0;
         else

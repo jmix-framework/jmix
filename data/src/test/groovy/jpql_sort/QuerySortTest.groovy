@@ -16,16 +16,15 @@
 
 package jpql_sort
 
-import spock.lang.Ignore
-import test_support.TestJpqlSortExpressionProvider
-import io.jmix.core.AppBeans
 import io.jmix.core.Metadata
 import io.jmix.core.Sort
 import io.jmix.data.impl.JpqlQueryBuilder
 import io.jmix.data.persistence.JpqlSortExpressionProvider
-import test_support.DataSpec
-
+import org.springframework.beans.factory.BeanFactory
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
+import test_support.DataSpec
+import test_support.TestJpqlSortExpressionProvider
 
 class QuerySortTest extends DataSpec {
 
@@ -35,6 +34,8 @@ class QuerySortTest extends DataSpec {
     @Autowired
     JpqlSortExpressionProvider sortExpressionProvider
 
+    @Autowired
+    BeanFactory beanFactory
 
     def "sort"() {
 
@@ -42,7 +43,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by single property"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by('name'))
                 .setEntityName('sec$User')
@@ -53,7 +54,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by two properties"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by('login', 'name'))
                 .setEntityName('sec$User')
@@ -64,7 +65,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by two properties desc"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by(Sort.Direction.DESC, 'login', 'name'))
                 .setEntityName('sec$User')
@@ -75,7 +76,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by reference property"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by('group.name'))
                 .setEntityName('sec$User')
@@ -86,7 +87,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by reference property desc"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by(Sort.Direction.DESC, 'group.name'))
                 .setEntityName('sec$User')
@@ -102,7 +103,7 @@ class QuerySortTest extends DataSpec {
 
         when:
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by('login'))
                 .setEntityName('sec$User')
@@ -121,7 +122,7 @@ class QuerySortTest extends DataSpec {
 
         when:
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e from sales_Order e')
                 .setSort(Sort.by('number'))
                 .setEntityName('sales_Order')
@@ -140,7 +141,7 @@ class QuerySortTest extends DataSpec {
 
         when:
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select u from sec$User u')
                 .setSort(Sort.by(Sort.Order.asc('login'), Sort.Order.desc('name')))
                 .setEntityName('sec$User').getResultQueryString()
@@ -156,7 +157,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by single non-persistent property"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e from test_TestAppEntity e')
                 .setSort(Sort.by('changeDate'))
                 .setEntityName('test_TestAppEntity')
@@ -167,7 +168,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by persistent and non-persistent property"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e from test_TestAppEntity e')
                 .setSort(Sort.by('createTs', 'changeDate'))
                 .setEntityName('test_TestAppEntity')
@@ -178,7 +179,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by single non-persistent property desc"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e from test_TestAppEntity e')
                 .setSort(Sort.by(Sort.Direction.DESC, 'changeDate'))
                 .setEntityName('test_TestAppEntity')
@@ -189,7 +190,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by non-persistent property related to two other properties"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e from test_TestAppEntity e')
                 .setSort(Sort.by('label'))
                 .setEntityName('test_TestAppEntity')
@@ -200,7 +201,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by non-persistent property related to two other properties desc"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e from test_TestAppEntity e')
                 .setSort(Sort.by(Sort.Direction.DESC, 'label'))
                 .setEntityName('test_TestAppEntity')
@@ -216,7 +217,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by single persistent property"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e.name from test_TestAppEntity e')
                 .setSort(Sort.by('name'))
                 .setValueProperties(['name'])
@@ -227,7 +228,7 @@ class QuerySortTest extends DataSpec {
 
         when: "by aggregated single persistent property"
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e.id, min(e.name) from test_TestAppEntity e group by e.id')
                 .setSort(Sort.by('min'))
                 .setValueProperties(['id', 'min'])
@@ -244,7 +245,7 @@ class QuerySortTest extends DataSpec {
 
         when:
 
-        queryBuilder = AppBeans.get(JpqlQueryBuilder)
+        queryBuilder = beanFactory.getBean(JpqlQueryBuilder)
         queryBuilder.setQueryString('select e from test_TestCompositeKeyEntity e')
                 .setSort(Sort.by(Sort.Direction.DESC, 'id.tenant'))
                 .setEntityName("test_TestCompositeKeyEntity")

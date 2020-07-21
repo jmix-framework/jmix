@@ -15,7 +15,6 @@
  */
 package io.jmix.data.impl;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.Listeners;
@@ -24,9 +23,10 @@ import io.jmix.data.listener.*;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -40,6 +40,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 @Component(EntityListenerManager.NAME)
 public class EntityListenerManager {
+
+    @Autowired
+    protected BeanFactory beanFactory;
 
     public static final String NAME = "data_EntityListenerManager";
 
@@ -321,8 +324,8 @@ public class EntityListenerManager {
 
         List<Object> result = new ArrayList<>();
         for (String name : names) {
-            if (AppBeans.containsBean(name)) {
-                Object bean = AppBeans.get(name);
+            if (beanFactory.containsBean(name)) {
+                Object bean = beanFactory.getBean(name);
                 log.trace("listener bean found: {}", bean);
                 List<Class<?>> interfaces = ClassUtils.getAllInterfaces(bean.getClass());
                 for (Class intf : interfaces) {

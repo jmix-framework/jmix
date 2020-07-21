@@ -15,16 +15,16 @@
  */
 package io.jmix.data.impl;
 
-import io.jmix.core.BeanLocator;
 import io.jmix.core.EnvironmentUtils;
 import io.jmix.data.persistence.JmixIsNullExpressionOperator;
 import org.eclipse.persistence.expressions.ExpressionOperator;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect;
 import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.spi.PersistenceProvider;
 import java.util.Map;
 
@@ -42,10 +42,10 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
     @Autowired
     public JmixEclipseLinkJpaVendorAdapter(Environment environment,
                                            JmixEclipseLinkJpaDialect jpaDialect,
-                                           BeanLocator beanLocator) {
+                                           BeanFactory beanFactory) {
         this.environment = environment;
         this.jpaDialect = jpaDialect;
-        this.persistenceProvider = new JmixPersistenceProvider(beanLocator);
+        this.persistenceProvider = new JmixPersistenceProvider(beanFactory);
 
         ExpressionOperator.addOperator(new JmixIsNullExpressionOperator());
         setGenerateDdl(false);

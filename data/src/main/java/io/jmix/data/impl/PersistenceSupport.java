@@ -18,11 +18,10 @@ package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import io.jmix.core.AppBeans;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.StackTrace;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.StoreAwareLocator;
@@ -42,6 +41,7 @@ import org.eclipse.persistence.sessions.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -89,6 +89,9 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     @Autowired(required = false)
     protected List<OrmLifecycleListener> lifecycleListeners = new ArrayList<>();
+
+    @Autowired
+    protected ObjectProvider<DeletePolicyProcessor> deletePolicyProcessorProvider;
 
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 
@@ -640,7 +643,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 //        }
 
         protected void processDeletePolicy(JmixEntity entity) {
-            DeletePolicyProcessor processor = AppBeans.get(DeletePolicyProcessor.NAME); // prototype
+            DeletePolicyProcessor processor = deletePolicyProcessorProvider.getObject(); // prototype
             processor.setEntity(entity);
             processor.process();
         }

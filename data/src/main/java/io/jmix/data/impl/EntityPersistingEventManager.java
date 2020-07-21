@@ -17,11 +17,13 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.Events;
+import io.jmix.core.ExtendedEntities;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.event.EntityPersistingEvent;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component(EntityPersistingEventManager.NAME)
 public class EntityPersistingEventManager {
@@ -31,8 +33,16 @@ public class EntityPersistingEventManager {
     @Autowired
     protected Events events;
 
+    @Autowired
+    protected Metadata metadata;
+
+    @Autowired
+    protected ExtendedEntities extendedEntities;
+
     public void publishEvent(JmixEntity entity) {
-        EntityPersistingEvent<JmixEntity> event = new EntityPersistingEvent<>(this, entity);
+        MetaClass metaClass = metadata.getClass(entity.getClass());
+        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
+        EntityPersistingEvent<JmixEntity> event = new EntityPersistingEvent<>(this, entity, originalMetaClass);
         events.publish(event);
     }
 }

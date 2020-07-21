@@ -16,11 +16,8 @@
 
 package io.jmix.data.event;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.Metadata;
-import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
@@ -50,14 +47,16 @@ import org.springframework.core.ResolvableTypeProvider;
 public class EntityPersistingEvent<E extends JmixEntity> extends ApplicationEvent implements ResolvableTypeProvider {
 
     private final E entity;
+    private final MetaClass originalMetaClass;
 
     /**
      * INTERNAL.
      */
-    public EntityPersistingEvent(Object source, E entity) {
+    public EntityPersistingEvent(Object source, E entity, MetaClass originalMetaClass) {
         super(source);
         Preconditions.checkNotNullArgument(entity, "entity is null");
         this.entity = entity;
+        this.originalMetaClass = originalMetaClass;
     }
 
     /**
@@ -72,10 +71,7 @@ public class EntityPersistingEvent<E extends JmixEntity> extends ApplicationEven
      */
     @Override
     public ResolvableType getResolvableType() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
-        MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity.getClass()));
-        return ResolvableType.forClassWithGenerics(getClass(), ResolvableType.forClass(metaClass.getJavaClass()));
+        return ResolvableType.forClassWithGenerics(getClass(), ResolvableType.forClass(originalMetaClass.getJavaClass()));
     }
 
     @Override

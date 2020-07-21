@@ -19,7 +19,6 @@ package io.jmix.data.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Id;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
@@ -45,6 +44,7 @@ import org.eclipse.persistence.queries.DatabaseQuery;
 import org.eclipse.persistence.queries.ObjectLevelReadQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
@@ -61,6 +61,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
     private final EntityManager entityManager;
     private Class<E> resultClass;
 
+    protected BeanFactory beanFactory;
     protected Environment environment;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
@@ -89,26 +90,27 @@ public class JmixQuery<E> implements TypedQuery<E> {
     protected boolean cacheable;
     protected FlushModeType flushMode;
 
-    public JmixQuery(EntityManager entityManager, BeanLocator beanLocator, boolean isNative, String qlString,
+    public JmixQuery(EntityManager entityManager, BeanFactory beanFactory, boolean isNative, String qlString,
                      @Nullable Class<E> resultClass) {
         this.entityManager = entityManager;
+        this.beanFactory = beanFactory;
         this.isNative = isNative;
         this.queryString = qlString;
         this.resultClass = resultClass;
 
-        environment = beanLocator.get(Environment.class);
-        metadata = beanLocator.get(Metadata.NAME);
-        metadataTools = beanLocator.get(MetadataTools.NAME);
-        extendedEntities = beanLocator.get(ExtendedEntities.NAME);
-        viewRepository = beanLocator.get(FetchPlanRepository.NAME);
-        support = beanLocator.get(PersistenceSupport.NAME);
-        fetchGroupMgr = beanLocator.get(FetchGroupManager.NAME);
-        entityFetcher = beanLocator.get(EntityFetcher.NAME);
-        queryCacheMgr = beanLocator.get(QueryCacheManager.NAME);
-        queryTransformerFactory = beanLocator.get(QueryTransformerFactory.NAME);
-        hintsProcessor = beanLocator.get(QueryHintsProcessor.NAME);
-        dbmsSpecifics = beanLocator.get(DbmsSpecifics.NAME);
-        macroHandlers = beanLocator.getAll(QueryMacroHandler.class).values();
+        environment = beanFactory.getBean(Environment.class);
+        metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
+        metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
+        extendedEntities = (ExtendedEntities) beanFactory.getBean(ExtendedEntities.NAME);
+        viewRepository = (FetchPlanRepository) beanFactory.getBean(FetchPlanRepository.NAME);
+        support = (PersistenceSupport) beanFactory.getBean(PersistenceSupport.NAME);
+        fetchGroupMgr = (FetchGroupManager) beanFactory.getBean(FetchGroupManager.NAME);
+        entityFetcher = (EntityFetcher) beanFactory.getBean(EntityFetcher.NAME);
+        queryCacheMgr = (QueryCacheManager) beanFactory.getBean(QueryCacheManager.NAME);
+        queryTransformerFactory = (QueryTransformerFactory) beanFactory.getBean(QueryTransformerFactory.NAME);
+        hintsProcessor = (QueryHintsProcessor) beanFactory.getBean(QueryHintsProcessor.NAME);
+        dbmsSpecifics = (DbmsSpecifics) beanFactory.getBean(DbmsSpecifics.NAME);
+        macroHandlers = beanFactory.getBeanProvider(QueryMacroHandler.class).stream().collect(Collectors.toList());
     }
 
     @Override
@@ -728,7 +730,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         boolean useQueryCache = cacheable && !isNative && queryCacheMgr.isEnabled() && lockMode == null;
         Object result;
         if (useQueryCache) {
-            QueryParser parser = QueryTransformerFactory.createParser(transformedQueryString);
+            QueryParser parser = beanFactory.getBean(QueryTransformerFactory.class).parser(transformedQueryString);
             String entityName = parser.getEntityName();
             useQueryCache = parser.isEntitySelect(entityName);
             QueryKey queryKey = null;

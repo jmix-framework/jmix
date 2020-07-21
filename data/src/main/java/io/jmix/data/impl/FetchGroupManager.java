@@ -59,6 +59,9 @@ public class FetchGroupManager {
     @Autowired
     private ExtendedEntities extendedEntities;
 
+    @Autowired
+    private QueryTransformerFactory queryTransformerFactory;
+
     public void setFetchPlan(JpaQuery query, String queryString, @Nullable FetchPlan fetchPlan, boolean singleResultExpected) {
         Preconditions.checkNotNullArgument(query, "query is null");
         if (fetchPlan != null) {
@@ -148,7 +151,7 @@ public class FetchGroupManager {
 
         MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         if (!refFields.isEmpty()) {
-            String alias = QueryTransformerFactory.createParser(queryString).getEntityAlias();
+            String alias = queryTransformerFactory.parser(queryString).getEntityAlias();
 
             List<FetchGroupField> batchFields = new ArrayList<>();
             List<FetchGroupField> joinFields = new ArrayList<>();
@@ -215,7 +218,7 @@ public class FetchGroupManager {
                 }
             }
 
-            QueryParser parser = QueryTransformerFactory.createParser(queryString);
+            QueryParser parser = queryTransformerFactory.parser(queryString);
 
             List<FetchGroupField> isNullFields = joinFields.stream()
                     .filter(f -> f.fetchMode == FetchMode.AUTO &&

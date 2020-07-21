@@ -16,8 +16,8 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.BeanLocator;
 import org.eclipse.persistence.jpa.PersistenceProvider;
+import org.springframework.beans.factory.BeanFactory;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
@@ -25,15 +25,15 @@ import java.util.Map;
 
 public class JmixPersistenceProvider extends PersistenceProvider {
 
-    private BeanLocator beanLocator;
+    private BeanFactory beanFactory;
 
-    public JmixPersistenceProvider(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public JmixPersistenceProvider(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
     }
 
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map properties) {
         EntityManagerFactory entityManagerFactory = super.createContainerEntityManagerFactory(info, properties);
-        return new JmixEntityManagerFactory(entityManagerFactory, beanLocator);
+        return new JmixEntityManagerFactory(entityManagerFactory, beanFactory);
     }
 }

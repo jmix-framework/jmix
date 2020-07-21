@@ -16,7 +16,11 @@
 
 package entity_extension
 
-import io.jmix.core.*
+
+import io.jmix.core.DataManager
+import io.jmix.core.ExtendedEntities
+import io.jmix.core.FetchPlan
+import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.entity_extension.*
@@ -72,8 +76,10 @@ class EntityExtensionTest extends DataSpec {
         driver1 instanceof ExtDriver
 
         when:
-        def query = new LoadContext.Query('select d from exttest_Driver d where d.id = :id').setParameter('id', driver.id)
-        def list = dataManager.loadList(new LoadContext(Driver).setQuery(query))
+        def list = dataManager.load(Driver)
+                .query('select d from exttest_Driver d where d.id = :id')
+                .parameter('id', driver.id)
+                .list()
 
         then:
         list[0] instanceof ExtDriver

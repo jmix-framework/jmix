@@ -16,22 +16,26 @@
 
 package io.jmix.ui.component.autocomplete;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.impl.jpql.DomainModel;
-import io.jmix.core.impl.jpql.DomainModelBuilder;
 import io.jmix.core.impl.jpql.DomainModelWithCaptionsBuilder;
 import io.jmix.ui.component.autocomplete.impl.HintProvider;
 import io.jmix.ui.component.autocomplete.impl.HintRequest;
 import io.jmix.ui.component.autocomplete.impl.HintResponse;
 import io.jmix.ui.component.autocomplete.impl.Option;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component("ui_JpqlSuggestionFactory")
 public class JpqlSuggestionFactory {
 
-    protected static Suggestion produce(AutoCompleteSupport sender, String value, String description, int senderCursorPosition, int prefixLength) {
+    @Autowired
+    protected DomainModelWithCaptionsBuilder domainModelWithCaptionsBuilder;
+
+    protected Suggestion produce(AutoCompleteSupport sender, String value, String description, int senderCursorPosition, int prefixLength) {
         String valueSuffix = value.substring(prefixLength);
         String displayedValue;
         if (description == null) {
@@ -44,15 +48,14 @@ public class JpqlSuggestionFactory {
         return new Suggestion(sender, displayedValue, value, valueSuffix, startPosition, senderCursorPosition);
     }
 
-    public static List<Suggestion> requestHint(String query, int queryPosition, AutoCompleteSupport sender,
+    public List<Suggestion> requestHint(String query, int queryPosition, AutoCompleteSupport sender,
                                                int senderCursorPosition) {
         return requestHint(query, queryPosition, sender, senderCursorPosition, null);
     }
 
-    public static List<Suggestion> requestHint(String query, int queryPosition, AutoCompleteSupport sender,
+    public List<Suggestion> requestHint(String query, int queryPosition, AutoCompleteSupport sender,
                                                int senderCursorPosition, @Nullable HintProvider provider) {
-        DomainModelBuilder builder = AppBeans.get(DomainModelWithCaptionsBuilder.NAME);
-        DomainModel domainModel = builder.produce();
+        DomainModel domainModel = domainModelWithCaptionsBuilder.produce();
         if (provider == null) {
             provider = new HintProvider(domainModel);
         }
@@ -66,7 +69,7 @@ public class JpqlSuggestionFactory {
 
             List<Suggestion> result = new ArrayList<>();
             for (Option option : options) {
-                Suggestion suggestion = JpqlSuggestionFactory.produce(sender, option.getValue(), option.getDescription(),
+                Suggestion suggestion = produce(sender, option.getValue(), option.getDescription(),
                         senderCursorPosition, prefix == null ? 0 : prefix.length());
                 result.add(suggestion);
             }

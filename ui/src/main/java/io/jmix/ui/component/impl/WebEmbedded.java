@@ -17,7 +17,6 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.server.*;
-import io.jmix.core.AppBeans;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.Embedded;
 import io.jmix.ui.download.DownloadDataProvider;
@@ -25,6 +24,7 @@ import io.jmix.ui.sys.ControllerUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -43,6 +43,9 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
     protected Map<String, String> parameters = null;
     protected Type type = Type.IMAGE;
     protected Resource resource;
+
+    @Autowired
+    protected UiProperties uiProperties;
 
     public WebEmbedded() {
         component = new com.vaadin.ui.Embedded();
@@ -76,7 +79,7 @@ public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> im
             } else {
                 File file = new File(src);
                 if (!file.isAbsolute()) {
-                    String root = AppBeans.get(UiProperties.class).getEmbeddedResourcesRoot();
+                    String root = uiProperties.getEmbeddedResourcesRoot();
                     if (root != null) {
                         if (!root.endsWith(File.separator)) {
                             root += File.separator;

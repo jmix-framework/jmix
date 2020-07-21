@@ -18,7 +18,7 @@ package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DateTimeTransformations;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Calendar;
 import io.jmix.ui.component.HasDatatype;
@@ -163,7 +163,8 @@ public class CalendarLoader extends AbstractComponentLoader<Calendar> {
     protected void loadDatatype(HasDatatype component, Element element) {
         String datatypeAttribute = element.attributeValue("datatype");
         if (StringUtils.isNotEmpty(datatypeAttribute)) {
-            component.setDatatype(Datatypes.get(datatypeAttribute));
+            DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.NAME);
+            component.setDatatype(datatypeRegistry.find(datatypeAttribute));
         }
     }
 

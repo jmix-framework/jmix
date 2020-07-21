@@ -46,6 +46,8 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected QueryStringProcessor queryStringProcessor;
+    @Autowired
+    protected Metadata metadata;
 
     protected DataContext dataContext;
     protected InstanceContainer<E> container;
@@ -115,7 +117,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     public LoadContext<E> createLoadContext() {
         Class<E> entityClass = container.getEntityMetaClass().getJavaClass();
 
-        LoadContext<E> loadContext = new LoadContext(entityClass);
+        LoadContext<E> loadContext = new LoadContext(metadata.getClass(entityClass));
 
         if (entityId != null) {
             loadContext.setId(entityId);

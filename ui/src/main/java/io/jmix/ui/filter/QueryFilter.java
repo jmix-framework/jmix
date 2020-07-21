@@ -15,10 +15,15 @@
  */
 package io.jmix.ui.filter;
 
+import io.jmix.core.QueryTransformer;
+import io.jmix.core.QueryTransformerFactory;
 import io.jmix.core.querycondition.JpqlCondition;
-import io.jmix.core.*;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -26,15 +31,25 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Component(QueryFilter.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class QueryFilter extends FilterParser implements Serializable {
+
+    public static final String NAME = "ui_QueryFilter";
 
     protected static final boolean ENABLE_SESSION_PARAMS = true;
 
-    public QueryFilter(Condition condition) {
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
+
+    @Autowired
+    protected QueryFilters queryFilters;
+
+    protected QueryFilter(Condition condition) {
         super(condition);
     }
 
-    public QueryFilter(Element element) {
+    protected QueryFilter(Element element) {
         super(element);
     }
 
@@ -66,7 +81,7 @@ public class QueryFilter extends FilterParser implements Serializable {
         if (isActual(root, params)) {
             Condition refined = refine(root, params);
             if (refined != null) {
-                QueryTransformer transformer = QueryTransformerFactory.createTransformer(query);
+                QueryTransformer transformer = queryTransformerFactory.transformer(query);
                 String where = new FilterJpqlGenerator().generateJpql(refined);
 
                 if (!StringUtils.isBlank(where)) {

@@ -17,18 +17,15 @@ package io.jmix.ui.component.impl;
 
 import com.google.common.base.Strings;
 import com.vaadin.server.Resource;
-import io.jmix.core.AppBeans;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
-import io.jmix.ui.settings.SettingsHelper;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.TestIdManager;
 import io.jmix.ui.widget.JmixTabSheet;
@@ -50,6 +47,15 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
 
     @Autowired(required = false)
     protected UserSettingsTools userSettingsTools;
+
+    @Autowired
+    protected UiComponents uiComponents;
+
+    @Autowired
+    protected IconResolver iconResolver;
+
+    @Autowired
+    protected Icons icons;
 
     protected boolean postInitTaskAdded;
     protected boolean componentTabChangeListenerInitialized;
@@ -283,7 +289,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
         public void setIcon(@Nullable String icon) {
             this.icon = icon;
             if (!StringUtils.isEmpty(icon)) {
-                Resource iconResource = AppBeans.get(IconResolver.class) // todo replace
+                Resource iconResource = iconResolver // todo replace
                         .getIconResource(this.icon);
                 getVaadinTab().setIcon(iconResource);
             } else {
@@ -293,7 +299,7 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
 
         @Override
         public void setIconFromSet(Icons.Icon icon) {
-            String iconPath = AppBeans.get(Icons.class) // todo replace
+            String iconPath = icons // todo replace
                     .get(icon);
             setIcon(iconPath);
         }
@@ -375,7 +381,6 @@ public class WebTabSheet extends WebAbstractComponent<JmixTabSheet>
 
     @Override
     public TabSheet.Tab addLazyTab(String name, Element descriptor, ComponentLoader loader) {
-        UiComponents uiComponents = AppBeans.get(UiComponents.NAME);
         CssLayout tabContent = uiComponents.create(CssLayout.NAME);
         tabContent.setStyleName("c-tabsheet-lazytab");
         tabContent.setSizeFull();

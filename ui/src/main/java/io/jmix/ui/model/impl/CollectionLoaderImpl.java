@@ -106,7 +106,7 @@ public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoa
     public LoadContext<E> createLoadContext() {
         Class<E> entityClass = container.getEntityMetaClass().getJavaClass();
 
-        LoadContext<E> loadContext = new LoadContext<>(entityClass);
+        LoadContext<E> loadContext = new LoadContext<>(container.getEntityMetaClass());
 
         String queryString = queryStringProcessor.process(this.query, entityClass);
 

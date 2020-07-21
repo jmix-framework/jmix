@@ -15,13 +15,12 @@
  */
 package io.jmix.ui.xml.layout;
 
-import io.jmix.core.AppBeans;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 
 /**
  * Factory to create UI components in client independent manner.
- * <br> An instance of the factory can be injected into screen controllers or obtained through {@link AppBeans}.
+ * <br> An instance of the factory can be injected into screen controllers.
  *
  * @deprecated Use {@link UiComponents} instead.
  */

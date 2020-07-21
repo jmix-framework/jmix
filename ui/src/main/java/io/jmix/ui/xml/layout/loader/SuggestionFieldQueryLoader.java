@@ -16,12 +16,9 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.LoadContext;
-import io.jmix.core.QueryUtils;
+import com.google.common.base.Strings;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.SuggestionField;
@@ -58,14 +55,13 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
                     }
                     searchString = applySearchFormat(searchString, searchFormat);
 
-                    LoadContext loadContext = new LoadContext(entityClass);
-                    if (StringUtils.isNotEmpty(view)) {
-                        loadContext.setFetchPlan(beanLocator.get(FetchPlanRepository.class).getFetchPlan(entityClass, view));
+                    FluentLoader<JmixEntity> loader = dataManager.load(entityClass);
+                    if (!Strings.isNullOrEmpty(view)) {
+                        loader.fetchPlan(beanLocator.get(FetchPlanRepository.class).getFetchPlan(entityClass, view));
                     }
-                    loadContext.setQuery(new LoadContext.Query(stringQuery).setParameter("searchString", searchString));
-
-                    //noinspection unchecked
-                    return dataManager.loadList(loadContext);
+                    loader.query(stringQuery)
+                            .parameter("searchString", searchString);
+                    return loader.list();
                 });
             } else {
                 throw new GuiDevelopmentException(String.format("Field 'entityClass' is empty in component %s.",

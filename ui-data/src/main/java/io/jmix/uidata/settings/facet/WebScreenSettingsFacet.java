@@ -16,19 +16,19 @@
 
 package io.jmix.uidata.settings.facet;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.impl.WebAbstractFacet;
-import io.jmix.uidata.settings.ScreenSettings;
-import io.jmix.uidata.settings.ScreenSettingsManager;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Screen.AfterDetachEvent;
 import io.jmix.ui.screen.Screen.AfterShowEvent;
 import io.jmix.ui.screen.Screen.BeforeShowEvent;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.uidata.settings.ScreenSettings;
+import io.jmix.uidata.settings.ScreenSettingsManager;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -50,6 +50,9 @@ public class WebScreenSettingsFacet extends WebAbstractFacet implements ScreenSe
 
     @Inject
     protected ScreenSettingsManager settingsManager;
+
+    @Inject
+    protected BeanFactory beanFactory;
 
     @Override
     public ScreenSettings getSettings() {
@@ -179,7 +182,7 @@ public class WebScreenSettingsFacet extends WebAbstractFacet implements ScreenSe
         super.setOwner(owner);
 
         if (getScreenOwner() != null)
-            screenSettings = AppBeans.getPrototype(ScreenSettings.NAME, getScreenOwner().getId());
+            screenSettings = (ScreenSettings) beanFactory.getBean(ScreenSettings.NAME, getScreenOwner().getId());
 
         subscribe();
     }

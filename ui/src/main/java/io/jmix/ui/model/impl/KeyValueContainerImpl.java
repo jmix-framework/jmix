@@ -18,16 +18,20 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
-import io.jmix.core.impl.keyvalue.KeyValueMetaProperty;
+import io.jmix.core.impl.keyvalue.KeyValueMetaPropertyBuilder;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.model.KeyValueContainer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
 public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity> implements KeyValueContainer {
 
     private String idName;
+
+    @Autowired
+    private KeyValueMetaPropertyBuilder keyValueMetaPropertyBuilder;
 
     public KeyValueContainerImpl() {
         super(new KeyValueMetaClass());
@@ -55,19 +59,19 @@ public class KeyValueContainerImpl extends InstanceContainerImpl<KeyValueEntity>
 
     @Override
     public KeyValueContainer addProperty(String name) {
-        getEntityMetaClass().addProperty(new KeyValueMetaProperty(getEntityMetaClass(), name, String.class));
+        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, String.class));
         return this;
     }
 
     @Override
     public KeyValueContainer addProperty(String name, Class aClass) {
-        getEntityMetaClass().addProperty(new KeyValueMetaProperty(getEntityMetaClass(), name, aClass));
+        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, aClass));
         return this;
     }
 
     @Override
     public KeyValueContainer addProperty(String name, Datatype datatype) {
-        getEntityMetaClass().addProperty(new KeyValueMetaProperty(getEntityMetaClass(), name, datatype));
+        getEntityMetaClass().addProperty(keyValueMetaPropertyBuilder.build(getEntityMetaClass(), name, datatype));
         return this;
     }
 

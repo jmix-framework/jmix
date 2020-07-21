@@ -18,15 +18,15 @@ package io.jmix.uidata;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.BaseUser;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.uidata.entity.UiTablePresentation;
-import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.PresentationsChangeListener;
+import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.uidata.entity.UiTablePresentation;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -314,7 +314,7 @@ public class TablePresentationsImpl implements TablePresentations {
     protected void checkLoad() {
         if (presentations == null) {
             LoadContext<UiTablePresentation> ctx
-                    = new LoadContext<>(UiTablePresentation.class);
+                    = new LoadContext<>(metadata.getClass(UiTablePresentation.class));
 
             ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(
                     UiTablePresentation.class, "app"));

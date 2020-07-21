@@ -16,7 +16,10 @@
 
 package test_support
 
-import io.jmix.core.*
+import io.jmix.core.CoreConfiguration
+import io.jmix.core.EntityStates
+import io.jmix.core.JmixEntity
+import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.entity.Versioned
 import io.jmix.data.DataConfiguration
@@ -41,6 +44,8 @@ class DataContextSpec extends Specification {
     TransactionTemplate transaction
     @Autowired
     JdbcTemplate jdbc
+    @Autowired
+    TimeSource timeSource
 
     void setup() {
         transaction.executeWithoutResult {}
@@ -89,9 +94,7 @@ class DataContextSpec extends Specification {
         return (T) deserialize(serialize(object))
     }
 
-    static <T extends Serializable> T makeSaved(T entity) {
-        EntityStates entityStates = AppBeans.get(EntityStates)
-        TimeSource timeSource = AppBeans.get(TimeSource)
+    def <T extends Serializable> T makeSaved(T entity) {
 
         T e = reserialize(entity)
         entityStates.makeDetached((JmixEntity) e)

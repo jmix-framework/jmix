@@ -19,7 +19,6 @@ package io.jmix.ui.component.mainwindow.impl;
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
-import io.jmix.core.AppBeans;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.component.mainwindow.AppMenu;
@@ -28,6 +27,7 @@ import io.jmix.ui.menu.MenuBuilder;
 import io.jmix.ui.widget.JmixMenuBar;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -39,6 +39,12 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements AppMenu {
+
+    @Autowired
+    protected MenuBuilder menuBuilder;
+
+    @Autowired
+    protected IconResolver iconResolver;
 
     protected Map<String, MenuItem> allItemsIds = new HashMap<>();
     protected Map<MenuBar.MenuItem, MenuItem> viewModelMap = new HashMap<>();
@@ -77,7 +83,6 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
 
     @Override
     public void loadMenu() {
-        MenuBuilder menuBuilder = AppBeans.getPrototype(MenuBuilder.NAME);
         menuBuilder.build(this);
     }
 
@@ -101,7 +106,7 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
 
         Resource iconResource = null;
         if (icon != null) {
-            iconResource = AppBeans.get(IconResolver.class).getIconResource(icon);
+            iconResource = iconResolver.getIconResource(icon);
         }
 
         MenuBar.MenuItem delegateItem = component.createMenuItem(caption, iconResource, null);
@@ -251,7 +256,7 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
         component.setTabIndex(tabIndex);
     }
 
-    protected static class MenuItemImpl implements MenuItem {
+    protected class MenuItemImpl implements MenuItem {
         protected WebAppMenu menu;
         protected String id;
         protected MenuBar.MenuItem delegateItem;
@@ -315,7 +320,7 @@ public class WebAppMenu extends WebAbstractComponent<JmixMenuBar> implements App
             this.icon = icon;
 
             if (icon != null) {
-                Resource iconResource = AppBeans.get(IconResolver.class)
+                Resource iconResource = iconResolver
                         .getIconResource(this.icon);
                 delegateItem.setIcon(iconResource);
             } else {

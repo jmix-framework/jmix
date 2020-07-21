@@ -20,7 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -70,6 +70,9 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected ScreenBuilders screenBuilders;
+    protected DatatypeRegistry datatypeRegistry;
+    protected Messages messages;
+    protected WindowConfig windowConfig;
 
     public WebEntityLinkField() {
         component = createComponent();
@@ -89,6 +92,21 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     @Autowired
     public void setSceenBuilders(ScreenBuilders screenBuilders) {
         this.screenBuilders = screenBuilders;
+    }
+
+    @Autowired
+    public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
+        this.datatypeRegistry = datatypeRegistry;
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+    }
+
+    @Autowired
+    public void setWindowConfig(WindowConfig windowConfig) {
+        this.windowConfig = windowConfig;
     }
 
     protected JmixButtonField<V> createComponent() {
@@ -117,7 +135,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
                 return metadataTools.getInstanceName((JmixEntity) value);
             }
 
-            Datatype datatype = Datatypes.getNN(value.getClass());
+            Datatype datatype = datatypeRegistry.get(value.getClass());
 
             if (locale != null) {
                 return datatype.format(value, locale);
@@ -295,7 +313,6 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
 
         ScreenContext context = ComponentsHelper.getScreenContext(this);
         if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted()) {
-            Messages messages = AppBeans.get(Messages.NAME);
             context.getNotifications().create(Notifications.NotificationType.HUMANIZED)
                     .withCaption(messages.getMessage("OpenAction.objectIsDeleted"))
                     .show();
@@ -309,7 +326,6 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
                 .one();
 
         String windowAlias = screen;
-        WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
 
         MetaClass metaClass = metadata.getClass(entity);
         if (windowAlias == null) {

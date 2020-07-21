@@ -16,7 +16,7 @@
 package io.jmix.ui.gui.data.impl;
 
 import io.jmix.core.AppBeans;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
@@ -63,7 +63,8 @@ public abstract class AggregatableDelegate<K> {
 
                         CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
                         Locale locale = currentAuthentication.getLocale();
-                        formattedValue = Datatypes.getNN(resultClass).format(value, locale);
+                        DatatypeRegistry datatypeRegistry = AppBeans.get(DatatypeRegistry.NAME);
+                        formattedValue = datatypeRegistry.get(resultClass).format(value, locale);
                     } else {
                         formattedValue = value.toString();
                     }
@@ -73,7 +74,8 @@ public abstract class AggregatableDelegate<K> {
 
                         CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
                         Locale locale = currentAuthentication.getLocale();
-                        formattedValue = Datatypes.getNN(resultClass).format(value, locale);
+                        DatatypeRegistry datatypeRegistry = AppBeans.get(DatatypeRegistry.NAME);
+                        formattedValue = datatypeRegistry.get(resultClass).format(value, locale);
                     } else {
                         formattedValue = value.toString();
                     }

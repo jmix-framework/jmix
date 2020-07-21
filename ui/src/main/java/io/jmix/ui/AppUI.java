@@ -23,8 +23,6 @@ import com.vaadin.server.*;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
-import io.jmix.core.AppBeans;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.core.security.CurrentAuthentication;
@@ -35,7 +33,6 @@ import io.jmix.ui.event.UIRefreshEvent;
 import io.jmix.ui.exception.UiExceptionHandler;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.navigation.*;
-import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.*;
 import io.jmix.ui.sys.event.UiEventsMulticaster;
 import io.jmix.ui.theme.ThemeConstantsRepository;
@@ -47,13 +44,14 @@ import io.jmix.ui.widget.client.ui.AppUIConstants;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -75,7 +73,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     @Autowired
     protected Events events;
     @Autowired
-    protected UiProperties properties;
+    protected UiProperties uiProperties;
 
 //    @Autowired
 //    protected UserSettingsTools userSettingsTools;
@@ -96,7 +94,8 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     protected WebJarResourceResolver webJarResourceResolver;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected BeanFactory beanFactory;
+
     @Autowired
     protected AppUIBeanProvider appUIBeanProvider;
 
@@ -156,7 +155,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     protected App createApplication() {
-        return beanLocator.getPrototype(App.NAME);
+        return (App) beanFactory.getBean(App.NAME);
     }
 
     @Override
@@ -524,11 +523,11 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
      * @return true if UI test mode is enabled and j-test-id attribute should be added to DOM tree
      */
     public boolean isTestMode() {
-        return properties.isTestMode();
+        return uiProperties.isTestMode();
     }
 
     public boolean isPerformanceTestMode() {
-        return properties.isPerformanceTestMode();
+        return uiProperties.isPerformanceTestMode();
     }
 
     @Override
@@ -560,7 +559,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
 
         String action = (String) wrappedSession.getAttribute(LAST_REQUEST_ACTION_ATTR);
 
-        return beanLocator.get(UiProperties.class).getLinkHandlerActions().contains(action);
+        return uiProperties.getLinkHandlerActions().contains(action);
     }
 
     protected void processLinkHandlerRequest(VaadinRequest request) {
@@ -572,7 +571,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
 
         try {
             String action = (String) wrappedSession.getAttribute(LAST_REQUEST_ACTION_ATTR);
-            LinkHandler linkHandler = AppBeans.getPrototype(LinkHandler.NAME, app, action, params);
+            LinkHandler linkHandler = (LinkHandler) beanFactory.getBean(LinkHandler.NAME, app, action, params);
             if (linkHandler.canHandleLink()) {
                 linkHandler.handle();
             } else {
@@ -584,7 +583,7 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     protected void processRequest(NavigationState navigationState) {
-        if (UrlHandlingMode.URL_ROUTES != beanLocator.get(UiProperties.class).getUrlHandlingMode()
+        if (UrlHandlingMode.URL_ROUTES != uiProperties.getUrlHandlingMode()
                 || navigationState == null) {
             return;
         }

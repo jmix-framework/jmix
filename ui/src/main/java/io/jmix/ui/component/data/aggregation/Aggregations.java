@@ -15,8 +15,9 @@
  */
 package io.jmix.ui.component.data.aggregation;
 
+import io.jmix.core.AppBeans;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.ui.component.data.aggregation.impl.*;
 
 import java.math.BigDecimal;
@@ -30,16 +31,17 @@ public class Aggregations {
     private static final Aggregations instance;
 
     static {
+        DatatypeRegistry datatypeRegistry = AppBeans.get(DatatypeRegistry.NAME);
         instance = new Aggregations();
-        instance.register(Datatypes.getNN(BigDecimal.class), new BigDecimalAggregation());
-        instance.register(Datatypes.getNN(Integer.class), new LongAggregation());
-        instance.register(Datatypes.getNN(Long.class), new LongAggregation());
-        instance.register(Datatypes.getNN(Double.class), new DoubleAggregation());
-        instance.register(Datatypes.getNN(Date.class), new DateAggregation());
-        instance.register(Datatypes.getNN(Boolean.class), new BasicAggregation<>(Boolean.class));
-        instance.register(Datatypes.getNN(byte[].class), new BasicAggregation<>(byte[].class));
-        instance.register(Datatypes.getNN(String.class), new BasicAggregation<>(String.class));
-        instance.register(Datatypes.getNN(UUID.class), new BasicAggregation<>(UUID.class));
+        instance.register(datatypeRegistry.get(BigDecimal.class), new BigDecimalAggregation());
+        instance.register(datatypeRegistry.get(Integer.class), new LongAggregation());
+        instance.register(datatypeRegistry.get(Long.class), new LongAggregation());
+        instance.register(datatypeRegistry.get(Double.class), new DoubleAggregation());
+        instance.register(datatypeRegistry.get(Date.class), new DateAggregation());
+        instance.register(datatypeRegistry.get(Boolean.class), new BasicAggregation<>(Boolean.class));
+        instance.register(datatypeRegistry.get(byte[].class), new BasicAggregation<>(byte[].class));
+        instance.register(datatypeRegistry.get(String.class), new BasicAggregation<>(String.class));
+        instance.register(datatypeRegistry.get(UUID.class), new BasicAggregation<>(UUID.class));
     }
 
     public static Aggregations getInstance() {

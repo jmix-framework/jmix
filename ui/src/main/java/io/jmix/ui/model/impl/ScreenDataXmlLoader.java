@@ -22,17 +22,17 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.ConditionXmlLoader;
 import io.jmix.ui.model.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 
 @Component(ScreenDataXmlLoader.NAME)
@@ -60,6 +60,9 @@ public class ScreenDataXmlLoader {
 
     @Autowired
     protected BeanLocator beanLocator;
+
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
 
     public void load(ScreenData screenData, Element element, @Nullable ScreenData hostScreenData) {
         Preconditions.checkNotNullArgument(screenData, "screenData is null");
@@ -210,7 +213,7 @@ public class ScreenDataXmlLoader {
                     container.addProperty(name, ReflectionHelper.getClass(className));
                 } else {
                     String typeName = propEl.attributeValue("datatype");
-                    Datatype datatype = typeName == null ? Datatypes.getNN(String.class) : Datatypes.get(typeName);
+                    Datatype datatype = typeName == null ? datatypeRegistry.get(String.class) : datatypeRegistry.find(typeName);
                     container.addProperty(name, datatype);
                 }
             }

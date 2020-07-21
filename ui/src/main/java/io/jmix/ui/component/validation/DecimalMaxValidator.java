@@ -21,15 +21,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
-import io.jmix.core.metamodel.datatype.Datatypes;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.number.NumberConstraint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Locale;
@@ -152,7 +151,7 @@ public class DecimalMaxValidator<T> extends AbstractValidator<T> {
             constraint = getNumberConstraint((Number) value);
         } else if (value instanceof String) {
             try {
-                Datatype datatype = Datatypes.getNN(BigDecimal.class);
+                Datatype datatype = datatypeRegistry.get(BigDecimal.class);
                 Locale locale = currentAuthentication.getLocale();
                 BigDecimal bigDecimal = (BigDecimal) datatype.parse((String) value, locale);
                 if (bigDecimal == null) {

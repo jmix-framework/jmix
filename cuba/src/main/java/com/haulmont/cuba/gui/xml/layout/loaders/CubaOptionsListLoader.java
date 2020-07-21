@@ -16,36 +16,58 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.components.OptionsList;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.xml.layout.loader.OptionsListLoader;
+import io.jmix.ui.xml.layout.loader.AbstractOptionsBaseLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class CubaOptionsListLoader extends OptionsListLoader {
+public class CubaOptionsListLoader extends AbstractOptionsBaseLoader<OptionsList> {
+
+    @Override
+    public void createComponent() {
+        resultComponent = factory.create(OptionsList.NAME);
+        loadId(resultComponent, element);
+    }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
         super.loadComponent();
 
+        String multiselect = element.attributeValue("multiselect");
+        if (StringUtils.isNotEmpty(multiselect)) {
+            resultComponent.setMultiSelect(Boolean.parseBoolean(multiselect));
+        }
+
+        String nullOptionVisible = element.attributeValue("nullOptionVisible");
+        if (StringUtils.isNotEmpty(nullOptionVisible)) {
+            resultComponent.setNullOptionVisible(Boolean.parseBoolean(nullOptionVisible));
+        }
+
+        loadCaptionProperty(resultComponent, element);
+        loadOptionsEnum(resultComponent, element);
+        loadTabIndex(resultComponent, element);
+
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.component.OptionsList component, Element element) {
+    protected void loadData(OptionsList component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper
-                .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
+                .loadDatasourceIfValueSourceNull(resultComponent, element, context,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setValueSource);
 
         DatasourceLoaderHelper
-                .loadOptionsDatasourceIfOptionsNull((OptionsField) resultComponent, element,
+                .loadOptionsDatasourceIfOptionsNull(resultComponent, element,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setOptions);
     }

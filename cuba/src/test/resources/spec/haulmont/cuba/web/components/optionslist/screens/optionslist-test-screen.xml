@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2008-2019 Haulmont.
+  ~ Copyright 2020 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,53 +14,43 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window">
-    <data>
-        <instance id="orderDc"
-                  class="com.haulmont.cuba.core.model.sales.Order">
-            <loader/>
-            <collection id="orderLinesDc" property="orderLines"/>
-        </instance>
-        <collection id="allOrderLinesDc"
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        class="spec.haulmont.cuba.web.components.optionslist.screens.OptionsListTestWindow">
+    <dsContext>
+        <datasource id="orderDs"
+                    class="com.haulmont.cuba.core.model.sales.Order">
+            <collectionDatasource id="orderLinesDs" property="orderLines"/>
+        </datasource>
+        <collectionDatasource id="allOrderLinesDs"
+                              class="com.haulmont.cuba.core.model.sales.OrderLine">
+        </collectionDatasource>
+
+        <datasource id="orderLineDs"
                     class="com.haulmont.cuba.core.model.sales.OrderLine">
-            <loader/>
-        </collection>
+            <datasource id="productDs" property="product"/>
+        </datasource>
+        <collectionDatasource id="allProductsDs"
+                              class="com.haulmont.cuba.core.model.sales.Product">
+        </collectionDatasource>
 
-        <instance id="orderLineDc"
-                  class="com.haulmont.cuba.core.model.sales.OrderLine">
-            <instance id="productDc" property="product"/>
-            <loader/>
-        </instance>
-        <collection id="allProductsDc"
-                    class="com.haulmont.cuba.core.model.sales.Product">
-            <loader/>
-        </collection>
-
-        <instance id="catalogDc"
-                  class="com.haulmont.cuba.core.model.sales.Catalog">
-            <loader/>
-        </instance>
-    </data>
+        <datasource id="catalogDs"
+                    class="com.haulmont.cuba.core.model.sales.Catalog">
+        </datasource>
+    </dsContext>
     <layout>
         <optionsList id="optionsList"
-                     dataContainer="orderDc" property="orderLines"
-                     optionsContainer="allOrderLinesDc"
-                     multiselect="true"/>
-
-        <optionsList id="requiredOptionsList"
-                     dataContainer="orderDc" property="orderLines"
-                     optionsContainer="allOrderLinesDc"
+                     datasource="orderDs" property="orderLines"
                      multiselect="true"
-                     required="true"/>
+                     optionsDatasource="allOrderLinesDs"/>
 
         <optionsList id="singleOptionsList"
-                     dataContainer="orderLineDc" property="product"
-                     optionsContainer="allProductsDc"
+                     datasource="orderLineDs" property="product"
+                     optionsDatasource="allProductsDs"
                      multiselect="false"/>
 
         <optionsList id="setOptionsList"
-                     dataContainer="catalogDc" property="products"
-                     optionsContainer="allProductsDc"
-                     multiselect="true"/>
+                     datasource="catalogDs" property="products"
+                     multiselect="true"
+                     optionsDatasource="allProductsDs"/>
     </layout>
 </window>

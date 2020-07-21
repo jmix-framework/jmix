@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package spec.haulmont.cuba.web.components.optionslist.screens;
+package spec.haulmont.cuba.web.components.selectlist.screens;
 
 import com.haulmont.cuba.core.model.sales.Catalog;
 import com.haulmont.cuba.core.model.sales.Order;
 import com.haulmont.cuba.core.model.sales.OrderLine;
 import com.haulmont.cuba.core.model.sales.Product;
-import com.haulmont.cuba.gui.components.OptionsList;
 import io.jmix.core.Metadata;
+import io.jmix.ui.component.MultiSelectList;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstancePropertyContainer;
@@ -32,13 +32,12 @@ import io.jmix.ui.screen.UiDescriptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @UiController
-@UiDescriptor("optionslist-test-screen.xml")
-public class OptionsListTestScreen extends Screen {
+@UiDescriptor("mutiselectlist-test-screen.xml")
+public class MultiSelectListTestScreen extends Screen {
 
     @Autowired
     private Metadata metadata;
@@ -61,13 +60,11 @@ public class OptionsListTestScreen extends Screen {
     public InstanceContainer<Catalog> catalogDc;
 
     @Autowired
-    public OptionsList<List<OrderLine>, OrderLine> optionsList;
+    public MultiSelectList<OrderLine> selectList;
     @Autowired
-    public OptionsList<List<OrderLine>, OrderLine> requiredOptionsList;
+    public MultiSelectList<OrderLine> requiredSelectList;
     @Autowired
-    public OptionsList<Product, Product> singleOptionsList;
-    @Autowired
-    public OptionsList<Set<Product>, Product> setOptionsList;
+    public MultiSelectList<Product> setSelectList;
 
     @Subscribe
     private void onInit(InitEvent event) {

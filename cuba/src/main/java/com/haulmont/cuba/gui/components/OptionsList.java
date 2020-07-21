@@ -16,15 +16,66 @@
 
 package com.haulmont.cuba.gui.components;
 
-import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.MultiSelectList;
+import io.jmix.ui.component.SingleSelectList;
+
+import java.util.EventObject;
+import java.util.function.Consumer;
 
 /**
- * Component compatible with {@link Datasource}.
+ * Simple list select component.
  *
  * @param <V> value type: single type or {@code Collection<I>}
  * @param <I> item type
- * @deprecated Use {@link io.jmix.ui.component.OptionsList} instead
+ * @deprecated Use {@link MultiSelectList} or {@link SingleSelectList} instead.
  */
 @Deprecated
-public interface OptionsList<V, I> extends OptionsField<V, I>, io.jmix.ui.component.OptionsList<V, I> {
+public interface OptionsList<V, I> extends OptionsField<V, I>, Component.Focusable {
+    String NAME = "optionsList";
+
+    boolean isMultiSelect();
+
+    void setMultiSelect(boolean multiselect);
+
+    /**
+     * Sets visibility for first null element in list.
+     */
+    void setNullOptionVisible(boolean nullOptionVisible);
+
+    /**
+     * @return true if first null element is visible.
+     */
+    boolean isNullOptionVisible();
+
+    /**
+     * Adds a listener that is fired when user double-clicks on a list item.
+     *
+     * @param listener a listener to add
+     */
+    Subscription addDoubleClickListener(Consumer<DoubleClickEvent<I>> listener);
+
+    /**
+     * The event sent when the user double-clicks mouse on a list item.
+     *
+     * @param <I> item type
+     */
+    class DoubleClickEvent<I> extends EventObject {
+        protected I item;
+
+        public DoubleClickEvent(OptionsList source, I item) {
+            super(source);
+            this.item = item;
+        }
+
+        @Override
+        public OptionsList getSource() {
+            return (OptionsList) super.getSource();
+        }
+
+        public I getItem() {
+            return item;
+        }
+    }
 }

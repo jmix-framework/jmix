@@ -33,7 +33,6 @@ import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Image;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.MaskedField;
-import io.jmix.ui.component.OptionsList;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.RadioButtonGroup;
 import io.jmix.ui.component.ResizableTextArea;
@@ -97,8 +96,8 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(LookupField.NAME, WebLookupField.class);
         classes.put(LookupPickerField.NAME, WebLookupPickerField.class);
         classes.put(OptionsGroup.NAME, WebOptionsGroup.class);
-        classes.put(OptionsList.NAME, WebOptionsList.class);
 
+        classes.put(OptionsList.NAME, WebOptionsList.class);
         classes.put(PickerField.NAME, WebPickerField.class);
         classes.put(SearchField.NAME, WebSearchField.class);
         classes.put(SearchPickerField.NAME, WebSearchPickerField.class);

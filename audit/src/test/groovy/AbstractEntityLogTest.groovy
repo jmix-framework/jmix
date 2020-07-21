@@ -3,7 +3,6 @@ import io.jmix.audit.EntityLog
 import io.jmix.audit.entity.EntityLogItem
 import io.jmix.audit.entity.LoggedAttribute
 import io.jmix.audit.entity.LoggedEntity
-import io.jmix.core.AppBeans
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.JmixEntity
 import io.jmix.core.MetadataTools
@@ -149,7 +148,6 @@ class AbstractEntityLogTest extends Specification {
     }
 
     protected void initEntityLogAPI() {
-        entityLog = AppBeans.get(EntityLog.class)
         entityLog.invalidateCache()
     }
 }

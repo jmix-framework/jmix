@@ -134,9 +134,9 @@
                                 <column id="eventTs" caption="msg://when">
                                     <dateFormatter format="msg:///dateTimeWithSeconds"/>
                                 </column>
-                                <column id="user" caption="msg://user"/>
+                                <column id="userLogin" caption="msg://user"/>
                                 <column id="type" caption="msg://changeType"/>
-                                <column id="displayedEntityName" caption="msg://entity"/>
+                                <column id="displayedEntityName" caption="msg://entity" type="string"/>
                                 <column id="entityId" caption="Id"/>
                                 <column id="entityInstanceName"/>
                             </columns>
@@ -147,10 +147,10 @@
                           spacing="true">
                         <table id="entityLogAttrTable" width="100%" height="100%" dataContainer="entityLogAttrDc">
                             <columns>
-                                <column id="displayName" caption="msg://attribute"/>
-                                <column id="displayValue" caption="msg://newValue"/>
+                                <column id="displayName" caption="msg://attribute" type="string"/>
+                                <column id="displayValue" caption="msg://newValue" type="string"/>
                                 <column id="valueId" caption="msg://newValueId"/>
-                                <column id="displayOldValue" caption="msg://oldValue"/>
+                                <column id="displayOldValue" caption="msg://oldValue" type="string"/>
                                 <column id="oldValueId" caption="msg://oldValueId"/>
                             </columns>
                         </table>

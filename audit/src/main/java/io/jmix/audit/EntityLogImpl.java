@@ -171,7 +171,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
             List<EntityLogItem> sameEntityList = items.stream()
                     .filter(entityLogItem -> entityLogItem.getDbGeneratedIdEntity() != null ?
                             entityLogItem.getDbGeneratedIdEntity().equals(item.getDbGeneratedIdEntity()) :
-                            entityLogItem.getObjectEntityId().equals(item.getObjectEntityId()))
+                            entityLogItem.getEntityRef().getObjectEntityId().equals(item.getEntityRef().getObjectEntityId()))
                     .collect(Collectors.toList());
             EntityLogItem itemToSave = sameEntityList.get(0);
             if (!saved.contains(itemToSave)) {
@@ -292,7 +292,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
                 @Override
                 public void afterCommit() {
                     Object id = EntityValues.getId(item.getDbGeneratedIdEntity());
-                    item.setObjectEntityId(id);
+                    item.getEntityRef().setObjectEntityId(id);
                     transaction.executeWithoutResult(status -> {
                         entityManager.persist(item);
                     });
@@ -630,7 +630,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
             item.setType(type);
             item.setEntity(extendedEntities.getOriginalOrThisMetaClass(metaClass).getName());
             item.setEntityInstanceName(metadataTools.getInstanceName(entity));
-            item.setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
+            item.getEntityRef().setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
             item.setAttributes(entityLogAttrs);
         }
 
@@ -783,7 +783,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         if (metadataTools.hasDbGeneratedPrimaryKey(metadata.getClass(entity)) && EntityLogItem.Type.CREATE.equals(type)) {
             item.setDbGeneratedIdEntity(entity);
         } else {
-            item.setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
+            item.getEntityRef().setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
         }
         item.setAttributes(createLogAttributes(entity, attributes, null));
         return item;

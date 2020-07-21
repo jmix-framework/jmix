@@ -16,17 +16,13 @@
 
 package io.jmix.audit.entity;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.ExtendedEntities;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 import org.springframework.data.annotation.CreatedBy;
@@ -118,8 +114,7 @@ public class EntityLogItem extends BaseUuidEntity {
     private String changes;
 
     @PostConstruct
-    public void init() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
+    public void init(Metadata metadata) {
         entityRef = metadata.create(ReferenceToEntity.class);
     }
 
@@ -149,19 +144,6 @@ public class EntityLogItem extends BaseUuidEntity {
 
     public void setEntity(String entity) {
         this.entity = entity;
-    }
-
-    @ModelProperty
-    public String getDisplayedEntityName() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
-        MessageTools messageTools = AppBeans.get(MessageTools.NAME);
-        MetaClass metaClass = metadata.getSession().getClass(entity);
-        if (metaClass != null) {
-            metaClass = extendedEntities.getEffectiveMetaClass(metaClass);
-            return messageTools.getEntityCaption(metaClass);
-        }
-        return entity;
     }
 
     public Date getEventTs() {
@@ -226,16 +208,5 @@ public class EntityLogItem extends BaseUuidEntity {
 
     public void setEntityInstanceName(String entityInstanceName) {
         this.entityInstanceName = entityInstanceName;
-    }
-
-    public void setObjectEntityId(Object entity) {
-        if (entityRef == null) {
-            entityRef = AppBeans.get(Metadata.class).create(ReferenceToEntity.class);
-        }
-        entityRef.setObjectEntityId(entity);
-    }
-
-    public Object getObjectEntityId() {
-        return entityRef == null ? null : entityRef.getObjectEntityId();
     }
 }

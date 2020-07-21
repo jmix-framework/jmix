@@ -16,16 +16,10 @@
 
 package io.jmix.audit.entity;
 
-import com.google.common.base.Strings;
-import io.jmix.core.*;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.data.entity.BaseUuidEntity;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 
 /**
  * Record containing changed entity attribute.
@@ -94,60 +88,6 @@ public class EntityLogAttr extends BaseUuidEntity {
         this.oldValue = oldValue;
     }
 
-    @ModelProperty
-    public String getDisplayValue() {
-        return getDisplayValue(getValue());
-    }
-
-    @ModelProperty
-    public String getDisplayOldValue() {
-        return getDisplayValue(getOldValue());
-    }
-
-    protected String getDisplayValue(String value) {
-        if (StringUtils.isEmpty(value)) {
-            return value;
-        }
-        final String entityName = getLogItem().getEntity();
-        io.jmix.core.metamodel.model.MetaClass metaClass = getClassFromEntityName(entityName);
-        if (metaClass != null) {
-            io.jmix.core.metamodel.model.MetaProperty property = metaClass.getProperty(getName());
-            if (property != null) {
-                if (property.getRange().isDatatype()) {
-                    return value;
-                } else if (property.getRange().isEnum() && EnumClass.class.isAssignableFrom(property.getJavaType())) {
-                    Messages messages = AppBeans.get(Messages.NAME);
-                    Enum en = getEnumById(property.getRange().asEnumeration().getValues(), value);
-                    if (en != null) {
-                        return messages.getMessage(en);
-                    } else {
-                        String nameKey = property.getRange().asEnumeration().getJavaClass().getSimpleName() + "." + value;
-                        String packageName = property.getRange().asEnumeration().getJavaClass().getPackage().getName();
-                        return messages.getMessage(packageName, nameKey);
-                    }
-                } else {
-                    return value;
-                }
-            } else {
-                return value;
-            }
-        } else {
-            return value;
-        }
-    }
-
-    protected Enum getEnumById(List<Enum> enums, String id) {
-        for (Enum e : enums) {
-            if (e instanceof EnumClass) {
-                Object enumId = ((EnumClass) e).getId();
-                if (id.equals(String.valueOf(enumId))) {
-                    return e;
-                }
-            }
-        }
-        return null;
-    }
-
     public String getValueId() {
         return valueId;
     }
@@ -170,61 +110,5 @@ public class EntityLogAttr extends BaseUuidEntity {
 
     public void setMessagesPack(String messagesPack) {
         this.messagesPack = messagesPack;
-    }
-
-    @ModelProperty
-    public String getDisplayName() {
-        String entityName = getLogItem().getEntity();
-        String message;
-        io.jmix.core.metamodel.model.MetaClass metaClass = getClassFromEntityName(entityName);
-        if (metaClass != null) {
-            MessageTools messageTools = AppBeans.get(MessageTools.NAME);
-            message = messageTools.getPropertyCaption(metaClass, getName());
-        } else {
-            return getName();
-        }
-        return (message != null ? message : getName());
-    }
-
-    private io.jmix.core.metamodel.model.MetaClass getClassFromEntityName(String entityName) {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
-        io.jmix.core.metamodel.model.MetaClass metaClass = metadata.getSession().getClass(entityName);
-        return metaClass == null ? null : extendedEntities.getEffectiveMetaClass(metaClass);
-    }
-
-    @ModelProperty
-    public String getLocValue() {
-        return getLocValue(value);
-    }
-
-    @ModelProperty
-    public String getLocOldValue() {
-        return getLocValue(oldValue);
-    }
-
-    public String getLocValue(String value) {
-        if (Strings.isNullOrEmpty(value)) return value;
-
-        String entityName = getLogItem().getEntity();
-        io.jmix.core.metamodel.model.MetaClass metaClass = getClassFromEntityName(entityName);
-        if (metaClass != null) {
-            io.jmix.core.metamodel.model.MetaProperty property = metaClass.getProperty(name);
-            if (property != null && property.getRange().isEnum()) {
-                try {
-                    Enum caller = Enum.valueOf((Class<Enum>) property.getJavaType(), value);
-                    Messages messages = AppBeans.get(Messages.NAME);
-                    return messages.getMessage(caller);
-                } catch (IllegalArgumentException ignored) {
-                }
-            }
-        }
-
-        if (!StringUtils.isBlank(messagesPack)) {
-            Messages messages = AppBeans.get(Messages.NAME);
-            return messages.getMessage(messagesPack, value);
-        } else {
-            return value;
-        }
     }
 }

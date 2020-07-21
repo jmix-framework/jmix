@@ -24,6 +24,7 @@ import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.HasUuid;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -37,9 +38,11 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.LookupComponent;
 import io.jmix.ui.screen.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,6 +126,8 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     protected CheckBox selectAllCheckBox;
     @Autowired
     protected UserRepository userRepository;
+    @Autowired
+    protected MessageTools messageTools;
 
     protected TreeMap<String, String> entityMetaClassesMap;
 
@@ -196,11 +201,96 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         });
 
         entityLogTable.addGeneratedColumn("entityId", entity -> {
-            if (entity.getObjectEntityId() != null) {
-                return new Table.PlainTextCell(entity.getObjectEntityId().toString());
+            if (entity.getEntityRef().getObjectEntityId() != null) {
+                return new Table.PlainTextCell(entity.getEntityRef().getObjectEntityId().toString());
             }
             return null;
         }, Table.PlainTextCell.class);
+    }
+
+    @Install(to = "entityLogTable.displayedEntityName", subject = "valueProvider")
+    protected String entityLogTableDisplayedEntityNameValueProvider(EntityLogItem entityLogItem) {
+        return evaluateEntityLogItemDisplayedEntityName(entityLogItem);
+    }
+
+    protected String evaluateEntityLogItemDisplayedEntityName(EntityLogItem entityLogItem) {
+        String entityName = entityLogItem.getEntity();
+        MetaClass metaClass = getClassFromEntityName(entityName);
+        if (metaClass != null) {
+            return messageTools.getEntityCaption(metaClass);
+        } else {
+            return entityName;
+        }
+    }
+
+    @Install(to = "entityLogAttrTable.displayName", subject = "valueProvider")
+    protected String entityLogAttrTableDisplayNameValueProvider(EntityLogAttr entityLogAttr) {
+        String entityName = entityLogAttr.getLogItem().getEntity();
+        MetaClass metaClass = getClassFromEntityName(entityName);
+        if (metaClass != null) {
+            return messageTools.getPropertyCaption(metaClass, entityLogAttr.getName());
+        } else {
+            return entityLogAttr.getName();
+        }
+    }
+
+    @Install(to = "entityLogAttrTable.displayValue", subject = "valueProvider")
+    protected String entityLogAttrTableDisplayValueValueProvider(EntityLogAttr entityLogAttr) {
+        return evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getValue());
+    }
+
+    @Install(to = "entityLogAttrTable.displayOldValue", subject = "valueProvider")
+    protected String entityLogAttrTableDisplayOldValueValueProvider(EntityLogAttr entityLogAttr) {
+        return evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getOldValue());
+    }
+
+    protected String evaluateEntityLogItemAttrDisplayValue(EntityLogAttr entityLogAttr, String value) {
+        if (StringUtils.isEmpty(value)) {
+            return value;
+        }
+        final String entityName = entityLogAttr.getLogItem().getEntity();
+        MetaClass metaClass = getClassFromEntityName(entityName);
+        if (metaClass != null) {
+            MetaProperty property = metaClass.findProperty(entityLogAttr.getName());
+            if (property != null) {
+                if (property.getRange().isDatatype()) {
+                    return value;
+                } else if (property.getRange().isEnum() && EnumClass.class.isAssignableFrom(property.getJavaType())) {
+                    Enum en = getEnumById(property.getRange().asEnumeration().getValues(), value);
+                    if (en != null) {
+                        return messages.getMessage(en);
+                    } else {
+                        String nameKey = property.getRange().asEnumeration().getJavaClass().getSimpleName() + "." + value;
+                        String packageName = property.getRange().asEnumeration().getJavaClass().getPackage().getName();
+                        return messages.getMessage(packageName, nameKey);
+                    }
+                } else {
+                    return value;
+                }
+            } else {
+                return value;
+            }
+        } else {
+            return value;
+        }
+    }
+
+    @Nullable
+    protected MetaClass getClassFromEntityName(String entityName) {
+        MetaClass metaClass = metadata.findClass(entityName);
+        return metaClass == null ? null : extendedEntities.getEffectiveMetaClass(metaClass);
+    }
+
+    protected Enum getEnumById(List<Enum> enums, String id) {
+        for (Enum e : enums) {
+            if (e instanceof EnumClass) {
+                Object enumId = ((EnumClass) e).getId();
+                if (id.equals(String.valueOf(enumId))) {
+                    return e;
+                }
+            }
+        }
+        return null;
     }
 
     @Subscribe("instancePicker.lookup")

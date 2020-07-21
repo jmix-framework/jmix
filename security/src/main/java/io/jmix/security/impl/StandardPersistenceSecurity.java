@@ -35,9 +35,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -76,9 +76,12 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
     @Autowired
     protected MetadataTools metadataTools;
 
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
+
     @Override
     public boolean applyConstraints(JmixQuery query) {
-        QueryParser parser = QueryTransformerFactory.createParser(query.getQueryString());
+        QueryParser parser = queryTransformerFactory.parser(query.getQueryString());
         String entityName = parser.getEntityName();
 
         List<ConstraintData> constraints = ((StandardSecurity) security).getConstraints(metadata.getClass(entityName),
@@ -90,7 +93,7 @@ public class StandardPersistenceSecurity implements PersistenceSecurity {
         if (constraints.isEmpty())
             return false;
 
-        QueryTransformer transformer = QueryTransformerFactory.createTransformer(query.getQueryString());
+        QueryTransformer transformer = queryTransformerFactory.transformer(query.getQueryString());
 
         for (ConstraintData constraint : constraints) {
             processConstraint(transformer, constraint, entityName);

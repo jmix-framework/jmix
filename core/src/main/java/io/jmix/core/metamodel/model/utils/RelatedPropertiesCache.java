@@ -16,12 +16,12 @@
 
 package io.jmix.core.metamodel.model.utils;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
+import com.google.common.base.Splitter;
+import io.jmix.core.metamodel.annotation.ModelProperty;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,40 +36,26 @@ public class RelatedPropertiesCache {
 
     protected RelatedPropertiesCache(Class clazz) {
         Objects.requireNonNull(clazz, "class is null");
-
-        MetaClass metaClass = AppBeans.get(Metadata.class).getClass(clazz);
-        for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (metaProperty.isReadOnly() && isNotPersistent(metaProperty)) {
-
-                for (String property : getRelatedProperties(metaProperty)) {
-                    Set<String> set = propertiesMap.computeIfAbsent(property, k -> new HashSet<>());
-                    set.add(metaProperty.getName());
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(ModelProperty.class)) {
+                String propertyName = StringUtils.uncapitalize(method.getName().substring(3));
+                String[] related = method.getAnnotation(ModelProperty.class).related();
+                List<String> relatedPropertyNames;
+                if (related.length == 1) {
+                    relatedPropertyNames = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(related[0]);
+                } else {
+                    relatedPropertyNames = Arrays.asList(related);
                 }
-
+                for (String relatedPropertyName : relatedPropertyNames) {
+                    Set<String> set = propertiesMap.computeIfAbsent(relatedPropertyName, k -> new HashSet<>());
+                    set.add(propertyName);
+                }
             }
-
         }
     }
 
     @Nullable
     public Set<String> getRelatedReadOnlyProperties(String propertyName) {
         return propertiesMap.get(propertyName);
-    }
-
-    private boolean isNotPersistent(MetaProperty metaProperty) {
-        return !isPersistent(metaProperty);
-    }
-
-    private boolean isPersistent(MetaProperty metaProperty) {
-        return metaProperty.getStore().getDescriptor().isPersistent();
-    }
-
-    private List<String> getRelatedProperties(MetaProperty metaProperty) {
-        String relatedProperties = (String) metaProperty.getAnnotations().get("relatedProperties");
-        List<String> result = Collections.emptyList();
-        if (relatedProperties != null) {
-            result = Arrays.asList(relatedProperties.split(","));
-        }
-        return result;
     }
 }

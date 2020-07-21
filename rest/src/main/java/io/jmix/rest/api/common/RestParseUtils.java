@@ -20,16 +20,16 @@ import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.EntitySerialization;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -51,6 +51,9 @@ public class RestParseUtils {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
 
     public Object toObject(Type type, String value, @Nullable String modelVersion) throws ParseException {
         if (value == null) return null;
@@ -76,23 +79,23 @@ public class RestParseUtils {
         if (String.class == clazz) return value;
         if (Integer.class == clazz || Integer.TYPE == clazz
                 || Byte.class == clazz || Byte.TYPE == clazz
-                || Short.class == clazz || Short.TYPE == clazz) return Datatypes.getNN(Integer.class).parse(value);
+                || Short.class == clazz || Short.TYPE == clazz) return datatypeRegistry.get(Integer.class).parse(value);
         if (Date.class == clazz) {
             try {
-                return Datatypes.getNN(Date.class).parse(value);
+                return datatypeRegistry.get(Date.class).parse(value);
             } catch (ParseException e) {
                 try {
-                    return Datatypes.getNN(java.sql.Date.class).parse(value);
+                    return datatypeRegistry.get(java.sql.Date.class).parse(value);
                 } catch (ParseException e1) {
-                    return Datatypes.getNN(Time.class).parse(value);
+                    return datatypeRegistry.get(Time.class).parse(value);
                 }
             }
         }
-        if (BigDecimal.class == clazz) return Datatypes.getNN(BigDecimal.class).parse(value);
-        if (Boolean.class == clazz || Boolean.TYPE == clazz) return Datatypes.getNN(Boolean.class).parse(value);
-        if (Long.class == clazz || Long.TYPE == clazz) return Datatypes.getNN(Long.class).parse(value);
+        if (BigDecimal.class == clazz) return datatypeRegistry.get(BigDecimal.class).parse(value);
+        if (Boolean.class == clazz || Boolean.TYPE == clazz) return datatypeRegistry.get(Boolean.class).parse(value);
+        if (Long.class == clazz || Long.TYPE == clazz) return datatypeRegistry.get(Long.class).parse(value);
         if (Double.class == clazz || Double.TYPE == clazz
-                || Float.class == clazz || Float.TYPE == clazz) return Datatypes.getNN(Double.class).parse(value);
+                || Float.class == clazz || Float.TYPE == clazz) return datatypeRegistry.get(Double.class).parse(value);
         if (UUID.class == clazz) return UUID.fromString(value);
         if (JmixEntity.class.isAssignableFrom(clazz)) {
             return entitySerializationAPI.entityFromJson(value, metadata.getClass(clazz));

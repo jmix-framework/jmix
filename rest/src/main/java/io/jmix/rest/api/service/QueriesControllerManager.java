@@ -21,7 +21,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.jmix.core.*;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
@@ -33,12 +33,12 @@ import io.jmix.rest.api.config.RestQueriesConfiguration;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;
@@ -64,6 +64,9 @@ public class QueriesControllerManager {
 
     @Autowired
     protected RestControllerUtils restControllerUtils;
+
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
 
 //    @Autowired
 //    protected PersistenceManagerClient persistenceManagerClient;
@@ -260,23 +263,23 @@ public class QueriesControllerManager {
         if (String.class == clazz) return value;
         if (Integer.class == clazz || Integer.TYPE == clazz
                 || Byte.class == clazz || Byte.TYPE == clazz
-                || Short.class == clazz || Short.TYPE == clazz) return Datatypes.getNN(Integer.class).parse(value);
+                || Short.class == clazz || Short.TYPE == clazz) return datatypeRegistry.get(Integer.class).parse(value);
         if (Date.class == clazz) {
             try {
-                return Datatypes.getNN(Date.class).parse(value);
+                return datatypeRegistry.get(Date.class).parse(value);
             } catch (ParseException e) {
                 try {
-                    return Datatypes.getNN(java.sql.Date.class).parse(value);
+                    return datatypeRegistry.get(java.sql.Date.class).parse(value);
                 } catch (ParseException e1) {
-                    return Datatypes.getNN(Time.class).parse(value);
+                    return datatypeRegistry.get(Time.class).parse(value);
                 }
             }
         }
-        if (BigDecimal.class == clazz) return Datatypes.getNN(BigDecimal.class).parse(value);
-        if (Boolean.class == clazz || Boolean.TYPE == clazz) return Datatypes.getNN(Boolean.class).parse(value);
-        if (Long.class == clazz || Long.TYPE == clazz) return Datatypes.getNN(Long.class).parse(value);
+        if (BigDecimal.class == clazz) return datatypeRegistry.get(BigDecimal.class).parse(value);
+        if (Boolean.class == clazz || Boolean.TYPE == clazz) return datatypeRegistry.get(Boolean.class).parse(value);
+        if (Long.class == clazz || Long.TYPE == clazz) return datatypeRegistry.get(Long.class).parse(value);
         if (Double.class == clazz || Double.TYPE == clazz
-                || Float.class == clazz || Float.TYPE == clazz) return Datatypes.getNN(Double.class).parse(value);
+                || Float.class == clazz || Float.TYPE == clazz) return datatypeRegistry.get(Double.class).parse(value);
         if (UUID.class == clazz) return UUID.fromString(value);
         throw new IllegalArgumentException("Parameters of type " + clazz.getName() + " are not supported");
     }

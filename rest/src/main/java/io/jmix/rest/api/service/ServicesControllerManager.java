@@ -16,9 +16,12 @@
 
 package io.jmix.rest.api.service;
 
-import io.jmix.core.*;
+import io.jmix.core.EntitySerialization;
+import io.jmix.core.EntitySerializationOption;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.common.RestParseUtils;
@@ -28,11 +31,12 @@ import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -65,6 +69,12 @@ public class ServicesControllerManager {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected BeanFactory beanFactory;
+
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
 
     private static final Logger log = LoggerFactory.getLogger(ServicesControllerManager.class);
 
@@ -110,7 +120,7 @@ public class ServicesControllerManager {
                                                      List<String> paramNames,
                                                      List<String> paramValuesStr,
                                                      String modelVersion) throws Throwable {
-        Object service = AppBeans.get(serviceName);
+        Object service = beanFactory.getBean(serviceName);
         RestServicesConfiguration.RestMethodInfo restMethodInfo = restServicesConfiguration.getRestMethodInfo(serviceName, methodName, paramNames);
         if (restMethodInfo == null) {
             throw new RestAPIException("Service method not found",
@@ -178,7 +188,7 @@ public class ServicesControllerManager {
                 return new ServiceCallResult(restParseUtils.serialize(methodResult), true);
             }
         } else {
-            Datatype<?> datatype = Datatypes.get(methodReturnType);
+            Datatype<?> datatype = datatypeRegistry.find(methodReturnType);
             if (datatype != null) {
                 return new ServiceCallResult(datatype.format(methodResult), false);
             } else {

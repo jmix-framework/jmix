@@ -17,7 +17,6 @@
 package io.jmix.rest.api.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -27,13 +26,14 @@ import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -71,6 +71,9 @@ public class RestServicesConfiguration {
 
     @Autowired
     protected Environment environment;
+
+    @Autowired
+    protected BeanFactory beanFactory;
 
     /**
      * @deprecated the method will be removed in one of next releases. Use {@link #getRestMethodInfo(String, String,
@@ -164,11 +167,10 @@ public class RestServicesConfiguration {
     protected void loadConfig(Element rootElem) {
         for (Element serviceElem : Dom4j.elements(rootElem, "service")) {
             String serviceName = serviceElem.attributeValue("name");
-            if (!AppBeans.containsBean(serviceName)) {
+            if (!beanFactory.containsBean(serviceName)) {
                 log.error("Service not found: {}", serviceName);
                 continue;
             }
-            Object service = AppBeans.get(serviceName);
             List<RestMethodInfo> methodInfos = new ArrayList<>();
 
             for (Element methodElem : Dom4j.elements(serviceElem, "method")) {
@@ -212,7 +214,7 @@ public class RestServicesConfiguration {
             return null;
         }
 
-        Object service = AppBeans.get(serviceName);
+        Object service = beanFactory.getBean(serviceName);
         Method serviceMethod = null;
         //the service object we get here is proxy. To get methods with type information
         //we need tp know actual interfaces implemented by the service (this is required when parameterized

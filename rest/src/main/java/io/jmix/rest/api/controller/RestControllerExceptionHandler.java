@@ -19,7 +19,7 @@ package io.jmix.rest.api.controller;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.Datatypes;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.CurrentAuthentication;
@@ -33,13 +33,13 @@ import io.jmix.rest.api.exception.RestAPIException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -61,6 +61,9 @@ public class RestControllerExceptionHandler {
 
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
 
     @ExceptionHandler(RestAPIException.class)
     @ResponseBody
@@ -201,7 +204,7 @@ public class RestControllerExceptionHandler {
         String propertyPath = violation.getPropertyPath().toString();
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, propertyPath);
         return metaPropertyPath == null
-                ? Datatypes.get(Date.class)
+                ? datatypeRegistry.find(Date.class)
                 : metaPropertyPath.getRange().asDatatype();
     }
 }

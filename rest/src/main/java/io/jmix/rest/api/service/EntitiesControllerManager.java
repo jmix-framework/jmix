@@ -23,7 +23,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
-import io.jmix.core.impl.importexport.EntityImportViewBuilder;
+import io.jmix.core.impl.importexport.EntityImportViewJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
@@ -68,7 +68,7 @@ public class EntitiesControllerManager {
     protected EntitySerialization entitySerialization;
 
     @Autowired
-    protected EntityImportViewBuilder entityImportViewBuilder;
+    protected EntityImportViewJsonBuilder entityImportViewJsonBuilder;
 
     @Autowired
     protected EntityImportExport entityImportExport;
@@ -157,7 +157,7 @@ public class EntitiesControllerManager {
 
         Long count = null;
         if (BooleanUtils.isTrue(returnCount)) {
-            LoadContext ctx = new LoadContext(metaClass.getJavaClass())
+            LoadContext ctx = new LoadContext(metadata.getClass(metaClass.getJavaClass()))
                     .setQuery(new LoadContext.Query(queryString));
             count = dataManager.getCount(ctx);
         }
@@ -203,7 +203,7 @@ public class EntitiesControllerManager {
                 dynamicAttributes, modelVersion, metaClass, queryParameters);
         Long count = null;
         if (BooleanUtils.isTrue(returnCount)) {
-            LoadContext ctx = new LoadContext(metaClass.getJavaClass())
+            LoadContext ctx = new LoadContext(metadata.getClass(metaClass.getJavaClass()))
                     .setQuery(new LoadContext.Query(queryString).setParameters(queryParameters));
             count = dataManager.getCount(ctx);
         }
@@ -432,7 +432,7 @@ public class EntitiesControllerManager {
             throw new RestAPIException("Cannot deserialize an entity from JSON", "", HttpStatus.BAD_REQUEST, e);
         }
 
-        EntityImportView entityImportView = entityImportViewBuilder.buildFromJson(entityJson, metaClass);
+        EntityImportView entityImportView = entityImportViewJsonBuilder.buildFromJson(entityJson, metaClass);
 
         Collection<JmixEntity> importedEntities;
         try {
@@ -522,7 +522,7 @@ public class EntitiesControllerManager {
         //noinspection unchecked
         EntityValues.setId(entity, id);
 
-        EntityImportView entityImportView = entityImportViewBuilder.buildFromJson(entityJson, metaClass);
+        EntityImportView entityImportView = entityImportViewJsonBuilder.buildFromJson(entityJson, metaClass);
         Collection<JmixEntity> importedEntities;
         try {
             importedEntities = entityImportExport.importEntities(Collections.singletonList(entity),

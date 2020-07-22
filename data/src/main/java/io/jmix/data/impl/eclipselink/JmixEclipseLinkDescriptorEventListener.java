@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl.eclipselink;
 
+import io.jmix.core.EntityStates;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.BaseUser;
@@ -64,6 +65,8 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     protected PersistenceSupport persistenceSupport;
     @Autowired
     protected PersistenceTools persistenceTools;
+    @Autowired
+    protected EntityStates entityStates;
 
     protected boolean justDeleted(SoftDelete entity) {
         return entity.isDeleted() && persistenceTools.getDirtyFields((JmixEntity) entity).contains("deleteTs");
@@ -95,7 +98,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
             FetchGroup fetchGroup = entity._persistence_getFetchGroup();
             if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
-                entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup));
+                entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
         }
     }
 
@@ -110,7 +113,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
             FetchGroup fetchGroup = entity._persistence_getFetchGroup();
             if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
-                entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup));
+                entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
         }
 
         if (event.getObject() instanceof JmixEntity)
@@ -141,7 +144,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
             FetchGroup fetchGroup = entity._persistence_getFetchGroup();
             if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
-                entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup));
+                entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
         }
     }
 

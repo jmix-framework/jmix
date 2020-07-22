@@ -16,7 +16,10 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.EntityEntry;
+import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
 import org.eclipse.persistence.core.queries.CoreAttributeGroup;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.FetchGroupManager;
@@ -37,14 +40,18 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
 
     protected FetchGroup wrappedFetchGroup;
 
+    protected transient EntityStates entityStates;
+
     protected static ThreadLocal<Boolean> accessLocalUnfetched = new ThreadLocal<>();
 
-    public JmixEntityFetchGroup(FetchGroup fetchGroup) {
-        wrappedFetchGroup = fetchGroup;
+    public JmixEntityFetchGroup(FetchGroup fetchGroup, EntityStates entityStates) {
+        this.wrappedFetchGroup = fetchGroup;
+        this.entityStates = entityStates;
     }
 
-    public JmixEntityFetchGroup(Collection<String> attributeNames) {
+    public JmixEntityFetchGroup(Collection<String> attributeNames, EntityStates entityStates) {
         wrappedFetchGroup = new EntityFetchGroup(attributeNames);
+        this.entityStates = entityStates;
     }
 
     public static void setAccessLocalUnfetched(boolean value) {
@@ -71,9 +78,10 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     }
 
     protected boolean cannotAccessUnfetched(FetchGroupTracker entity) {
-        return Boolean.FALSE.equals(accessLocalUnfetched.get())
-                && entity instanceof JmixEntity
-                && !AppBeans.get(EntityStates.class).isLoadedWithFetchPlan((JmixEntity) entity, FetchPlan.LOCAL);
+        if (Boolean.FALSE.equals(accessLocalUnfetched.get()) && entity instanceof JmixEntity) {
+            return entityStates != null && !entityStates.isLoadedWithFetchPlan((JmixEntity) entity, FetchPlan.LOCAL);
+        }
+        return false;
     }
 
     @Override
@@ -139,12 +147,12 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
 
     @Override
     public FetchGroup clone() {
-        return new JmixEntityFetchGroup(wrappedFetchGroup.clone());
+        return new JmixEntityFetchGroup(wrappedFetchGroup.clone(), entityStates);
     }
 
     @Override
     public CoreAttributeGroup cloneWithSameAttributes(Map<CoreAttributeGroup<AttributeItem, ClassDescriptor>, CoreAttributeGroup<AttributeItem, ClassDescriptor>> cloneMap) {
-        return new JmixEntityFetchGroup(wrappedFetchGroup.cloneWithSameAttributes());
+        return new JmixEntityFetchGroup(wrappedFetchGroup.cloneWithSameAttributes(), entityStates);
     }
 
     @Override

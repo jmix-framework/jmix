@@ -77,7 +77,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
                 .map(MetadataObject::getName)
                 .collect(Collectors.toSet());
 
-        return new JmixEntityFetchGroup(new EntityFetchGroup(attributes));
+        return new JmixEntityFetchGroup(new EntityFetchGroup(attributes), entityStates);
     }
 
     protected FetchGroup mergeFetchGroups(@Nullable FetchGroup first, @Nullable FetchGroup second) {
@@ -86,7 +86,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
             attributes.addAll(getFetchGroupAttributes(first));
         if (second != null)
             attributes.addAll(getFetchGroupAttributes(second));
-        return new JmixEntityFetchGroup(new EntityFetchGroup(attributes));
+        return new JmixEntityFetchGroup(new EntityFetchGroup(attributes), entityStates);
     }
 
     protected Collection<String> getFetchGroupAttributes(FetchGroup fetchGroup) {

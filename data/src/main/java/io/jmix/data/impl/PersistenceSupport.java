@@ -18,6 +18,7 @@ package io.jmix.data.impl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import io.jmix.core.EntityStates;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
@@ -86,6 +87,9 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     @Autowired
     protected EntityChangedEventManager entityChangedEventManager;
+
+    @Autowired
+    protected EntityStates entityStates;
 
     @Autowired(required = false)
     protected List<OrmLifecycleListener> lifecycleListeners = new ArrayList<>();
@@ -452,7 +456,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                         FetchGroupTracker fetchGroupTracker = (FetchGroupTracker) entity;
                         FetchGroup fetchGroup = fetchGroupTracker._persistence_getFetchGroup();
                         if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
-                            fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup));
+                            fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
                     }
                     if (entity.__getEntityEntry().isNew()) {
                         typeNames.add(metadata.getClass(entity).getName());

@@ -41,7 +41,7 @@ class EntityFetcherTest extends DataSpec {
         // setup the entity like it is stored in a custom datastore and linked as transient property
         def npCustomer = new Customer(status: Status.OK)
         entityStates.makeDetached(npCustomer)
-        ((FetchGroupTracker) npCustomer)._persistence_setFetchGroup(new JmixEntityFetchGroup(['status']))
+        ((FetchGroupTracker) npCustomer)._persistence_setFetchGroup(new JmixEntityFetchGroup(['status'] , entityStates))
 
         def entity = new TestEntityWithNonPersistentRef(
                 name: 'c',

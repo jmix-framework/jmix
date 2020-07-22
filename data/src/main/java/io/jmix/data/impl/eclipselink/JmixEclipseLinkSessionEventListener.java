@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.data.impl.eclipselink;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
@@ -26,13 +26,14 @@ import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.data.impl.DescriptorEventManagerWrapper;
+import io.jmix.data.impl.UuidConverter;
 import io.jmix.data.persistence.EntityNotEnhancedException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.annotations.CacheCoordinationType;
 import org.eclipse.persistence.config.CacheIsolationType;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
-import org.eclipse.persistence.descriptors.DescriptorEventListener;
 import org.eclipse.persistence.descriptors.InheritancePolicy;
 import org.eclipse.persistence.expressions.ExpressionBuilder;
 import org.eclipse.persistence.internal.descriptors.PersistenceObject;
@@ -46,7 +47,10 @@ import org.eclipse.persistence.sessions.SessionEvent;
 import org.eclipse.persistence.sessions.SessionEventAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.OneToOne;
 import java.sql.Types;
@@ -55,19 +59,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class EclipseLinkSessionEventListener extends SessionEventAdapter {
+@Component(JmixEclipseLinkSessionEventListener.NAME)
+public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
+    public static final String NAME = "data_JmixEclipseLinkSessionEventListener";
 
-    private Environment environment = AppBeans.get(Environment.class);
+    @Autowired
+    private Environment environment;
+    @Autowired
+    private Metadata metadata;
+    @Autowired
+    private MetadataTools metadataTools;
+    @Autowired
+    private EntityStates entityStates;
+    @Autowired
+    private BeanFactory beanFactory;
 
-    private Metadata metadata = AppBeans.get(Metadata.NAME);
-
-    private MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-
-    private EntityStates entityStates = AppBeans.get(EntityStates.NAME);
-
-    private DescriptorEventListener descriptorEventListener = AppBeans.get(EclipseLinkDescriptorEventListener.NAME);
-
-    private static final Logger log = LoggerFactory.getLogger(EclipseLinkSessionEventListener.class);
+    private static final Logger log = LoggerFactory.getLogger(JmixEclipseLinkSessionEventListener.class);
 
     @Override
     public void preLogin(SessionEvent event) {
@@ -95,7 +102,7 @@ public class EclipseLinkSessionEventListener extends SessionEventAdapter {
             if (JmixEntity.class.isAssignableFrom(desc.getJavaClass())) {
                 // set DescriptorEventManager that doesn't invoke listeners for base classes
                 desc.setEventManager(new DescriptorEventManagerWrapper(desc.getDescriptorEventManager()));
-                desc.getEventManager().addListener(descriptorEventListener);
+                desc.getEventManager().addListener(beanFactory.getBean(JmixEclipseLinkDescriptorEventListener.class));
             }
 
             if (SoftDelete.class.isAssignableFrom(desc.getJavaClass())) {

@@ -14,30 +14,36 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.entitycache;
+package io.jmix.data.impl.eclipselink;
 
-import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.AppBeans;
 import org.eclipse.persistence.exceptions.RemoteCommandManagerException;
 import org.eclipse.persistence.internal.sessions.coordination.RemoteConnection;
 import org.eclipse.persistence.sessions.coordination.RemoteCommandManager;
 import org.eclipse.persistence.sessions.coordination.broadcast.BroadcastTransportManager;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-public class EntityCacheTransportManager extends BroadcastTransportManager {
 
-    public EntityCacheTransportManager() {
-    }
+@Component(JmixEclipseLinkTransportManager.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class JmixEclipseLinkTransportManager extends BroadcastTransportManager {
+    public static final String NAME = "data_JmixEclipseLinkTransportManager";
 
-    public EntityCacheTransportManager(RemoteCommandManager rcm) {
+    @Autowired
+    protected ObjectProvider<JmixEclipseLinkRemoteConnection> connectionProvider;
+
+    public JmixEclipseLinkTransportManager(RemoteCommandManager rcm) {
         super(rcm);
     }
 
-    protected EntityCacheConnection createConnection() throws RemoteCommandManagerException {
+    protected JmixEclipseLinkRemoteConnection createConnection() throws RemoteCommandManagerException {
         try {
-            ClusterManager clusterManager = AppBeans.get(ClusterManager.class);
-            return new EntityCacheConnection(this.rcm, clusterManager);
+            return connectionProvider.getObject(this.rcm);
         } catch (Exception ex) {
             throw new RemoteCommandManagerException(ex.getMessage());
         }

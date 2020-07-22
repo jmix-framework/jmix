@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.data.impl.eclipselink;
 
 import com.google.common.base.Preconditions;
 import io.jmix.data.persistence.DbmsSpecifics;

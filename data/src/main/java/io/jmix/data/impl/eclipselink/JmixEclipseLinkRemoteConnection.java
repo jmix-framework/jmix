@@ -14,38 +14,50 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.entitycache;
+package io.jmix.data.impl.eclipselink;
 
 import io.jmix.core.ExtendedEntities;
+import io.jmix.core.Metadata;
 import io.jmix.core.cluster.ClusterListenerAdapter;
 import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.AppBeans;
-import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.impl.entitycache.QueryCacheManager;
 import org.eclipse.persistence.internal.helper.Helper;
 import org.eclipse.persistence.internal.sessions.UnitOfWorkChangeSet;
 import org.eclipse.persistence.internal.sessions.coordination.broadcast.BroadcastRemoteConnection;
 import org.eclipse.persistence.sessions.coordination.MergeChangeSetCommand;
 import org.eclipse.persistence.sessions.coordination.RemoteCommandManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EntityCacheConnection extends BroadcastRemoteConnection {
+@Component(JmixEclipseLinkRemoteConnection.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
+    public static final String NAME = "data_JmixEclipseLinkRemoteConnection";
 
+    @Autowired
     protected Metadata metadata;
+    @Autowired
     protected ExtendedEntities extendedEntities;
+    @Autowired
     protected QueryCacheManager queryCacheManager;
+    @Autowired
     protected ClusterManager clusterManager;
 
-    public EntityCacheConnection(RemoteCommandManager rcm, ClusterManager clusterManager) {
+    public JmixEclipseLinkRemoteConnection(RemoteCommandManager rcm) {
         super(rcm);
-        this.metadata = AppBeans.get(Metadata.NAME);
-        this.extendedEntities = AppBeans.get((ExtendedEntities.NAME));
-        this.queryCacheManager = AppBeans.get(QueryCacheManager.NAME);
-        this.clusterManager = clusterManager;
+    }
+
+    @PostConstruct
+    protected void init() {
         rcm.logDebug("creating_broadcast_connection", getInfo());
         try {
             this.clusterManager.addListener(Message.class, new ClusterListenerAdapter<Message>() {
@@ -60,10 +72,6 @@ public class EntityCacheConnection extends BroadcastRemoteConnection {
             close();
             throw ex;
         }
-    }
-
-    public EntityCacheConnection(RemoteCommandManager rcm) {
-        super(rcm);
     }
 
     public boolean isLocal() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl;
+package io.jmix.data.impl.eclipselink;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.TimeSource;
@@ -23,6 +23,10 @@ import io.jmix.core.entity.EntityEntryAuditable;
 import io.jmix.core.entity.SoftDelete;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.PersistenceTools;
+import io.jmix.data.impl.EntityListenerManager;
+import io.jmix.data.impl.EntityListenerType;
+import io.jmix.data.impl.JmixEntityFetchGroup;
+import io.jmix.data.impl.PersistenceSupport;
 import io.jmix.data.impl.converters.AuditConvertionService;
 import org.eclipse.persistence.descriptors.DescriptorEvent;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
@@ -32,36 +36,34 @@ import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
 
-@Component(EclipseLinkDescriptorEventListener.NAME)
-public class EclipseLinkDescriptorEventListener implements DescriptorEventListener {
+@Component(JmixEclipseLinkDescriptorEventListener.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventListener {
 
     public static final String NAME = "data_EclipseLinkDescriptorEventListener";
 
-    private final Logger logger = LoggerFactory.getLogger(EclipseLinkDescriptorEventListener.class);
+    private final Logger logger = LoggerFactory.getLogger(JmixEclipseLinkDescriptorEventListener.class);
 
     @Autowired
-    protected EntityListenerManager manager;
-
-    @Autowired
-    protected PersistenceTools persistenceTools;
-
+    protected EntityListenerManager entityListenerManager;
     @Autowired
     protected AuditInfoProvider auditInfoProvider;
-
+    @Autowired
+    protected AuditConvertionService auditConversionService;
     @Autowired
     protected TimeSource timeSource;
-
     @Autowired
-    protected PersistenceSupport support;
-
+    protected PersistenceSupport persistenceSupport;
     @Autowired
-    protected AuditConvertionService conversionService;
+    protected PersistenceTools persistenceTools;
 
     protected boolean justDeleted(SoftDelete entity) {
         return entity.isDeleted() && persistenceTools.getDirtyFields((JmixEntity) entity).contains("deleteTs");
@@ -112,21 +114,21 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         }
 
         if (event.getObject() instanceof JmixEntity)
-            support.registerInstance((JmixEntity) event.getObject(), event.getSession());
+            persistenceSupport.registerInstance((JmixEntity) event.getObject(), event.getSession());
     }
 
     @Override
     public void postDelete(DescriptorEvent event) {
-        String storeName = support.getStorageName(event.getSession());
-        manager.fireListener((JmixEntity) event.getSource(), EntityListenerType.AFTER_DELETE, storeName);
+        String storeName = persistenceSupport.getStorageName(event.getSession());
+        entityListenerManager.fireListener((JmixEntity) event.getSource(), EntityListenerType.AFTER_DELETE, storeName);
     }
 
     @Override
     public void postInsert(DescriptorEvent event) {
         JmixEntity entity = (JmixEntity) event.getSource();
-        String storeName = support.getStorageName(event.getSession());
-        manager.fireListener(entity, EntityListenerType.AFTER_INSERT, storeName);
-        support.getSavedInstances(storeName).add(entity);
+        String storeName = persistenceSupport.getStorageName(event.getSession());
+        entityListenerManager.fireListener(entity, EntityListenerType.AFTER_INSERT, storeName);
+        persistenceSupport.getSavedInstances(storeName).add(entity);
     }
 
     @Override
@@ -145,12 +147,12 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
 
     @Override
     public void postUpdate(DescriptorEvent event) {
-        String storeName = support.getStorageName(event.getSession());
+        String storeName = persistenceSupport.getStorageName(event.getSession());
         JmixEntity entity = (JmixEntity) event.getSource();
         if (entity instanceof SoftDelete && persistenceTools.isDirty(entity, "deleteTs") && ((SoftDelete) entity).isDeleted()) {
-            manager.fireListener(entity, EntityListenerType.AFTER_DELETE, storeName);
+            entityListenerManager.fireListener(entity, EntityListenerType.AFTER_DELETE, storeName);
         } else {
-            manager.fireListener(entity, EntityListenerType.AFTER_UPDATE, storeName);
+            entityListenerManager.fireListener(entity, EntityListenerType.AFTER_UPDATE, storeName);
         }
     }
 
@@ -197,8 +199,8 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     protected void setCreateInfo(EntityEntryAuditable auditable, Date ts, @Nullable BaseUser user) {
         if (auditable.getCreatedDateClass() != null) {
             Class<?> dateClass = auditable.getCreatedDateClass();
-            if (conversionService.canConvert(ts.getClass(), dateClass)) {
-                auditable.setCreatedDate(conversionService.convert(ts, dateClass));
+            if (auditConversionService.canConvert(ts.getClass(), dateClass)) {
+                auditable.setCreatedDate(auditConversionService.convert(ts, dateClass));
             } else {
                 logger.error("Cannot find converter from java.util.Date to " + dateClass.getName());
             }
@@ -207,8 +209,8 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         if (auditable.getCreatedByClass() != null) {
             if (user != null) {
                 Class<?> byClass = auditable.getCreatedByClass();
-                if (conversionService.canConvert(user.getClass(), byClass)) {
-                    auditable.setCreatedBy(conversionService.convert(user, byClass));
+                if (auditConversionService.canConvert(user.getClass(), byClass)) {
+                    auditable.setCreatedBy(auditConversionService.convert(user, byClass));
                 } else {
                     logger.error("Cannot find converter from " + user.getClass().getName() + " to " + byClass.getName());
                 }
@@ -221,8 +223,8 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
     protected void setUpdateInfo(EntityEntryAuditable auditable, Date ts, @Nullable BaseUser user, boolean dateOnly) {
         if (auditable.getLastModifiedDateClass() != null) {
             Class<?> dateClass = auditable.getLastModifiedDateClass();
-            if (conversionService.canConvert(ts.getClass(), dateClass)) {
-                auditable.setLastModifiedDate(conversionService.convert(ts, dateClass));
+            if (auditConversionService.canConvert(ts.getClass(), dateClass)) {
+                auditable.setLastModifiedDate(auditConversionService.convert(ts, dateClass));
             } else {
                 logger.error("Cannot find converter from java.util.Date to " + dateClass.getName());
             }
@@ -231,8 +233,8 @@ public class EclipseLinkDescriptorEventListener implements DescriptorEventListen
         if (auditable.getLastModifiedByClass() != null && !dateOnly) {
             if (user != null) {
                 Class<?> byClass = auditable.getLastModifiedByClass();
-                if (conversionService.canConvert(user.getClass(), byClass)) {
-                    auditable.setLastModifiedBy(conversionService.convert(user, byClass));
+                if (auditConversionService.canConvert(user.getClass(), byClass)) {
+                    auditable.setLastModifiedBy(auditConversionService.convert(user, byClass));
                 } else {
                     logger.error("Cannot find converter from " + user.getClass().getName() + " to " + byClass.getName());
                 }

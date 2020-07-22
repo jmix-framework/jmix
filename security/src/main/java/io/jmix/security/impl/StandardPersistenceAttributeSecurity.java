@@ -202,7 +202,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
             if (!attributesToRemove.isEmpty()) {
                 List<String> attributeNames = new ArrayList<>(fetchGroup.getAttributeNames());
                 attributeNames.removeAll(attributesToRemove);
-                fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(attributeNames));
+                fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(attributeNames, entityStates));
             }
         } else {
             List<String> attributeNames = new ArrayList<>();
@@ -215,7 +215,7 @@ public class StandardPersistenceAttributeSecurity implements PersistenceAttribut
                     attributeNames.add(metaProperty.getName());
                 }
             }
-            fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(attributeNames));
+            fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(attributeNames, entityStates));
         }
     }
 

@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 public final class JmixEntityFetchGroup extends EntityFetchGroup {
+    private static final long serialVersionUID = -4592471280815085370L;
 
     protected FetchGroup wrappedFetchGroup;
 

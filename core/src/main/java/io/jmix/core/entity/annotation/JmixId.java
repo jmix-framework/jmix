@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.annotation;
+package io.jmix.core.entity.annotation;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated class must be represented in the metadata.
+ * This annotation should be used on an id attribute if the attribute has no other appropriate annotation
+ * recognized by the framework (such as {@link javax.persistence.Id}).
  */
-@Target({java.lang.annotation.ElementType.TYPE})
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModelObject {
-
-    /**
-     * Name of the class in the metadata.
-     */
-    String name() default "";
-
-    /**
-     * By default, all properties of the class are included in metadata. Set this attribute to true in order to include
-     * only properties explicitly annotated with {@link ModelProperty}.
-     */
-    boolean annotatedPropertiesOnly() default false;
+@MetaAnnotation
+public @interface JmixId {
 }

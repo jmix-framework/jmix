@@ -21,6 +21,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -242,7 +243,7 @@ public class MetaModelLoader {
 
             final String fieldName = field.getName();
 
-            if (isMetaPropertyField(field)) {
+            if (isMetaPropertyField(field) || (useNonAnnotatedProperties(clazz) && isFieldWithGetter(field, clazz))) {
                 MetaPropertyImpl property = (MetaPropertyImpl) metaClass.findProperty(fieldName);
                 if (property == null) {
                     MetadataObjectInfo<MetaProperty> info;
@@ -298,6 +299,21 @@ public class MetaModelLoader {
                 }
             }
         }
+    }
+
+    private boolean useNonAnnotatedProperties(Class<?> javaClass) {
+        ModelObject modelObjectAnnotation = javaClass.getAnnotation(ModelObject.class);
+        return modelObjectAnnotation != null && !modelObjectAnnotation.annotatedPropertiesOnly();
+    }
+
+    private boolean isFieldWithGetter(Field field, Class<?> javaClass) {
+        for (Method method : javaClass.getDeclaredMethods()) {
+            if (method.getName().equals("get" + StringUtils.capitalize(field.getName()))
+                && method.getReturnType().equals(field.getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected boolean isMetaPropertyField(Field field) {
@@ -563,11 +579,7 @@ public class MetaModelLoader {
             Class<?> type = field.getType();
             if (Collection.class.isAssignableFrom(type)) {
                 return Range.Cardinality.ONE_TO_MANY;
-            } else if (type.isPrimitive()
-                    || type.equals(String.class)
-                    || Number.class.isAssignableFrom(type)
-                    || Date.class.isAssignableFrom(type)
-                    || UUID.class.isAssignableFrom(type)) {
+            } else if (type.isPrimitive() || datatypes.find(type) != null) {
                 return Range.Cardinality.NONE;
             } else
                 return Range.Cardinality.MANY_TO_ONE;
@@ -592,7 +604,9 @@ public class MetaModelLoader {
     }
 
     protected boolean isPrimaryKey(Field field) {
-        return field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(EmbeddedId.class);
+        return field.isAnnotationPresent(Id.class)
+                || field.isAnnotationPresent(EmbeddedId.class)
+                || field.isAnnotationPresent(JmixId.class);
     }
 
     protected boolean isEmbedded(Field field) {

@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Transient;
 
-@ModelObject(name = "test$SettersEntity")
+@ModelObject(name = "test$SettersEntity", annotatedPropertiesOnly = true)
 public class SettersEntity extends BaseUuidEntity {
     private static boolean staticFlag = true;
 

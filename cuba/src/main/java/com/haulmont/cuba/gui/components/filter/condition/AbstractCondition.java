@@ -44,7 +44,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * Class that encapsulates common filter condition behaviour.
  */
-@ModelObject(name = "sec$AbstractCondition")
+@ModelObject(name = "sec$AbstractCondition", annotatedPropertiesOnly = true)
 @SystemLevel
 public abstract class AbstractCondition extends BaseUuidEntity {
 

@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@ModelObject(name = "sec$DynamicAttributesCondition")
+@ModelObject(name = "sec$DynamicAttributesCondition", annotatedPropertiesOnly = true)
 @SystemLevel
 public class DynamicAttributesCondition extends AbstractCondition {
 

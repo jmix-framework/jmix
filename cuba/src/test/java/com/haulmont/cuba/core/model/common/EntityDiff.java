@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Diff object for Entity Snapshots
  */
-@ModelObject(name = "test$EntityDiff")
+@ModelObject(name = "test$EntityDiff", annotatedPropertiesOnly = true)
 @SystemLevel
 public class EntityDiff extends BaseUuidEntity {
 

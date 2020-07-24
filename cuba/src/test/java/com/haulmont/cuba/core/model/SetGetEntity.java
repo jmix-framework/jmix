@@ -23,7 +23,7 @@
  import javax.persistence.Transient;
  import java.util.Map;
 
- @ModelObject(name = "test$SetGetEntity")
+ @ModelObject(name = "test$SetGetEntity", annotatedPropertiesOnly = true)
  public class SetGetEntity<T> extends StandardEntity {
 
      @Transient

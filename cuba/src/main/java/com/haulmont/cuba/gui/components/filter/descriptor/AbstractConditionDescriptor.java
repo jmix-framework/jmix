@@ -29,7 +29,7 @@ import org.dom4j.Element;
  * Class that encapsulates common filter condition descriptor behaviour. Condition descriptors are used for
  * generating condition objects.
  */
-@ModelObject(name = "sec$AbstractConditionDescriptor")
+@ModelObject(name = "sec$AbstractConditionDescriptor", annotatedPropertiesOnly = true)
 @SystemLevel
 public abstract class AbstractConditionDescriptor extends BaseUuidEntity {
 

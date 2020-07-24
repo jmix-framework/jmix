@@ -33,6 +33,7 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
@@ -295,8 +296,14 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
         PopupButton exportPopupButton = uiComponents.create(PopupButton.class);
         exportPopupButton.setCaption(messages.getMessage(EntityInspectorBrowser.class, "export"));
         exportPopupButton.setIcon(icons.get(JmixIcon.DOWNLOAD));
-        exportPopupButton.addAction(new ExportAction("exportJSON", JSON));
-        exportPopupButton.addAction(new ExportAction("exportZIP", ZIP));
+
+        ExportAction exportJSONAction = (ExportAction) actions.create(ExportAction.ID, "exportJSON");
+        exportJSONAction.setFormat(JSON);
+        exportPopupButton.addAction(exportJSONAction);
+
+        ExportAction exportZIPAction = (ExportAction) actions.create(ExportAction.ID, "exportZIP");
+        exportZIPAction.setFormat(ZIP);
+        exportPopupButton.addAction(exportZIPAction);
 
         FileUploadField importUpload = uiComponents.create(FileUploadField.class);
         importUpload.setPasteZone(tableBox);
@@ -408,12 +415,22 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
         return security.isEntityOpPermitted(metaClass, entityOp);
     }
 
+    @ActionType(ExportAction.ID)
     protected class ExportAction extends ItemTrackingAction {
 
-        private final DownloadFormat format;
+        public static final String ID = "export";
 
-        public ExportAction(String id, DownloadFormat format) {
+        protected DownloadFormat format;
+
+        public ExportAction() {
+            super(ID);
+        }
+
+        public ExportAction(String id) {
             super(id);
+        }
+
+        public void setFormat(DownloadFormat format) {
             this.format = format;
         }
 

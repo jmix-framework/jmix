@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.sys;
+package io.jmix.ui.action;
 
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -23,8 +23,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.action.ActionType;
-import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.ListComponent;

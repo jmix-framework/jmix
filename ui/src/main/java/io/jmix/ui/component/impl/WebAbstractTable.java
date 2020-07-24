@@ -78,7 +78,7 @@ import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
 import io.jmix.ui.settings.component.binder.TableSettingsBinder;
 import io.jmix.ui.sys.PersistenceManagerClient;
-import io.jmix.ui.sys.ShowInfoAction;
+import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.widget.JmixButton;

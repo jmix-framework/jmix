@@ -28,7 +28,7 @@ import org.dom4j.Element;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@ModelObject(name = "sec$ScreenComponentDescriptor")
+@ModelObject(name = "sec$ScreenComponentDescriptor", annotatedPropertiesOnly = true)
 @SystemLevel
 public class ScreenComponentDescriptor implements JmixEntity, HasUuid {
 

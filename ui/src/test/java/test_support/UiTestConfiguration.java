@@ -38,9 +38,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:/test_support/test-data-app.properties")
+@PropertySource("classpath:/test_support/test-ui-app.properties")
 @JmixModule(dependsOn = {CoreConfiguration.class, CoreSecurityConfiguration.class})
-public class DataContextTestConfiguration {
+public class UiTestConfiguration {
 
     @Bean
     DataSource dataSource() {

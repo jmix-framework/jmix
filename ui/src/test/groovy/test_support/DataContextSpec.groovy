@@ -35,7 +35,7 @@ import spock.lang.Specification
 import static io.jmix.core.impl.StandardSerialization.deserialize
 import static io.jmix.core.impl.StandardSerialization.serialize
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, DataContextTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class DataContextSpec extends Specification {
 
     @Autowired

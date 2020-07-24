@@ -25,10 +25,10 @@ import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
-import test_support.DataContextTestConfiguration
+import test_support.UiTestConfiguration
 import test_support.entity.sales.Customer
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, DataContextTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class BrowserEditorInteractionTest extends ScreenSpecification {
 
     @Autowired

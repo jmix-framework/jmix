@@ -183,8 +183,6 @@ public class FluentLoaderFetchPlanBuilderTest {
 
     private boolean containsSystemProperties(FetchPlan fetchPlan) {
         return fetchPlan.containsProperty("id")
-                && fetchPlan.containsProperty("version")
-                && fetchPlan.containsProperty("deleteTs")//todo taimanov remove
-                && fetchPlan.containsProperty("deletedBy");
+                && fetchPlan.containsProperty("version");
     }
 }

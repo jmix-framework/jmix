@@ -224,9 +224,7 @@ public class FetchPlanBuilderTest {
 
     private boolean containsSystemProperties(FetchPlan view) {
         return view.containsProperty("id")
-                && view.containsProperty("version")
-                && view.containsProperty("deleteTs")//todo taimanov remove from system
-                && view.containsProperty("deletedBy");
+                && view.containsProperty("version");
     }
 
 }

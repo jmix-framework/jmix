@@ -138,11 +138,11 @@ public class EntityStates {
     }
 
     /**
-     * DEPRECATED. Use {@link MetadataTools#isSoftDeleted(Class)} instead.
+     * DEPRECATED. Use {@link MetadataTools#isSoftDeletable(Class)} instead.
      */
     @Deprecated
     public boolean isSoftDeleted(Class entityClass) {
-        return metadataTools.isSoftDeleted(entityClass);
+        return metadataTools.isSoftDeletable(entityClass);
     }
 
     /**

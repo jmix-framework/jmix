@@ -33,7 +33,7 @@ import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.impl.CompositeComponent;
 import io.jmix.ui.component.impl.CompositeWithCaption;
 import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.sys.ShowInfoAction;
+import io.jmix.ui.action.ShowInfoAction;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Function;

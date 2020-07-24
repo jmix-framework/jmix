@@ -22,6 +22,7 @@ import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.HasUuid;
@@ -503,9 +504,9 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 
 
     protected String findUserLogin() {
-        String currentUserKey = auditInfoProvider.getCurrentUserKey();
-        if (currentUserKey != null)
-            return auditInfoProvider.getCurrentUserUsername();
+        BaseUser currentUser = auditInfoProvider.getCurrentUser();
+        if (currentUser != null)
+            return currentUser.getUsername();
         else {
             String login = properties.getSystemUserLogin();
             if (login != null)

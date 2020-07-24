@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class AnnotationsInfo {
     public static final String LEGACY_INTERFACE_CREATABLE = "com.haulmont.cuba.core.entity.Creatable";
     public static final String LEGACY_INTERFACE_UPDATABLE = "com.haulmont.cuba.core.entity.Updatable";
-    public static final String LEGACY_INTERFACE_SOFT_DELETE = "io.jmix.core.entity.SoftDelete";//todo taimanov fix path after migration
+    public static final String LEGACY_INTERFACE_SOFT_DELETE = "com.haulmont.cuba.core.entity.SoftDelete";
 
     private Multimap<FieldAnnotation, CtField> declaredFields = HashMultimap.create();
     private Multimap<FieldAnnotation, CtField> inheritedFields = HashMultimap.create();

@@ -371,7 +371,7 @@ public class FetchGroupManager {
 
         if (useFetchGroup) {
             // Always add SoftDelete properties to support EntityManager contract
-            if (metadataTools.isSoftDeleted(entityClass)) {
+            if (metadataTools.isSoftDeletable(entityClass)) {
                 for (String property : metadataTools.getSoftDeleteProperties(entityClass)) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, property));
                 }

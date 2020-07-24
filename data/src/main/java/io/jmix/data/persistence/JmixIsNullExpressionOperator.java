@@ -16,6 +16,8 @@
 
 package io.jmix.data.persistence;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.MetadataTools;
 import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.expressions.ExpressionSQLPrinter;
 import org.eclipse.persistence.internal.expressions.QueryKeyExpression;
@@ -27,7 +29,9 @@ import java.util.Vector;
 
 public class JmixIsNullExpressionOperator extends ExpressionOperator {
 
-    public JmixIsNullExpressionOperator() {
+    private MetadataTools metadataTools;
+
+    public JmixIsNullExpressionOperator(MetadataTools metadataTools) {
         setType(ExpressionOperator.ComparisonOperator);
         setSelector(ExpressionOperator.IsNull);
         Vector v = org.eclipse.persistence.internal.helper.NonSynchronizedVector.newInstance();
@@ -37,14 +41,19 @@ public class JmixIsNullExpressionOperator extends ExpressionOperator {
         bePrefix();
         printsJavaAs(".isNull()");
         setNodeClass(ClassConstants.FunctionExpression_Class);
+        this.metadataTools = metadataTools;
     }
 
     @Override
     public void printCollection(Vector items, ExpressionSQLPrinter printer) {
         if (items.size() == 1
                 && items.get(0) instanceof QueryKeyExpression
-                && "deleteTs".equals(((QueryKeyExpression) items.get(0)).getName())) {
-            if (!CubaUtil.isSoftDeletion()) {
+        ) {
+            //noinspection unchecked
+            Class<? extends JmixEntity> clazz = ((QueryKeyExpression) items.get(0)).getContainingDescriptor().getJavaClass();
+
+            String deletedDateFieldName = metadataTools.getDeletedDateProperty(clazz);
+            if (deletedDateFieldName != null && deletedDateFieldName.equals(((QueryKeyExpression) items.get(0)).getName()) && !CubaUtil.isSoftDeletion()) {
                 try {
                     printer.getWriter().write("(0=0)");
                     return;

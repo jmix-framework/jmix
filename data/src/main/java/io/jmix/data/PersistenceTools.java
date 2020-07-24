@@ -187,7 +187,7 @@ public class PersistenceTools {
                 if (changeRecord instanceof CollectionChangeRecord) {
                     if (PersistenceHints.isSoftDeletion(entityManager) && changeRecord.getOldValue() != null) {
                         MetaProperty metaProperty = metadata.getClass(entity).getProperty(attribute);
-                        if (metadataTools.isSoftDeleted(metaProperty.getRange().asClass().getJavaClass())) {
+                        if (metadataTools.isSoftDeletable(metaProperty.getRange().asClass().getJavaClass())) {
                             Collection oldValue = (Collection) changeRecord.getOldValue();
                             Collection<JmixEntity> filteredValue;
                             Class<?> propertyType = metaProperty.getJavaType();

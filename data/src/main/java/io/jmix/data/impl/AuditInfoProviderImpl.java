@@ -29,20 +29,6 @@ public class AuditInfoProviderImpl implements AuditInfoProvider {
     private CurrentAuthentication currentAuthentication;
 
     @Override
-    public String getCurrentUserUsername() {
-        return currentAuthentication.getAuthentication() != null ?
-                currentAuthentication.getUser().getUsername() :
-                null;
-    }
-
-    @Override
-    public String getCurrentUserKey() {
-        return currentAuthentication.getAuthentication() != null ?
-                currentAuthentication.getUser().getKey() :
-                null;
-    }
-
-    @Override
     public BaseUser getCurrentUser() {
         return currentAuthentication.getAuthentication() != null ?
                 currentAuthentication.getUser() :

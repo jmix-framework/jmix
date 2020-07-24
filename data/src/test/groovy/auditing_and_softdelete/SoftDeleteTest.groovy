@@ -17,20 +17,16 @@
 package auditing_and_softdelete
 
 import io.jmix.core.DataManager
-import io.jmix.core.Metadata
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.security.Authenticator
-import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.impl.CoreUser
 import io.jmix.core.security.impl.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.soft_delete.SoftDeleteEntity
 import test_support.entity.soft_delete.SoftDeleteWithUserEntity
-import test_support.entity.soft_delete.TestLegacySoftDeleteEntity
 
-//todo taimanov refactor to common class with Auditing test or with other tests when need
 class SoftDeleteTest extends DataSpec {
 
     @Autowired
@@ -43,29 +39,23 @@ class SoftDeleteTest extends DataSpec {
     Authenticator authenticator
 
     @Autowired
-    private CurrentAuthentication currentAuthentication;
-
-    @Autowired
     InMemoryUserRepository userRepository
-
-    @Autowired
-    Metadata metadata;
 
     CoreUser admin
 
     def setup() {
         admin = new CoreUser('admin', '{noop}admin123', 'Admin')
         userRepository.createUser(admin)
+        authenticator.begin()
     }
 
     def cleanup() {
+        authenticator.end()
         userRepository.removeUser(admin)
     }
 
     def "Enhancing should work for SoftDelete entities"() {
         setup:
-        authenticator.begin()
-
         SoftDeleteWithUserEntity entity = dataManager.create(SoftDeleteWithUserEntity)
 
         expect:
@@ -73,7 +63,6 @@ class SoftDeleteTest extends DataSpec {
 
 
         when:
-
         EntityEntrySoftDelete softDeleteEntry = (EntityEntrySoftDelete) entity.__getEntityEntry()
 
         Date beforeDelete = timeSource.currentTimestamp()
@@ -83,16 +72,10 @@ class SoftDeleteTest extends DataSpec {
         softDeleteEntry.setDeletedBy("UFO")
 
         then:
-
         beforeOrEquals(beforeDelete, entity.getDeleteTs())
         afterOrEquals(afterDelete, entity.getDeleteTs())
         "UFO".equals(entity.getWhoDeleted())
         ((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted()
-
-
-        cleanup:
-        authenticator.end()
-
     }
 
 
@@ -100,50 +83,34 @@ class SoftDeleteTest extends DataSpec {
         setup:
         authenticator.begin("admin")
 
-        SoftDeleteWithUserEntity entity = dataManager.create(SoftDeleteWithUserEntity)
-        entity = dataManager.save(entity)
+        SoftDeleteWithUserEntity entity = dataManager.save(dataManager.create(SoftDeleteWithUserEntity))
+        SoftDeleteEntity tsOnly = dataManager.save(dataManager.create(SoftDeleteEntity))
 
-        TestLegacySoftDeleteEntity legacyEntity = dataManager.create(TestLegacySoftDeleteEntity)
-        legacyEntity = dataManager.save(legacyEntity)
-
-        SoftDeleteEntity tsOnly = dataManager.create(SoftDeleteEntity)
-        tsOnly = dataManager.save(tsOnly)
 
         when:
-        dataManager.remove(legacyEntity)
-        legacyEntity = dataManager.load(TestLegacySoftDeleteEntity).id(legacyEntity.getId()).softDeletion(false).one()
-
+        Date beforeDelete = timeSource.currentTimestamp()
         dataManager.remove(entity)
         entity = dataManager.load(SoftDeleteWithUserEntity).id(entity.getId()).softDeletion(false).one()
 
         dataManager.remove(tsOnly)
         tsOnly = dataManager.load(SoftDeleteEntity).id(tsOnly.getId()).softDeletion(false).one()
+        Date afterDelete = timeSource.currentTimestamp()
+
 
         then:
-
-        legacyEntity.isDeleted()
-        legacyEntity.getDeleteTs() != null
-        legacyEntity.getDeletedBy().equals("admin")
-
-
         ((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted()
         entity.whoDeleted.equals("admin")
-        entity.deleteTs != null
+        beforeOrEquals(beforeDelete, entity.deleteTs)
+        afterOrEquals(afterDelete, entity.deleteTs)
 
         ((EntityEntrySoftDelete) tsOnly.__getEntityEntry()).isDeleted()
         ((EntityEntrySoftDelete) tsOnly.__getEntityEntry()).getDeletedBy() == null
-        entity.deleteTs != null
+        beforeOrEquals(beforeDelete, tsOnly.deleteTs)
+        afterOrEquals(afterDelete, tsOnly.deleteTs)
 
         cleanup:
         authenticator.end()
     }
-
-    def "TODO test MetadataHelper"() {
-        //todo taimanov improve tests
-    }
-
-    //todo taimanov: another cases: 1) date without by 2) ...
-
 
     static boolean beforeOrEquals(Date first, Date second) {
         return first.before(second) || first.equals(second)

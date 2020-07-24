@@ -47,7 +47,5 @@ public class AuditConverters {
         }
     }
 
-    //todo taimanov String to User converter. or move to separate UserAware/AuditAware bean
-
 
 }

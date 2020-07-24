@@ -271,7 +271,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         boolean enableDeleteInSoftDeleteMode =
                 Boolean.parseBoolean(environment.getProperty("jmix.data.enableDeleteStatementInSoftDeleteMode"));
         if (!enableDeleteInSoftDeleteMode && PersistenceHints.isSoftDeletion(entityManager) && isDeleteQuery) {
-            if (metadataTools.isSoftDeleted(referenceClass)) {
+            if (metadataTools.isSoftDeletable(referenceClass)) {
                 throw new UnsupportedOperationException("Delete queries are not supported with enabled soft deletion. " +
                         "Use 'cuba.enableDeleteStatementInSoftDeleteMode' application property to roll back to legacy behavior.");
             }

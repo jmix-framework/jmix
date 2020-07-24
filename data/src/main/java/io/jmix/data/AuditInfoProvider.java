@@ -30,11 +30,5 @@ public interface AuditInfoProvider {
     String NAME = "data_AuditInfoProvider";
 
     @Nullable
-    String getCurrentUserUsername();
-
-    @Nullable
-    String getCurrentUserKey();
-
-    @Nullable
     BaseUser getCurrentUser();
 }

@@ -59,7 +59,7 @@ public class JmixEntityManager implements EntityManager {
     private EntityPersistingEventManager entityPersistingEventMgr;
     private TimeSource timeSource;
     private AuditInfoProvider auditInfoProvider;
-    private AuditConversionService entityControlService;
+    private AuditConversionService auditConverter;
 
     private static final Logger log = LoggerFactory.getLogger(JmixEntityManager.class);
 
@@ -76,7 +76,7 @@ public class JmixEntityManager implements EntityManager {
         entityPersistingEventMgr = (EntityPersistingEventManager) beanFactory.getBean(EntityPersistingEventManager.NAME);
         timeSource = (TimeSource) beanFactory.getBean(TimeSource.NAME);
         auditInfoProvider = (AuditInfoProvider) beanFactory.getBean(AuditInfoProvider.NAME);
-        entityControlService = (AuditConversionService) beanFactory.getBean(AuditConversionService.NAME);
+        auditConverter = (AuditConversionService) beanFactory.getBean(AuditConversionService.NAME);
     }
 
     @Override
@@ -134,9 +134,17 @@ public class JmixEntityManager implements EntityManager {
         }
 
         if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete && PersistenceHints.isSoftDeletion(delegate)) {
-            entityControlService.setDeletedDate((EntityEntrySoftDelete) entity.__getEntityEntry(), timeSource.currentTimestamp());
-            entityControlService.setDeletedBy((EntityEntrySoftDelete) entity.__getEntityEntry(), auditInfoProvider.getCurrentUser());
+            EntityEntrySoftDelete softDeleteEntry = (EntityEntrySoftDelete) entity.__getEntityEntry();
 
+            softDeleteEntry.setDeletedDate(auditConverter.convert(
+                    timeSource.currentTimestamp(),
+                    softDeleteEntry.getDeletedDateClass()));
+
+            if (softDeleteEntry.getDeletedByClass() != null) {
+                softDeleteEntry.setDeletedBy(auditConverter.convert(
+                        auditInfoProvider.getCurrentUser(),
+                        softDeleteEntry.getDeletedByClass()));
+            }
         } else {
             delegate.remove(entity);
             entity.__getEntityEntry().setRemoved(true);

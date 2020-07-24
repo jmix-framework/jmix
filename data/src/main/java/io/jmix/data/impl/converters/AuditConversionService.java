@@ -18,15 +18,12 @@ package io.jmix.data.impl.converters;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
-import io.jmix.core.entity.BaseUser;
-import io.jmix.core.entity.EntityEntrySoftDelete;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.annotation.Nullable;
 import java.util.Date;
 
 /**
@@ -36,15 +33,4 @@ import java.util.Date;
  */
 public interface AuditConversionService extends ConversionService {
     String NAME = "data_AuditConversionService";
-
-    void setDeletedDate(EntityEntrySoftDelete softDeleteEntry, Date timestamp);
-
-    @Nullable
-    Date getDeletedDate(EntityEntrySoftDelete softDeleteEntry);
-
-    void setDeletedBy(EntityEntrySoftDelete softDeleteEntry, BaseUser user);
-
-    @Nullable
-    BaseUser getDeletedBy(EntityEntrySoftDelete softDeleteEntry);
-
 }

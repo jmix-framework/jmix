@@ -17,8 +17,8 @@ package com.haulmont.cuba.core.global;
 
 import io.jmix.core.AppBeans;
 import io.jmix.core.EntityStates;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.MetadataTools;
 
 /**
  * Utility class providing information about entity states.
@@ -66,7 +66,7 @@ public class PersistenceHelper {
     }
 
     /**
-     * DEPRECATED. Use {@link MetadataTools#isSoftDeleted(Class)} instead.
+     * DEPRECATED. Use {@link MetadataTools#isSoftDeletable(Class)} instead.
      */
     @Deprecated
     public static boolean isSoftDeleted(Class entityClass) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.model;
+package com.haulmont.cuba.core.model.audit_and_softdelete;
 
 import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.entity.Updatable;
@@ -28,6 +28,7 @@ import java.util.Date;
 @Table(name = "TEST_LEGACY_AUDITABLE")
 @Entity(name = "test$LegacyAuditable")
 public class LegacyAuditableEntity extends BaseUuidEntity implements Creatable, Updatable {
+    private static final long serialVersionUID = 16315856594452571L;
 
     @Column(name = "NAME")
     private String name;

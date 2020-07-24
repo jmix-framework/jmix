@@ -19,8 +19,8 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.Creatable;
+import com.haulmont.cuba.core.entity.SoftDelete;
 import com.haulmont.cuba.core.entity.Updatable;
-import io.jmix.core.entity.SoftDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.data.entity.BaseUuidEntity;

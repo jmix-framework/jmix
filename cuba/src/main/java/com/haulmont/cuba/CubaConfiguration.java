@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba;
 
+import com.haulmont.cuba.core.global.CubaMetadataTools;
 import com.haulmont.cuba.core.global.impl.CubaFetchPlanRepository;
 import com.haulmont.cuba.core.global.impl.CubaInstanceNameProviderImpl;
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
@@ -126,6 +127,11 @@ public class CubaConfiguration {
     @Bean(MenuItemCommands.NAME)
     protected MenuItemCommands menuItemCommands() {
         return new CubaMenuItemCommands();
+    }
+
+    @Bean(MetadataTools.NAME)
+    protected MetadataTools metadataTools() {
+        return new CubaMetadataTools();
     }
 
     @EventListener

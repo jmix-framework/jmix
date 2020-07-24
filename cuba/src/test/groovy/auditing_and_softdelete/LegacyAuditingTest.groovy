@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package auditing
+package auditing_and_softdelete
 
-import com.haulmont.cuba.core.model.LegacyAuditableEntity
+import com.haulmont.cuba.core.model.audit_and_softdelete.LegacyAuditableEntity
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable

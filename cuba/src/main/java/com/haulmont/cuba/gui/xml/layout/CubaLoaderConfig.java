@@ -149,6 +149,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(FileMultiUploadField.NAME, FileMultiUploadFieldLoader.class);
         loaders.put(GroupBoxLayout.NAME, CubaGroupBoxLayoutLoader.class);
         loaders.put(SplitPanel.NAME, CubaSplitPanelLoader.class);
+        loaders.put(PopupButton.NAME, CubaPopupButtonLoader.class);
     }
 
     protected boolean isLegacyScreen(Element element) {

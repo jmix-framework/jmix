@@ -16,9 +16,8 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import io.jmix.ui.Actions;
+import com.haulmont.cuba.gui.xml.DeclarativeAction;
 import io.jmix.ui.component.Button;
-import io.jmix.ui.xml.DeclarativeAction;
 import io.jmix.ui.xml.layout.loader.ButtonLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -46,16 +45,12 @@ public class CubaButtonLoader extends ButtonLoader {
             actionBaseId = methodName;
         }
 
-        Actions actions = beanLocator.get(Actions.NAME);
-        DeclarativeAction action = (DeclarativeAction) actions.create(DeclarativeAction.ID, actionBaseId + "_invoke");
-        action.setCaption(component.getCaption());
-        action.setDescription(component.getDescription());
-        action.setIcon(component.getIcon());
-        action.setEnabled(resultComponent.isEnabled());
-        action.setVisible(resultComponent.isVisible());
-        action.setMethodName(methodName);
-        action.checkActionsHolder(component.getFrame());
-
+        DeclarativeAction action = new DeclarativeAction(actionBaseId + "_invoke",
+                component.getCaption(), component.getDescription(), component.getIcon(),
+                resultComponent.isEnabled(), resultComponent.isVisible(),
+                methodName,
+                component.getFrame()
+        );
         component.setAction(action);
     }
 

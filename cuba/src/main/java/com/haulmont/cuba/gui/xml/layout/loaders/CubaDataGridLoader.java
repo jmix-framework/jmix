@@ -24,12 +24,17 @@ import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.xml.layout.loader.DataGridLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @SuppressWarnings("rawtypes")
 public class CubaDataGridLoader extends DataGridLoader {
@@ -106,6 +111,35 @@ public class CubaDataGridLoader extends DataGridLoader {
         }
 
         return renderer;
+    }
+
+    @Override
+    protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+        Optional<Action> actionOpt = ComponentLoaderHelper.loadInvokeAction(
+                context,
+                actionsHolder,
+                element,
+                loadActionId(element),
+                loadResourceString(element.attributeValue("caption")),
+                loadResourceString(element.attributeValue("description")),
+                getIconPath(element.attributeValue("icon")),
+                loadShortcut(trimToNull(element.attributeValue("shortcut"))));
+
+        if (actionOpt.isPresent()) {
+            return actionOpt.get();
+        }
+
+        actionOpt = ComponentLoaderHelper.loadLegacyListAction(
+                context,
+                actionsHolder,
+                element,
+                loadResourceString(element.attributeValue("caption")),
+                loadResourceString(element.attributeValue("description")),
+                getIconPath(element.attributeValue("icon")),
+                loadShortcut(trimToNull(element.attributeValue("shortcut"))));
+
+        return actionOpt.orElseGet(() ->
+                super.loadDeclarativeAction(actionsHolder, element));
     }
 
     protected static class CubaDataGridDataHolder extends DataGridDataHolder {

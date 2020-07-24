@@ -28,6 +28,12 @@ import io.jmix.ui.component.EntitySuggestionField;
 import io.jmix.ui.xml.layout.loader.EntitySuggestionFieldLoader;
 import org.dom4j.Element;
 
+import java.util.Optional;
+
+import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadInvokeAction;
+import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadLegacyPickerAction;
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 public class CubaSuggestionPickerFieldLoader extends EntitySuggestionFieldLoader {
 
     @Override
@@ -73,10 +79,22 @@ public class CubaSuggestionPickerFieldLoader extends EntitySuggestionFieldLoader
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String id = loadActionId(element);
+        Optional<Action> actionOpt = loadLegacyPickerAction(((PickerField) actionsHolder), element, context, id);
+        if (actionOpt.isPresent()) {
+            return actionOpt.get();
+        }
 
-        return ComponentLoaderHelper
-                .loadLegacyPickerAction(((PickerField) actionsHolder), element, context, id)
-                .orElseGet(() ->
-                        super.loadDeclarativeAction(actionsHolder, element));
+        actionOpt = loadInvokeAction(
+                context,
+                actionsHolder,
+                element,
+                loadActionId(element),
+                loadResourceString(element.attributeValue("caption")),
+                loadResourceString(element.attributeValue("description")),
+                getIconPath(element.attributeValue("icon")),
+                loadShortcut(trimToNull(element.attributeValue("shortcut"))));
+
+        return actionOpt.orElseGet(() ->
+                super.loadDeclarativeAction(actionsHolder, element));
     }
 }

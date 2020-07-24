@@ -19,10 +19,17 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.gui.components.Tree;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.xml.layout.loader.TreeLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public class CubaTreeLoader extends TreeLoader {
 
@@ -44,5 +51,34 @@ public class CubaTreeLoader extends TreeLoader {
                 ((Tree) resultComponent).setDatasource((HierarchicalDatasource) ds);
             }
         }
+    }
+
+    @Override
+    protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+        Optional<Action> actionOpt = ComponentLoaderHelper.loadInvokeAction(
+                context,
+                actionsHolder,
+                element,
+                loadActionId(element),
+                loadResourceString(element.attributeValue("caption")),
+                loadResourceString(element.attributeValue("description")),
+                getIconPath(element.attributeValue("icon")),
+                loadShortcut(trimToNull(element.attributeValue("shortcut"))));
+
+        if (actionOpt.isPresent()) {
+            return actionOpt.get();
+        }
+
+        actionOpt = ComponentLoaderHelper.loadLegacyListAction(
+                context,
+                actionsHolder,
+                element,
+                loadResourceString(element.attributeValue("caption")),
+                loadResourceString(element.attributeValue("description")),
+                getIconPath(element.attributeValue("icon")),
+                loadShortcut(trimToNull(element.attributeValue("shortcut"))));
+
+        return actionOpt.orElseGet(() ->
+                super.loadDeclarativeAction(actionsHolder, element));
     }
 }

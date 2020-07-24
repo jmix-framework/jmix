@@ -20,6 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.ui.UiConfiguration;
+import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -46,4 +47,11 @@ public class DatatoolsUiConfiguration {
         return uiControllers;
     }
 
+    @Bean("datatools_UiActions")
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.datatoolsui.action"));
+        return actionsConfiguration;
+    }
 }

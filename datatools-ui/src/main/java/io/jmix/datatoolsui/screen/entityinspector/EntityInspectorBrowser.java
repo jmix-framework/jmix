@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
+import io.jmix.datatoolsui.action.ExportAction;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
 import io.jmix.ui.Actions;
@@ -33,17 +34,12 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.ActionType;
-import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RefreshAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.*;
-import io.jmix.ui.download.ByteArrayDataProvider;
-import io.jmix.ui.download.DownloadFormat;
-import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
@@ -118,9 +114,6 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
 
     @Autowired
     protected EntityImportExport entityImportExport;
-
-    @Autowired
-    protected Downloader exportDisplay;
 
     @Autowired
     protected EntityImportViews entityImportViews;
@@ -299,10 +292,14 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
 
         ExportAction exportJSONAction = (ExportAction) actions.create(ExportAction.ID, "exportJSON");
         exportJSONAction.setFormat(JSON);
+        exportJSONAction.setTable(entitiesTable);
+        exportJSONAction.setMetaClass(selectedMeta);
         exportPopupButton.addAction(exportJSONAction);
 
         ExportAction exportZIPAction = (ExportAction) actions.create(ExportAction.ID, "exportZIP");
         exportZIPAction.setFormat(ZIP);
+        exportZIPAction.setTable(entitiesTable);
+        exportZIPAction.setMetaClass(selectedMeta);
         exportPopupButton.addAction(exportZIPAction);
 
         FileUploadField importUpload = uiComponents.create(FileUploadField.class);
@@ -413,58 +410,5 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
 
     protected boolean entityOpPermitted(MetaClass metaClass, EntityOp entityOp) {
         return security.isEntityOpPermitted(metaClass, entityOp);
-    }
-
-    @ActionType(ExportAction.ID)
-    protected class ExportAction extends ItemTrackingAction {
-
-        public static final String ID = "export";
-
-        protected DownloadFormat format;
-
-        public ExportAction() {
-            super(ID);
-        }
-
-        public ExportAction(String id) {
-            super(id);
-        }
-
-        public void setFormat(DownloadFormat format) {
-            this.format = format;
-        }
-
-        @Override
-        public void actionPerform(Component component) {
-            Collection<JmixEntity> selected = entitiesTable.getSelected();
-            if (selected.isEmpty()
-                    && entitiesTable.getItems() != null) {
-                selected = entitiesTable.getItems().getItems();
-            }
-
-            try {
-                if (format == ZIP) {
-                    byte[] data = entityImportExport.exportEntitiesToZIP(selected);
-                    String resourceName = selectedMeta.getJavaClass().getSimpleName() + ".zip";
-                    exportDisplay.download(new ByteArrayDataProvider(data), resourceName, ZIP);
-                } else if (format == JSON) {
-                    byte[] data = entityImportExport.exportEntitiesToJSON(selected)
-                            .getBytes(StandardCharsets.UTF_8);
-                    String resourceName = selectedMeta.getJavaClass().getSimpleName() + ".json";
-                    exportDisplay.download(new ByteArrayDataProvider(data), resourceName, JSON);
-                }
-            } catch (Exception e) {
-                notifications.create(Notifications.NotificationType.ERROR)
-                        .withCaption(messages.getMessage(EntityInspectorBrowser.class, "exportFailed"))
-                        .withDescription(e.getMessage())
-                        .show();
-                log.error("Entities export failed", e);
-            }
-        }
-
-        @Override
-        public String getCaption() {
-            return messages.getMessage(EntityInspectorBrowser.class, id);
-        }
     }
 }

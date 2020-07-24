@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
-
 /**
  * Standard action for reloading a list of entities from the database.
  * <p>
@@ -47,8 +45,6 @@ import javax.annotation.Nullable;
 public class RefreshAction extends ListAction {
 
     public static final String ID = "refresh";
-
-    protected Messages messages;
 
     private static final Logger log = LoggerFactory.getLogger(RefreshAction.class);
 
@@ -67,7 +63,6 @@ public class RefreshAction extends ListAction {
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.messages = messages;
         this.caption = messages.getMessage("actions.Refresh");
     }
 

@@ -16,10 +16,8 @@
 
 package io.jmix.ui.action;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.core.security.Security;
+import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.ListComponent;
 
 import javax.annotation.Nullable;
@@ -29,7 +27,7 @@ import javax.annotation.Nullable;
  * <br>
  * You can use fluent API to create instances of ItemTrackingAction and assign handlers to them:
  * <pre>{@code
- *     Action action = new ItemTrackingAction("moveToTrash")
+ *     Action action = actions.create(ItemTrackingAction.class, "moveToTrash")
  *             .withCaption("Move to trash")
  *             .withIcon("icons/trash.png")
  *             .withHandler(event -> {
@@ -38,19 +36,21 @@ import javax.annotation.Nullable;
  *     docsTable.addAction(action);
  * }</pre>
  */
-public class ItemTrackingAction extends ListAction implements Action.HasSecurityConstraint {
+@ActionType(ItemTrackingAction.ID)
+public class ItemTrackingAction extends SecuredListAction {
 
-    protected ConstraintOperationType constraintOperationType;
-    protected String constraintCode;
+    public static final String ID = "itemTracking";
 
-    protected Security security = AppBeans.get(Security.NAME);
+    public ItemTrackingAction() {
+        this(ID);
+    }
 
     public ItemTrackingAction(String id) {
         this(null, id);
     }
 
     public ItemTrackingAction(@Nullable ListComponent target, String id) {
-        super(id, null);
+        super(id);
 
         this.target = target;
     }
@@ -83,27 +83,5 @@ public class ItemTrackingAction extends ListAction implements Action.HasSecurity
         }
 
         return true;
-    }
-
-    @Override
-    public void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType) {
-        this.constraintOperationType = constraintOperationType;
-    }
-
-    @Nullable
-    @Override
-    public ConstraintOperationType getConstraintOperationType() {
-        return constraintOperationType;
-    }
-
-    @Override
-    public void setConstraintCode(@Nullable String constraintCode) {
-        this.constraintCode = constraintCode;
-    }
-
-    @Nullable
-    @Override
-    public String getConstraintCode() {
-        return constraintCode;
     }
 }

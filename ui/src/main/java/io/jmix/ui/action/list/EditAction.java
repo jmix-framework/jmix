@@ -58,7 +58,6 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
 
     public static final String ID = "edit";
 
-    @Autowired
     protected ScreenBuilders screenBuilders;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
@@ -223,6 +222,11 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
     @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableEditShortcut());
+    }
+
+    @Autowired
+    public void setScreenBuilders(ScreenBuilders screenBuilders) {
+        this.screenBuilders = screenBuilders;
     }
 
     @Override

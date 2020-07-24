@@ -589,37 +589,30 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected Action loadInvokeAction(ActionsHolder actionsHolder, Element element, String id, boolean shouldTrackSelection, String invokeMethod) {
-        BaseAction action;
-        String shortcut = loadShortcut(trimToNull(element.attributeValue("shortcut")));
-        if (shouldTrackSelection) {
-            action = new DeclarativeTrackingAction(
-                    id,
-                    loadResourceString(element.attributeValue("caption")),
-                    loadResourceString(element.attributeValue("description")),
-                    getIconPath(element.attributeValue("icon")),
-                    element.attributeValue("enable"),
-                    element.attributeValue("visible"),
-                    invokeMethod,
-                    shortcut,
-                    actionsHolder
-            );
+        return shouldTrackSelection
+                ? loadDeclarativeTrackingAction(actionsHolder, element, id, invokeMethod)
+                : loadDeclarativeAction(actionsHolder, element, id, invokeMethod);
 
-            loadActionConstraint(action, element);
+    }
 
-            return action;
-        } else {
-            action = new DeclarativeAction(
-                    id,
-                    loadResourceString(element.attributeValue("caption")),
-                    loadResourceString(element.attributeValue("description")),
-                    getIconPath(element.attributeValue("icon")),
-                    element.attributeValue("enable"),
-                    element.attributeValue("visible"),
-                    invokeMethod,
-                    shortcut,
-                    actionsHolder
-            );
-        }
+    protected DeclarativeTrackingAction loadDeclarativeTrackingAction(ActionsHolder actionsHolder, Element element,
+                                                                      String id, String invokeMethod) {
+        Actions actions = beanLocator.get(Actions.NAME);
+        DeclarativeTrackingAction action = actions.create(DeclarativeTrackingAction.class, id);
+        initAction(element, action);
+        action.setMethodName(invokeMethod);
+        action.checkActionsHolder(actionsHolder);
+        loadActionConstraint(action, element);
+        return action;
+    }
+
+    protected DeclarativeAction loadDeclarativeAction(ActionsHolder actionsHolder, Element element, String id,
+                                                      String invokeMethod) {
+        Actions actions = beanLocator.get(Actions.NAME);
+        DeclarativeAction action = actions.create(DeclarativeAction.class, id);
+        initAction(element, action);
+        action.setMethodName(invokeMethod);
+        action.checkActionsHolder(actionsHolder);
         action.setPrimary(Boolean.parseBoolean(element.attributeValue("primary")));
         return action;
     }
@@ -628,7 +621,8 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         Action targetAction;
 
         if (shouldTrackSelection) {
-            targetAction = new ItemTrackingAction(id);
+            Actions actions = beanLocator.get(Actions.NAME);
+            targetAction = actions.create(ItemTrackingAction.ID, id);
             loadActionConstraint(targetAction, element);
         } else {
             targetAction = new BaseAction(id);

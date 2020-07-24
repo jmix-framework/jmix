@@ -41,6 +41,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.Security;
+import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
@@ -145,6 +146,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected FetchPlanRepository viewRepository;
     protected UserSettingsTools userSettingsTools;
     protected EntityStates entityStates;
+    protected Actions actions;
 
     protected Locale locale;
 
@@ -277,6 +279,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Autowired
     public void setEntityStates(EntityStates entityStates) {
         this.entityStates = entityStates;
+    }
+
+    @Autowired
+    public void setActions(Actions actions) {
+        this.actions = actions;
     }
 
     @Override
@@ -1435,7 +1442,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
             if (security.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION)) {
                 if (getAction(ShowInfoAction.ACTION_ID) == null) {
-                    addAction(new ShowInfoAction());
+                    addAction(actions.create(ShowInfoAction.ACTION_ID));
                 }
             }
 

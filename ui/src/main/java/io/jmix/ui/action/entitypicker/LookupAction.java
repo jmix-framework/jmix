@@ -62,7 +62,6 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
 
     protected EntityPicker entityPicker;
 
-    @Autowired
     protected ScreenBuilders screenBuilders;
     protected Icons icons;
     protected Messages messages;
@@ -255,6 +254,11 @@ public class LookupAction<E extends JmixEntity> extends BaseAction implements En
     @Autowired
     protected void setUiProperties(UiProperties properties) {
         this.properties = properties;
+    }
+
+    @Autowired
+    public void setScreenBuilders(ScreenBuilders screenBuilders) {
+        this.screenBuilders = screenBuilders;
     }
 
     @Override

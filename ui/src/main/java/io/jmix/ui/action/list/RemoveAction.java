@@ -53,7 +53,6 @@ public class RemoveAction<E extends JmixEntity> extends SecuredListAction implem
 
     public static final String ID = "remove";
 
-    @Autowired
     protected RemoveOperation removeOperation;
 
     protected Boolean confirmation;
@@ -164,6 +163,11 @@ public class RemoveAction<E extends JmixEntity> extends SecuredListAction implem
     @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableRemoveShortcut());
+    }
+
+    @Autowired
+    public void setRemoveOperation(RemoveOperation removeOperation) {
+        this.removeOperation = removeOperation;
     }
 
     @Override

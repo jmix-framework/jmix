@@ -84,10 +84,6 @@ public interface Action {
     @Nullable
     String getIcon();
     void setIcon(@Nullable String icon);
-    /**
-     * Set an icon from an icon set.
-     */
-    void setIconFromSet(Icons.Icon icon);
 
     /**
      * @return  whether the action is currently enabled

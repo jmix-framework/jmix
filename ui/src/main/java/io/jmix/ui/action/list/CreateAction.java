@@ -60,9 +60,7 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
 
     public static final String ID = "create";
 
-    @Autowired
     protected ScreenBuilders screenBuilders;
-    @Autowired
     protected Security security;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
@@ -257,6 +255,16 @@ public class CreateAction<E extends JmixEntity> extends ListAction implements Ac
     @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableInsertShortcut());
+    }
+
+    @Autowired
+    public void setScreenBuilders(ScreenBuilders screenBuilders) {
+        this.screenBuilders = screenBuilders;
+    }
+
+    @Autowired
+    public void setSecurity(Security security) {
+        this.security = security;
     }
 
     @Override

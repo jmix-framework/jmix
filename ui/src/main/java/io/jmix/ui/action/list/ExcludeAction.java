@@ -52,7 +52,6 @@ public class ExcludeAction<E extends JmixEntity> extends SecuredListAction imple
 
     public static final String ID = "exclude";
 
-    @Autowired
     protected RemoveOperation removeOperation;
 
     protected Boolean confirmation;
@@ -163,6 +162,11 @@ public class ExcludeAction<E extends JmixEntity> extends SecuredListAction imple
     @Autowired
     protected void setUiProperties(UiProperties properties) {
         setShortcut(properties.getTableRemoveShortcut());
+    }
+
+    @Autowired
+    public void setRemoveOperation(RemoveOperation removeOperation) {
+        this.removeOperation = removeOperation;
     }
 
     @Override

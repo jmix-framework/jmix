@@ -66,7 +66,6 @@ public class OpenAction<E extends JmixEntity> extends BaseAction implements Enti
     protected Messages messages;
     protected UiProperties properties;
 
-    @Autowired
     protected ScreenBuilders screenBuilders;
 
     protected boolean editable = true;
@@ -269,6 +268,11 @@ public class OpenAction<E extends JmixEntity> extends BaseAction implements Enti
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setScreenBuilders(ScreenBuilders screenBuilders) {
+        this.screenBuilders = screenBuilders;
     }
 
     @Override

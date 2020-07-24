@@ -60,9 +60,7 @@ public class AddAction<E extends JmixEntity> extends ListAction implements Actio
 
     public static final String ID = "add";
 
-    @Autowired
     protected Security security;
-    @Autowired
     protected ScreenBuilders screenBuilders;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
@@ -216,6 +214,16 @@ public class AddAction<E extends JmixEntity> extends ListAction implements Actio
     @Autowired
     protected void setMessages(Messages messages) {
         this.caption = messages.getMessage("actions.Add");
+    }
+
+    @Autowired
+    public void setSecurity(Security security) {
+        this.security = security;
+    }
+
+    @Autowired
+    public void setScreenBuilders(ScreenBuilders screenBuilders) {
+        this.screenBuilders = screenBuilders;
     }
 
     @Override

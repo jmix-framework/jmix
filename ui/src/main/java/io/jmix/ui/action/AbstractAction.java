@@ -17,13 +17,10 @@ package io.jmix.ui.action;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.AppBeans;
-import io.jmix.core.Messages;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.icon.Icons;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
@@ -54,17 +51,12 @@ public abstract class AbstractAction implements Action {
 
     protected EventHub eventHub;
 
-    // legacy field
-    @Deprecated
-    private Messages messages;
-
     protected AbstractAction() {
         // do not init messages here
     }
 
     protected AbstractAction(String id) {
         this.id = id;
-        this.messages = AppBeans.get(Messages.NAME); // legacy behaviour
     }
 
     protected AbstractAction(String id, @Nullable String shortcut) {
@@ -100,17 +92,7 @@ public abstract class AbstractAction implements Action {
     @Nullable
     @Override
     public String getCaption() {
-        return caption == null ? getDefaultCaption() : caption;
-    }
-
-    @Nullable
-    protected String getDefaultCaption() {
-        if (messages != null) {
-            // legacy behaviour
-            return messages.getMessage(id);
-        } else {
-            return null;
-        }
+        return caption;
     }
 
     @Override
@@ -174,13 +156,6 @@ public abstract class AbstractAction implements Action {
             this.icon = icon;
             firePropertyChange(PROP_ICON, oldValue, icon);
         }
-    }
-
-    @Override
-    public void setIconFromSet(Icons.Icon icon) {
-        String iconName = AppBeans.get(Icons.class)
-                .get(icon);
-        setIcon(iconName);
     }
 
     @Override

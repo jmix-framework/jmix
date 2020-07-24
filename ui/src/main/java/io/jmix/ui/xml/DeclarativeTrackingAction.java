@@ -16,12 +16,9 @@
 
 package io.jmix.ui.xml;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.core.security.Security;
-import io.jmix.ui.action.Action;
-import io.jmix.ui.action.ListAction;
+import io.jmix.ui.action.ActionType;
+import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
@@ -32,32 +29,23 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
-public class DeclarativeTrackingAction extends ListAction implements Action.HasTarget, Action.SecuredAction,
-        Action.HasSecurityConstraint {
+@ActionType(DeclarativeTrackingAction.ID)
+public class DeclarativeTrackingAction extends SecuredListAction {
+
+    public static final String ID = "declarativeTracking";
 
     protected Frame frame;
     protected String methodName;
 
-    protected Security security = AppBeans.get(Security.NAME);
-
-    protected ConstraintOperationType constraintOperationType;
-    protected String constraintCode;
-
-    public DeclarativeTrackingAction(String id, String caption, String description, String icon, @Nullable String enable,
-                                     @Nullable String visible, String methodName, @Nullable String shortcut, ActionsHolder holder) {
-        super(id, shortcut);
-        this.caption = caption;
-        this.description = description;
-        this.icon = icon;
-
-        setEnabled(enable == null || Boolean.parseBoolean(enable));
-        setVisible(visible == null || Boolean.parseBoolean(visible));
-
-        this.methodName = methodName;
-        checkActionsHolder(holder);
+    protected DeclarativeTrackingAction(String id) {
+        super(id);
     }
 
-    protected void checkActionsHolder(ActionsHolder holder) {
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public void checkActionsHolder(@Nullable ActionsHolder holder) {
         if (holder instanceof Frame) {
             frame = (Frame) holder;
         } else if (holder instanceof Component.BelongToFrame) {
@@ -135,27 +123,5 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
         }
 
         return super.isPermitted();
-    }
-
-    @Nullable
-    @Override
-    public ConstraintOperationType getConstraintOperationType() {
-        return constraintOperationType;
-    }
-
-    @Override
-    public void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType) {
-        this.constraintOperationType = constraintOperationType;
-    }
-
-    @Nullable
-    @Override
-    public String getConstraintCode() {
-        return constraintCode;
-    }
-
-    @Override
-    public void setConstraintCode(@Nullable String constraintCode) {
-        this.constraintCode = constraintCode;
     }
 }

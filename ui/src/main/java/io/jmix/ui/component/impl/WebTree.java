@@ -38,6 +38,7 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.Security;
+import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -102,6 +103,7 @@ public class WebTree<E extends JmixEntity>
     protected Security security;
     protected IconResolver iconResolver;
     protected MetadataTools metadataTools;
+    protected Actions actions;
 
     protected SelectionMode selectionMode;
 
@@ -264,6 +266,11 @@ public class WebTree<E extends JmixEntity>
         this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
     }
 
+    @Autowired
+    public void setActions(Actions actions) {
+        this.actions = actions;
+    }
+
     @Nullable
     @Override
     public TreeItems<E> getItems() {
@@ -404,7 +411,7 @@ public class WebTree<E extends JmixEntity>
     protected void initShowInfoAction() {
         if (security.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION)) {
             if (getAction(ShowInfoAction.ACTION_ID) == null) {
-                addAction(new ShowInfoAction());
+                addAction(actions.create(ShowInfoAction.ACTION_ID));
             }
         }
     }

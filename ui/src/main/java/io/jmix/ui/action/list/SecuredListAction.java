@@ -41,6 +41,10 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
         super(id);
     }
 
+    public SecuredListAction(String id, @Nullable String shortcut) {
+        super(id, shortcut);
+    }
+
     @Autowired
     protected void setSecurity(Security security) {
         this.security = security;

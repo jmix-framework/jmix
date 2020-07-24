@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.sys;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
@@ -24,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
+import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
@@ -31,17 +31,34 @@ import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
+import org.springframework.beans.factory.annotation.Autowired;
 
+@ActionType(ShowInfoAction.ACTION_ID)
 public class ShowInfoAction extends BaseAction {
 
     public static final String ACTION_ID = "showSystemInfo";
     public static final String ACTION_PERMISSION = "cuba.gui.showInfo";
 
+    protected Metadata metadata;
+    protected WindowConfig windowConfig;
+
     public ShowInfoAction() {
         super(ACTION_ID);
+    }
 
-        Messages messages = AppBeans.get(Messages.NAME);
+    @Autowired
+    public void setMessages(Messages messages) {
         setCaption(messages.getMessage("table.showInfoAction"));
+    }
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setWindowConfig(WindowConfig windowConfig) {
+        this.windowConfig = windowConfig;
     }
 
     @Override
@@ -50,7 +67,6 @@ public class ShowInfoAction extends BaseAction {
 
             JmixEntity selectedItem = ((ListComponent) component).getSingleSelected();
             if (selectedItem != null) {
-                Metadata metadata = AppBeans.get(Metadata.class);
                 showInfo(selectedItem, metadata.getClass(selectedItem), (Component.BelongToFrame) component);
             }
         }
@@ -61,7 +77,7 @@ public class ShowInfoAction extends BaseAction {
                 .getScreens();
 
         // todo sysInfoWindow
-        WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo("sysInfoWindow");
+        WindowInfo windowInfo = windowConfig.getWindowInfo("sysInfoWindow");
 
         Screen screen = screens.create(windowInfo.getId(), OpenMode.DIALOG, new MapScreenOptions(ParamsMap.of(
                 "metaClass", metaClass,

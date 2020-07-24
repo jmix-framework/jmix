@@ -46,6 +46,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.Security;
+import io.jmix.ui.Actions;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.Action;
@@ -122,6 +123,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected PersistenceManagerClient persistenceManagerClient;
     protected ApplicationContext applicationContext;
     protected ScreenValidation screenValidation;
+    protected Actions actions;
 
     // Style names used by grid itself
     protected final List<String> internalStyles = new ArrayList<>(2);
@@ -279,6 +281,11 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     @Autowired
     protected void setScreenValidation(ScreenValidation screenValidation) {
         this.screenValidation = screenValidation;
+    }
+
+    @Autowired
+    public void setActions(Actions actions) {
+        this.actions = actions;
     }
 
     @SuppressWarnings("unchecked")
@@ -1081,7 +1088,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected void initShowInfoAction() {
         if (security.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION)) {
             if (getAction(ShowInfoAction.ACTION_ID) == null) {
-                addAction(new ShowInfoAction());
+                addAction(actions.create(ShowInfoAction.ACTION_ID));
             }
         }
     }

@@ -100,20 +100,15 @@ public class PopupButtonLoader extends AbstractComponentLoader<PopupButton> {
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        String id = loadActionId(element);
+        String type = element.attributeValue("type");
+        if (StringUtils.isNotEmpty(type)) {
+            Actions actions = beanLocator.get(Actions.NAME);
 
-        if (StringUtils.isBlank(element.attributeValue("invoke"))) {
-            if (!isLegacyFrame()) {
-                String type = element.attributeValue("type");
-                if (StringUtils.isNotEmpty(type)) {
-                    Actions actions = beanLocator.get(Actions.NAME);
+            String id = loadActionId(element);
+            Action action = actions.create(type, id);
+            initAction(element, action);
 
-                    Action action = actions.create(type, id);
-                    initAction(element, action);
-
-                    return action;
-                }
-            }
+            return action;
         }
 
         return loadDeclarativeActionDefault(actionsHolder, element);

@@ -35,49 +35,24 @@ public abstract class ActionsHolderLoader<T extends ActionsHolder> extends Abstr
                     "ActionsHolder ID", actionsHolder.getId());
         }
 
-        if (StringUtils.isEmpty(element.attributeValue("invoke"))) {
-            // only in legacy frames
-            /*
-            TODO: legacy-ui
-            if (context instanceof ComponentContext
-                    && ((ComponentContext) context).getFrame().getFrameOwner() instanceof LegacyFrame) {
-                // Try to create a standard list action
-                for (ListActionType type : ListActionType.values()) {
-                    if (type.getId().equals(id)) {
-                        Action instance = type.createAction((ListComponent) actionsHolder);
+        String actionTypeId = element.attributeValue("type");
+        if (StringUtils.isNotEmpty(actionTypeId)) {
+            Actions actions = beanLocator.get(Actions.NAME);
+            Action instance = actions.create(actionTypeId, id);
 
-                        loadStandardActionProperties(instance, element);
+            if (instance instanceof ListAction) {
+                ((ListAction) instance).setTarget((ListComponent) actionsHolder);
+            }
 
-                        loadActionOpenType(instance, element);
+            loadStandardActionProperties(instance, element);
 
-                        loadActionConstraint(instance, element);
+            loadActionConstraint(instance, element);
 
-                        loadShortcut(instance, element);
+            loadShortcut(instance, element);
 
-                        return instance;
-                    }
-                }
-            } else {*/
-                String actionTypeId = element.attributeValue("type");
-                if (StringUtils.isNotEmpty(actionTypeId)) {
-                    Actions actions = beanLocator.get(Actions.NAME);
-                    Action instance = actions.create(actionTypeId, id);
+            loadCustomProperties(instance, element);
 
-                    if (instance instanceof ListAction) {
-                        ((ListAction) instance).setTarget((ListComponent) actionsHolder);
-                    }
-
-                    loadStandardActionProperties(instance, element);
-
-                    loadActionConstraint(instance, element);
-
-                    loadShortcut(instance, element);
-
-                    loadCustomProperties(instance, element);
-
-                    return instance;
-                }
-            // } TODO: legacy-ui
+            return instance;
         }
 
         return super.loadDeclarativeAction(actionsHolder, element);
@@ -126,25 +101,5 @@ public abstract class ActionsHolderLoader<T extends ActionsHolder> extends Abstr
                         propertyEl.attributeValue("name"), propertyEl.attributeValue("value"));
             }
         }
-    }
-
-    protected void loadActionOpenType(Action action, Element element) {
-        /*
-        TODO: legacy-ui
-        if (action instanceof Action.HasOpenType) {
-            String openTypeString = element.attributeValue("openType");
-            if (StringUtils.isNotEmpty(openTypeString)) {
-                OpenType openType;
-                try {
-                    openType = OpenType.valueOf(openTypeString);
-                } catch (IllegalArgumentException e) {
-                    throw new GuiDevelopmentException(
-                            String.format("Unknown open type: '%s' for action: '%s'", openTypeString, action.getId()),
-                            context);
-                }
-
-                ((Action.HasOpenType) action).setOpenType(openType);
-            }
-        }*/
     }
 }

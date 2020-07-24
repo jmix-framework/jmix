@@ -1220,7 +1220,6 @@
         <xs:attributeGroup ref="hasVisibility"/>
         <xs:attributeGroup ref="hasIcon"/>
 
-        <xs:attribute name="invoke" type="xs:string"/>
         <xs:attribute name="primary" type="xs:boolean"/>
         <xs:attribute name="shortcut" type="shortcut"/>
     </xs:complexType>
@@ -1512,7 +1511,6 @@
 
         <xs:attribute name="openType" type="openType"/>
         <xs:attribute name="trackSelection" type="xs:boolean"/>
-        <xs:attribute name="invoke" type="xs:string"/>
         <xs:attribute name="shortcut" type="shortcut"/>
         <xs:attribute name="constraintOperationType" type="constraintOperationType"/>
         <xs:attribute name="constraintCode" type="xs:string"/>
@@ -1524,7 +1522,6 @@
         <xs:attributeGroup ref="hasEnableProp"/>
         <xs:attributeGroup ref="hasVisibility"/>
         <xs:attributeGroup ref="hasIcon"/>
-        <xs:attribute name="invoke" type="xs:string"/>
         <xs:attribute name="type" type="xs:string"/>
     </xs:complexType>
 

@@ -47,8 +47,6 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
-import io.jmix.ui.xml.DeclarativeAction;
-import io.jmix.ui.xml.DeclarativeTrackingAction;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
 import io.jmix.ui.xml.layout.LoaderResolver;
@@ -217,14 +215,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected ThemeConstants getTheme() {
         ThemeConstantsManager manager = beanLocator.get(ThemeConstantsManager.NAME);
         return manager.getConstants();
-    }
-
-    protected boolean isLegacyFrame() {
-        return false;
-        /*
-        TODO: legacy-ui
-        return context instanceof ComponentContext
-                && ((ComponentContext) context).getFrame().getFrameOwner() instanceof LegacyFrame;*/
     }
 
     protected LayoutLoader getLayoutLoader() {
@@ -561,15 +551,20 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         String id = loadActionId(element);
 
         String trackSelection = element.attributeValue("trackSelection");
-
         boolean shouldTrackSelection = Boolean.parseBoolean(trackSelection);
-        String invokeMethod = element.attributeValue("invoke");
 
-        if (StringUtils.isEmpty(invokeMethod)) {
-            return loadStubAction(element, id, shouldTrackSelection);
+        Action targetAction;
+
+        if (shouldTrackSelection) {
+            targetAction = new ItemTrackingAction(id);
+            loadActionConstraint(targetAction, element);
+        } else {
+            targetAction = new BaseAction(id);
         }
 
-        return loadInvokeAction(actionsHolder, element, id, shouldTrackSelection, invokeMethod);
+        initAction(element, targetAction);
+
+        return targetAction;
     }
 
     protected String loadActionId(Element element) {
@@ -586,51 +581,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
                     "Component ID", component.attributeValue("id"));
         }
         return id;
-    }
-
-    protected Action loadInvokeAction(ActionsHolder actionsHolder, Element element, String id, boolean shouldTrackSelection, String invokeMethod) {
-        return shouldTrackSelection
-                ? loadDeclarativeTrackingAction(actionsHolder, element, id, invokeMethod)
-                : loadDeclarativeAction(actionsHolder, element, id, invokeMethod);
-
-    }
-
-    protected DeclarativeTrackingAction loadDeclarativeTrackingAction(ActionsHolder actionsHolder, Element element,
-                                                                      String id, String invokeMethod) {
-        Actions actions = beanLocator.get(Actions.NAME);
-        DeclarativeTrackingAction action = actions.create(DeclarativeTrackingAction.class, id);
-        initAction(element, action);
-        action.setMethodName(invokeMethod);
-        action.checkActionsHolder(actionsHolder);
-        loadActionConstraint(action, element);
-        return action;
-    }
-
-    protected DeclarativeAction loadDeclarativeAction(ActionsHolder actionsHolder, Element element, String id,
-                                                      String invokeMethod) {
-        Actions actions = beanLocator.get(Actions.NAME);
-        DeclarativeAction action = actions.create(DeclarativeAction.class, id);
-        initAction(element, action);
-        action.setMethodName(invokeMethod);
-        action.checkActionsHolder(actionsHolder);
-        action.setPrimary(Boolean.parseBoolean(element.attributeValue("primary")));
-        return action;
-    }
-
-    protected Action loadStubAction(Element element, String id, boolean shouldTrackSelection) {
-        Action targetAction;
-
-        if (shouldTrackSelection) {
-            Actions actions = beanLocator.get(Actions.NAME);
-            targetAction = actions.create(ItemTrackingAction.ID, id);
-            loadActionConstraint(targetAction, element);
-        } else {
-            targetAction = new BaseAction(id);
-        }
-
-        initAction(element, targetAction);
-
-        return targetAction;
     }
 
     protected void initAction(Element element, Action targetAction) {
@@ -781,18 +731,15 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected Action loadEntityPickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        String id = loadActionId(element);
+        String type = element.attributeValue("type");
+        if (StringUtils.isNotEmpty(type)) {
+            Actions actions = beanLocator.get(Actions.NAME);
 
-        if (StringUtils.isBlank(element.attributeValue("invoke"))) {
-            String type = element.attributeValue("type");
-            if (StringUtils.isNotEmpty(type)) {
-                Actions actions = beanLocator.get(Actions.NAME);
+            String id = loadActionId(element);
+            Action action = actions.create(type, id);
+            initAction(element, action);
 
-                Action action = actions.create(type, id);
-                initAction(element, action);
-
-                return action;
-            }
+            return action;
         }
 
         return loadDeclarativeActionDefault(actionsHolder, element);

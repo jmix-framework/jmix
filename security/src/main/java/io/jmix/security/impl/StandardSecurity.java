@@ -16,8 +16,8 @@
 
 package io.jmix.security.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.ExtendedEntities;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -34,12 +34,11 @@ import org.codehaus.groovy.runtime.MethodClosure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -69,7 +68,8 @@ public class StandardSecurity implements Security {
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
-    protected ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+    @Autowired
+    protected ScriptEvaluator scriptEvaluator;
 
 //    private StandardUserSession getUserSession() {
 //        return (StandardUserSession) userSessionSource.getUserSession();
@@ -199,17 +199,12 @@ public class StandardSecurity implements Security {
         //todo MG
 //        context.put("userSession", currentAuthentication.getUserSession());
         fillGroovyConstraintsContext(context);
-        ScriptEngine engine = scriptEngineManager.getEngineByName("groovy");
+        Map<String, Object> arguments = new HashMap<>();
         for (Map.Entry<String, Object> entry : context.entrySet()) {
-            engine.put(entry.getKey(), entry.getValue());
+            arguments.put(entry.getKey(), entry.getValue());
         }
-        Object result;
-        try {
-            result = engine.eval(groovyScript.replace("{E}", "__entity__"));
-        } catch (ScriptException e) {
-            throw new RuntimeException("Error evaluating Groovy expression", e);
-        }
-        return result;
+        String modifiedScript = groovyScript.replace("{E}", "__entity__");
+        return scriptEvaluator.evaluate(new StaticScriptSource(modifiedScript), arguments);
     }
 
     protected boolean isEntityAttrPermitted(MetaClass metaClass, MetaPropertyPath propertyPath, EntityAttrAccess access) {

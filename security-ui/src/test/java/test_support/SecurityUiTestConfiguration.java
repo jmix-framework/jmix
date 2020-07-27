@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -67,5 +69,10 @@ public class SecurityUiTestConfiguration {
         liquibase.setDataSource(dataSource);
         liquibase.setChangeLog("file:" + processor.createMasterChangeLog(Stores.MAIN));
         return liquibase;
+    }
+
+    @Bean
+    public ScriptEvaluator scriptEvaluator() {
+        return new GroovyScriptEvaluator();
     }
 }

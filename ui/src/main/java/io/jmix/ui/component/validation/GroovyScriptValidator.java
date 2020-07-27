@@ -26,17 +26,12 @@ import io.jmix.ui.component.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.support.ResourceScriptSource;
+import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 
 /**
  * GroovyScript validator runs a custom Groovy script. If the script returns any object,
@@ -65,6 +60,8 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
 
     protected String scriptPath;
 
+    protected ScriptEvaluator scriptEvaluator;
+
     public GroovyScriptValidator() {
     }
 
@@ -90,6 +87,11 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
     @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
+    }
+
+    @Autowired
+    protected void setScriptEvaluator(ScriptEvaluator scriptEvaluator) {
+        this.scriptEvaluator = scriptEvaluator;
     }
 
     @Autowired
@@ -135,27 +137,13 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
         if (value == null) {
             return;
         }
-
-        ScriptEngineManager factory = new ScriptEngineManager();
-        ScriptEngine engine = factory.getEngineByName("groovy");
-        engine.put("value", value);
         Object scriptResult = null;
         if (validatorGroovyScript != null) {
-            try {
-                scriptResult = engine.eval(validatorGroovyScript);
-            } catch (ScriptException e) {
-                throw new RuntimeException("Error evaluating Groovy expression", e);
-            }
+            scriptResult = scriptEvaluator.evaluate(new StaticScriptSource(validatorGroovyScript),
+                    Collections.singletonMap("value", value));
         } else if (scriptPath != null) {
-            try (Reader reader = new InputStreamReader(new FileInputStream(resources.getResource(scriptPath).getFile()), StandardCharsets.UTF_8)) {
-                scriptResult = engine.eval(reader);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Groovy script file not found", e);
-            } catch (ScriptException e) {
-                throw new RuntimeException("Error evaluating Groovy expression", e);
-            } catch (IOException e) {
-                throw new RuntimeException("Groovy script file I/O exception", e);
-            }
+            scriptResult = scriptEvaluator.evaluate(new ResourceScriptSource(resources.getResource(scriptPath)),
+                    Collections.singletonMap("value", value));
         }
 
         if (scriptResult != null) {

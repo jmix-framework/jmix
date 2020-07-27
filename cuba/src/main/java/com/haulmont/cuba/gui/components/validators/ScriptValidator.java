@@ -23,16 +23,10 @@ import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.GroovyScriptValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.support.ResourceScriptSource;
+import org.springframework.scripting.support.StaticScriptSource;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +44,7 @@ public class ScriptValidator implements Field.Validator {
     private Map<String, Object> params;
     protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
     protected Resources resources = AppBeans.get(Resources.NAME);
-    protected ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
+    protected ScriptEvaluator scriptEvaluator = AppBeans.get(ScriptEvaluator.class);
 
     public ScriptValidator(Element element, String messagesPack) {
         this.script = element.getText();
@@ -89,26 +83,14 @@ public class ScriptValidator implements Field.Validator {
             params = new HashMap<>();
         }
         params.put("value", value);
-        ScriptEngine engine = scriptEngineManager.getEngineByName("groovy");
+        Map<String, Object> arguments = new HashMap<>();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
-            engine.put(entry.getKey(), entry.getValue());
+            arguments.put(entry.getKey(), entry.getValue());
         }
         if (innerScript) {
-            try {
-                isValid = (Boolean) engine.eval(script);
-            } catch (ScriptException e) {
-                throw new RuntimeException("Error evaluating Groovy expression", e);
-            }
+            isValid = (Boolean) scriptEvaluator.evaluate(new StaticScriptSource(script), arguments);
         } else if (scriptPath != null) {
-            try (Reader reader = new InputStreamReader(new FileInputStream(resources.getResource(scriptPath).getFile()), StandardCharsets.UTF_8)) {
-                isValid = (Boolean) engine.eval(reader);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException("Groovy script file not found", e);
-            } catch (ScriptException e) {
-                throw new RuntimeException("Error evaluating Groovy expression", e);
-            } catch (IOException e) {
-                throw new RuntimeException("Groovy script file I/O exception", e);
-            }
+            isValid = (Boolean) scriptEvaluator.evaluate(new ResourceScriptSource(resources.getResource(scriptPath)), arguments);
         }
         if (!isValid) {
             String msg = message != null ? messageTools.loadString(messagesPack, message) : "Invalid value '%s'";

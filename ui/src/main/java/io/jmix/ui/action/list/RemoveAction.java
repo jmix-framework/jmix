@@ -49,7 +49,7 @@ import java.util.function.Consumer;
  */
 @StudioAction(category = "List Actions", description = "Removes an entity instance from the list and from the database")
 @ActionType(RemoveAction.ID)
-public class RemoveAction<E extends JmixEntity> extends SecuredListAction implements Action.DisabledWhenScreenReadOnly {
+public class RemoveAction<E extends JmixEntity> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly {
 
     public static final String ID = "remove";
 

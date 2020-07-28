@@ -232,10 +232,17 @@ public interface Action {
     }
 
     /**
-     * Marker interface that indicates that the implementing action will
-     * change its 'enabled' state according to the screen read-only mode.
+     * Interface to be implemented by actions which may adjust
+     * their 'enabled' state according to the screen read-only mode.
      */
-    interface DisabledWhenScreenReadOnly {
+    interface AdjustWhenScreenReadOnly {
+
+        /**
+         * @return whether this action must be disabled when a screen in the read-only mode
+         */
+        default boolean isDisabledWhenScreenReadOnly() {
+            return true;
+        }
     }
 
     /**

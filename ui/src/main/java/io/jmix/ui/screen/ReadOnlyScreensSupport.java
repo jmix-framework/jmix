@@ -132,7 +132,8 @@ public class ReadOnlyScreensSupport {
     }
 
     protected boolean isChangeComponentActionEnabled(Action action) {
-        return action instanceof Action.DisabledWhenScreenReadOnly;
+        return action instanceof Action.AdjustWhenScreenReadOnly
+                && ((Action.AdjustWhenScreenReadOnly) action).isDisabledWhenScreenReadOnly();
     }
 
     protected boolean isChangeOwnActionEnabled(Action action) {

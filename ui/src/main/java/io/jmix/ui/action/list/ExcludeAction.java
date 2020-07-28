@@ -48,7 +48,7 @@ import java.util.function.Consumer;
  */
 @StudioAction(category = "List Actions", description = "Excludes entities from the list. The excluded entities are not deleted.")
 @ActionType(ExcludeAction.ID)
-public class ExcludeAction<E extends JmixEntity> extends SecuredListAction implements Action.DisabledWhenScreenReadOnly {
+public class ExcludeAction<E extends JmixEntity> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly {
 
     public static final String ID = "exclude";
 

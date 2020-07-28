@@ -36,6 +36,7 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
@@ -61,7 +62,7 @@ import java.util.function.Supplier;
 @org.springframework.stereotype.Component("cuba_EditAction")
 @Scope("prototype")
 public class EditAction extends ItemTrackingAction
-        implements Action.HasOpenType, Action.HasBeforeActionPerformedHandler, Action.DisabledWhenScreenReadOnly {
+        implements Action.HasOpenType, Action.HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.EDIT.getId();
 
@@ -209,6 +210,23 @@ public class EditAction extends ItemTrackingAction
         }
 
         return super.isPermitted();
+    }
+
+    @Override
+    public boolean isDisabledWhenScreenReadOnly() {
+        if (!(target.getItems() instanceof EntityDataUnit)) {
+            return true;
+        }
+
+        MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
+        if (metaClass != null) {
+            // Even though the screen is read-only, this edit action may remain active
+            // because the related entity cannot be edited and the corresponding edit screen
+            // will be opened in read-only mode either.
+            return security.isEntityOpPermitted(metaClass, EntityOp.UPDATE);
+        }
+
+        return true;
     }
 
     /**

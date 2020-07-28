@@ -51,7 +51,7 @@ import java.util.Set;
 @org.springframework.stereotype.Component("cuba_ExcludeAction")
 @Scope("prototype")
 public class ExcludeAction extends RemoveAction
-        implements Action.DisabledWhenScreenReadOnly {
+        implements Action.AdjustWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.EXCLUDE.getId();
 

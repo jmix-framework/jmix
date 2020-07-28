@@ -65,7 +65,7 @@ import java.util.function.Supplier;
 @org.springframework.stereotype.Component("cuba_AddAction")
 @Scope("prototype")
 public class AddAction extends ListAction
-        implements Action.HasOpenType, Action.HasBeforeActionPerformedHandler, Action.DisabledWhenScreenReadOnly {
+        implements Action.HasOpenType, Action.HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.ADD.getId();
 

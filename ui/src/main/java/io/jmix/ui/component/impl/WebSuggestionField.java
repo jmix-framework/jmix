@@ -18,6 +18,7 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.executor.BackgroundTask;
@@ -26,12 +27,12 @@ import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widget.JmixSuggestionField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -307,6 +308,10 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         Screen lastDialog = null;
         for (Screen dialogScreen : dialogScreens) {
             lastDialog = dialogScreen;
+        }
+
+        if (frameOwner instanceof ScreenFragment) {
+            frameOwner = ComponentsHelper.getScreen((ScreenFragment) frameOwner);
         }
 
         if (lastDialog == null || Objects.equals(frameOwner, lastDialog)) {

@@ -19,6 +19,7 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.SecuredActionsHolder;
 import io.jmix.ui.component.EntitySuggestionField;
 import io.jmix.ui.executor.BackgroundTask;
@@ -27,6 +28,7 @@ import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widget.JmixPickerField;
 import io.jmix.ui.widget.JmixSuggestionPickerField;
@@ -292,6 +294,10 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         Screen lastDialog = null;
         for (Screen dialogScreen : dialogScreens) {
             lastDialog = dialogScreen;
+        }
+
+        if (frameOwner instanceof ScreenFragment) {
+            frameOwner = ComponentsHelper.getScreen((ScreenFragment) frameOwner);
         }
 
         if (lastDialog == null || Objects.equals(frameOwner, lastDialog)) {

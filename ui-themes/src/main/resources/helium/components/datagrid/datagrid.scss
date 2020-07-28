@@ -144,6 +144,7 @@
       text-shadow: none;
 
       .v-link,
+      .v-link > a:visited,
       .v-button-link,
       .boolean-value:before {
         color: var(--grid-selected-row-text-color);

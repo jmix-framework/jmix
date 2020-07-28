@@ -279,7 +279,8 @@ $he-table-header-row-height-scale: 1.5 !default;
     .c-table-cell-textcut .c-table-clickable-cell,
     .v-popupview,
     .v-button-link,
-    .v-link {
+    .v-link,
+    .v-link > a:visited {
       color: var(--table-selected-row-text-color);
     }
 

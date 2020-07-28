@@ -16,18 +16,19 @@
 
 package spec.haulmont.cuba.components.validation
 
+
 import io.jmix.core.TimeSource
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype
 import io.jmix.core.metamodel.datatype.impl.LocalTimeDatatype
 import io.jmix.ui.component.*
 import io.jmix.ui.component.validation.*
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import spec.haulmont.cuba.components.validation.screens.ValidatorsScreen
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
-import org.springframework.beans.factory.annotation.Autowired
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.OffsetTime
@@ -968,44 +969,6 @@ class ValidatorsTest extends UiScreenSpec {
 
         when: "valid value"
         textField.setValue(validValue)
-        textField.validate()
-
-        then:
-        noExceptionThrown()
-    }
-
-    @Ignore
-    def "groovy script validator test"() {
-        showMainScreen()
-
-        def validatorsScreen = screens.create(ValidatorsScreen)
-        validatorsScreen.show()
-
-        def groovyScript = "if (!value.startsWith(\"correct\")) return \"validation error message\""
-        def groovyScriptValidator = (GroovyScriptValidator) applicationContext.getBean(GroovyScriptValidator.NAME, groovyScript)
-        def textField = (TextField) validatorsScreen.getWindow().getComponent("stringField")
-        textField.setDatatype(datatypeRegistry.find(String))
-        textField.addValidator(groovyScriptValidator)
-
-        def invalidStringValue = "incorrectValue"
-        def validStringValue = "correctValue"
-
-        when: "invalid value"
-        textField.setValue(invalidStringValue)
-        textField.validate()
-
-        then:
-        thrown(ValidationException)
-
-        when: "valid value"
-        textField.setValue(validStringValue)
-        textField.validate()
-
-        then:
-        noExceptionThrown()
-
-        when: "null value"
-        textField.setValue(null)
         textField.validate()
 
         then:

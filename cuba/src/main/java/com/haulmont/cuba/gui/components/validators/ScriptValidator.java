@@ -20,7 +20,6 @@ import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Resources;
 import io.jmix.ui.component.ValidationException;
-import io.jmix.ui.component.validation.GroovyScriptValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.scripting.ScriptEvaluator;
@@ -31,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @deprecated Use a {@link GroovyScriptValidator} instead
+ * @deprecated
  */
 @Deprecated
 public class ScriptValidator implements Field.Validator {

@@ -18,14 +18,7 @@ package io.jmix.dynattrui.impl;
 
 import io.jmix.core.BeanLocator;
 import io.jmix.dynattr.AttributeDefinition;
-import io.jmix.ui.component.validation.DecimalMaxValidator;
-import io.jmix.ui.component.validation.DecimalMinValidator;
-import io.jmix.ui.component.validation.DoubleMaxValidator;
-import io.jmix.ui.component.validation.DoubleMinValidator;
-import io.jmix.ui.component.validation.GroovyScriptValidator;
-import io.jmix.ui.component.validation.MaxValidator;
-import io.jmix.ui.component.validation.MinValidator;
-import io.jmix.ui.component.validation.Validator;
+import io.jmix.ui.component.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -66,7 +66,7 @@ public class HeliumThemeVariantsManager {
         return getCookieValue(THEME_MODE_COOKIE_PREFIX);
     }
 
-    public void setUserAppThemeMode(String themeMode) {
+    public void setUserAppThemeMode(@Nullable String themeMode) {
         if (Objects.equals(themeMode, getDefaultAppThemeMode())) {
             removeCookie(THEME_MODE_COOKIE_PREFIX);
             removeUserSetting(THEME_MODE_USER_SETTING_NAME);
@@ -100,7 +100,7 @@ public class HeliumThemeVariantsManager {
         return getCookieValue(THEME_SIZE_COOKIE_PREFIX);
     }
 
-    public void setUserAppThemeSize(String themeSize) {
+    public void setUserAppThemeSize(@Nullable String themeSize) {
         if (Objects.equals(themeSize, getDefaultAppThemeSize())) {
             removeCookie(THEME_SIZE_COOKIE_PREFIX);
             removeUserSetting(THEME_SIZE_USER_SETTING_NAME);

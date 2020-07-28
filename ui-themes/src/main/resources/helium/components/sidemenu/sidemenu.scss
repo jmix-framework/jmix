@@ -409,16 +409,16 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
 }
 
 @mixin he-sidemenu-item-selected-style() {
-  background: var(--sedemenu-item-selected-background-color);
-  color: var(--sedemenu-item-selected-color);
+  background: var(--sidemenu-item-selected-background-color);
+  color: var(--sidemenu-item-selected-color);
 
   &:focus,
   &:hover,
   &.selected {
-    color: var(--sedemenu-item-selected-color);
+    color: var(--sidemenu-item-selected-color);
 
     .v-ch & span.v-icon {
-      color: var(--sedemenu-item-selected-color);
+      color: var(--sidemenu-item-selected-color);
     }
   }
 }

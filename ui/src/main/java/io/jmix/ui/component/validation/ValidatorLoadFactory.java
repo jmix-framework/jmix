@@ -63,7 +63,6 @@ public class ValidatorLoadFactory {
             .put("positiveOrZero", this::loadValidatorWithoutAttributes)
             .put("positive", this::loadValidatorWithoutAttributes)
             .put("regexp", this::loadRegexpValidator)
-            .put("script", this::loadScriptValidator)
             .put("size", this::loadSizeValidator)
             .build();
 
@@ -322,24 +321,6 @@ public class ValidatorLoadFactory {
         RegexpValidator validator = beanLocator.getPrototype(RegexpValidator.NAME, regexp);
         validator.setMessage(loadMessage(element, messagePack));
 
-        return validator;
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected Validator loadScriptValidator(Element element, String messagePack) {
-        GroovyScriptValidator validator = beanLocator.getPrototype(GroovyScriptValidator.NAME);
-
-        String script = element.getText();
-        if (script != null) {
-            validator.setValidatorGroovyScript(script);
-        }
-
-        String scriptPath = element.attributeValue("path");
-        if (scriptPath != null) {
-            validator.setScriptPath(scriptPath);
-        }
-
-        validator.setMessage(loadMessage(element, messagePack));
         return validator;
     }
 

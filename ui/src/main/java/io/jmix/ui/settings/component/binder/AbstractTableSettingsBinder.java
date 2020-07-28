@@ -135,8 +135,9 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
         boolean settingsChanged = false;
 
         if (table.isUsePresentations()) {
-            boolean textSelection = BooleanUtils.toBoolean(tableSettings.getTextSelection());
-            if (textSelection != table.isTextSelectionEnabled()) {
+            Boolean textSelection = tableSettings.getTextSelection();
+            if (textSelection == null
+                    || BooleanUtils.toBoolean(textSelection) != table.isTextSelectionEnabled()) {
                 tableSettings.setTextSelection(table.isTextSelectionEnabled());
 
                 settingsChanged = true;

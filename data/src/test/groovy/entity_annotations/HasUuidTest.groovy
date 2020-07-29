@@ -37,8 +37,8 @@ class HasUuidTest extends DataSpec {
 
     def "entities enhanced properly"() {
         setup:
-        DummyEntity entity = dataManager.save(dataManager.create(DummyEntity))
-        AnnotatedUuidEntity annotatedUuidEntity = dataManager.save(dataManager.create(AnnotatedUuidEntity))
+        DummyEntity dummyEntity = dataManager.save(dataManager.create(DummyEntity))
+        AnnotatedUuidEntity entity = dataManager.save(dataManager.create(AnnotatedUuidEntity))
         UUID someId = UUID.fromString("7ca7670b-b352-4e62-87a2-de9ca59ad2c1")
         UUID anotherId = UUID.fromString('e61703bf-bf36-4364-ba66-67655e1810d6')
 
@@ -49,15 +49,15 @@ class HasUuidTest extends DataSpec {
         "someNotPrimaryId".equals(metadataTools.getUuidPropertyName(AnnotatedUuidEntity))
         "id".equals(metadataTools.getUuidPropertyName(BaseUuidEntity))
 
-        entity.__getEntityEntry() instanceof EntityEntryHasUuid
+        dummyEntity.__getEntityEntry() instanceof EntityEntryHasUuid
+        ((EntityEntryHasUuid) dummyEntity.__getEntityEntry()).getUuid() != null
+
+        entity.getId() != null
+        entity.getSomeNotPrimaryId() != null
         ((EntityEntryHasUuid) entity.__getEntityEntry()).getUuid() != null
 
-        annotatedUuidEntity.getId() != null
-        annotatedUuidEntity.getSomeNotPrimaryId() != null
-        ((EntityEntryHasUuid) annotatedUuidEntity.__getEntityEntry()).getUuid() != null
-
         when:
-        entity.setId(someId)
+        entity.setSomeNotPrimaryId(someId)
 
         then:
         ((EntityEntryHasUuid) entity.__getEntityEntry()).getUuid() == someId
@@ -66,10 +66,11 @@ class HasUuidTest extends DataSpec {
         ((EntityEntryHasUuid) entity.__getEntityEntry()).setUuid(anotherId)
 
         then:
-        entity.getId() == anotherId
+        entity.getSomeNotPrimaryId() == anotherId
 
         cleanup:
         if (entity != null) dataManager.remove(entity)
+        if (dummyEntity != null) dataManager.remove(dummyEntity)
     }
 
 }

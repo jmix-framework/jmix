@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -179,7 +178,7 @@ public class SecurityTokenManager {
     }
 
     protected Object convertId(Object value, MetaClass metaClass, boolean handleHasUuid) {
-        if (handleHasUuid && HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+        if (handleHasUuid && metadataTools.hasUuid(metaClass)) {
             return UuidProvider.fromString((String) value);
         }
         MetaProperty primaryKey = metadataTools.getPrimaryKeyProperty(metaClass);

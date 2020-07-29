@@ -370,20 +370,21 @@ public class FetchGroupManager {
         MetaClass entityMetaClass = metadata.getClass(entityClass);
 
         if (useFetchGroup) {
-            // Always add SoftDelete properties to support EntityManager contract
-            if (metadataTools.isSoftDeletable(entityClass)) {
-                for (String property : metadataTools.getSoftDeleteProperties(entityClass)) {
-                    fetchGroupFields.add(createFetchGroupField(entityClass, parentField, property));
-                }
-            }
-
             // Always add uuid property if the entity has primary key not of type UUID
             MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(entityMetaClass);
             if (pkProperty != null && !UUID.class.equals(pkProperty.getJavaType())) {
-                MetaProperty uuidProp = entityMetaClass.findProperty("uuid");
+                String uuidPropName = metadataTools.getUuidPropertyName(entityClass);
+                MetaProperty uuidProp = uuidPropName != null ? entityMetaClass.findProperty(uuidPropName) : null;
                 if (uuidProp != null && metadataTools.isPersistent(uuidProp)) {
-                    fetchGroupFields.add(createFetchGroupField(entityClass, parentField, "uuid"));
+                    fetchGroupFields.add(createFetchGroupField(entityClass, parentField, uuidPropName));
                 }
+            }
+        }
+
+        // Always add SoftDelete properties to support EntityManager contract
+        if (metadataTools.isSoftDeletable(entityClass)) {
+            for (String property : metadataTools.getSoftDeleteProperties(entityClass)) {
+                fetchGroupFields.add(createFetchGroupField(entityClass, parentField, property));
             }
         }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package auditing_and_softdelete
+package entity_annotations
 
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
@@ -72,8 +72,8 @@ class SoftDeleteTest extends DataSpec {
         softDeleteEntry.setDeletedBy("UFO")
 
         then:
-        beforeOrEquals(beforeDelete, entity.getDeleteTs())
-        afterOrEquals(afterDelete, entity.getDeleteTs())
+        beforeOrEquals(beforeDelete, entity.getTimeOfDeletion())
+        afterOrEquals(afterDelete, entity.getTimeOfDeletion())
         "UFO".equals(entity.getWhoDeleted())
         ((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted()
     }
@@ -100,13 +100,13 @@ class SoftDeleteTest extends DataSpec {
         then:
         ((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted()
         entity.whoDeleted.equals("admin")
-        beforeOrEquals(beforeDelete, entity.deleteTs)
-        afterOrEquals(afterDelete, entity.deleteTs)
+        beforeOrEquals(beforeDelete, entity.timeOfDeletion)
+        afterOrEquals(afterDelete, entity.timeOfDeletion)
 
         ((EntityEntrySoftDelete) tsOnly.__getEntityEntry()).isDeleted()
         ((EntityEntrySoftDelete) tsOnly.__getEntityEntry()).getDeletedBy() == null
-        beforeOrEquals(beforeDelete, tsOnly.deleteTs)
-        afterOrEquals(afterDelete, tsOnly.deleteTs)
+        beforeOrEquals(beforeDelete, tsOnly.timeOfDeletion)
+        afterOrEquals(afterDelete, tsOnly.timeOfDeletion)
 
         cleanup:
         authenticator.end()

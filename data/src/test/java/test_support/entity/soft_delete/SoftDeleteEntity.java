@@ -29,16 +29,16 @@ public class SoftDeleteEntity extends HardDeleteEntity {
     private static final long serialVersionUID = 7016314126468585951L;
 
     @DeletedDate
-    @Column(name = "DELETE_TS")
-    protected Date deleteTs;
+    @Column(name = "TIME_OF_DELETION")
+    protected Date timeOfDeletion;
 
 
-    public Date getDeleteTs() {
-        return deleteTs;
+    public Date getTimeOfDeletion() {
+        return timeOfDeletion;
     }
 
-    public void setDeleteTs(Date deleteTs) {
-        this.deleteTs = deleteTs;
+    public void setTimeOfDeletion(Date timeOfDeletion) {
+        this.timeOfDeletion = timeOfDeletion;
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,42 +14,45 @@
  * limitations under the License.
  */
 
-package test_support.entity;
+package test_support.entity.soft_delete;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.data.entity.BaseIdentityIdEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
-@Entity(name = "test_IdentityUuidEntity")
-@Table(name = "TEST_IDENTITY_UUID_ENTITY")
-public class TestIdentityUuidEntity extends BaseIdentityIdEntity {
+@Table(name = "TEST_ANNOTATED_UUID_ENTITY")
+@Entity(name = "test_AnnotatedUuidEntity")
+public class AnnotatedUuidEntity implements JmixEntity {
+    private static final long serialVersionUID = -8038621963186188071L;
 
-    private static final long serialVersionUID = 146993228195491648L;
-
-    @Column(name = "NAME")
-    private String name;
-
-    @Column(name = "UUID")
+    @Id
     @JmixGeneratedValue
-    private UUID uuid;
+    @Column(name = "ID")
+    protected Long id;
 
-    public String getName() {
-        return name;
+
+    @Column(name = "SOME_NOT_PRIMARY_ID")
+    @JmixGeneratedValue
+    protected UUID someNotPrimaryId;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public UUID getSomeNotPrimaryId() {
+        return someNotPrimaryId;
     }
 
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    public void setSomeNotPrimaryId(UUID someNotPrimaryId) {
+        this.someNotPrimaryId = someNotPrimaryId;
     }
 }

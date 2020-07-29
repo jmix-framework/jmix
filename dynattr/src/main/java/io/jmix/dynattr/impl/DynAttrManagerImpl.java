@@ -22,7 +22,6 @@ import com.google.common.collect.Multimap;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
@@ -189,7 +188,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
     protected void doFetchValues(MetaClass metaClass, Collection<JmixEntity> entities) {
         if (dynAttrMetadata.getAttributes(metaClass).isEmpty() ||
-                metadataTools.hasCompositePrimaryKey(metaClass) && !HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+                metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
             for (JmixEntity entity : entities) {
                 DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
                 entity.__getEntityEntry().addExtraState(state);
@@ -303,7 +302,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 .build();
 
         List<CategoryAttributeValue> result;
-        if (HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+        if (metadataTools.hasUuid(metaClass)) {
             result = entityManager.createQuery(
                     String.format("select v from sys_CategoryAttributeValue v where v.entity.%s in :ids and v.parent is null",
                             referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)

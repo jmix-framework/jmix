@@ -23,7 +23,6 @@ import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.jmix.core.*;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -728,8 +727,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         Map<String, String> optionsMap = new TreeMap<>();
         for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
             if (!metadataTools.isSystemLevel(metaClass)) {
-                if (metadataTools.hasCompositePrimaryKey(metaClass)
-                        && !HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+                if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
                     continue;
                 }
                 optionsMap.put(messageTools.getDetailedEntityCaption(metaClass), metaClass.getJavaClass().getName());

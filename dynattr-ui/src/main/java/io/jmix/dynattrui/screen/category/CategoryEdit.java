@@ -17,7 +17,6 @@
 package io.jmix.dynattrui.screen.category;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.impl.model.Category;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
@@ -132,7 +131,7 @@ public class CategoryEdit extends StandardEditor<Category> {
     protected void initEntityTypeField() {
         Map<String, MetaClass> options = new TreeMap<>();//the map sorts meta classes by the string key
         for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
-            if (metadataTools.hasCompositePrimaryKey(metaClass) && !HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+            if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
                 continue;
             }
             options.put(messageTools.getDetailedEntityCaption(metaClass), metaClass);

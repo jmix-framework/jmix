@@ -17,12 +17,11 @@
 package io.jmix.ui.component;
 
 import com.google.common.base.Strings;
-import io.jmix.core.UuidProvider;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.entity.HasUuid;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 import org.dom4j.Element;
 
 import javax.persistence.Id;
@@ -30,9 +29,10 @@ import java.util.UUID;
 
 @ModelObject(name = "sec$ScreenComponentDescriptor", annotatedPropertiesOnly = true)
 @SystemLevel
-public class ScreenComponentDescriptor implements JmixEntity, HasUuid {
+public class ScreenComponentDescriptor implements JmixEntity {
 
     @Id
+    @JmixGeneratedValue
     protected UUID id;
     protected Element element;
 
@@ -40,7 +40,6 @@ public class ScreenComponentDescriptor implements JmixEntity, HasUuid {
     protected ScreenComponentDescriptor parent;
 
     public ScreenComponentDescriptor(Element element, ScreenComponentDescriptor parent) {
-        this.id = UuidProvider.createUuid();
         this.element = element;
         this.parent = parent;
     }
@@ -51,16 +50,6 @@ public class ScreenComponentDescriptor implements JmixEntity, HasUuid {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    @Override
-    public UUID getUuid() {
-        return id;
-    }
-
-    @Override
-    public void setUuid(UUID uuid) {
-        this.id = uuid;
     }
 
     @ModelProperty

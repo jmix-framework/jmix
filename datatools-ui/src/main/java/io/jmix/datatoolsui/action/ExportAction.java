@@ -16,12 +16,14 @@
 
 package io.jmix.datatoolsui.action;
 
+import io.jmix.core.CoreProperties;
 import io.jmix.core.EntityImportExport;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.datatoolsui.screen.entityinspector.EntityInspectorBrowser;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.component.Component;
@@ -52,6 +54,8 @@ public class ExportAction extends ItemTrackingAction {
     protected EntityImportExport entityImportExport;
     protected Downloader exportDisplay;
     protected Messages messages;
+    protected UiProperties uiProperties;
+    protected CoreProperties coreProperties;
 
     protected DownloadFormat format;
     protected MetaClass metaClass;
@@ -81,6 +85,16 @@ public class ExportAction extends ItemTrackingAction {
         this.exportDisplay = exportDisplay;
     }
 
+    @Autowired
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
+    }
+
+    @Autowired
+    public void setCoreProperties(CoreProperties coreProperties) {
+        this.coreProperties = coreProperties;
+    }
+
     public void setFormat(DownloadFormat format) {
         this.format = format;
     }
@@ -102,15 +116,19 @@ public class ExportAction extends ItemTrackingAction {
         }
 
         try {
+            int saveExportedByteArrayDataThresholdBytes = uiProperties.getSaveExportedByteArrayDataThresholdBytes();
+            String tempDir = coreProperties.getTempDir();
             if (format == ZIP) {
                 byte[] data = entityImportExport.exportEntitiesToZIP(selected);
                 String resourceName = metaClass.getJavaClass().getSimpleName() + ".zip";
-                exportDisplay.download(new ByteArrayDataProvider(data), resourceName, ZIP);
+                exportDisplay.download(
+                        new ByteArrayDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir), resourceName, ZIP);
             } else if (format == JSON) {
                 byte[] data = entityImportExport.exportEntitiesToJSON(selected)
                         .getBytes(StandardCharsets.UTF_8);
                 String resourceName = metaClass.getJavaClass().getSimpleName() + ".json";
-                exportDisplay.download(new ByteArrayDataProvider(data), resourceName, JSON);
+                exportDisplay.download(
+                        new ByteArrayDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir), resourceName, JSON);
             }
         } catch (Exception e) {
             ScreenContext screenContext = ComponentsHelper.getScreenContext(table);

@@ -19,18 +19,16 @@ package io.jmix.datatoolsui.screen.entityinspector.assistant;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.component.ButtonsPanel;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TablePagination;
 import io.jmix.ui.component.data.table.ContainerTableItems;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -54,6 +52,8 @@ public class InspectorTableBuilder {
     protected MessageTools messageTools;
     @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected AggregatableDelegate aggregatableDelegate;
 
     private final MetaClass metaClass;
     private final CollectionContainer collectionContainer;
@@ -126,7 +126,7 @@ public class InspectorTableBuilder {
         }
         table.setSizeFull();
 
-        table.setItems(new ContainerTableItems(collectionContainer));
+        table.setItems(new ContainerTableItems(collectionContainer, aggregatableDelegate));
 
         if (buttonsPanelInitializer!=null) {
             table.setButtonsPanel(uiComponents.create(ButtonsPanel.class));

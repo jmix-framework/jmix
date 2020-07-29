@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components.filter.operationedit;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -62,7 +63,8 @@ public class PropertyOperationEditor extends AbstractOperationEditor {
             popupButton.addAction(operatorChangeAction);
         }
 
-        popupButton.setCaption(condition.getOperator().getLocCaption());
+        Messages messages = AppBeans.get(Messages.class);
+        popupButton.setCaption(messages.getMessage(Op.class, "Op." + condition.getOperator().name()));
         popupButton.setStyleName("condition-operation-button");
 
         return popupButton;
@@ -91,7 +93,8 @@ public class PropertyOperationEditor extends AbstractOperationEditor {
 
         @Override
         public String getCaption() {
-            return op.getLocCaption();
+            Messages messages = AppBeans.get(Messages.class);
+            return messages.getMessage(Op.class, "Op." + op.name());
         }
     }
 }

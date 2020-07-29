@@ -63,17 +63,7 @@ public class CollectionDatasourceImpl<T extends JmixEntity, K>
 
     protected boolean inRefresh;
 
-    protected AggregatableDelegate<K> aggregatableDelegate = new AggregatableDelegate<K>() {
-        @Override
-        public Object getItem(K itemId) {
-            return CollectionDatasourceImpl.this.getItem(itemId);
-        }
-
-        @Override
-        public Object getItemValue(MetaPropertyPath property, K itemId) {
-            return CollectionDatasourceImpl.this.getItemValue(property, itemId);
-        }
-    };
+    protected AggregatableDelegate<K> aggregatableDelegate;
 
     protected SortDelegate<T, K> sortDelegate = (entities, sortInfo) -> entities.sort(createEntityComparator());
 
@@ -88,6 +78,16 @@ public class CollectionDatasourceImpl<T extends JmixEntity, K>
     protected LoadContext.Query lastQuery;
     protected LinkedList<LoadContext.Query> prevQueries = new LinkedList<>();
     protected Integer queryKey;
+
+    public CollectionDatasourceImpl() {
+        initAggregatableDelegate();
+    }
+
+    protected void initAggregatableDelegate() {
+        aggregatableDelegate = AppBeans.getPrototype(AggregatableDelegate.class);
+        aggregatableDelegate.setItemProvider(CollectionDatasourceImpl.this::getItem);
+        aggregatableDelegate.setItemValueProvider(CollectionDatasourceImpl.this::getItemValue);
+    }
 
     @Override
     public void refreshIfNotSuspended() {

@@ -21,11 +21,16 @@ import io.jmix.ui.component.Table
 import io.jmix.ui.component.TextField
 import io.jmix.ui.component.data.table.ContainerTableItems
 import io.jmix.ui.component.data.value.ContainerValueSource
+import io.jmix.ui.gui.data.impl.AggregatableDelegate
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.InstanceContainer
+import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.web.UiScreenSpec
 
 class ContainerBindingTest extends UiScreenSpec {
+
+    @Autowired
+    private AggregatableDelegate aggregatableDelegate;
 
     def "fields with one instance container"() {
         InstanceContainer<Foo> container = dataComponents.createInstanceContainer(Foo)
@@ -63,7 +68,7 @@ class ContainerBindingTest extends UiScreenSpec {
 
         Table<Foo> table = uiComponents.create(Table)
         table.addColumn(new Table.Column(metadata.getClassNN(Foo).getPropertyPath("name")))
-        table.setItems(new ContainerTableItems(container))
+        table.setItems(new ContainerTableItems(container, aggregatableDelegate))
 
         TextField textField = uiComponents.create(TextField)
         textField.setValueSource(new ContainerValueSource(container, 'name'))

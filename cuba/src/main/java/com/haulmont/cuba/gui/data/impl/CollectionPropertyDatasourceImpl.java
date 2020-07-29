@@ -38,7 +38,6 @@ import io.jmix.core.security.PermissionType;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.filter.QueryFilter;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
-import io.jmix.ui.model.impl.EntityValuesComparator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,17 +71,17 @@ public class CollectionPropertyDatasourceImpl<T extends JmixEntity, K>
 
     protected SortDelegate<T, K> sortDelegate = (entities, sortInfo) -> entities.sort(createEntityComparator());
 
-    protected AggregatableDelegate<K> aggregatableDelegate = new AggregatableDelegate<K>() {
-        @Override
-        public Object getItem(K itemId) {
-            return CollectionPropertyDatasourceImpl.this.getItem(itemId);
-        }
+    protected AggregatableDelegate<K> aggregatableDelegate;
 
-        @Override
-        public Object getItemValue(MetaPropertyPath property, K itemId) {
-            return CollectionPropertyDatasourceImpl.this.getItemValue(property, itemId);
-        }
-    };
+    public CollectionPropertyDatasourceImpl() {
+        initAggregatableDelegate();
+    }
+
+    protected void initAggregatableDelegate() {
+        aggregatableDelegate = AppBeans.getPrototype(AggregatableDelegate.class);
+        aggregatableDelegate.setItemProvider(CollectionPropertyDatasourceImpl.this::getItem);
+        aggregatableDelegate.setItemValueProvider(CollectionPropertyDatasourceImpl.this::getItemValue);
+    }
 
     @Override
     public void setup(String id, Datasource masterDs, String property) {

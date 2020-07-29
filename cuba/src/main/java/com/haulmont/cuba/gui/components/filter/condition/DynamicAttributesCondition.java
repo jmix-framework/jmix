@@ -180,7 +180,8 @@ public class DynamicAttributesCondition extends AbstractCondition {
 
     @Override
     public String getOperationCaption() {
-        return operator.getLocCaption();
+        io.jmix.core.Messages messages = AppBeans.get(io.jmix.core.Messages.class);
+        return messages.getMessage(Op.class, "Op." + operator.name());
     }
 
     @Override

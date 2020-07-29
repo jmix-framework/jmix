@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.export;
 
 public class ByteArrayDataProvider extends io.jmix.ui.download.ByteArrayDataProvider implements ExportDataProvider {
-    public ByteArrayDataProvider(byte[] data) {
-        super(data);
+    public ByteArrayDataProvider(byte[] data, int saveExportedByteArrayDataThresholdBytes, String tempDir) {
+        super(data, saveExportedByteArrayDataThresholdBytes, tempDir);
     }
 }

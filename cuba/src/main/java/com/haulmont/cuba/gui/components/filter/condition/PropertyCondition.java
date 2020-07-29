@@ -28,6 +28,7 @@ import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescr
 import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEditor;
 import com.haulmont.cuba.gui.components.filter.operationedit.PropertyOperationEditor;
 import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -279,7 +280,8 @@ public class PropertyCondition extends AbstractCondition {
 
     @Override
     public String getOperationCaption() {
-        return operator.getLocCaption();
+        Messages messages = AppBeans.get(Messages.class);
+        return messages.getMessage(Op.class, "Op." + operator.name());
     }
 
     @Override

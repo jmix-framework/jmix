@@ -21,7 +21,6 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.model.impl.EntityValuesComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

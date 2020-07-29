@@ -20,7 +20,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.GroupDatasource;
 import io.jmix.ui.gui.data.GroupInfo;
-import io.jmix.ui.model.impl.EntityValuesComparator;
 
 import java.util.Collection;
 import java.util.Comparator;

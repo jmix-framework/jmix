@@ -38,7 +38,6 @@ import io.jmix.ui.component.HasValue;
 import io.jmix.ui.filter.ParameterInfo;
 import io.jmix.ui.filter.ParametersHelper;
 import io.jmix.ui.filter.QueryFilter;
-import io.jmix.ui.model.impl.EntityValuesComparator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

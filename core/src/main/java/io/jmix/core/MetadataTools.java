@@ -20,9 +20,9 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -64,6 +64,7 @@ public class MetadataTools {
     public static final String NAME = "core_MetadataTools";
 
     public static final String PRIMARY_KEY_ANN_NAME = "jmix.primaryKey";
+    public static final String UUID_KEY_ANN_NAME = "jmix.uuidKey";
     public static final String EMBEDDED_ANN_NAME = "jmix.embedded";
     public static final String TEMPORAL_ANN_NAME = "jmix.temporal";
     public static final String SYSTEM_ANN_NAME = "jmix.system";
@@ -75,8 +76,7 @@ public class MetadataTools {
 
     public static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(
             JmixEntity.class,
-            Versioned.class,
-            HasUuid.class
+            Versioned.class
     );
 
     @Autowired
@@ -312,9 +312,14 @@ public class MetadataTools {
     }
 
     /**
-     * Determine whether the given property is system-level. A property is considered system if it is defined not
-     * in an entity class but in one of its base interfaces:
-     * {@link JmixEntity}, {@link Versioned}, {@link HasUuid}
+     * Determine whether the given property is system-level. A property is considered system if satisfies any of conditions:
+     * <ul>
+     *     <li>has {@link Id} annotation</li>
+     *     <li>used as Uuid Key (see {@link EntityEntryHasUuid})</li>
+     *     <li>defined not in an entity class but in one of its base interfaces:
+     *         {@link JmixEntity}, {@link Versioned}
+     *     </li>
+     * </ul>
      */
     public boolean isSystem(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
@@ -798,6 +803,20 @@ public class MetadataTools {
         return instance.__getEntityEntry() instanceof EntityEntrySoftDelete
                 && ((EntityEntrySoftDelete) instance.__getEntityEntry()).isDeleted();
 
+    }
+
+    /**
+     * Checks whether an entity has uuid key (primary or not)
+     *
+     * @return true if entity's {@link EntityEntry} implements {@link EntityEntryHasUuid}
+     */
+    public boolean hasUuid(MetaClass metaClass) {
+        return metaClass.getAnnotations().containsKey(UUID_KEY_ANN_NAME);
+    }
+
+    @Nullable
+    public String getUuidPropertyName(Class<?> clazz) {
+        return (String) metadata.getClass(clazz).getAnnotations().get(UUID_KEY_ANN_NAME);
     }
 
     /**

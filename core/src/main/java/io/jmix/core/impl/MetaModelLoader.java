@@ -20,7 +20,9 @@ import com.google.common.base.Joiner;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.UuidKey;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 import io.jmix.core.metamodel.annotation.Composition;
@@ -309,7 +311,7 @@ public class MetaModelLoader {
     private boolean isFieldWithGetter(Field field, Class<?> javaClass) {
         for (Method method : javaClass.getDeclaredMethods()) {
             if (method.getName().equals("get" + StringUtils.capitalize(field.getName()))
-                && method.getReturnType().equals(field.getType())) {
+                    && method.getReturnType().equals(field.getType())) {
                 return true;
             }
         }
@@ -463,6 +465,12 @@ public class MetaModelLoader {
             metaProperty.getDomain().getAnnotations().put(MetadataTools.PRIMARY_KEY_ANN_NAME, metaProperty.getName());
         }
 
+        if (isUuidKey(field)) {
+            metaProperty.getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, true);
+            metaProperty.getDomain().getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, metaProperty.getName());
+            metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
+        }
+
         Column column = field.getAnnotation(Column.class);
         Lob lob = field.getAnnotation(Lob.class);
         if (column != null && column.length() != 0 && lob == null) {
@@ -607,6 +615,22 @@ public class MetaModelLoader {
         return field.isAnnotationPresent(Id.class)
                 || field.isAnnotationPresent(EmbeddedId.class)
                 || field.isAnnotationPresent(JmixId.class);
+    }
+
+    protected boolean isUuidKey(Field field) {
+        //return field.isAnnotationPresent(UuidKey.class)//todo taimanov rework after #583 or apply on class processing (not field)
+        Class<?> entryClass = Arrays.stream(field.getDeclaringClass().getDeclaredClasses()).
+                filter(nested -> nested.getSimpleName().equals("JmixEntityEntry"))
+                .findFirst()
+                .orElse(null);
+
+        if (entryClass != null && EntityEntryHasUuid.class.isAssignableFrom(entryClass)) {
+            UuidKey uuidKeyAnnotation = entryClass.getAnnotation(UuidKey.class);
+            if (uuidKeyAnnotation != null) {
+                return field.getName().equals(uuidKeyAnnotation.propertyName());
+            }
+        }
+        return false;
     }
 
     protected boolean isEmbedded(Field field) {

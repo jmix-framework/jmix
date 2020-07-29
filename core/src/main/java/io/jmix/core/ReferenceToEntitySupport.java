@@ -16,8 +16,8 @@
 
 package io.jmix.core;
 
+import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class ReferenceToEntitySupport {
      * @return entity id to store in database
      */
     public Object getReferenceId(JmixEntity entity) {
-        if (entity instanceof HasUuid) {
-            return ((HasUuid) entity).getUuid();
+        if (entity.__getEntityEntry() instanceof EntityEntryHasUuid) {
+            return ((EntityEntryHasUuid) entity.__getEntityEntry()).getUuid();
         }
         return EntityValues.getId(entity);
     }
@@ -60,8 +60,8 @@ public class ReferenceToEntitySupport {
         if (entityId == null)
             return null;
         if (metadataTools.hasCompositePrimaryKey(metadata.getClass(entity))) {
-            if (entity instanceof HasUuid)
-                return ((HasUuid) entity).getUuid();
+            if (entity.__getEntityEntry() instanceof EntityEntryHasUuid)
+                return ((EntityEntryHasUuid) entity.__getEntityEntry()).getUuid();
             else
                 throw new IllegalArgumentException(
                         String.format("Unsupported primary key type: %s", entityId.getClass().getSimpleName()));
@@ -74,7 +74,7 @@ public class ReferenceToEntitySupport {
      * @return metaProperty name for storing corresponding primary key in the database
      */
     public String getReferenceIdPropertyName(MetaClass metaClass) {
-        if (HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+        if (metadataTools.hasUuid(metaClass)) {
             return "entityId";
         }
         MetaProperty primaryKey = metadataTools.getPrimaryKeyProperty(metaClass);
@@ -104,7 +104,7 @@ public class ReferenceToEntitySupport {
      * @return metaProperty name for loading entity from database by primary key stored in the database
      */
     public String getPrimaryKeyForLoadingEntity(MetaClass metaClass) {
-        if (HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+        if (metadataTools.hasUuid(metaClass)) {
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
             if (primaryKeyProperty != null && !UUID.class.isAssignableFrom(primaryKeyProperty.getJavaType()))
                 return "uuid";
@@ -119,7 +119,7 @@ public class ReferenceToEntitySupport {
     public String getPrimaryKeyForLoadingEntityFromLink(MetaClass metaClass) {
         if (!metadataTools.hasCompositePrimaryKey(metaClass))
             return metadataTools.getPrimaryKeyName(metaClass);
-        if (HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+        if (metadataTools.hasUuid(metaClass)) {
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
             if (primaryKeyProperty != null && !UUID.class.isAssignableFrom(primaryKeyProperty.getJavaType()))
                 return "uuid";

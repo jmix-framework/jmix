@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,22 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.Id;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+
 import java.util.UUID;
 
 /**
- * Interface to be implemented by entities that have a persistent attribute of {@link UUID} type.
+ * Used to clearly identify entity.<br/>
+ * Property selection performs as follows:
+ * <ol>
+ *     <li>{@link Id} property used if it has {@link UUID} type and {@link JmixGeneratedValue} annotation,</li>
+ *     <li>any other UUID @JmixGeneratedValue property chosen if @Id property doesn't satisfy conditions above, </li>
+ *     <li>interface isn't applied otherwise.</li>
+ * </ol>
  */
-public interface HasUuid {
+
+public interface EntityEntryHasUuid {
 
     UUID getUuid();
 

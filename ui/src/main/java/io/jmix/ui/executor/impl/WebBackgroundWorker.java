@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 import io.jmix.core.Events;
+import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
@@ -62,6 +63,8 @@ public class WebBackgroundWorker implements BackgroundWorker {
     protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected Events events;
+    @Autowired
+    protected TimeSource timeSource;
 
     protected UiBackgroundTaskProperties properties;
 
@@ -120,7 +123,8 @@ public class WebBackgroundWorker implements BackgroundWorker {
         appInstance.addBackgroundTask(taskExecutor.getFuture());
 
         // create task handler
-        TaskHandlerImpl<T, V> taskHandler = new TaskHandlerImpl<>(getUIAccessor(), taskExecutor, watchDog);
+        TaskHandlerImpl<T, V> taskHandler = new TaskHandlerImpl<>(
+                getUIAccessor(), taskExecutor, watchDog, events, currentAuthentication.getUser(), timeSource);
         taskExecutor.setTaskHandler(taskHandler);
 
         return taskHandler;

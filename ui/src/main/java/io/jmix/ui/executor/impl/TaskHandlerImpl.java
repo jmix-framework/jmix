@@ -16,12 +16,10 @@
 
 package io.jmix.ui.executor.impl;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Events;
 import io.jmix.core.TimeSource;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.BaseUser;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.event.BackgroundTaskTimeoutEvent;
 import io.jmix.ui.executor.*;
 import io.jmix.ui.screen.FrameOwner;
@@ -42,6 +40,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     private final TaskExecutor<T, V> taskExecutor;
     private final WatchDog watchDog;
     private Events events;
+    private TimeSource timeSource;
 
     private volatile boolean started = false;
     private volatile boolean timeoutHappens = false;
@@ -51,13 +50,15 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     private Subscription afterDetachSubscription;
     private final BaseUser user;
 
-    public TaskHandlerImpl(UIAccessor uiAccessor, TaskExecutor<T, V> taskExecutor, WatchDog watchDog) {
+    public TaskHandlerImpl(UIAccessor uiAccessor, TaskExecutor<T, V> taskExecutor, WatchDog watchDog, Events events,
+                           BaseUser user, TimeSource timeSource) {
         this.uiAccessor = uiAccessor;
         this.taskExecutor = taskExecutor;
         this.watchDog = watchDog;
-        this.events = AppBeans.get(Events.NAME);
+        this.events = events;
+        this.timeSource = timeSource;
 
-        user = AppBeans.get(CurrentAuthentication.class).getUser();
+        this.user = user;
         BackgroundTask<T, V> task = taskExecutor.getTask();
         if (task.getOwnerScreen() != null) {
             Screen ownerFrame = task.getOwnerScreen();
@@ -90,7 +91,6 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
 
         this.started = true;
 
-        TimeSource timeSource = AppBeans.get(TimeSource.NAME);
         this.startTimeStamp = timeSource.currentTimestamp().getTime();
 
         this.watchDog.manageTask(this);

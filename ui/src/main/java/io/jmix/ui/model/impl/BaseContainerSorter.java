@@ -23,6 +23,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Sort;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Sorter;
+import org.springframework.beans.factory.BeanFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,10 +34,13 @@ import java.util.List;
  */
 public abstract class BaseContainerSorter implements Sorter {
 
+    protected BeanFactory beanFactory;
+
     private final CollectionContainer container;
 
-    public BaseContainerSorter(CollectionContainer container) {
+    public BaseContainerSorter(CollectionContainer container, BeanFactory beanFactory) {
         this.container = container;
+        this.beanFactory = beanFactory;
     }
 
     public CollectionContainer getContainer() {
@@ -69,6 +73,7 @@ public abstract class BaseContainerSorter implements Sorter {
             throw new IllegalArgumentException("Property " + sort.getOrders().get(0).getProperty() + " is invalid");
         }
         boolean asc = sort.getOrders().get(0).getDirection() == Sort.Direction.ASC;
-        return Comparator.comparing(e -> EntityValues.getValueEx(e, propertyPath), EntityValuesComparator.asc(asc));
+        EntityValuesComparator<Object> comparator = new EntityValuesComparator<>(asc, beanFactory);
+        return Comparator.comparing(e -> EntityValues.getValueEx(e, propertyPath), comparator);
     }
 }

@@ -35,6 +35,7 @@ import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.component.data.table.EmptyTableItems;
 import io.jmix.ui.component.formatter.Formatter;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -265,7 +266,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
     @SuppressWarnings("unchecked")
     protected ContainerTableItems createContainerTableSource(CollectionContainer container) {
-        return new ContainerTableItems(container);
+        return new ContainerTableItems(container, beanLocator.getPrototype(AggregatableDelegate.class));
     }
 
     protected TableItems createEmptyTableItems(MetaClass metaClass) {

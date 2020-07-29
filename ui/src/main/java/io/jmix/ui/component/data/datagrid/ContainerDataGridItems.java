@@ -23,6 +23,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.PropertyPath;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.AggregatableDataGridItems;
 import io.jmix.ui.component.data.BindingState;
@@ -57,13 +58,14 @@ public class ContainerDataGridItems<E extends JmixEntity>
 
     protected EventHub events = new EventHub();
 
-    public ContainerDataGridItems(CollectionContainer<E> container) {
+    public ContainerDataGridItems(CollectionContainer<E> container, AggregatableDelegate aggregatableDelegate) {
         this.container = container;
         this.container.addItemChangeListener(this::containerItemChanged);
         this.container.addCollectionChangeListener(this::containerCollectionChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
 
-        this.aggregatableDelegate = createAggregatableDelegate();
+        this.aggregatableDelegate = aggregatableDelegate;
+        initAggregatableDelegate();
     }
 
     @Override
@@ -237,18 +239,8 @@ public class ContainerDataGridItems<E extends JmixEntity>
     }
 
     @SuppressWarnings("rawtypes")
-    protected AggregatableDelegate createAggregatableDelegate() {
-        return new AggregatableDelegate() {
-            @Override
-            public Object getItem(Object itemId) {
-                return container.getItem(itemId);
-            }
-
-            @Nullable
-            @Override
-            public Object getItemValue(MetaPropertyPath property, Object itemId) {
-                return EntityValues.getValueEx(container.getItem(itemId), property);
-            }
-        };
+    protected void initAggregatableDelegate() {
+        aggregatableDelegate.setItemProvider(container::getItem);
+        aggregatableDelegate.setItemValueProvider((property, itemId) -> EntityValues.getValueEx(container.getItem(itemId), (PropertyPath) property));
     }
 }

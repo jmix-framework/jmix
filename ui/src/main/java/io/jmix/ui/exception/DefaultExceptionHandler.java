@@ -17,7 +17,7 @@ package io.jmix.ui.exception;
 
 import com.vaadin.server.ErrorEvent;
 import com.vaadin.ui.Window;
-import io.jmix.core.AppBeans;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
@@ -34,7 +34,14 @@ import java.net.SocketException;
  */
 public class DefaultExceptionHandler implements ExceptionHandler {
 
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    protected BeanLocator beanLocator;
+
+    protected Messages messages;
+
+    public DefaultExceptionHandler(BeanLocator beanLocator) {
+        this.beanLocator = beanLocator;
+        messages = beanLocator.get(Messages.class);
+    }
 
     @Override
     public boolean handle(ErrorEvent event, App app) {
@@ -84,7 +91,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
         if (rootCause == null) {
             rootCause = exception;
         }
-        ExceptionDialog dialog = new ExceptionDialog(rootCause);
+        ExceptionDialog dialog = new ExceptionDialog(rootCause, beanLocator);
         for (Window window : ui.getWindows()) {
             if (window.isModal()) {
                 dialog.setModal(true);

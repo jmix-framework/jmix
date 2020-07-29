@@ -19,6 +19,7 @@ package io.jmix.ui.model.impl;
 import io.jmix.core.Sort;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
+import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -30,8 +31,8 @@ public class CollectionContainerSorter extends BaseContainerSorter {
 
     private final BaseCollectionLoader loader;
 
-    public CollectionContainerSorter(CollectionContainer container, @Nullable BaseCollectionLoader loader) {
-        super(container);
+    public CollectionContainerSorter(CollectionContainer container, @Nullable BaseCollectionLoader loader, BeanFactory beanFactory) {
+        super(container, beanFactory);
         this.loader = loader;
     }
 

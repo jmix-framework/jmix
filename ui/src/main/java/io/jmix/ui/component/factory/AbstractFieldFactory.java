@@ -16,9 +16,12 @@
 
 package io.jmix.ui.component.factory;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentGenerationContext;
+import io.jmix.ui.component.FieldFactory;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.UiComponentsGenerator;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import org.dom4j.Element;
@@ -27,7 +30,11 @@ import javax.annotation.Nullable;
 
 public abstract class AbstractFieldFactory implements FieldFactory {
 
-    protected UiComponentsGenerator componentsGenerator = AppBeans.get(UiComponentsGenerator.NAME);
+    protected UiComponentsGenerator componentsGenerator;
+
+    public AbstractFieldFactory(UiComponentsGenerator componentsGenerator) {
+        this.componentsGenerator = componentsGenerator;
+    }
 
     /*
     TODO: legacy-ui

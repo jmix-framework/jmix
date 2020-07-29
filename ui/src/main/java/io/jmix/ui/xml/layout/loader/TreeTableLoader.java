@@ -24,6 +24,7 @@ import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.component.data.table.ContainerTreeTableItems;
 import io.jmix.ui.component.data.table.EmptyTreeTableItems;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import org.dom4j.Element;
 
@@ -48,7 +49,7 @@ public class TreeTableLoader extends AbstractTableLoader<TreeTable> {
             throw new GuiDevelopmentException("TreeTable doesn't have 'hierarchyProperty' attribute", context,
                     "TreeTable ID", element.attributeValue("id"));
         }
-        return new ContainerTreeTableItems(container, hierarchyProperty);
+        return new ContainerTreeTableItems(container, hierarchyProperty, beanLocator.getPrototype(AggregatableDelegate.class));
     }
 
     @Override

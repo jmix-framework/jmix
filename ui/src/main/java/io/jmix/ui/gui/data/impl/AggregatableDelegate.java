@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.gui.data.impl;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
@@ -24,15 +23,65 @@ import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.data.aggregation.Aggregations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class AggregatableDelegate<K> {
+@Component(AggregatableDelegate.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class AggregatableDelegate<K> {
+
+    public static final String NAME = "ui_AggregatableDelegate";
+
+    protected Aggregations aggregations;
+    protected CurrentAuthentication currentAuthentication;
+    protected DatatypeRegistry datatypeRegistry;
+
+    protected Function<K, Object> itemProvider;
+    protected BiFunction<MetaPropertyPath, K, Object> itemValueProvider;
+
+    @Autowired
+    public void setAggregations(Aggregations aggregations) {
+        this.aggregations = aggregations;
+    }
+
+    @Autowired
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
+    }
+
+    @Autowired
+    public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
+        this.datatypeRegistry = datatypeRegistry;
+    }
+
+    public void setItemProvider(Function<K, Object> itemProvider) {
+        this.itemProvider = itemProvider;
+    }
+
+    public void setItemValueProvider(BiFunction<MetaPropertyPath, K, Object> itemValueProvider) {
+        this.itemValueProvider = itemValueProvider;
+    }
+
     public Map<AggregationInfo, String> aggregate(@Nullable AggregationInfo[] aggregationInfos, Collection<K> itemIds) {
         if (aggregationInfos == null || aggregationInfos.length == 0) {
             throw new NullPointerException("Aggregation must be executed at least by one field");
+        }
+
+        if (itemProvider == null || itemValueProvider == null) {
+            throw new NullPointerException("ItemProvider and ItemValueProvider must be non-nulls");
         }
 
         return doAggregation(itemIds, aggregationInfos);
@@ -56,15 +105,13 @@ public abstract class AggregatableDelegate<K> {
                         Class resultClass;
                         if (aggregationInfo.getStrategy() == null) {
                             Class rangeJavaClass = propertyPath.getRangeJavaClass();
-                            Aggregation aggregation = Aggregations.get(rangeJavaClass);
+                            Aggregation aggregation = aggregations.get(rangeJavaClass);
                             resultClass = aggregation.getResultClass();
                         } else {
                             resultClass = aggregationInfo.getStrategy().getResultClass();
                         }
 
-                        CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
                         Locale locale = currentAuthentication.getLocale();
-                        DatatypeRegistry datatypeRegistry = AppBeans.get(DatatypeRegistry.NAME);
                         formattedValue = datatypeRegistry.get(resultClass).format(value, locale);
                     } else {
                         formattedValue = value.toString();
@@ -73,9 +120,7 @@ public abstract class AggregatableDelegate<K> {
                     if (aggregationInfo.getStrategy() != null) {
                         Class resultClass = aggregationInfo.getStrategy().getResultClass();
 
-                        CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
                         Locale locale = currentAuthentication.getLocale();
-                        DatatypeRegistry datatypeRegistry = AppBeans.get(DatatypeRegistry.NAME);
                         formattedValue = datatypeRegistry.get(resultClass).format(value, locale);
                     } else {
                         formattedValue = value.toString();
@@ -91,6 +136,10 @@ public abstract class AggregatableDelegate<K> {
     public Map<AggregationInfo, Object> aggregateValues(@Nullable AggregationInfo[] aggregationInfos, Collection<K> itemIds) {
         if (aggregationInfos == null || aggregationInfos.length == 0) {
             throw new NullPointerException("Aggregation must be executed at least by one field");
+        }
+
+        if (itemProvider == null || itemValueProvider == null) {
+            throw new NullPointerException("ItemProvider and ItemValueProvider must be non-nulls");
         }
 
         Map<AggregationInfo, Object> aggregationResults = new HashMap<>();
@@ -111,7 +160,7 @@ public abstract class AggregatableDelegate<K> {
                 && aggregationInfo.getPropertyPath() == null) {
             // use items in this case;
             items = itemIds.stream()
-                    .map(this::getItem)
+                    .map(itemProvider::apply)
                     .collect(Collectors.toList());
         } else {
             items = valuesByProperty(aggregationInfo.getPropertyPath(), itemIds);
@@ -119,7 +168,7 @@ public abstract class AggregatableDelegate<K> {
 
         if (aggregationInfo.getStrategy() == null) {
             Class rangeJavaClass = aggregationInfo.getPropertyPath().getRangeJavaClass();
-            Aggregation aggregation = Aggregations.get(rangeJavaClass);
+            Aggregation aggregation = aggregations.get(rangeJavaClass);
 
             switch (aggregationInfo.getType()) {
                 case COUNT:
@@ -145,16 +194,11 @@ public abstract class AggregatableDelegate<K> {
     protected List valuesByProperty(MetaPropertyPath propertyPath, Collection<K> itemIds) {
         final List<Object> values = new ArrayList<>(itemIds.size());
         for (final K itemId : itemIds) {
-            final Object value = getItemValue(propertyPath, itemId);
+            final Object value = itemValueProvider.apply(propertyPath, itemId);
             if (value != null) {
                 values.add(value);
             }
         }
         return values;
     }
-
-    public abstract Object getItem(K itemId);
-
-    @Nullable
-    public abstract Object getItemValue(MetaPropertyPath property, K itemId);
 }

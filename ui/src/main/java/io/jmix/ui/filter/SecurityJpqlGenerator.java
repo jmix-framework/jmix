@@ -16,13 +16,14 @@
 
 package io.jmix.ui.filter;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -30,7 +31,24 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
+@Component(SecurityJpqlGenerator.NAME)
 public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
+
+    public static final String NAME = "ui_SecurityJpqlGenerator";
+
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
     @Override
     protected String generateClauseText(Clause condition) {
         ParameterInfo parameterInfo = condition.getCompiledParameters().iterator().next();
@@ -80,8 +98,6 @@ public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
             Object enumId = ((EnumClass) enumValue).getId();
             return (enumId instanceof Number) ? enumId.toString() : "'" + enumId + "'";
         } else if (JmixEntity.class.isAssignableFrom(javaClass)) {
-            Metadata metadata = AppBeans.get(Metadata.class);
-            MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
             MetaClass metaClass = metadata.findClass(javaClass);
             if (metaClass != null) {
                 MetaProperty metaProperty = metadataTools.getPrimaryKeyProperty(metaClass);

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.data.options;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
@@ -43,10 +42,13 @@ public class MapEntityOptions<E extends JmixEntity> extends MapOptions<E> implem
 
     private static final Logger log = LoggerFactory.getLogger(MapEntityOptions.class);
 
+    protected Metadata metadata;
+
     protected E selectedItem = null;
 
-    public MapEntityOptions(Map<String, E> options) {
+    public MapEntityOptions(Map<String, E> options, Metadata metadata) {
         super(options);
+        this.metadata = metadata;
     }
 
     @Override
@@ -84,7 +86,6 @@ public class MapEntityOptions<E extends JmixEntity> extends MapOptions<E> implem
     @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
         MetaClass metaClass;
         if (selectedItem != null) {
             metaClass = metadata.getClass(selectedItem);

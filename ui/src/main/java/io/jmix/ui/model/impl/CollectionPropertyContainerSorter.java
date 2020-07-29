@@ -17,6 +17,7 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.ui.model.CollectionPropertyContainer;
+import org.springframework.beans.factory.BeanFactory;
 
 import java.util.List;
 
@@ -25,8 +26,8 @@ import java.util.List;
  */
 public class CollectionPropertyContainerSorter extends BaseContainerSorter {
 
-    public CollectionPropertyContainerSorter(CollectionPropertyContainer container) {
-        super(container);
+    public CollectionPropertyContainerSorter(CollectionPropertyContainer container, BeanFactory beanFactory) {
+        super(container, beanFactory);
     }
 
     @Override

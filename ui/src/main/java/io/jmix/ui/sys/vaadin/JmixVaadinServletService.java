@@ -17,16 +17,22 @@
 package io.jmix.ui.sys.vaadin;
 
 import com.vaadin.server.*;
-import com.vaadin.server.communication.*;
+import com.vaadin.server.communication.AtmospherePushConnection;
+import com.vaadin.server.communication.FileUploadHandler;
+import com.vaadin.server.communication.HeartbeatHandler;
+import com.vaadin.server.communication.ServletBootstrapHandler;
+import com.vaadin.server.communication.ServletUIInitHandler;
+import com.vaadin.server.communication.UidlRequestHandler;
+import com.vaadin.server.communication.UidlWriter;
 import com.vaadin.spring.server.SpringVaadinServletService;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.ui.App;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.sys.WebJarResourceResolver;
 import io.jmix.ui.sys.event.WebSessionDestroyedEvent;
 import io.jmix.ui.sys.event.WebSessionInitializedEvent;
 import io.jmix.ui.theme.ThemeVariantsProvider;
@@ -34,6 +40,8 @@ import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
 import javax.servlet.ServletContext;
@@ -60,21 +68,29 @@ public class JmixVaadinServletService extends SpringVaadinServletService
 
     protected Events events;
     protected Messages messages;
+    protected WebJarResourceResolver resolver;
+    protected Environment environment;
+    protected ThemeVariantsProvider themeVariantsProvider;
 
-
-    public JmixVaadinServletService(VaadinServlet servlet,
-                                    DeploymentConfiguration deploymentConfiguration, String serviceUrl)
+    public JmixVaadinServletService(VaadinServlet servlet, DeploymentConfiguration deploymentConfiguration,
+                                    String serviceUrl, BeanFactory beanFactory)
             throws ServiceException {
         super(servlet, deploymentConfiguration, serviceUrl);
 
-        this.events = AppBeans.get(Events.NAME);
+        this.events = beanFactory.getBean(Events.class);
         this.serviceUrl = serviceUrl;
 
-        uiProperties = AppBeans.get(UiProperties.class);
+        uiProperties = beanFactory.getBean(UiProperties.class);
         testMode = uiProperties.isTestMode();
         performanceTestMode = uiProperties.isPerformanceTestMode();
 
-        this.messages = AppBeans.get(Messages.NAME);
+        this.messages = beanFactory.getBean(Messages.class);
+        this.environment = beanFactory.getBean(Environment.class);
+        this.resolver = beanFactory.getBean(WebJarResourceResolver.class);
+
+        if (beanFactory.containsBean(ThemeVariantsProvider.NAME)) {
+            themeVariantsProvider = (ThemeVariantsProvider) beanFactory.getBean(ThemeVariantsProvider.NAME);
+        }
 
         addSessionInitListener(event -> {
             WrappedSession wrappedSession = event.getSession().getSession();
@@ -120,7 +136,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
 
         for (RequestHandler handler : requestHandlers) {
             if (handler instanceof UidlRequestHandler) {
-                jmixRequestHandlers.add(new JmixUidlRequestHandler(servletContext));
+                jmixRequestHandlers.add(new JmixUidlRequestHandler(servletContext, resolver, environment));
             } else if (handler instanceof ServletBootstrapHandler) {
                 // replace ServletBootstrapHandler with JmixServletBootstrapHandler
                 jmixRequestHandlers.add(new JmixServletBootstrapHandler());
@@ -132,13 +148,13 @@ public class JmixVaadinServletService extends SpringVaadinServletService
                 jmixRequestHandlers.add(handler);
                 jmixRequestHandlers.add(new JmixFileUploadHandler());
             } else if (handler instanceof ServletUIInitHandler) {
-                jmixRequestHandlers.add(new JmixServletUIInitHandler(servletContext));
+                jmixRequestHandlers.add(new JmixServletUIInitHandler(servletContext, resolver, environment));
             } else {
                 jmixRequestHandlers.add(handler);
             }
         }
 
-        jmixRequestHandlers.add(new JmixWebJarsHandler(servletContext));
+        jmixRequestHandlers.add(new JmixWebJarsHandler(servletContext, resolver, uiProperties));
 
 
         // replace bootstrap handler with a custom one if service URL set
@@ -162,7 +178,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
 
     @Override
     public UidlWriter createUidlWriter() {
-        return new JmixUidlWriter(getServlet().getServletContext());
+        return new JmixUidlWriter(getServlet().getServletContext(), resolver, environment);
     }
 
     protected String getThemeVariants() {
@@ -171,8 +187,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
     }
 
     public List<String> findAndEscapeThemeVariants() {
-        if (AppBeans.containsBean(ThemeVariantsProvider.NAME)) {
-            ThemeVariantsProvider themeVariantsProvider = AppBeans.get(ThemeVariantsProvider.NAME);
+        if (themeVariantsProvider != null) {
             List<String> themeVariants = themeVariantsProvider.getThemeVariants();
             if (!themeVariants.isEmpty()) {
                 List<String> strippedVariants = new ArrayList<>(themeVariants.size());
@@ -250,14 +265,18 @@ public class JmixVaadinServletService extends SpringVaadinServletService
      */
     protected static class JmixServletUIInitHandler extends ServletUIInitHandler {
         protected final ServletContext servletContext;
+        protected final WebJarResourceResolver resolver;
+        protected final Environment environment;
 
-        public JmixServletUIInitHandler(ServletContext servletContext) {
+        public JmixServletUIInitHandler(ServletContext servletContext, WebJarResourceResolver resolver, Environment environment) {
             this.servletContext = servletContext;
+            this.resolver = resolver;
+            this.environment = environment;
         }
 
         @Override
         protected UidlWriter createUidlWriter() {
-            return new JmixUidlWriter(servletContext);
+            return new JmixUidlWriter(servletContext, resolver, environment);
         }
     }
 
@@ -267,14 +286,18 @@ public class JmixVaadinServletService extends SpringVaadinServletService
      */
     protected static class JmixUidlRequestHandler extends UidlRequestHandler {
         protected final ServletContext servletContext;
+        protected final WebJarResourceResolver resolver;
+        protected final Environment environment;
 
-        public JmixUidlRequestHandler(ServletContext servletContext) {
+        public JmixUidlRequestHandler(ServletContext servletContext, WebJarResourceResolver resolver, Environment environment) {
             this.servletContext = servletContext;
+            this.resolver = resolver;
+            this.environment = environment;
         }
 
         @Override
         protected UidlWriter createUidlWriter() {
-            return new JmixUidlWriter(servletContext);
+            return new JmixUidlWriter(servletContext, resolver, environment);
         }
     }
 

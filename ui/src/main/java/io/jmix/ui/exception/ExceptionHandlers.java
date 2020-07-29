@@ -55,7 +55,7 @@ public class ExceptionHandlers {
     public ExceptionHandlers(App app, BeanLocator beanLocator) {
         this.app = app;
         this.beanLocator = beanLocator;
-        this.defaultHandler = new DefaultExceptionHandler();
+        this.defaultHandler = new DefaultExceptionHandler(beanLocator);
     }
 
     /**

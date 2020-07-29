@@ -24,6 +24,7 @@ import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.table.ContainerGroupTableItems;
 import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.component.data.table.EmptyGroupTableItems;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -91,7 +92,7 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
     @SuppressWarnings("unchecked")
     @Override
     protected ContainerTableItems createContainerTableSource(CollectionContainer container) {
-        return new ContainerGroupTableItems(container);
+        return new ContainerGroupTableItems(container, beanLocator.getPrototype(AggregatableDelegate.class));
     }
 
     @Override

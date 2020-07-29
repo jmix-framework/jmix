@@ -21,7 +21,6 @@ import com.vaadin.server.LegacyCommunicationManager;
 import com.vaadin.server.communication.UidlWriter;
 import com.vaadin.ui.Dependency;
 import com.vaadin.ui.HasDependencies;
-import io.jmix.core.AppBeans;
 import io.jmix.ui.sys.WebJarResourceResolver;
 import io.jmix.ui.widget.WebJarResource;
 import org.apache.commons.lang3.StringUtils;
@@ -53,8 +52,13 @@ public class JmixUidlWriter extends UidlWriter {
 
     protected final ServletContext servletContext;
 
-    public JmixUidlWriter(ServletContext servletContext) {
+    protected WebJarResourceResolver resolver;
+    protected Environment environment;
+
+    public JmixUidlWriter(ServletContext servletContext, WebJarResourceResolver resolver, Environment environment) {
         this.servletContext = servletContext;
+        this.resolver = resolver;
+        this.environment = environment;
     }
 
     @Override
@@ -155,8 +159,6 @@ public class JmixUidlWriter extends UidlWriter {
             return staticResourcePath;
         }
 
-        WebJarResourceResolver resolver = AppBeans.get(WebJarResourceResolver.NAME);
-
         String webJarPath = resolver.getWebJarPath(webJar, resource);
         return resolver.translateToWebPath(webJarPath);
     }
@@ -199,7 +201,7 @@ public class JmixUidlWriter extends UidlWriter {
         String propertyName = uri.substring(propertyFirstIndex + 2, propertyLastIndex);
         String[] splittedProperty = WEB_JAR_PROPERTY_DEFAULT_VALUE_PATTERN.split(propertyName);
 
-        String webJarVersion = AppBeans.get(Environment.class).getProperty(splittedProperty[0]);
+        String webJarVersion = environment.getProperty(splittedProperty[0]);
 
         if (StringUtils.isEmpty(webJarVersion) && splittedProperty.length > 1) {
             webJarVersion = splittedProperty[1];

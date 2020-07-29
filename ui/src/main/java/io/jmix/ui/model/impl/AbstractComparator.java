@@ -15,10 +15,9 @@
  */
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.AppBeans;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -41,8 +40,6 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
         // todo PersistenceManager or DbmsFeatures
 //        PersistenceManagerClient persistenceManager = AppBeans.get(PersistenceManagerClient.NAME, PersistenceManagerClient.class);
         this.nullsLast = 1; //persistenceManager.isNullsLastSorting() ? 1 : -1;
-        this.metadata = AppBeans.get(Metadata.NAME);
-        metadataTools = AppBeans.get(MetadataTools.NAME, MetadataTools.class);
         this.asc = asc;
     }
 

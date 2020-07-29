@@ -150,6 +150,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected UserSettingsTools userSettingsTools;
     protected EntityStates entityStates;
     protected Actions actions;
+    protected UiComponentsGenerator uiComponentsGenerator;
+    protected Aggregations aggregations;
 
     protected Locale locale;
 
@@ -286,6 +288,16 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Autowired
     public void setActions(Actions actions) {
         this.actions = actions;
+    }
+
+    @Autowired
+    public void setUiComponentsGenerator(UiComponentsGenerator uiComponentsGenerator) {
+        this.uiComponentsGenerator = uiComponentsGenerator;
+    }
+
+    @Autowired
+    public void setAggregations(Aggregations aggregations) {
+        this.aggregations = aggregations;
     }
 
     @Override
@@ -1221,7 +1233,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     protected WebTableFieldFactory createFieldFactory() {
-        return new WebTableFieldFactory<>(this, accessManager, metadataTools);
+        return new WebTableFieldFactory<>(this, accessManager, metadataTools, uiComponentsGenerator);
     }
 
     protected void setClientCaching() {
@@ -2477,7 +2489,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
         MetaPropertyPath propertyPath = aggregationInfo.getPropertyPath();
         Class<?> javaType = propertyPath.getMetaProperty().getJavaType();
-        Aggregation<?> aggregation = Aggregations.get(javaType);
+        Aggregation<?> aggregation = aggregations.get(javaType);
 
         if (aggregation != null && aggregation.getSupportedAggregationTypes().contains(aggregationType)) {
             return;
@@ -3295,7 +3307,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
                     if (aggregationInfo.getStrategy() == null) {
                         Class<?> rangeJavaClass = propertyPath.getRangeJavaClass();
-                        Aggregation aggregation = Aggregations.get(rangeJavaClass);
+                        Aggregation aggregation = aggregations.get(rangeJavaClass);
                         resultClass = aggregation.getResultClass();
                     } else {
                         resultClass = aggregationInfo.getStrategy().getResultClass();

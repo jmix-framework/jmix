@@ -19,6 +19,7 @@ package io.jmix.ui.component.data.table;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeTableItems;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 
 import javax.annotation.Nullable;
@@ -30,8 +31,8 @@ public class ContainerTreeTableItems<E extends JmixEntity>
 
     private final String hierarchyProperty;
 
-    public ContainerTreeTableItems(CollectionContainer<E> container, String hierarchyProperty) {
-        super(container);
+    public ContainerTreeTableItems(CollectionContainer<E> container, String hierarchyProperty, AggregatableDelegate aggregatableDelegate) {
+        super(container, aggregatableDelegate);
         this.hierarchyProperty = hierarchyProperty;
     }
 

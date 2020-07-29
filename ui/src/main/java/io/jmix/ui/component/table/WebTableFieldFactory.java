@@ -29,6 +29,7 @@ import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.Component.BelongToFrame;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.Table;
+import io.jmix.ui.component.UiComponentsGenerator;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityValueSource;
@@ -50,7 +51,9 @@ public class WebTableFieldFactory<E extends JmixEntity> extends AbstractFieldFac
     protected AccessManager accessManager;
     protected MetadataTools metadataTools;
 
-    public WebTableFieldFactory(WebAbstractTable<?, E> webTable, AccessManager accessManager, MetadataTools metadataTools) {
+    public WebTableFieldFactory(WebAbstractTable<?, E> webTable, AccessManager accessManager, MetadataTools metadataTools,
+                                UiComponentsGenerator uiComponentsGenerator) {
+        super(uiComponentsGenerator);
         this.webTable = webTable;
         this.accessManager = accessManager;
         this.metadataTools = metadataTools;

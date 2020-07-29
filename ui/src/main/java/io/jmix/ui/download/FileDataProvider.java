@@ -16,9 +16,7 @@
  */
 package io.jmix.ui.download;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageLocator;
 
 import java.io.InputStream;
 
@@ -31,10 +29,6 @@ public class FileDataProvider<R> implements DownloadDataProvider {
 
     protected R fileReference;
     protected FileStorage<R, ?> fileStorage;
-
-    public FileDataProvider(R fileReference) {
-        this(fileReference, AppBeans.get(FileStorageLocator.class).getDefault());
-    }
 
     public FileDataProvider(R fileReference, FileStorage<R, ?> fileStorage) {
         checkNotNullArgument(fileReference, "Null file reference");

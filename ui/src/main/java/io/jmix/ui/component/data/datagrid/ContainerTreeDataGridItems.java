@@ -20,6 +20,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeDataGridItems;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 
 import javax.annotation.Nullable;
@@ -31,8 +32,8 @@ public class ContainerTreeDataGridItems<E extends JmixEntity>
 
     private final String hierarchyProperty;
 
-    public ContainerTreeDataGridItems(CollectionContainer<E> container, String hierarchyProperty) {
-        super(container);
+    public ContainerTreeDataGridItems(CollectionContainer<E> container, String hierarchyProperty, AggregatableDelegate aggregatableDelegate) {
+        super(container, aggregatableDelegate);
         this.hierarchyProperty = hierarchyProperty;
     }
 

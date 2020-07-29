@@ -59,28 +59,19 @@ public class ContainerTableItems<E extends JmixEntity> implements EntityTableIte
 
     protected EventHub events = new EventHub();
 
-    public ContainerTableItems(CollectionContainer<E> container) {
+    public ContainerTableItems(CollectionContainer<E> container, AggregatableDelegate aggregatableDelegate) {
         this.container = container;
         this.container.addItemChangeListener(this::containerItemChanged);
         this.container.addCollectionChangeListener(this::containerCollectionChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
 
-        this.aggregatableDelegate = createAggregatableDelegate();
+        this.aggregatableDelegate = aggregatableDelegate;
+        initAggregatableDelegate();
     }
 
-    public AggregatableDelegate createAggregatableDelegate() {
-        return new AggregatableDelegate() {
-            @Override
-            public Object getItem(Object itemId) {
-                return ContainerTableItems.this.getItem(itemId);
-            }
-
-            @Nullable
-            @Override
-            public Object getItemValue(MetaPropertyPath property, Object itemId) {
-                return ContainerTableItems.this.getItemValue(itemId, property);
-            }
-        };
+    protected void initAggregatableDelegate() {
+        aggregatableDelegate.setItemProvider(ContainerTableItems.this::getItem);
+        aggregatableDelegate.setItemValueProvider(ContainerTableItems.this::getItemValue);
     }
 
     public CollectionContainer<E> getContainer() {

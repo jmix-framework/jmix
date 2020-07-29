@@ -18,6 +18,8 @@ package io.jmix.ui.model;
 
 import io.jmix.ui.model.impl.CollectionContainerSorter;
 import io.jmix.ui.model.impl.CollectionPropertyContainerSorter;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -30,17 +32,24 @@ public class SorterFactory {
 
     public static final String NAME = "jmix_SorterFactory";
 
+    protected BeanFactory beanFactory;
+
+    @Autowired
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
     /**
      * Creates {@code Sorter}.
      */
     public Sorter createCollectionContainerSorter(CollectionContainer container, @Nullable BaseCollectionLoader loader) {
-        return new CollectionContainerSorter(container, loader);
+        return new CollectionContainerSorter(container, loader, beanFactory);
     }
 
     /**
      * Creates {@code Sorter}.
      */
     public Sorter createCollectionPropertyContainerSorter(CollectionPropertyContainer container) {
-        return new CollectionPropertyContainerSorter(container);
+        return new CollectionPropertyContainerSorter(container, beanFactory);
     }
 }

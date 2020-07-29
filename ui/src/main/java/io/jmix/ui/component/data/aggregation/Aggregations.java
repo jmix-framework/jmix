@@ -15,10 +15,15 @@
  */
 package io.jmix.ui.component.data.aggregation;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
-import io.jmix.ui.component.data.aggregation.impl.*;
+import io.jmix.ui.component.data.aggregation.impl.BasicAggregation;
+import io.jmix.ui.component.data.aggregation.impl.BigDecimalAggregation;
+import io.jmix.ui.component.data.aggregation.impl.DateAggregation;
+import io.jmix.ui.component.data.aggregation.impl.DoubleAggregation;
+import io.jmix.ui.component.data.aggregation.impl.LongAggregation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -27,41 +32,43 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-// vaadin8 convert to bean
+@Component(Aggregations.NAME)
 public class Aggregations {
-    private static final Aggregations instance;
 
-    static {
-        DatatypeRegistry datatypeRegistry = AppBeans.get(DatatypeRegistry.NAME);
-        instance = new Aggregations();
-        instance.register(datatypeRegistry.get(BigDecimal.class), new BigDecimalAggregation());
-        instance.register(datatypeRegistry.get(Integer.class), new LongAggregation());
-        instance.register(datatypeRegistry.get(Long.class), new LongAggregation());
-        instance.register(datatypeRegistry.get(Double.class), new DoubleAggregation());
-        instance.register(datatypeRegistry.get(Date.class), new DateAggregation());
-        instance.register(datatypeRegistry.get(Boolean.class), new BasicAggregation<>(Boolean.class));
-        instance.register(datatypeRegistry.get(byte[].class), new BasicAggregation<>(byte[].class));
-        instance.register(datatypeRegistry.get(String.class), new BasicAggregation<>(String.class));
-        instance.register(datatypeRegistry.get(UUID.class), new BasicAggregation<>(UUID.class));
-    }
+    public static final String NAME = "ui_Aggregations";
 
-    public static Aggregations getInstance() {
-        return instance;
-    }
+    protected DatatypeRegistry datatypeRegistry;
 
-    private Map<Class, Aggregation> aggregationByDatatype;
+    protected Map<Class, Aggregation> aggregationByDatatype;
 
-    private Aggregations() {
-        aggregationByDatatype = new HashMap<>();
-    }
-
-    protected <T> void register(Datatype datatype, Aggregation<T> aggregation) {
-        aggregationByDatatype.put(datatype.getJavaClass(), aggregation);
+    @Autowired
+    public void setDatatypeRegistry(DatatypeRegistry datatypeRegistry) {
+        this.datatypeRegistry = datatypeRegistry;
     }
 
     @SuppressWarnings("unchecked")
     @Nullable
-    public static <T> Aggregation<T> get(Class<T> clazz) {
-        return getInstance().aggregationByDatatype.get(clazz);
+    public <T> Aggregation<T> get(Class<T> clazz) {
+        if (aggregationByDatatype == null) {
+            registerDatatypes();
+        }
+        return aggregationByDatatype.get(clazz);
+    }
+
+    protected void registerDatatypes() {
+        aggregationByDatatype = new HashMap<>();
+        register(datatypeRegistry.get(BigDecimal.class), new BigDecimalAggregation());
+        register(datatypeRegistry.get(Integer.class), new LongAggregation());
+        register(datatypeRegistry.get(Long.class), new LongAggregation());
+        register(datatypeRegistry.get(Double.class), new DoubleAggregation());
+        register(datatypeRegistry.get(Date.class), new DateAggregation());
+        register(datatypeRegistry.get(Boolean.class), new BasicAggregation<>(Boolean.class));
+        register(datatypeRegistry.get(byte[].class), new BasicAggregation<>(byte[].class));
+        register(datatypeRegistry.get(String.class), new BasicAggregation<>(String.class));
+        register(datatypeRegistry.get(UUID.class), new BasicAggregation<>(UUID.class));
+    }
+
+    protected <T> void register(Datatype datatype, Aggregation<T> aggregation) {
+        aggregationByDatatype.put(datatype.getJavaClass(), aggregation);
     }
 }

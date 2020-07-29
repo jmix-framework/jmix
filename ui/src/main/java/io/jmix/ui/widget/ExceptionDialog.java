@@ -60,26 +60,33 @@ public class ExceptionDialog extends JmixWindow {
 
     protected Map<String, Object> additionalExceptionReportBinding = null;
 
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    protected Messages messages;
 
 //    todo exception report service
 //    protected ExceptionReportService reportService = AppBeans.get(ExceptionReportService.NAME);
 
-    protected WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
+    protected WindowConfig windowConfig;
 
-    protected UiProperties properties = AppBeans.get(UiProperties.class);
+    protected UiProperties properties;
 
-    protected CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+    protected CurrentAuthentication currentAuthentication;
 
-    protected TimeSource timeSource = AppBeans.get(TimeSource.NAME);
+    protected TimeSource timeSource;
 
-    protected AccessManager accessManager = AppBeans.get(AccessManager.class);
+    protected AccessManager accessManager;
 
-    public ExceptionDialog(Throwable throwable) {
-        this(throwable, null, null);
+    public ExceptionDialog(Throwable throwable, BeanLocator beanLocator) {
+        this(throwable, null, null, beanLocator);
     }
 
-    public ExceptionDialog(Throwable throwable, @Nullable String caption, @Nullable String message) {
+    public ExceptionDialog(Throwable throwable, @Nullable String caption, @Nullable String message, BeanLocator beanLocator) {
+        messages = beanLocator.get(Messages.class);
+        windowConfig = beanLocator.get(WindowConfig.class);
+        properties = beanLocator.get(UiProperties.class);
+        currentAuthentication = beanLocator.get(CurrentAuthentication.class);
+        timeSource = beanLocator.get(TimeSource.class);
+        accessManager = beanLocator.get(AccessManager.class);
+
         AppUI ui = AppUI.getCurrent();
 
         String closeShortcut = properties.getCloseShortcut();

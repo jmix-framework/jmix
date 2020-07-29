@@ -26,6 +26,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Events;
+import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Screens;
 import io.jmix.ui.Screens.OpenedScreens;
@@ -83,6 +84,8 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
     protected int urlStateCounter = 0;
 
+    protected Messages messages;
+
     public WebAppWorkArea() {
         component = new CssLayout();
         component.setPrimaryStyleName(WORKAREA_STYLENAME);
@@ -100,6 +103,11 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
         this.tabbedContainer = createTabbedModeContainer();
 
         loadModeFromSettings();
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
     }
 
     @Override
@@ -288,7 +296,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     }
 
     protected Action.Handler createTabSheetActionHandler(HasTabSheetBehaviour tabSheet) {
-        return new MainTabSheetActionHandler(tabSheet);
+        return new MainTabSheetActionHandler(tabSheet, messages, getUiProperties());
     }
 
     protected JmixSingleModeContainer createSingleModeContainer() {

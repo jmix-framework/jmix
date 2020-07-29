@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.data.options;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
@@ -41,10 +40,13 @@ public class ListEntityOptions<E extends JmixEntity> extends ListOptions<E> impl
 
     private static final Logger log = LoggerFactory.getLogger(ListEntityOptions.class);
 
+    protected Metadata metadata;
+
     protected E selectedItem = null;
 
-    public ListEntityOptions(List<E> options) {
+    public ListEntityOptions(List<E> options, Metadata metadata) {
         super(options);
+        this.metadata = metadata;
     }
 
     @Override
@@ -87,7 +89,6 @@ public class ListEntityOptions<E extends JmixEntity> extends ListOptions<E> impl
     @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
         MetaClass metaClass;
         if (selectedItem != null) {
             metaClass = metadata.getClass(selectedItem);

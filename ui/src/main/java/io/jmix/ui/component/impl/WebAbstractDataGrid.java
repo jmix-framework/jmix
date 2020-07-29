@@ -127,6 +127,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected ApplicationContext applicationContext;
     protected ScreenValidation screenValidation;
     protected Actions actions;
+    protected IconResolver iconResolver;
+    protected Aggregations aggregations;
 
     // Style names used by grid itself
     protected final List<String> internalStyles = new ArrayList<>(2);
@@ -289,6 +291,16 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     @Autowired
     public void setActions(Actions actions) {
         this.actions = actions;
+    }
+
+    @Autowired
+    public void setIconResolver(IconResolver iconResolver) {
+        this.iconResolver = iconResolver;
+    }
+
+    @Autowired
+    public void setAggregations(Aggregations aggregations) {
+        this.aggregations = aggregations;
     }
 
     @SuppressWarnings("unchecked")
@@ -1928,7 +1940,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         MenuItem menuItem = contextMenu.addItem(action.getCaption(), null);
         menuItem.setStyleName("c-cm-item");
 
-        return new ActionMenuItemWrapper(menuItem, showIconsForPopupMenuActions) {
+        return new ActionMenuItemWrapper(menuItem, showIconsForPopupMenuActions, iconResolver) {
             @Override
             public void performAction(Action action) {
                 action.actionPerform(WebAbstractDataGrid.this);
@@ -2925,7 +2937,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
         MetaPropertyPath propertyPath = aggregationInfo.getPropertyPath();
         Class<?> javaType = propertyPath.getMetaProperty().getJavaType();
-        Aggregation<?> aggregation = Aggregations.get(javaType);
+        Aggregation<?> aggregation = aggregations.get(javaType);
 
         if (aggregation != null && aggregation.getSupportedAggregationTypes().contains(aggregationType)) {
             return;
@@ -4091,11 +4103,14 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
         protected boolean showIconsForPopupMenuActions;
 
+        protected IconResolver iconResolver;
+
         protected Consumer<PropertyChangeEvent> actionPropertyChangeListener;
 
-        public ActionMenuItemWrapper(MenuItem menuItem, boolean showIconsForPopupMenuActions) {
+        public ActionMenuItemWrapper(MenuItem menuItem, boolean showIconsForPopupMenuActions, IconResolver iconResolver) {
             this.menuItem = menuItem;
             this.showIconsForPopupMenuActions = showIconsForPopupMenuActions;
+            this.iconResolver = iconResolver;
 
             this.menuItem.setCommand((MenuBar.Command) selectedItem -> {
                 if (action != null) {
@@ -4164,7 +4179,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         public void setIcon(@Nullable String icon) {
             if (showIconsForPopupMenuActions) {
                 if (!StringUtils.isEmpty(icon)) {
-                    menuItem.setIcon(AppBeans.get(IconResolver.class).getIconResource(icon));
+                    menuItem.setIcon(iconResolver.getIconResource(icon));
                 } else {
                     menuItem.setIcon(null);
                 }

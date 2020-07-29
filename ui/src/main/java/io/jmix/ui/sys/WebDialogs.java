@@ -21,6 +21,7 @@ import com.vaadin.shared.ui.window.WindowMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
 import io.jmix.ui.*;
 import io.jmix.ui.action.AbstractAction;
@@ -75,6 +76,8 @@ public class WebDialogs implements Dialogs {
     protected UiProperties properties;
     @Autowired
     protected HtmlSanitizer htmlSanitizer;
+    @Autowired
+    protected BeanLocator beanLocator;
 
     protected ScreenBuilders screenBuilders;
 
@@ -707,7 +710,7 @@ public class WebDialogs implements Dialogs {
                 rootCause = throwable;
             }
 
-            ExceptionDialog dialog = new ExceptionDialog(rootCause, caption, message);
+            ExceptionDialog dialog = new ExceptionDialog(rootCause, caption, message, beanLocator);
             for (com.vaadin.ui.Window window : ui.getWindows()) {
                 if (window.isModal()) {
                     dialog.setModal(true);

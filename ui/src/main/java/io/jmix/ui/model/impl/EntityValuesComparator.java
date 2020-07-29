@@ -17,9 +17,11 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.Nullable;
-import java.util.Comparator;
 
 /**
  * A comparison function, which imposes a ordering for entity attribute values.
@@ -29,15 +31,11 @@ import java.util.Comparator;
  * <pre>{@code Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.of(asc))}</pre>
  */
 public class EntityValuesComparator<T> extends AbstractComparator<T> {
-    public static final Comparator<Object> NATURAL_ORDER = new EntityValuesComparator<>(true);
-    public static final Comparator<Object> REVERSE_ORDER = new EntityValuesComparator<>(false);
-
-    public static Comparator<Object> asc(boolean asc) {
-        return asc ? NATURAL_ORDER : REVERSE_ORDER;
-    }
-
-    protected EntityValuesComparator(boolean asc) {
+    public EntityValuesComparator(boolean asc, BeanFactory beanFactory) {
         super(asc);
+
+        metadata = beanFactory.getBean(Metadata.class);
+        metadataTools = beanFactory.getBean(MetadataTools.class);
     }
 
     @Override

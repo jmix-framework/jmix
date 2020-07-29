@@ -16,10 +16,15 @@
 
 package io.jmix.ui.filter;
 
+import org.springframework.stereotype.Component;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component(FilterJpqlGenerator.NAME)
 public class FilterJpqlGenerator extends AbstractJpqlGenerator {
+
+    public static final String NAME = "ui_FilterJpqlGenerator";
 
     public static final String OR_PATTERN_REGEX = "\\bOR\\b";
     public static final Pattern OR_PATTERN = Pattern.compile(OR_PATTERN_REGEX, Pattern.CASE_INSENSITIVE);

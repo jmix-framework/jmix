@@ -16,8 +16,6 @@
 
 package io.jmix.ui.filter;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
 public enum Op implements EnumClass<String> {
@@ -72,10 +70,6 @@ public enum Op implements EnumClass<String> {
                 return op;
         }
         throw new UnsupportedOperationException("Unsupported operation: " + str);
-    }
-
-    public String getLocCaption() {
-        return AppBeans.get(Messages.class).getMessage(getClass(), "Op." + this.name());
     }
 
     @Override

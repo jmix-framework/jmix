@@ -253,7 +253,7 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     public VaadinServlet vaadinServlet() {
-        return new JmixVaadinServlet();
+        return new JmixVaadinServlet(applicationContext);
     }
 
     @SuppressWarnings("unchecked")

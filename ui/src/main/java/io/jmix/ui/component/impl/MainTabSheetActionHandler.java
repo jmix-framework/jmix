@@ -19,9 +19,7 @@ package io.jmix.ui.component.impl;
 import com.vaadin.event.Action;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Layout;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Messages;
-import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.widget.HasTabSheetBehaviour;
@@ -45,15 +43,18 @@ public class MainTabSheetActionHandler implements Action.Handler {
     protected boolean initialized = false;
     protected HasTabSheetBehaviour tabSheet;
 
-    public MainTabSheetActionHandler(HasTabSheetBehaviour tabSheet) {
+    protected Messages messages;
+    protected UiProperties uiProperties;
+
+    public MainTabSheetActionHandler(HasTabSheetBehaviour tabSheet, Messages messages, UiProperties uiProperties) {
         this.tabSheet = tabSheet;
+        this.messages = messages;
+        this.uiProperties = uiProperties;
     }
 
     @Override
     public Action[] getActions(Object target, Object sender) {
         if (!initialized) {
-            Messages messages = AppBeans.get(Messages.NAME);
-
             closeAllTabs = new Action(messages.getMessage("actions.closeAllTabs"));
             closeOtherTabs = new Action(messages.getMessage("actions.closeOtherTabs"));
             closeCurrentTab = new Action(messages.getMessage("actions.closeCurrentTab"));
@@ -69,15 +70,13 @@ public class MainTabSheetActionHandler implements Action.Handler {
         actions.add(closeAllTabs);
 
         if (target != null) {
-            UiProperties properties = AppBeans.get(UiProperties.class);
-
             // CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
             // todo permissions
 //            if (userSession.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION) &&
 //                    findEditor((Layout) target) != null) {
 //                actions.add(showInfo);
 //            }
-            if (properties.isLayoutAnalyzerEnabled()) {
+            if (uiProperties.isLayoutAnalyzerEnabled()) {
                 actions.add(analyzeLayout);
             }
         }

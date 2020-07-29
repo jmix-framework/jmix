@@ -20,7 +20,6 @@ import com.vaadin.server.RequestHandler;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinResponse;
 import com.vaadin.server.VaadinSession;
-import io.jmix.core.AppBeans;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.sys.WebJarResourceResolver;
 import io.jmix.core.FileTypesHelper;
@@ -49,12 +48,10 @@ public class JmixWebJarsHandler implements RequestHandler {
     protected ServletContext servletContext;
     protected UiProperties uiProperties;
 
-    public JmixWebJarsHandler(ServletContext servletContext) {
+    public JmixWebJarsHandler(ServletContext servletContext, WebJarResourceResolver resolver, UiProperties uiProperties) {
         this.servletContext = servletContext;
-
-        this.resolver = AppBeans.get(WebJarResourceResolver.NAME);
-
-        this.uiProperties = AppBeans.get(UiProperties.class);
+        this.resolver = resolver;
+        this.uiProperties = uiProperties;
     }
 
     @Override

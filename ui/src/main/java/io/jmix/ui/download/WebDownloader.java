@@ -19,6 +19,7 @@ package io.jmix.ui.download;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinResponse;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
@@ -56,6 +57,8 @@ public class WebDownloader implements Downloader {
 
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     protected Messages messages;
 
@@ -168,7 +171,7 @@ public class WebDownloader implements Downloader {
             fileStorage = fileStorageLocator.getDefault();
         }
         String fileName = fileStorage.getFileInfo(fileReference).toString();
-        download(new FileDataProvider<>(fileReference), fileName, format);
+        download(new FileDataProvider<>(fileReference, fileStorage), fileName, format);
     }
 
     @Override
@@ -196,11 +199,13 @@ public class WebDownloader implements Downloader {
         }
         String fileName = fileStorage.getFileInfo(fileReference).toString();
         DownloadFormat format = DownloadFormat.getByExtension(FilenameUtils.getExtension(fileName));
-        download(new FileDataProvider<>(fileReference), format);
+        download(new FileDataProvider<>(fileReference, fileStorage), format);
     }
 
     public void download(byte[] content, String resourceName, DownloadFormat format) {
-        download(new ByteArrayDataProvider(content), resourceName, format);
+        download(new ByteArrayDataProvider(content, uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir()),
+                resourceName,
+                format);
     }
 
     /**

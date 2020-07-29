@@ -16,10 +16,7 @@
  */
 package io.jmix.ui.download;
 
-import io.jmix.core.AppBeans;
-import io.jmix.core.CoreProperties;
 import io.jmix.core.UuidProvider;
-import io.jmix.ui.UiProperties;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,23 +37,18 @@ public class ByteArrayDataProvider implements DownloadDataProvider {
 
     private Supplier<InputStream> supplier;
 
-    public ByteArrayDataProvider(byte[] data) {
-        int saveExportedByteArrayDataThresholdBytes =
-                AppBeans.get(UiProperties.class).getSaveExportedByteArrayDataThresholdBytes();
-
+    public ByteArrayDataProvider(byte[] data, int saveExportedByteArrayDataThresholdBytes, String tempDir) {
         if (data.length >= saveExportedByteArrayDataThresholdBytes) {
             // save to temp
-            File file = saveToTempStorage(data);
+            File file = saveToTempStorage(data, tempDir);
             this.supplier = () -> readFromTempStorage(file);
         } else {
             this.supplier = () -> new ByteArrayInputStream(data);
         }
     }
 
-    protected File saveToTempStorage(byte[] data) {
+    protected File saveToTempStorage(byte[] data, String tempDir) {
         UUID uuid = UuidProvider.createUuid();
-
-        String tempDir = AppBeans.get(CoreProperties.class).getTempDir();
 
         File dir = new File(tempDir);
         File file = new File(dir, uuid.toString());

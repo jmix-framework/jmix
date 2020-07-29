@@ -45,6 +45,9 @@ public class QueryFilter extends FilterParser implements Serializable {
     @Autowired
     protected QueryFilters queryFilters;
 
+    @Autowired
+    protected FilterJpqlGenerator filterJpqlGenerator;
+
     protected QueryFilter(Condition condition) {
         super(condition);
     }
@@ -82,7 +85,7 @@ public class QueryFilter extends FilterParser implements Serializable {
             Condition refined = refine(root, params);
             if (refined != null) {
                 QueryTransformer transformer = queryTransformerFactory.transformer(query);
-                String where = new FilterJpqlGenerator().generateJpql(refined);
+                String where = filterJpqlGenerator.generateJpql(refined);
 
                 if (!StringUtils.isBlank(where)) {
                     Set<String> joins = refined.getJoins();

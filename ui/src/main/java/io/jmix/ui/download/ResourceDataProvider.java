@@ -17,7 +17,6 @@
 
 package io.jmix.ui.download;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.Resources;
 
 import java.io.InputStream;
@@ -28,14 +27,15 @@ import java.io.InputStream;
 public class ResourceDataProvider implements DownloadDataProvider {
 
     private String resourcePath;
+    private Resources resources;
 
-    public ResourceDataProvider(String resourcePath) {
+    public ResourceDataProvider(String resourcePath, Resources resources) {
         this.resourcePath = resourcePath;
+        this.resources = resources;
     }
 
     @Override
     public InputStream provide() {
-        Resources resources = AppBeans.get(Resources.NAME);
         return resources.getResourceAsStream(resourcePath);
     }
 }

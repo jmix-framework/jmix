@@ -36,6 +36,7 @@ public class AnnotationsInfo {
     public static final String LEGACY_INTERFACE_CREATABLE = "com.haulmont.cuba.core.entity.Creatable";
     public static final String LEGACY_INTERFACE_UPDATABLE = "com.haulmont.cuba.core.entity.Updatable";
     public static final String LEGACY_INTERFACE_SOFT_DELETE = "com.haulmont.cuba.core.entity.SoftDelete";
+    public static final String LEGACY_INTERFACE_HAS_UUID = "com.haulmont.cuba.core.entity.HasUuid";
 
     private Multimap<FieldAnnotation, CtField> declaredFields = HashMultimap.create();
     private Multimap<FieldAnnotation, CtField> inheritedFields = HashMultimap.create();
@@ -56,7 +57,12 @@ public class AnnotationsInfo {
         CtClass current = entityClass;
 
         while (current.getSuperclass() != null) {
-            interfaceNames.addAll(Arrays.stream(current.getInterfaces()).map(CtClass::getName).collect(Collectors.toList()));
+            List<String> currentInterfaces = Arrays.stream(current.getInterfaces()).map(CtClass::getName).collect(Collectors.toList());
+            interfaceNames.addAll(currentInterfaces);
+
+            if (currentInterfaces.contains(LEGACY_INTERFACE_HAS_UUID)) {//legacy support
+                info.putClassAnnotation(ClassAnnotation.LEGACY_HAS_UUID, current);
+            }
 
             AnnotationsAttribute attribute = (AnnotationsAttribute) current.getClassFile2().getAttribute(AnnotationsAttribute.visibleTag);
             if (attribute != null) {
@@ -177,7 +183,7 @@ public class AnnotationsInfo {
         JMIX_GENERATED_VALUE("io.jmix.core.entity.annotation.JmixGeneratedValue", false);
 
         private final String className;
-        private final boolean unique;//not fully supported yet. need to store multiply fields for annotation
+        private final boolean unique;
 
 
         FieldAnnotation(String className) {
@@ -207,7 +213,8 @@ public class AnnotationsInfo {
 
 
     public enum ClassAnnotation {
-        EMBEDDABLE(MetaModelUtil.EMBEDDABLE_ANNOTATION_TYPE);
+        EMBEDDABLE(MetaModelUtil.EMBEDDABLE_ANNOTATION_TYPE),
+        LEGACY_HAS_UUID("LEGACY_HAS_UUID");
 
         private final String className;
 

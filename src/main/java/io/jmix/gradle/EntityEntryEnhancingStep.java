@@ -17,18 +17,27 @@
 package io.jmix.gradle;
 
 import javassist.*;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static io.jmix.gradle.AnnotationsInfo.ClassAnnotation.EMBEDDABLE;
+import static io.jmix.gradle.AnnotationsInfo.ClassAnnotation.LEGACY_HAS_UUID;
 import static io.jmix.gradle.AnnotationsInfo.FieldAnnotation.*;
 import static io.jmix.gradle.MetaModelUtil.*;
 
 public class EntityEntryEnhancingStep extends BaseEnhancingStep {
+    protected static final String UUID_KEY_ANNOTATION_NAME = "io.jmix.core.annotation.UuidKey";
 
     @Override
     protected boolean isAlreadyEnhanced(CtClass ctClass) throws NotFoundException {
@@ -81,52 +90,54 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         ctClass.addInterface(classPool.get(ENTITY_ENTRY_ENHANCED_TYPE));
     }
 
+    /**
+     * @param info must always contain info.getPrimaryKey() != null
+     */
     protected void makeEntityEntryClass(CtClass ctClass, AnnotationsInfo info) throws CannotCompileException, NotFoundException, IOException {
-        CtField primaryKeyField = info.getPrimaryKey();
+
+        CtField primaryKeyField = Objects.requireNonNull(info.getPrimaryKey());
 
         CtClass nestedCtClass = ctClass.makeNestedClass(GEN_ENTITY_ENTRY_CLASS_NAME, true);
 
-        if (primaryKeyField != null) {
-            CtField generatedIdField = findGeneratedIdField(info);
+        CtField generatedIdField = findGeneratedIdField(info);
 
-            CtClass idType = classPool.get(Object.class.getName());
-            if (generatedIdField == null) {
-                nestedCtClass.setSuperclass(classPool.get(NULLABLE_ID_ENTITY_ENTRY_TYPE));
-            } else {
-                nestedCtClass.setSuperclass(classPool.get(BASE_ENTITY_ENTRY_TYPE));
-            }
+        CtClass idType = classPool.get(Object.class.getName());
+        if (generatedIdField == null) {
+            nestedCtClass.setSuperclass(classPool.get(NULLABLE_ID_ENTITY_ENTRY_TYPE));
+        } else {
+            nestedCtClass.setSuperclass(classPool.get(BASE_ENTITY_ENTRY_TYPE));
+        }
 
-            CtMethod getIdMethod = CtNewMethod.make(idType, "getEntityId",
+        CtMethod getIdMethod = CtNewMethod.make(idType, "getEntityId",
+                null, null,
+                String.format("return ((%s)getSource()).get%s();",
+                        ctClass.getName(),
+                        StringUtils.capitalize(primaryKeyField.getName())),
+                nestedCtClass);
+        nestedCtClass.addMethod(getIdMethod);
+
+        CtMethod setIdMethod = CtNewMethod.make(CtClass.voidType, "setEntityId",
+                new CtClass[]{idType}, null,
+                String.format("((%s)getSource()).set%s((%s)$1);",
+                        ctClass.getName(),
+                        StringUtils.capitalize(primaryKeyField.getName()),
+                        primaryKeyField.getType().getName()),
+                nestedCtClass);
+        nestedCtClass.addMethod(setIdMethod);
+
+        if (generatedIdField != null) {
+            CtMethod getGeneratedIdMethod = CtNewMethod.make(idType, "getGeneratedIdOrNull",
                     null, null,
                     String.format("return ((%s)getSource()).get%s();",
                             ctClass.getName(),
-                            StringUtils.capitalize(primaryKeyField.getName())),
+                            StringUtils.capitalize(generatedIdField.getName())),
                     nestedCtClass);
-            nestedCtClass.addMethod(getIdMethod);
-
-            CtMethod setIdMethod = CtNewMethod.make(CtClass.voidType, "setEntityId",
-                    new CtClass[]{idType}, null,
-                    String.format("((%s)getSource()).set%s((%s)$1);",
-                            ctClass.getName(),
-                            StringUtils.capitalize(primaryKeyField.getName()),
-                            primaryKeyField.getType().getName()),
-                    nestedCtClass);
-            nestedCtClass.addMethod(setIdMethod);
-
-            if (generatedIdField != null) {
-                CtMethod getGeneratedIdMethod = CtNewMethod.make(idType, "getGeneratedIdOrNull",
-                        null, null,
-                        String.format("return ((%s)getSource()).get%s();",
-                                ctClass.getName(),
-                                StringUtils.capitalize(generatedIdField.getName())),
-                        nestedCtClass);
-                nestedCtClass.addMethod(getGeneratedIdMethod);
-            }
+            nestedCtClass.addMethod(getGeneratedIdMethod);
         }
 
         setupAuditing(nestedCtClass, ctClass, info);
-
         setupSoftDelete(nestedCtClass, ctClass, info);
+        setupHasUuid(nestedCtClass, ctClass, info);
 
         nestedCtClass.writeFile(outputDir);
     }
@@ -153,7 +164,8 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         return false;
     }
 
-    private void setupSoftDelete(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info) throws NotFoundException, CannotCompileException {
+    private void setupSoftDelete(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info)
+            throws NotFoundException, CannotCompileException {
         CtField deletedDateField = info.getAnnotatedField(DELETED_DATE);
         CtField deletedByField = info.getAnnotatedField(DELETED_BY);
 
@@ -169,6 +181,11 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                     nestedClass);
             nestedClass.addMethod(isDeletedMethod);
 
+            logger.debug(String.format("Entity %s is soft-deletable. Fields: deletedDate: %s, deletedBy: %s",
+                    ctClass.getSimpleName(),
+                    deletedDateField.getName(),
+                    deletedByField == null ? '-' : deletedByField.getName()));
+
             nestedClass.addInterface(classPool.get("io.jmix.core.entity.EntityEntrySoftDelete"));
         } else if (deletedByField != null) {
             throw new RuntimeException("@DeletedBy annotation cannot be used without @DeletedDate. Class: "
@@ -176,7 +193,8 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         }
     }
 
-    protected void setupAuditing(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info) throws NotFoundException, CannotCompileException {
+    protected void setupAuditing(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info)
+            throws NotFoundException, CannotCompileException {
 
         CtField createdDateField = info.getAnnotatedField(CREATED_DATE);
         CtField createdByField = info.getAnnotatedField(CREATED_BY);
@@ -198,6 +216,69 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                     lastModifiedByField == null ? '-' : lastModifiedByField.getName()
             ));
         }
+    }
+
+    protected void setupHasUuid(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info)
+            throws NotFoundException, CannotCompileException {
+
+        String uuidFieldName;
+
+        if (info.hasClassAnnotation(LEGACY_HAS_UUID)) {//legacy support
+            uuidFieldName = "uuid";
+        } else {
+            CtField primaryKeyField = info.getPrimaryKey();
+            List<CtField> generatedValueUuidFields = info.getAnnotatedFields(JMIX_GENERATED_VALUE).stream()
+                    .filter(this::isFieldOfUuidType)
+                    .collect(Collectors.toList());
+
+            CtField uuidField = generatedValueUuidFields.stream()
+                    .filter(ctField -> ctField.equals(primaryKeyField))
+                    .findFirst()
+                    .orElseGet(() -> generatedValueUuidFields.stream()
+                            .findFirst()
+                            .orElse(null));
+
+            if (uuidField != null) {
+                uuidFieldName = uuidField.getName();
+            } else {
+                uuidFieldName = null;
+            }
+        }
+
+        if (uuidFieldName != null) {
+            addHasUuidAnnotation(nestedClass, uuidFieldName);
+            setupHasUuidForField(nestedClass, ctClass, uuidFieldName);
+        }
+    }
+
+    protected void addHasUuidAnnotation(CtClass nestedClass, String propertyName) {
+        ConstPool nestedClassConstPool = nestedClass.getClassFile().getConstPool();
+        AnnotationsAttribute attr = new AnnotationsAttribute(nestedClassConstPool, AnnotationsAttribute.visibleTag);
+        Annotation uuidKeyAnnotation = new Annotation(UUID_KEY_ANNOTATION_NAME, nestedClassConstPool);
+        uuidKeyAnnotation.addMemberValue("propertyName", new StringMemberValue(propertyName, nestedClassConstPool));
+        attr.addAnnotation(uuidKeyAnnotation);
+
+        nestedClass.getClassFile().addAttribute(attr);//todo taimanov put on uuid field/method after #583
+    }
+
+    protected void setupHasUuidForField(CtClass nestedClass, CtClass ctClass, String uuidFieldName)
+            throws NotFoundException, CannotCompileException {
+        CtClass uuidClass = classPool.get(UUID.class.getName());
+
+        nestedClass.addMethod(CtNewMethod.make(uuidClass, "getUuid", null, null,
+                String.format("return ((%s)getSource()).get%s();",
+                        ctClass.getName(),
+                        StringUtils.capitalize(uuidFieldName)),
+                nestedClass));
+
+        nestedClass.addMethod(CtNewMethod.make(CtClass.voidType, "setUuid", new CtClass[]{uuidClass}, null,
+                String.format("((%s)getSource()).set%s($1);",
+                        ctClass.getName(),
+                        StringUtils.capitalize(uuidFieldName)),
+                nestedClass));
+
+        logger.debug(String.format("Entity '%s' uuid field: %s", ctClass.getSimpleName(), uuidFieldName));
+        nestedClass.addInterface(classPool.get("io.jmix.core.entity.EntityEntryHasUuid"));
     }
 
     /**

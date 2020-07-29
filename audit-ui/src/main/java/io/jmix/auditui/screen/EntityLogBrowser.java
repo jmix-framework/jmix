@@ -23,7 +23,6 @@ import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.entity.BaseUser;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -331,7 +330,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                 String originalName = originalMetaClass.getName();
                 Class javaClass = originalMetaClass.getJavaClass();
-                if (metadataTools.hasCompositePrimaryKey(metaClass) && !HasUuid.class.isAssignableFrom(javaClass)) {
+                if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(originalMetaClass)) {
                     continue;
                 }
                 String caption = messages.getMessage(javaClass, javaClass.getSimpleName()) + " (" + originalName + ")";
@@ -577,7 +576,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         }
         Range range = metaProperty.getRange();
         if (range.isClass() && metadataTools.hasCompositePrimaryKey(range.asClass()) &&
-                !HasUuid.class.isAssignableFrom(range.asClass().getJavaClass())) {
+                !metadataTools.hasUuid(range.asClass())) {
             return false;
         }
         if (range.isClass() && range.getCardinality().isMany()) {

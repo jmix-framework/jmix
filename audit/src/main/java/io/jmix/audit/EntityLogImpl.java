@@ -23,9 +23,9 @@ import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.BaseUser;
+import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.HasUuid;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -405,7 +405,8 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
         if (entity instanceof EntityLogItem) {
             return true;
         }
-        if (metadataTools.hasCompositePrimaryKey(metadata.getClass(entity)) && !(entity instanceof HasUuid)) {
+        if (metadataTools.hasCompositePrimaryKey(metadata.getClass(entity))
+                && !(entity.__getEntityEntry() instanceof EntityEntryHasUuid)) {
             return true;
         }
         return !isEnabled();

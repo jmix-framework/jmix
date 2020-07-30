@@ -65,11 +65,11 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
         legacyEntity.__getEntityEntry() instanceof EntityEntrySoftDelete
         newEntity.__getEntityEntry() instanceof EntityEntrySoftDelete
 
-        "deleteTs".equals(metadataTools.getDeletedDateProperty(legacyEntity.getClass()))
-        "deletedBy".equals(metadataTools.getDeletedByProperty(legacyEntity.getClass()))
+        "deleteTs".equals(metadataTools.findDeletedDateProperty(legacyEntity.getClass()))
+        "deletedBy".equals(metadataTools.findDeletedByProperty(legacyEntity.getClass()))
 
-        "whenDeleted".equals(metadataTools.getDeletedDateProperty(newEntity.getClass()))
-        "whoDeleted".equals(metadataTools.getDeletedByProperty(newEntity.getClass()))
+        "whenDeleted".equals(metadataTools.findDeletedDateProperty(newEntity.getClass()))
+        "whoDeleted".equals(metadataTools.findDeletedByProperty(newEntity.getClass()))
 
         metadataTools.getSoftDeleteProperties(legacyEntity.getClass()).containsAll(["deleteTs", "deletedBy"])
         metadataTools.getSoftDeleteProperties(legacyEntity.getClass()).size() == 2

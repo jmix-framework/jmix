@@ -28,22 +28,22 @@ public class CubaMetadataTools extends MetadataTools {
 
     @Override
     @Nullable
-    public String getDeletedDateProperty(Class<? extends JmixEntity> clazz) {
+    public String findDeletedDateProperty(Class<? extends JmixEntity> clazz) {
         if (SoftDelete.class.isAssignableFrom(clazz)) {
             return "deleteTs";
         }
 
-        return super.getDeletedDateProperty(clazz);
+        return super.findDeletedDateProperty(clazz);
     }
 
     @Override
     @Nullable
-    public String getDeletedByProperty(Class<? extends JmixEntity> clazz) {
+    public String findDeletedByProperty(Class<? extends JmixEntity> clazz) {
         if (SoftDelete.class.isAssignableFrom(clazz)) {
             return "deletedBy";
         }
 
-        return super.getDeletedByProperty(clazz);
+        return super.findDeletedByProperty(clazz);
     }
 
     @Override
@@ -58,14 +58,6 @@ public class CubaMetadataTools extends MetadataTools {
     @Override
     public boolean isSoftDeletable(Class<? extends JmixEntity> entityClass) {
         return SoftDelete.class.isAssignableFrom(entityClass) || super.isSoftDeletable(entityClass);
-    }
-
-    @Override
-    public boolean isSoftDeleted(JmixEntity instance) {
-        if (instance instanceof SoftDelete) {
-            return ((SoftDelete) instance).isDeleted();
-        }
-        return super.isSoftDeleted(instance);
     }
 
 }

@@ -32,7 +32,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
-        Component.BelongToFrame, Component.HasCaption, Component.Editable, Component.Focusable, HasCaptionMode,
+        Component.BelongToFrame, Component.HasCaption, Component.Editable, Component.Focusable,
         HasOptionCaptionProvider<V> {
 
     String NAME = "tokenList";
@@ -74,44 +74,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      */
     @Nullable
     Function<? super V, String> getLookupFieldOptionsCaptionProvider();
-
-    /**
-     * @return option captions mode generation
-     *
-     * @deprecated use {@link TokenList#getLookupFieldOptionsCaptionProvider()}
-     */
-    @Nullable
-    @Deprecated
-    CaptionMode getOptionsCaptionMode();
-
-    /**
-     * Sets how LookupField option captions should be generated.
-     *
-     * @param optionsCaptionMode mode
-     *
-     * @deprecated use {@link TokenList#setLookupFieldOptionsCaptionProvider(Function)} instead
-     */
-    @Deprecated
-    void setOptionsCaptionMode(@Nullable CaptionMode optionsCaptionMode);
-
-    /**
-     * @return a property that is used for LookupField option captions generation
-     *
-     * @deprecated use {@link TokenList#getLookupFieldOptionsCaptionProvider()} instead
-     */
-    @Deprecated
-    @Nullable
-    String getOptionsCaptionProperty();
-
-    /**
-     * Sets a property that will be used for LookupField option captions generation when {@link CaptionMode#PROPERTY} is used.
-     *
-     * @param optionsCaptionProperty property
-     *
-     * @deprecated use {@link TokenList#setLookupFieldOptionsCaptionProvider(Function)} instead
-     */
-    @Deprecated
-    void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty);
 
     /**
      * Sets whether options should be refreshed after lookup window closing.

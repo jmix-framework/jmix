@@ -17,16 +17,18 @@
 package io.jmix.ui.component.factory;
 
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.impl.GuiActionSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This generation strategy is intended for generating a default field corresponding to a datatype for which other
@@ -39,8 +41,11 @@ public class CustomDatatypesComponentGenerationStrategy extends AbstractComponen
     public static final String NAME = "ui_CustomDatatypesComponentGenerationStrategy";
 
     @Autowired
-    public CustomDatatypesComponentGenerationStrategy(Messages messages, GuiActionSupport guiActionSupport) {
-        super(messages, guiActionSupport);
+    public CustomDatatypesComponentGenerationStrategy(Messages messages,
+                                                      GuiActionSupport guiActionSupport,
+                                                      Metadata metadata,
+                                                      MetadataTools metadataTools) {
+        super(messages, guiActionSupport, metadata, metadataTools);
     }
 
     @Autowired

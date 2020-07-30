@@ -17,6 +17,8 @@
 package io.jmix.ui.component.factory;
 
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.CurrencyValue;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -28,7 +30,7 @@ import io.jmix.ui.action.entitypicker.ClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.impl.GuiActionSupport;
 import io.jmix.ui.gui.OpenType;
@@ -40,7 +42,11 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.sql.Time;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
@@ -53,11 +59,17 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Messages messages;
     protected UiComponents uiComponents;
     protected GuiActionSupport guiActionSupport;
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
 
     public AbstractComponentGenerationStrategy(Messages messages,
-                                               GuiActionSupport guiActionSupport) {
+                                               GuiActionSupport guiActionSupport,
+                                               Metadata metadata,
+                                               MetadataTools metadataTools) {
         this.messages = messages;
         this.guiActionSupport = guiActionSupport;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
     }
 
     @Nullable
@@ -366,7 +378,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
                 String captionProperty = xmlDescriptor.attributeValue("captionProperty");
                 if (StringUtils.isNotEmpty(captionProperty)) {
                     entityPicker.setOptionCaptionProvider(
-                            new LegacyCaptionAdapter(CaptionMode.PROPERTY, captionProperty));
+                            new CaptionAdapter(captionProperty, metadata, metadataTools));
                 }
             }
 

@@ -17,15 +17,17 @@
 package io.jmix.ui.component.factory;
 
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.impl.GuiActionSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(DefaultComponentGenerationStrategy.NAME)
 public class DefaultComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
@@ -33,8 +35,10 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
 
     @Autowired
     public DefaultComponentGenerationStrategy(Messages messages,
-                                              GuiActionSupport guiActionSupport) {
-        super(messages, guiActionSupport);
+                                              GuiActionSupport guiActionSupport,
+                                              Metadata metadata,
+                                              MetadataTools metadataTools) {
+        super(messages, guiActionSupport, metadata, metadataTools);
     }
 
     @Autowired

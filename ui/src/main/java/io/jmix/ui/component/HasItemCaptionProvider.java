@@ -16,9 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
-import org.apache.commons.lang3.StringUtils;
-
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
@@ -41,87 +38,4 @@ public interface HasItemCaptionProvider<I> extends Component {
      */
     @Nullable
     Function<? super I, String> getItemCaptionProvider();
-
-    /**
-     * @return caption mode
-     *
-     * @deprecated use {@link HasItemCaptionProvider#getItemCaptionProvider} instead
-     */
-    @Deprecated
-    @Nullable
-    default CaptionMode getCaptionMode() {
-        Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();
-
-        if (provider instanceof LegacyCaptionAdapter) {
-            return ((LegacyCaptionAdapter) provider).getCaptionMode();
-        }
-
-        return null;
-    }
-
-    /**
-     * Sets caption mode.
-     *
-     * @param captionMode caption mode
-     *
-     * @deprecated use {@link HasItemCaptionProvider#setItemCaptionProvider(Function)} instead
-     */
-    @Deprecated
-    default void setCaptionMode(@Nullable CaptionMode captionMode) {
-        Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();
-
-        String captionProperty = null;
-        if (provider instanceof LegacyCaptionAdapter) {
-            captionProperty = ((LegacyCaptionAdapter) provider).getCaptionProperty();
-        }
-
-        LegacyCaptionAdapter adapter = captionMode != null
-                || StringUtils.isNotEmpty(captionProperty)
-                        ? new LegacyCaptionAdapter(captionMode, captionProperty)
-                        : null;
-
-        setItemCaptionProvider(adapter);
-    }
-
-    /**
-     * @return caption property
-     *
-     * @deprecated use {@link HasItemCaptionProvider#getItemCaptionProvider} instead
-     */
-    @Deprecated
-    @Nullable
-    default String getCaptionProperty() {
-        Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();
-
-        if (provider instanceof LegacyCaptionAdapter) {
-            return ((LegacyCaptionAdapter) provider).getCaptionProperty();
-        }
-
-        return null;
-    }
-
-    /**
-     * Sets caption property.
-     *
-     * @param captionProperty caption property
-     *
-     * @deprecated use {@link HasItemCaptionProvider#setItemCaptionProvider(Function)} instead
-     */
-    @Deprecated
-    default void setCaptionProperty(@Nullable String captionProperty) {
-        CaptionMode captionMode = null;
-
-        Function provider = ((HasItemCaptionProvider) this).getItemCaptionProvider();
-
-        if (provider instanceof LegacyCaptionAdapter) {
-            captionMode = ((LegacyCaptionAdapter) provider).getCaptionMode();
-        }
-
-        LegacyCaptionAdapter adapter = captionMode != null
-                || StringUtils.isNotEmpty(captionProperty)
-                        ? new LegacyCaptionAdapter(captionMode, captionProperty)
-                        : null;
-
-        setItemCaptionProvider(adapter);
-    }
 }

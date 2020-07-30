@@ -16,8 +16,10 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.component.CaptionMode;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.component.OptionsField;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -31,8 +33,8 @@ public abstract class AbstractOptionsBaseLoader<T extends OptionsField> extends 
     protected void loadCaptionProperty(T component, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            component.setCaptionProperty(captionProperty);
-            component.setCaptionMode(CaptionMode.PROPERTY);
+            component.setOptionCaptionProvider(
+                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
         }
     }
 

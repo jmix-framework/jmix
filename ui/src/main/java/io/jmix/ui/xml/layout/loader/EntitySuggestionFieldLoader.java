@@ -17,13 +17,14 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.ActionsHolder;
-import io.jmix.ui.component.CaptionMode;
 import io.jmix.ui.component.EntitySuggestionField;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -72,8 +73,8 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
     protected void loadCaptionProperty(EntitySuggestionField suggestionField, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            suggestionField.setCaptionMode(CaptionMode.PROPERTY);
-            suggestionField.setCaptionProperty(captionProperty);
+            suggestionField.setOptionCaptionProvider(
+                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
         }
     }
 

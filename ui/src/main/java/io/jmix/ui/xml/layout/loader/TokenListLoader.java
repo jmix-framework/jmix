@@ -15,10 +15,12 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.component.CaptionMode;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TokenList;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.CollectionContainer;
@@ -168,11 +170,7 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
 
         loadOptionsContainer(component, lookupElement);
 
-        String optionsCaptionProperty = lookupElement.attributeValue("captionProperty");
-        if (!StringUtils.isEmpty(optionsCaptionProperty)) {
-            component.setOptionsCaptionMode(CaptionMode.PROPERTY);
-            component.setOptionsCaptionProperty(optionsCaptionProperty);
-        }
+        loadLookupCaptionProperty(component, lookupElement);
 
         String lookup = lookupElement.attributeValue("lookup");
         if (StringUtils.isNotEmpty(lookup)) {
@@ -202,6 +200,14 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
         loadFilterMode(component, lookupElement);
     }
 
+    protected void loadLookupCaptionProperty(TokenList component, Element lookupElement) {
+        String optionsCaptionProperty = lookupElement.attributeValue("captionProperty");
+        if (!StringUtils.isEmpty(optionsCaptionProperty)) {
+            component.setLookupFieldOptionsCaptionProvider(
+                    new CaptionAdapter(optionsCaptionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+        }
+    }
+
     protected void loadInline(TokenList component, Element element) {
         String inline = element.attributeValue("inline");
         if (StringUtils.isNotEmpty(inline)) {
@@ -219,8 +225,8 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
     protected void loadCaptionProperty(TokenList component, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            component.setCaptionMode(CaptionMode.PROPERTY);
-            component.setCaptionProperty(captionProperty);
+            component.setOptionCaptionProvider(
+                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
         }
     }
 

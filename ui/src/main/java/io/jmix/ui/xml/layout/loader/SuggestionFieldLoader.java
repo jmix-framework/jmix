@@ -16,8 +16,10 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.component.CaptionMode;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.component.SuggestionField;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -57,8 +59,8 @@ public class SuggestionFieldLoader extends SuggestionFieldQueryLoader<Suggestion
     protected void loadCaptionProperty(SuggestionField suggestionField, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (StringUtils.isNotEmpty(captionProperty)) {
-            suggestionField.setCaptionMode(CaptionMode.PROPERTY);
-            suggestionField.setCaptionProperty(captionProperty);
+            suggestionField.setOptionCaptionProvider(
+                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
         }
     }
 

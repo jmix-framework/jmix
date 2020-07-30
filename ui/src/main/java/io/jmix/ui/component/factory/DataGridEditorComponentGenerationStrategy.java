@@ -16,9 +16,11 @@
 
 package io.jmix.ui.component.factory;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.entity.annotation.LookupType;
@@ -28,7 +30,13 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.ClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentGenerationContext;
+import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.component.EntityComboBox;
+import io.jmix.ui.component.EntityPicker;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.impl.GuiActionSupport;
@@ -54,8 +62,11 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     }
 
     @Autowired
-    public DataGridEditorComponentGenerationStrategy(Messages messages, GuiActionSupport guiActionSupport) {
-        super(messages, guiActionSupport);
+    public DataGridEditorComponentGenerationStrategy(Messages messages,
+                                                     GuiActionSupport guiActionSupport,
+                                                     Metadata metadata,
+                                                     MetadataTools metadataTools) {
+        super(messages, guiActionSupport, metadata, metadataTools);
     }
 
     @Autowired
@@ -110,7 +121,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
             setValueSource(entityPicker, context);
             LookupAction<?> lookupAction = (LookupAction<?>) actions.create(LookupAction.ID);
             // Opening lookup screen in another mode will close editor
-             lookupAction.setOpenMode(OpenMode.DIALOG);
+            lookupAction.setOpenMode(OpenMode.DIALOG);
             // In case of adding special logic for lookup screen opened from DataGrid editor
             lookupAction.setScreenOptionsSupplier(() ->
                     new MapScreenOptions(ParamsMap.of("dataGridEditor", true)));

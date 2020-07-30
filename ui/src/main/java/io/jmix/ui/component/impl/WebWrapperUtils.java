@@ -29,11 +29,10 @@ import com.vaadin.shared.ui.grid.ScrollDestination;
 import com.vaadin.shared.ui.slider.SliderOrientation;
 import com.vaadin.ui.Dependency;
 import com.vaadin.v7.shared.ui.combobox.FilteringMode;
-import com.vaadin.v7.ui.AbstractSelect;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.ComboBox.FilterMode;
 import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.DataGrid.DataGridStaticCellType;
-import io.jmix.ui.component.ComboBox.FilterMode;
 import io.jmix.ui.widget.client.fieldgrouplayout.CaptionAlignment;
 import io.jmix.ui.widget.client.popupview.PopupPosition;
 import io.jmix.ui.widget.client.resizabletextarea.ResizeDirection;
@@ -54,42 +53,6 @@ public final class WebWrapperUtils {
     public static final String AUTO_SIZE = "AUTO";
 
     private WebWrapperUtils() {
-    }
-
-    @Nullable
-    public static CaptionMode toCaptionMode(@Nullable AbstractSelect.ItemCaptionMode captionMode) {
-        if (captionMode == null) {
-            return null;
-        }
-
-        switch (captionMode) {
-            case ITEM:
-                return CaptionMode.ITEM;
-            case PROPERTY:
-                return CaptionMode.PROPERTY;
-            case EXPLICIT_DEFAULTS_ID:
-                return CaptionMode.MAP_ENTRY;
-            default:
-                throw new UnsupportedOperationException("Unsupported Vaadin AbstractSelect.ItemCaptionMode");
-        }
-    }
-
-    @Nullable
-    public static AbstractSelect.ItemCaptionMode toVaadinCaptionMode(@Nullable CaptionMode captionMode) {
-        if (captionMode == null) {
-            return null;
-        }
-
-        switch (captionMode) {
-            case ITEM:
-                return AbstractSelect.ItemCaptionMode.ITEM;
-            case PROPERTY:
-                return AbstractSelect.ItemCaptionMode.PROPERTY;
-            case MAP_ENTRY:
-                return AbstractSelect.ItemCaptionMode.EXPLICIT_DEFAULTS_ID;
-            default:
-                throw new UnsupportedOperationException("Unsupported CaptionMode");
-        }
     }
 
     public static ContentMode toContentMode(com.vaadin.shared.ui.ContentMode contentMode) {

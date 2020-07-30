@@ -15,9 +15,11 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.component.CaptionMode;
 import io.jmix.ui.component.TwinColumn;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
@@ -83,8 +85,8 @@ public class TwinColumnLoader extends AbstractFieldLoader<TwinColumn> {
     protected void loadCaptionProperty(TwinColumn resultComponent, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setCaptionMode(CaptionMode.PROPERTY);
-            resultComponent.setCaptionProperty(captionProperty);
+            resultComponent.setOptionCaptionProvider(
+                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
         }
     }
 

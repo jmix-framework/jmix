@@ -16,37 +16,28 @@
 
 package io.jmix.ui.component.compatibility;
 
-import io.jmix.core.AppBeans;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.ui.component.CaptionMode;
-import io.jmix.ui.component.HasItemCaptionProvider;
-import io.jmix.ui.component.HasOptionCaptionProvider;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
- * Legacy item/options caption provider adapter that supports {@code captionMode} and {@code captionProperty}
- * properties.
- *
- * @deprecated use {@link HasItemCaptionProvider#setItemCaptionProvider(Function)} or
- * {@link HasOptionCaptionProvider#setOptionCaptionProvider(Function)} directly instead
+ * Converts {@code captionProperty} XML attribute to item/options caption provider.
  */
-@Deprecated
-public class LegacyCaptionAdapter implements Function<Object, String> {
+public class CaptionAdapter implements Function<Object, String> {
 
-    protected CaptionMode captionMode;
     protected String captionProperty;
 
-    protected Metadata metadata = AppBeans.get(Metadata.NAME);
-    protected MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
 
-    public LegacyCaptionAdapter(@Nullable CaptionMode captionMode, @Nullable String captionProperty) {
-        this.captionMode = captionMode;
+    public CaptionAdapter(@Nullable String captionProperty, Metadata metadata, MetadataTools metadataTools) {
         this.captionProperty = captionProperty;
+        this.metadata = metadata;
+        this.metadataTools = metadataTools;
     }
 
     @Override
@@ -56,8 +47,7 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
         }
 
         JmixEntity entity = (JmixEntity) o;
-        if (captionMode == CaptionMode.PROPERTY
-                && captionProperty != null) {
+        if (captionProperty != null) {
 
             if (metadata.getClass(entity).getPropertyPath(captionProperty) == null) {
                 throw new IllegalArgumentException(String.format("Couldn't find property with name '%s'", captionProperty));
@@ -70,15 +60,6 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
         }
 
         return metadataTools.getInstanceName(entity);
-    }
-
-    @Nullable
-    public CaptionMode getCaptionMode() {
-        return captionMode;
-    }
-
-    public void setCaptionMode(@Nullable CaptionMode captionMode) {
-        this.captionMode = captionMode;
     }
 
     @Nullable

@@ -16,10 +16,12 @@
 package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Strings;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.ButtonsPanel;
-import io.jmix.ui.component.CaptionMode;
 import io.jmix.ui.component.Tree;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.tree.ContainerTreeItems;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
@@ -96,8 +98,8 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
         }
 
         if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setCaptionProperty(captionProperty);
-            resultComponent.setCaptionMode(CaptionMode.PROPERTY);
+            resultComponent.setItemCaptionProvider(
+                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
         }
     }
 

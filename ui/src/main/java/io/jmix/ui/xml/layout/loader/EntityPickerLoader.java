@@ -16,14 +16,14 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.entitypicker.ClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.ActionsHolder;
-import io.jmix.ui.component.CaptionMode;
 import io.jmix.ui.component.EntityPicker;
-import io.jmix.ui.component.compatibility.LegacyCaptionAdapter;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.impl.GuiActionSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -41,11 +41,7 @@ public class EntityPickerLoader extends AbstractFieldLoader<EntityPicker> {
 
         loadTabIndex(resultComponent, element);
 
-        String captionProperty = element.attributeValue("captionProperty");
-        if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setOptionCaptionProvider(
-                    new LegacyCaptionAdapter(CaptionMode.PROPERTY, captionProperty));
-        }
+        loadCaptionProperty(resultComponent, element);
 
         loadMetaClass(resultComponent, element);
         loadActions(resultComponent, element);
@@ -58,6 +54,14 @@ public class EntityPickerLoader extends AbstractFieldLoader<EntityPicker> {
         }
 
         loadBuffered(resultComponent, element);
+    }
+
+    protected void loadCaptionProperty(EntityPicker resultComponent, Element element) {
+        String captionProperty = element.attributeValue("captionProperty");
+        if (!StringUtils.isEmpty(captionProperty)) {
+            resultComponent.setOptionCaptionProvider(
+                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+        }
     }
 
     protected boolean createActionsByMetaAnnotations() {

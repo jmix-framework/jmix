@@ -167,11 +167,15 @@ public class WebTokenList<V extends JmixEntity>
         clearButton = uiComponents.create(Button.class);
         clearButton.setCaption(messages.getMessage("actions.Clear"));
 
+        createEntityComboBox();
+
+        setMultiSelect(false);
+    }
+
+    protected void createEntityComboBox() {
         //noinspection unchecked
         entityComboBox = uiComponents.create(EntityComboBox.class);
         entityComboBox.addValueChangeListener(lookupSelectListener);
-
-        setMultiSelect(false);
     }
 
     @Override
@@ -255,28 +259,6 @@ public class WebTokenList<V extends JmixEntity>
     @Override
     public Function<? super V, String> getLookupFieldOptionsCaptionProvider() {
         return entityComboBox.getOptionCaptionProvider();
-    }
-
-    @Nullable
-    @Override
-    public String getOptionsCaptionProperty() {
-        return entityComboBox.getCaptionProperty();
-    }
-
-    @Override
-    public void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty) {
-        entityComboBox.setCaptionProperty(optionsCaptionProperty);
-    }
-
-    @Nullable
-    @Override
-    public CaptionMode getOptionsCaptionMode() {
-        return entityComboBox.getCaptionMode();
-    }
-
-    @Override
-    public void setOptionsCaptionMode(@Nullable CaptionMode optionsCaptionMode) {
-        entityComboBox.setCaptionMode(optionsCaptionMode);
     }
 
     @Override

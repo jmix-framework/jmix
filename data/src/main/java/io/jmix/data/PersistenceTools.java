@@ -202,7 +202,7 @@ public class PersistenceTools {
                                 EntityEntrySoftDelete softDeleteEntry = (EntityEntrySoftDelete) ((JmixEntity) item).__getEntityEntry();
                                 if (!softDeleteEntry.isDeleted() ||
                                         softDeleteEntry.isDeleted() && isDirty((JmixEntity) item,
-                                                metadataTools.getDeletedDatePropertyNN((JmixEntity) item))) {
+                                                metadataTools.getDeletedDateProperty((JmixEntity) item))) {
                                     filteredValue.add((JmixEntity) item);
                                 }
                             }

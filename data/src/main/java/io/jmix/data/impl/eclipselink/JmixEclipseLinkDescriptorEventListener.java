@@ -74,7 +74,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     protected boolean isJustSoftDeleted(JmixEntity entity) {
         if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete) {
             EntityEntrySoftDelete entry = (EntityEntrySoftDelete) entity.__getEntityEntry();
-            return entry.isDeleted() && persistenceTools.isDirty(entity, metadataTools.getDeletedDatePropertyNN(entity));
+            return entry.isDeleted() && persistenceTools.isDirty(entity, metadataTools.getDeletedDateProperty(entity));
         }
         return false;
     }

@@ -227,7 +227,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete) {
             ObjectChangeSet changeSet = changeListener.getObjectChangeSet();
             return changeSet != null
-                    && changeSet.getAttributesToChanges().containsKey(metadataTools.getDeletedDateProperty(entity.getClass()))
+                    && changeSet.getAttributesToChanges().containsKey(metadataTools.findDeletedDateProperty(entity.getClass()))
                     && ((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted();
 
         } else {

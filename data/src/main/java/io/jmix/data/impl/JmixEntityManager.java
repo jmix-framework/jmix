@@ -445,7 +445,9 @@ public class JmixEntityManager implements EntityManager {
 
         T entity = delegate.find(javaClass, realId, lockMode, properties);
 
-        if (entity != null && metadataTools.isSoftDeleted((JmixEntity) entity) && isSoftDeletion(properties))
+        if (entity != null && ((JmixEntity) entity).__getEntityEntry() instanceof EntityEntrySoftDelete
+                && ((EntityEntrySoftDelete) ((JmixEntity) entity).__getEntityEntry()).isDeleted()
+                && isSoftDeletion(properties))
             return null; // in case of entity cache
         else
             return entity;

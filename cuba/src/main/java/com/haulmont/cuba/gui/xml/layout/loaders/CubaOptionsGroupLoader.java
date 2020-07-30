@@ -64,4 +64,9 @@ public class CubaOptionsGroupLoader extends AbstractOptionsBaseLoader<OptionsGro
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setOptions);
     }
+
+    @Override
+    protected void loadCaptionProperty(OptionsGroup component, Element element) {
+        ComponentLoaderHelper.loadCaptionProperty(component, element);
+    }
 }

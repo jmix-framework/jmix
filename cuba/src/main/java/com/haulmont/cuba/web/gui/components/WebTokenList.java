@@ -16,9 +16,12 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.TokenList;
 import io.jmix.core.JmixEntity;
+import com.haulmont.cuba.gui.components.CaptionMode;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
@@ -32,5 +35,38 @@ public class WebTokenList<V extends JmixEntity> extends io.jmix.ui.component.imp
     @Override
     public void removeValidator(Consumer<Collection<V>> validator) {
         removeValidator(validator::accept);
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Nullable
+    @Override
+    public String getOptionsCaptionProperty() {
+        return ((LookupPickerField) entityComboBox).getCaptionProperty();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty) {
+        ((LookupPickerField) entityComboBox).setCaptionProperty(optionsCaptionProperty);
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Nullable
+    @Override
+    public CaptionMode getOptionsCaptionMode() {
+        return ((LookupPickerField) entityComboBox).getCaptionMode();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void setOptionsCaptionMode(@Nullable CaptionMode optionsCaptionMode) {
+        ((LookupPickerField) entityComboBox).setCaptionMode(optionsCaptionMode);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected void createEntityComboBox() {
+        entityComboBox = uiComponents.create(LookupPickerField.class);
+        entityComboBox.addValueChangeListener(lookupSelectListener);
     }
 }

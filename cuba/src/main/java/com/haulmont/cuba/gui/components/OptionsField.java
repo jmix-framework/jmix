@@ -29,7 +29,7 @@ import io.jmix.ui.component.data.Options;
  * @deprecated Use {@link io.jmix.ui.component.OptionsField} instead
  */
 @SuppressWarnings("rawtypes")
-public interface OptionsField<V, I> extends Field<V>, io.jmix.ui.component.OptionsField<V, I> {
+public interface OptionsField<V, I> extends Field<V>, io.jmix.ui.component.OptionsField<V, I>, HasCaptionMode {
 
     /**
      * @return options datasource

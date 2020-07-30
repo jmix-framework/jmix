@@ -31,7 +31,7 @@ import io.jmix.ui.component.data.TreeItems;
  */
 @SuppressWarnings("rawtypes")
 @Deprecated
-public interface Tree<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Tree<E> {
+public interface Tree<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Tree<E>, HasItemCaptionMode {
 
     /**
      * Sets an instance of {@code HierarchicalDatasource} as Tree data source.

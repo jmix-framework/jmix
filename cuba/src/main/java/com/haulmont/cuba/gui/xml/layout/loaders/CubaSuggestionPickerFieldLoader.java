@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.SuggestionPickerField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -96,5 +97,10 @@ public class CubaSuggestionPickerFieldLoader extends EntitySuggestionFieldLoader
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
+    }
+
+    @Override
+    protected void loadCaptionProperty(EntitySuggestionField suggestionField, Element element) {
+        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) suggestionField, element);
     }
 }

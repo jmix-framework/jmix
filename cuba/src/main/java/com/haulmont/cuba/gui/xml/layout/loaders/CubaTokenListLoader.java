@@ -16,11 +16,15 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.components.CaptionMode;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.ui.component.TokenList;
 import io.jmix.ui.xml.layout.loader.TokenListLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -52,6 +56,20 @@ public class CubaTokenListLoader extends TokenListLoader {
             DatasourceLoaderHelper
                     .loadOptionsDatasource(lookupElement, (ComponentLoaderContext) getComponentContext())
                     .ifPresent(component::setOptions);
+        }
+    }
+
+    @Override
+    protected void loadCaptionProperty(TokenList component, Element element) {
+        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) component, element);
+    }
+
+    @Override
+    protected void loadLookupCaptionProperty(TokenList component, Element lookupElement) {
+        String optionsCaptionProperty = lookupElement.attributeValue("captionProperty");
+        if (!StringUtils.isEmpty(optionsCaptionProperty)) {
+            ((com.haulmont.cuba.gui.components.TokenList) component).setOptionsCaptionMode(CaptionMode.PROPERTY);
+            ((com.haulmont.cuba.gui.components.TokenList) component).setOptionsCaptionProperty(optionsCaptionProperty);
         }
     }
 }

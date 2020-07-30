@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.components.CaptionMode;
+import com.haulmont.cuba.gui.components.HasItemCaptionMode;
 import com.haulmont.cuba.gui.components.Tree;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
@@ -80,5 +82,22 @@ public class CubaTreeLoader extends TreeLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
+    }
+
+    @Override
+    protected void loadTreeChildren() {
+        Element itemsElem = element.element("treechildren");
+
+        loadDataContainer();
+
+        String captionProperty = element.attributeValue("captionProperty");
+        if (captionProperty == null && itemsElem != null) {
+            captionProperty = itemsElem.attributeValue("captionProperty");
+        }
+
+        if (!StringUtils.isEmpty(captionProperty)) {
+            ((HasItemCaptionMode) resultComponent).setCaptionProperty(captionProperty);
+            ((HasItemCaptionMode) resultComponent).setCaptionMode(CaptionMode.PROPERTY);
+        }
     }
 }

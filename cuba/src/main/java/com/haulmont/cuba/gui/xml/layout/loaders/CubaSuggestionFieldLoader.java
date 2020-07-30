@@ -18,8 +18,10 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.xml.layout.loader.SuggestionFieldLoader;
 import org.dom4j.Element;
 
@@ -42,5 +44,10 @@ public class CubaSuggestionFieldLoader extends SuggestionFieldLoader {
                 .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setValueSource);
+    }
+
+    @Override
+    protected void loadCaptionProperty(SuggestionField suggestionField, Element element) {
+        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) suggestionField, element);
     }
 }

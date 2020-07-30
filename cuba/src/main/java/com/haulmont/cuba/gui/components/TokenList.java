@@ -19,7 +19,9 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.JmixEntity;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -28,5 +30,40 @@ import java.util.Collection;
  * @deprecated Use {@link io.jmix.ui.component.TokenList} instead
  */
 @Deprecated
-public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>, io.jmix.ui.component.TokenList<V> {
+public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>, io.jmix.ui.component.TokenList<V>,
+        HasCaptionMode {
+
+    /**
+     * @return option captions mode generation
+     * @deprecated use {@link io.jmix.ui.component.TokenList#getLookupFieldOptionsCaptionProvider()}
+     */
+    @Nullable
+    @Deprecated
+    CaptionMode getOptionsCaptionMode();
+
+    /**
+     * Sets how LookupField option captions should be generated.
+     *
+     * @param optionsCaptionMode mode
+     * @deprecated use {@link io.jmix.ui.component.TokenList#setLookupFieldOptionsCaptionProvider(Function)} instead
+     */
+    @Deprecated
+    void setOptionsCaptionMode(@Nullable CaptionMode optionsCaptionMode);
+
+    /**
+     * @return a property that is used for LookupField option captions generation
+     * @deprecated use {@link io.jmix.ui.component.TokenList#getLookupFieldOptionsCaptionProvider()} instead
+     */
+    @Deprecated
+    @Nullable
+    String getOptionsCaptionProperty();
+
+    /**
+     * Sets a property that will be used for LookupField option captions generation when {@link CaptionMode#PROPERTY} is used.
+     *
+     * @param optionsCaptionProperty property
+     * @deprecated use {@link io.jmix.ui.component.TokenList#setLookupFieldOptionsCaptionProvider(Function)} instead
+     */
+    @Deprecated
+    void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty);
 }

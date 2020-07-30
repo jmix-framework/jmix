@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.data;
 
 import com.google.common.collect.ImmutableList;
+import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ListComponent;
@@ -40,6 +41,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.ActionsHolder;
+import com.haulmont.cuba.gui.components.CaptionMode;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.gui.OpenType;
@@ -436,6 +438,14 @@ public final class ComponentLoaderHelper {
 
             String constraintCode = element.attributeValue("constraintCode");
             itemTrackingAction.setConstraintCode(constraintCode);
+        }
+    }
+
+    public static void loadCaptionProperty(HasCaptionMode component, Element element) {
+        String captionProperty = element.attributeValue("captionProperty");
+        if (!StringUtils.isEmpty(captionProperty)) {
+            component.setCaptionProperty(captionProperty);
+            component.setCaptionMode(CaptionMode.PROPERTY);
         }
     }
 }

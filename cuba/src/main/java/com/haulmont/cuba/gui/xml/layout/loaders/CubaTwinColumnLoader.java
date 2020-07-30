@@ -18,9 +18,11 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.xml.layout.loader.TwinColumnLoader;
 import org.dom4j.Element;
 
@@ -48,5 +50,10 @@ public class CubaTwinColumnLoader extends TwinColumnLoader {
                 .loadOptionsDatasourceIfOptionsNull((OptionsField) resultComponent, element,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setOptions);
+    }
+
+    @Override
+    protected void loadCaptionProperty(TwinColumn resultComponent, Element element) {
+        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) resultComponent, element);
     }
 }

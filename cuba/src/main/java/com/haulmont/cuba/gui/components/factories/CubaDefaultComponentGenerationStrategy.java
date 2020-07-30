@@ -19,6 +19,8 @@ package com.haulmont.cuba.gui.components.factories;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.Component;
@@ -33,8 +35,11 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
     public static final String NAME = "cuba_DefaultMetaComponentStrategy";
 
     @Autowired
-    public CubaDefaultComponentGenerationStrategy(Messages messages, GuiActionSupport guiActionSupport) {
-        super(messages, guiActionSupport);
+    public CubaDefaultComponentGenerationStrategy(Messages messages,
+                                                  GuiActionSupport guiActionSupport,
+                                                  Metadata metadata,
+                                                  MetadataTools metadataTools) {
+        super(messages, guiActionSupport, metadata, metadataTools);
     }
 
     @Override

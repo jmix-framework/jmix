@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.haulmont.cuba.gui.components;
 
-import com.haulmont.cuba.gui.data.Datasource;
-
-/**
- * Component compatible with {@link Datasource}.
- *
- * @param <V> type of value
- * @deprecated Use {@link io.jmix.ui.component.SuggestionField} instead
- */
-@Deprecated
-public interface SuggestionField<V> extends Field<V>, io.jmix.ui.component.SuggestionField<V>, HasCaptionMode {
+public enum CaptionMode {
+    ITEM,
+    PROPERTY,
+    MAP_ENTRY
 }

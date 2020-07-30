@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -71,5 +72,10 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
                 .loadOptionsDatasourceIfOptionsNull((OptionsField) resultComponent, element,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setOptions);
+    }
+
+    @Override
+    protected void loadCaptionProperty(ComboBox resultComponent, Element element) {
+        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) resultComponent, element);
     }
 }

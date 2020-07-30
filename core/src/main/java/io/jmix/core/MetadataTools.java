@@ -308,7 +308,7 @@ public class MetadataTools {
      * @return {@code true} if the entity has @{@link DeletedDate} field
      */
     public boolean isSoftDeletable(Class<? extends JmixEntity> entityClass) {
-        return getDeletedDateProperty(entityClass) != null;
+        return findDeletedDateProperty(entityClass) != null;
     }
 
     /**
@@ -742,8 +742,8 @@ public class MetadataTools {
      * @return field annotated with @DeletedDate
      * @throws IllegalArgumentException if entity has no @{@link DeletedDate} field
      */
-    public String getDeletedDatePropertyNN(JmixEntity entity) throws IllegalArgumentException {
-        String result = getDeletedDateProperty(entity.getClass());
+    public String getDeletedDateProperty(JmixEntity entity) throws IllegalArgumentException {
+        String result = findDeletedDateProperty(entity.getClass());
 
         if (result != null) {
             return result;
@@ -756,7 +756,7 @@ public class MetadataTools {
      * @return field annotated with @DeletedDate or null if annotation is not present
      */
     @Nullable
-    public String getDeletedDateProperty(Class<? extends JmixEntity> clazz) {
+    public String findDeletedDateProperty(Class<? extends JmixEntity> clazz) {
         return findPropertyByAnnotation(clazz, DELETED_DATE_ANN_NAME);
     }
 
@@ -764,7 +764,7 @@ public class MetadataTools {
      * @return field annotated with @DeletedBy or null if annotation is not present
      */
     @Nullable
-    public String getDeletedByProperty(Class<? extends JmixEntity> clazz) {
+    public String findDeletedByProperty(Class<? extends JmixEntity> clazz) {
         return findPropertyByAnnotation(clazz, DELETED_BY_ANN_NAME);
     }
 
@@ -788,8 +788,8 @@ public class MetadataTools {
     public List<String> getSoftDeleteProperties(Class<? extends JmixEntity> clazz) {
         LinkedList<String> result = new LinkedList<>();
 
-        Optional.ofNullable(getDeletedDateProperty(clazz)).ifPresent(result::add);
-        Optional.ofNullable(getDeletedByProperty(clazz)).ifPresent(result::add);
+        Optional.ofNullable(findDeletedDateProperty(clazz)).ifPresent(result::add);
+        Optional.ofNullable(findDeletedByProperty(clazz)).ifPresent(result::add);
 
         return result;
     }

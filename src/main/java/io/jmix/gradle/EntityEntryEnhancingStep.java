@@ -17,15 +17,12 @@
 package io.jmix.gradle;
 
 import javassist.*;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -37,7 +34,6 @@ import static io.jmix.gradle.AnnotationsInfo.FieldAnnotation.*;
 import static io.jmix.gradle.MetaModelUtil.*;
 
 public class EntityEntryEnhancingStep extends BaseEnhancingStep {
-    protected static final String UUID_KEY_ANNOTATION_NAME = "io.jmix.core.annotation.UuidKey";
 
     @Override
     protected boolean isAlreadyEnhanced(CtClass ctClass) throws NotFoundException {
@@ -235,7 +231,7 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                     .filter(ctField -> ctField.equals(primaryKeyField))
                     .findFirst()
                     .orElseGet(() -> generatedValueUuidFields.stream()
-                            .findFirst()
+                            .min(Comparator.comparing(CtField::getName))
                             .orElse(null));
 
             if (uuidField != null) {
@@ -246,19 +242,8 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         }
 
         if (uuidFieldName != null) {
-            addHasUuidAnnotation(nestedClass, uuidFieldName);
             setupHasUuidForField(nestedClass, ctClass, uuidFieldName);
         }
-    }
-
-    protected void addHasUuidAnnotation(CtClass nestedClass, String propertyName) {
-        ConstPool nestedClassConstPool = nestedClass.getClassFile().getConstPool();
-        AnnotationsAttribute attr = new AnnotationsAttribute(nestedClassConstPool, AnnotationsAttribute.visibleTag);
-        Annotation uuidKeyAnnotation = new Annotation(UUID_KEY_ANNOTATION_NAME, nestedClassConstPool);
-        uuidKeyAnnotation.addMemberValue("propertyName", new StringMemberValue(propertyName, nestedClassConstPool));
-        attr.addAnnotation(uuidKeyAnnotation);
-
-        nestedClass.getClassFile().addAttribute(attr);//todo taimanov put on uuid field/method after #583
     }
 
     protected void setupHasUuidForField(CtClass nestedClass, CtClass ctClass, String uuidFieldName)

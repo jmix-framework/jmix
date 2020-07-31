@@ -16,7 +16,6 @@
 
 package io.jmix.data.impl.converters;
 
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.data.convert.Jsr310Converters;
@@ -48,19 +47,10 @@ public class AuditConversionServiceBean implements AuditConversionService {
         return conversionService.canConvert(sourceType, targetType);
     }
 
-    @Override
-    public boolean canConvert(TypeDescriptor sourceType, TypeDescriptor targetType) {
-        return conversionService.canConvert(sourceType, targetType);
-    }
 
     @Override
     public <T> T convert(Object source, Class<T> targetType) {
         return conversionService.convert(source, targetType);
-    }
-
-    @Override
-    public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
-        return conversionService.convert(source, sourceType, targetType);
     }
 
     public void addConverter(Converter<?, ?> converter) {

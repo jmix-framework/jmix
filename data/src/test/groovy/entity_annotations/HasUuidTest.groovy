@@ -27,6 +27,7 @@ import test_support.DataSpec
 import test_support.entity.soft_delete.AnnotatedUuidEntity
 
 class HasUuidTest extends DataSpec {
+    //todo taimanov improve: test entity with several uuid JmixGenerated fields, make sure lexicographical order used
 
     @Autowired
     DataManager dataManager

@@ -18,12 +18,12 @@ package io.jmix.data.impl.converters;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 
 /**
@@ -31,6 +31,17 @@ import java.util.Date;
  * <p>
  * Also converts current user to {@link CreatedBy}, {@link LastModifiedBy} and {@link DeletedBy} field types
  */
-public interface AuditConversionService extends ConversionService {
+public interface AuditConversionService {
     String NAME = "data_AuditConversionService";
+
+    /**
+     * @see org.springframework.core.convert.ConversionService#canConvert(Class, Class)
+     */
+    boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType);
+
+    /**
+     * @see org.springframework.core.convert.ConversionService#convert(Object, Class)
+     */
+    @Nullable
+    <T> T convert(@Nullable Object source, Class<T> targetType);
 }

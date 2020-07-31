@@ -16,8 +16,8 @@
 
 package entity_annotations
 
-import com.haulmont.cuba.core.model.audit_and_softdelete.AnnotatedSoftDeleteEntity
-import com.haulmont.cuba.core.model.audit_and_softdelete.LegacySoftDeleteEntity
+import com.haulmont.cuba.core.model.entity_annotations.AnnotatedSoftDeleteEntity
+import com.haulmont.cuba.core.model.entity_annotations.LegacySoftDeleteEntity
 import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntrySoftDelete

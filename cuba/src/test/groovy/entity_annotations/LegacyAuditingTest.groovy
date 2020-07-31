@@ -16,7 +16,7 @@
 
 package entity_annotations
 
-import com.haulmont.cuba.core.model.audit_and_softdelete.LegacyAuditableEntity
+import com.haulmont.cuba.core.model.entity_annotations.LegacyAuditableEntity
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable

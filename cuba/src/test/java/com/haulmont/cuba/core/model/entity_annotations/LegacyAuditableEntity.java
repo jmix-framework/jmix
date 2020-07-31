@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.model.audit_and_softdelete;
+package com.haulmont.cuba.core.model.entity_annotations;
 
 import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.entity.Updatable;

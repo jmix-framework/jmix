@@ -16,9 +16,11 @@
 
 package com.haulmont.cuba.core.global;
 
+import com.haulmont.cuba.core.entity.HasUuid;
 import com.haulmont.cuba.core.entity.SoftDelete;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -60,4 +62,19 @@ public class CubaMetadataTools extends MetadataTools {
         return SoftDelete.class.isAssignableFrom(entityClass) || super.isSoftDeletable(entityClass);
     }
 
+    @Override
+    public boolean hasUuid(MetaClass metaClass) {
+        if (HasUuid.class.isAssignableFrom(metaClass.getJavaClass())) {
+            return true;
+        }
+        return super.hasUuid(metaClass);
+    }
+
+    @Override
+    public String getUuidPropertyName(Class<?> clazz) {
+        if (HasUuid.class.isAssignableFrom(clazz)) {
+            return "uuid";
+        }
+        return super.getUuidPropertyName(clazz);
+    }
 }

@@ -20,9 +20,8 @@ import com.google.common.base.Joiner;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
-import io.jmix.core.annotation.UuidKey;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.entity.EntityEntryHasUuid;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
 import io.jmix.core.metamodel.annotation.Composition;
@@ -465,11 +464,7 @@ public class MetaModelLoader {
             metaProperty.getDomain().getAnnotations().put(MetadataTools.PRIMARY_KEY_ANN_NAME, metaProperty.getName());
         }
 
-        if (isUuidKey(field)) {
-            metaProperty.getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, true);
-            metaProperty.getDomain().getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, metaProperty.getName());
-            metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
-        }
+        checkUuidField(metaProperty, field);
 
         Column column = field.getAnnotation(Column.class);
         Lob lob = field.getAnnotation(Lob.class);
@@ -485,6 +480,46 @@ public class MetaModelLoader {
         boolean system = isPrimaryKey(field) || propertyBelongsTo(field, metaProperty, MetadataTools.SYSTEM_INTERFACES);
         if (system)
             metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
+    }
+
+    protected void checkUuidField(MetaProperty metaProperty, Field field) {
+        if (isUuidGeneratedValue(metaProperty, field)) {
+            Map<String, Object> metaClassAnnotations = metaProperty.getDomain().getAnnotations();
+            if (metaClassAnnotations.containsKey(MetadataTools.UUID_KEY_ANN_NAME)) {
+                String previousUuidKey = (String) metaClassAnnotations.get(MetadataTools.UUID_KEY_ANN_NAME);
+
+                if (metaProperty.getAnnotations().containsKey(MetadataTools.PRIMARY_KEY_ANN_NAME)
+                        || previousUuidKey.compareTo(metaProperty.getName()) > 0
+                        && !previousUuidKey.equals(metaClassAnnotations.get(MetadataTools.PRIMARY_KEY_ANN_NAME))) {
+
+                    replaceUuidField(metaProperty);
+                }
+            } else {
+                setUuidField(metaProperty);
+            }
+
+        }
+    }
+
+    protected void replaceUuidField(MetaProperty metaProperty) {
+        Map<String, Object> metaClassAnnotations = metaProperty.getDomain().getAnnotations();
+
+        String previousPropertyName = (String) metaClassAnnotations.remove(MetadataTools.UUID_KEY_ANN_NAME);
+        metaProperty.getDomain().getProperties().stream()
+                .filter(p -> p.getName().equals(previousPropertyName))
+                .findFirst()
+                .ifPresent(prop -> {
+                    prop.getAnnotations().remove(MetadataTools.UUID_KEY_ANN_NAME);
+                    prop.getAnnotations().remove(MetadataTools.SYSTEM_ANN_NAME);
+                });
+
+        setUuidField(metaProperty);
+    }
+
+    protected void setUuidField(MetaProperty metaProperty) {
+        metaProperty.getDomain().getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, metaProperty.getName());
+        metaProperty.getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, true);
+        metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
     }
 
     protected void assignStore(MetaProperty metaProperty) {
@@ -562,7 +597,7 @@ public class MetaModelLoader {
 
         boolean superMandatory = (modelPropertyAnnotation != null && modelPropertyAnnotation.mandatory())
                 || (field.getAnnotation(NotNull.class) != null
-                    && isDefinedForDefaultValidationGroup(field.getAnnotation(NotNull.class)));  // @NotNull without groups
+                && isDefinedForDefaultValidationGroup(field.getAnnotation(NotNull.class)));  // @NotNull without groups
 
         return (columnAnnotation != null && !columnAnnotation.nullable())
                 || (oneToOneAnnotation != null && !oneToOneAnnotation.optional())
@@ -617,20 +652,8 @@ public class MetaModelLoader {
                 || field.isAnnotationPresent(JmixId.class);
     }
 
-    protected boolean isUuidKey(Field field) {
-        //return field.isAnnotationPresent(UuidKey.class)//todo taimanov rework after #583 or apply on class processing (not field)
-        Class<?> entryClass = Arrays.stream(field.getDeclaringClass().getDeclaredClasses()).
-                filter(nested -> nested.getSimpleName().equals("JmixEntityEntry"))
-                .findFirst()
-                .orElse(null);
-
-        if (entryClass != null && EntityEntryHasUuid.class.isAssignableFrom(entryClass)) {
-            UuidKey uuidKeyAnnotation = entryClass.getAnnotation(UuidKey.class);
-            if (uuidKeyAnnotation != null) {
-                return field.getName().equals(uuidKeyAnnotation.propertyName());
-            }
-        }
-        return false;
+    protected boolean isUuidGeneratedValue(MetaProperty metaProperty, Field field) {
+        return field.isAnnotationPresent(JmixGeneratedValue.class) && UUID.class.isAssignableFrom(field.getType());
     }
 
     protected boolean isEmbedded(Field field) {

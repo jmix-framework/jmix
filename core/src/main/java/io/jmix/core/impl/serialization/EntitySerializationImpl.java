@@ -631,9 +631,9 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         protected void clearFields(JmixEntity entity) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
-            for (MetaProperty metaProperty : metaClass.getProperties()) {
+            for (MetaProperty metaProperty : metaClass.getProperties()) {//todo taimanov determine id prop name by annotation
                 if ("id".equals(metaProperty.getName()) ||
-                        (entity.__getEntityEntry() instanceof EntityEntryHasUuid
+                        (entity.__getEntityEntry() instanceof EntityEntryHasUuid//todo taimanov exclude all @JmixGeneratedValue
                                 && Objects.equals(metadataTools.getUuidPropertyName(entity.getClass()), metaProperty.getName())))
                     continue;
                 Field field = getField(entity.getClass(), metaProperty.getName());

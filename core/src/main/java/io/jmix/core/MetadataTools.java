@@ -64,12 +64,16 @@ public class MetadataTools {
     public static final String NAME = "core_MetadataTools";
 
     public static final String PRIMARY_KEY_ANN_NAME = "jmix.primaryKey";
-    public static final String UUID_KEY_ANN_NAME = "jmix.uuidKey";
     public static final String EMBEDDED_ANN_NAME = "jmix.embedded";
     public static final String TEMPORAL_ANN_NAME = "jmix.temporal";
     public static final String SYSTEM_ANN_NAME = "jmix.system";
     public static final String STORE_ANN_NAME = "jmix.storeName";
     public static final String LENGTH_ANN_NAME = "jmix.length";
+
+    /**
+     * Not applicable for legacy cuba entities
+     */
+    public static final String UUID_KEY_ANN_NAME = "jmix.uuidKey";
 
     public static final String DELETED_DATE_ANN_NAME = DeletedDate.class.getName();
     public static final String DELETED_BY_ANN_NAME = DeletedBy.class.getName();

@@ -464,7 +464,11 @@ public class MetaModelLoader {
             metaProperty.getDomain().getAnnotations().put(MetadataTools.PRIMARY_KEY_ANN_NAME, metaProperty.getName());
         }
 
-        checkUuidField(metaProperty, field);
+        if (isUuidGeneratedValue(metaProperty, field)) {
+            metaProperty.getDomain().getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, metaProperty.getName());
+            metaProperty.getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, true);
+            metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
+        }
 
         Column column = field.getAnnotation(Column.class);
         Lob lob = field.getAnnotation(Lob.class);
@@ -480,46 +484,6 @@ public class MetaModelLoader {
         boolean system = isPrimaryKey(field) || propertyBelongsTo(field, metaProperty, MetadataTools.SYSTEM_INTERFACES);
         if (system)
             metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
-    }
-
-    protected void checkUuidField(MetaProperty metaProperty, Field field) {
-        if (isUuidGeneratedValue(metaProperty, field)) {
-            Map<String, Object> metaClassAnnotations = metaProperty.getDomain().getAnnotations();
-            if (metaClassAnnotations.containsKey(MetadataTools.UUID_KEY_ANN_NAME)) {
-                String previousUuidKey = (String) metaClassAnnotations.get(MetadataTools.UUID_KEY_ANN_NAME);
-
-                if (metaProperty.getAnnotations().containsKey(MetadataTools.PRIMARY_KEY_ANN_NAME)
-                        || previousUuidKey.compareTo(metaProperty.getName()) > 0
-                        && !previousUuidKey.equals(metaClassAnnotations.get(MetadataTools.PRIMARY_KEY_ANN_NAME))) {
-
-                    replaceUuidField(metaProperty);
-                }
-            } else {
-                setUuidField(metaProperty);
-            }
-
-        }
-    }
-
-    protected void replaceUuidField(MetaProperty metaProperty) {
-        Map<String, Object> metaClassAnnotations = metaProperty.getDomain().getAnnotations();
-
-        String previousPropertyName = (String) metaClassAnnotations.remove(MetadataTools.UUID_KEY_ANN_NAME);
-        metaProperty.getDomain().getProperties().stream()
-                .filter(p -> p.getName().equals(previousPropertyName))
-                .findFirst()
-                .ifPresent(prop -> {
-                    prop.getAnnotations().remove(MetadataTools.UUID_KEY_ANN_NAME);
-                    prop.getAnnotations().remove(MetadataTools.SYSTEM_ANN_NAME);
-                });
-
-        setUuidField(metaProperty);
-    }
-
-    protected void setUuidField(MetaProperty metaProperty) {
-        metaProperty.getDomain().getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, metaProperty.getName());
-        metaProperty.getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, true);
-        metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
     }
 
     protected void assignStore(MetaProperty metaProperty) {

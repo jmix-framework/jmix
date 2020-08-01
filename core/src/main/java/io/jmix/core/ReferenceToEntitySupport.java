@@ -107,7 +107,7 @@ public class ReferenceToEntitySupport {
         if (metadataTools.hasUuid(metaClass)) {
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
             if (primaryKeyProperty != null && !UUID.class.isAssignableFrom(primaryKeyProperty.getJavaType()))
-                return "uuid";
+                return metadataTools.getUuidPropertyName(metaClass.getJavaClass());
         }
         return metadataTools.getPrimaryKeyName(metaClass);
     }
@@ -122,7 +122,7 @@ public class ReferenceToEntitySupport {
         if (metadataTools.hasUuid(metaClass)) {
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
             if (primaryKeyProperty != null && !UUID.class.isAssignableFrom(primaryKeyProperty.getJavaType()))
-                return "uuid";
+                return metadataTools.getUuidPropertyName(metaClass.getJavaClass());
         }
         throw new IllegalStateException(
                 String.format("Unsupported primary key type for %s", metaClass.getName()));

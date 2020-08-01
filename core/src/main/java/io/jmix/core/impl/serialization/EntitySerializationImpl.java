@@ -23,7 +23,6 @@ import com.google.common.collect.Table;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.jmix.core.*;
-import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -631,11 +630,11 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         protected void clearFields(JmixEntity entity) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
-            for (MetaProperty metaProperty : metaClass.getProperties()) {//todo taimanov determine id prop name by annotation
-                if ("id".equals(metaProperty.getName()) ||
-                        (entity.__getEntityEntry() instanceof EntityEntryHasUuid//todo taimanov exclude all @JmixGeneratedValue
-                                && Objects.equals(metadataTools.getUuidPropertyName(entity.getClass()), metaProperty.getName())))
+            for (MetaProperty metaProperty : metaClass.getProperties()) {
+                if (metaProperty.getName().equals(metadataTools.getPrimaryKeyName(metaClass)) ||
+                        metaProperty.getName().equals(metadataTools.getUuidPropertyName(entity.getClass())))
                     continue;
+
                 Field field = getField(entity.getClass(), metaProperty.getName());
                 if (field != null) {
                     makeFieldAccessible(field);

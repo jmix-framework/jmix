@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -222,20 +221,19 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         if (info.hasClassAnnotation(LEGACY_HAS_UUID)) {//legacy support
             uuidFieldName = "uuid";
         } else {
-            CtField primaryKeyField = info.getPrimaryKey();
             List<CtField> generatedValueUuidFields = info.getAnnotatedFields(JMIX_GENERATED_VALUE).stream()
                     .filter(this::isFieldOfUuidType)
                     .collect(Collectors.toList());
 
-            CtField uuidField = generatedValueUuidFields.stream()
-                    .filter(ctField -> ctField.equals(primaryKeyField))
-                    .findFirst()
-                    .orElseGet(() -> generatedValueUuidFields.stream()
-                            .min(Comparator.comparing(CtField::getName))
-                            .orElse(null));
+            if (generatedValueUuidFields.size() > 1) {
+                throw new RuntimeException("More than one UUID field annotated with @JmixGeneratedValue: "
+                        + generatedValueUuidFields.stream()
+                        .map(field -> field.getDeclaringClass().getSimpleName() + "#" + field.getName())
+                        .collect(Collectors.joining(", ", "", ".")));
+            }
 
-            if (uuidField != null) {
-                uuidFieldName = uuidField.getName();
+            if (generatedValueUuidFields.size() == 1) {
+                uuidFieldName = generatedValueUuidFields.get(0).getName();
             } else {
                 uuidFieldName = null;
             }

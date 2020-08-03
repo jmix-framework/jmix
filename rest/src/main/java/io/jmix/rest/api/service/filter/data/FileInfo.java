@@ -16,27 +16,27 @@
 
 package io.jmix.rest.api.service.filter.data;
 
-import java.util.UUID;
+import java.net.URI;
 
 /**
  */
 public class FileInfo {
-    protected UUID id;
+    protected URI fileReference;
     protected String name;
     protected long size;
 
-    public FileInfo(UUID id, String name, long size) {
-        this.id = id;
+    public FileInfo(URI fileReference, String name, long size) {
+        this.fileReference = fileReference;
         this.name = name;
         this.size = size;
     }
 
-    public UUID getId() {
-        return id;
+    public URI getFileReference() {
+        return fileReference;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setFileReference(URI fileReference) {
+        this.fileReference = fileReference;
     }
 
     public String getName() {

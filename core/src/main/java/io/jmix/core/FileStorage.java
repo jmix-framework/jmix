@@ -77,6 +77,7 @@ public interface FileStorage<R, I> {
      *
      * @param reference file reference
      * @return true if the file denoted by this file reference exists
+     * @throws IllegalArgumentException if file reference is invalid
      */
     boolean fileExists(R reference);
 }

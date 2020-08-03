@@ -19,6 +19,7 @@ package io.jmix.datatoolsui.screen.entityinspector;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -215,7 +216,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
             if (!selectionEvent.getSelected().isEmpty()) {
                 for (Object o : selectionEvent.getSelected()) {
                     if (o instanceof JmixEntity) {
-                        if (metadataTools.isSoftDeleted((JmixEntity) o)) {
+                        if (EntityValues.isSoftDeleted((JmixEntity) o)) {
                             removeEnabled = false;
                         }
                     }

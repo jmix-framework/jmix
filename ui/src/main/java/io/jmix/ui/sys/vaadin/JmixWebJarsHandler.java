@@ -23,7 +23,7 @@ import com.vaadin.server.VaadinSession;
 import io.jmix.core.AppBeans;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.sys.WebJarResourceResolver;
-import io.jmix.ui.upload.FileTypesHelper;
+import io.jmix.core.FileTypesHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

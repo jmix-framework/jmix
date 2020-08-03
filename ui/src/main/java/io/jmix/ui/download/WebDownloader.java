@@ -26,7 +26,7 @@ import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.executor.BackgroundWorker;
-import io.jmix.ui.upload.FileTypesHelper;
+import io.jmix.core.FileTypesHelper;
 import io.jmix.ui.widget.JmixFileDownloader;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;

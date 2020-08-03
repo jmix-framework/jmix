@@ -236,4 +236,13 @@ public class EntityValues {
         }
         return a != null && a.equals(b);
     }
+
+    /**
+     * @return true if entity has been soft deleted, false - otherwise or if entity doesn't support soft deletion
+     */
+    public static boolean isSoftDeleted(JmixEntity instance) {
+        return instance.__getEntityEntry() instanceof EntityEntrySoftDelete
+                && ((EntityEntrySoftDelete) instance.__getEntityEntry()).isDeleted();
+
+    }
 }

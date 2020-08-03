@@ -237,8 +237,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 
         for (JmixEntity commitInstance : saveContext.getEntitiesToSave()) {
             if (!entityStates.isNew(commitInstance)) {
-                if (commitInstance.__getEntityEntry() instanceof EntityEntrySoftDelete
-                        && ((EntityEntrySoftDelete) commitInstance.__getEntityEntry()).isDeleted()) {
+                if (EntityValues.isSoftDeleted(commitInstance)) {
                     ((EntityEntrySoftDelete) commitInstance.__getEntityEntry()).setDeletedDate(null);
                 }
             }

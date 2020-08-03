@@ -18,7 +18,6 @@ package io.jmix.core;
 
 import com.google.common.collect.Sets;
 import io.jmix.core.common.util.StackTrace;
-import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -445,8 +444,7 @@ public class EntityStates {
         checkNotNullArgument(entity, "entity is null");
         if (entity instanceof JmixEntity) {
             JmixEntity casted = (JmixEntity) entity;
-            if (casted.__getEntityEntry() instanceof EntityEntrySoftDelete
-                    && ((EntityEntrySoftDelete) (casted.__getEntityEntry())).isDeleted())
+            if (EntityValues.isSoftDeleted(casted))
                 return true;
 
             if (((JmixEntity) entity).__getEntityEntry().isRemoved()) {

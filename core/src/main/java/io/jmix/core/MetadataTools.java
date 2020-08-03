@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableList;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.EntityEntryHasUuid;
-import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
@@ -801,12 +800,6 @@ public class MetadataTools {
         Optional.ofNullable(findDeletedByProperty(clazz)).ifPresent(result::add);
 
         return result;
-    }
-
-    public boolean isSoftDeleted(JmixEntity instance) {
-        return instance.__getEntityEntry() instanceof EntityEntrySoftDelete
-                && ((EntityEntrySoftDelete) instance.__getEntityEntry()).isDeleted();
-
     }
 
     /**

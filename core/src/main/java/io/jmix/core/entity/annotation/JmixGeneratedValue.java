@@ -25,6 +25,8 @@ import java.lang.annotation.Target;
  * Indicates an entity attribute that must be assigned by the framework right after creating an entity instance.
  * <p>
  * The annotated attribute must be of {@code Long}, {@code Integer} or {@code UUID} type.
+ * <p>
+ * Entity cannot have more than one {@code UUID} attribute marked with this annotation.
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

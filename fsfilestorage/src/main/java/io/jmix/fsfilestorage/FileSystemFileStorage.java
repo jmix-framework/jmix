@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
@@ -46,6 +47,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -83,23 +85,35 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
     }
 
     @Override
-    public URI createReference(String fileInfo) {
-        //path = yyyy/mm/dd/uuid
-        String path = createDateDir() + "/" + createUuidFilename(fileInfo);
-        //reference = path;filename
-        StringBuilder reference = new StringBuilder(path)
-                .append(";").append(URLEncodeUtils.encodeUtf8(fileInfo));
+    public URI createReference(@Nullable String filename) {
+        filename = Objects.toString(filename, StringUtils.EMPTY);
+        //reference = yyyy/mm/dd/uuid
+        String reference = createDateDir() + "/" + createUuidFilename(filename);
+        //if the filename is given, add it as an additional info
+        if (StringUtils.isNotEmpty(filename)) {
+            reference += "*" + URLEncodeUtils.encodeUtf8(filename);
+        }
         try {
-            return new URI(reference.toString());
+            return new URI(reference);
         } catch (URISyntaxException e) {
             throw new IllegalStateException(e);
         }
     }
 
+    /**
+     * Returns the original filename for the file located by the given reference
+     * or an empty string if the filename is not included in the reference.
+     * <p>
+     * The original filename is passed as an argument to {@link #createReference(String)}.
+     */
     @Override
     public String getFileInfo(URI reference) {
         String[] parts = getReferenceParts(reference);
-        return URLEncodeUtils.decodeUtf8(parts[1]);
+        String encodedFilename = StringUtils.EMPTY;
+        if (parts.length > 1) {
+            encodedFilename = parts[1];
+        }
+        return URLEncodeUtils.decodeUtf8(encodedFilename);
     }
 
     protected String createUuidFilename(String fileInfo) {
@@ -291,15 +305,11 @@ public class FileSystemFileStorage implements FileStorage<URI, String> {
 
     protected String[] getReferenceParts(URI reference) {
         String path = reference.getRawPath();
-        String[] parts = path.split(";", -1);
-        if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid URI reference format");
-        }
-        return parts;
+        return path.split("\\*", 2);
     }
 
     /**
-     * Returns URI containing only relative path to the file (without file name after `;`).
+     * Returns relative path to the file.
      */
     protected Path getRelativePathFromURI(URI encodedReference) {
         String rawReference = getReferenceParts(encodedReference)[0];

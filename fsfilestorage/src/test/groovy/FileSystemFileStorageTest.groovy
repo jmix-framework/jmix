@@ -48,13 +48,13 @@ class FileSystemFileStorageTest extends Specification {
     def "URI file reference format"() {
 
         when: "Simple URI reference"
-        def uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4.txt;1.txt')
+        def uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4.txt*1.txt')
 
         then:
         fileStorage.getFileInfo(uri) == '1.txt'
 
         when: "Filename is not defined"
-        uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4;')
+        uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4')
 
         then:
         fileStorage.getFileInfo(uri) == ''

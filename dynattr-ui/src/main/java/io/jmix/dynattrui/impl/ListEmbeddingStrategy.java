@@ -17,12 +17,12 @@
 package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.component.formatter.Formatter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -32,10 +32,14 @@ public abstract class ListEmbeddingStrategy extends BaseEmbeddingStrategy {
     protected MsgBundleTools msgBundleTools;
     protected CurrentAuthentication currentAuthentication;
 
-    public ListEmbeddingStrategy(BeanLocator beanLocator) {
-        super(beanLocator);
-        this.currentAuthentication = beanLocator.get(CurrentAuthentication.class);
-        this.msgBundleTools = beanLocator.get(MsgBundleTools.class);
+    @Autowired
+    public void setMsgBundleTools(MsgBundleTools msgBundleTools) {
+        this.msgBundleTools = msgBundleTools;
+    }
+
+    @Autowired
+    public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
+        this.currentAuthentication = currentAuthentication;
     }
 
     protected String getColumnDescription(AttributeDefinition attribute) {

@@ -16,36 +16,55 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.core.BeanLocator;
+import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
-    protected BeanLocator beanLocator;
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
+    protected DynAttrMetadata dynAttrMetadata;
+    protected AccessManager accessManager;
 
-    public BaseEmbeddingStrategy(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setDynAttrMetadata(DynAttrMetadata dynAttrMetadata) {
+        this.dynAttrMetadata = dynAttrMetadata;
+    }
+
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
     }
 
     @Override
     public void embed(Component component, Frame frame) {
         if (getWindowId(frame) != null) {
-            MetadataTools metadataTools = beanLocator.get(MetadataTools.class);
 
             MetaClass entityMetaClass = getEntityMetaClass(component);
             if (metadataTools.isPersistent(entityMetaClass)) {
@@ -86,7 +105,6 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     }
 
     protected List<AttributeDefinition> findVisibleAttributes(MetaClass entityMetaClass, String windowId, String componentId) {
-        DynAttrMetadata dynAttrMetadata = beanLocator.get(DynAttrMetadata.class);
         return dynAttrMetadata.getAttributes(entityMetaClass).stream()
                 .filter(attr -> isVisibleAttribute(attr, windowId, componentId))
                 .filter(this::checkPermissions)
@@ -95,9 +113,8 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
     }
 
     protected boolean isVisibleAttribute(AttributeDefinition attributeDefinition, String screen, String componentId) {
-        return true;
-//        Set<String> screens = attributeDefinition.getConfiguration().getScreens();
-//        return screens.contains(screen) || screens.contains(screen + "#" + componentId);
+        Set<String> screens = attributeDefinition.getConfiguration().getScreens();
+        return screens.contains(screen) || screens.contains(screen + "#" + componentId);
     }
 
     protected boolean checkPermissions(AttributeDefinition attributeDefinition) {
@@ -105,10 +122,10 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
             return true;
         }
 
-        Metadata metadata = beanLocator.get(Metadata.class);
-        Security security = beanLocator.get(Security.class);
-
         MetaClass entityClass = metadata.getClass(attributeDefinition.getJavaType());
-        return security.isEntityOpPermitted(entityClass, EntityOp.READ);
+
+        UiEntityContext uiEntityContext = new UiEntityContext(entityClass);
+        accessManager.applyRegisteredConstraints(uiEntityContext);
+        return uiEntityContext.isViewPermitted();
     }
 }

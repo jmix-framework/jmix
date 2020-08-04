@@ -16,7 +16,6 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.core.BeanLocator;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -25,18 +24,12 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @org.springframework.stereotype.Component(DataGridEmbeddingStrategy.NAME)
 public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
     public static final String NAME = "dynattrui_DataGridEmbeddingStrategy";
-
-    @Autowired
-    public DataGridEmbeddingStrategy(BeanLocator beanLocator) {
-        super(beanLocator);
-    }
 
     @Override
     public boolean supportComponent(Component component) {

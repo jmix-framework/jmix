@@ -17,7 +17,6 @@
 package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -27,18 +26,12 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.table.ContainerTableItems;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @org.springframework.stereotype.Component(TableEmbeddingStrategy.NAME)
 public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
     public static final String NAME = "dynattrui_TableEmbeddingStrategy";
-
-    @Autowired
-    public TableEmbeddingStrategy(BeanLocator beanLocator) {
-        super(beanLocator);
-    }
 
     @Override
     public boolean supportComponent(Component component) {

@@ -17,6 +17,7 @@
 package io.jmix.dynattrui.impl;
 
 import io.jmix.core.*;
+import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.dynattr.DynamicAttributesState;
 import io.jmix.ui.builder.EditedEntityTransformer;
@@ -41,6 +42,8 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
     private DataManager dataManager;
     @Autowired
     private DynAttrManager dynAttrManager;
+    @Autowired
+    private AccessConstraintsRegistry accessConstraintsRegistry;
 
     @Override
     public <E extends JmixEntity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
@@ -63,7 +66,7 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
         if (fetchPlan != null && !entityStates.isLoadedWithFetchPlan(editedEntity, fetchPlan)) {
             return dataManager.load(Id.of(editedEntity)).fetchPlan(fetchPlan).dynamicAttributes(needDynamicAttributes).one();
         } else if (needDynamicAttributes && !dynamicAttributesAreLoaded) {
-            dynAttrManager.loadValues(Collections.singletonList(editedEntity), fetchPlan);
+            dynAttrManager.loadValues(Collections.singletonList(editedEntity), fetchPlan, accessConstraintsRegistry.getConstraints());
             return editedEntity;
         } else {
             return editedEntity;

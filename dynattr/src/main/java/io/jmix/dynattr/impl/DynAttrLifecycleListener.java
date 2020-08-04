@@ -18,11 +18,12 @@ package io.jmix.dynattr.impl;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
+import io.jmix.core.SaveContext;
 import io.jmix.data.impl.OrmLifecycleListener;
 import io.jmix.dynattr.DynAttrManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 @Component(DynAttrLifecycleListener.NAME)
@@ -35,12 +36,13 @@ public class DynAttrLifecycleListener implements OrmLifecycleListener {
     @Override
     public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext) {
         if (loadContext.isLoadDynamicAttributes()) {
-            dynAttrManager.loadValues(entities, loadContext.getFetchPlan());
+            //noinspection unchecked
+            dynAttrManager.loadValues(entities, loadContext.getFetchPlan(), loadContext.getAccessConstraints());
         }
     }
 
     @Override
-    public void onSave(Collection<JmixEntity> entities) {
-        dynAttrManager.storeValues(entities);
+    public void onSave(Collection<JmixEntity> entities, SaveContext saveContext) {
+        dynAttrManager.storeValues(entities, saveContext.getAccessConstraints());
     }
 }

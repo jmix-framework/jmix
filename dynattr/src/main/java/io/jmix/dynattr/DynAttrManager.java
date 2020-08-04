@@ -17,8 +17,9 @@
 
 package io.jmix.dynattr;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.constraint.AccessConstraint;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -29,10 +30,10 @@ public interface DynAttrManager {
     /**
      * Fetch dynamic attributes from dynamic attributes store for each entity
      */
-    void loadValues(Collection<JmixEntity> entities, @Nullable FetchPlan fetchPlan);
+    void loadValues(Collection<JmixEntity> entities, @Nullable FetchPlan fetchPlan, Collection<AccessConstraint<?>> accessConstraints);
 
     /**
      * Store dynamic attributes from the entity to store
      */
-    void storeValues(Collection<JmixEntity> entities);
+    void storeValues(Collection<JmixEntity> entities, Collection<AccessConstraint<?>> accessConstraints);
 }

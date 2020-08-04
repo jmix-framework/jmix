@@ -17,7 +17,6 @@
 package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;
@@ -25,8 +24,8 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.ValueSourceProvider;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -35,9 +34,11 @@ import java.util.OptionalDouble;
 public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
     public static final String NAME = "dynattrui_FormEmbeddingStrategy";
 
+    protected UiComponentsGenerator uiComponentsGenerator;
+
     @Autowired
-    public FormEmbeddingStrategy(BeanLocator beanLocator) {
-        super(beanLocator);
+    public void setUiComponentsGenerator(UiComponentsGenerator uiComponentsGenerator) {
+        this.uiComponentsGenerator = uiComponentsGenerator;
     }
 
     @Override
@@ -75,8 +76,6 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
 
         ComponentGenerationContext context = new ComponentGenerationContext(getEntityMetaClass(form), code);
         context.setValueSource(valueSource);
-
-        UiComponentsGenerator uiComponentsGenerator = beanLocator.get(UiComponentsGenerator.class);
 
         Component resultComponent = uiComponentsGenerator.generate(context);
 

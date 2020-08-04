@@ -21,7 +21,6 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.Security;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -55,8 +54,6 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     protected UiComponents uiComponents;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected Security security;
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;
 

@@ -17,16 +17,17 @@
 package io.jmix.ui.navigation;
 
 import com.vaadin.server.Page;
+import io.jmix.core.AccessManager;
 import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
-import io.jmix.core.security.Security;
 import io.jmix.ui.*;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.context.UiShowScreenContext;
 import io.jmix.ui.navigation.accessfilter.NavigationFilter;
 import io.jmix.ui.navigation.accessfilter.NavigationFilter.AccessCheckResult;
 import io.jmix.ui.screen.FrameOwner;
@@ -39,9 +40,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -57,8 +58,6 @@ public class UrlChangeHandler implements InitializingBean {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected Security security;
-    @Autowired
     protected BeanLocator beanLocator;
     @Autowired
     protected UrlTools urlTools;
@@ -70,6 +69,9 @@ public class UrlChangeHandler implements InitializingBean {
 
     @Autowired
     protected List<NavigationFilter> navigationFilters;
+
+    @Autowired
+    protected AccessManager accessManager;
 
     protected AppUI ui;
 
@@ -179,8 +181,11 @@ public class UrlChangeHandler implements InitializingBean {
 
         boolean allowAnonymousAccess = uiProperties.isAllowAnonymousAccess();
 
-        return !allowAnonymousAccess
-                || !security.isScreenPermitted(windowInfo.getId());
+
+        UiShowScreenContext showScreenContext = new UiShowScreenContext(windowInfo.getId());
+        accessManager.applyRegisteredConstraints(showScreenContext);
+
+        return !allowAnonymousAccess || !showScreenContext.isPermitted();
     }
 
     public void redirect(NavigationState navigationState) {
@@ -197,8 +202,10 @@ public class UrlChangeHandler implements InitializingBean {
     }
 
     public boolean isPermittedToNavigate(NavigationState requestedState, WindowInfo windowInfo) {
-        boolean screenPermitted = security.isScreenPermitted(windowInfo.getId());
-        if (!screenPermitted) {
+        UiShowScreenContext showScreenContext = new UiShowScreenContext(windowInfo.getId());
+        accessManager.applyRegisteredConstraints(showScreenContext);
+
+        if (!showScreenContext.isPermitted()) {
             revertNavigationState();
 
             throw new AccessDeniedException(PermissionType.SCREEN, windowInfo.getId());

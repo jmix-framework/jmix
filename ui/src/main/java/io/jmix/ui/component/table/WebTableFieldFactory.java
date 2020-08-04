@@ -20,11 +20,11 @@ import com.google.common.base.Strings;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.TableFieldFactory;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.AccessManager;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.security.Security;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.Component.BelongToFrame;
 import io.jmix.ui.component.Field;
@@ -36,6 +36,7 @@ import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.factory.AbstractFieldFactory;
 import io.jmix.ui.component.impl.WebAbstractTable;
+import io.jmix.ui.context.UiEntityAttributeContext;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
@@ -46,12 +47,12 @@ import java.util.Map;
 
 public class WebTableFieldFactory<E extends JmixEntity> extends AbstractFieldFactory implements TableFieldFactory {
     protected WebAbstractTable<?, E> webTable;
-    protected Security security;
+    protected AccessManager accessManager;
     protected MetadataTools metadataTools;
 
-    public WebTableFieldFactory(WebAbstractTable<?, E> webTable, Security security, MetadataTools metadataTools) {
+    public WebTableFieldFactory(WebAbstractTable<?, E> webTable, AccessManager accessManager, MetadataTools metadataTools) {
         this.webTable = webTable;
-        this.security = security;
+        this.accessManager = accessManager;
         this.metadataTools = metadataTools;
     }
 
@@ -65,7 +66,7 @@ public class WebTableFieldFactory<E extends JmixEntity> extends AbstractFieldFac
         Table.Column columnConf = webTable.getColumnsInternal().get(propertyId);
 
         TableDataContainer tableDataContainer = (TableDataContainer) container;
-        JmixEntity entity  = (JmixEntity) tableDataContainer.getInternalItem(itemId);
+        JmixEntity entity = (JmixEntity) tableDataContainer.getInternalItem(itemId);
         InstanceContainer instanceContainer = webTable.getInstanceContainer((E) entity);
 
         io.jmix.ui.component.Component columnComponent =
@@ -134,8 +135,11 @@ public class WebTableFieldFactory<E extends JmixEntity> extends AbstractFieldFac
                 io.jmix.ui.component.Component.Editable editable =
                         (io.jmix.ui.component.Component.Editable) component;
 
+                UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(propertyPath);
+                accessManager.applyRegisteredConstraints(attributeContext);
+
                 editable.setEditable(editable.isEditable()
-                        && security.isEntityAttrUpdatePermitted(propertyPath));
+                        && attributeContext.isModifyPermitted());
             }
         }
     }

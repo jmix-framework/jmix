@@ -17,13 +17,9 @@ package io.jmix.ui.sys;
 
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
-import io.jmix.core.BeanLocator;
-import io.jmix.core.Events;
-import io.jmix.core.Messages;
-import io.jmix.core.UuidProvider;
+import io.jmix.core.*;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
-import io.jmix.core.security.Security;
 import io.jmix.ui.*;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.action.Action;
@@ -37,16 +33,17 @@ import io.jmix.ui.component.impl.WebDialogWindow.GuiDialogWindow;
 import io.jmix.ui.component.impl.WebTabWindow;
 import io.jmix.ui.component.impl.WebWindow;
 import io.jmix.ui.component.impl.WindowImplementation;
+import io.jmix.ui.context.UiShowScreenContext;
 import io.jmix.ui.event.screen.AfterShowScreenEvent;
 import io.jmix.ui.event.screen.BeforeShowScreenEvent;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.gui.data.compatibility.DsSupport;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.monitoring.ScreenLifeCycle;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.logging.UserActionsLogger;
 import io.jmix.ui.model.impl.ScreenDataImpl;
+import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlTools;
 import io.jmix.ui.screen.*;
@@ -64,12 +61,10 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
@@ -95,8 +90,6 @@ public class WebScreens implements Screens {
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
-    protected Security security;
-    @Autowired
     protected UiComponents uiComponents;
     @Autowired
     protected ScreenXmlLoader screenXmlLoader;
@@ -116,10 +109,11 @@ public class WebScreens implements Screens {
     protected MeterRegistry meterRegistry;
     @Autowired
     protected Events events;
+    @Autowired
+    protected AccessManager accessManager;
 
     // todo implement
-    /*@Autowired
-    protected AttributeAccessSupport attributeAccessSupport;
+    /*
     @Autowired
     protected ScreenHistorySupport screenHistorySupport;*/
 
@@ -918,8 +912,10 @@ public class WebScreens implements Screens {
     protected void checkPermissions(LaunchMode launchMode, WindowInfo windowInfo) {
         // ROOT windows are always permitted
         if (launchMode != OpenMode.ROOT) {
-            boolean permitted = security.isScreenPermitted(windowInfo.getId());
-            if (!permitted) {
+            UiShowScreenContext showScreenContext = new UiShowScreenContext(windowInfo.getId());
+            accessManager.applyRegisteredConstraints(showScreenContext);
+
+            if (!showScreenContext.isPermitted()) {
                 throw new AccessDeniedException(PermissionType.SCREEN, windowInfo.getId());
             }
         }

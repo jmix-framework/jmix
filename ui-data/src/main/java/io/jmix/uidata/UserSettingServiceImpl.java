@@ -16,16 +16,20 @@
 
 package io.jmix.uidata;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.*;
-import io.jmix.uidata.entity.UiTablePresentation;
-import io.jmix.uidata.entity.UiSetting;
+import io.jmix.core.security.AccessDeniedException;
+import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.PermissionType;
+import io.jmix.data.impl.context.CrudEntityContext;
 import io.jmix.ui.settings.UserSettingService;
+import io.jmix.uidata.entity.UiSetting;
+import io.jmix.uidata.entity.UiTablePresentation;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -50,10 +54,10 @@ public class UserSettingServiceImpl implements UserSettingService {
     protected Metadata metadata;
 
     @Autowired
-    protected Security security;
+    protected Dom4jTools dom4JTools;
 
     @Autowired
-    protected Dom4jTools dom4JTools;
+    protected AccessManager accessManager;
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -116,7 +120,10 @@ public class UserSettingServiceImpl implements UserSettingService {
 
         MetaClass metaClass = metadata.getClass(UiSetting.class);
 
-        if (!security.isEntityOpPermitted(metaClass, EntityOp.CREATE)) {
+        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isCreatePermitted()) {
             throw new AccessDeniedException(PermissionType.ENTITY_OP, metaClass.getName());
         }
 

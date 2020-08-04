@@ -72,15 +72,18 @@ public class ItemTrackingAction extends SecuredListAction {
             return false;
         }
 
-        if (constraintOperationType != null) {
-            boolean isPermitted;
-            if (constraintCode != null) {
-                isPermitted = security.isPermitted(singleSelected, constraintCode);
-            } else {
-                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
-            }
-            return isPermitted;
-        }
+        //TODO: access manager
+//        if (constraintOperationType != null) {
+//            boolean isPermitted;
+//            if (constraintCode != null) {
+//                isPermitted = security.isPermitted(singleSelected, constraintCode);
+//            } else {
+//                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
+//            }
+//            if (!isPermitted) {
+//                return false;
+//            }
+//        }
 
         return true;
     }

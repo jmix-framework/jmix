@@ -16,9 +16,10 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.security.Security;
+import io.jmix.core.AccessManager;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Table;
+import io.jmix.ui.context.UiGlobalPresentationContext;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
@@ -49,7 +50,7 @@ public class PresentationActionsBuilder {
     }
 
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
     @Autowired
     protected ApplicationContext applicationContext;
 
@@ -97,11 +98,16 @@ public class PresentationActionsBuilder {
     protected AbstractAction buildActionByType(Object type) {
         if (type instanceof Type) {
             switch ((Type) type) {
-                case SAVE: return buildSaveAction();
-                case SAVE_AS: return buildSaveAsAction();
-                case EDIT: return buildEditAction();
-                case DELETE: return buildDeleteAction();
-                case RESET: return buildResetAction();
+                case SAVE:
+                    return buildSaveAction();
+                case SAVE_AS:
+                    return buildSaveAsAction();
+                case EDIT:
+                    return buildEditAction();
+                case DELETE:
+                    return buildDeleteAction();
+                case RESET:
+                    return buildResetAction();
             }
         }
         return buildCustomAction(type);
@@ -145,7 +151,11 @@ public class PresentationActionsBuilder {
     protected boolean isGlobalPresentation() {
         TablePresentations presentations = table.getPresentations();
         TablePresentation presentation = presentations.getCurrent();
+
+        UiGlobalPresentationContext globalPresentationContext = new UiGlobalPresentationContext();
+        accessManager.applyRegisteredConstraints(globalPresentationContext);
+
         return presentation != null && (!presentations.isGlobal(presentation) ||
-                security.isSpecificPermitted("cuba.gui.presentations.global"));
+                globalPresentationContext.isPermitted());
     }
 }

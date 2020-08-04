@@ -16,13 +16,12 @@
 
 package io.jmix.ui.action.list;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.core.security.Security;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ListComponent;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -35,7 +34,7 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
     protected ConstraintOperationType constraintOperationType;
     protected String constraintCode;
 
-    protected Security security;
+    protected AccessManager accessManager;
 
     protected SecuredListAction(String id) {
         super(id);
@@ -46,8 +45,8 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
     }
 
     @Autowired
-    protected void setSecurity(Security security) {
-        this.security = security;
+    protected void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
     }
 
     @Override
@@ -68,17 +67,18 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
             return false;
         }
 
-        if (constraintOperationType != null) {
-            boolean isPermitted;
-            if (constraintCode != null) {
-                isPermitted = security.isPermitted(singleSelected, constraintCode);
-            } else {
-                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
-            }
-            if (!isPermitted) {
-                return false;
-            }
-        }
+        //TODO: access manager
+//        if (constraintOperationType != null) {
+//            boolean isPermitted;
+//            if (constraintCode != null) {
+//                isPermitted = security.isPermitted(singleSelected, constraintCode);
+//            } else {
+//                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
+//            }
+//            if (!isPermitted) {
+//                return false;
+//            }
+//        }
 
         return super.isPermitted();
     }

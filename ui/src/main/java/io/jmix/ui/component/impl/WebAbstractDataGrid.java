@@ -45,12 +45,12 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.security.Security;
 import io.jmix.ui.Actions;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.AggregatableDataGridItems;
 import io.jmix.ui.component.data.BindingState;
@@ -68,14 +68,17 @@ import io.jmix.ui.component.datagrid.DataGridItemsEventsDelegate;
 import io.jmix.ui.component.datagrid.SortableDataGridDataProvider;
 import io.jmix.ui.component.formatter.CollectionFormatter;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.component.renderer.*;
+import io.jmix.ui.component.renderer.RendererWrapper;
 import io.jmix.ui.component.valueprovider.*;
+import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.context.UiShowEntityInfoContext;
 import io.jmix.ui.icon.IconResolver;
-import io.jmix.ui.model.*;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataComponents;
+import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.ScreenValidation;
 import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShortcutsDelegate;
-import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.widget.JmixCssActionsLayout;
@@ -90,10 +93,10 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
@@ -117,7 +120,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
     /* Beans */
     protected MetadataTools metadataTools;
-    protected Security security;
+    protected AccessManager accessManager;
     protected Messages messages;
     protected MessageTools messageTools;
     protected PersistenceManagerClient persistenceManagerClient;
@@ -248,8 +251,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     @Autowired
-    public void setSecurity(Security security) {
-        this.security = security;
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
     }
 
     @Autowired
@@ -1086,7 +1089,10 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     protected void initShowInfoAction() {
-        if (security.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION)) {
+        UiShowEntityInfoContext showInfoContext = new UiShowEntityInfoContext();
+        accessManager.applyRegisteredConstraints(new UiShowEntityInfoContext());
+
+        if (showInfoContext.isPermitted()) {
             if (getAction(ShowInfoAction.ACTION_ID) == null) {
                 addAction(actions.create(ShowInfoAction.ACTION_ID));
             }
@@ -1999,8 +2005,13 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         return columnsOrder.stream()
                 .filter(column -> {
                     MetaPropertyPath propertyPath = column.getPropertyPath();
-                    return propertyPath == null
-                            || security.isEntityAttrReadPermitted(metaClass, propertyPath.toString());
+                    if (propertyPath != null) {
+                        UiEntityAttributeContext attributeContext =
+                                new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                        accessManager.applyRegisteredConstraints(attributeContext);
+                        return attributeContext.isViewPermitted();
+                    }
+                    return true;
                 })
                 .collect(Collectors.toList());
     }
@@ -3675,7 +3686,12 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         protected boolean isEditingPermitted() {
             if (propertyPath != null) {
                 MetaClass metaClass = propertyPath.getMetaClass();
-                return owner.security.isEntityAttrUpdatePermitted(metaClass, propertyPath.toString());
+
+                UiEntityAttributeContext attributeContext =
+                        new UiEntityAttributeContext(metaClass, propertyPath.toString());
+                owner.accessManager.applyRegisteredConstraints(attributeContext);
+
+                return attributeContext.isModifyPermitted();
             }
             return true;
         }

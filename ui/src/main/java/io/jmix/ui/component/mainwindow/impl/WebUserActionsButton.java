@@ -19,21 +19,20 @@ package io.jmix.ui.component.mainwindow.impl;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
-import io.jmix.core.security.Security;
-import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.component.mainwindow.UserActionsButton;
-import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.context.UiShowScreenContext;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.widget.JmixMenuBar;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -47,7 +46,7 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
     protected IconResolver iconResolver;
     protected Icons icons;
     protected Messages messages;
-    protected Security security;
+    protected AccessManager accessManager;
 
     protected Consumer<LoginHandlerContext> loginHandler;
     protected Consumer<LogoutHandlerContext> logoutHandler;
@@ -81,8 +80,8 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
     }
 
     @Autowired
-    public void setSecurity(Security security) {
-        this.security = security;
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
     }
 
     @Override
@@ -115,7 +114,10 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
         userMenuButton.setIcon(getIconResource(JmixIcon.USER));
         userMenuButton.setVisible(authenticated);
 
-        if (security.isScreenPermitted("settings")) {
+        UiShowScreenContext showScreenContext = new UiShowScreenContext("settings");
+        accessManager.applyRegisteredConstraints(showScreenContext);
+
+        if (showScreenContext.isPermitted()) {
             userMenuButton.addItem(messages.getMessage("settings"),
                     getIconResource(JmixIcon.GEAR), item -> openSettings());
         }

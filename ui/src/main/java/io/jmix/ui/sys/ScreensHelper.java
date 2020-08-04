@@ -18,21 +18,17 @@ package io.jmix.ui.sys;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import io.jmix.core.BeanLocator;
-import io.jmix.core.MessageTools;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.Resources;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.Security;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.ScreenComponentDescriptor;
+import io.jmix.ui.context.UiShowScreenContext;
 import io.jmix.ui.screen.EditedEntityContainer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.LookupComponent;
@@ -42,19 +38,12 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -85,7 +74,7 @@ public class ScreensHelper {
     @Autowired
     protected Dom4jTools dom4JTools;
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
 
     protected Map<String, String> captionCache = new ConcurrentHashMap<>();
     protected Map<String, Map<String, String>> availableScreensCache = new ConcurrentHashMap<>();
@@ -114,15 +103,24 @@ public class ScreensHelper {
     @Nullable
     public WindowInfo getDefaultBrowseScreen(MetaClass metaClass) {
         WindowInfo browseWindow = windowConfig.findWindowInfo(windowConfig.getBrowseScreenId(metaClass));
-        if (browseWindow != null
-                && security.isScreenPermitted(browseWindow.getId())) {
-            return browseWindow;
+
+        if (browseWindow != null) {
+            UiShowScreenContext screenContext = new UiShowScreenContext(browseWindow.getId());
+            accessManager.applyRegisteredConstraints(screenContext);
+
+            if (screenContext.isPermitted()) {
+                return browseWindow;
+            }
         }
 
         WindowInfo lookupWindow = windowConfig.findWindowInfo(windowConfig.getLookupScreenId(metaClass));
-        if (lookupWindow != null
-                && security.isScreenPermitted(lookupWindow.getId())) {
-            return lookupWindow;
+        if (lookupWindow != null) {
+            UiShowScreenContext screenContext = new UiShowScreenContext(lookupWindow.getId());
+            accessManager.applyRegisteredConstraints(screenContext);
+
+            if (screenContext.isPermitted()) {
+                return lookupWindow;
+            }
         }
 
         return null;

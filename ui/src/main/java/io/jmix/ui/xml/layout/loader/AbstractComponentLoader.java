@@ -23,7 +23,6 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.core.security.Security;
 import io.jmix.ui.Actions;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiComponents;
@@ -36,7 +35,6 @@ import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.formatter.FormatterLoadFactory;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
@@ -57,7 +55,6 @@ import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
@@ -186,10 +183,6 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     @Override
     public void setLayoutLoaderConfig(LayoutLoaderConfig layoutLoaderConfig) {
         this.layoutLoaderConfig = layoutLoaderConfig;
-    }
-
-    protected Security getSecurity() {
-        return beanLocator.get(Security.NAME);
     }
 
     protected Messages getMessages() {

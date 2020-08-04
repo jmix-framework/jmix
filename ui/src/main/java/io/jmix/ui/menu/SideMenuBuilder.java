@@ -19,21 +19,21 @@ package io.jmix.ui.menu;
 import com.google.common.base.Strings;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.AbstractComponent;
+import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
-import io.jmix.core.security.Security;
+import io.jmix.ui.AppUI;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.SideMenu;
+import io.jmix.ui.context.UiMenuContext;
 import io.jmix.ui.screen.FrameOwner;
-import io.jmix.ui.AppUI;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -50,13 +50,11 @@ public class SideMenuBuilder {
     public static final String NAME = "jmix_SideMenuBuilder";
 
     @Autowired
-    protected Security security;
-
-    @Autowired
     protected MenuConfig menuConfig;
     @Autowired
     protected MenuItemCommands menuItemCommands;
-
+    @Autowired
+    protected AccessManager accessManager;
     @Autowired
     protected MessageTools messageTools;
 
@@ -76,8 +74,9 @@ public class SideMenuBuilder {
 
         for (MenuItem menuItem : rootItems) {
             // AppMenu does not support separators
-            if (menuItem.isPermitted(security)
-                    && !menuItem.isSeparator()) {
+            UiMenuContext menuItemContext = new UiMenuContext(menuItem);
+            accessManager.applyRegisteredConstraints(menuItemContext);
+            if (menuItemContext.isPermitted() && !menuItem.isSeparator()) {
                 createMenuBarItem(window, menu, menuItem);
             }
         }
@@ -113,11 +112,11 @@ public class SideMenuBuilder {
     }
 
     protected void createMenuBarItem(Window webWindow, SideMenu menu, MenuItem item) {
-        if (item.isPermitted(security)) {
+        if (isPermitted(item)) {
             SideMenu.MenuItem menuItem = menu.createMenuItem(item.getId(),
                     menuConfig.getItemCaption(item), null, createMenuBarCommand(item));
 
-            createSubMenu(webWindow, menu, menuItem, item, security);
+            createSubMenu(webWindow, menu, menuItem, item);
             assignStyleName(menuItem, item);
             assignIcon(menuItem, item);
             assignDescription(menuItem, item);
@@ -131,14 +130,14 @@ public class SideMenuBuilder {
     }
 
     protected void createSubMenu(Window webWindow, SideMenu menu, SideMenu.MenuItem vItem,
-                                 MenuItem parentItem, Security security) {
-        if (parentItem.isPermitted(security)) {
+                                 MenuItem parentItem) {
+        if (isPermitted(parentItem)) {
             for (MenuItem child : parentItem.getChildren()) {
                 if (child.isSeparator()) {
                     continue;
                 }
 
-                if (child.isPermitted(security)) {
+                if (isPermitted(child)) {
                     SideMenu.MenuItem menuItem = menu.createMenuItem(child.getId(),
                             menuConfig.getItemCaption(child));
 
@@ -153,7 +152,7 @@ public class SideMenuBuilder {
 
                         vItem.addChildItem(menuItem);
                     } else {
-                        createSubMenu(webWindow, menu, menuItem, child, security);
+                        createSubMenu(webWindow, menu, menuItem, child);
 
                         assignExpanded(menuItem, child);
 
@@ -217,6 +216,15 @@ public class SideMenuBuilder {
                 menuItem.setDescription(itemShortcut.format());
             }
         }
+    }
+
+    protected boolean isPermitted(MenuItem item) {
+        if (Strings.isNullOrEmpty(item.getId()) || item.isSeparator()) {
+            return true;
+        }
+        UiMenuContext menuItemContext = new UiMenuContext(item);
+        accessManager.applyRegisteredConstraints(menuItemContext);
+        return menuItemContext.isPermitted();
     }
 
     protected static class SideMenuShortcutListener extends ShortcutListener {

@@ -16,8 +16,9 @@
 
 package io.jmix.ui.action.list;
 
-import io.jmix.core.Messages;
+import io.jmix.core.AccessManager;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.RemoveOperation;
@@ -26,16 +27,17 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.context.UiEntityAttributeContext;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.Nested;
 import io.jmix.ui.screen.Install;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 
 /**
@@ -53,6 +55,8 @@ public class ExcludeAction<E extends JmixEntity> extends SecuredListAction imple
     public static final String ID = "exclude";
 
     protected RemoveOperation removeOperation;
+    @Autowired
+    protected AccessManager accessManager;
 
     protected Boolean confirmation;
     protected String confirmationMessage;
@@ -188,7 +192,11 @@ public class ExcludeAction<E extends JmixEntity> extends SecuredListAction imple
             MetaClass masterMetaClass = nestedContainer.getMaster().getEntityMetaClass();
             MetaProperty metaProperty = masterMetaClass.getProperty(nestedContainer.getProperty());
 
-            boolean attrPermitted = security.isEntityAttrUpdatePermitted(masterMetaClass, metaProperty.getName());
+            UiEntityAttributeContext attributeContext =
+                    new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
+            accessManager.applyRegisteredConstraints(attributeContext);
+
+            boolean attrPermitted = attributeContext.isModifyPermitted();
             if (!attrPermitted) {
                 return false;
             }

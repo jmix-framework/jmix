@@ -16,12 +16,13 @@
 
 package io.jmix.ui.model;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
+import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.model.impl.*;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,10 @@ public class DataComponents {
     protected Metadata metadata;
 
     @Autowired
-    protected Security security;
+    protected SorterFactory sorterFactory;
 
     @Autowired
-    protected SorterFactory sorterFactory;
+    protected AccessManager accessManager;
 
     protected void autowire(Object instance) {
         beanFactory.autowireBean(instance);
@@ -61,6 +62,7 @@ public class DataComponents {
             }
         }
     }
+
     /**
      * Creates {@code DataContext}.
      */
@@ -90,8 +92,15 @@ public class DataComponents {
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
 
-        if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)
-                && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
+
+        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        accessManager.applyRegisteredConstraints(attributeContext);
+
+        if (entityContext.isViewPermitted()
+                && attributeContext.isViewPermitted()) {
             masterContainer.addItemChangeListener(e -> {
                 JmixEntity item = masterContainer.getItemOrNull();
                 container.setItem(item != null ? EntityValues.getValue(item, property) : null);
@@ -129,8 +138,14 @@ public class DataComponents {
         autowire(container);
         container.setSorter(sorterFactory.createCollectionPropertyContainerSorter(container));
 
-        if (security.isEntityAttrReadPermitted(masterContainer.getEntityMetaClass(), property)
-                && security.isEntityOpPermitted(entityClass, EntityOp.READ)) {
+        UiEntityContext entityContext = new UiEntityContext(masterContainer.getEntityMetaClass());
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
+        accessManager.applyRegisteredConstraints(attributeContext);
+
+        if (attributeContext.isViewPermitted()
+                && entityContext.isViewPermitted()) {
             masterContainer.addItemChangeListener(e -> {
                 JmixEntity item = masterContainer.getItemOrNull();
                 container.setItems(item != null ? EntityValues.getValue(item, property) : null);

@@ -15,10 +15,7 @@
  */
 package io.jmix.ui.menu;
 
-import io.jmix.core.security.PermissionType;
-import io.jmix.core.security.Security;
 import io.jmix.ui.component.KeyCombination;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
@@ -66,13 +63,17 @@ public class MenuItem {
         this.isMenu = isMenu;
     }
 
-    /** Parent item. Null if this is root item. */
+    /**
+     * Parent item. Null if this is root item.
+     */
     @Nullable
     public MenuItem getParent() {
         return parent;
     }
 
-    /** Children items */
+    /**
+     * Children items
+     */
     public List<MenuItem> getChildren() {
         return children;
     }
@@ -94,7 +95,6 @@ public class MenuItem {
 
     /**
      * @return a raw string from menu XML config, can be a reference to localization message, e.g. {@code mainMsg://menuitem.caption}
-     *
      * @see MenuConfig#getItemCaption(MenuItem)
      */
     public String getCaption() {
@@ -105,7 +105,6 @@ public class MenuItem {
      * Sets the given {@code caption} to menu item.
      *
      * @param caption menu item caption
-     *
      * @see MenuConfig#getItemCaption(MenuItem)
      */
     public void setCaption(String caption) {
@@ -136,30 +135,6 @@ public class MenuItem {
         this.stylename = stylename;
     }
 
-    public boolean isPermitted(Security security) {
-        if (StringUtils.isEmpty(id) || isSeparator()) {
-             return true;
-        } else {
-            boolean screenPermitted = security.isScreenPermitted(id);
-            /* todo security
-            if (screenPermitted) {
-                Element permissionsElem = descriptor.element("permissions");
-                if (permissionsElem != null) {
-                    for (Element element : permissionsElem.elements("permission")) {
-                        PermissionType type = PermissionType.valueOf(element.attributeValue("type"));
-                        String target = element.attributeValue("target");
-                        screenPermitted = security.isPermitted(type, target);
-                        if (!screenPermitted)
-                            break;
-                    }
-                }
-            }
-             */
-            return screenPermitted;
-        }
-    }
-
-    @Nullable
     public KeyCombination getShortcut() {
         return shortcut;
     }

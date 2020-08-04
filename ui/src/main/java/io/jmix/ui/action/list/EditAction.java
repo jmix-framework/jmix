@@ -16,10 +16,10 @@
 
 package io.jmix.ui.action.list;
 
-import io.jmix.core.Messages;
+import io.jmix.core.AccessManager;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
@@ -27,15 +27,16 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -59,6 +60,9 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
     public static final String ID = "edit";
 
     protected ScreenBuilders screenBuilders;
+
+    @Autowired
+    protected AccessManager accessManager;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
 
@@ -238,7 +242,7 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
 
     @Override
     protected boolean isPermitted() {
-        if (target == null ||!(target.getItems() instanceof EntityDataUnit)) {
+        if (target == null || !(target.getItems() instanceof EntityDataUnit)) {
             return false;
         }
 
@@ -247,8 +251,10 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
             return true;
         }
 
-        boolean entityOpPermitted = security.isEntityOpPermitted(metaClass, EntityOp.READ);
-        if (!entityOpPermitted) {
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isViewPermitted()) {
             return false;
         }
 
@@ -265,8 +271,12 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
 
         if (!captionInitialized) {
             MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
+
+            UiEntityContext entityContext = new UiEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(entityContext);
+
             if (metaClass != null) {
-                if (security.isEntityOpPermitted(metaClass, EntityOp.UPDATE)) {
+                if (entityContext.isEditPermitted()) {
                     setCaption(messages.getMessage("actions.Edit"));
                 } else {
                     setCaption(messages.getMessage("actions.View"));
@@ -286,7 +296,11 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
             // Even though the screen is read-only, this edit action may remain active
             // because the related entity cannot be edited and the corresponding edit screen
             // will be opened in read-only mode either.
-            return security.isEntityOpPermitted(metaClass, EntityOp.UPDATE);
+
+            UiEntityContext entityContext = new UiEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(entityContext);
+
+            return entityContext.isEditPermitted();
         }
 
         return true;

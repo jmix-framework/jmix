@@ -16,25 +16,25 @@
 
 package io.jmix.ui.action.list;
 
-import io.jmix.core.Messages;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ActionScreenInitializer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -234,8 +234,10 @@ public class ViewAction<E extends JmixEntity> extends SecuredListAction {
             return true;
         }
 
-        boolean entityOpPermitted = security.isEntityOpPermitted(metaClass, EntityOp.READ);
-        if (!entityOpPermitted) {
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isViewPermitted()) {
             return false;
         }
 

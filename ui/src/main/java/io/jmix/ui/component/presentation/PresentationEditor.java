@@ -16,17 +16,18 @@
 package io.jmix.ui.component.presentation;
 
 import com.vaadin.ui.*;
+import io.jmix.core.AccessManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.Security;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasTablePresentations;
+import io.jmix.ui.context.UiGlobalPresentationContext;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.screen.FrameOwner;
@@ -78,7 +79,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
     @Autowired
     protected CurrentAuthentication currentAuthentication;
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
     @Autowired
     protected EntityStates entityStates;
     @Autowired(required = false)
@@ -95,7 +96,10 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         isNew = entityStates.isNew(presentation);
-        allowGlobalPresentations = security.isSpecificPermitted("cuba.gui.presentations.global");
+
+        UiGlobalPresentationContext globalPresentationContext = new UiGlobalPresentationContext();
+        accessManager.applyRegisteredConstraints(globalPresentationContext);
+        allowGlobalPresentations = globalPresentationContext.isPermitted();
 
         initWindow();
     }

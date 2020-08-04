@@ -21,11 +21,10 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.pessimisticlocking.LockInfo;
 import io.jmix.core.pessimisticlocking.LockManager;
 import io.jmix.core.pessimisticlocking.LockNotSupported;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.list.CreateAction;
@@ -36,6 +35,7 @@ import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.model.*;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
@@ -286,9 +286,14 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
                 }
             }
         });
+
+        MetaClass entityMetaClass = getBeanLocator().get(Metadata.class).getClass(getEntityClass());
+        UiEntityContext entityContext = new UiEntityContext(entityMetaClass);
+        getBeanLocator().get(AccessManager.class).applyRegisteredConstraints(entityContext);
+
         editAction.addEnabledRule(() ->
                 table.getSelected().size() == 1
-                && getBeanLocator().get(Security.class).isEntityOpPermitted(getEntityClass(), EntityOp.UPDATE));
+                        && entityContext.isEditPermitted());
     }
 
     /**
@@ -325,6 +330,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
 
     /**
      * Enables controls for editing.
+     *
      * @param creating indicates that a new instance is being created
      */
     protected void enableEditControls(boolean creating) {
@@ -345,6 +351,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
 
     /**
      * Initializes edit controls, depending on if they should be enabled or disabled.
+     *
      * @param enabled if true - enables edit controls and disables controls on the left side of the splitter
      *                if false - vice versa
      */
@@ -381,8 +388,8 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
             notifications.create(Notifications.NotificationType.HUMANIZED)
                     .withCaption(messages.getMessage("entityLocked.msg"))
                     .withDescription(String.format(messages.getMessage("entityLocked.desc"),
-                                    lockInfo.getUserName(),
-                                    datatypeFormatter.formatDateTime(lockInfo.getSince())))
+                            lockInfo.getUserName(),
+                            datatypeFormatter.formatDateTime(lockInfo.getSince())))
                     .show();
 
             return false;
@@ -643,7 +650,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
      *         }
      *     }
      * </pre>
-     *
+     * <p>
      * Show dialog and resume commit after:
      * <pre>
      *     &#64;Subscribe

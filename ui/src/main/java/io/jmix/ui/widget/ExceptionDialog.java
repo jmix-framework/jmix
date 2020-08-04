@@ -18,16 +18,13 @@ package io.jmix.ui.widget;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.window.WindowMode;
 import com.vaadin.ui.*;
-import io.jmix.core.AppBeans;
-import io.jmix.core.DevelopmentException;
-import io.jmix.core.Messages;
-import io.jmix.core.TimeSource;
+import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.Security;
 import io.jmix.ui.*;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.KeyCombination;
+import io.jmix.ui.context.UiShowExceptionDetailsContext;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -76,7 +73,7 @@ public class ExceptionDialog extends JmixWindow {
 
     protected TimeSource timeSource = AppBeans.get(TimeSource.NAME);
 
-    protected Security security = AppBeans.get(Security.NAME);
+    protected AccessManager accessManager = AppBeans.get(AccessManager.class);
 
     public ExceptionDialog(Throwable throwable) {
         this(throwable, null, null);
@@ -126,8 +123,12 @@ public class ExceptionDialog extends JmixWindow {
         textArea.setHeight(theme.get("cuba.web.ExceptionDialog.textArea.height"));
         textArea.setWidth(100, Sizeable.Unit.PERCENTAGE);
 
-        boolean showExceptionDetails = currentAuthentication.isSet()
-                && security.isSpecificPermitted("cuba.gui.showExceptionDetails");
+        boolean showExceptionDetails = false;
+        if (currentAuthentication.isSet()) {
+            UiShowExceptionDetailsContext showExceptionDetailsContext = new UiShowExceptionDetailsContext();
+                    accessManager.applyRegisteredConstraints(new UiShowExceptionDetailsContext());
+            showExceptionDetails = showExceptionDetailsContext.isPermitted();
+        }
 
         if (showExceptionDetails) {
             textArea.setValue(text);
@@ -281,7 +282,8 @@ public class ExceptionDialog extends JmixWindow {
                         if (template != null) {
                             params.put("XML descriptor", template.value());
                         }
-                    } else */if (guiDevException.getFrameId() != null) {
+                    } else */
+                    if (guiDevException.getFrameId() != null) {
                         String frameId = guiDevException.getFrameId();
                         params.put("Frame ID", frameId);
                         try {

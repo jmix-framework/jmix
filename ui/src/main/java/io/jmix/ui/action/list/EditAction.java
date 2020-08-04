@@ -61,9 +61,6 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction implemen
 
     protected ScreenBuilders screenBuilders;
 
-    @Autowired
-    protected AccessManager accessManager;
-
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
 
     protected Consumer<E> afterCommitHandler;

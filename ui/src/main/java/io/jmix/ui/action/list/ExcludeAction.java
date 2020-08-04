@@ -55,8 +55,6 @@ public class ExcludeAction<E extends JmixEntity> extends SecuredListAction imple
     public static final String ID = "exclude";
 
     protected RemoveOperation removeOperation;
-    @Autowired
-    protected AccessManager accessManager;
 
     protected Boolean confirmation;
     protected String confirmationMessage;

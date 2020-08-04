@@ -40,7 +40,9 @@ public class ReadEntityQueryContext implements AccessContext {
         }
     }
 
-    public ReadEntityQueryContext(JmixQuery<?> originalQuery, MetaClass entityClass, QueryTransformerFactory transformerFactory) {
+    public ReadEntityQueryContext(JmixQuery<?> originalQuery,
+                                  MetaClass entityClass,
+                                  QueryTransformerFactory transformerFactory) {
         this.originalQuery = originalQuery;
         this.entityClass = entityClass;
         this.queryTransformerFactory = transformerFactory;
@@ -72,28 +74,23 @@ public class ReadEntityQueryContext implements AccessContext {
             QueryTransformer transformer = queryTransformerFactory.transformer(originalQuery.getQueryString());
             boolean hasJoins = false;
 
-            //TODO: handle exception and throw RLS exception
-            //        } catch (JpqlSyntaxException e) {
-//            log.error("Syntax errors found in constraint's JPQL expressions. Entity [{}]. Constraint ID [{}].",
-//                    entityName, constraint.getId(), e);
-//
-//            throw new RowLevelSecurityException(
-//                    "Syntax errors found in constraint's JPQL expressions. Please see the logs.", entityName);
-//        } catch (Exception e) {
-//            log.error("An error occurred when applying security constraint. Entity [{}]. Constraint ID [{}].",
-//                    entityName, constraint.getId(), e);
-//
-//            throw new RowLevelSecurityException(
-//                    "An error occurred when applying security constraint. Please see the logs.", entityName);
-//        }
             for (Condition condition : conditions) {
-                if (!Strings.isNullOrEmpty(condition.join)) {
-                    hasJoins = true;
-                    transformer.addJoinAndWhere(condition.join, condition.where);
-                } else {
-                    transformer.addWhere(condition.where);
+                try {
+                    if (!Strings.isNullOrEmpty(condition.join)) {
+                        hasJoins = true;
+                        transformer.addJoinAndWhere(condition.join, condition.where);
+                    } else {
+                        transformer.addWhere(condition.where);
+                    }
+                } catch (Exception e) {
+                    log.error("An error occurred when applying row level for entity {}. Join clause {}, where clause {}",
+                            entityClass.getName(), condition.join, condition.where, e);
+
+                    throw new RuntimeException(
+                            String.format("An error occurred when applying row level for entity %s", entityClass.getName()));
                 }
             }
+
             if (hasJoins && singleResult) {
                 transformer.addDistinct();
             }

@@ -16,15 +16,12 @@
 
 package io.jmix.datatoolsui.screen.entityinspector.assistant;
 
-import io.jmix.core.security.EntityAttrAccess;
-import io.jmix.core.security.Security;
-import io.jmix.datatoolsui.screen.entityinspector.EntityInspectorBrowser;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.core.security.EntityOp;
+import io.jmix.datatoolsui.screen.entityinspector.EntityInspectorBrowser;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.ClearAction;
@@ -32,6 +29,8 @@ import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
+import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
@@ -69,7 +68,7 @@ public class InspectorFormBuilder {
     @Autowired
     protected MessageTools messageTools;
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
 
     private final InstanceContainer container;
     private JmixEntity entityToEdit;
@@ -182,10 +181,17 @@ public class InspectorFormBuilder {
         Range range = metaProperty.getRange();
 
         boolean isRequired = isRequired(metaProperty);
-        if (!security.isEntityAttrPermitted(metaClass, metaProperty.getName(), EntityAttrAccess.VIEW))
+
+        UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaClass, metaProperty.getName());
+        accessManager.applyRegisteredConstraints(attributeContext);
+
+        if (!attributeContext.isViewPermitted())
             return;
 
-        if ((range.isClass()) && !security.isEntityOpPermitted(range.asClass(), EntityOp.READ))
+        UiEntityContext entityContext = new UiEntityContext(range.asClass());
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (range.isClass() && !entityContext.isViewPermitted())
             return;
 
         ValueSource valueSource = new ContainerValueSource<>(container, metaProperty.getName());
@@ -255,5 +261,4 @@ public class InspectorFormBuilder {
             return caption.substring(0, maxCaptionLength);
         }
     }
-
 }

@@ -21,9 +21,6 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.EntityAttrAccess;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFormBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
@@ -33,6 +30,8 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.*;
 import io.jmix.ui.component.*;
+import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
@@ -46,7 +45,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static io.jmix.core.metamodel.model.MetaProperty.Type.ASSOCIATION;
-import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.*;
+import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isEmbedded;
+import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 @UiController("entityInspector.edit")
@@ -70,7 +70,7 @@ public class EntityInspectorEditor extends StandardEditor {
     @Autowired
     protected DataComponents dataComponents;
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
     @Autowired
     protected UiProperties uiProperties;
     @Autowired
@@ -214,9 +214,17 @@ public class EntityInspectorEditor extends StandardEditor {
     protected void addTable(InstanceContainer parent, MetaProperty childMeta) {
         MetaClass meta = childMeta.getRange().asClass();
 
+        UiEntityContext entityContext = new UiEntityContext(meta);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+
+        UiEntityAttributeContext attributeContext =
+                new UiEntityAttributeContext(parent.getEntityMetaClass(), childMeta.getName());
+        accessManager.applyRegisteredConstraints(attributeContext);
+
         //don't show empty table if the user don't have permissions on the attribute or the entity
-        if (!security.isEntityAttrPermitted(parent.getEntityMetaClass(), childMeta.getName(), EntityAttrAccess.VIEW) ||
-                !security.isEntityOpPermitted(meta, EntityOp.READ)) {
+        if (!attributeContext.isViewPermitted() ||
+                !entityContext.isViewPermitted()) {
             return;
         }
 

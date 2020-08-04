@@ -25,8 +25,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class DataProperties {
 
     boolean inMemoryDistinct;
-    boolean disableLoadValuesIfConstraints;
-    boolean dataManagerChecksSecurityOnMiddleware;
     boolean useReadOnlyTransactionForLoad;
     boolean queryCacheEnabled;
     int queryCacheMaxSize;
@@ -35,8 +33,6 @@ public class DataProperties {
 
     public DataProperties(
             boolean inMemoryDistinct,
-            boolean disableLoadValuesIfConstraints,
-            boolean dataManagerChecksSecurityOnMiddleware,
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
             @DefaultValue("true") boolean queryCacheEnabled,
             @DefaultValue("100") int queryCacheMaxSize,
@@ -44,8 +40,6 @@ public class DataProperties {
             boolean useEntityDataStoreForIdSequence
     ) {
         this.inMemoryDistinct = inMemoryDistinct;
-        this.disableLoadValuesIfConstraints = disableLoadValuesIfConstraints;
-        this.dataManagerChecksSecurityOnMiddleware = dataManagerChecksSecurityOnMiddleware;
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
         this.queryCacheEnabled = queryCacheEnabled;
         this.queryCacheMaxSize = queryCacheMaxSize;
@@ -55,14 +49,6 @@ public class DataProperties {
 
     public boolean isInMemoryDistinct() {
         return inMemoryDistinct;
-    }
-
-    public boolean isDisableLoadValuesIfConstraints() {
-        return disableLoadValuesIfConstraints;
-    }
-
-    public boolean isDataManagerChecksSecurityOnMiddleware() {
-        return dataManagerChecksSecurityOnMiddleware;
     }
 
     public boolean isUseReadOnlyTransactionForLoad() {

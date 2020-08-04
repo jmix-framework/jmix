@@ -16,32 +16,31 @@
 package io.jmix.data;
 
 import io.jmix.core.Logging;
-import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.core.security.EntityOp;
 
 import javax.annotation.Nullable;
 
 /**
  * Exception that is raised on different exceptions related to Row Level Security.
  * <p>
- *
  */
 @Logging(Logging.Type.BRIEF)
 public class RowLevelSecurityException extends RuntimeException {
     private static final long serialVersionUID = -3097861878301424338L;
 
     private final String entity;
-    private final ConstraintOperationType operationType;
+    private final EntityOp entityOp;
 
     public RowLevelSecurityException(String message, @Nullable String entity) {
         super(message);
         this.entity = entity;
-        this.operationType = null;
+        this.entityOp = null;
     }
 
-    public RowLevelSecurityException(String message, String entity, ConstraintOperationType operationType) {
+    public RowLevelSecurityException(String message, String entity, EntityOp entityOp) {
         super(message);
         this.entity = entity;
-        this.operationType = operationType;
+        this.entityOp = entityOp;
     }
 
     @Nullable
@@ -50,7 +49,7 @@ public class RowLevelSecurityException extends RuntimeException {
     }
 
     @Nullable
-    public ConstraintOperationType getOperationType() {
-        return operationType;
+    public EntityOp getEntityOp() {
+        return entityOp;
     }
 }

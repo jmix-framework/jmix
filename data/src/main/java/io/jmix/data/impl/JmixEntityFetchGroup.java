@@ -16,7 +16,6 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.JmixEntity;
@@ -62,16 +61,6 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     @Override
     @Nullable
     public String onUnfetchedAttribute(FetchGroupTracker entity, String attributeName) {
-        if (entity instanceof JmixEntity) {
-            EntityEntry entityEntry = ((JmixEntity) entity).__getEntityEntry();
-            if (entityEntry.getSecurityState().getInaccessibleAttributes() != null) {
-                for (String attribute : entityEntry.getSecurityState().getInaccessibleAttributes()) {
-                    if (attributeName.equals(attribute))
-                        return null;
-                }
-            }
-        }
-
         if (cannotAccessUnfetched(entity))
             return "Cannot get unfetched attribute [" + attributeName + "] from object " + entity;
 

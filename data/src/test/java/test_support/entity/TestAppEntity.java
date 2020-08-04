@@ -87,4 +87,12 @@ public class TestAppEntity extends StandardEntity {
     public void setAppDate(Date appDate) {
         this.appDate = appDate;
     }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
 }

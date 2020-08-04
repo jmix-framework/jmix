@@ -18,6 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
+import io.jmix.core.SaveContext;
 import io.jmix.data.EntityChangeType;
 
 import javax.annotation.Nullable;
@@ -56,6 +57,6 @@ public interface OrmLifecycleListener {
     /**
      * Invoked when entities are saved in ORM store
      */
-    default void onSave(Collection<JmixEntity> entities) {
+    default void onSave(Collection<JmixEntity> entities, SaveContext saveContext) {
     }
 }

@@ -289,14 +289,6 @@ public class PersistenceTools {
         if (!entityStates.isManaged(entity))
             throw new IllegalStateException("Entity must be in managed state");
 
-        EntityEntry entityEntry = entity.__getEntityEntry();
-        if (entityEntry.getSecurityState().getInaccessibleAttributes() != null) {
-            for (String inaccessibleAttr : entityEntry.getSecurityState().getInaccessibleAttributes()) {
-                if (inaccessibleAttr.equals(property))
-                    return RefId.createNotLoaded(property);
-            }
-        }
-
         if (entity instanceof FetchGroupTracker) {
             FetchGroup fetchGroup = ((FetchGroupTracker) entity)._persistence_getFetchGroup();
             if (fetchGroup != null) {

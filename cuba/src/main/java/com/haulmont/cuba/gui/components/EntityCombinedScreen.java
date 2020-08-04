@@ -303,7 +303,7 @@ public class EntityCombinedScreen extends AbstractLookup {
                     ((FieldGroup) component).setEditable(enabled);
                 } else if (component instanceof Table) {
                     ((Table) component).getActions().forEach(action -> action.setEnabled(enabled));
-                } else if (!(component instanceof ComponentContainer)) {
+                } else if (!(component instanceof HasComponents)) {
                     component.setEnabled(enabled);
                 }
             });

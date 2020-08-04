@@ -103,7 +103,7 @@ public class ReadEntityQueryContext implements AccessContext {
             }
 
             if (log.isDebugEnabled()) {
-                log.debug("Constraints applied: {}", printQuery(originalQuery.getQueryString()));
+                log.debug("Row level applied: {}", printQuery(originalQuery.getQueryString()));
             }
         }
     }

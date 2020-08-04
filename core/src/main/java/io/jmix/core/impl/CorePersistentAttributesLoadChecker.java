@@ -20,12 +20,13 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.PersistentAttributesLoadChecker;
-import io.jmix.core.entity.*;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.List;
 
@@ -95,15 +96,6 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
 
     protected PropertyLoadedState isLoadedCommonCheck(Object entity, String property) {
         if (entity instanceof JmixEntity) {
-            SecurityState securityState = ((JmixEntity) entity).__getEntityEntry().getSecurityState();
-
-            if (securityState.getInaccessibleAttributes() != null) {
-                for (String attributes : securityState.getInaccessibleAttributes()) {
-                    if (attributes.equals(property))
-                        return PropertyLoadedState.NO;
-                }
-            }
-
             return isLoadedByFetchGroup(entity, property);
         }
 

@@ -17,9 +17,7 @@
 package security
 
 import io.jmix.core.CoreConfiguration
-import io.jmix.core.security.Security
 import io.jmix.core.security.authentication.CoreAuthentication
-import io.jmix.core.security.impl.CoreSecurityImpl
 import io.jmix.core.security.impl.CoreUser
 import io.jmix.core.security.impl.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,9 +41,6 @@ import test_support.addon1.TestAddon1Configuration
 class CoreSecurityImplTest extends Specification {
 
     @Autowired
-    Security security
-
-    @Autowired
     ApplicationContext context
 
     @Autowired
@@ -53,12 +48,6 @@ class CoreSecurityImplTest extends Specification {
 
     @Autowired
     InMemoryUserRepository userRepository
-
-    def "Security impl is default"() {
-        expect:
-
-        security instanceof CoreSecurityImpl
-    }
 
     def "authentication as admin"() {
         when:

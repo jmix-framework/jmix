@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.StringHelper;
+import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.querycondition.Condition;
 
 import javax.annotation.Nullable;
@@ -42,7 +43,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
     protected boolean softDeletion = true;
     protected String idName;
     protected List<String> properties = new ArrayList<>();
-    protected boolean authorizationRequired;
+    protected List<AccessConstraint<?>> accessConstraints;
     protected boolean joinTransaction;
 
     /**
@@ -61,7 +62,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
     /**
      * @param queryString JPQL query string. Only named parameters are supported.
-     * @return  query definition object
+     * @return query definition object
      */
     @Override
     public Query setQueryString(String queryString) {
@@ -78,6 +79,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
     /**
      * Sets a data store name if it is different from the main database.
+     *
      * @return this instance for chaining
      */
     public ValueLoadContext setStoreName(String storeName) {
@@ -87,6 +89,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
     /**
      * Sets query instance
+     *
      * @return this instance for chaining
      */
     public ValueLoadContext setQuery(Query query) {
@@ -136,6 +139,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
      * <p>For example, if the query is <code>select e.id, e.name from sample$Customer</code>
      * and you executed <code>context.addProperty("customerId").addProperty("customerName")</code>, the returned KeyValueEntity
      * will contain customer identifiers in "customerId" property and names in "customerName" property.
+     *
      * @return this instance for chaining
      */
     public ValueLoadContext addProperty(String name) {
@@ -145,6 +149,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
     /**
      * The same as invoking {@link #addProperty(String)} multiple times.
+     *
      * @return this instance for chaining
      */
     public ValueLoadContext setProperties(List<String> properties) {
@@ -154,18 +159,18 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
     }
 
     /**
-     * @return  the list of properties added by {@link #addProperty(String)}
+     * @return the list of properties added by {@link #addProperty(String)}
      */
     public List<String> getProperties() {
         return properties;
     }
 
-    public boolean isAuthorizationRequired() {
-        return authorizationRequired;
+    public List<AccessConstraint<?>> getAccessConstraints() {
+        return this.accessConstraints == null ? Collections.emptyList() : this.accessConstraints;
     }
 
-    public ValueLoadContext setAuthorizationRequired(boolean authorizationRequired) {
-        this.authorizationRequired = authorizationRequired;
+    public ValueLoadContext setAccessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        this.accessConstraints = accessConstraints;
         return this;
     }
 
@@ -219,9 +224,10 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
         /**
          * Set value for a query parameter.
+         *
          * @param name  parameter name
          * @param value parameter value
-         * @return  this query instance for chaining
+         * @return this query instance for chaining
          */
         public Query setParameter(String name, Object value) {
             parameters.put(name, value);
@@ -230,10 +236,11 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
         /**
          * Set value for a query parameter.
-         * @param name  parameter name
-         * @param value parameter value
+         *
+         * @param name                parameter name
+         * @param value               parameter value
          * @param implicitConversions whether to do parameter value conversions, e.g. convert an entity to its ID
-         * @return  this query instance for chaining
+         * @return this query instance for chaining
          */
         public Query setParameter(String name, Object value, boolean implicitConversions) {
             parameters.put(name, value);
@@ -249,10 +256,11 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
 
         /**
          * Set value for a parameter of java.util.Date type.
-         * @param name          parameter name
-         * @param value         date value
-         * @param temporalType  temporal type
-         * @return  this query instance for chaining
+         *
+         * @param name         parameter name
+         * @param value        date value
+         * @param temporalType temporal type
+         * @return this query instance for chaining
          */
         public Query setParameter(String name, Date value, TemporalType temporalType) {
             parameters.put(name, new TemporalValue(value, temporalType));

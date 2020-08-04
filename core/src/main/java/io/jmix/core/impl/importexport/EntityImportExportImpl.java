@@ -18,6 +18,7 @@ package io.jmix.core.impl.importexport;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityEntrySoftDelete;
+import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -66,9 +67,6 @@ public class EntityImportExportImpl implements EntityImportExport {
 //    @Autowired
 //    protected DynamicAttributesManagerAPI dynamicAttributesManagerAPI;
 
-//    @Autowired
-//    protected PersistenceSecurity persistenceSecurity;
-
     @Autowired
     protected BeanValidation beanValidation;
 
@@ -89,6 +87,9 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     @Autowired
     protected EntityStates entityStates;
+
+    @Autowired
+    protected AccessConstraintsRegistry accessConstraintsRegistry;
 
     @Override
     public byte[] exportEntitiesToZIP(Collection<? extends JmixEntity> entities, FetchPlan view) {
@@ -220,7 +221,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                     .setFetchPlan(regularView)
                     .setLoadDynamicAttributes(true)
                     .setId(EntityValues.getId(srcEntity))
-                    .setAuthorizationRequired(true);
+                    .setAccessConstraints(accessConstraintsRegistry.getConstraints());
             JmixEntity dstEntity = dataManager.load(ctx);
 
             importEntity(srcEntity, dstEntity, importView, regularView, saveContext, referenceInfoList, optimisticLocking);
@@ -262,7 +263,7 @@ public class EntityImportExportImpl implements EntityImportExport {
             saveContext.setSoftDeletion(true);
         }
 
-        saveContext.setAuthorizationRequired(true);
+        saveContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
         return dataManager.save(saveContext);
     }
@@ -700,7 +701,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     protected Collection getFilteredIds(@Nullable SecurityState securityState, String propertyName) {
         if (securityState != null) {
-            return Optional.ofNullable(securityState.getFilteredData())
+            return Optional.ofNullable(securityState.getErasedData())
                     .map(v -> v.get(propertyName))
                     .orElse(Collections.emptyList());
         }

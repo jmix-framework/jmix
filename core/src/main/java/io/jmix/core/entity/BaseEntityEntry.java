@@ -16,10 +16,10 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
@@ -134,13 +134,15 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
         state = (byte) (removed ? state | REMOVED : state & ~REMOVED);
     }
 
+    @NonNull
     @Override
     public SecurityState getSecurityState() {
         return securityState;
     }
 
+
     @Override
-    public void setSecurityState(SecurityState securityState) {
+    public void setSecurityState(@NonNull SecurityState securityState) {
         this.securityState = securityState;
     }
 

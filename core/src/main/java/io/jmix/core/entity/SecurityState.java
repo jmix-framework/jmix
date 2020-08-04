@@ -17,10 +17,11 @@ package io.jmix.core.entity;
 
 import com.google.common.collect.Multimap;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Stores information about:
@@ -34,13 +35,12 @@ public class SecurityState implements Serializable {
 
     protected transient Multimap<String, Object> filteredData = null;
 
-    protected String[] inaccessibleAttributes;
-
     protected String[] filteredAttributes;
 
     protected byte[] securityToken;
 
-    public Multimap<String, Object> getFilteredData() {
+    @Nullable
+    public Multimap<String, Object> getErasedData() {
         return filteredData;
     }
 
@@ -48,16 +48,12 @@ public class SecurityState implements Serializable {
         this.filteredData = filteredData;
     }
 
-    public String[] getInaccessibleAttributes() {
-        return inaccessibleAttributes;
+    public List<String> getErasedAttributes() {
+        return filteredAttributes == null ? Collections.emptyList() : Arrays.asList(filteredAttributes);
     }
 
-    public void setInaccessibleAttributes(String[] inaccessibleAttributes) {
-        this.inaccessibleAttributes = inaccessibleAttributes;
-    }
-
-    public String[] getFilteredAttributes() {
-        return filteredAttributes;
+    public List<Object> getErasedIds(String attrName) {
+        return null;
     }
 
     public void setFilteredAttributes(String[] filteredAttributes) {

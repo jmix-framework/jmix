@@ -96,13 +96,11 @@ public class SaveContextTest {
         ctx = new SaveContext().saving(pet).removing(owner)
                 .setSoftDeletion(false)
                 .setDiscardSaved(true)
-                .setAuthorizationRequired(true)
                 .setJoinTransaction(true)
                 .setDbHint("h1", "v1");
         // then:
         assertFalse(ctx.isSoftDeletion());
         assertTrue(ctx.isDiscardSaved());
-        assertTrue(ctx.isAuthorizationRequired());
         assertTrue(ctx.isJoinTransaction());
         assertEquals("v1", ctx.getDbHints().get("h1"));
     }

@@ -72,10 +72,9 @@ public interface EntityEntry extends Serializable {
 
     void setRemoved(boolean removed);
 
-    @Nullable
     SecurityState getSecurityState();
 
-    void setSecurityState(@Nullable SecurityState securityState);
+    void setSecurityState(SecurityState securityState);
 
     /**
      * Add listener to track attributes changes.

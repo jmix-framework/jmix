@@ -15,11 +15,15 @@
  */
 package io.jmix.core;
 
+
+import io.jmix.core.constraint.AccessConstraint;
+
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.*;
 
 /**
+ *
  */
 public class SaveContext implements Serializable {
 
@@ -32,8 +36,8 @@ public class SaveContext implements Serializable {
 
     protected boolean softDeletion = true;
     protected boolean discardSaved;
-    protected boolean authorizationRequired;
     protected boolean joinTransaction = true;
+    protected List<AccessConstraint<?>> accessConstraints;
     protected Map<String, Object> dbHints = new HashMap<>();
 
     /**
@@ -48,7 +52,7 @@ public class SaveContext implements Serializable {
     }
 
     /**
-    /**
+     * /**
      * Adds an entity to be committed to the database.
      *
      * @param entity entity instance
@@ -62,8 +66,8 @@ public class SaveContext implements Serializable {
     /**
      * Adds an entity to be committed to the database.
      *
-     * @param entity entity instance
-     * @param fetchPlan   fetch plan which is used in merge operation to ensure all required attributes are loaded in the returned instance
+     * @param entity    entity instance
+     * @param fetchPlan fetch plan which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
     public SaveContext saving(JmixEntity entity, @Nullable FetchPlan fetchPlan) {
@@ -141,7 +145,7 @@ public class SaveContext implements Serializable {
     }
 
     /**
-     * @param softDeletion  whether to use soft deletion for this commit
+     * @param softDeletion whether to use soft deletion for this commit
      */
     public SaveContext setSoftDeletion(boolean softDeletion) {
         this.softDeletion = softDeletion;
@@ -163,12 +167,12 @@ public class SaveContext implements Serializable {
         return this;
     }
 
-    public boolean isAuthorizationRequired() {
-        return authorizationRequired;
+    public List<AccessConstraint<?>> getAccessConstraints() {
+        return this.accessConstraints == null ? Collections.emptyList() : this.accessConstraints;
     }
 
-    public SaveContext setAuthorizationRequired(boolean authorizationRequired) {
-        this.authorizationRequired = authorizationRequired;
+    public SaveContext setAccessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        this.accessConstraints = accessConstraints;
         return this;
     }
 

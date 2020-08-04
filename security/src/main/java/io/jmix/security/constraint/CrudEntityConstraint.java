@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class CRUDEntityConstraint implements EntityOperationConstraint<CrudEntityContext> {
-    public static final String NAME = "sec_CRUDEntityConstraint";
+public class CrudEntityConstraint implements EntityOperationConstraint<CrudEntityContext> {
+    public static final String NAME = "sec_CrudEntityConstraint";
 
     protected ResourcePolicyStore policyStore;
     protected SecureOperations secureOperations;

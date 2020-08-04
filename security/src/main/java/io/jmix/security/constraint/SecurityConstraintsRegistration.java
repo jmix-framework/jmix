@@ -19,7 +19,6 @@ package io.jmix.security.constraint;
 import io.jmix.core.AccessConstraintsRegistry;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
@@ -33,7 +32,7 @@ public class SecurityConstraintsRegistration {
 
     @PostConstruct
     public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(CRUDEntityConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(CrudEntityConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(InMemoryCRUDEntityConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(ReadEntityQueryConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(LoadValuesConstraint.class));

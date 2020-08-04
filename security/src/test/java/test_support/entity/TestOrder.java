@@ -20,11 +20,13 @@ import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity(name = "test_Order")
+@Table(name = "TEST_ORDER")
 public class TestOrder extends StandardEntity {
 
-    @Column(name = "number")
+    @Column(name = "NUMBER")
     private String number;
 
     public String getNumber() {

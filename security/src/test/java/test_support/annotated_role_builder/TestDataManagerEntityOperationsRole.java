@@ -16,5 +16,16 @@
 
 package test_support.annotated_role_builder;
 
-public interface TestDataManagerRowLevelRole {
+import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.role.annotation.EntityPolicy;
+import io.jmix.security.role.annotation.Role;
+import test_support.entity.TestOrder;
+
+@Role(name = TestDataManagerEntityOperationsRole.NAME, code = TestDataManagerEntityOperationsRole.NAME)
+public interface TestDataManagerEntityOperationsRole {
+    String NAME = "TestDataManagerEntityOperationsRole";
+
+    @EntityPolicy(entityClass = TestOrder.class,
+            actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ})
+    void order();
 }

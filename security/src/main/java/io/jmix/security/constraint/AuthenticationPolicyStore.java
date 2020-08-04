@@ -81,12 +81,13 @@ public class AuthenticationPolicyStore implements ResourcePolicyStore {
     protected <T> Collection<T> extractFromAuthentication(
             Function<SecuredAuthentication, Collection<T>> extractor) {
         if (currentAuthentication.getAuthentication() instanceof SecuredAuthentication) {
-            return extractor.apply((SecuredAuthentication) currentAuthentication.getAuthentication());
+            Collection<T> result = extractor.apply((SecuredAuthentication) currentAuthentication.getAuthentication());
+            return result == null ? Collections.emptyList() : result;
         }
         return Collections.emptyList();
     }
 
-    protected static class RowLevelPolicyByEntityIndex implements RowLevelPolicyIndex {
+    public static class RowLevelPolicyByEntityIndex implements RowLevelPolicyIndex {
         protected Map<String, List<RowLevelPolicy>> policyByEntity;
 
         @Override
@@ -100,13 +101,13 @@ public class AuthenticationPolicyStore implements ResourcePolicyStore {
         }
     }
 
-    protected static class EntityResourcePolicyByEntityIndex implements ResourcePolicyIndex {
+    public static class EntityResourcePolicyByEntityIndex implements ResourcePolicyIndex {
         protected Map<String, List<ResourcePolicy>> policyByEntity;
 
         @Override
         public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
             policyByEntity = resourcePolicies.stream()
-                    .filter(p -> Objects.equals(p.getResource(), ResourcePolicyType.ENTITY))
+                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.ENTITY))
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 
@@ -115,13 +116,13 @@ public class AuthenticationPolicyStore implements ResourcePolicyStore {
         }
     }
 
-    protected static class EntityResourcePolicyByAttributesIndex implements ResourcePolicyIndex {
+    public static class EntityResourcePolicyByAttributesIndex implements ResourcePolicyIndex {
         protected Map<String, List<ResourcePolicy>> policyByAttributes;
 
         @Override
         public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
             policyByAttributes = resourcePolicies.stream()
-                    .filter(p -> Objects.equals(p.getResource(), ResourcePolicyType.ENTITY_ATTRIBUTE))
+                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.ENTITY_ATTRIBUTE))
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 
@@ -130,13 +131,13 @@ public class AuthenticationPolicyStore implements ResourcePolicyStore {
         }
     }
 
-    protected static class SpecificResourcePolicyByNameIndex implements ResourcePolicyIndex {
+    public static class SpecificResourcePolicyByNameIndex implements ResourcePolicyIndex {
         protected Map<String, List<ResourcePolicy>> policyByName;
 
         @Override
         public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
             policyByName = resourcePolicies.stream()
-                    .filter(p -> Objects.equals(p.getResource(), ResourcePolicyType.SPECIFIC))
+                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.SPECIFIC))
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 

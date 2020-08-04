@@ -24,6 +24,7 @@ import io.jmix.security.model.RowLevelPolicy;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -68,7 +69,8 @@ public class SecuredAuthenticationToken extends CoreAuthenticationToken implemen
         });
 
         //noinspection unchecked
-        return extractor.apply((I) index);
+        Collection<ResourcePolicy> result = extractor.apply((I) index);
+        return result == null ? Collections.emptyList() : result;
     }
 
     @Override
@@ -99,6 +101,7 @@ public class SecuredAuthenticationToken extends CoreAuthenticationToken implemen
         });
 
         //noinspection unchecked
-        return extractor.apply((I) index);
+        Collection<RowLevelPolicy> result = extractor.apply((I) index);
+        return result == null ? Collections.emptyList() : result;
     }
 }

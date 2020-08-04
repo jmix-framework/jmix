@@ -420,7 +420,7 @@ public class OrmDataStore implements DataStore {
 
         context = context.copy();
         if (context.getQuery() == null) {
-            context.setQuery(new LoadContext.Query(null));
+            context.setQuery(new LoadContext.Query(""));
         }
         if (StringUtils.isBlank(context.getQuery().getQueryString())) {
             context.getQuery().setQueryString("select e from " + metaClass.getName() + " e");
@@ -815,8 +815,7 @@ public class OrmDataStore implements DataStore {
 
         queryBuilder.setId(context.getId())
                 .setIds(context.getIds())
-                .setEntityName(metaClass.getName())
-                .setSingleResult(singleResult);
+                .setEntityName(metaClass.getName());
 
         if (contextQuery != null) {
             queryBuilder.setQueryString(contextQuery.getQueryString())

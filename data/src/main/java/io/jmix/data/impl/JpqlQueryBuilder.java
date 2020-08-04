@@ -56,8 +56,6 @@ public class JpqlQueryBuilder {
     protected String entityName;
     protected List<String> valueProperties;
 
-    protected boolean singleResult;
-
     protected boolean previousResults;
     protected UUID sessionId;
     protected int queryKey;
@@ -100,11 +98,6 @@ public class JpqlQueryBuilder {
 
     public JpqlQueryBuilder setValueProperties(List<String> valueProperties) {
         this.valueProperties = valueProperties;
-        return this;
-    }
-
-    public JpqlQueryBuilder setSingleResult(boolean singleResult) {
-        this.singleResult = singleResult;
         return this;
     }
 

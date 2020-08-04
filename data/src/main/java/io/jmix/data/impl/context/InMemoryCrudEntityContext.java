@@ -79,7 +79,11 @@ public class InMemoryCrudEntityContext implements AccessContext {
     }
 
     public void addUpdatePredicate(Predicate<JmixEntity> predicate) {
-
+        if (this.updatePredicate == null) {
+            this.updatePredicate = predicate;
+        } else {
+            this.updatePredicate = this.updatePredicate.and(predicate);
+        }
     }
 
     public boolean isDeletePermitted(JmixEntity entity) {
@@ -91,5 +95,10 @@ public class InMemoryCrudEntityContext implements AccessContext {
     }
 
     public void addDeletePredicate(Predicate<JmixEntity> predicate) {
+        if (this.deletePredicate == null) {
+            this.deletePredicate = predicate;
+        } else {
+            this.deletePredicate = this.deletePredicate.and(predicate);
+        }
     }
 }

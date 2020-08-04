@@ -31,12 +31,12 @@ public class ReadEntityQueryContext implements AccessContext {
     private static final Logger log = LoggerFactory.getLogger(ReadEntityQueryContext.class);
 
     protected static class Condition {
-        final String where;
         final String join;
+        final String where;
 
-        public Condition(String where, String join) {
-            this.where = where;
+        public Condition(String join, String where) {
             this.join = join;
+            this.where = where;
         }
     }
 
@@ -51,11 +51,11 @@ public class ReadEntityQueryContext implements AccessContext {
         return entityClass;
     }
 
-    public void addJoinAndWhere(String where, String join) {
+    public void addJoinAndWhere(String join, String where) {
         if (conditions == null) {
             conditions = new ArrayList<>();
         }
-        conditions.add(new Condition(where, join));
+        conditions.add(new Condition(join, where));
     }
 
     public void setQueryParamsProvider(Function<String, Object> queryParamsProvider) {

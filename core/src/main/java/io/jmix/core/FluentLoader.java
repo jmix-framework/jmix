@@ -18,6 +18,7 @@ package io.jmix.core;
 
 import com.google.common.base.Strings;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import org.springframework.beans.factory.BeanFactory;
@@ -49,6 +50,7 @@ public class FluentLoader<E extends JmixEntity> {
     private FetchPlanBuilder fetchPlanBuilder;
     private boolean softDeletion = true;
     private boolean dynamicAttributes;
+    private List<AccessConstraint<?>> accessConstraints;
 
     @Autowired
     private Metadata metadata;
@@ -107,6 +109,7 @@ public class FluentLoader<E extends JmixEntity> {
 
         loadContext.setSoftDeletion(softDeletion);
         loadContext.setLoadDynamicAttributes(dynamicAttributes);
+        loadContext.setAccessConstraints(accessConstraints);
     }
 
     private void createFetchPlanBuilder() {
@@ -229,6 +232,14 @@ public class FluentLoader<E extends JmixEntity> {
      */
     public FluentLoader<E> dynamicAttributes(boolean dynamicAttributes) {
         this.dynamicAttributes = dynamicAttributes;
+        return this;
+    }
+
+    /**
+     * Sets access constraints.
+     */
+    public FluentLoader<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        this.accessConstraints = accessConstraints;
         return this;
     }
 
@@ -389,6 +400,14 @@ public class FluentLoader<E extends JmixEntity> {
             loader.dynamicAttributes = dynamicAttributes;
             return this;
         }
+
+        /**
+         * Sets access constraints.
+         */
+        public ById<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            loader.accessConstraints = accessConstraints;
+            return this;
+        }
     }
 
     public static class ByIds<E extends JmixEntity> {
@@ -539,6 +558,14 @@ public class FluentLoader<E extends JmixEntity> {
          */
         public ByIds<E> dynamicAttributes(boolean dynamicAttributes) {
             loader.dynamicAttributes = dynamicAttributes;
+            return this;
+        }
+
+        /**
+         * Sets access constraints.
+         */
+        public ByIds<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            loader.accessConstraints = accessConstraints;
             return this;
         }
     }
@@ -768,6 +795,14 @@ public class FluentLoader<E extends JmixEntity> {
          */
         public ByQuery<E> cacheable(boolean cacheable) {
             this.cacheable = cacheable;
+            return this;
+        }
+
+        /**
+         * Sets access constraints.
+         */
+        public ByQuery<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            loader.accessConstraints = accessConstraints;
             return this;
         }
     }

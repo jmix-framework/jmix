@@ -25,8 +25,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
 import io.jmix.core.impl.importexport.EntityImportViewJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
+import io.jmix.data.impl.context.CrudEntityContext;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.service.filter.RestFilterParseException;
@@ -74,7 +73,7 @@ public class EntitiesControllerManager {
     protected EntityImportExport entityImportExport;
 
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
 
     @Autowired
     protected BeanValidation beanValidation;
@@ -597,7 +596,8 @@ public class EntitiesControllerManager {
     }
 
     protected void checkCanReadEntity(MetaClass metaClass) {
-        if (!security.isEntityOpPermitted(metaClass, EntityOp.READ)) {
+        CrudEntityContext entityContext = applyEntityConstraints(metaClass);
+        if (!entityContext.isReadPermitted()) {
             throw new RestAPIException("Reading forbidden",
                     String.format("Reading of the %s is forbidden", metaClass.getName()),
                     HttpStatus.FORBIDDEN);
@@ -605,7 +605,8 @@ public class EntitiesControllerManager {
     }
 
     protected void checkCanCreateEntity(MetaClass metaClass) {
-        if (!security.isEntityOpPermitted(metaClass, EntityOp.CREATE)) {
+        CrudEntityContext entityContext = applyEntityConstraints(metaClass);
+        if (!entityContext.isCreatePermitted()) {
             throw new RestAPIException("Creation forbidden",
                     String.format("Creation of the %s is forbidden", metaClass.getName()),
                     HttpStatus.FORBIDDEN);
@@ -613,7 +614,8 @@ public class EntitiesControllerManager {
     }
 
     protected void checkCanDeleteEntity(MetaClass metaClass) {
-        if (!security.isEntityOpPermitted(metaClass, EntityOp.DELETE)) {
+        CrudEntityContext entityContext = applyEntityConstraints(metaClass);
+        if (!entityContext.isDeletePermitted()) {
             throw new RestAPIException("Deletion forbidden",
                     String.format("Deletion of the %s is forbidden", metaClass.getName()),
                     HttpStatus.FORBIDDEN);
@@ -621,11 +623,18 @@ public class EntitiesControllerManager {
     }
 
     protected void checkCanUpdateEntity(MetaClass metaClass) {
-        if (!security.isEntityOpPermitted(metaClass, EntityOp.UPDATE)) {
+        CrudEntityContext entityContext = applyEntityConstraints(metaClass);
+        if (!entityContext.isUpdatePermitted()) {
             throw new RestAPIException("Updating forbidden",
                     String.format("Updating of the %s is forbidden", metaClass.getName()),
                     HttpStatus.FORBIDDEN);
         }
+    }
+
+    protected CrudEntityContext applyEntityConstraints(MetaClass metaClass) {
+        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(new CrudEntityContext(metaClass));
+        return entityContext;
     }
 
     /**

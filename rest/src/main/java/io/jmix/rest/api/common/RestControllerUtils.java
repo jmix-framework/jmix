@@ -18,19 +18,14 @@ package io.jmix.rest.api.common;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
-import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.Security;
 import io.jmix.rest.api.config.RestJsonTransformations;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.Arrays;
 
 /**
  *
@@ -42,7 +37,7 @@ public class RestControllerUtils {
     protected Metadata metadata;
 
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -109,23 +104,16 @@ public class RestControllerUtils {
 
         @Override
         public void visit(JmixEntity entity, MetaProperty property) {
-            MetaClass metaClass = metadata.getClass(entity.getClass());
-            if (!security.isEntityAttrReadPermitted(metaClass, property.getName())) {
-                addInaccessibleAttribute(entity, property.getName());
-                if (!metadataTools.isSystem(property) && !property.isReadOnly()) {
-                    // Using reflective access to field because the attribute can be unfetched if loading not partial entities,
-                    // which is the case when in-memory constraints exist
-                    EntityValues.setValue(entity, property.getName(), null);
-                }
-            }
+            //todo:rest
+//            MetaClass metaClass = metadata.getClass(entity.getClass());
+//            ReadEntityQueryContext = accessManager.applyRegisteredConstraints(new CRUDEntityContext());
+//            if (!security.isEntityAttrReadPermitted(metaClass, property.getName())) {
+//                if (!metadataTools.isSystem(property) && !property.isReadOnly()) {
+//                    // Using reflective access to field because the attribute can be unfetched if loading not partial entities,
+//                    // which is the case when in-memory constraints exist
+//                    EntityValues.setValue(entity, property.getName(), null);
+//                }
+//            }
         }
-    }
-
-    private void addInaccessibleAttribute(JmixEntity entity, String property) {
-        SecurityState securityState = entity.__getEntityEntry().getSecurityState();
-        String[] attributes = securityState.getInaccessibleAttributes();
-        attributes = attributes == null ? new String[1] : Arrays.copyOf(attributes, attributes.length + 1);
-        attributes[attributes.length - 1] = property;
-        securityState.setInaccessibleAttributes(attributes);
     }
 }

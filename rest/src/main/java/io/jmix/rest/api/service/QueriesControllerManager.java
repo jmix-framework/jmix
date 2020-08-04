@@ -25,8 +25,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
+import io.jmix.data.impl.context.CrudEntityContext;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.config.RestQueriesConfiguration;
@@ -60,16 +59,13 @@ public class QueriesControllerManager {
     protected EntitySerialization entitySerializationAPI;
 
     @Autowired
-    protected Security security;
+    protected AccessManager accessManager;
 
     @Autowired
     protected RestControllerUtils restControllerUtils;
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
-
-//    @Autowired
-//    protected PersistenceManagerClient persistenceManagerClient;
 
     @Autowired
     protected RestParseUtils restParseUtils;
@@ -234,7 +230,10 @@ public class QueriesControllerManager {
     }
 
     protected void checkCanReadEntity(MetaClass metaClass) {
-        if (!security.isEntityOpPermitted(metaClass, EntityOp.READ)) {
+        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isReadPermitted()) {
             throw new RestAPIException("Reading forbidden",
                     String.format("Reading of the %s is forbidden", metaClass.getName()),
                     HttpStatus.FORBIDDEN);

@@ -47,4 +47,8 @@ public class InMemoryRoleAssignmentProvider implements RoleAssignmentProvider {
     public void addAssignment(RoleAssignment roleAssignment) {
         assignments.put(roleAssignment.getUserKey(), roleAssignment);
     }
+
+    public void removeAssignments(String userKey) {
+        assignments.removeAll(userKey);
+    }
 }

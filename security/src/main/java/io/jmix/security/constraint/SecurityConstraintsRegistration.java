@@ -33,7 +33,7 @@ public class SecurityConstraintsRegistration {
     @PostConstruct
     public void registerConstraints() {
         accessConstraintsRegistry.register(beanFactory.getBean(CrudEntityConstraint.class));
-        accessConstraintsRegistry.register(beanFactory.getBean(InMemoryCRUDEntityConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(InMemoryCrudEntityConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(ReadEntityQueryConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(LoadValuesConstraint.class));
         accessConstraintsRegistry.register(beanFactory.getBean(ImportEntityConstraint.class));

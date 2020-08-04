@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package authorization
+package datamanager
 
 import io.jmix.core.*
 import io.jmix.core.security.AccessDeniedException
@@ -30,11 +30,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import test_support.SecuritySpecification
 import test_support.annotated_role_builder.TestDataManagerEntityOperationsRole
+import test_support.annotated_role_builder.TestDataManagerReadQueryRole
 import test_support.entity.TestOrder
 
 import javax.sql.DataSource
 
-class DataManagerEntityOperationsTest extends SecuritySpecification {
+class DataManagerReadQueryConstraintTest extends SecuritySpecification {
     @Autowired
     DataManager dataManager
 
@@ -56,8 +57,8 @@ class DataManagerEntityOperationsTest extends SecuritySpecification {
     @Autowired
     DataSource dataSource
 
-    CoreUser user1, user2
-    TestOrder order
+    CoreUser user1
+    TestOrder orderDenied1, orderDenied2, orderAllowed
 
     Authentication systemAuthentication
 
@@ -66,14 +67,19 @@ class DataManagerEntityOperationsTest extends SecuritySpecification {
     def setup() {
         user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
         userRepository.createUser(user1)
+        roleAssignmentProvider.addAssignment(new RoleAssignment(user1.key, TestDataManagerReadQueryRole.NAME))
 
-        user2 = new CoreUser("user2", "{noop}$PASSWORD", "user2")
-        userRepository.createUser(user2)
-        roleAssignmentProvider.addAssignment(new RoleAssignment(user2.key, TestDataManagerEntityOperationsRole.NAME))
+        orderDenied1 = metadata.create(TestOrder)
+        orderDenied1.number = '1'
 
-        order = metadata.create(TestOrder)
-        order.number = '1'
-        dataManager.save(order)
+        orderDenied2 = metadata.create(TestOrder)
+        orderDenied2.number = '2'
+
+        orderAllowed = metadata.create(TestOrder)
+        orderAllowed.number = 'allowed_3'
+
+
+        dataManager.save(orderDenied1, orderDenied2, orderAllowed)
 
         systemAuthentication = SecurityContextHelper.getAuthentication()
     }
@@ -82,12 +88,10 @@ class DataManagerEntityOperationsTest extends SecuritySpecification {
         SecurityContextHelper.setAuthentication(systemAuthentication)
 
         userRepository.removeUser(user1)
-        userRepository.removeUser(user2)
 
-        dataManager.remove(order)
+        roleAssignmentProvider.removeAssignments(user1.key)
 
-        new JdbcTemplate(dataSource)
-                .execute('delete from TEST_ORDER')
+        new JdbcTemplate(dataSource).execute('delete from TEST_ORDER')
     }
 
 
@@ -98,86 +102,34 @@ class DataManagerEntityOperationsTest extends SecuritySpecification {
 
         when:
 
-        def newOrder = dataManager.load(Id.of(order))
-                .one()
+        def result = dataManager.load(TestOrder.class).list()
 
         then:
 
-        newOrder == order
+        result.size() == 3
+
+        result.contains(orderDenied1)
+        result.contains(orderAllowed)
+        result.contains(orderDenied2)
 
     }
 
-    def "load is denied"() {
+    def "load with constraints"() {
         setup:
 
         authenticate('user1')
 
         when:
 
-        def newOrder = dataManager.load(Id.of(order))
+        def result = dataManager.load(TestOrder.class)
                 .accessConstraints(accessConstraintsRegistry.getConstraints())
-                .optional()
-                .orElse(null)
+                .list()
 
         then:
 
-        newOrder == null
-    }
+        result.size() == 1
 
-    def "load is allowed"() {
-        setup:
-
-        authenticate('user2')
-
-        when:
-
-        def newOrder = dataManager.load(Id.of(order))
-                .one()
-
-        then:
-
-        newOrder == order
-    }
-
-    def "save is denied"() {
-        setup:
-
-        authenticate('user1')
-
-        when:
-
-        SaveContext saveContext = new SaveContext()
-        saveContext.saving(metadata.create(TestOrder))
-                .setAccessConstraints(accessConstraintsRegistry.getConstraints())
-
-        dataManager.save(saveContext)
-
-        then:
-
-        thrown(AccessDeniedException)
-
-    }
-
-    def "save is allowed"() {
-        setup:
-
-        authenticate('user2')
-
-        when:
-
-        SaveContext saveContext = new SaveContext()
-        def newOrder = metadata.create(TestOrder)
-        newOrder.number = '2'
-        saveContext.saving(metadata.create(TestOrder))
-                .setAccessConstraints(accessConstraintsRegistry.getConstraints())
-
-        EntitySet saved = dataManager.save(saveContext)
-
-        def savedOrder = saved.iterator().next()
-
-        then:
-
-        savedOrder != null
+        result.contains(orderAllowed)
     }
 
     protected void authenticate(String username) {

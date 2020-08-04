@@ -26,10 +26,10 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(InMemoryCRUDEntityConstraint.NAME)
+@Component(InMemoryCrudEntityConstraint.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class InMemoryCRUDEntityConstraint implements RowLevelConstraint<InMemoryCrudEntityContext> {
-    public static final String NAME = "sec_InMemoryCRUDEntityConstraint";
+public class InMemoryCrudEntityConstraint implements RowLevelConstraint<InMemoryCrudEntityContext> {
+    public static final String NAME = "sec_InMemoryCrudEntityConstraint";
 
     protected ResourcePolicyStore policyStore;
 

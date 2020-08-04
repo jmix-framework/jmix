@@ -23,4 +23,6 @@
             template="/com/haulmont/cuba/gui/backgroundwork/background-work-window.xml"/>
     <screen id="backgroundWorkProgressWindow"
             template="/com/haulmont/cuba/gui/backgroundwork/background-work-progress-window.xml"/>
+    <screen id="fileUploadDialog"
+            template="/com/haulmont/cuba/gui/app/core/file/file-upload-dialog.xml"/>
 </screen-config>

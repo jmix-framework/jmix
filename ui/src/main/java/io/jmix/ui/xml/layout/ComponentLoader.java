@@ -120,6 +120,9 @@ public interface ComponentLoader<T extends Component> {
     LoaderResolver getLoaderResolver();
     void setLoaderResolver(LoaderResolver loaderResolver);
 
+    LoaderHelper getLoaderHelper();
+    void setLoaderHelper(LoaderHelper loaderHelper);
+
     /**
      * @deprecated use {@link #getLoaderResolver()} instead
      */

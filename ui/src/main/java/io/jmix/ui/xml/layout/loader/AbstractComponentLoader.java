@@ -47,6 +47,7 @@ import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
+import io.jmix.ui.xml.layout.LoaderHelper;
 import io.jmix.ui.xml.layout.LoaderResolver;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.lang3.StringUtils;
@@ -60,6 +61,7 @@ import org.springframework.core.env.Environment;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
@@ -93,6 +95,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     @Deprecated
     protected LayoutLoaderConfig layoutLoaderConfig;
     protected LoaderResolver loaderResolver;
+    protected LoaderHelper loaderHelper;
 
     protected Element element;
 
@@ -171,6 +174,16 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     @Override
     public void setLoaderResolver(LoaderResolver loaderResolver) {
         this.loaderResolver = loaderResolver;
+    }
+
+    @Override
+    public LoaderHelper getLoaderHelper() {
+        return loaderHelper;
+    }
+
+    @Override
+    public void setLoaderHelper(LoaderHelper loaderHelper) {
+        this.loaderHelper = loaderHelper;
     }
 
     @Deprecated
@@ -863,8 +876,8 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
                 current = current.getParent();
             }
 
-            if (current instanceof ComponentContainer) {
-                return ((ComponentContainer) current).getComponent(componentId);
+            if (current instanceof HasComponents) {
+                return ((HasComponents) current).getComponent(componentId);
             }
         }
 
@@ -883,5 +896,42 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         if (StringUtils.isNotEmpty(htmlSanitizerEnabled)) {
             component.setHtmlSanitizerEnabled(Boolean.parseBoolean(htmlSanitizerEnabled));
         }
+    }
+
+    protected Optional<String> loadString(Element element, String attributeName) {
+        return getLoaderHelper().loadString(element, attributeName);
+    }
+
+    protected void loadString(Element element, String attributeName, Consumer<String> setter) {
+        loadString(element, attributeName)
+                .ifPresent(setter);
+    }
+
+    protected Optional<Boolean> loadBoolean(Element element, String attributeName) {
+        return getLoaderHelper().loadBoolean(element, attributeName);
+    }
+
+    protected void loadBoolean(Element element, String attributeName, Consumer<Boolean> setter) {
+        loadBoolean(element, attributeName)
+                .ifPresent(setter);
+    }
+
+    protected Optional<Integer> loadInteger(Element element, String attributeName) {
+        return getLoaderHelper().loadInteger(element, attributeName);
+    }
+
+    protected void loadInteger(Element element, String attributeName, Consumer<Integer> setter) {
+        loadInteger(element, attributeName)
+                .ifPresent(setter);
+    }
+
+    protected  <T extends Enum<T>> Optional<T> loadEnum(Element element, Class<T> type, String attributeName) {
+        return getLoaderHelper().loadEnum(element, type, attributeName);
+    }
+
+    protected <T extends Enum<T>> void loadEnum(Element element, Class<T> type, String attributeName,
+                                                Consumer<T> setter) {
+        loadEnum(element, type, attributeName)
+                .ifPresent(setter);
     }
 }

@@ -36,7 +36,7 @@ public abstract class ComponentsHelper {
      * @param container container to start from
      * @return collection of components
      */
-    public static Collection<Component> getComponents(ComponentContainer container) {
+    public static Collection<Component> getComponents(HasComponents container) {
         // do not return LinkedHashSet, it uses much more memory than ArrayList
         Collection<Component> res = new ArrayList<>();
 
@@ -55,13 +55,13 @@ public abstract class ComponentsHelper {
      * @param container container to start from
      * @param visitor   visitor instance
      */
-    public static void traverseComponents(ComponentContainer container, Consumer<Component> visitor) {
+    public static void traverseComponents(HasComponents container, Consumer<Component> visitor) {
         container.getOwnComponentsStream()
                 .forEach(c -> {
                     visitor.accept(c);
 
-                    if (c instanceof ComponentContainer) {
-                        traverseComponents((ComponentContainer) c, visitor);
+                    if (c instanceof HasComponents) {
+                        traverseComponents((HasComponents) c, visitor);
                     }
                 });
     }
@@ -72,7 +72,7 @@ public abstract class ComponentsHelper {
      * @param container container to start from
      * @param visitor   visitor instance
      */
-    public static void traverseValidatable(ComponentContainer container, Consumer<Validatable> visitor) {
+    public static void traverseValidatable(HasComponents container, Consumer<Validatable> visitor) {
         traverseComponents(container, c -> {
             if (c instanceof Validatable && ((Validatable) c).isValidateOnCommit()) {
                 visitor.accept((Validatable) c);
@@ -91,10 +91,10 @@ public abstract class ComponentsHelper {
 //                return window.getTimer(id);
         } else {
             Component innerComponent = frameImpl.getRegisteredComponent(elements[0]);
-            if (innerComponent instanceof ComponentContainer) {
+            if (innerComponent instanceof HasComponents) {
 
                 String subPath = ValuePathHelper.pathSuffix(elements);
-                return ((ComponentContainer) innerComponent).getComponent(subPath);
+                return ((HasComponents) innerComponent).getComponent(subPath);
             } else if (innerComponent instanceof HasNamedComponents) {
 
                 String subPath = ValuePathHelper.pathSuffix(elements);
@@ -117,10 +117,10 @@ public abstract class ComponentsHelper {
             return component;
         } else {
             Component innerComponent = frameImpl.getRegisteredComponent(elements[0]);
-            if (innerComponent instanceof ComponentContainer) {
+            if (innerComponent instanceof HasComponents) {
 
                 String subPath = ValuePathHelper.pathSuffix(elements);
-                return ((ComponentContainer) innerComponent).getComponent(subPath);
+                return ((HasComponents) innerComponent).getComponent(subPath);
             } else if (innerComponent instanceof HasNamedComponents) {
 
                 String subPath = ValuePathHelper.pathSuffix(elements);
@@ -132,7 +132,7 @@ public abstract class ComponentsHelper {
     }
 
     @Nullable
-    public static Component getComponent(ComponentContainer container, String id) {
+    public static Component getComponent(HasComponents container, String id) {
         String[] elements = ValuePathHelper.parse(id);
         if (elements.length == 1) {
             Component component = container.getOwnComponent(id);
@@ -149,9 +149,9 @@ public abstract class ComponentsHelper {
             if (innerComponent == null) {
                 return getComponentByIteration(container, id);
             } else {
-                if (innerComponent instanceof ComponentContainer) {
+                if (innerComponent instanceof HasComponents) {
                     String subPath = ValuePathHelper.pathSuffix(elements);
-                    return ((ComponentContainer) innerComponent).getComponent(subPath);
+                    return ((HasComponents) innerComponent).getComponent(subPath);
                 } else if (innerComponent instanceof HasNamedComponents) {
 
                     String subPath = ValuePathHelper.pathSuffix(elements);
@@ -164,7 +164,7 @@ public abstract class ComponentsHelper {
     }
 
     @Nullable
-    private static Component getComponentByIteration(ComponentContainer container, String id) {
+    private static Component getComponentByIteration(HasComponents container, String id) {
         return getComponentByIterationInternal(container.getOwnComponents(), id);
     }
 
@@ -173,8 +173,8 @@ public abstract class ComponentsHelper {
         for (Component component : components) {
             if (id.equals(component.getId())) {
                 return component;
-            } else if (component instanceof ComponentContainer) {
-                Collection<Component> ownComponents = ((ComponentContainer) component).getOwnComponents();
+            } else if (component instanceof HasComponents) {
+                Collection<Component> ownComponents = ((HasComponents) component).getOwnComponents();
                 Component innerComponent = getComponentByIterationInternal(ownComponents, id);
                 if (innerComponent != null) {
                     return innerComponent;
@@ -190,13 +190,13 @@ public abstract class ComponentsHelper {
         return null;
     }
 
-    private static void fillChildComponents(ComponentContainer container, Collection<Component> components) {
+    private static void fillChildComponents(HasComponents container, Collection<Component> components) {
         Collection<Component> ownComponents = container.getOwnComponents();
         components.addAll(ownComponents);
 
         for (Component component : ownComponents) {
-            if (component instanceof ComponentContainer) {
-                fillChildComponents((ComponentContainer) component, components);
+            if (component instanceof HasComponents) {
+                fillChildComponents((HasComponents) component, components);
             }
         }
     }
@@ -232,18 +232,11 @@ public abstract class ComponentsHelper {
      * @param container container to start from
      * @param visitor   visitor instance
      */
-    public static void walkComponents(
-            ComponentContainer container,
-            ComponentVisitor visitor
-    ) {
+    public static void walkComponents(HasComponents container, ComponentVisitor visitor) {
         __walkComponents(container, visitor, "");
     }
 
-    private static void __walkComponents(
-            ComponentContainer container,
-            ComponentVisitor visitor,
-            String path
-    ) {
+    private static void __walkComponents(HasComponents container, ComponentVisitor visitor, String path) {
         for (Component component : container.getOwnComponents()) {
             String id = component.getId();
             if (id == null && component instanceof ActionOwner
@@ -255,11 +248,11 @@ public abstract class ComponentsHelper {
             }
             visitor.visit(component, path + id);
 
-            if (component instanceof ComponentContainer) {
+            if (component instanceof HasComponents) {
                 String p = component instanceof Frame ?
                         path + id + "." :
                         path;
-                __walkComponents(((ComponentContainer) component), visitor, p);
+                __walkComponents(((HasComponents) component), visitor, p);
             } else if (component instanceof AppWorkArea) {
                 // todo support HasInnerComponents
                 AppWorkArea workArea = (AppWorkArea) component;
@@ -283,20 +276,20 @@ public abstract class ComponentsHelper {
      * @param finder    finder instance
      * @return {@code true} if component has been found, {@code false} otherwise
      */
-    public static boolean walkComponents(ComponentContainer container,
+    public static boolean walkComponents(HasComponents container,
                                          ComponentFinder finder) {
         return __walkComponents(container, finder);
     }
 
-    private static boolean __walkComponents(ComponentContainer container,
+    private static boolean __walkComponents(HasComponents container,
                                             ComponentFinder finder) {
         for (Component component : container.getOwnComponents()) {
             if (finder.visit(component)) {
                 return true;
             }
 
-            if (component instanceof ComponentContainer) {
-                if (__walkComponents(((ComponentContainer) component), finder)) {
+            if (component instanceof HasComponents) {
+                if (__walkComponents(((HasComponents) component), finder)) {
                     return true;
                 }
             }
@@ -588,7 +581,7 @@ public abstract class ComponentsHelper {
     }
 
     @Nullable
-    public static Component.Focusable focusChildComponent(ComponentContainer container) {
+    public static <T extends Component & HasComponents> Component.Focusable focusChildComponent(T container) {
         if (!container.isEnabledRecursive()) {
             return null;
         }
@@ -615,8 +608,8 @@ public abstract class ComponentsHelper {
                         return focusable;
                     }
 
-                    if (component instanceof ComponentContainer) {
-                        Component.Focusable focused = focusChildComponent((ComponentContainer) component);
+                    if (component instanceof HasComponents) {
+                        Component.Focusable focused = focusChildComponent((T) component);
                         if (focused != null) {
                             return focused;
                         }

@@ -16,7 +16,7 @@
 package io.jmix.ui.component;
 
 /**
- * Visitor used in {@link ComponentsHelper#walkComponents(ComponentContainer, ComponentVisitor)}
+ * Visitor used in {@link ComponentsHelper#walkComponents(HasComponents, ComponentVisitor)}
  */
 public interface ComponentVisitor {
 

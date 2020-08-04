@@ -558,8 +558,8 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
                 }
             }
 
-            if (child instanceof ComponentContainer) {
-                Collection<Component> components = ((ComponentContainer) child).getComponents();
+            if (child instanceof HasComponents) {
+                Collection<Component> components = ((HasComponents) child).getComponents();
                 Component.Focusable result = getComponentToFocus(components.iterator());
                 if (result != null) {
                     return result;
@@ -589,8 +589,8 @@ public abstract class WebWindow implements Window, Component.Wrapper, Component.
             if (focusComponent instanceof Focusable) {
                 ((Focusable) focusComponent).focus();
             } else if (focusComponent != null) {
-                if (focusComponent instanceof ComponentContainer) {
-                    ComponentContainer componentContainer = (ComponentContainer) focusComponent;
+                if (focusComponent instanceof HasComponents) {
+                    HasComponents componentContainer = (HasComponents) focusComponent;
                     Component.Focusable focusableComponent = getComponentToFocus(componentContainer.getComponents().iterator());
                     if (focusableComponent != null) {
                         focusableComponent.focus();

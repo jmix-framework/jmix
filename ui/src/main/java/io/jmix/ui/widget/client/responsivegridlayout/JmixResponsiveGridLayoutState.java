@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.component;
 
-/**
- * Visitor used in {@link ComponentsHelper#walkComponents(HasComponents, ComponentFinder)}
- */
-public interface ComponentFinder {
+package io.jmix.ui.widget.client.responsivegridlayout;
 
-    /**
-     * @param component visiting component
-     */
-    boolean visit(Component component);
+import com.vaadin.shared.AbstractComponentState;
+import com.vaadin.shared.Connector;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class JmixResponsiveGridLayoutState extends AbstractComponentState {
+    {
+        primaryStyleName = "jmix-responsivegridlayout";
+    }
+
+    public String configuration = "";
+
+    public Map<Connector, String> childLocations = new HashMap<>();
 }

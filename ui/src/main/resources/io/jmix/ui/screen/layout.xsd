@@ -463,6 +463,72 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="responsiveGridContainerType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FIXED"/>
+            <xs:enumeration value="FLUID"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="responsiveGridRowAlignItems">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="BASELINE"/>
+            <xs:enumeration value="STRETCH"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="responsiveGridRowJustifyContent">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="AROUND"/>
+            <xs:enumeration value="BETWEEN"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="responsiveGridColumnAlignSelf">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AUTO"/>
+            <xs:enumeration value="START"/>
+            <xs:enumeration value="CENTER"/>
+            <xs:enumeration value="END"/>
+            <xs:enumeration value="BASELINE"/>
+            <xs:enumeration value="STRETCH"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="responsiveGridColumnColumnsValue">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:integer"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="DEFAULT"/>
+                    <xs:enumeration value="AUTO"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="responsiveGridColumnOrderValue">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:integer"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="FIRST"/>
+                    <xs:enumeration value="LAST"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <!-- Style names -->
 
     <xs:simpleType name="labelStylename">
@@ -1389,7 +1455,9 @@
             </xs:extension>
         </xs:complexContent>
 
-    </xs:complexType><xs:complexType name="decimalMaxMinValidatorType">
+    </xs:complexType>
+
+    <xs:complexType name="decimalMaxMinValidatorType">
         <xs:complexContent>
             <xs:extension base="messageValidatorType">
                 <xs:attribute name="value" type="xs:string" use="required"/>
@@ -1539,6 +1607,62 @@
         <xs:attribute name="path" type="xs:string" use="required"/>
         <xs:attribute name="type" type="dependencyType"/>
     </xs:complexType>
+
+    <xs:attributeGroup name="responsiveGridColumnColumnsValueGroup">
+        <xs:attribute name="xs" type="responsiveGridColumnColumnsValue"/>
+        <xs:attribute name="sm" type="responsiveGridColumnColumnsValue"/>
+        <xs:attribute name="md" type="responsiveGridColumnColumnsValue"/>
+        <xs:attribute name="lg" type="responsiveGridColumnColumnsValue"/>
+        <xs:attribute name="xl" type="responsiveGridColumnColumnsValue"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="responsiveGridColumnAlignGroup">
+        <xs:attribute name="alignSelf" type="responsiveGridColumnAlignSelf"/>
+        <xs:attribute name="alignSelfSm" type="responsiveGridColumnAlignSelf"/>
+        <xs:attribute name="alignSelfMd" type="responsiveGridColumnAlignSelf"/>
+        <xs:attribute name="alignSelfLg" type="responsiveGridColumnAlignSelf"/>
+        <xs:attribute name="alignSelfXl" type="responsiveGridColumnAlignSelf"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="responsiveGridColumnOrderValue">
+        <xs:attribute name="order" type="responsiveGridColumnOrderValue"/>
+        <xs:attribute name="orderSm" type="responsiveGridColumnOrderValue"/>
+        <xs:attribute name="orderMd" type="responsiveGridColumnOrderValue"/>
+        <xs:attribute name="orderLg" type="responsiveGridColumnOrderValue"/>
+        <xs:attribute name="orderXl" type="responsiveGridColumnOrderValue"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="responsiveGridColumnOffsetGroup">
+        <xs:attribute name="offset" type="xs:integer"/>
+        <xs:attribute name="offsetSm" type="xs:integer"/>
+        <xs:attribute name="offsetMd" type="xs:integer"/>
+        <xs:attribute name="offsetLg" type="xs:integer"/>
+        <xs:attribute name="offsetXl" type="xs:integer"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="responsiveGridRowColumnsGroup">
+        <xs:attribute name="cols" type="xs:integer"/>
+        <xs:attribute name="colsSm" type="xs:integer"/>
+        <xs:attribute name="colsMd" type="xs:integer"/>
+        <xs:attribute name="colsLg" type="xs:integer"/>
+        <xs:attribute name="colsXl" type="xs:integer"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="responsiveGridRowAlignItemsGroup">
+        <xs:attribute name="alignItems" type="responsiveGridRowAlignItems"/>
+        <xs:attribute name="alignItemsSm" type="responsiveGridRowAlignItems"/>
+        <xs:attribute name="alignItemsMd" type="responsiveGridRowAlignItems"/>
+        <xs:attribute name="alignItemsLg" type="responsiveGridRowAlignItems"/>
+        <xs:attribute name="alignItemsXl" type="responsiveGridRowAlignItems"/>
+    </xs:attributeGroup>
+
+    <xs:attributeGroup name="responsiveGridRowJustifyContentGroup">
+        <xs:attribute name="justifyContent" type="responsiveGridRowJustifyContent"/>
+        <xs:attribute name="justifyContentSm" type="responsiveGridRowJustifyContent"/>
+        <xs:attribute name="justifyContentMd" type="responsiveGridRowJustifyContent"/>
+        <xs:attribute name="justifyContentLg" type="responsiveGridRowJustifyContent"/>
+        <xs:attribute name="justifyContentXl" type="responsiveGridRowJustifyContent"/>
+    </xs:attributeGroup>
 
     <!-- Components -->
 
@@ -2966,6 +3090,67 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="baseResponsiveGridElement">
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="stylename" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- ResponsiveGridLayout.Column -->
+    <xs:complexType name="responsiveGridColumn">
+        <xs:complexContent>
+            <xs:extension base="baseResponsiveGridElement">
+                <xs:group ref="layoutOrComponent"/>
+
+                <xs:attributeGroup ref="responsiveGridColumnColumnsValueGroup"/>
+                <xs:attributeGroup ref="responsiveGridColumnAlignGroup"/>
+                <xs:attributeGroup ref="responsiveGridColumnOrderValue"/>
+                <xs:attributeGroup ref="responsiveGridColumnOffsetGroup"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ResponsiveGridLayout.Row -->
+    <xs:complexType name="responsiveGridRow">
+        <xs:complexContent>
+            <xs:extension base="baseResponsiveGridElement">
+                <xs:sequence>
+                    <xs:element name="col" type="responsiveGridColumn" maxOccurs="unbounded"/>
+                </xs:sequence>
+
+                <xs:attribute name="guttersEnabled" type="xs:boolean"/>
+                <xs:attribute name="height" type="componentSize"/>
+
+                <xs:attributeGroup ref="responsiveGridRowColumnsGroup"/>
+                <xs:attributeGroup ref="responsiveGridRowAlignItemsGroup"/>
+                <xs:attributeGroup ref="responsiveGridRowJustifyContentGroup"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ResponsiveGridLayout -->
+    <xs:complexType name="responsiveGridLayout">
+
+        <xs:sequence>
+            <xs:element name="row" type="responsiveGridRow" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <xs:attributeGroup ref="hasId"/>
+
+        <xs:attributeGroup ref="hasVisibility"/>
+        <xs:attributeGroup ref="hasEnableProp"/>
+
+        <xs:attributeGroup ref="hasAlign"/>
+
+        <xs:attributeGroup ref="hasStyle"/>
+        <xs:attributeGroup ref="hasCss"/>
+
+        <xs:attributeGroup ref="hasHtmlSanitizer"/>
+
+        <xs:attribute name="height" type="componentSize"/>
+
+        <xs:attribute name="containerType" type="responsiveGridContainerType"/>
+    </xs:complexType>
+
     <!-- ScrollBoxLayout -->
     <xs:complexType name="scrollBoxLayout">
         <xs:complexContent>
@@ -3679,6 +3864,8 @@
                 <xs:element name="split" type="splitContainer"/>
                 <xs:element name="tabSheet" type="tabsheetContainer"/>
                 <xs:element name="accordion" type="accordionContainer"/>
+
+                <xs:element name="responsiveGridLayout" type="responsiveGridLayout"/>
 
                 <xs:element name="fragment" type="fragmentContainer"/>
                 <!-- frame is here for compatibility with the previous versions -->

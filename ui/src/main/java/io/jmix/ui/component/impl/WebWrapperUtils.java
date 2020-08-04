@@ -33,6 +33,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.ComboBox.FilterMode;
 import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.DataGrid.DataGridStaticCellType;
+import io.jmix.ui.widget.JmixResponsiveGridLayout.*;
 import io.jmix.ui.widget.client.fieldgrouplayout.CaptionAlignment;
 import io.jmix.ui.widget.client.popupview.PopupPosition;
 import io.jmix.ui.widget.client.resizabletextarea.ResizeDirection;
@@ -729,5 +730,267 @@ public final class WebWrapperUtils {
         }
 
         throw new IllegalArgumentException("Can't be converted to TimeField.TimeMode: " + timeMode.name());
+    }
+
+    public static ContainerType toVaadinContainerType(ResponsiveGridLayout.ContainerType containerType) {
+        checkNotNullArgument(containerType);
+
+        switch (containerType) {
+            case FIXED:
+                return ContainerType.FIXED;
+            case FLUID:
+                return ContainerType.FLUID;
+            default:
+                throw new IllegalArgumentException("Can't be converted to ContainerType: " + containerType);
+        }
+    }
+
+    public static ResponsiveGridLayout.ContainerType fromVaadinContainerType(ContainerType containerType) {
+        checkNotNullArgument(containerType);
+
+        switch (containerType) {
+            case FIXED:
+                return ResponsiveGridLayout.ContainerType.FIXED;
+            case FLUID:
+                return ResponsiveGridLayout.ContainerType.FLUID;
+            default:
+                throw new IllegalArgumentException("Can't be converted to ContainerType: " + containerType);
+        }
+    }
+
+    public static Breakpoint toVaadinBreakpoint(ResponsiveGridLayout.Breakpoint breakpoint) {
+        checkNotNullArgument(breakpoint);
+
+        switch (breakpoint) {
+            case XS:
+                return Breakpoint.XS;
+            case SM:
+                return Breakpoint.SM;
+            case MD:
+                return Breakpoint.MD;
+            case LG:
+                return Breakpoint.LG;
+            case XL:
+                return Breakpoint.XL;
+            default:
+                throw new IllegalArgumentException("Can't be converted to Breakpoint: " + breakpoint);
+        }
+    }
+
+    public static ResponsiveGridLayout.Breakpoint fromVaadinBreakpoint(Breakpoint breakpoint) {
+        checkNotNullArgument(breakpoint);
+
+        switch (breakpoint) {
+            case XS:
+                return ResponsiveGridLayout.Breakpoint.XS;
+            case SM:
+                return ResponsiveGridLayout.Breakpoint.SM;
+            case MD:
+                return ResponsiveGridLayout.Breakpoint.MD;
+            case LG:
+                return ResponsiveGridLayout.Breakpoint.LG;
+            case XL:
+                return ResponsiveGridLayout.Breakpoint.XL;
+            default:
+                throw new IllegalArgumentException("Can't be converted to Breakpoint: " + breakpoint);
+        }
+    }
+
+    public static AlignItems toVaadinAlignItems(ResponsiveGridLayout.AlignItems alignItems) {
+        checkNotNullArgument(alignItems);
+
+        switch (alignItems) {
+            case START:
+                return AlignItems.START;
+            case CENTER:
+                return AlignItems.CENTER;
+            case END:
+                return AlignItems.END;
+            case BASELINE:
+                return AlignItems.BASELINE;
+            case STRETCH:
+                return AlignItems.STRETCH;
+            default:
+                throw new IllegalArgumentException("Can't be converted to AlignItems: " + alignItems);
+        }
+    }
+
+    public static ResponsiveGridLayout.AlignItems fromVaadinAlignItems(AlignItems alignItems) {
+        checkNotNullArgument(alignItems);
+
+        switch (alignItems) {
+            case START:
+                return ResponsiveGridLayout.AlignItems.START;
+            case CENTER:
+                return ResponsiveGridLayout.AlignItems.CENTER;
+            case END:
+                return ResponsiveGridLayout.AlignItems.END;
+            case BASELINE:
+                return ResponsiveGridLayout.AlignItems.BASELINE;
+            case STRETCH:
+                return ResponsiveGridLayout.AlignItems.STRETCH;
+            default:
+                throw new IllegalArgumentException("Can't be converted to AlignItems: " + alignItems);
+        }
+    }
+
+    public static JustifyContent toVaadinJustifyContent(ResponsiveGridLayout.JustifyContent justifyContent) {
+        checkNotNullArgument(justifyContent);
+
+        switch (justifyContent) {
+            case START:
+                return JustifyContent.START;
+            case CENTER:
+                return JustifyContent.CENTER;
+            case END:
+                return JustifyContent.END;
+            case AROUND:
+                return JustifyContent.AROUND;
+            case BETWEEN:
+                return JustifyContent.BETWEEN;
+            default:
+               throw new IllegalArgumentException("Can't be converted to JustifyContent: " + justifyContent);
+        }
+    }
+
+    public static ResponsiveGridLayout.JustifyContent fromVaadinJustifyContent(JustifyContent justifyContent) {
+        checkNotNullArgument(justifyContent);
+
+        switch (justifyContent) {
+            case START:
+                return ResponsiveGridLayout.JustifyContent.START;
+            case CENTER:
+                return ResponsiveGridLayout.JustifyContent.CENTER;
+            case END:
+                return ResponsiveGridLayout.JustifyContent.END;
+            case AROUND:
+                return ResponsiveGridLayout.JustifyContent.AROUND;
+            case BETWEEN:
+                return ResponsiveGridLayout.JustifyContent.BETWEEN;
+            default:
+                throw new IllegalArgumentException("Can't be converted to JustifyContent: " + justifyContent);
+        }
+    }
+
+    public static RowColumnsValue toVaadinRowColumnsValue(ResponsiveGridLayout.RowColumnsValue columnsValue) {
+        checkNotNullArgument(columnsValue);
+
+        return RowColumnsValue.columns(columnsValue.getColumns());
+    }
+
+    public static ResponsiveGridLayout.RowColumnsValue fromVaadinRowColumnsValue(RowColumnsValue columnsValue) {
+        checkNotNullArgument(columnsValue);
+
+        return ResponsiveGridLayout.RowColumnsValue.columns(columnsValue.getColumns());
+    }
+
+    public static AlignSelf toVaadinResponsiveColumnAlignSelf(ResponsiveGridLayout.AlignSelf alignSelf) {
+        checkNotNullArgument(alignSelf);
+
+        switch (alignSelf) {
+            case START:
+                return AlignSelf.START;
+            case CENTER:
+                return AlignSelf.CENTER;
+            case END:
+                return AlignSelf.END;
+            case BASELINE:
+                return AlignSelf.BASELINE;
+            case STRETCH:
+                return AlignSelf.STRETCH;
+            default:
+                throw new IllegalArgumentException("Can't be converted to AlignSelf: " + alignSelf);
+        }
+    }
+
+    public static ResponsiveGridLayout.AlignSelf fromVaadinResponsiveColumnAlignSelf(AlignSelf alignSelf) {
+        checkNotNullArgument(alignSelf);
+
+        switch (alignSelf) {
+            case START:
+                return ResponsiveGridLayout.AlignSelf.START;
+            case CENTER:
+                return ResponsiveGridLayout.AlignSelf.CENTER;
+            case END:
+                return ResponsiveGridLayout.AlignSelf.END;
+            case BASELINE:
+                return ResponsiveGridLayout.AlignSelf.BASELINE;
+            case STRETCH:
+                return ResponsiveGridLayout.AlignSelf.STRETCH;
+            default:
+                throw new IllegalArgumentException("Can't be converted to AlignSelf: " + alignSelf);
+        }
+    }
+
+    public static ColumnsValue toVaadinColumnsValue(ResponsiveGridLayout.ColumnsValue columnsValue) {
+        checkNotNullArgument(columnsValue);
+
+        if (ResponsiveGridLayout.ColumnsValue.DEFAULT.equals(columnsValue)) {
+            return ColumnsValue.DEFAULT;
+        }
+
+        if (ResponsiveGridLayout.ColumnsValue.AUTO.equals(columnsValue)) {
+            return ColumnsValue.AUTO;
+        }
+
+        return ColumnsValue.columns(columnsValue.getColumns());
+    }
+
+    public static ResponsiveGridLayout.ColumnsValue fromVaadinColumnsValue(ColumnsValue columnsValue) {
+        checkNotNullArgument(columnsValue);
+
+        if (ColumnsValue.DEFAULT.equals(columnsValue)) {
+            return ResponsiveGridLayout.ColumnsValue.DEFAULT;
+        }
+
+        if (ColumnsValue.AUTO.equals(columnsValue)) {
+            return ResponsiveGridLayout.ColumnsValue.AUTO;
+        }
+
+        return ResponsiveGridLayout.ColumnsValue.columns(columnsValue.getColumns());
+    }
+
+    public static OrderValue toVaadinOrderValue(ResponsiveGridLayout.OrderValue orderValue) {
+        checkNotNullArgument(orderValue);
+
+        if (ResponsiveGridLayout.OrderValue.FIRST.equals(orderValue)) {
+            return OrderValue.FIRST;
+        }
+
+        if (ResponsiveGridLayout.OrderValue.LAST.equals(orderValue)) {
+            return OrderValue.LAST;
+        }
+
+        return orderValue.getOrder() != null
+                ? new OrderValue(orderValue.getOrder())
+                : new OrderValue(orderValue.getValue());
+    }
+
+    public static ResponsiveGridLayout.OrderValue fromVaadinOrderValue(OrderValue orderValue) {
+        checkNotNullArgument(orderValue);
+
+        if (OrderValue.FIRST.equals(orderValue)) {
+            return ResponsiveGridLayout.OrderValue.FIRST;
+        }
+
+        if (OrderValue.LAST.equals(orderValue)) {
+            return ResponsiveGridLayout.OrderValue.LAST;
+        }
+
+        return orderValue.getOrder() != null
+                ? new ResponsiveGridLayout.OrderValue(orderValue.getOrder())
+                : new ResponsiveGridLayout.OrderValue(orderValue.getValue());
+    }
+
+    public static OffsetValue toVaadinOffsetValue(ResponsiveGridLayout.OffsetValue offsetValue) {
+        checkNotNullArgument(offsetValue);
+
+        return OffsetValue.columns(offsetValue.getColumns());
+    }
+
+    public static ResponsiveGridLayout.OffsetValue fromVaadinOffsetValue(OffsetValue offsetValue) {
+        checkNotNullArgument(offsetValue);
+
+        return ResponsiveGridLayout.OffsetValue.columns(offsetValue.getColumns());
     }
 }

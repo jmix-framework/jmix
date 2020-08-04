@@ -16,14 +16,10 @@
 
 package io.jmix.ui.component;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.stream.Stream;
-
 /**
  * Component which can contain other components.
  */
-public interface ComponentContainer extends Component {
+public interface ComponentContainer extends Component, HasComponents {
     /**
      * Adds a component to this container.
      *
@@ -64,53 +60,4 @@ public interface ComponentContainer extends Component {
      * Removes all components from this container.
      */
     void removeAll();
-
-    /**
-     * Get component directly owned by this container.
-     * @return component or null if not found
-     */
-    @Nullable
-    Component getOwnComponent(String id);
-
-    /**
-     * Get component belonging to the whole components tree below this container.
-     * @return component or null if not found
-     */
-    @Nullable
-    Component getComponent(String id);
-
-    /**
-     * Get component belonging to the whole components tree below this container.
-     *
-     * @return component. Throws exception if not found.
-     */
-    default Component getComponentNN(String id) {
-        Component component = getComponent(id);
-        if (component == null) {
-            throw new IllegalArgumentException(String.format("Not found component with id '%s'", id));
-        }
-        return component;
-    }
-
-    /** Get all components directly owned by this container */
-    Collection<Component> getOwnComponents();
-
-    /** Get stream of components directly owned by this container */
-    Stream<Component> getOwnComponentsStream();
-
-    /** Get all components belonging to the whole components tree below this container */
-    Collection<Component> getComponents();
-
-    /**
-     * Focuses the first {@link Focusable} component, if present.
-     */
-    default void focusFirstComponent() {
-        ComponentsHelper.walkComponents(this, component -> {
-            if (component instanceof Focusable) {
-                ((Focusable) component).focus();
-                return true;
-            }
-            return false;
-        });
-    }
 }

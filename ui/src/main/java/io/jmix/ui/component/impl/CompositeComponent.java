@@ -113,10 +113,10 @@ public class CompositeComponent<T extends Component>
      */
     @SuppressWarnings("unchecked")
     protected <C> Optional<C> getInnerComponentOptional(String id) {
-        Preconditions.checkState(getComposition() instanceof ComponentContainer,
+        Preconditions.checkState(getComposition() instanceof HasComponents,
                 "Composition can't contain inner components");
 
-        return (Optional<C>) Optional.ofNullable(((ComponentContainer) getComposition()).getComponent(id));
+        return (Optional<C>) Optional.ofNullable(((HasComponents) getComposition()).getComponent(id));
     }
 
     /**

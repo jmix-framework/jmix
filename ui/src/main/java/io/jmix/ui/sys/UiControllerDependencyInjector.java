@@ -411,8 +411,8 @@ public class UiControllerDependencyInjector {
                     }
                 }
 
-                if (component instanceof ComponentContainer) {
-                    Component childComponent = ((ComponentContainer) component).getComponent(id);
+                if (component instanceof HasComponents) {
+                    Component childComponent = ((HasComponents) component).getComponent(id);
                     if (childComponent != null) {
                         return childComponent;
                     }

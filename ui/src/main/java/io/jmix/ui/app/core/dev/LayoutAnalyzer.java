@@ -141,10 +141,10 @@ public class LayoutAnalyzer {
 
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
-            if (c instanceof ComponentContainer) {
+            if (c instanceof HasComponents) {
                 List<LayoutTip> tips = null;
 
-                ComponentContainer container = (ComponentContainer) c;
+                HasComponents container = (HasComponents) c;
                 if (c.getWidth() < 0) {
                     for (Component component : container.getOwnComponents()) {
                         if (component.getWidthSizeUnit() == SizeUnit.PERCENTAGE && component.getWidth() > 0) {
@@ -183,11 +183,11 @@ public class LayoutAnalyzer {
 
         @Override
         public List<LayoutTip> analyze(Component c, String path) {
-            if (c instanceof ComponentContainer) {
+            if (c instanceof HasComponents) {
                 if (c.getWidth() < 0 && c.getHeight() < 0) {
                     List<LayoutTip> tips = null;
 
-                    ComponentContainer container = (ComponentContainer) c;
+                    HasComponents container = (HasComponents) c;
                     for (Component component : container.getOwnComponents()) {
                         if (tips == null) {
                             tips = new ArrayList<>();
@@ -219,7 +219,7 @@ public class LayoutAnalyzer {
             if (c instanceof Window && c.getHeight() < 0) {
                 List<LayoutTip> tips = null;
 
-                ComponentContainer container = (ComponentContainer) c;
+                HasComponents container = (HasComponents) c;
                 for (Component component : container.getOwnComponents()) {
                     if (tips == null) {
                         tips = new ArrayList<>();
@@ -245,7 +245,7 @@ public class LayoutAnalyzer {
             if (c instanceof Window && c.getWidth() < 0) {
                 List<LayoutTip> tips = null;
 
-                ComponentContainer container = (ComponentContainer) c;
+                HasComponents container = (HasComponents) c;
                 for (Component component : container.getOwnComponents()) {
                     if (tips == null) {
                         tips = new ArrayList<>();

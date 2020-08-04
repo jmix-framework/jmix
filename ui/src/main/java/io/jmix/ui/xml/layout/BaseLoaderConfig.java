@@ -47,6 +47,7 @@ public abstract class BaseLoaderConfig {
         loaders.put(HtmlBoxLayout.NAME, HtmlBoxLayoutLoader.class);
         loaders.put(FlowBoxLayout.NAME, FlowBoxLayoutLoader.class);
         loaders.put(CssLayout.NAME, CssLayoutLoader.class);
+        loaders.put(ResponsiveGridLayout.NAME, ResponsiveGridLayoutLoader.class);
 
         loaders.put(Button.NAME, ButtonLoader.class);
         loaders.put(LinkButton.NAME, LinkButtonLoader.class);

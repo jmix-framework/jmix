@@ -313,7 +313,18 @@ public class JmixCaptionWidget extends VCaption implements ClickHandler {
     protected int getInsertPosition(InsertPosition element) {
         int pos = super.getInsertPosition(element);
 
-        if (contextHelpIndicatorElement != null) {
+        // All previous cases are handled, so we don't need to increment 'pos'.
+        // Currently 'null' is the Context Help element.
+        if (element != null
+                && !InsertPosition.ERROR.equals(element)) {
+            return pos;
+        }
+
+        if (InsertPosition.ERROR.equals(element)) {
+            return pos;
+        }
+
+        if (errorIndicatorElement != null) {
             pos++;
         }
 
@@ -326,6 +337,10 @@ public class JmixCaptionWidget extends VCaption implements ClickHandler {
 
     public void setCaptionHolder(CaptionHolder captionHolder) {
         this.captionHolder = captionHolder;
+    }
+
+    public boolean isCaptionPlacedAfterComponentByDefault() {
+        return captionPlacedAfterComponentByDefault;
     }
 
     public void setCaptionPlacedAfterComponentByDefault(boolean captionPlacedAfterComponentByDefault) {

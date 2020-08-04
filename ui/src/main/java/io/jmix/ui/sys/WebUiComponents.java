@@ -69,6 +69,7 @@ public class WebUiComponents implements UiComponents {
         classes.put(HtmlBoxLayout.NAME, WebHtmlBoxLayout.class);
         classes.put(FlowBoxLayout.NAME, WebFlowBoxLayout.class);
         classes.put(CssLayout.NAME, WebCssLayout.class);
+        classes.put(ResponsiveGridLayout.NAME, WebResponsiveGridLayout.class);
 
         classes.put(Button.NAME, WebButton.class);
         classes.put(LinkButton.NAME, WebLinkButton.class);

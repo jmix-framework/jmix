@@ -19,10 +19,10 @@ package io.jmix.ui.component.impl;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HasComponents;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.*;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.*;
 import io.jmix.ui.widget.JmixGroupBox;
 import io.jmix.ui.widget.JmixHorizontalActionsLayout;
@@ -255,8 +255,8 @@ public class WebComponentsHelper {
             return new ShortcutTriggeredEvent(source, source);
         }
 
-        if (source instanceof ComponentContainer) {
-            ComponentContainer container = (ComponentContainer) source;
+        if (source instanceof io.jmix.ui.component.HasComponents) {
+            io.jmix.ui.component.HasComponents container = (io.jmix.ui.component.HasComponents) source;
             io.jmix.ui.component.Component childComponent =
                     findChildComponent(container, target);
             return new ShortcutTriggeredEvent(source, childComponent);
@@ -280,9 +280,9 @@ public class WebComponentsHelper {
     }
 
     @Nullable
-    protected static io.jmix.ui.component.Component findChildComponent(ComponentContainer container,
+    protected static io.jmix.ui.component.Component findChildComponent(io.jmix.ui.component.HasComponents container,
                                                                        Component target) {
-        Component vaadinSource = getVaadinSource(container);
+        Component vaadinSource = getVaadinSource(((io.jmix.ui.component.Component) container));
         Collection<io.jmix.ui.component.Component> components = container.getOwnComponents();
 
         return findChildComponent(components, vaadinSource, target);
@@ -311,8 +311,8 @@ public class WebComponentsHelper {
             if (unwrapped == targetComponent) {
                 io.jmix.ui.component.Component child = null;
 
-                if (component instanceof ComponentContainer) {
-                    child = findChildComponent((ComponentContainer) component, target);
+                if (component instanceof io.jmix.ui.component.HasComponents) {
+                    child = findChildComponent((io.jmix.ui.component.HasComponents) component, target);
                 }
 
 

@@ -36,10 +36,13 @@ dependencies {
     api 'com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20191001.1'
 
     api 'org.webjars:ace-builds'
+    api 'org.webjars:bootstrap'
     api 'org.webjars:diff-match-patch'
     api 'org.webjars:jquery'
     api 'org.webjars:jquery-ui'
     api 'org.webjars.bower:jquery-file-upload'
+
+    implementation 'com.google.code.gson:gson'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

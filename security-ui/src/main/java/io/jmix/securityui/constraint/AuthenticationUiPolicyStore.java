@@ -55,7 +55,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
         return Collections.emptyList();
     }
 
-    protected static class ScreenResourcePolicyByIdIndex implements ResourcePolicyIndex {
+    public static class ScreenResourcePolicyByIdIndex implements ResourcePolicyIndex {
         protected Map<String, List<ResourcePolicy>> policyById;
 
         @Override
@@ -70,7 +70,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
         }
     }
 
-    protected static class MenuResourcePolicyByIdIndex implements ResourcePolicyIndex {
+    public static class MenuResourcePolicyByIdIndex implements ResourcePolicyIndex {
         protected Map<String, List<ResourcePolicy>> policyById;
 
         @Override

@@ -17,6 +17,7 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.*;
@@ -29,7 +30,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
@@ -91,7 +91,7 @@ public class CreateAction extends ListAction
 
     public interface AfterCommitHandler {
         /**
-         * @param entity    new committed entity instance
+         * @param entity new committed entity instance
          */
         void handle(JmixEntity entity);
     }
@@ -106,7 +106,8 @@ public class CreateAction extends ListAction
 
     /**
      * Creates an action with default id, opening the editor screen in THIS tab.
-     * @param target    component containing this action
+     *
+     * @param target component containing this action
      */
     public static CreateAction create(io.jmix.ui.component.ListComponent target) {
         return AppBeans.getPrototype("cuba_CreateAction", target);
@@ -114,8 +115,9 @@ public class CreateAction extends ListAction
 
     /**
      * Creates an action with default id.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
      */
     public static CreateAction create(io.jmix.ui.component.ListComponent target, OpenType openType) {
         return AppBeans.getPrototype("cuba_CreateAction", target, openType);
@@ -123,9 +125,10 @@ public class CreateAction extends ListAction
 
     /**
      * Creates an action with the given id.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
-     * @param id        action name
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
+     * @param id       action name
      */
     public static CreateAction create(io.jmix.ui.component.ListComponent target, OpenType openType, String id) {
         return AppBeans.getPrototype("cuba_CreateAction", target, openType, id);
@@ -133,7 +136,8 @@ public class CreateAction extends ListAction
 
     /**
      * The simplest constructor. The action has default name and opens the editor screen in THIS tab.
-     * @param target    component containing this action
+     *
+     * @param target component containing this action
      */
     public CreateAction(ListComponent target) {
         this(target, OpenType.THIS_TAB, ACTION_ID);
@@ -141,8 +145,9 @@ public class CreateAction extends ListAction
 
     /**
      * Constructor that allows to specify how the editor screen opens. The action has default name.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
      */
     public CreateAction(ListComponent target, OpenType openType) {
         this(target, openType, ACTION_ID);
@@ -150,9 +155,10 @@ public class CreateAction extends ListAction
 
     /**
      * Constructor that allows to specify the action name and how the editor screen opens.
-     * @param target    component containing this action
-     * @param openType  how to open the editor screen
-     * @param id        action name
+     *
+     * @param target   component containing this action
+     * @param openType how to open the editor screen
+     * @param id       action name
      */
     public CreateAction(ListComponent target, OpenType openType, String id) {
         super(id, null);
@@ -347,7 +353,7 @@ public class CreateAction extends ListAction
     }
 
     /**
-     * @return  editor screen open type
+     * @return editor screen open type
      */
     @Override
     public OpenType getOpenType() {
@@ -355,7 +361,7 @@ public class CreateAction extends ListAction
     }
 
     /**
-     * @param openType  editor screen open type
+     * @param openType editor screen open type
      */
     @Override
     public void setOpenType(OpenType openType) {
@@ -363,7 +369,7 @@ public class CreateAction extends ListAction
     }
 
     /**
-     * @return  editor screen identifier
+     * @return editor screen identifier
      */
     public String getWindowId() {
         if (windowId != null) {
@@ -376,14 +382,14 @@ public class CreateAction extends ListAction
     }
 
     /**
-     * @param windowId  editor screen identifier
+     * @param windowId editor screen identifier
      */
     public void setWindowId(String windowId) {
         this.windowId = windowId;
     }
 
     /**
-     * @return  editor screen parameters
+     * @return editor screen parameters
      */
     public Map<String, Object> getWindowParams() {
         return windowParams;
@@ -411,7 +417,7 @@ public class CreateAction extends ListAction
     }
 
     /**
-     * @return  map of initial values for attributes of created entity
+     * @return map of initial values for attributes of created entity
      */
     public Map<String, Object> getInitialValues() {
         return initialValues;
@@ -458,14 +464,16 @@ public class CreateAction extends ListAction
 
     /**
      * Hook invoked after the editor was committed and closed
-     * @param entity    new committed entity instance
+     *
+     * @param entity new committed entity instance
      */
     protected void afterCommit(JmixEntity entity) {
     }
 
     /**
      * Hook invoked always after the editor was closed
-     * @param window    the editor window
+     *
+     * @param window the editor window
      */
     protected void afterWindowClosed(Window window) {
     }

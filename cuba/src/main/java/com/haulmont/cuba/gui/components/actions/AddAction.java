@@ -17,6 +17,7 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -30,7 +31,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityAttrAccess;
-import io.jmix.core.security.Security;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
@@ -84,7 +84,8 @@ public class AddAction extends ListAction
 
     /**
      * Creates an action with default id, opening the lookup screen in THIS tab.
-     * @param target    component containing this action
+     *
+     * @param target component containing this action
      */
     public static AddAction create(io.jmix.ui.component.ListComponent target) {
         return AppBeans.getPrototype("cuba_AddAction", target);
@@ -92,8 +93,9 @@ public class AddAction extends ListAction
 
     /**
      * Creates an action with default id, opening the lookup screen in THIS tab.
-     * @param target    component containing this action
-     * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
+     *
+     * @param target  component containing this action
+     * @param handler lookup handler. If null, an instance of {@link DefaultHandler} will be used.
      */
     public static AddAction create(io.jmix.ui.component.ListComponent target, @Nullable Window.Lookup.Handler handler) {
         return AppBeans.getPrototype("cuba_AddAction", target, handler);
@@ -101,9 +103,10 @@ public class AddAction extends ListAction
 
     /**
      * Creates an action with default id, opening the lookup screen in THIS tab.
-     * @param target    component containing this action
-     * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
-     * @param openType  how to open the editor screen
+     *
+     * @param target   component containing this action
+     * @param handler  lookup handler. If null, an instance of {@link DefaultHandler} will be used.
+     * @param openType how to open the editor screen
      */
     public static AddAction create(io.jmix.ui.component.ListComponent target, @Nullable Window.Lookup.Handler handler,
                                    OpenType openType) {
@@ -112,10 +115,11 @@ public class AddAction extends ListAction
 
     /**
      * Creates an action with the given id.
-     * @param target    component containing this action
-     * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
-     * @param openType  how to open the editor screen
-     * @param id        action's name
+     *
+     * @param target   component containing this action
+     * @param handler  lookup handler. If null, an instance of {@link DefaultHandler} will be used.
+     * @param openType how to open the editor screen
+     * @param id       action's name
      */
     public static AddAction create(io.jmix.ui.component.ListComponent target, @Nullable Window.Lookup.Handler handler,
                                    OpenType openType, String id) {
@@ -127,7 +131,7 @@ public class AddAction extends ListAction
      * Lookup handler can be set by subsequent call to {@link #setHandler(io.jmix.ui.component.Window.Lookup.Handler)}.
      * If it is not set, an instance of {@link DefaultHandler} will be used.
      *
-     * @param target    component containing this action
+     * @param target component containing this action
      */
     public AddAction(ListComponent target) {
         this(target, null, OpenType.THIS_TAB, ACTION_ID);
@@ -135,8 +139,9 @@ public class AddAction extends ListAction
 
     /**
      * The simplest constructor. The action has default name and opens the lookup screen in THIS tab.
-     * @param target    component containing this action
-     * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
+     *
+     * @param target  component containing this action
+     * @param handler lookup handler. If null, an instance of {@link DefaultHandler} will be used.
      */
     public AddAction(ListComponent target, @Nullable Window.Lookup.Handler handler) {
         this(target, handler, OpenType.THIS_TAB, ACTION_ID);
@@ -144,9 +149,10 @@ public class AddAction extends ListAction
 
     /**
      * Constructor that allows to specify how the lookup screen opens. The action has default name.
-     * @param target    component containing this action
-     * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
-     * @param openType  how to open the editor screen
+     *
+     * @param target   component containing this action
+     * @param handler  lookup handler. If null, an instance of {@link DefaultHandler} will be used.
+     * @param openType how to open the editor screen
      */
     public AddAction(ListComponent target, @Nullable Window.Lookup.Handler handler, OpenType openType) {
         this(target, handler, openType, ACTION_ID);
@@ -154,10 +160,11 @@ public class AddAction extends ListAction
 
     /**
      * Constructor that allows to specify the action name and how the lookup screen opens.
-     * @param target    component containing this action
-     * @param handler   lookup handler. If null, an instance of {@link DefaultHandler} will be used.
-     * @param openType  how to open the editor screen
-     * @param id        action's name
+     *
+     * @param target   component containing this action
+     * @param handler  lookup handler. If null, an instance of {@link DefaultHandler} will be used.
+     * @param openType how to open the editor screen
+     * @param id       action's name
      */
     public AddAction(ListComponent target, @Nullable Window.Lookup.Handler handler,
                      OpenType openType, String id) {
@@ -253,7 +260,7 @@ public class AddAction extends ListAction
     }
 
     /**
-     * @return  handler to pass to lookup screen
+     * @return handler to pass to lookup screen
      */
     @Nullable
     public Window.Lookup.Handler getHandler() {
@@ -261,14 +268,14 @@ public class AddAction extends ListAction
     }
 
     /**
-     * @param handler   handler to pass to lookup screen
+     * @param handler handler to pass to lookup screen
      */
     public void setHandler(Window.Lookup.Handler handler) {
         this.handler = handler;
     }
 
     /**
-     * @return  lookup screen open type
+     * @return lookup screen open type
      */
     @Override
     public OpenType getOpenType() {
@@ -276,7 +283,7 @@ public class AddAction extends ListAction
     }
 
     /**
-     * @param openType  lookup screen open type
+     * @param openType lookup screen open type
      */
     @Override
     public void setOpenType(OpenType openType) {
@@ -284,7 +291,7 @@ public class AddAction extends ListAction
     }
 
     /**
-     * @return  lookup screen id
+     * @return lookup screen id
      */
     public String getWindowId() {
         if (windowId != null) {
@@ -298,7 +305,7 @@ public class AddAction extends ListAction
     }
 
     /**
-     * @param windowId  lookup screen id
+     * @param windowId lookup screen id
      */
     public void setWindowId(String windowId) {
         this.windowId = windowId;

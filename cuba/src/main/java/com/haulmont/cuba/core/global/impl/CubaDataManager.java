@@ -276,7 +276,8 @@ public class CubaDataManager implements DataManager {
 
         @Override
         public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-            context.setAuthorizationRequired(true);
+            //TODO: fix API usage with access constraints
+            //context.setAuthorizationRequired(true);
             return dataManager.loadValues(context);
         }
 
@@ -288,7 +289,8 @@ public class CubaDataManager implements DataManager {
 
         @Override
         public EntitySet commit(CommitContext context) {
-            context.setAuthorizationRequired(true);
+            //TODO: fix API usage with access constraints
+            //context.setAuthorizationRequired(true);
             return dataManager.commit(context);
         }
     }

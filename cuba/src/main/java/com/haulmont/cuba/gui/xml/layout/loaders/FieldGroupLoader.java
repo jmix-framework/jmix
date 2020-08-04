@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.FieldGroup.FieldCaptionAlignment;
 import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
@@ -51,14 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -629,8 +623,9 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
         if (fieldGroup.getDatasource() != null) {
             MetaClass metaClass = fieldGroup.getDatasource().getMetaClass();
-            boolean editableByPermission = (getSecurity().isEntityOpPermitted(metaClass, EntityOp.CREATE)
-                    || getSecurity().isEntityOpPermitted(metaClass, EntityOp.UPDATE));
+            Security security = beanLocator.get(Security.class);
+            boolean editableByPermission = (security.isEntityOpPermitted(metaClass, EntityOp.CREATE)
+                    || security.isEntityOpPermitted(metaClass, EntityOp.UPDATE));
             if (!editableByPermission) {
                 fieldGroup.setEditable(false);
                 return;
@@ -673,9 +668,10 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
             MetaClass metaClass = getMetaClass(resultComponent, field);
             MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, field.getProperty());
 
-            if (!getSecurity().isEntityAttrUpdatePermitted(metaClass, propertyPath.toString()) ||
+            Security security = beanLocator.get(Security.class);
+            if (!security.isEntityAttrUpdatePermitted(metaClass, propertyPath.toString()) ||
                     (getMetadataTools().isEmbeddable(metaClass) &&
-                            !getSecurity().isEntityOpPermitted(getParentEntityMetaClass(resultComponent), EntityOp.UPDATE))) {
+                            !security.isEntityOpPermitted(getParentEntityMetaClass(resultComponent), EntityOp.UPDATE))) {
                 field.setEditable(false);
             }
         }
@@ -694,7 +690,8 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
             MetaClass metaClass = getMetaClass(resultComponent, field);
             MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, field.getProperty());
 
-            if (!getSecurity().isEntityAttrReadPermitted(metaClass, propertyPath.toString())) {
+            Security security = beanLocator.get(Security.class);
+            if (!security.isEntityAttrReadPermitted(metaClass, propertyPath.toString())) {
                 field.setVisible(false);
             }
         }

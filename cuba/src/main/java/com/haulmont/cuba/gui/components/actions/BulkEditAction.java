@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.Field;
@@ -24,7 +25,6 @@ import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.core.security.Security;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.WindowConfig;
@@ -73,7 +73,8 @@ public class BulkEditAction extends ItemTrackingAction
 
     /**
      * Creates an action with default id.
-     * @param target    component containing this action
+     *
+     * @param target component containing this action
      */
     public static BulkEditAction create(ListComponent target) {
         return AppBeans.getPrototype("cuba_BulkEditAction", target);
@@ -195,9 +196,9 @@ public class BulkEditAction extends ItemTrackingAction
             ThemeConstants theme = themeManager.getConstants();
 
             openType = openType.copy()
-                .width(theme.get("cuba.gui.BulkEditAction.editorDialog.width"))
-                .height(theme.get("cuba.gui.BulkEditAction.editorDialog.height"))
-                .resizable(true);
+                    .width(theme.get("cuba.gui.BulkEditAction.editorDialog.width"))
+                    .height(theme.get("cuba.gui.BulkEditAction.editorDialog.height"))
+                    .resizable(true);
         }
 
         Map<String, Object> params = ParamsMap.of()

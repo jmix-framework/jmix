@@ -32,12 +32,12 @@ import java.util.stream.Collectors;
  * Class that defines parameters for loading entities from the database via {@link DataManager}.
  * <p>Typical usage:
  * <pre>
-    LoadContext&lt;User&gt; context = LoadContext.create(User.class).setQuery(
-            LoadContext.createQuery("select u from sec$User u where u.login like :login")
-                    .setParameter("login", "a%")
-                    .setMaxResults(10))
-            .setView("user.browse");
-    List&lt;User&gt; users = dataManager.loadList(context);
+ * LoadContext&lt;User&gt; context = LoadContext.create(User.class).setQuery(
+ * LoadContext.createQuery("select u from sec$User u where u.login like :login")
+ * .setParameter("login", "a%")
+ * .setMaxResults(10))
+ * .setView("user.browse");
+ * List&lt;User&gt; users = dataManager.loadList(context);
  * </pre>
  * <p>
  * Instead of using this class directly, consider fluent interface with the entry point in {@link DataManager#load(Class)}.
@@ -51,7 +51,7 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
     /**
      * Factory method to create a LoadContext instance.
      *
-     * @param entityClass   class of the loaded entities
+     * @param entityClass class of the loaded entities
      */
     public static <E extends JmixEntity> LoadContext<E> create(Class<E> entityClass) {
         return new LoadContext<>(entityClass);
@@ -60,7 +60,7 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
     /**
      * Factory method to create a LoadContext.Query instance for passing into {@link #setQuery(Query)} method.
      *
-     * @param queryString   JPQL query string. Only named parameters are supported.
+     * @param queryString JPQL query string. Only named parameters are supported.
      */
     public static LoadContext.Query createQuery(String queryString) {
         return new LoadContext.Query(queryString);
@@ -104,7 +104,7 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
 
     /**
      * @param queryString JPQL query string. Only named parameters are supported.
-     * @return  query definition object
+     * @return query definition object
      */
     @Override
     public Query setQueryString(String queryString) {
@@ -149,6 +149,7 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
 
     /**
      * Allows to execute query on a previous query result.
+     *
      * @return editable list of previous queries
      */
     public List<Query> getPrevQueries() {
@@ -213,9 +214,8 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
         return this;
     }
 
-    @Override
     public LoadContext<E> setAuthorizationRequired(boolean authorizationRequired) {
-        super.setAuthorizationRequired(authorizationRequired);
+        //TODO: fix API usage with access constraints
         return this;
     }
 
@@ -246,7 +246,6 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
             ctx.getHints().putAll(hints);
         }
         ctx.loadDynamicAttributes = loadDynamicAttributes;
-        ctx.authorizationRequired = authorizationRequired;
         ctx.joinTransaction = joinTransaction;
         return ctx;
     }

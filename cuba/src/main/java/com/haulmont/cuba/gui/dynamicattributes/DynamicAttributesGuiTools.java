@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.dynamicattributes;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import io.jmix.core.*;
@@ -26,7 +27,6 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.Security;
 import io.jmix.dynattr.*;
 import io.jmix.dynattr.impl.model.Categorized;
 import io.jmix.dynattr.impl.model.Category;

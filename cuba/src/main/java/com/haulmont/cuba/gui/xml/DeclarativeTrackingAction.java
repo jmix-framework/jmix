@@ -16,10 +16,8 @@
 
 package com.haulmont.cuba.gui.xml;
 
-import io.jmix.core.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.core.security.Security;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ActionsHolder;
@@ -32,13 +30,12 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 
+//TODO: access manager
 public class DeclarativeTrackingAction extends ListAction implements Action.HasTarget, Action.SecuredAction,
         Action.HasSecurityConstraint {
 
     protected Frame frame;
     protected String methodName;
-
-    protected Security security = AppBeans.get(Security.NAME);
 
     protected ConstraintOperationType constraintOperationType;
     protected String constraintCode;
@@ -122,17 +119,20 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
             return false;
         }
 
-        if (constraintOperationType != null) {
-            boolean isPermitted;
-            if (constraintCode != null) {
-                isPermitted = security.isPermitted(singleSelected, constraintCode);
-            } else {
-                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
-            }
-            if (!isPermitted) {
-                return false;
-            }
-        }
+        //TODO: access manager
+
+//
+//        if (constraintOperationType != null) {
+//            boolean isPermitted;
+//            if (constraintCode != null) {
+//                isPermitted = security.isPermitted(singleSelected, constraintCode);
+//            } else {
+//                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
+//            }
+//            if (!isPermitted) {
+//                return false;
+//            }
+//        }
 
         return super.isPermitted();
     }

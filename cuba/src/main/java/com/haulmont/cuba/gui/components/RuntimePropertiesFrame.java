@@ -17,6 +17,11 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.gui.components.validators.DateValidator;
+import com.haulmont.cuba.gui.components.validators.DoubleValidator;
+import com.haulmont.cuba.gui.components.validators.IntegerValidator;
+import com.haulmont.cuba.gui.components.validators.LongValidator;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.RuntimePropsDatasource;
@@ -25,7 +30,6 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.security.Security;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
@@ -37,10 +41,6 @@ import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.SizeWithUnit;
-import com.haulmont.cuba.gui.components.validators.DateValidator;
-import com.haulmont.cuba.gui.components.validators.DoubleValidator;
-import com.haulmont.cuba.gui.components.validators.IntegerValidator;
-import com.haulmont.cuba.gui.components.validators.LongValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

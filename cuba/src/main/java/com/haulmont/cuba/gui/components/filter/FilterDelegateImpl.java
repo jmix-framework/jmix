@@ -50,7 +50,6 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.JpqlCondition;
-import io.jmix.core.security.Security;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.ui.*;
 import io.jmix.ui.action.AbstractAction;

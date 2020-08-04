@@ -36,21 +36,21 @@ public class UiSecurityConstraintsRegistration {
 
     @PostConstruct
     public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
-                UiGlobalPresentationContext.class, "cuba.gui.presentations.global"));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
-                UiShowEntityInfoContext.class, "cuba.gui.showInfo"));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
-                UiShowExceptionDetailsContext.class, "cuba.gui.showExceptionDetails"));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(UiShowScreenConstraint.class));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(UiMenuConstraint.class));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(UiEntityConstraint.class));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(UiEntityAttributeConstraint.class));
+//        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
+//                UiGlobalPresentationContext.class, "cuba.gui.presentations.global"));
+//
+//        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
+//                UiShowEntityInfoContext.class, "cuba.gui.showInfo"));
+//
+//        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
+//                UiShowExceptionDetailsContext.class, "cuba.gui.showExceptionDetails"));
+//
+//        accessConstraintsRegistry.register(beanFactory.getBean(UiShowScreenConstraint.class));
+//
+//        accessConstraintsRegistry.register(beanFactory.getBean(UiMenuConstraint.class));
+//
+//        accessConstraintsRegistry.register(beanFactory.getBean(UiEntityConstraint.class));
+//
+//        accessConstraintsRegistry.register(beanFactory.getBean(UiEntityAttributeConstraint.class));
     }
 }

@@ -70,7 +70,7 @@ public class SecurityTokenManager {
         SecurityState securityState = entity.__getEntityEntry().getSecurityState();
         if (securityState != null) {
             JSONObject jsonObject = new JSONObject();
-            Multimap<String, Object> filtered = securityState.getFilteredData();
+            Multimap<String, Object> filtered = securityState.getErasedData();
             if (filtered != null) {
                 Set<Map.Entry<String, Collection<Object>>> entries = filtered.asMap().entrySet();
                 String[] filteredAttributes = new String[entries.size()];
@@ -208,7 +208,7 @@ public class SecurityTokenManager {
      */
     public void addFiltered(JmixEntity entity, String property, Object id) {
         EntityEntry entityEntry = entity.__getEntityEntry();
-        Multimap<String, Object> filteredData = entityEntry.getSecurityState().getFilteredData();
+        Multimap<String, Object> filteredData = entityEntry.getSecurityState().getErasedData();
         if (filteredData == null) {
             filteredData = ArrayListMultimap.create();
             entityEntry.getSecurityState().setFilteredData(filteredData);
@@ -221,7 +221,7 @@ public class SecurityTokenManager {
      */
     public void addFiltered(JmixEntity entity, String property, Collection ids) {
         EntityEntry entityEntry = entity.__getEntityEntry();
-        Multimap<String, Object> filteredData = entityEntry.getSecurityState().getFilteredData();
+        Multimap<String, Object> filteredData = entityEntry.getSecurityState().getErasedData();
         if (filteredData == null) {
             filteredData = ArrayListMultimap.create();
             entityEntry.getSecurityState().setFilteredData(filteredData);

@@ -20,6 +20,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.security.authentication.SecuredAuthenticationProvider;
+import io.jmix.security.constraint.SecurityConstraintsRegistration;
 import io.jmix.security.role.RoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,5 +89,10 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Bean(name = "sec_PasswordEncoder")
     public PasswordEncoder getPasswordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean(name = SecurityConstraintsRegistration.NAME)
+    public SecurityConstraintsRegistration constraintsRegistration() {
+        return new SecurityConstraintsRegistration();
     }
 }

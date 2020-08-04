@@ -21,6 +21,7 @@ import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.RowLevelPolicy;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 /**
  * An authentication that stores security policies.
@@ -33,4 +34,10 @@ public interface SecuredAuthentication extends CoreAuthentication {
     Collection<ResourcePolicy> getResourcePolicies();
 
     Collection<RowLevelPolicy> getRowLevelPolicies();
+
+    <I extends ResourcePolicyIndex> Collection<ResourcePolicy> getResourcePoliciesByIndex(
+            Class<I> indexClass, Function<I, Collection<ResourcePolicy>> extractor);
+
+    <I extends RowLevelPolicyIndex> Collection<RowLevelPolicy> getRowLevelPoliciesByIndex(
+            Class<I> indexClass, Function<I, Collection<RowLevelPolicy>> extractor);
 }

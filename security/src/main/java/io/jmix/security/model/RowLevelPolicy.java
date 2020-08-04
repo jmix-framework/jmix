@@ -34,7 +34,7 @@ public class RowLevelPolicy {
 
     private RowLevelPolicyAction action;
 
-    private Predicate<? extends JmixEntity> predicate;
+    private Predicate<JmixEntity> predicate;
 
     private String whereClause;
 
@@ -58,11 +58,11 @@ public class RowLevelPolicy {
         this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<? extends JmixEntity> predicate) {
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<JmixEntity> predicate) {
         this(entityName, action, predicate, Collections.emptyMap());
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<? extends JmixEntity> predicate,
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<JmixEntity> predicate,
                           Map<String, String> customProperties) {
         this.entityName = entityName;
         this.action = action;
@@ -89,14 +89,17 @@ public class RowLevelPolicy {
 
     /**
      * Returns a predicate for in-memory row-level policy
+     *
      * @return a predicate
      */
-    public Predicate<? extends JmixEntity> getPredicate() {
+    @Nullable
+    public Predicate<JmixEntity> getPredicate() {
         return predicate;
     }
 
     /**
      * Returns "where" clause for JPQL policy
+     *
      * @return JPQL "where" clause
      */
     public String getWhereClause() {
@@ -105,7 +108,8 @@ public class RowLevelPolicy {
 
     /**
      * Returns "join" clause for JPQL policy
-     * @return JPQL "joine" clause
+     *
+     * @return JPQL "join" clause
      */
     public String getJoinClause() {
         return joinClause;
@@ -113,6 +117,7 @@ public class RowLevelPolicy {
 
     /**
      * Returns row-level policy type. It may be in-memory predicate or JPQL policy
+     *
      * @return row-level policy type
      */
     public RowLevelPolicyType getType() {

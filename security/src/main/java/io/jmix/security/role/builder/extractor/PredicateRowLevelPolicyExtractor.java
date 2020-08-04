@@ -53,9 +53,9 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
             for (RowLevelPolicyAction action : annotation.actions()) {
                 Class<? extends JmixEntity> entityClass = annotation.entityClass();
                 MetaClass metaClass = metadata.getClass(entityClass);
-                Predicate<? extends JmixEntity> predicate;
+                Predicate<JmixEntity> predicate;
                 try {
-                    predicate = (Predicate<? extends JmixEntity>) method.invoke(null);
+                    predicate = (Predicate<JmixEntity>) method.invoke(null);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }

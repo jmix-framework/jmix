@@ -25,14 +25,10 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class SecurityProperties {
 
     String keyForSecurityTokenEncryption;
-    boolean entityAttributePermissionChecking;
 
     public SecurityProperties(
-            @DefaultValue("jmix") String keyForSecurityTokenEncryption,
-            boolean entityAttributePermissionChecking
-    ) {
+            @DefaultValue("jmix") String keyForSecurityTokenEncryption) {
         this.keyForSecurityTokenEncryption = keyForSecurityTokenEncryption;
-        this.entityAttributePermissionChecking = entityAttributePermissionChecking;
     }
 
     /**
@@ -40,9 +36,5 @@ public class SecurityProperties {
      */
     public String getKeyForSecurityTokenEncryption() {
         return keyForSecurityTokenEncryption;
-    }
-
-    public boolean isEntityAttributePermissionChecking() {
-        return entityAttributePermissionChecking;
     }
 }

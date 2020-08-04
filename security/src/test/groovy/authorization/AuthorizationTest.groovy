@@ -90,7 +90,8 @@ class AuthorizationTest extends SecuritySpecification {
 //        then:
 //
 //        session.user == user
-//        session.getConstraints('test_Foo').size() == 1
+//        session.getConstraint
+//@Scope(value = WebApplicationContext.SCOPE_REQUESTs('test_Foo').size() == 1
 //
 //        security.hasConstraints()
 //        security.hasConstraints(metadata.getClass('test_Foo'))

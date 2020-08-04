@@ -1003,8 +1003,10 @@ public class OrmDataStore implements DataStore {
                 return newEntityContext;
             });
 
-            if (entityStates.isNew(entity) && !entityContext.isCreatePermitted()) {
-                throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.CREATE, metaClass.getName());
+            if (entityStates.isNew(entity)) {
+                if (!entityContext.isCreatePermitted()) {
+                    throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.CREATE, metaClass.getName());
+                }
             } else if (!entityContext.isUpdatePermitted()) {
                 throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.UPDATE, metaClass.getName());
             }

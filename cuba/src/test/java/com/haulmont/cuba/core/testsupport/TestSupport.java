@@ -44,12 +44,14 @@ public class TestSupport {
     protected Metadata metadata;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected StandardSerialization standardSerialization;
 
     public <T> T reserialize(Serializable object) throws Exception {
         if (object == null)
             return null;
 
-        return (T) StandardSerialization.deserialize(StandardSerialization.serialize(object));
+        return (T) standardSerialization.deserialize(standardSerialization.serialize(object));
     }
 
     public void deleteRecord(String table, Object... ids) {

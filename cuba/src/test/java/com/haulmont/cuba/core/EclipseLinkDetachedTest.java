@@ -23,6 +23,7 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
+import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,8 @@ public class EclipseLinkDetachedTest {
     private Persistence persistence;
     @Autowired
     private TestSupport testSupport;
+    @Autowired
+    private EntityStates entityStates;
 
     private UUID userId;
     private UUID userRoleId;
@@ -106,14 +109,14 @@ public class EclipseLinkDetachedTest {
         assertEquals("testUser", user.getName());
 
         try {
+            assertFalse(entityStates.isLoaded(user, "group"));
             user.getGroup();
-            fail();
         } catch (Exception ignored) {
         }
 
         try {
+            assertFalse(entityStates.isLoaded(user, "userRoles"));
             user.getUserRoles().size();
-            fail();
         } catch (Exception ignored) {
         }
     }
@@ -139,10 +142,10 @@ public class EclipseLinkDetachedTest {
 
         // exception on getting not loaded references
         try {
+            assertFalse(entityStates.isLoaded(user, "group"));
             assertNotNull(user.getGroup());
-            fail();
+            assertFalse(entityStates.isLoaded(user, "userRoles"));
             assertEquals(1, user.getUserRoles().size());
-            fail();
         } catch (Exception ignored) {
         }
     }
@@ -173,8 +176,8 @@ public class EclipseLinkDetachedTest {
         } catch (IllegalStateException ignored) {
         }
         try {
+            assertFalse(entityStates.isLoaded(user, "group"));
             user.getGroup();
-            fail();
         } catch (IllegalStateException ignored) {
         }
     }
@@ -206,13 +209,13 @@ public class EclipseLinkDetachedTest {
         } catch (Exception ignored) {
         }
         try {
+            assertFalse(entityStates.isLoaded(user, "group"));
             user.getGroup();
-            fail();
         } catch (Exception ignored) {
         }
         try {
+            assertFalse(entityStates.isLoaded(user, "userRoles"));
             user.getUserRoles().size();
-            fail();
         } catch (Exception ignored) {
         }
     }
@@ -244,13 +247,13 @@ public class EclipseLinkDetachedTest {
         } catch (Exception ignored) {
         }
         try {
+            assertFalse(entityStates.isLoaded(user, "group"));
             user.getGroup();
-            fail();
         } catch (Exception ignored) {
         }
         try {
+            assertFalse(entityStates.isLoaded(user, "userRoles"));
             user.getUserRoles().size();
-            fail();
         } catch (Exception ignored) {
         }
 
@@ -273,13 +276,12 @@ public class EclipseLinkDetachedTest {
         assertEquals("testUser", user.getName());
         // exception on getting not loaded references
         try {
+            assertFalse(entityStates.isLoaded(user, "group"));
             user.getGroup();
-            fail();
         } catch (Exception ignored) {
         }
         try {
             user.getUserRoles().size();
-            fail();
         } catch (Exception ignored) {
         }
 

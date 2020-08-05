@@ -16,19 +16,19 @@
 
 package spec.haulmont.cuba.web.datacontext
 
+import com.haulmont.cuba.core.global.CommitContext
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
-
-import com.haulmont.cuba.core.global.CommitContext
 import io.jmix.core.JmixEntity
+import io.jmix.core.impl.StandardSerialization
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext
 import io.jmix.ui.model.InstanceContainer
 import io.jmix.ui.model.InstanceLoader
-import io.jmix.ui.testassist.TestSupport
 import org.eclipse.persistence.jpa.config.DataService
+import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 import sun.reflect.generics.reflectiveObjects.NotImplementedException
@@ -41,6 +41,9 @@ class CompositionTest extends UiScreenSpec {
     private Order order1
     private Product product11, product12
     private OrderLine orderLine11, orderLine12
+
+    @Autowired
+    protected StandardSerialization standardSerialization;
 
     class OrderScreen {
         DataContext dataContext
@@ -144,7 +147,12 @@ class CompositionTest extends UiScreenSpec {
 
     private mockLoad(JmixEntity loadedEntity) {
         TestServiceProxy.mock(DataService, Mock(DataService) {
-            load(_) >> TestSupport.reserialize(loadedEntity)
+            load(_) >> {
+                if (loadedEntity == null) {
+                    return null;
+                }
+                return standardSerialization.deserialize(standardSerialization.serialize(loadedEntity));
+            }
         })
     }
 
@@ -305,8 +313,8 @@ class CompositionTest extends UiScreenSpec {
         committed.upd.size() == 2
         committed.upd.contains(product11)
         committed.upd.contains(orderLine11)
-        committed.upd.find { it == product11}.price == 101
-        committed.upd.find { it == orderLine11}.quantity == 11
+        committed.upd.find { it == product11 }.price == 101
+        committed.upd.find { it == orderLine11 }.quantity == 11
     }
 
     def "one level of composition - repetitive edit"() {
@@ -340,7 +348,7 @@ class CompositionTest extends UiScreenSpec {
         then:
 
         committed.upd.size() == 1
-        committed.upd.find { it == orderLine11}.quantity == 12
+        committed.upd.find { it == orderLine11 }.quantity == 12
     }
 
     def "one level of composition - changed reference"() {

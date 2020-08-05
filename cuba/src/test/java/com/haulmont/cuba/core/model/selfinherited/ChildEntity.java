@@ -39,6 +39,14 @@ public class ChildEntity extends RootEntity {
         return name;
     }
 
+    public List<ChildEntityDetail> getChildDetails() {
+        return childDetails;
+    }
+
+    public void setChildDetails(List<ChildEntityDetail> childDetails) {
+        this.childDetails = childDetails;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

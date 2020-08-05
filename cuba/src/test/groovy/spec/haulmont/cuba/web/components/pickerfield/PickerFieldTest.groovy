@@ -27,6 +27,7 @@ import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import io.jmix.ui.component.Component
 import io.jmix.ui.component.HasValue
+import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.web.UiScreenSpec
 
 import java.util.concurrent.atomic.AtomicInteger
@@ -34,6 +35,8 @@ import java.util.function.Consumer
 
 class PickerFieldTest extends UiScreenSpec {
 
+    @Autowired
+    StandardSerialization standardSerialization
 
     def testNew() {
         when:
@@ -236,7 +239,7 @@ class PickerFieldTest extends UiScreenSpec {
         subscription.remove()
 
         component.setValue(g)
-        Group gCopy = (Group) StandardSerialization.deserialize(StandardSerialization.serialize(g))
+        Group gCopy = (Group) standardSerialization.deserialize(standardSerialization.serialize(g))
 
         Consumer<HasValue.ValueChangeEvent> listener4 = { e ->
             counter.addAndGet(1)

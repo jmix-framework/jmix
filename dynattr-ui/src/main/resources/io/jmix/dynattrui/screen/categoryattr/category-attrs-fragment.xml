@@ -37,7 +37,7 @@
                 <column id="required"/>
                 <column id="defaultValue" caption="msg://categoryAttrsTable.defaultValue"/>
             </columns>
-            <rowsCount/>
+            <pagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn" action="categoryAttrsTable.create"/>

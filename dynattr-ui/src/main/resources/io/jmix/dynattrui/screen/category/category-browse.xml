@@ -63,7 +63,7 @@
                         <column id="entityType"/>
                         <column id="isDefault"/>
                     </columns>
-                    <rowsCount/>
+                    <pagination/>
                     <buttonsPanel id="buttonsPanel"
                                   alwaysVisible="true">
                         <button id="createBtn" action="categoriesTable.create"/>
@@ -84,7 +84,7 @@
                         <column id="required"/>
                         <column id="isCollection"/>
                     </columns>
-                    <rowsCount/>
+                    <pagination/>
                 </groupTable>
             </vbox>
         </split>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.rest'
+archivesBaseName = 'jmix-rest'
 
 dependencies {
-    api platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api project(':modules:core')
-    api project(':modules:data')
+    api 'io.jmix.core:jmix-core'
+    api 'io.jmix.data:jmix-data' // TODO should not depend on data
 
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'
@@ -49,7 +48,7 @@ dependencies {
     implementation 'org.springframework.security.oauth:spring-security-oauth2'
     implementation 'io.swagger:swagger-models'
 
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2' // TODO move to BOM
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
@@ -60,25 +59,4 @@ dependencies {
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-}
-
-jar {
-    archivesBaseName = 'jmix-rest'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-rest'
-            from components.java
-        }
-    }
 }

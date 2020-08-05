@@ -24,13 +24,6 @@ public interface VisibilityChangeNotifier {
 
     Subscription addVisibilityChangeListener(Consumer<VisibilityChangeEvent> listener);
 
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeVisibilityChangeListener(Consumer<VisibilityChangeEvent> listener);
-
     class VisibilityChangeEvent {
         private Component component;
         private boolean visible;

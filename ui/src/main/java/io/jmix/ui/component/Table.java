@@ -19,7 +19,6 @@ import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.columnmanager.ColumnManager;
@@ -49,8 +48,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public interface Table<E extends JmixEntity>
         extends
             ListComponent<E>, Component.Editable, HasButtonsPanel, HasTablePresentations, Component.HasCaption,
-            HasContextHelp, Component.HasIcon, HasRowsCount, LookupComponent<E>, Component.Focusable,
-            RowsCount.RowsCountTarget, HasSubParts, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
+            HasContextHelp, Component.HasIcon, LookupComponent<E>, Component.Focusable, HasSubParts, HasHtmlCaption,
+            HasHtmlDescription, HasHtmlSanitizer, HasTablePagination {
 
     enum ColumnAlignment {
         LEFT,

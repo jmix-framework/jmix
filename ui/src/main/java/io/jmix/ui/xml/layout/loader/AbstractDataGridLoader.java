@@ -146,8 +146,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         loadAggregationPosition(resultComponent, element);
 
         loadButtonsPanel(resultComponent);
-
-        loadRowsCount(resultComponent, element); // must be before datasource setting
+        loadPagination(resultComponent, element);
 
         loadDataGridData();
 
@@ -399,18 +398,20 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         }
     }
 
-    protected void loadRowsCount(DataGrid component, Element element) {
-        Element rowsCountElement = element.element("rowsCount");
-        if (rowsCountElement != null) {
-            RowsCount rowsCount = factory.create(RowsCount.class);
+    @SuppressWarnings("unchecked")
+    protected void loadPagination(DataGrid component, Element element) {
+        Element paginationElement = element.element("pagination");
+        if (paginationElement != null) {
 
-            String autoLoad = rowsCountElement.attributeValue("autoLoad");
-            if (StringUtils.isNotEmpty(autoLoad)) {
-                rowsCount.setAutoLoad(Boolean.parseBoolean(autoLoad));
-            }
+            ComponentLoader<TablePagination> loader = getLayoutLoader()
+                    .getLoader(paginationElement, TablePagination.NAME);
+            loader.createComponent();
+            loader.loadComponent();
 
-            rowsCount.setRowsCountTarget(component);
-            component.setRowsCount(rowsCount);
+            TablePagination pagination = loader.getResultComponent();
+
+            pagination.setTablePaginationTarget(component);
+            component.setPagination(pagination);
         }
     }
 

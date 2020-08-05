@@ -179,8 +179,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected HorizontalLayout topPanel;
 
     protected ButtonsPanel buttonsPanel;
-
-    protected RowsCount rowsCount;
+    protected TablePagination pagination;
 
     protected Map<Table.Column, String> aggregationCells = null;
 
@@ -855,28 +854,28 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
     @Nullable
     @Override
-    public RowsCount getRowsCount() {
-        return rowsCount;
+    public TablePagination getPagination() {
+        return pagination;
     }
 
     @Override
-    public void setRowsCount(@Nullable RowsCount rowsCount) {
-        if (this.rowsCount != null && topPanel != null) {
-            topPanel.removeComponent(this.rowsCount.unwrap(com.vaadin.ui.Component.class));
+    public void setPagination(@Nullable TablePagination pagination) {
+        if (this.pagination != null && topPanel != null) {
+            topPanel.removeComponent(this.pagination.unwrap(com.vaadin.ui.Component.class));
         }
-        this.rowsCount = rowsCount;
-        if (rowsCount != null) {
+        this.pagination = pagination;
+        if (pagination != null) {
             if (topPanel == null) {
                 topPanel = createTopPanel();
                 topPanel.setWidth(100, Sizeable.Unit.PERCENTAGE);
                 componentComposition.addComponentAsFirst(topPanel);
             }
-            rowsCount.setWidthAuto();
-            com.vaadin.ui.Component rc = rowsCount.unwrap(com.vaadin.ui.Component.class);
+            pagination.setWidthAuto();
+            com.vaadin.ui.Component rc = pagination.unwrap(com.vaadin.ui.Component.class);
             topPanel.addComponent(rc);
 
-            if (rowsCount instanceof VisibilityChangeNotifier) {
-                ((VisibilityChangeNotifier) rowsCount).addVisibilityChangeListener(event ->
+            if (pagination instanceof VisibilityChangeNotifier) {
+                ((VisibilityChangeNotifier) pagination).addVisibilityChangeListener(event ->
                         updateCompositionStylesTopPanelVisible()
                 );
             }
@@ -1456,8 +1455,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 }
             }
 
-            if (rowsCount != null) {
-                rowsCount.setRowsCountTarget(this);
+            if (pagination != null) {
+                pagination.setTablePaginationTarget(this);
             }
 
             if (!canBeSorted(tableItems)) {

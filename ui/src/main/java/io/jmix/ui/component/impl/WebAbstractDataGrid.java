@@ -155,7 +155,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected GridComposition componentComposition;
     protected HorizontalLayout topPanel;
     protected ButtonsPanel buttonsPanel;
-    protected RowsCount rowsCount;
+    protected TablePagination pagination;
 
     protected List<Function<? super E, String>> rowStyleProviders;
     protected List<CellStyleProvider<? super E>> cellStyleProviders;
@@ -922,8 +922,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
             initShowInfoAction();
 
-            if (rowsCount != null) {
-                rowsCount.setRowsCountTarget(this);
+            if (pagination != null) {
+                pagination.setTablePaginationTarget(this);
             }
 
             if (!canBeSorted(dataGridItems)) {
@@ -2139,19 +2139,19 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
     @Nullable
     @Override
-    public RowsCount getRowsCount() {
-        return rowsCount;
+    public TablePagination getPagination() {
+        return pagination;
     }
 
     @Override
-    public void setRowsCount(@Nullable RowsCount rowsCount) {
-        if (this.rowsCount != null && topPanel != null) {
-            topPanel.removeComponent(WebComponentsHelper.unwrap(this.rowsCount));
-            this.rowsCount.setParent(null);
+    public void setPagination(@Nullable TablePagination pagination) {
+        if (this.pagination != null && topPanel != null) {
+            topPanel.removeComponent(WebComponentsHelper.unwrap(this.pagination));
+            this.pagination.setParent(null);
         }
-        this.rowsCount = rowsCount;
-        if (rowsCount != null) {
-            if (rowsCount.getParent() != null && rowsCount.getParent() != this) {
+        this.pagination = pagination;
+        if (pagination != null) {
+            if (pagination.getParent() != null && pagination.getParent() != this) {
                 throw new IllegalStateException("Component already has parent");
             }
 
@@ -2160,12 +2160,12 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                 topPanel.setWidth(100, Sizeable.Unit.PERCENTAGE);
                 componentComposition.addComponentAsFirst(topPanel);
             }
-            rowsCount.setWidthAuto();
-            Component rc = WebComponentsHelper.unwrap(rowsCount);
+            pagination.setWidthAuto();
+            Component rc = WebComponentsHelper.unwrap(pagination);
             topPanel.addComponent(rc);
 
-            if (rowsCount instanceof VisibilityChangeNotifier) {
-                ((VisibilityChangeNotifier) rowsCount).addVisibilityChangeListener(event ->
+            if (pagination instanceof VisibilityChangeNotifier) {
+                ((VisibilityChangeNotifier) pagination).addVisibilityChangeListener(event ->
                         updateCompositionStylesTopPanelVisible()
                 );
             }

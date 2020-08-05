@@ -344,6 +344,13 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="paginationContentAlignment">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LEFT"/>
+            <xs:enumeration value="RIGHT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:simpleType name="maskedFieldValueMode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="masked"/>
@@ -2502,6 +2509,33 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- Pagination -->
+    <xs:complexType name="paginationComponent">
+        <xs:complexContent>
+            <xs:extension base="tablePaginationComponent">
+                <xs:attributeGroup ref="hasId"/>
+                <xs:attributeGroup ref="hasSize"/>
+                <xs:attributeGroup ref="hasStyle"/>
+                <xs:attributeGroup ref="hasVisibility"/>
+                <xs:attributeGroup ref="hasAlign"/>
+                <xs:attributeGroup ref="hasCss"/>
+
+                <xs:attribute name="contentAlignment" type="paginationContentAlignment"/>
+
+                <xs:attribute name="dataLoader" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- TablePagination -->
+    <xs:complexType name="tablePaginationComponent">
+        <xs:attribute name="maxResultValues" type="xs:string"/>
+        <xs:attribute name="showMaxResults" type="xs:boolean"/>
+        <xs:attribute name="showNullMaxResult" type="xs:boolean"/>
+
+        <xs:attribute name="autoLoad" type="xs:boolean"/>
+    </xs:complexType>
+
     <!-- ButtonsPanel -->
     <xs:complexType name="buttonsPanelComponent">
         <xs:complexContent>
@@ -2578,9 +2612,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="rowsCount" minOccurs="0">
-                        <xs:complexType/>
-                    </xs:element>
+                    <xs:element name="pagination" minOccurs="0" type="tablePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
                     <xs:element name="rows" type="tableRowsType"/>
                 </xs:all>
@@ -2600,9 +2632,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="rowsCount" minOccurs="0">
-                        <xs:complexType/>
-                    </xs:element>
+                    <xs:element name="pagination" minOccurs="0" type="tablePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
                     <xs:element name="rows" type="treeTableRowsType"/>
                 </xs:all>
@@ -2623,9 +2653,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="rowsCount" minOccurs="0">
-                        <xs:complexType/>
-                    </xs:element>
+                    <xs:element name="pagination" minOccurs="0" type="tablePaginationComponent"/>
                     <xs:element name="columns" type="groupTableColumnsType"/>
                     <xs:element name="rows" type="tableRowsType"/>
                 </xs:all>
@@ -2681,9 +2709,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="rowsCount" minOccurs="0">
-                        <xs:complexType/>
-                    </xs:element>
+                    <xs:element name="pagination" minOccurs="0" type="tablePaginationComponent"/>
                     <xs:element name="columns" type="dataGridColumnsList"/>
                 </xs:all>
 
@@ -3925,6 +3951,7 @@
                 <xs:element name="dataGrid" type="dataGridComponent"/>
                 <xs:element name="treeDataGrid" type="treeDataGridComponent"/>
                 <xs:element name="buttonsPanel" type="buttonsPanelComponent"/>
+                <xs:element name="pagination" type="paginationComponent"/>
                 <xs:element name="calendar" type="calendarComponent"/>
 
                 <xs:element name="filter" type="filterComponent"/>

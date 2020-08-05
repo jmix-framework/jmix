@@ -1,5 +1,5 @@
-/*!
- * Copyright (c) 2008-2019 Haulmont.
+/*
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-/*
- * Is used for supporting RowsCount in compatibility module.
- */
-@mixin hover-cuba-table-paging {
-  .c-paging-count {
-    height: round(($v-unit-size / 7) * 6);
-  }
+package pagination_component.screen;
 
-  .v-button.v-button-link.c-paging-count-number {
-    text-decoration: none;
-    opacity: inherit;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.screen.LoadDataBeforeShow;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import test_support.entity.sales.Customer;
 
-    .v-button-wrap .v-button-caption {
-      text-decoration: none;
-      color: $v-font-color;
-    }
-  }
+@UiController
+@UiDescriptor("table-pagination-test-screen.xml")
+@LoadDataBeforeShow
+public class TablePaginationTestScreen extends Screen {
+
+    @Autowired
+    public Table<Customer> customerTable;
 }

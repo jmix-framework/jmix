@@ -15,6 +15,9 @@
  *
  */
 
+/*
+ * Is used for supporting RowsCount in compatibility module.
+ */
 @mixin halo-cuba-table-paging {
   .c-table-rows-count {
     text-align: right;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,23 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.DataLoadContext;
-
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 /**
- * Component having a {@link RowsCount} component.
+ * {@link ListComponent} component with a given interface supports the ability to show data by pages.
  */
-public interface HasRowsCount {
-    @Nullable
-    RowsCount getRowsCount();
-
-    void setRowsCount(@Nullable RowsCount rowsCount);
+public interface HasTablePagination {
 
     /**
-     * Sets RowsCount delegate which is used to get the total number of rows when user clicks "total count" or "last page".
+     * @return pagination that is used in the {@link ListComponent}.
      */
-    default void setRowsCountTotalCountDelegate(Function<DataLoadContext, Long> delegate) {
-        RowsCount rowsCount = getRowsCount();
-        if (rowsCount != null) {
-            rowsCount.setTotalCountDelegate(delegate);
-        }
-    }
+    @Nullable
+    TablePagination getPagination();
+
+    /**
+     * Sets pagination to the {@link ListComponent}.
+     *
+     * @param pagination pagination component
+     */
+    void setPagination(@Nullable TablePagination pagination);
 }

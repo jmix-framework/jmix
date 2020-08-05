@@ -105,6 +105,8 @@ public abstract class BaseLoaderConfig {
         loaders.put(TwinColumn.NAME, TwinColumnLoader.class);
         loaders.put(ProgressBar.NAME, ProgressBarLoader.class);
         loaders.put(RelatedEntities.NAME, RelatedEntitiesLoader.class);
+        loaders.put(Pagination.NAME, PaginationLoader.class);
+        loaders.put(TablePagination.NAME, TablePaginationLoader.class);
 
         loaders.put(CapsLockIndicator.NAME, CapsLockIndicatorLoader.class);
 

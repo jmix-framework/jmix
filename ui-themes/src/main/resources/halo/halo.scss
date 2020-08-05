@@ -84,6 +84,7 @@
 @import "components/accordion/accordion";
 @import "components/slider/slider";
 @import "components/responsivegridlayout/responsivegridlayout";
+@import "components/pagination/pagination";
 
 // Application specific
 @import "app/log-control";
@@ -171,6 +172,7 @@
   @include halo-cuba-currencyfield;
   @include halo-slider;
   @include halo-responsivegridlayout;
+  @include halo-pagination;
 
   @include halo-cuba-groupbox;
   @include halo-cuba-tokenlist;

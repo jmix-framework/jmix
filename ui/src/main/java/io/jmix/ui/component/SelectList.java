@@ -22,7 +22,7 @@ import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
- * Base interface for OptionsList base components.
+ * Base interface for list components.
  *
  * @param <V> value type: single value or {@code Collection<I>}
  * @param <I> item type

@@ -28,7 +28,7 @@
             <columns>
                 <column id="name"/>
             </columns>
-            <rowsCount/>
+            <pagination/>
         </groupTable>
     </layout>
 </window>

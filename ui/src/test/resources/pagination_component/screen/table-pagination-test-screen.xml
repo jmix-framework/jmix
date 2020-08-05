@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright 2020 Haulmont.
   ~
@@ -16,21 +15,23 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window">
-    <data readOnly="true">
-        <collection id="orderObjectsDc"
-                    class="test_support.entity.model_objects.OrderObject">
-            <loader id="orderObjectsDl"/>
+    <data>
+        <collection id="customersDc" class="test_support.entity.sales.Customer">
+            <loader id="customersLd" maxResults="2">
+                <query><![CDATA[select e from test$Customer e]]></query>
+            </loader>
         </collection>
     </data>
     <layout>
-        <groupTable id="orderObjectsTable"
-                    dataContainer="orderObjectsDc">
+        <table id="customerTable"
+               dataContainer="customersDc">
             <columns>
-                <column id="date"/>
-                <column id="number"/>
-                <column id="customer"/>
+                <column id="name"/>
+                <column id="email"/>
+                <column id="status"/>
             </columns>
             <pagination/>
-        </groupTable>
+            <rows/>
+        </table>
     </layout>
 </window>

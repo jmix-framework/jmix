@@ -20,6 +20,7 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
@@ -78,7 +79,8 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
 
     @Override
     public Class<?> getType(Object propertyId) {
-        throw new UnsupportedOperationException();
+        MetaPropertyPath propertyPath = (MetaPropertyPath) propertyId;
+        return propertyPath.getRangeJavaClass();
     }
 
     @Override

@@ -42,9 +42,9 @@ public class PersistenceManagerClient {
         return false;
     }
 
-//    public int getFetchUI(String entityName) {
-//        return 50;
-//    }
+    public int getFetchUI(String entityName) {
+        return 50;
+    }
 
     public int getMaxFetchUI(String entityName) {
         return 10000;

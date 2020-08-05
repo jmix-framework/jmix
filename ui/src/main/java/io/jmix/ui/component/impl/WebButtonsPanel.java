@@ -61,11 +61,6 @@ public class WebButtonsPanel extends WebFlowBoxLayout implements ButtonsPanel, V
     }
 
     @Override
-    public void removeVisibilityChangeListener(Consumer<VisibilityChangeEvent> listener) {
-        unsubscribe(VisibilityChangeEvent.class, listener);
-    }
-
-    @Override
     public void setAlwaysVisible(boolean alwaysVisible) {
         this.alwaysVisible = alwaysVisible;
     }

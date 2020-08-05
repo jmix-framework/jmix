@@ -21,6 +21,9 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
 
+/**
+ * Is used for supporting RowsCount component in compatibility module.
+ */
 public class JmixRowsCount extends JmixCssActionsLayout {
 
     protected Button prevButton;

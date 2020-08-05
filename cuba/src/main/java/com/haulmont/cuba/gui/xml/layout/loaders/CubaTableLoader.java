@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -83,6 +84,9 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
 
     @Override
     protected void loadTableData() {
+        // must be before datasource setting
+        ComponentLoaderHelper.loadRowsCount((Table) resultComponent, element, () -> factory.create(RowsCount.NAME));
+
         super.loadTableData();
 
         List<io.jmix.ui.component.Table.Column> columns = resultComponent.getColumns();

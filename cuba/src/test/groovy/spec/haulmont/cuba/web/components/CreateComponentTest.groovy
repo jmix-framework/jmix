@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.components.OptionsGroup
 import com.haulmont.cuba.gui.components.SearchField
 import com.haulmont.cuba.gui.components.SearchPickerField
 import com.haulmont.cuba.gui.components.OptionsList
+import com.haulmont.cuba.gui.components.RowsCount
 import io.jmix.ui.Facets
 import io.jmix.ui.component.*
 import io.jmix.ui.component.impl.JavaScriptComponent
@@ -116,6 +117,8 @@ class CreateComponentTest extends UiScreenSpec {
                 TwinColumn.NAME,
                 ProgressBar.NAME,
                 RowsCount.NAME,
+                Pagination.NAME,
+                TablePagination.NAME,
                 RelatedEntities.NAME,
                 BulkEditor.NAME,
                 DatePicker.NAME,

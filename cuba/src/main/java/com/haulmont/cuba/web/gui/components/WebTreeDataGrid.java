@@ -17,14 +17,17 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.DataGrid;
+import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeDataGrid;
 import com.haulmont.cuba.settings.binder.CubaTreeDataGridSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyTreeDataGridSettingsConverter;
+import com.haulmont.cuba.web.gui.components.datagrid.DataGridDelegate;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixEntity;
+import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -46,12 +49,14 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
         implements TreeDataGrid<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
+    protected DataGridDelegate dataGridDelegate;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
 
         settingsDelegate = createSettingsDelegate();
+        dataGridDelegate = createDataGridDelegate();
     }
 
     @Override
@@ -216,5 +221,34 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
     protected LegacySettingsDelegate createSettingsDelegate() {
         return beanLocator.getPrototype(LegacySettingsDelegate.NAME,
                 this, new LegacyTreeDataGridSettingsConverter(), getSettingsBinder());
+    }
+
+    @Override
+    public void setItems(@Nullable DataGridItems<E> dataGridItems) {
+        super.setItems(dataGridItems);
+
+        if (getRowsCount() != null) {
+            getRowsCount().setRowsCountTarget(this);
+        }
+    }
+
+    @Nullable
+    @Override
+    public RowsCount getRowsCount() {
+        return dataGridDelegate.getRowsCount();
+    }
+
+    @Override
+    public void setRowsCount(@Nullable RowsCount rowsCount) {
+        dataGridDelegate.setRowsCount(
+                rowsCount,
+                topPanel,
+                this::createTopPanel,
+                componentComposition,
+                this::updateCompositionStylesTopPanelVisible);
+    }
+
+    protected DataGridDelegate createDataGridDelegate() {
+        return beanLocator.getPrototype(DataGridDelegate.NAME);
     }
 }

@@ -37,7 +37,6 @@ import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.RadioButtonGroup;
 import io.jmix.ui.component.ResizableTextArea;
 import io.jmix.ui.component.RichTextArea;
-import io.jmix.ui.component.RowsCount;
 import io.jmix.ui.component.Slider;
 import io.jmix.ui.component.SourceCodeEditor;
 import io.jmix.ui.component.SplitPanel;

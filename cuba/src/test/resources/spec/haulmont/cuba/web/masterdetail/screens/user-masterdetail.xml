@@ -57,7 +57,7 @@
                         <column id="name"/>
                         <column id="active"/>
                     </columns>
-                    <rowsCount/>
+                    <pagination/>
                     <buttonsPanel id="buttonsPanel"
                                   alwaysVisible="true">
                         <button id="createBtn" action="table.create"/>

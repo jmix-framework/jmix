@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeTable;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -85,6 +86,9 @@ public class CubaTreeTableLoader extends TreeTableLoader {
 
     @Override
     protected void loadTableData() {
+        // must be before datasource setting
+        ComponentLoaderHelper.loadRowsCount((TreeTable) resultComponent, element, () -> factory.create(RowsCount.NAME));
+
         super.loadTableData();
 
         List<Table.Column> columns = resultComponent.getColumns();

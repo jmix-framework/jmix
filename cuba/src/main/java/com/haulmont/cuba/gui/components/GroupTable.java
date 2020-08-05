@@ -33,7 +33,7 @@ import io.jmix.ui.component.data.TableItems;
 @Deprecated
 @SuppressWarnings("rawtypes")
 public interface GroupTable<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.GroupTable<E>, HasSettings,
-        HasDataLoadingSettings {
+        HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
 
     /**
      * @return group datasource

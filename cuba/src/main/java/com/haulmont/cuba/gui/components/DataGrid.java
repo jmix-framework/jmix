@@ -36,7 +36,7 @@ import java.util.function.Function;
 @SuppressWarnings("rawtypes, unchecked")
 @Deprecated
 public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E>,
-        HasSettings, HasDataLoadingSettings {
+        HasSettings, HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
 
     static <T extends JmixEntity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<DataGrid<T>>() {

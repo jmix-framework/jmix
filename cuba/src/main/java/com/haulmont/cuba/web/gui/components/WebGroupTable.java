@@ -17,11 +17,14 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.GroupTable;
+import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.presentation.LegacyPresentationsDelegate;
 import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.settings.binder.CubaGroupTableSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
+import com.haulmont.cuba.web.gui.components.table.TableDelegate;
 import io.jmix.core.JmixEntity;
+import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -29,18 +32,22 @@ import com.haulmont.cuba.settings.converter.LegacyGroupTableSettingsConverter;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
+
 @Deprecated
 public class WebGroupTable<E extends JmixEntity> extends io.jmix.ui.component.impl.WebGroupTable<E>
         implements GroupTable<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected LegacyPresentationsDelegate presentationsDelegate;
+    protected TableDelegate tableDelegate;
 
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
         settingsDelegate = createSettingsDelegate();
+        tableDelegate = createTableDelegate();
     }
 
     @Override
@@ -119,5 +126,32 @@ public class WebGroupTable<E extends JmixEntity> extends io.jmix.ui.component.im
         } else {
             super.resetPresentation();
         }
+    }
+
+    @Override
+    public void setItems(@Nullable TableItems<E> tableItems) {
+        super.setItems(tableItems);
+
+        if (tableItems != null) {
+            if (getRowsCount() != null) {
+                getRowsCount().setRowsCountTarget(this);
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public RowsCount getRowsCount() {
+        return tableDelegate.getRowsCount();
+    }
+
+    @Override
+    public void setRowsCount(@Nullable RowsCount rowsCount) {
+        tableDelegate.setRowsCount(rowsCount, topPanel, this::createTopPanel, componentComposition,
+                this::updateCompositionStylesTopPanelVisible);
+    }
+
+    protected TableDelegate createTableDelegate() {
+        return beanLocator.getPrototype(TableDelegate.NAME);
     }
 }

@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.GroupTable;
+import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
@@ -76,6 +77,9 @@ public class CubaGroupTableLoader extends GroupTableLoader {
 
     @Override
     protected void loadTableData() {
+        // must be before datasource setting
+        ComponentLoaderHelper.loadRowsCount((GroupTable) resultComponent, element, () -> factory.create(RowsCount.NAME));
+
         super.loadTableData();
 
         List<Table.Column> columns = resultComponent.getColumns();

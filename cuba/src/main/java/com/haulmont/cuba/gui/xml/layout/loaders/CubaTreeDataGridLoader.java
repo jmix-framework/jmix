@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.google.common.base.Strings;
 import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.gui.components.DataGrid;
+import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeDataGrid;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -45,6 +46,14 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
         super.loadComponent();
 
         ComponentLoaderHelper.loadSettingsEnabled((TreeDataGrid) resultComponent, element);
+    }
+
+    @Override
+    protected void loadDataGridData() {
+        // must be before datasource setting
+        ComponentLoaderHelper.loadRowsCount((DataGrid) resultComponent, element, () -> factory.create(RowsCount.NAME));
+
+        super.loadDataGridData();
     }
 
     @Override

@@ -38,7 +38,7 @@ import java.util.function.Function;
 @Deprecated
 @SuppressWarnings("rawtypes")
 public interface Table<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
-        HasDataLoadingSettings {
+        HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
 
     /**
      * Sets {@code CollectionDatasource} as Table data source.

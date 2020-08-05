@@ -55,7 +55,7 @@
                 <column id="changePasswordAtNextLogon"/>
                 <column id="ipMask"/>
             </columns>
-            <rowsCount/>
+            <pagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn" action="usersTable.create"/>

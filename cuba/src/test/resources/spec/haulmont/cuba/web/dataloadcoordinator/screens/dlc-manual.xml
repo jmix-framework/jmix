@@ -71,7 +71,7 @@
                     <column id="email"/>
                     <column id="category"/>
                 </columns>
-                <rowsCount/>
+                <pagination/>
                 <buttonsPanel id="buttonsPanel"
                               alwaysVisible="true">
                     <entityPicker id="categoryFilterField" metaClass="pc_OwnerCategory" width="150px"/>

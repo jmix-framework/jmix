@@ -56,4 +56,24 @@
         <property name="info"/>
     </fetchPlan>
 
+    <fetchPlan class="test_support.entity.lazyloading.OneToManyEntity" name="OneToManyEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.ManyToOneEntity" name="ManyToOneEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.ManyToManySecondEntity" name="ManyToManySecondEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.OneToOneFieldEntity" name="OneToOneFieldEntity">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.entity.lazyloading.OneToOneNoFieldEntity" name="OneToOneNoFieldEntity">
+        <property name="name"/>
+    </fetchPlan>
+
 </fetchPlans>

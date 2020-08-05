@@ -295,8 +295,12 @@ public class PersistenceTools {
                 if (!fetchGroup.containsAttributeInternal(property))
                     return RefId.createNotLoaded(property);
                 else {
-                    JmixEntity refEntity = getValue(entity, property);
-                    return RefId.create(property, refEntity == null ? null : getId(refEntity));
+                    if (entityStates.isLoaded(entity, property)) {
+                        JmixEntity refEntity = getValue(entity, property);
+                        return RefId.create(property, refEntity == null ? null : getId(refEntity));
+                    } else {
+                        return RefId.createNotLoaded(property);
+                    }
                 }
             }
         }

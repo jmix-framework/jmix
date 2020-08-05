@@ -18,16 +18,20 @@ package io.jmix.data;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.EntitySystemStateSupport;
-import io.jmix.core.Metadata;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.data.impl.JmixEntityFetchGroup;
 import org.eclipse.persistence.internal.queries.EntityFetchGroup;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,6 +70,27 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
                 ((FetchGroupTracker) dst)._persistence_setFetchGroup(srcFetchGroup);
             } else {
                 ((FetchGroupTracker) dst)._persistence_setFetchGroup(mergeFetchGroups(srcFetchGroup, dstFetchGroup));
+            }
+        }
+
+        boolean srcNew = entityStates.isNew(src);
+        MetaClass metaClass = metadata.getClass(src.getClass());
+        for (MetaProperty property : metaClass.getProperties()) {
+            //copy value holders to support lazy loading
+            String propertyName = property.getName();
+            if (property.getRange().isClass() && (!(entityStates.isLoaded(src, propertyName) || srcNew))) {
+                if (entityStates.isLoaded(dst, propertyName)
+                        && EntityValues.getValue(dst, propertyName) != null) {
+                    continue;
+                }
+                try {
+                    Field declaredField = dst.getClass().getDeclaredField("_persistence_" + property.getName() + "_vh");
+                    boolean accessible = declaredField.isAccessible();
+                    declaredField.setAccessible(true);
+                    declaredField.set(dst, declaredField.get(src));
+                    declaredField.setAccessible(accessible);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                }
             }
         }
     }

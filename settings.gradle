@@ -1,0 +1,8 @@
+rootProject.name = 'jmix-datatools'
+
+include 'datatools-ui'
+include 'datatools-ui-starter'
+
+rootProject.children.each { p1 ->
+	p1.buildFileName = "${p1.name}.gradle"
+}

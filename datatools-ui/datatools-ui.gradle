@@ -14,47 +14,25 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.datatools'
+archivesBaseName = 'jmix-datatools-ui'
 
 dependencies {
-    api platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api project(':modules:core')
-    api project(':modules:ui')
-    api project(':modules:security')
+    api 'io.jmix.core:jmix-core'
+    api 'io.jmix.ui:jmix-ui'
+    api 'io.jmix.security:jmix-security'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation project(':modules:data')
+    testImplementation 'io.jmix.data:jmix-data'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testRuntimeOnly 'org.hsqldb:hsqldb'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
-}
-
-jar {
-    archivesBaseName = 'jmix-datatools-ui'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-datatools-ui'
-            from components.java
-        }
-    }
 }

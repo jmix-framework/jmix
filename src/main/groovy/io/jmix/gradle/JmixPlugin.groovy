@@ -23,9 +23,9 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 
-class JmixPlugin implements Plugin<Project> {
+import java.util.jar.Manifest
 
-    public static final String DEFAULT_JMIX_VERSION = '1.0-SNAPSHOT'
+class JmixPlugin implements Plugin<Project> {
 
     public static final String THEMES_CONFIGURATION_NAME = 'themes'
     public static final String WIDGETS_CONFIGURATION_NAME = 'widgets'
@@ -38,10 +38,9 @@ class JmixPlugin implements Plugin<Project> {
         project.extensions.create('jmix', JmixExtension, project)
 
         project.afterEvaluate {
-            if (!project.hasProperty('jmixFrameworkItself') && project.jmix.useBom) {
-                String jmixVersion = project.jmix.version ?: DEFAULT_JMIX_VERSION
-
-                def platform = project.dependencies.platform("io.jmix.bom:jmix-bom:$jmixVersion")
+            if (isJmixApp(project) && project.jmix.useBom) {
+                String bomVersion = project.jmix.bomVersion ?: getBomVersion()
+                def platform = project.dependencies.platform("io.jmix.bom:jmix-bom:$bomVersion")
                 project.dependencies.add('implementation', platform)
                 project.dependencies.add(THEMES_CONFIGURATION_NAME, platform)
                 project.dependencies.add(WIDGETS_CONFIGURATION_NAME, platform)
@@ -63,7 +62,7 @@ class JmixPlugin implements Plugin<Project> {
             }
 
             // Exclude second logger to prevent collisions with Logback
-            if (!project.hasProperty('jmixFrameworkItself')) {
+            if (isJmixApp(project)) {
                 project.configurations.collect {
                     it.exclude(group: 'org.slf4j', module: 'slf4j-jdk14')
                 }
@@ -74,6 +73,10 @@ class JmixPlugin implements Plugin<Project> {
         setupWidgetsCompile(project)
 
         project.task([type: ZipProject], 'zipProject')
+    }
+
+    private boolean isJmixApp(Project project) {
+        !project.plugins.hasPlugin('io.jmix.build')
     }
 
     protected void setupThemeCompile(Project project) {
@@ -132,5 +135,26 @@ class JmixPlugin implements Plugin<Project> {
                 }
             }
         }
+    }
+
+    String getBomVersion() {
+        String result = null
+        Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF")
+        while (resources.hasMoreElements()) {
+            try {
+                Manifest manifest = new Manifest(resources.nextElement().openStream())
+                String bomVersion = manifest.mainAttributes.getValue('Jmix-Default-BOM-Version')
+                if (bomVersion) {
+                    if (result && result != bomVersion) {
+                        throw new IllegalStateException("More than one manifest in plugin's classpath define Jmix-Default-BOM-Version, and they are different." +
+                                " Set jmix.bomVersion property in the project.")
+                    }
+                    result = bomVersion
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e)
+            }
+        }
+        return result ?: 'unspecified'
     }
 }

@@ -43,6 +43,13 @@ dependencies {
     }
 }
 
+tasks.jar {
+    manifest {
+        // The only safe assumption about default version is major.minor.0 (1.0.1 -> 1.0.0, 1.1.1 -> 1.1.0)
+        attributes("Jmix-Default-BOM-Version": version.endsWith('SNAPSHOT') ? version : version.substring(0, version.lastIndexOf('.')) + '.0')
+    }
+}
+
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
     archiveClassifier = 'sources'

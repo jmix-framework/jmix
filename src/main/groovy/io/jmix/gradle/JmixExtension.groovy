@@ -28,7 +28,7 @@ class JmixExtension {
     /**
      * Jmix BOM version
      */
-    String version
+    String bomVersion
 
     /**
      * If true, the Jmix BOM will be added to the project dependencies as a platform.

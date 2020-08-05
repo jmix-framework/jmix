@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.core'
+archivesBaseName = 'jmix-core'
 
 dependencies {
-    api platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'org.springframework.boot:spring-boot'
     api 'org.springframework:spring-context'
@@ -62,29 +61,4 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
-}
-
-jar {
-    archivesBaseName = 'jmix-core'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-test {
-    useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-core'
-            from components.java
-        }
-    }
 }

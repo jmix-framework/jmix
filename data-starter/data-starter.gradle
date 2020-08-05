@@ -1,0 +1,14 @@
+group = 'io.jmix.data'
+archivesBaseName = 'jmix-data-starter'
+
+dependencies {
+    api 'io.jmix.core:jmix-core'
+    api project(':data')
+
+    api 'com.zaxxer:HikariCP'
+    api 'org.liquibase:liquibase-core'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+}

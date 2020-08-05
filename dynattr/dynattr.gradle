@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.dynattr'
+archivesBaseName = 'jmix-dynattr'
 
 dependencies {
-    api platform(project(':platform'))
-    api project(':modules:data')
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api 'io.jmix.data:jmix-data'
 
     implementation 'com.google.code.gson:gson'
 
@@ -32,25 +32,4 @@ dependencies {
     testImplementation "org.spockframework:spock-spring"
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-}
-
-jar {
-    archivesBaseName = 'jmix-dynattr'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-dynattr'
-            from components.java
-        }
-    }
 }

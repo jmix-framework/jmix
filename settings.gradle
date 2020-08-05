@@ -1,0 +1,10 @@
+rootProject.name = 'jmix-dynattr'
+
+include 'dynattr'
+include 'dynattr-ui'
+include 'dynattr-starter'
+include 'dynattr-ui-starter'
+
+rootProject.children.each { p1 ->
+	p1.buildFileName = "${p1.name}.gradle"
+}

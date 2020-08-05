@@ -140,7 +140,7 @@
                                 <column id="entityId" caption="Id"/>
                                 <column id="entityInstanceName"/>
                             </columns>
-                            <rowsCount/>
+                            <pagination/>
                         </table>
                     </vbox>
                     <vbox id="entityLogAttrTableBox" width="100%" height="100%" margin="false,false,false,true"

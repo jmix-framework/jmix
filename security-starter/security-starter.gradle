@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
 
 group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-data'
+archivesBaseName = 'jmix-security-starter'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
     api project(':security')
 
-    api 'io.jmix.data:jmix-data'
-
-    implementation 'org.json:json'
-
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testImplementation 'org.liquibase:liquibase-core'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
 }

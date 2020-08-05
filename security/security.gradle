@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.security'
+archivesBaseName = 'jmix-security'
 
 dependencies {
-    api platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api project(':modules:core')
+    api 'io.jmix.core:jmix-core'
 
     //todo MG remove data dependency from security module
-    api project(':modules:data')
+    api 'io.jmix.data:jmix-data'
 
     implementation 'org.json:json'
 
@@ -36,28 +35,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-spring'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.liquibase:liquibase-core'
-    testImplementation project(':modules:data')
+    testImplementation 'io.jmix.data:jmix-data'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-}
-
-jar {
-    archivesBaseName = 'jmix-security'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-security'
-            from components.java
-        }
-    }
 }

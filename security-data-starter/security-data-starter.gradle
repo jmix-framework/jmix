@@ -14,25 +14,11 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
-
 group = 'io.jmix.security'
-archivesBaseName = 'jmix-security-ui'
+archivesBaseName = 'jmix-security-data-starter'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api project(':security')
     api project(':security-data')
 
-    api 'io.jmix.ui:jmix-ui'
-
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testImplementation 'org.liquibase:liquibase-core'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
 }

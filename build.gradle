@@ -1,0 +1,30 @@
+buildscript {
+    repositories {
+        if (rootProject.hasProperty('jmixRepoUrl')) {
+            maven {
+                url rootProject['jmixRepoUrl']
+
+                if (rootProject.hasProperty('jmixRepoUser') && rootProject.hasProperty('jmixRepoPassword')) {
+                    credentials {
+                        username rootProject['jmixRepoUser']
+                        password rootProject['jmixRepoPassword']
+                    }
+                }
+            }
+        } else {
+            mavenLocal()
+            mavenCentral()
+            maven {
+                url "https://plugins.gradle.org/m2/"
+            }
+        }
+    }
+    dependencies {
+        classpath("io.jmix.build:jmix-build:$version")
+        classpath("io.jmix.gradle:jmix-gradle-plugin:${version}")
+    }
+}
+
+subprojects {
+    apply plugin: 'io.jmix.build'
+}

@@ -35,7 +35,7 @@
                 <column id="name"/>
                 <column id="code"/>
             </columns>
-            <rowsCount/>
+            <pagination/>
         </groupTable>
         <hbox id="lookupActions" spacing="true" visible="false">
             <button action="lookupSelectAction"/>

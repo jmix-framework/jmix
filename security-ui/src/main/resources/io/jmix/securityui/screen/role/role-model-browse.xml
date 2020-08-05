@@ -41,7 +41,7 @@
                 <column id="code"/>
                 <column id="source"/>
             </columns>
-            <rowsCount/>
+            <pagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn" action="roleModelsTable.create"/>

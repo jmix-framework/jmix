@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
-
 group = 'io.jmix.audit'
-archivesBaseName = 'jmix-audit-ui'
+archivesBaseName = 'jmix-audit-ui-starter'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+    api project(':audit-ui')
 
-    api project(':audit')
-    api 'io.jmix.ui:jmix-ui'
-
-    testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.spockframework:spock-core'
-    testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'io.jmix.data:jmix-data'
-    testImplementation 'org.apache.commons:commons-dbcp2'
-    testImplementation 'org.springframework:spring-orm'
-    testRuntimeOnly 'org.hsqldb:hsqldb'
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    api 'org.springframework.boot:spring-boot-autoconfigure'
 }

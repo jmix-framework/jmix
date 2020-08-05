@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
-
 group = 'io.jmix.audit'
-archivesBaseName = 'jmix-audit'
+archivesBaseName = 'jmix-audit-starter'
 
 dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+    api project(':audit')
 
-    api 'io.jmix.data:jmix-data'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
 
-    implementation 'org.springframework:spring-orm'
-    implementation 'org.springframework:spring-tx'
-    implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
-
-    testImplementation 'org.springframework:spring-test'
-    testImplementation "org.spockframework:spock-core"
-    testImplementation "org.spockframework:spock-spring"
-    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

@@ -16,15 +16,13 @@
 
 import io.jmix.gradle.ui.WidgetsCompile
 
-apply plugin: 'java'
-apply plugin: 'java-library'
-
 group = 'io.jmix.ui'
+archivesBaseName = 'jmix-ui-widgets'
 
-def jmixUi = rootProject.project(':modules:ui')
+def jmixUi = project(':ui')
 
 dependencies {
-    api platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api(jmixUi) {
         exclude(group: 'org.hibernate.validator', module: 'hibernate-validator')
@@ -40,18 +38,4 @@ dependencies {
     api 'com.vaadin:vaadin-compatibility-client'
 }
 
-jar {
-    archivesBaseName = 'jmix-ui-widgets'
-    from sourceSets.main.allJava
-}
-
 task compileWidgets(type: WidgetsCompile, dependsOn: classes)
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-ui-widgets'
-            from components.java
-        }
-    }
-}

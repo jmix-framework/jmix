@@ -14,34 +14,11 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
-apply plugin: 'java-library'
-
-group = 'io.jmix.starter.ui'
+group = 'io.jmix.ui'
+archivesBaseName = 'jmix-ui-data-starter'
 
 dependencies {
-    api project(':modules:ui-data')
+    api project(':ui-data')
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
-}
-
-jar {
-    archivesBaseName = 'jmix-starter-ui-data'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-starter-ui-data'
-            from components.java
-        }
-    }
 }

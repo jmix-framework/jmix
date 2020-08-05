@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.ui'
+archivesBaseName = 'jmix-ui'
 
 dependencies {
-    api platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api project(':modules:core')
+    api 'io.jmix.core:jmix-core'
+
     api 'com.vaadin:vaadin-server'
     api 'com.vaadin:vaadin-compatibility-server'
     api 'com.vaadin:vaadin-push'
@@ -47,8 +47,8 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation project(':modules:ui-test-assist')
-    testImplementation project(':modules:data')
+    testImplementation project(':ui-test-assist')
+    testImplementation 'io.jmix.data:jmix-data'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testRuntimeOnly 'org.hsqldb:hsqldb'
@@ -59,26 +59,5 @@ jar {
     with copySpec {
         from sourceSets.main.allJava
         include "io/jmix/ui/widget/client/**"
-    }
-}
-
-jar {
-    archivesBaseName = 'jmix-ui'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-ui'
-            from components.java
-        }
     }
 }

@@ -16,17 +16,16 @@
 
 import io.jmix.gradle.ui.ThemeCompile
 
-apply plugin: 'java'
-
 group = 'io.jmix.ui'
+archivesBaseName = 'jmix-ui-themes'
 
 configurations {
     themes
 }
 
 dependencies {
-    implementation platform(project(':platform'))
-    themes platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+    themes platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     implementation 'com.vaadin:vaadin-themes'
     themes 'com.vaadin:vaadin-themes'
@@ -35,17 +34,4 @@ dependencies {
 task compileThemes(type: ThemeCompile) {
     scssDir = 'src/main/resources'
     themes = ['halo', 'hover', 'helium']
-}
-
-jar {
-    archivesBaseName = 'jmix-ui-themes'
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-ui-themes'
-            from components.java
-        }
-    }
 }

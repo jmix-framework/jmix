@@ -16,24 +16,10 @@
 
 import io.jmix.gradle.JmixPlugin
 
-apply plugin: 'java'
-
 group = 'io.jmix.ui'
+archivesBaseName = 'jmix-ui-themes-compiled'
 
-def uiThemes = project(':modules:ui-themes')
+def uiThemes = project(':ui-themes')
 def inputDir = new File(uiThemes.buildDir, 'themes')
 
 sourceSets.main.output.dir(inputDir, builtBy: uiThemes.tasks.getByName(JmixPlugin.COMPILE_THEMES_TASK_NAME))
-
-jar {
-    archivesBaseName = 'jmix-ui-themes-compiled'
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-ui-themes-compiled'
-            from components.java
-        }
-    }
-}

@@ -17,19 +17,28 @@
 package io.jmix.core.impl;
 
 import org.apache.commons.lang3.ClassUtils;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 
 /**
- * The serialization implementation using standard Java serialization
+ * The serialization implementation using standard Java serialization and allowing beans to be restored on deserialization
  */
-public class StandardSerialization  {
+@Component(StandardSerialization.NAME)
+public class StandardSerialization {
 
-    public static void serialize(Object object, OutputStream os) {
+    public static final String NAME = "core_StandardSerialization";
+
+    @Autowired
+    protected BeanFactory beanFactory;
+
+    public void serialize(Object object, OutputStream os) {
         ObjectOutputStream out = null;
         boolean isObjectStream = os instanceof ObjectOutputStream;
         try {
-            out = isObjectStream ? (ObjectOutputStream)os : new ObjectOutputStream(os);
+            out = isObjectStream ? (ObjectOutputStream) os : new ObjectOutputStream(os);
             out.writeObject(object);
         } catch (IOException ex) {
             throw new RuntimeException("Failed to serialize object", ex);
@@ -48,12 +57,14 @@ public class StandardSerialization  {
 
     //To work properly must itself be loaded by the application classloader (i.e. by classloader capable of loading
     //all the other application classes). For web application it means placing this class inside webapp folder.
-    public static Object deserialize(InputStream is) {
+    public Object deserialize(InputStream is) {
+        //Put BeanFactory to let deserialized objects restore beans
+        SerializationContext.setThreadLocalBeanFactory(beanFactory);
         try {
             ObjectInputStream ois;
             boolean isObjectStream = is instanceof ObjectInputStream;
             if (isObjectStream) {
-                ois = (ObjectInputStream)is;
+                ois = (ObjectInputStream) is;
             } else {
                 ois = new ObjectInputStream(is) {
                     @Override
@@ -67,16 +78,19 @@ public class StandardSerialization  {
             throw new RuntimeException("Failed to deserialize object", ex);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException("Failed to deserialize object type", ex);
+        } finally {
+            //Clean variable after deserialization
+            SerializationContext.removeThreadLocalBeanFactory();
         }
     }
 
-    public static byte[] serialize(Object object) {
+    public byte[] serialize(Object object) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         serialize(object, bos);
         return bos.toByteArray();
     }
 
-    public static Object deserialize(byte[] bytes) {
+    public Object deserialize(byte[] bytes) {
         if (bytes == null) {
             return null;
         }

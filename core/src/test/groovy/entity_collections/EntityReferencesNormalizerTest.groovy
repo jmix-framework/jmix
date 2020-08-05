@@ -18,6 +18,7 @@ package entity_collections
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.EntityReferencesNormalizer
+import io.jmix.core.impl.StandardSerialization
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
@@ -31,9 +32,6 @@ import test_support.app.entity.sales.OrderLineA
 import test_support.app.entity.sales.Product
 import test_support.base.TestBaseConfiguration
 
-import static io.jmix.core.impl.StandardSerialization.deserialize
-import static io.jmix.core.impl.StandardSerialization.serialize
-
 @ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(value = AppContextTestExecutionListener,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
@@ -41,6 +39,8 @@ class EntityReferencesNormalizerTest extends Specification {
 
     @Autowired
     EntityReferencesNormalizer normalizer
+    @Autowired
+    StandardSerialization standardSerialization
 
     def "update immediate to-one references"() {
         Customer customer1 = new Customer(name: 'cust')
@@ -91,11 +91,11 @@ class EntityReferencesNormalizerTest extends Specification {
     }
 
     @SuppressWarnings("unchecked")
-    static <T> T reserialize(Serializable object) {
+    def <T> T reserialize(Serializable object) {
         if (object == null) {
             return null
         }
 
-        return (T) deserialize(serialize(object))
+        return (T) standardSerialization.deserialize(standardSerialization.serialize(object))
     }
 }

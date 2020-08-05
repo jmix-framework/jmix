@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'java-library'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.cuba'
+archivesBaseName = 'jmix-cuba'
 
 dependencies {
-    api platform(project(':platform'))
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api project(':modules:core')
-    api project(':modules:data')
-    api project(':modules:ui')
-    api project(':modules:ui-data')
-    api project(':modules:security')
-    api project(':modules:dynattr')
-    api project(':modules:dynattr-ui')
-    api project(':modules:fsfilestorage')
+    api 'io.jmix.core:jmix-core'
+    api 'io.jmix.data:jmix-data'
+    api 'io.jmix.ui:jmix-ui'
+    api 'io.jmix.ui:jmix-ui-data'
+    api 'io.jmix.security:jmix-security'
+    api 'io.jmix.dynattr:jmix-dynattr'
+    api 'io.jmix.dynattr:jmix-dynattr-ui'
+    api 'io.jmix.fsfilestorage:jmix-fsfilestorage'
 
-    testImplementation project(':modules:ui-test-assist')
+    testImplementation 'io.jmix.ui:jmix-ui-test-assist'
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
@@ -43,29 +42,4 @@ dependencies {
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
-}
-
-jar {
-    archivesBaseName = 'jmix-cuba'
-}
-
-java {
-    withSourcesJar()
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-test {
-    useJUnitPlatform()
-}
-
-publishing {
-    publications {
-        javaMaven(MavenPublication) {
-            artifactId = 'jmix-cuba'
-            from components.java
-        }
-    }
 }

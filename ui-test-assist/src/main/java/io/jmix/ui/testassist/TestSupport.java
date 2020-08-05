@@ -20,23 +20,10 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import io.jmix.core.security.impl.CoreUser;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Locale;
 
-import static io.jmix.core.impl.StandardSerialization.deserialize;
-import static io.jmix.core.impl.StandardSerialization.serialize;
-
 public class TestSupport {
-
-    @SuppressWarnings("unchecked")
-    public static <T> T reserialize(Serializable object) {
-        if (object == null) {
-            return null;
-        }
-
-        return (T) deserialize(serialize(object));
-    }
 
     public static void setAuthenticationToSecurityContext() {
         CoreUser user = new CoreUser("test_admin", "test_admin", "test_admin");

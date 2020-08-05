@@ -70,6 +70,9 @@ public class DataContextImpl implements DataContext {
     @Autowired
     protected EntityReferencesNormalizer entityReferencesNormalizer;
 
+    @Autowired
+    protected StandardSerialization standardSerialization;
+
     protected EventHub events = new EventHub();
 
     protected Map<Class<?>, Map<Object, JmixEntity>> content = new HashMap<>();
@@ -270,10 +273,9 @@ public class DataContextImpl implements DataContext {
 
         for (MetaProperty property : metaClass.getProperties()) {
             String propertyName = property.getName();
-            if (property.getRange().isClass()                                              // refs and collections
-                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))          // loaded src
-                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {       // loaded dst
-
+            if (property.getRange().isClass()                                               // refs and collections
+                    && (srcNew || entityStates.isLoaded(srcEntity, propertyName))           // loaded src
+                    && (dstNew || entityStates.isLoaded(dstEntity, propertyName))) {        // loaded dst
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities
@@ -656,7 +658,7 @@ public class DataContextImpl implements DataContext {
     @SuppressWarnings("unchecked")
     public Collection<JmixEntity> isolate(List<JmixEntity> entities) {
         // re-serialize the whole collection to preserve links between objects
-        List isolatedEntities = (List) StandardSerialization.deserialize(StandardSerialization.serialize(entities));
+        List isolatedEntities = (List) standardSerialization.deserialize(standardSerialization.serialize(entities));
         for (int i = 0; i < isolatedEntities.size(); i++) {
             JmixEntity isolatedEntity = (JmixEntity) isolatedEntities.get(i);
             JmixEntity entity = entities.get(i);

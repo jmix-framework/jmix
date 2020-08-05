@@ -2,7 +2,6 @@ group = 'io.jmix.data'
 archivesBaseName = 'jmix-data-starter'
 
 dependencies {
-    api 'io.jmix.core:jmix-core'
     api project(':data')
 
     api 'com.zaxxer:HikariCP'

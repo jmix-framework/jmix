@@ -16,12 +16,17 @@
 
 package io.jmix.security.role.builder.extractor;
 
+import com.google.common.base.Strings;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.NullEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +40,8 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
 
     public static final String NAME = "sec_EntityAttributePolicyExtractor";
 
+    private static final Logger log = LoggerFactory.getLogger(EntityAttributePolicyExtractor.class);
+
     protected Metadata metadata;
 
     @Autowired
@@ -47,11 +54,20 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
         EntityAttributePolicy[] policyAnnotations = method.getAnnotationsByType(EntityAttributePolicy.class);
         for (EntityAttributePolicy policyAnnotation : policyAnnotations) {
-            MetaClass metaClass = metadata.getClass(policyAnnotation.entityClass());
+            Class<? extends JmixEntity> entityClass = policyAnnotation.entityClass();
+            String entityName = policyAnnotation.entityName();
+            if (entityClass != NullEntity.class) {
+                MetaClass metaClass = metadata.getClass(entityClass);
+                entityName = metaClass.getName();
+            } else if (Strings.isNullOrEmpty(entityName)) {
+                log.error("Neither entityClass, nor entityName is defined for the EntityAttributePolicy annotation. " +
+                        "Class: {}, method: {}", method.getClass().getName(), method.getName());
+                continue;
+            }
             String scope = policyAnnotation.scope();
             for (String attribute : policyAnnotation.attributes()) {
                 for (EntityAttributePolicyAction action : policyAnnotation.actions()) {
-                    String resource = metaClass.getName() + "." + attribute;
+                    String resource = entityName + "." + attribute;
                     ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.ENTITY_ATTRIBUTE,
                             resource,
                             action.getId(),

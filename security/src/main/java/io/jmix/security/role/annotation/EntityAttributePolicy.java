@@ -50,7 +50,9 @@ import java.lang.annotation.*;
 @Repeatable(EntityAttributePolicyContainer.class)
 public @interface EntityAttributePolicy {
 
-    Class<? extends JmixEntity> entityClass();
+    Class<? extends JmixEntity> entityClass() default NullEntity.class;
+
+    String entityName() default "";
 
     String[] attributes();
 

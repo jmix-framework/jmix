@@ -48,6 +48,24 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         entityPolicies[0].scope == 'rest'
     }
 
+    def "string entityName attribute on annotation"() {
+
+        when:
+
+        Role role = annotatedRoleBuilder.createRole(TestStringEntityNameRole.class.getCanonicalName())
+        def policies = role.resourcePolicies
+        def entityPolicies = policies.findAll { it.type == ResourcePolicyType.ENTITY }
+        def entityAttributePolicies = policies.findAll { it.type == ResourcePolicyType.ENTITY_ATTRIBUTE }
+
+        then:
+
+        entityPolicies.size() == 1
+        entityAttributePolicies.size() == 1
+
+        entityPolicies[0].resource == 'test_Order'
+        entityAttributePolicies[0].resource == 'test_Order.number'
+    }
+
     def "resource policies created in static method with @ExplicitResourcePolicies"() {
         when:
 

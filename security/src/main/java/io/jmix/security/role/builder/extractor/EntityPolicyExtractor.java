@@ -16,12 +16,17 @@
 
 package io.jmix.security.role.builder.extractor;
 
+import com.google.common.base.Strings;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.EntityPolicy;
+import io.jmix.security.role.annotation.NullEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +48,8 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
             EntityPolicyAction.DELETE
     };
 
+    private static final Logger log = LoggerFactory.getLogger(EntityPolicyExtractor.class);
+
     protected Metadata metadata;
 
     @Autowired
@@ -55,7 +62,16 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
         EntityPolicy[] entityPolicyAnnotations = method.getAnnotationsByType(EntityPolicy.class);
         for (EntityPolicy entityPolicyAnnotation : entityPolicyAnnotations) {
-            MetaClass metaClass = metadata.getClass(entityPolicyAnnotation.entityClass());
+            Class<? extends JmixEntity> entityClass = entityPolicyAnnotation.entityClass();
+            String entityName = entityPolicyAnnotation.entityName();
+            if (entityClass != NullEntity.class) {
+                MetaClass metaClass = metadata.getClass(entityClass);
+                entityName = metaClass.getName();
+            } else if (Strings.isNullOrEmpty(entityName)) {
+                log.error("Neither entityClass, nor entityName is defined for the EntityPolicy annotation. " +
+                        "Class: {}, method: {}", method.getClass().getName(), method.getName());
+                continue;
+            }
             EntityPolicyAction[] actions = entityPolicyAnnotation.actions();
             if (Arrays.asList(actions).contains(EntityPolicyAction.ALL)) {
                 actions = ALL_CRUD_ACTIONS;
@@ -63,7 +79,7 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
             String scope = entityPolicyAnnotation.scope();
             for (EntityPolicyAction action : actions) {
                 ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.ENTITY,
-                        metaClass.getName(),
+                        entityName,
                         action.getId(),
                         ResourcePolicy.DEFAULT_EFFECT,
                         scope);

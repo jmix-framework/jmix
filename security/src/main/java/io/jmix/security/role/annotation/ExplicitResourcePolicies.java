@@ -36,7 +36,7 @@ import java.lang.annotation.Target;
  *     &#064;ExplicitResourcePolicies
  *     static Collection<ResourcePolicy> explicitOrderPolicies() {
  *         List<ResourcePolicy> resourcePolicies = new ArrayList<>();
- *         ResourcePolicy policy1 = new ResourcePolicy(ResourcePolicyType.SCREEN, "sample_Order.browsr");
+ *         ResourcePolicy policy1 = new ResourcePolicy(ResourcePolicyType.SCREEN, "sample_Order.browse");
  *         resourcePolicies.add(policy1);
  *         ResourcePolicy policy2 = new ResourcePolicy(ResourcePolicyType.ENTITY, "sample_Order", EntityPolicyAction.READ.getId());
  *         resourcePolicies.add(policy2);

@@ -1141,7 +1141,7 @@ public interface ResponsiveGridLayout extends Component, Component.BelongToFrame
             this(null, value);
         }
 
-        protected OrderValue(@Nullable Integer order, String value) {
+        protected OrderValue(@Nullable Integer order, @Nullable String value) {
             Preconditions.checkArgument(order != null && value == null
                             || order == null && value != null,
                     "Either numeric value or constant value can be set at a time");

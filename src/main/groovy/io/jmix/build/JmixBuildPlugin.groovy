@@ -158,7 +158,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                             xml.enabled = false
                             html {
                                 enabled = true
-                                stylesheet = rootProject.resources.text.fromFile('etc/spotbugs/spotbugs-fancy-hist.xsl')
+                                stylesheet = 'fancy-hist.xsl'
                                 destination file("${project.buildDir}/reports/spotbugs/${project.name}.html")
                             }
                         }
@@ -171,7 +171,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                             xml.enabled = false
                             html {
                                 enabled = true
-                                stylesheet = project.resources.text.fromFile('etc/spotbugs/spotbugs-fancy-hist.xsl')
+                                stylesheet = 'fancy-hist.xsl'
                                 destination file("${project.buildDir}/reports/spotbugs/test-${project.name}.html")
                             }
                         }

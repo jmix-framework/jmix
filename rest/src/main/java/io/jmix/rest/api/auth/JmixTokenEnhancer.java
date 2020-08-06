@@ -20,6 +20,7 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import java.util.Map;
 /**
  * Provides additional token details from authentication details with ext_ prefix.
  */
+@Component
 public class JmixTokenEnhancer implements TokenEnhancer {
 
     public static final String EXTENDED_DETAILS_ATTRIBUTE_PREFIX = "ext_";
@@ -34,24 +36,19 @@ public class JmixTokenEnhancer implements TokenEnhancer {
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         Map<String, String> requestParameters = authentication.getOAuth2Request().getRequestParameters();
-        Map<String, Object> additionalInfos = null;
+        Map<String, Object> additionalInfos = new HashMap<>();
 
         for (Map.Entry<String, String> entry : requestParameters.entrySet()) {
             if (entry.getKey().startsWith(EXTENDED_DETAILS_ATTRIBUTE_PREFIX)) {
                 String detailsKey = entry.getKey().substring(EXTENDED_DETAILS_ATTRIBUTE_PREFIX.length());
-                if (additionalInfos == null) {
-                    additionalInfos = new HashMap<>();
-                }
                 additionalInfos.put(detailsKey, entry.getValue());
             }
         }
 
-        if (additionalInfos != null) {
-            additionalInfos.putAll(accessToken.getAdditionalInformation());
+        additionalInfos.putAll(accessToken.getAdditionalInformation());
 
-            DefaultOAuth2AccessToken mutableAccessToken = (DefaultOAuth2AccessToken) accessToken;
-            mutableAccessToken.setAdditionalInformation(additionalInfos);
-        }
+        DefaultOAuth2AccessToken mutableAccessToken = (DefaultOAuth2AccessToken) accessToken;
+        mutableAccessToken.setAdditionalInformation(additionalInfos);
 
         return accessToken;
     }

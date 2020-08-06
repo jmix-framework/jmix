@@ -1,0 +1,49 @@
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://application.caption">
+
+    <layout>
+        <cssLayout id="horizontalWrap"
+                   stylename="c-sidemenu-layout"
+                   height="100%"
+                   width="100%">
+            <cssLayout id="sideMenuContainer"
+                       height="100%"
+                       stylename="c-sidemenu-container">
+                <cssLayout id="sideMenuPanel"
+                           stylename="c-sidemenu-panel">
+                    <cssLayout id="appTitleBox"
+                               stylename="c-sidemenu-title"
+                               width="100%">
+                        <image id="logoImage"
+                               stylename="c-app-icon"
+                               scaleMode="SCALE_DOWN">
+                            <theme path="branding/app-icon-menu.svg"/>
+                        </image>
+                        <label id="appTitleLabel"
+                               stylename="c-app-title"
+                               value="msg://application.logoLabel"/>
+                    </cssLayout>
+                    <sideMenu id="sideMenu"
+                              width="100%"/>
+                    <timeZoneIndicator id="timeZoneIndicator"
+                                       align="MIDDLE_CENTER"/>
+                    <cssLayout id="controlBox"
+                               stylename="c-sidemenu-controls"
+                               width="100%">
+                        <userIndicator id="userIndicator"
+                                       align="MIDDLE_CENTER"/>
+                        <logoutButton id="logoutButton"
+                                      icon="SIGN_OUT"
+                                      description="msg://logoutBtnDescription"/>
+                    </cssLayout>
+                </cssLayout>
+            </cssLayout>
+            <workArea id="workArea"
+                      stylename="c-workarea"
+                      height="100%">
+                <initialLayout spacing="true" margin="true">
+                </initialLayout>
+            </workArea>
+        </cssLayout>
+    </layout>
+</window>

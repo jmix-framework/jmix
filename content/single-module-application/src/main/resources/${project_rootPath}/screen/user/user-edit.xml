@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://UserEdit.caption"
+        focusComponent="form">
+    <data>
+        <instance id="userDc"
+                  class="${project_rootPackage}.entity.User">
+            <fetchPlan extends="_base"/>
+            <loader/>
+        </instance>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true" expand="roleAssignmentGroupBox">
+        <form id="form" dataContainer="userDc">
+            <column width="350px">
+                <textField id="usernameField" property="username"/>
+                <passwordField id="passwordField"
+                               caption="msg://${project_rootPackage}.entity/User.password"
+                               required="true"
+                               visible="false"/>
+                <passwordField id="confirmPasswordField"
+                               caption="msg://confirmPassword"
+                               required="true"
+                               visible="false"/>
+                <textField id="firstNameField" property="firstName"/>
+                <textField id="lastNameField" property="lastName"/>
+                <textField id="emailField" property="email"/>
+                <checkBox id="enabledField" property="enabled"/>
+            </column>
+        </form>
+        <groupBox id="roleAssignmentGroupBox" spacing="true" caption="msg://roleAssignments">
+            <fragment id="roleAssignmentFragment" screen="sec_RoleAssignmentFragment" width="100%" height="100%">
+                <properties>
+                    <property name="userDc" ref="userDc"/>
+                </properties>
+            </fragment>
+        </groupBox>
+        <hbox id="editActions" spacing="true">
+            <button action="windowCommitAndClose"/>
+            <button action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

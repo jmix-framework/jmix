@@ -1,0 +1,7 @@
+group = 'io.jmix.sessions'
+archivesBaseName = 'jmix-sessions-starter'
+
+dependencies {
+    api project(':sessions')
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+}

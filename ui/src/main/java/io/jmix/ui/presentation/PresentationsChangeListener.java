@@ -15,11 +15,13 @@
  */
 package io.jmix.ui.presentation;
 
+import javax.annotation.Nullable;
+
 public interface PresentationsChangeListener {
 
     void currentPresentationChanged(TablePresentations presentations, Object oldPresentationId);
 
     void presentationsSetChanged(TablePresentations presentations);
 
-    void defaultPresentationChanged(TablePresentations presentations, Object oldPresentationId);
+    void defaultPresentationChanged(TablePresentations presentations, @Nullable Object oldPresentationId);
 }

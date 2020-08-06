@@ -303,7 +303,7 @@ public class TablePresentationsImpl implements TablePresentations {
         }
     }
 
-    protected void fireDefaultPresentationChanged(Object oldPresentationId) {
+    protected void fireDefaultPresentationChanged(@Nullable Object oldPresentationId) {
         if (listeners != null) {
             for (final PresentationsChangeListener listener : listeners) {
                 listener.defaultPresentationChanged(this, oldPresentationId);

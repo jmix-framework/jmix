@@ -17,25 +17,40 @@
 package io.jmix.security;
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.rememberme.JmixRememberMeServices;
+import io.jmix.core.rememberme.RememberMeProperties;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
+import io.jmix.core.session.SessionProperties;
 import io.jmix.security.authentication.SecuredAuthenticationProvider;
 import io.jmix.security.constraint.SecurityConstraintsRegistration;
 import io.jmix.security.role.RoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
 
 @Configuration
 @ComponentScan
@@ -48,6 +63,12 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     private CoreProperties coreProperties;
 
     @Autowired
+    private SessionProperties sessionProperties;
+
+    @Autowired
+    private RememberMeProperties rememberMeProperties;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
@@ -55,6 +76,15 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private PersistentTokenRepository rememberMeTokenRepository;
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
@@ -72,12 +102,60 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
         http.antMatcher("/**")
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/")
+                .and()
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .anonymous(anonymousConfigurer -> {
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
                     anonymousConfigurer.principal(userRepository.getAnonymousUser());
                 })
+                .rememberMe().rememberMeServices(rememberMeServices())
+                .and()
+                .sessionManagement().sessionAuthenticationStrategy(sessionControlAuthenticationStrategy())
+                .maximumSessions(sessionProperties.getMaximumUserSessions()).sessionRegistry(sessionRegistry)
+                .and().and()
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin();
+    }
+
+    @Bean("sec_rememberMeServices")
+    protected RememberMeServices rememberMeServices() {
+        JmixRememberMeServices rememberMeServices =
+                new JmixRememberMeServices(rememberMeProperties.getKey(), userDetailsService, rememberMeTokenRepository);
+        rememberMeServices.setTokenValiditySeconds(rememberMeProperties.getTokenValiditySeconds());
+        rememberMeServices.setParameter(DEFAULT_PARAMETER);
+        return rememberMeServices;
+    }
+
+    @Bean("sec_rememberMeRepository")
+    protected PersistentTokenRepository rememberMeRepository() {
+        return new InMemoryTokenRepositoryImpl();
+    }
+
+    @Primary
+    @Bean
+    protected SessionAuthenticationStrategy sessionControlAuthenticationStrategy() {
+        return new CompositeSessionAuthenticationStrategy(strategies());
+    }
+
+    protected List<SessionAuthenticationStrategy> strategies() {
+        RegisterSessionAuthenticationStrategy registerSessionAuthenticationStrategy
+                = new RegisterSessionAuthenticationStrategy(sessionRegistry);
+        ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlStrategy
+                = new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry);
+        concurrentSessionControlStrategy.setMaximumSessions(sessionProperties.getMaximumUserSessions());
+
+        List<SessionAuthenticationStrategy> strategies = new LinkedList<>();
+
+        strategies.add(registerSessionAuthenticationStrategy);
+        strategies.add(concurrentSessionControlStrategy);
+        return strategies;
+    }
+
+    @Bean
+    protected SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 
     @Bean(name = "sec_AuthenticationManager")

@@ -46,7 +46,9 @@ dependencies {
     api 'commons-io:commons-io'
     api 'org.apache.commons:commons-text'
     api 'com.google.guava:guava'
-    api 'org.dom4j:dom4j'
+    api ('org.dom4j:dom4j') {
+        exclude group: 'xpp3', module: 'xpp3'
+    }
     api 'javax.annotation:javax.annotation-api'
 
     api 'org.eclipse.persistence:jakarta.persistence'

@@ -602,10 +602,9 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
             Boolean currentCheckBoxValue = currentCheckBox.getValue();
             if (currentCheckBoxValue && !isEntityHaveAttribute(currentCheckBox.getId(), enabledAttributes)) {
                 //add attribute if checked and not exist in table
-                LoggedAttribute newLoggedAttribute = metadata.create(LoggedAttribute.class);
+                LoggedAttribute newLoggedAttribute = dataContext.create(LoggedAttribute.class);
                 newLoggedAttribute.setName(currentCheckBox.getId());
                 newLoggedAttribute.setEntity(selectedEntity);
-                dataContext.merge(newLoggedAttribute);
             }
             if (!currentCheckBoxValue && isEntityHaveAttribute(currentCheckBox.getId(), enabledAttributes)) {
                 //remove attribute if unchecked and exist in table

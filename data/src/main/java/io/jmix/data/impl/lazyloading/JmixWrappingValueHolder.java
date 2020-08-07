@@ -36,8 +36,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
-    protected volatile UnitOfWorkQueryValueHolder originalValueHolder;
+    private static final long serialVersionUID = 8740384435315015951L;
 
+    protected volatile UnitOfWorkQueryValueHolder originalValueHolder;
     protected transient DataManager dataManager;
     protected transient Metadata metadata;
     protected transient MetadataTools metadataTools;
@@ -84,11 +85,6 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
             }
         }
         return value;
-    }
-
-    @Override
-    public Object clone() {
-        return new JmixWrappingValueHolder(originalValueHolder, dataManager, metadata, metadataTools);
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {

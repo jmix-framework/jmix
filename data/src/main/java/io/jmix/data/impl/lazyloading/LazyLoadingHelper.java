@@ -137,6 +137,8 @@ public class LazyLoadingHelper {
                         beanFactory.getBean(FetchPlanBuilder.class, instance.getClass()),
                         metadata));
                 break;
+            default:
+                break;
         }
     }
 

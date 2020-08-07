@@ -53,7 +53,11 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
 
     @Override
     public Object clone() {
-        return null;
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException exception) {
+            throw new InternalError();
+        }
     }
 
     @Override
@@ -64,5 +68,6 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
     @Override
     public void setValue(Object value) {
         this.value = value;
+        this.isInstantiated = true;
     }
 }

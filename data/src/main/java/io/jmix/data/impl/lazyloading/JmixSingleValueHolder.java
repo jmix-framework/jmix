@@ -27,6 +27,8 @@ import org.springframework.beans.factory.BeanFactory;
 import java.io.IOException;
 
 public class JmixSingleValueHolder extends JmixAbstractValueHolder {
+    private static final long serialVersionUID = -9161805285177725933L;
+
     protected Object entityId;
     protected String propertyName;
     protected Class valueClass;
@@ -60,12 +62,6 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
             }
         }
         return value;
-    }
-
-    @Override
-    public Object clone() {
-        return new JmixSingleValueHolder(propertyName, valueClass, entityId, dataManager,
-                metadata, metadataTools);
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {

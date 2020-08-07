@@ -18,10 +18,23 @@ package io.jmix.autoconfigure.sessions;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.sessions.SessionsConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.session.MapSession;
+import org.springframework.session.MapSessionRepository;
+import org.springframework.session.SessionRepository;
+
+import java.util.HashMap;
 
 @Configuration
 @Import({CoreConfiguration.class, SessionsConfiguration.class})
 public class SessionsAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(SessionRepository.class)
+    public SessionRepository<MapSession> sessionRepository(){
+        return new MapSessionRepository(new HashMap<>());
+    }
 }

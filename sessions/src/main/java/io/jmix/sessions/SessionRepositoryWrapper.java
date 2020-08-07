@@ -42,10 +42,8 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
 
     protected SessionRepository<S> delegate;
 
-    @Autowired
     protected SessionRegistry sessionRegistry;
 
-    @Autowired
     protected Events events;
 
     public List<SessionAttributePersistenceValidator> getAttributePersistenceValidators() {
@@ -60,8 +58,10 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
         this.attributePersistenceValidators = attributePersistenceValidators;
     }
 
-    public SessionRepositoryWrapper(SessionRepository<S> delegate) {
+    public SessionRepositoryWrapper(SessionRegistry sessionRegistry, Events events, SessionRepository<S> delegate) {
         this.delegate = delegate;
+        this.sessionRegistry = sessionRegistry;
+        this.events = events;
     }
 
     @Override
@@ -123,8 +123,8 @@ public class SessionRepositoryWrapper<S extends Session> implements FindByIndexN
 
     @Override
     public Map<String, SessionWrapper> findByIndexNameAndIndexValue(String indexName, String indexValue) {
-        if (delegate instanceof FindByIndexNameSessionRepository){
-            return wrapMap(((FindByIndexNameSessionRepository<S>)delegate).findByIndexNameAndIndexValue(indexName, indexValue));
+        if (delegate instanceof FindByIndexNameSessionRepository) {
+            return wrapMap(((FindByIndexNameSessionRepository<S>) delegate).findByIndexNameAndIndexValue(indexName, indexValue));
         }
         return Collections.emptyMap();
     }

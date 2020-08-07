@@ -17,19 +17,24 @@
 package io.jmix.sessions;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.Events;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.sessions.validators.VaadinSessionAttributesValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.annotation.*;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.session.MapSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.session.web.http.SessionRepositoryFilter;
+
+import java.util.HashMap;
 
 @Configuration
 @ComponentScan
@@ -39,17 +44,25 @@ public class SessionsConfiguration<S extends Session> {
     @Autowired
     protected HttpSessionIdResolver sessionIdResolver;
 
-    @Primary
-    @Bean("sessions_sessionRepositoryWrapper")
+    @Autowired
+    protected Events events;
+
     public SessionRepositoryWrapper<S> sessionRepositoryWrapper(SessionRepository<S> sessionRepository) {
-        SessionRepositoryWrapper<S> sessionRepositoryWrapper = new SessionRepositoryWrapper<>(sessionRepository);
+        SessionRepositoryWrapper<S> sessionRepositoryWrapper = new SessionRepositoryWrapper<>(
+                sessionRegistry(), events, sessionRepository);
         sessionRepositoryWrapper.addAttributePersistenceValidators(new VaadinSessionAttributesValidator());
         return sessionRepositoryWrapper;
     }
 
     @Bean
+    protected SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
     public SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> springSessionRepositoryFilter(
-            @Autowired SessionRepository<S> sessionRepository) {
+            @Autowired SessionRepository<S> sessionRepository,
+            @Autowired Events events) {
         SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> sessionRepositoryFilter
                 = new SessionRepositoryFilter<>(sessionRepositoryWrapper(sessionRepository));
         sessionRepositoryFilter.setHttpSessionIdResolver(sessionIdResolver);

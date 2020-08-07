@@ -11,12 +11,13 @@ buildscript {
                     }
                 }
             }
+            gradlePluginPortal()
         } else {
             mavenLocal()
-            mavenCentral()
             maven {
-                url "https://plugins.gradle.org/m2/"
+                url 'https://nexus.jmix.io/repository/public'
             }
+            gradlePluginPortal()
         }
     }
     dependencies {

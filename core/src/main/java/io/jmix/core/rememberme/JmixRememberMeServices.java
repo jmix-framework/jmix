@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class JmixRememberMeServices extends PersistentTokenBasedRememberMeServices {
 
@@ -52,6 +53,10 @@ public class JmixRememberMeServices extends PersistentTokenBasedRememberMeServic
     @Override
     protected void onLoginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) {
         super.onLoginSuccess(request, response, successfulAuthentication);
-        request.getSession().setMaxInactiveInterval(getTokenValiditySeconds());
+        enhanceSession(request.getSession());
+    }
+
+    protected void enhanceSession(HttpSession session) {
+        session.setMaxInactiveInterval(getTokenValiditySeconds());
     }
 }

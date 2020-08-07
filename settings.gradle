@@ -1,4 +1,4 @@
-rootProject.name = 'jmix-data'
+rootProject.name = 'jmix-sessions'
 
 include 'sessions'
 include 'sessions-starter'

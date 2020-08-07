@@ -250,7 +250,7 @@ public class UserSettingServiceImpl implements UserSettingService {
             return presentationMap;
         });
 
-        return resultMap;
+        return resultMap == null ? Collections.emptyMap() : resultMap;
     }
 
     /* todo folders panel

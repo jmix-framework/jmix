@@ -686,7 +686,7 @@ public class JmixResponsiveGridLayout extends AbstractComponent
         protected Integer cols;
         protected boolean auto;
 
-        public ColumnsValue(Integer cols) {
+        public ColumnsValue(@Nullable Integer cols) {
             this(cols, false);
         }
 
@@ -694,7 +694,7 @@ public class JmixResponsiveGridLayout extends AbstractComponent
             this(null, auto);
         }
 
-        protected ColumnsValue(Integer cols, boolean auto) {
+        protected ColumnsValue(@Nullable Integer cols, boolean auto) {
             Preconditions.checkArgument(cols == null || cols > 0,
                     "Columns value must be either 'null' for auto-layout or be greater than 0");
 
@@ -752,7 +752,7 @@ public class JmixResponsiveGridLayout extends AbstractComponent
             this(null, value);
         }
 
-        protected OrderValue(Integer order, String value) {
+        protected OrderValue(@Nullable Integer order, @Nullable String value) {
             Preconditions.checkArgument(order != null && value == null
                             || order == null && value != null,
                     "Either numeric value or constant value can be set at a time");

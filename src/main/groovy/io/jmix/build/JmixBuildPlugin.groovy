@@ -40,14 +40,15 @@ class JmixBuildPlugin implements Plugin<Project> {
                             }
                         }
                     }
+                    mavenCentral()
                 }
             } else {
                 repositories {
                     mavenLocal()
-                    mavenCentral()
                     maven {
                         url('https://nexus.jmix.io/repository/public')
                     }
+                    mavenCentral()
                 }
             }
         }

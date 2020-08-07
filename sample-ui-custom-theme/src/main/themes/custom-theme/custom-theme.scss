@@ -1,0 +1,6 @@
+/* Halo - Vaadin Valo SCSS theme for Platform */
+@import "../halo/halo";
+
+@mixin custom-theme {
+  @include halo;
+}

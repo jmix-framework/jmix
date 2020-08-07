@@ -1,0 +1,22 @@
+apply plugin: 'java'
+apply plugin: 'java-library'
+
+dependencies {
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api project(':ui')
+
+    compileOnly project(':ui-widgets')
+}
+
+jar {
+    // pack client Java sources
+    with copySpec {
+        from sourceSets.main.allJava
+        include "io/jmix/widgetsaddon/client/**"
+    }
+    // register exported widgetset
+    manifest {
+        attributes(['Vaadin-Widgetsets': 'io.jmix.widgetsaddon.WidgetsAddon'])
+    }
+}

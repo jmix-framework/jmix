@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'war'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.ui'
+
+dependencies {
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api 'io.jmix.core:jmix-core-starter'
+    api 'io.jmix.data:jmix-data-starter'
+    api project(':ui-starter')
+    implementation project(':ui-widgets-compiled')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    themes project(':ui-themes')
+    themes project(':sample-ui-theme-addon')
+}

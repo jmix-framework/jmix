@@ -9,6 +9,11 @@ include 'ui-themes'
 include 'ui-themes-compiled'
 include 'ui-widgets'
 include 'ui-widgets-compiled'
+include 'sample-ui'
+include 'sample-ui-widgets-addon'
+include 'sample-ui-custom-widgets'
+include 'sample-ui-theme-addon'
+include 'sample-ui-custom-theme'
 
 rootProject.children.each { p1 ->
 	p1.buildFileName = "${p1.name}.gradle"

@@ -1,0 +1,70 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.samples.ui;
+
+import io.jmix.core.DataManager;
+import io.jmix.core.security.Authenticator;
+import io.jmix.samples.ui.entity.SampleUser;
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.EventListener;
+
+import javax.sql.DataSource;
+
+@SpringBootApplication
+public class SampleUIApplication {
+
+
+	@Autowired
+	private DataManager dataManager;
+
+	@Autowired
+	private Authenticator authenticator;
+
+
+	public static void main(String[] args) {
+		SpringApplication.run(SampleUIApplication.class, args);
+	}
+
+	@Bean
+	public DataSource dataSource() {
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setUrl("jdbc:hsqldb:mem:testdb");
+		dataSource.setUsername("sa");
+		dataSource.setPassword("");
+		return dataSource;
+	}
+
+
+	@EventListener(ApplicationStartedEvent.class)
+	private void onStartup() {
+		authenticator.withSystem(() -> {
+
+			for (int i = 0; i < 50; i++) {
+				SampleUser user = dataManager.create(SampleUser.class);
+				user.setUsername(String.format("User %d", i));
+				dataManager.save(user);
+			}
+
+			return null;
+		});
+	}
+}

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://browseCaption">
+    <data readOnly="true">
+        <collection id="usersDc"
+                    class="io.jmix.samples.ui.entity.SampleUser">
+            <fetchPlan>
+                <property name="username"/>
+                <property name="firstName"/>
+                <property name="lastName"/>
+                <property name="middleName"/>
+                <property name="email"/>
+                <property name="language"/>
+                <property name="timeZone"/>
+            </fetchPlan>
+            <loader id="usersDl">
+                <query>
+                    <![CDATA[select e from sample_User e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <layout spacing="true" expand="usersTable">
+        <label value="Users"/>
+        <comboBox caption="Select Role"/>
+        <groupTable id="usersTable"
+                    width="100%"
+                    dataContainer="usersDc">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="firstName"/>
+                <column id="lastName"/>
+                <column id="middleName"/>
+                <column id="email"/>
+                <column id="language"/>
+                <column id="timeZone"/>
+            </columns>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn" action="usersTable.create"/>
+                <button id="editBtn" action="usersTable.edit"/>
+                <button id="removeBtn" action="usersTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+        <vbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </vbox>
+    </layout>
+</window>

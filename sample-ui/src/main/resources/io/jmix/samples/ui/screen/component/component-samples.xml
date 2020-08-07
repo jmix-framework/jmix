@@ -1,0 +1,254 @@
+<!--
+  ~ Copyright 2019 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="Components">
+    <data readOnly="true">
+        <collection id="usersDc"
+                    class="io.jmix.samples.ui.entity.SampleUser"
+                    fetchPlan="_local">
+            <loader id="usersDl">
+                <query>
+                    <![CDATA[select e from sample_User e]]>
+                </query>
+            </loader>
+        </collection>
+    </data>
+
+    <facets>
+        <notification id="notificationFacet"
+                      type="TRAY"
+                      caption="Notification Facet"
+                      onButton="notificationFacetBtn"/>
+
+        <messageDialog id="messageDialogFacet"
+                       caption="Message Dialog Facet"
+                       message="Message"
+                       modal="true"
+                       closeOnClickOutside="true"
+                       onButton="messageDialogFacetBtn"/>
+
+        <optionDialog id="optionDialogFacet"
+                      caption="Option Dialog Facet"
+                      message="Message"
+                      onButton="optionDialogFacetBtn">
+            <actions>
+                <action id="ok"
+                        caption="OK"
+                        icon="CHECK"
+                        primary="true"/>
+                <action id="cancel"
+                        caption="Cancel"
+                        icon="BAN"/>
+            </actions>
+        </optionDialog>
+
+        <inputDialog id="inputDialogFacet"
+                     caption="Input Dialog Facet"
+                     onButton="inputDialogFacetBtn">
+            <parameters>
+                <booleanParameter id="boolParam"
+                                  caption="Boolean parameter"
+                                  defaultValue="true"
+                                  required="true"/>
+                <intParameter id="intParam"
+                              caption="Integer parameter"
+                              required="true"/>
+            </parameters>
+            <actions>
+                <action id="ok"
+                        caption="OK"
+                        icon="CHECK"
+                        primary="true"/>
+                <action id="cancel"
+                        caption="Cancel"
+                        icon="BAN"/>
+            </actions>
+        </inputDialog>
+    </facets>
+
+    <layout>
+        <tabSheet id="tabSheet" width="100%" height="100%">
+            <tab id="fieldsTab" caption="Fields Tab">
+                <scrollBox spacing="true" width="100%" height="100%">
+                    <hbox spacing="true" caption="MaskedField">
+                        <maskedField mask="#(###)-###-##-##" valueMode="masked"/>
+                        <maskedField mask="#(###)-###-##-##" valueMode="masked" editable="false"/>
+                        <maskedField mask="#(###)-###-##-##" valueMode="masked" enable="false"/>
+                    </hbox>
+                    <hbox spacing="true" caption="DateField">
+                        <!--                <dateField/>-->
+                        <!--                <dateField editable="false"/>-->
+                        <!--                <dateField enable="false"/>-->
+                    </hbox>
+                    <hbox caption="TextArea" spacing="true">
+                        <textArea/>
+                        <textArea editable="false"/>
+                        <textArea enable="false"/>
+                    </hbox>
+                    <hbox caption="ResizableTextArea" spacing="true">
+                        <resizableTextArea/>
+                        <resizableTextArea editable="false"/>
+                        <resizableTextArea enable="false"/>
+                    </hbox>
+                    <hbox caption="TextField" spacing="true">
+                        <textField datatype="int"/>
+                        <textField id="editableTextField" editable="false"/>
+                        <textField enable="false"/>
+                        <textField editable="false" enable="false"/>
+                    </hbox>
+                    <hbox caption="TimeField" spacing="true">
+                        <!--                <timeField/>-->
+                        <!--                <timeField editable="false"/>-->
+                        <!--                <timeField enable="false"/>-->
+                    </hbox>
+                    <hbox caption="ComboBox" spacing="true">
+                        <comboBox/>
+                        <comboBox id="editableComboBox" editable="false"/>
+                        <comboBox enable="false"/>
+                    </hbox>
+                    <hbox caption="EntityPicker" spacing="true">
+                        <entityPicker/>
+                        <entityPicker editable="false"/>
+                        <entityPicker enable="false"/>
+                    </hbox>
+                    <hbox caption="SuggestionField" spacing="true">
+                        <suggestionField/>
+                        <suggestionField editable="false"/>
+                        <suggestionField enable="false"/>
+                    </hbox>
+                    <hbox caption="EntitySuggestionField" spacing="true">
+                        <entitySuggestionField/>
+                        <entitySuggestionField editable="false"/>
+                        <entitySuggestionField enable="false"/>
+                    </hbox>
+                    <hbox caption="EntityComboBox" spacing="true">entityComboBox
+                        <entityComboBox/>
+                        <entityComboBox editable="false"/>
+                        <entityComboBox enable="false"/>
+                    </hbox>
+                    <hbox caption="PasswordField" spacing="true">
+                        <passwordField/>
+                        <passwordField editable="false"/>
+                        <passwordField enable="false"/>
+                    </hbox>
+                    <hbox caption="CurrencyField" spacing="true">
+                        <currencyField currency="R" currencyLabelPosition="LEFT"/>
+                        <currencyField currency="R" editable="false"/>
+                        <currencyField currency="R" enable="false"/>
+                        <currencyField currency="R" editable="false" enable="false"/>
+                    </hbox>
+                    <hbox caption="SourceCodeEditor" spacing="true">
+                        <sourceCodeEditor/>
+                        <sourceCodeEditor editable="false"/>
+                        <sourceCodeEditor enable="false"/>
+                    </hbox>
+                    <hbox caption="RichTextArea" spacing="true">
+                        <richTextArea/>
+                        <richTextArea editable="false"/>
+                        <richTextArea enable="false"/>
+                    </hbox>
+                    <hbox caption="FileUpload" spacing="true">
+                        <fileUpload/>
+                    </hbox>
+                </scrollBox>
+            </tab>
+            <tab id="layoutTab" caption="Layouts">
+                <scrollBox spacing="true" width="100%" height="100%">
+                    <accordion caption="Accorddion" height="200px" width="300px">
+                        <tab id="accordionTab1" caption="Tab 1">
+                            <button/>
+                        </tab>
+                        <tab id="accordionTab2" caption="Tab 2">
+                            <button/>
+                        </tab>
+                    </accordion>
+                    <cssLayout caption="CssLayout" height="100px" width="300px">
+                        <button caption="btn"/>
+                        <label value="label"/>
+                    </cssLayout>
+                    <gridLayout caption="Grid Layout" height="100px" width="200px">
+                        <columns count="2"/>
+                        <rows>
+                            <row>
+                                <button caption="Col 1 row 1"/>
+                                <label value="Col 2 row 1"/>
+                            </row>
+                            <row>
+                                <button caption="Col 1 row 2"/>
+                                <label value="Col 2 row 2"/>
+                            </row>
+                        </rows>
+                    </gridLayout>
+                </scrollBox>
+            </tab>
+            <tab id="othersTab" caption="Others">
+                <vbox id="othersVBox" height="100%" width="100%" expand="spacer" spacing="true">
+                    <capsLockIndicator id="capsLockIndicator"/>
+                    <passwordField id="pass" caption="Caps Lock Indicator password"
+                                   capsLockIndicator="capsLockIndicator"/>
+                    <link url="https://www.cuba-platform.com" caption="Link Button" target="_blank"/>
+                    <checkBox caption="CheckBox"/>
+                    <hbox spacing="true">
+                        <checkBoxGroup id="checkBoxGroup"/>
+                        <twinColumn id="twinColumn"/>
+                        <radioButtonGroup id="radioButtonGroup"/>
+                        <multiSelectList id="multiSelectList"/>
+                        <singleSelectList id="singleSelectList"/>
+                    </hbox>
+                    <popupButton caption="PopupButton">
+                        <actions>
+                            <action id="action1" caption="Action 1"/>
+                            <action id="action2" caption="Action 2"/>
+                        </actions>
+                    </popupButton>
+                    <popupView caption="PopupView">
+                        <button caption="Content PopupView"/>
+                    </popupView>
+                    <label id="spacer"/>
+                </vbox>
+            </tab>
+            <tab id="dialogsAndNotificationsTab"
+                 spacing="true"
+                 caption="Dialogs and Notifications">
+                <scrollBox spacing="true" width="100%" height="100%">
+                    <hbox caption="Input Dialog" spacing="true">
+                        <button id="inputDialogBtn"
+                                caption="Show InputDialog"/>
+                        <button id="inputDialogFacetBtn"
+                                caption="Show InputDialogFacet"/>
+                    </hbox>
+                    <hbox caption="Message Dialog" spacing="true">
+                        <button id="messageDialogBtn"
+                                caption="Show MessageDialog"/>
+                        <button id="messageDialogFacetBtn"
+                                caption="Show MessageDialogFacet"/>
+                    </hbox>
+                    <hbox caption="Option Dialog" spacing="true">
+                        <button id="optionDialogBtn"
+                                caption="Show OptionDialog"/>
+                        <button id="optionDialogFacetBtn"
+                                caption="Show OptionDialogFacet"/>
+                    </hbox>
+                    <hbox caption="Notifications" spacing="true">
+                        <button id="notificationBtn" caption="Show Notification"/>
+                        <button id="notificationFacetBtn" caption="Show NotificationFacet"/>
+                    </hbox>
+                </scrollBox>
+            </tab>
+        </tabSheet>
+    </layout>
+</window>

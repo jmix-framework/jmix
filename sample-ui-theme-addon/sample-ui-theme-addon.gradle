@@ -1,0 +1,5 @@
+apply plugin: 'java'
+
+jar.manifest {
+    attributes(['Vaadin-Stylesheets': 'VAADIN/addons/demo-theme-addon/demo-theme-addon.scss'])
+}

@@ -1,0 +1,45 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.jmix'
+
+group = 'io.jmix.ui'
+
+dependencies {
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api project(':ui-starter')
+    api project(':ui-data-starter')
+
+    api 'io.jmix.core:jmix-core-starter'
+    api 'io.jmix.data:jmix-data-starter'
+    api 'io.jmix.security:jmix-security-starter'
+    api 'io.jmix.security:jmix-security-ui-starter'
+    api 'io.jmix.security:jmix-security-data-starter'
+    api 'io.jmix.datatools:jmix-datatools-ui-starter'
+
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    implementation project(':ui-widgets-compiled')
+    implementation project(':ui-themes-compiled')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.apache.commons:commons-dbcp2'
+    runtimeOnly 'org.hsqldb:hsqldb'
+}

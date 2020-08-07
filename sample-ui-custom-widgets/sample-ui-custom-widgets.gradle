@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'war'
+apply plugin: 'io.jmix'
+
+dependencies {
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api project(':ui-starter')
+
+    api 'io.jmix.core:jmix-core-starter'
+    api 'io.jmix.data:jmix-data-starter'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation project(':sample-ui-widgets-addon')
+
+    widgets project(':ui-widgets')
+    widgets project(':sample-ui-widgets-addon')
+}
+
+compileWidgets {
+    generate 'io.jmix.sample.customwidgets.CustomWidgetSet'
+}

@@ -14,7 +14,9 @@ buildscript {
             gradlePluginPortal()
         } else {
             mavenLocal()
-            mavenCentral()
+            maven {
+                url 'https://nexus.jmix.io/repository/public'
+            }
             gradlePluginPortal()
         }
     }

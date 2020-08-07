@@ -55,8 +55,8 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
     public Object clone() {
         try {
             return super.clone();
-        } catch (CloneNotSupportedException exception) {
-            throw new InternalError();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -30,8 +30,9 @@ dependencies {
     implementation 'com.google.code.gson:gson'
 
     testImplementation 'org.springframework:spring-test'
-    testImplementation "org.spockframework:spock-core"
-    testImplementation "org.spockframework:spock-spring"
+    testImplementation 'org.spockframework:spock-core'
+    testImplementation 'org.spockframework:spock-spring'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

@@ -27,6 +27,10 @@ public class RestAuthDetails implements Serializable {
 
     private String sessionId;
 
+    private String accessToken;
+
+    private String refreshToken;
+
     private RestAuthDetails() {
     }
 
@@ -47,6 +51,16 @@ public class RestAuthDetails implements Serializable {
 
         public Builder sessionId(String sessionId) {
             obj.sessionId = sessionId;
+            return this;
+        }
+
+        public Builder accessToken(String accessToken) {
+            obj.accessToken = accessToken;
+            return this;
+        }
+
+        public Builder refreshToken(String refreshToken) {
+            obj.refreshToken = refreshToken;
             return this;
         }
 

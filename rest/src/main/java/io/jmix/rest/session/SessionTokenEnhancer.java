@@ -35,7 +35,11 @@ public class SessionTokenEnhancer implements TokenEnhancer {
 
         mutableAccessToken.getAdditionalInformation().put(OAuth2AccessTokenSessionIdResolver.SESSION_ID, session.getId());
 
-        authentication.setDetails(RestAuthDetails.builder().sessionId(session.getId()).build());
+        authentication.setDetails(RestAuthDetails.builder()
+                .sessionId(session.getId())
+                .accessToken(accessToken.getValue())
+                .refreshToken(accessToken.getRefreshToken().getValue())
+                .build());
         return accessToken;
     }
 }

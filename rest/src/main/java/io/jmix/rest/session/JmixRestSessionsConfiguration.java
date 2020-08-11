@@ -16,7 +16,6 @@
 
 package io.jmix.rest.session;
 
-import io.jmix.rest.session.OAuth2AccessTokenSessionIdResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

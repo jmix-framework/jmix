@@ -615,11 +615,20 @@ public class OrmDataStore implements DataStore {
                 savedEntitiesHolder = SavedEntitiesHolder.setEntities(saved);
 
                 if (context.isJoinTransaction()) {
-                    List<EntityChangedEvent> events = entityChangedEventManager.collect(saved);
+                    List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect(saved);
+
                     em.flush();
+
+                    List<EntityChangedEvent> events = new ArrayList<>(eventsInfo.size());
+                    for (EntityChangedEventInfo info : eventsInfo) {
+                        events.add(new EntityChangedEvent(info.getSource(),
+                                Id.of(info.getEntity()), info.getType(), info.getChanges(), info.getOriginalMetaClass()));
+                    }
+
                     for (JmixEntity entity : saved) {
                         em.detach(entity);
                     }
+
                     entityChangedEventManager.publish(events);
                 }
 

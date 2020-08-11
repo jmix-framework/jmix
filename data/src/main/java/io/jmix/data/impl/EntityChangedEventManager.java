@@ -81,8 +81,8 @@ public class EntityChangedEventManager {
 
     private Map<Class, PublishingInfo> infoCache = new ConcurrentHashMap<>();
 
-    public List<EntityChangedEvent> collect(Collection<JmixEntity> entities) {
-        List<EntityChangedEvent> list = new ArrayList<>();
+    public List<EntityChangedEventInfo> collect(Collection<JmixEntity> entities) {
+        List<EntityChangedEventInfo> list = new ArrayList<>();
         for (JmixEntity entity : entities) {
 
             PublishingInfo info = infoCache.computeIfAbsent(entity.getClass(), aClass -> {
@@ -125,9 +125,9 @@ public class EntityChangedEventManager {
                 }
                 if (type != null && attributeChanges != null) {
                     @SuppressWarnings("unchecked")
-                    EntityChangedEvent event = new EntityChangedEvent(this, Id.of(entity), type, attributeChanges,
-                            info.originalMetaClass);
-                    list.add(event);
+                    EntityChangedEventInfo eventData = new EntityChangedEventInfo(this, entity, type,
+                            attributeChanges, info.originalMetaClass);
+                    list.add(eventData);
                 }
             }
         }

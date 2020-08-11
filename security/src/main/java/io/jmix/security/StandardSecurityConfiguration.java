@@ -19,6 +19,7 @@ package io.jmix.security;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.rememberme.JmixRememberMeServices;
 import io.jmix.core.rememberme.RememberMeProperties;
+import io.jmix.core.security.JmixSessionAuthenticationStrategy;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.core.session.SessionProperties;
@@ -150,7 +151,13 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
         strategies.add(registerSessionAuthenticationStrategy);
         strategies.add(concurrentSessionControlStrategy);
+        strategies.add(jmixSessionAuthenticationStrategy());
         return strategies;
+    }
+
+    @Bean
+    protected SessionAuthenticationStrategy jmixSessionAuthenticationStrategy() {
+        return new JmixSessionAuthenticationStrategy();
     }
 
     @Bean

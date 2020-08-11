@@ -21,6 +21,7 @@ import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import com.haulmont.cuba.core.listener.AfterDeleteEntityListener;
 import com.haulmont.cuba.core.listener.AfterInsertEntityListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
+import com.haulmont.cuba.core.model.primary_keys.IntIdentityEntity;
 import io.jmix.core.Id;
 import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.EntityManager;
@@ -34,6 +35,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -109,6 +111,12 @@ public class TestEntityChangedEventListener implements
         entityChangedEvents.add(new Info(event, isCommitted(event.getEntityId())));
     }
 
+    @TransactionalEventListener
+    void afterCommitIdentity(EntityChangedEvent<IntIdentityEntity> event) {
+        allEvents.add(new EventInfo("EntityChangedEvent: afterCommit, "  + event.getType(), event));
+        entityChangedEvents.add(new Info(event, isCommittedIdentity(event.getEntityId())));
+    }
+
     @Override
     public void beforeCommit(EntityManager entityManager, Collection<JmixEntity> managedEntities) {
         allEvents.add(new EventInfo("BeforeCommitTransactionListener", managedEntities));
@@ -176,4 +184,20 @@ public class TestEntityChangedEventListener implements
         }
     }
 
+    private boolean isCommittedIdentity(Id<IntIdentityEntity> entityId) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Boolean> future = executor.submit(() -> {
+            JdbcTemplate jdbcTemplate = new JdbcTemplate(persistence.getDataSource());
+            List<Map<String, Object>> row = jdbcTemplate.queryForList("select id from TEST_INT_IDENTITY where id = ?",
+                    entityId.getValue().toString());
+            return !row.isEmpty();
+        });
+        try {
+            return future.get(200L, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
 }

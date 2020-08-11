@@ -19,6 +19,7 @@ import com.haulmont.cuba.core.Transaction
 import com.haulmont.cuba.core.TransactionalDataManager
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.model.primary_keys.IntIdentityEntity
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
@@ -187,5 +188,23 @@ class EntityChangedEventTest extends CoreTestSpecification {
         cleanup:
 
         testSupport.deleteRecord(orderLine11, orderLine12, product1, product2, order1)
+    }
+
+    def "entity change event for DB generated id entity"() {
+
+        IntIdentityEntity entity = metadata.create(IntIdentityEntity)
+        entity.setName('intIdentity')
+
+        when:
+
+        IntIdentityEntity entity1 = dataManager.commit(entity)
+
+        then:
+
+        listener.entityChangedEvents.size() == 1
+
+        cleanup:
+
+        testSupport.deleteRecord(entity1)
     }
 }

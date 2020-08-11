@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
+import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.data.entity.BaseIntIdentityIdEntity;
 
 import javax.persistence.Column;
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test$IntIdentityEntity")
 @Table(name = "TEST_INT_IDENTITY")
+@PublishEntityChangedEvents
 public class IntIdentityEntity extends BaseIntIdentityIdEntity {
 
     @Column(name = "NAME")

@@ -21,8 +21,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath("io.jmix.build:jmix-build:$version")
-        classpath("io.jmix.gradle:jmix-gradle-plugin:${version}")
+        classpath("io.jmix.build:jmix-build:${rootProject.findProperty('buildPluginVersion') ?: version}")
+        classpath("io.jmix.gradle:jmix-gradle-plugin:${rootProject.findProperty('jmixPluginVersion') ?: version}")
     }
 }
 

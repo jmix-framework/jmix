@@ -44,6 +44,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -487,11 +488,12 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
         T selectedItem = getBrowseContainer().getItemOrNull();
         if (selectedItem != null) {
             FetchPlan fetchPlan = getEditContainer().getFetchPlan();
-            boolean loadDynamicAttributes = getEditLoader().isLoadDynamicAttributes();
+            Map<String, Object> hits = getEditLoader().getHints();
+
             T reloadedItem = getBeanLocator().get(DataManager.class)
                     .load(Id.of(selectedItem))
                     .fetchPlan(fetchPlan)
-                    .dynamicAttributes(loadDynamicAttributes)
+                    .hints(hits)
                     .one();
             getBrowseContainer().replaceItem(reloadedItem);
         }

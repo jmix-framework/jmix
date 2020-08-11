@@ -203,15 +203,14 @@ class ScreenDataTest extends DataContextSpec {
                 <instance id="userCont"
                           class="test_support.entity.sec.User" fetchPlan="user.edit">
                           
-                    <loader id="userLoader" entityId="60885987-1b61-4247-94c7-dff348347f93" softDeletion="false"
-                            dynamicAttributes="true"/>
+                    <loader id="userLoader" entityId="60885987-1b61-4247-94c7-dff348347f93" softDeletion="false"/>
+                            
                 </instance>
 
                 <collection id="usersCont"
                             class="test_support.entity.sec.User" fetchPlan="user.browse">
             
-                    <loader id="usersLoader" softDeletion="false" firstResult="100" maxResults="1000" cacheable="true"
-                            dynamicAttributes="true">
+                    <loader id="usersLoader" softDeletion="false" firstResult="100" maxResults="1000" cacheable="true">
                         <query>
                             select u from sec$User u
                         </query>
@@ -258,14 +257,12 @@ class ScreenDataTest extends DataContextSpec {
 
         userLoader.entityId == UUID.fromString('60885987-1b61-4247-94c7-dff348347f93')
         !userLoader.softDeletion
-        userLoader.loadDynamicAttributes
         ((InstanceLoaderImpl) userLoader).createLoadContext().fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.edit')
 
         !usersLoader.softDeletion
         usersLoader.firstResult == 100
         usersLoader.maxResults == 1000
         usersLoader.cacheable
-        usersLoader.loadDynamicAttributes
         ((CollectionLoaderImpl) usersLoader).createLoadContext().fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.browse')
 
         !userInfoLoader.softDeletion

@@ -192,12 +192,13 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
         if (getEntityStates().isNew(entityToEdit) || doNotReloadEditedEntity()) {
             T mergedEntity = getScreenData().getDataContext().merge(entityToEdit);
 
-            if (instanceLoader != null
-                    && instanceLoader.isLoadDynamicAttributes()
-                    && getEntityStates().isNew(entityToEdit)) {
-                // todo dynamic attributes
-                // tools.initDefaultAttributeValues((BaseGenericIdEntity) mergedEntity, mergedEntity.getMetaClass());
-            }
+            //TODO: Dynamic attributes: move into facet
+//            if (instanceLoader != null
+//                    && instanceLoader.isLoadDynamicAttributes()
+//                    && getEntityStates().isNew(entityToEdit)) {
+//                // todo dynamic attributes
+//                // tools.initDefaultAttributeValues((BaseGenericIdEntity) mergedEntity, mergedEntity.getMetaClass());
+//            }
 
             fireEvent(InitEntityEvent.class, new InitEntityEvent<>(this, mergedEntity));
 

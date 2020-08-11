@@ -288,7 +288,6 @@ public class ScreenDataXmlLoader {
             loader.setContainer(container);
 
             loadSoftDeletion(element, loader);
-            loadDynamicAttributes(element, loader);
             loadQuery(element, loader);
             loadEntityId(element, loader);
         }
@@ -315,7 +314,6 @@ public class ScreenDataXmlLoader {
 
             loadQuery(element, loader);
             loadSoftDeletion(element, loader);
-            loadDynamicAttributes(element, loader);
             loadFirstResult(element, loader);
             loadMaxResults(element, loader);
             loadCacheable(element, loader);
@@ -439,17 +437,6 @@ public class ScreenDataXmlLoader {
         String softDeletionVal = element.attributeValue("softDeletion");
         if (!Strings.isNullOrEmpty(softDeletionVal))
             loader.setSoftDeletion(Boolean.parseBoolean(softDeletionVal));
-    }
-
-    protected void loadDynamicAttributes(Element element, DataLoader loader) {
-        String dynamicAttributes = element.attributeValue("dynamicAttributes");
-        if (!Strings.isNullOrEmpty(dynamicAttributes)) {
-            if (loader instanceof InstanceLoader) {
-                ((InstanceLoader) loader).setLoadDynamicAttributes(Boolean.parseBoolean(dynamicAttributes));
-            } else if (loader instanceof CollectionLoader) {
-                ((CollectionLoader) loader).setLoadDynamicAttributes(Boolean.parseBoolean(dynamicAttributes));
-            }
-        }
     }
 
     protected void loadEntityId(Element element, InstanceLoader<JmixEntity> loader) {

@@ -23,8 +23,10 @@ import io.jmix.core.FetchPlan;
 import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -51,14 +53,15 @@ public interface CollectionLoader<E extends JmixEntity> extends BaseCollectionLo
     LoadContext<E> createLoadContext();
 
     /**
-     * Returns true if the entity's dynamic attributes are loaded.
+     * Sets custom hint that should be used by the query for loading data.
      */
-    boolean isLoadDynamicAttributes();
+    void setHint(String hintName, Object value);
 
     /**
-     * Set to true to load the entity's dynamic attributes. Dynamic attributes are not loaded by default.
+     * @return custom hints which are used by the query for loading data.
      */
-    void setLoadDynamicAttributes(boolean loadDynamicAttributes);
+    @Nullable
+    Map<String, Object> getHints();
 
     /**
      * Returns true if the query for loading data is cacheable.

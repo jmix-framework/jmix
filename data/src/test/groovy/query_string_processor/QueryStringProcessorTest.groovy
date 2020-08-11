@@ -72,4 +72,18 @@ class QueryStringProcessorTest extends DataSpec {
         then:
         query == 'select e from test_TestAppEntity e where e.number = :num and e.name = :name'
     }
+
+    def "test upper case"() {
+        def query
+
+        when:
+        query = processor.process('FROM test_TestAppEntity o LEFT JOIN o.items i WHERE i.name = :name', TestAppEntity)
+        then:
+        query == 'select o FROM test_TestAppEntity o LEFT JOIN o.items i WHERE i.name = :name'
+
+        when:
+        query = processor.process('FROM test_TestAppEntity o, test_TestSecondAppEntity c WHERE c.appEntity = o', TestAppEntity)
+        then:
+        query == 'select o FROM test_TestAppEntity o, test_TestSecondAppEntity c WHERE c.appEntity = o'
+    }
 }

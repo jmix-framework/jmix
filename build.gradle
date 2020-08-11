@@ -68,55 +68,57 @@ javaPlatform {
 
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.3.1.RELEASE")
-    
+
+    def baseVersion = '0.1.0'
+
     constraints {
-        api "io.jmix.audit:jmix-audit:$version"
-        api "io.jmix.audit:jmix-audit-ui:$version"
-        api "io.jmix.audit:jmix-audit-starter:$version"
-        api "io.jmix.audit:jmix-audit-ui-starter:$version"
+        api "io.jmix.audit:jmix-audit:${snapshotOr(baseVersion)}"
+        api "io.jmix.audit:jmix-audit-ui:${snapshotOr(baseVersion)}"
+        api "io.jmix.audit:jmix-audit-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.audit:jmix-audit-ui-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.core:jmix-core:$version"
-        api "io.jmix.core:jmix-core-starter:$version"
+        api "io.jmix.core:jmix-core:${snapshotOr(baseVersion)}"
+        api "io.jmix.core:jmix-core-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.cuba:jmix-cuba:$version"
-        api "io.jmix.cuba:jmix-cuba-starter:$version"
+        api "io.jmix.cuba:jmix-cuba:${snapshotOr(baseVersion)}"
+        api "io.jmix.cuba:jmix-cuba-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.data:jmix-data:$version"
-        api "io.jmix.data:jmix-data-starter:$version"
+        api "io.jmix.data:jmix-data:${snapshotOr(baseVersion)}"
+        api "io.jmix.data:jmix-data-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.dynattr:jmix-dynattr:$version"
-        api "io.jmix.dynattr:jmix-dynattr-ui:$version"
-        api "io.jmix.dynattr:jmix-dynattr-starter:$version"
-        api "io.jmix.dynattr:jmix-dynattr-ui-starter:$version"
+        api "io.jmix.dynattr:jmix-dynattr:${snapshotOr(baseVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-ui:${snapshotOr(baseVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-ui-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.fsfilestorage:jmix-fsfilestorage:$version"
-        api "io.jmix.fsfilestorage:jmix-fsfilestorage-starter:$version"
+        api "io.jmix.fsfilestorage:jmix-fsfilestorage:${snapshotOr(baseVersion)}"
+        api "io.jmix.fsfilestorage:jmix-fsfilestorage-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.rest:jmix-rest:$version"
-        api "io.jmix.rest:jmix-rest-starter:$version"
+        api "io.jmix.rest:jmix-rest:${snapshotOr(baseVersion)}"
+        api "io.jmix.rest:jmix-rest-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.datatools:jmix-datatools-ui:$version"
-        api "io.jmix.datatools:jmix-datatools-ui-starter:$version"
+        api "io.jmix.datatools:jmix-datatools-ui:${snapshotOr(baseVersion)}"
+        api "io.jmix.datatools:jmix-datatools-ui-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.security:jmix-security:$version"
-        api "io.jmix.security:jmix-security-ui:$version"
-        api "io.jmix.security:jmix-security-data:$version"
-        api "io.jmix.security:jmix-security-starter:$version"
-        api "io.jmix.security:jmix-security-ui-starter:$version"
-        api "io.jmix.security:jmix-security-data-starter:$version"
+        api "io.jmix.security:jmix-security:${snapshotOr(baseVersion)}"
+        api "io.jmix.security:jmix-security-ui:${snapshotOr(baseVersion)}"
+        api "io.jmix.security:jmix-security-data:${snapshotOr(baseVersion)}"
+        api "io.jmix.security:jmix-security-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.security:jmix-security-ui-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.security:jmix-security-data-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.sessions:jmix-sessions:$version"
-        api "io.jmix.sessions:jmix-sessions-starter:$version"
+        api "io.jmix.sessions:jmix-sessions:${snapshotOr(baseVersion)}"
+        api "io.jmix.sessions:jmix-sessions-starter:${snapshotOr(baseVersion)}"
 
-        api "io.jmix.ui:jmix-ui:$version"
-        api "io.jmix.ui:jmix-ui-data:$version"
-        api "io.jmix.ui:jmix-ui-test-assist:$version"
-        api "io.jmix.ui:jmix-ui-themes:$version"
-        api "io.jmix.ui:jmix-ui-themes-compiled:$version"
-        api "io.jmix.ui:jmix-ui-widgets:$version"
-        api "io.jmix.ui:jmix-ui-widgets-compiled:$version"
-        api "io.jmix.ui:jmix-ui-starter:$version"
-        api "io.jmix.ui:jmix-ui-data-starter:$version"
+        api "io.jmix.ui:jmix-ui:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-data:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-test-assist:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-themes:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-themes-compiled:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-widgets:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-widgets-compiled:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(baseVersion)}"
 
         api 'com.google.guava:guava:27.0.1-jre'
         api 'commons-io:commons-io:2.6'
@@ -167,5 +169,13 @@ publishing {
             artifactId = 'jmix-bom'
             from components.javaPlatform
         }
+    }
+}
+
+String snapshotOr(String releaseVer) {
+    if (rootProject.hasProperty('jmixRelease')) {
+        return releaseVer
+    } else {
+        return version
     }
 }

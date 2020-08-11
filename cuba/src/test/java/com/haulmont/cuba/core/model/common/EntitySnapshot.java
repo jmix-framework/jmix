@@ -19,8 +19,8 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.core.entity.Creatable;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.UserSessionSource;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;

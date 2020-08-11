@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components.compatibility;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;

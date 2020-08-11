@@ -16,8 +16,8 @@
 package com.haulmont.cuba.gui.components.validators;
 
 import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.Field;
-import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.security.CurrentAuthentication;
@@ -67,12 +67,10 @@ public class LongValidator implements Field.Validator {
                 CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
                 Long num = datatype.parse((String) value, currentAuthentication.getLocale());
                 result = checkPositive(num);
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
                 result = false;
             }
-        }
-        else {
+        } else {
             result = value instanceof Long && checkPositive((Long) value);
         }
         if (!result) {

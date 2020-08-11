@@ -16,13 +16,13 @@
 
 package com.haulmont.cuba.gui.backgroundwork;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 
 import com.haulmont.cuba.gui.components.AbstractWindow;
 
 import com.haulmont.cuba.gui.components.Label;
 
-import io.jmix.core.AppBeans;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;

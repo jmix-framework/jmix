@@ -15,8 +15,8 @@
  */
 package com.haulmont.cuba.gui.components.validators;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.Field;
-import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.RegexpValidator;

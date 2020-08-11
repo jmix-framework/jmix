@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components.validators;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;

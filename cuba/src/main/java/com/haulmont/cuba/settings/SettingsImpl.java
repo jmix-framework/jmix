@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.settings;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.ui.screen.Screen;
 import io.jmix.uidata.UiSettingsCache;

@@ -16,8 +16,8 @@
 package com.haulmont.cuba.gui.components.validators;
 
 import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.Field;
-import io.jmix.core.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;

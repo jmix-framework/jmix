@@ -16,7 +16,7 @@
 
 package com.haulmont.chile.core.datatypes;
 
-import io.jmix.core.AppBeans;
+import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -35,6 +35,7 @@ public class Datatypes {
 
     /**
      * Returns localized format strings.
+     *
      * @param locale selected locale
      * @return {@link FormatStrings} object, or null if no formats are registered for the locale
      */
@@ -45,6 +46,7 @@ public class Datatypes {
 
     /**
      * Returns localized format strings.
+     *
      * @param locale selected locale
      * @return {@link FormatStrings} object. Throws exception if not found.
      */
@@ -55,6 +57,7 @@ public class Datatypes {
 
     /**
      * Get Datatype instance by its unique name
+     *
      * @return Datatype instance
      * @throws IllegalArgumentException if no datatype with the given name found
      */
@@ -65,6 +68,7 @@ public class Datatypes {
 
     /**
      * Get Datatype instance by the corresponding Java class. This method tries to find matching supertype too.
+     *
      * @return Datatype instance or null if not found
      */
     @Nullable
@@ -74,6 +78,7 @@ public class Datatypes {
 
     /**
      * Get Datatype instance by the corresponding Java class. This method tries to find matching supertype too.
+     *
      * @return Datatype instance
      * @throws IllegalArgumentException if no datatype suitable for the given type found
      */

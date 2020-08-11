@@ -21,10 +21,12 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.data.impl.OrmLifecycleListener;
 import io.jmix.dynattr.DynAttrManager;
+import io.jmix.dynattr.DynAttrQueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Component(DynAttrLifecycleListener.NAME)
 public class DynAttrLifecycleListener implements OrmLifecycleListener {
@@ -33,9 +35,11 @@ public class DynAttrLifecycleListener implements OrmLifecycleListener {
     @Autowired
     protected DynAttrManager dynAttrManager;
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext) {
-        if (loadContext.isLoadDynamicAttributes()) {
+        Map<String, Object> hints = loadContext.getHints();
+        if (hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
             //noinspection unchecked
             dynAttrManager.loadValues(entities, loadContext.getFetchPlan(), loadContext.getAccessConstraints());
         }

@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.context.UiEntityContext;
@@ -97,9 +98,9 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
         if (container instanceof HasLoader) {
             DataLoader dataLoader = ((HasLoader) container).getLoader();
             if (dataLoader instanceof InstanceLoader) {
-                ((InstanceLoader<?>) dataLoader).setLoadDynamicAttributes(true);
+                ((InstanceLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
             } else if (dataLoader instanceof CollectionLoader) {
-                ((CollectionLoader<?>) dataLoader).setLoadDynamicAttributes(true);
+                ((CollectionLoader<?>) dataLoader).setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
             }
         }
     }

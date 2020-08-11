@@ -16,16 +16,17 @@
 
 package dynamic_attributes
 
+import io.jmix.core.CoreConfiguration
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
-import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
 import io.jmix.data.entity.ReferenceToEntity
 import io.jmix.dynattr.AttributeType
-import io.jmix.dynattr.DynAttrMetadata
 import io.jmix.dynattr.DynAttrConfiguration
+import io.jmix.dynattr.DynAttrMetadata
+import io.jmix.dynattr.DynAttrQueryHints
 import io.jmix.dynattr.impl.model.CategoryAttribute
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -225,7 +226,7 @@ class DynamicAttributesTest extends Specification {
         dataManager.save(user2)
         def user = dataManager.load(User)
                 .id(user2.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:
@@ -237,7 +238,7 @@ class DynamicAttributesTest extends Specification {
 
         def user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         when:
@@ -246,7 +247,7 @@ class DynamicAttributesTest extends Specification {
         dataManager.save(user)
         user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:
@@ -258,12 +259,12 @@ class DynamicAttributesTest extends Specification {
 
         def user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         def role = dataManager.load(Role)
                 .id(role.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         EntityValues.setValue(user, '+userAttribute', 'userName')
@@ -279,7 +280,7 @@ class DynamicAttributesTest extends Specification {
                     builder.addFetchPlan(FetchPlan.LOCAL)
                             .add("userRoles.role.name")
                 })
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:
@@ -292,7 +293,7 @@ class DynamicAttributesTest extends Specification {
 
         def user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         def group = dataManager.load(Group)
@@ -305,7 +306,7 @@ class DynamicAttributesTest extends Specification {
         dataManager.save(user)
         user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:
@@ -317,7 +318,7 @@ class DynamicAttributesTest extends Specification {
 
         def user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         def group1 = dataManager.load(Group)
@@ -334,7 +335,7 @@ class DynamicAttributesTest extends Specification {
         dataManager.save(user)
         user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:
@@ -350,7 +351,7 @@ class DynamicAttributesTest extends Specification {
 
         def user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         when:
@@ -359,7 +360,7 @@ class DynamicAttributesTest extends Specification {
         dataManager.save(user)
         user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:
@@ -375,7 +376,7 @@ class DynamicAttributesTest extends Specification {
 
         def user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         when:
@@ -384,7 +385,7 @@ class DynamicAttributesTest extends Specification {
         dataManager.save(user)
         user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:
@@ -400,7 +401,7 @@ class DynamicAttributesTest extends Specification {
 
         def user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         when:
@@ -409,7 +410,7 @@ class DynamicAttributesTest extends Specification {
         dataManager.save(user)
         user = dataManager.load(User)
                 .id(user1.id)
-                .dynamicAttributes(true)
+                .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 
         then:

@@ -17,8 +17,8 @@
 package io.jmix.dynattrui.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.dynattr.DynAttrManager;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.dynattr.DynamicAttributesState;
 import io.jmix.ui.builder.EditedEntityTransformer;
 import io.jmix.ui.component.HasValue;
@@ -31,6 +31,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
+import java.util.Map;
 
 @Component("dynattrui_DynAttrAwareEntityTransformer")
 @Order(110)
@@ -58,13 +59,20 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
         if (container instanceof HasLoader) {
             DataLoader loader = ((HasLoader) container).getLoader();
             if (loader instanceof CollectionLoader) {
-                needDynamicAttributes = ((CollectionLoader) loader).isLoadDynamicAttributes();
+                CollectionLoader collectionLoader = (CollectionLoader) loader;
+                Map<String, Object> hints = collectionLoader.getHints();
+
+                needDynamicAttributes = hints != null
+                        && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR));
             }
         }
 
         FetchPlan fetchPlan = container.getFetchPlan();
         if (fetchPlan != null && !entityStates.isLoadedWithFetchPlan(editedEntity, fetchPlan)) {
-            return dataManager.load(Id.of(editedEntity)).fetchPlan(fetchPlan).dynamicAttributes(needDynamicAttributes).one();
+            return dataManager.load(Id.of(editedEntity))
+                    .fetchPlan(fetchPlan)
+                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, needDynamicAttributes)
+                    .one();
         } else if (needDynamicAttributes && !dynamicAttributesAreLoaded) {
             dynAttrManager.loadValues(Collections.singletonList(editedEntity), fetchPlan, accessConstraintsRegistry.getConstraints());
             return editedEntity;

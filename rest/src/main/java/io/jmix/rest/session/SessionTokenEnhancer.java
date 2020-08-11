@@ -1,6 +1,7 @@
 package io.jmix.rest.session;
 
 import io.jmix.core.session.SessionData;
+import io.jmix.rest.security.RestAuthDetails;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Order(500)
@@ -32,6 +34,8 @@ public class SessionTokenEnhancer implements TokenEnhancer {
         sessionData.setAttribute(OAuth2AccessTokenSessionIdResolver.ACCESS_TOKEN, accessToken.getValue());
 
         mutableAccessToken.getAdditionalInformation().put(OAuth2AccessTokenSessionIdResolver.SESSION_ID, session.getId());
+
+        authentication.setDetails(RestAuthDetails.builder().sessionId(session.getId()).build());
         return accessToken;
     }
 }

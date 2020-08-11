@@ -1,9 +1,12 @@
 package io.jmix.rest.session;
 
 import io.jmix.core.session.SessionData;
+import io.jmix.rest.security.RestAuthDetails;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.session.web.http.HttpSessionIdResolver;
@@ -37,8 +40,25 @@ public class OAuth2AccessTokenSessionIdResolver implements HttpSessionIdResolver
                     return Collections.singletonList(sessionId);
                 }
             }
+        } else if (isRefreshTokenRequested(request)) {
+            String refreshTokenValue = request.getParameter("refresh_token");
+            if (refreshTokenValue != null) {
+                OAuth2RefreshToken refreshToken = tokenStore.readRefreshToken(refreshTokenValue);
+                if (refreshToken != null) {
+                    OAuth2Authentication authentication = tokenStore.readAuthenticationForRefreshToken(refreshToken);
+                    if (authentication.getDetails() != null && authentication.getDetails() instanceof RestAuthDetails) {
+                        RestAuthDetails restAuthDetails = (RestAuthDetails) authentication.getDetails();
+                        return Collections.singletonList(restAuthDetails.getSessionId());
+                    }
+                }
+            }
         }
+
         return Collections.emptyList();
+    }
+
+    protected boolean isRefreshTokenRequested(HttpServletRequest request) {
+        return "refresh_token".equals(request.getParameter("grant_type"));
     }
 
     private String fromRequest(HttpServletRequest request) {
@@ -70,7 +90,7 @@ public class OAuth2AccessTokenSessionIdResolver implements HttpSessionIdResolver
         String tokenValue = fromRequest(request);
         if (tokenValue != null) {
             OAuth2AccessToken oAuth2AccessToken = tokenStore.readAccessToken(tokenValue);
-            if (oAuth2AccessToken!=null) {
+            if (oAuth2AccessToken != null) {
                 tokenStore.removeAccessToken(oAuth2AccessToken);
             }
         }

@@ -174,21 +174,6 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
             throw new IllegalStateException("No DataContext defined. Make sure the editor screen XML descriptor has <data> element");
         }
 
-        // String screenId = getScreenContext().getWindowInfo().getId();
-
-        InstanceLoader instanceLoader = null;
-        InstanceContainer<T> editedEntityContainer = getEditedEntityContainer();
-        if (editedEntityContainer instanceof HasLoader) {
-            if (((HasLoader) editedEntityContainer).getLoader() instanceof InstanceLoader) {
-                instanceLoader = getEditedEntityLoader();
-                // todo dynamic attributes
-                /*DynamicAttributesGuiTools tools = getBeanLocator().get(DynamicAttributesGuiTools.NAME);
-                if (tools.screenContainsDynamicAttributes(editedEntityContainer.getView(), screenId)) {
-                    instanceLoader.setLoadDynamicAttributes(true);
-                }*/
-            }
-        }
-
         if (getEntityStates().isNew(entityToEdit) || doNotReloadEditedEntity()) {
             T mergedEntity = getScreenData().getDataContext().merge(entityToEdit);
 

@@ -55,7 +55,6 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     protected Map<String, Object> parameters = new HashMap<>();
     protected Object entityId;
     protected boolean softDeletion = true;
-    protected boolean loadDynamicAttributes;
     protected FetchPlan fetchPlan;
     protected String fetchPlanName;
     protected Map<String, Object> hints;

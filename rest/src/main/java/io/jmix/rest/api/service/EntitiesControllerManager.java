@@ -119,7 +119,7 @@ public class EntitiesControllerManager {
             ctx.setFetchPlan(view);
         }
 
-        ctx.setLoadDynamicAttributes(BooleanUtils.isTrue(dynamicAttributes));
+        ctx.setHint("load_dyn_attr", BooleanUtils.isTrue(dynamicAttributes));
 
         JmixEntity entity = dataManager.load(ctx);
         checkEntityIsNotNull(entityName, entityId, entity);
@@ -313,7 +313,7 @@ public class EntitiesControllerManager {
             ctx.setFetchPlan(view);
         }
 
-        ctx.setLoadDynamicAttributes(BooleanUtils.isTrue(dynamicAttributes));
+        ctx.setHint("load_dyn_attr", BooleanUtils.isTrue(dynamicAttributes));
 
         List<JmixEntity> entities = dataManager.loadList(ctx);
         entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));

@@ -238,7 +238,6 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
         entitiesDl = dataComponents.createCollectionLoader();
         entitiesDl.setFetchPlan(fetchPlan);
         entitiesDl.setContainer(entitiesDc);
-        entitiesDl.setLoadDynamicAttributes(true);
         entitiesDl.setSoftDeletion(!removedRecords.isChecked());
         entitiesDl.setQuery(String.format("select e from %s e", meta.getName()));
         entitiesDl.load();

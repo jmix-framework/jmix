@@ -216,10 +216,11 @@ public class EntityImportExportImpl implements EntityImportExport {
         for (JmixEntity srcEntity : entities) {
             FetchPlan regularView = buildViewFromImportView(importView);
             //set softDeletion to false because we can import deleted entity, so we'll restore it and update
+            //TODO: dynamic attributes
             LoadContext<? extends JmixEntity> ctx = new LoadContext(metadata.getClass(srcEntity.getClass()))
                     .setSoftDeletion(false)
                     .setFetchPlan(regularView)
-                    .setLoadDynamicAttributes(true)
+//                    .setLoadDynamicAttributes(true)
                     .setId(EntityValues.getId(srcEntity))
                     .setAccessConstraints(accessConstraintsRegistry.getConstraints());
             JmixEntity dstEntity = dataManager.load(ctx);

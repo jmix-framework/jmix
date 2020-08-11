@@ -200,6 +200,7 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     /**
      * @return custom hints which are used by the query
      */
+    @Nullable
     public Map<String, Object> getHints() {
         return hints == null ? Collections.emptyMap() : Collections.unmodifiableMap(hints);
     }
@@ -216,17 +217,10 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     }
 
     /**
-     * @return whether to load dynamic attributes
+     * Sets custom hints that should be used by the query.
      */
-    public boolean isLoadDynamicAttributes() {
-        return loadDynamicAttributes;
-    }
-
-    /**
-     * @param loadDynamicAttributes whether to load dynamic attributes
-     */
-    public LoadContext<E> setLoadDynamicAttributes(boolean loadDynamicAttributes) {
-        this.loadDynamicAttributes = loadDynamicAttributes;
+    public LoadContext<E> setHints(Map<String, Object> hints) {
+        this.hints = hints;
         return this;
     }
 

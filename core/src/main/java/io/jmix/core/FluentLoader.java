@@ -49,7 +49,7 @@ public class FluentLoader<E extends JmixEntity> {
     private String fetchPlanName;
     private FetchPlanBuilder fetchPlanBuilder;
     private boolean softDeletion = true;
-    private boolean dynamicAttributes;
+    private Map<String, Object> hints;
     private List<AccessConstraint<?>> accessConstraints;
 
     @Autowired
@@ -108,7 +108,7 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         loadContext.setSoftDeletion(softDeletion);
-        loadContext.setLoadDynamicAttributes(dynamicAttributes);
+        loadContext.setHints(hints);
         loadContext.setAccessConstraints(accessConstraints);
     }
 
@@ -157,6 +157,7 @@ public class FluentLoader<E extends JmixEntity> {
 
     /**
      * Sets a view.
+     *
      * @deprecated replaced by {@link FluentLoader#fetchPlan(FetchPlan)}
      */
     @Deprecated
@@ -174,6 +175,7 @@ public class FluentLoader<E extends JmixEntity> {
 
     /**
      * Sets a fetchPlan by name.
+     *
      * @deprecated replaced by {@link FluentLoader#fetchPlan(String)}
      */
     @Deprecated
@@ -190,7 +192,6 @@ public class FluentLoader<E extends JmixEntity> {
     }
 
     /**
-     *
      * @deprecated replaced by {@link FluentLoader#fetchPlan(Consumer)}
      */
     @Deprecated
@@ -205,7 +206,6 @@ public class FluentLoader<E extends JmixEntity> {
     }
 
     /**
-     *
      * @deprecated replaced by {@link FluentLoader#fetchPlanProperties(String...)}
      */
     @Deprecated
@@ -228,10 +228,21 @@ public class FluentLoader<E extends JmixEntity> {
     }
 
     /**
-     * Sets loading of dynamic attributes. It is false by default.
+     * Sets custom hint that should be used by the query.
      */
-    public FluentLoader<E> dynamicAttributes(boolean dynamicAttributes) {
-        this.dynamicAttributes = dynamicAttributes;
+    public FluentLoader<E> hint(String hintName, Object value) {
+        if (hints == null) {
+            hints = new HashMap<>();
+        }
+        hints.put(hintName, value);
+        return this;
+    }
+
+    /**
+     * Sets custom hints that should be used by the query.
+     */
+    public FluentLoader<E> hints(Map<String, Object> hints) {
+        this.hints = hints;
         return this;
     }
 
@@ -325,6 +336,7 @@ public class FluentLoader<E extends JmixEntity> {
 
         /**
          * Sets a fetchPlan.
+         *
          * @deprecated replaced by {@link ById#fetchPlan(FetchPlan)}
          */
         @Deprecated
@@ -342,6 +354,7 @@ public class FluentLoader<E extends JmixEntity> {
 
         /**
          * Sets a fetchPlan by name.
+         *
          * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
         @Deprecated
@@ -394,10 +407,21 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         /**
-         * Sets loading of dynamic attributes. It is false by default.
+         * Sets custom hint that should be used by the query.
          */
-        public ById<E> dynamicAttributes(boolean dynamicAttributes) {
-            loader.dynamicAttributes = dynamicAttributes;
+        public ById<E> hint(String hintName, Object value) {
+            if (loader.hints == null) {
+                loader.hints = new HashMap<>();
+            }
+            loader.hints.put(hintName, value);
+            return this;
+        }
+
+        /**
+         * Sets custom hints that should be used by the query.
+         */
+        public ById<E> hints(Map<String, Object> hints) {
+            loader.hints = hints;
             return this;
         }
 
@@ -439,6 +463,7 @@ public class FluentLoader<E extends JmixEntity> {
 
         /**
          * Sets a fetchPlan.
+         *
          * @deprecated replaced by {@link ByIds#fetchPlan(FetchPlan)}
          */
         @Deprecated
@@ -456,6 +481,7 @@ public class FluentLoader<E extends JmixEntity> {
 
         /**
          * Sets a fetchPlan by name.
+         *
          * @deprecated replaced by {@link ByIds#fetchPlan(String)}
          */
         @Deprecated
@@ -481,6 +507,7 @@ public class FluentLoader<E extends JmixEntity> {
          *                 "owner.name"))
          *         .list();
          * </pre>
+         *
          * @deprecated replaced by {@link ByIds#fetchPlan(Consumer)} )}
          */
         @Deprecated
@@ -517,6 +544,7 @@ public class FluentLoader<E extends JmixEntity> {
          *                 "owner.address.city")
          *         .list();
          * </pre>
+         *
          * @deprecated replaced by {@link ByIds#fetchPlanProperties(String...)}
          */
         @Deprecated
@@ -554,10 +582,21 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         /**
-         * Sets loading of dynamic attributes. It is false by default.
+         * Sets custom hint that should be used by the query.
          */
-        public ByIds<E> dynamicAttributes(boolean dynamicAttributes) {
-            loader.dynamicAttributes = dynamicAttributes;
+        public ByIds<E> hint(String hintName, Object value) {
+            if (loader.hints == null) {
+                loader.hints = new HashMap<>();
+            }
+            loader.hints.put(hintName, value);
+            return this;
+        }
+
+        /**
+         * Sets custom hints that should be used by the query.
+         */
+        public ByIds<E> hints(Map<String, Object> hints) {
+            loader.hints = hints;
             return this;
         }
 
@@ -658,6 +697,7 @@ public class FluentLoader<E extends JmixEntity> {
 
         /**
          * Sets a fetchPlan.
+         *
          * @deprecated replaced by {@link ByQuery#fetchPlan(FetchPlan)}
          */
         @Deprecated
@@ -675,6 +715,7 @@ public class FluentLoader<E extends JmixEntity> {
 
         /**
          * Sets a fetchPlan by name.
+         *
          * @deprecated replaced by {@link ById#fetchPlan(String)}
          */
         @Deprecated
@@ -691,7 +732,6 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         /**
-         *
          * @deprecated replaced by {@link ByQuery#fetchPlan(Consumer)} )}
          */
         public ByQuery<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
@@ -705,7 +745,6 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         /**
-         *
          * @deprecated replaced by {@link ByQuery#fetchPlanProperties(String...)}
          */
         public ByQuery<E> viewProperties(String... properties) {
@@ -727,10 +766,21 @@ public class FluentLoader<E extends JmixEntity> {
         }
 
         /**
-         * Sets loading of dynamic attributes. It is false by default.
+         * Sets custom hint that should be used by the query.
          */
-        public ByQuery<E> dynamicAttributes(boolean dynamicAttributes) {
-            loader.dynamicAttributes = dynamicAttributes;
+        public ByQuery hint(String hintName, Object value) {
+            if (loader.hints == null) {
+                loader.hints = new HashMap<>();
+            }
+            loader.hints.put(hintName, value);
+            return this;
+        }
+
+        /**
+         * Sets custom hints that should be used by the query.
+         */
+        public ByQuery hints(Map<String, Object> hints) {
+            loader.hints = hints;
             return this;
         }
 

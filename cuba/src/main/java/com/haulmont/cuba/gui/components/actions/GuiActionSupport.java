@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.*;
 import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.entitypicker.ClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
@@ -73,7 +74,7 @@ public class GuiActionSupport {
         if (!entityStates.isLoadedWithFetchPlan(entity, fetchPlan)) {
             entity = dataManager.load(Id.of(entity))
                     .fetchPlan(fetchPlan)
-                    .dynamicAttributes(needDynamicAttributes)
+                    .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                     .optional().orElse(null);
         } else if (needDynamicAttributes && !dynamicAttributesAreLoaded) {
             dynamicAttributesGuiTools.reloadDynamicAttributes(entity);

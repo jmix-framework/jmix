@@ -119,7 +119,7 @@ public class DynamicAttributesGuiTools {
                 .addProperty(metadataTools.getPrimaryKeyName(metaClass));
         LoadContext loadContext = new LoadContext(metaClass)
                 .setFetchPlan(fetchPlan)
-                .setLoadDynamicAttributes(true)
+                .setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .setId(EntityValues.getId(entity));
         JmixEntity reloadedEntity = dataManager.load(loadContext);
         if (reloadedEntity != null) {

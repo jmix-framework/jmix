@@ -23,6 +23,7 @@ import io.jmix.core.Sort;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.dynattr.DynAttrQueryHints;
 
 import javax.persistence.TemporalType;
 import java.util.*;
@@ -202,9 +203,18 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
         return this;
     }
 
-    @Override
+    /**
+     * Returns true if the entity's dynamic attributes are loaded.
+     */
+    public boolean isLoadDynamicAttributes() {
+        return hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR));
+    }
+
+    /**
+     * Set to true to load the entity's dynamic attributes. Dynamic attributes are not loaded by default.
+     */
     public LoadContext<E> setLoadDynamicAttributes(boolean loadDynamicAttributes) {
-        super.setLoadDynamicAttributes(loadDynamicAttributes);
+        super.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
         return this;
     }
 

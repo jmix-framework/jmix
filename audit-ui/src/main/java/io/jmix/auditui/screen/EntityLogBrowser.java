@@ -130,7 +130,6 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
     protected TreeMap<String, String> entityMetaClassesMap;
 
-    protected List<String> systemAttrsList;
 
     // allow or not selectAllCheckBox to change values of other checkboxes
     protected boolean canSelectAllCheckboxGenerateEvents = true;
@@ -142,7 +141,6 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
         loggedEntityDl.load();
 
-        systemAttrsList = Arrays.asList("version", "id");
         Map<String, Object> changeTypeMap = new LinkedHashMap<>();
         changeTypeMap.put(messages.getMessage("createField"), "C");
         changeTypeMap.put(messages.getMessage("modifyField"), "M");
@@ -379,11 +377,11 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
                         for (MetaProperty embeddedProperty : embeddedMetaClass.getProperties()) {
                             if (allowLogProperty(embeddedProperty)) {
                                 addAttribute(enabledAttr,
-                                        String.format("%s.%s", property.getName(), embeddedProperty.getName()), editable);
+                                        String.format("%s.%s", property.getName(), embeddedProperty.getName()), metaClass, editable);
                             }
                         }
                     } else {
-                        addAttribute(enabledAttr, property.getName(), editable);
+                        addAttribute(enabledAttr, property.getName(), metaClass, editable);
                     }
                 }
             }
@@ -402,9 +400,9 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         }
     }
 
-    protected void addAttribute(Set<LoggedAttribute> enabledAttributes, String name, boolean editable) {
+    protected void addAttribute(Set<LoggedAttribute> enabledAttributes, String name, MetaClass metaclass, boolean editable) {
         CheckBox checkBox = uiComponents.create(CheckBox.class);
-        if (enabledAttributes != null && isEntityHaveAttribute(name, enabledAttributes)) {
+        if (enabledAttributes != null && isEntityHaveAttribute(name, metaclass, enabledAttributes)) {
             checkBox.setValue(true);
         }
         checkBox.setId(name);
@@ -463,8 +461,8 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
                 attributesBoxScroll.remove(c);
     }
 
-    public boolean isEntityHaveAttribute(String propertyName, Set<LoggedAttribute> enabledAttr) {
-        if (enabledAttr != null && !systemAttrsList.contains(propertyName)) {
+    public boolean isEntityHaveAttribute(String propertyName, MetaClass metaClass, Set<LoggedAttribute> enabledAttr) {
+        if (enabledAttr != null && !metadataTools.isSystem(metaClass.getProperty(propertyName))) {
             for (LoggedAttribute logAttr : enabledAttr)
                 if (logAttr.getName().equals(propertyName))
                     return true;
@@ -571,7 +569,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     }
 
     protected boolean allowLogProperty(MetaProperty metaProperty /*, CategoryAttribute categoryAttribute*/) {
-        if (systemAttrsList.contains(metaProperty.getName())) {
+        if (metadataTools.isSystem(metaProperty)) {
             return false;
         }
         Range range = metaProperty.getRange();
@@ -600,13 +598,14 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
             if (SELECT_ALL_CHECK_BOX.equals(currentCheckBox.getId()))
                 continue;
             Boolean currentCheckBoxValue = currentCheckBox.getValue();
-            if (currentCheckBoxValue && !isEntityHaveAttribute(currentCheckBox.getId(), enabledAttributes)) {
+            MetaClass metaClass = metadata.getClass(selectedEntity.getName());
+            if (currentCheckBoxValue && !isEntityHaveAttribute(currentCheckBox.getId(), metaClass, enabledAttributes)) {
                 //add attribute if checked and not exist in table
                 LoggedAttribute newLoggedAttribute = dataContext.create(LoggedAttribute.class);
                 newLoggedAttribute.setName(currentCheckBox.getId());
                 newLoggedAttribute.setEntity(selectedEntity);
             }
-            if (!currentCheckBoxValue && isEntityHaveAttribute(currentCheckBox.getId(), enabledAttributes)) {
+            if (!currentCheckBoxValue && isEntityHaveAttribute(currentCheckBox.getId(), metaClass, enabledAttributes)) {
                 //remove attribute if unchecked and exist in table
                 LoggedAttribute removeAtr = getLoggedAttribute(currentCheckBox.getId(), enabledAttributes);
                 if (removeAtr != null)

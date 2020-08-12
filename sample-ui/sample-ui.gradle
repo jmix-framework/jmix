@@ -28,9 +28,6 @@ dependencies {
 
     api 'io.jmix.core:jmix-core-starter'
     api 'io.jmix.data:jmix-data-starter'
-    api 'io.jmix.security:jmix-security-starter'
-    api 'io.jmix.security:jmix-security-ui-starter'
-    api 'io.jmix.security:jmix-security-data-starter'
     api 'io.jmix.datatools:jmix-datatools-ui-starter'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'

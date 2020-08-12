@@ -57,7 +57,6 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     protected List<AccessConstraint<?>> accessConstraints;
     protected int queryKey;
 
-    protected boolean loadDynamicAttributes;
     protected boolean loadPartialEntities = true;
     protected boolean joinTransaction = true;
 
@@ -281,7 +280,6 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
         if (hints != null) {
             ctx.getHints().putAll(hints);
         }
-        ctx.loadDynamicAttributes = loadDynamicAttributes;
         ctx.joinTransaction = joinTransaction;
         return ctx;
     }
@@ -289,8 +287,8 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     @Override
     public String toString() {
         return String.format(
-                "LoadContext{metaClass=%s, query=%s, view=%s, id=%s, softDeletion=%s, partialEntities=%s, dynamicAttributes=%s}",
-                metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities, loadDynamicAttributes
+                "LoadContext{metaClass=%s, query=%s, view=%s, id=%s, softDeletion=%s, partialEntities=%s}",
+                metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities
         );
     }
 

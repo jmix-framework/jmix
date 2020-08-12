@@ -44,7 +44,6 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.EventObject;
-import java.util.Map;
 import java.util.function.Consumer;
 
 /**

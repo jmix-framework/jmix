@@ -29,8 +29,13 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
         def view = new FetchPlan(User, true)
 
         then:
-
         view.containsProperty('version')
+        view.containsProperty('createTs')
+        view.containsProperty('createdBy')
+        view.containsProperty('updateTs')
+        view.containsProperty('updatedBy')
+        view.containsProperty('deleteTs')
+        view.containsProperty('deletedBy')
     }
 
     def "view does not contain system properties"() {
@@ -42,5 +47,11 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
         then:
 
         !view.containsProperty('version')
+        !view.containsProperty('createTs')
+        !view.containsProperty('createdBy')
+        !view.containsProperty('updateTs')
+        !view.containsProperty('updatedBy')
+        !view.containsProperty('deleteTs')
+        !view.containsProperty('deletedBy')
     }
 }

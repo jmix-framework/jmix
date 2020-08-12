@@ -22,12 +22,23 @@ import com.haulmont.cuba.core.model.Pet;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @CoreTest
 public class ViewBuilderTest {
+
+    @Autowired
+    private Metadata metadata;
+
+    @Autowired
+    private MetadataTools metadataTools;
 
     @Test
     public void testBuild() {
@@ -209,8 +220,8 @@ public class ViewBuilderTest {
     }
 
     private boolean containsSystemProperties(FetchPlan view) {
-        return view.containsProperty("id")
-                && view.containsProperty("version");
+        List<String> systemProperties = metadataTools.getSystemProperties(metadata.getClass(view.getEntityClass()));
+        return systemProperties.stream().allMatch(view::containsProperty);
     }
 
 }

@@ -22,14 +22,18 @@ import com.haulmont.cuba.core.global.impl.CubaInstanceNameProviderImpl;
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.core.sys.AppContext;
+import com.haulmont.cuba.core.sys.CubaMetaModelLoader;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
 import com.haulmont.cuba.web.sys.CubaAppUIBeanProvider;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.MetaModelLoader;
 import io.jmix.core.impl.MetadataLoader;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
+import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
@@ -104,6 +108,11 @@ public class CubaConfiguration {
     @Bean(FetchPlanRepository.NAME)
     protected FetchPlanRepository fetchPlanRepository() {
         return new CubaFetchPlanRepository();
+    }
+
+    @Bean(MetaModelLoader.NAME)
+    protected MetaModelLoader metaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
+        return new CubaMetaModelLoader(datatypes, stores, formatStringsRegistry);
     }
 
     @Bean("cuba_UiControllers")

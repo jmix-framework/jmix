@@ -16,6 +16,8 @@
 
 package entity_annotations
 
+import com.haulmont.cuba.core.model.entity_annotations.LegacyAuditableEntity
+import com.haulmont.cuba.core.model.entity_annotations.LegacySoftDeleteEntity
 import com.haulmont.cuba.core.model.primary_keys.IdentityUuidEntity
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
@@ -62,5 +64,33 @@ class MiscInterfacesTest extends CoreTestSpecification {
         cleanup:
         if (entity != null) dataManager.remove(entity)
     }
+
+    def "System attributes determined correctly"() {
+        setup:
+        def actualAuditableSystem = metadataTools.getSystemProperties(metadata.getClass(LegacyAuditableEntity)) as Set
+        def expectedAuditableSystem = ["createTs", "createdBy", "updateTs", "updatedBy", "id"] as Set
+
+        def expectedSoftDeleteSystem = metadataTools.getSystemProperties(metadata.getClass(LegacySoftDeleteEntity)) as Set
+        def actualSoftDeleteSystem = ["deleteTs", "deletedBy", "id"] as Set
+
+        expect:
+        !metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("name"))
+
+        metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("createTs"))
+        metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("createdBy"))
+        metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("updateTs"))
+        metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("updatedBy"))
+
+        metadataTools.isSystem(metadata.getClass(LegacySoftDeleteEntity).getProperty("id"))
+        metadataTools.isSystem(metadata.getClass(LegacySoftDeleteEntity).getProperty("deleteTs"))
+        metadataTools.isSystem(metadata.getClass(LegacySoftDeleteEntity).getProperty("deletedBy"))
+
+        expectedAuditableSystem == actualAuditableSystem
+        expectedSoftDeleteSystem == actualSoftDeleteSystem
+
+
+        //todo taimanov check for HasUuid-key, Versioned
+    }
+
 
 }

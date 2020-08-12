@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.EntityEntryHasUuid;
@@ -77,10 +76,6 @@ public class MetadataTools {
     public static final String DELETED_DATE_ANN_NAME = DeletedDate.class.getName();
     public static final String DELETED_BY_ANN_NAME = DeletedBy.class.getName();
 
-    public static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(
-            JmixEntity.class,
-            Versioned.class
-    );
 
     @Autowired
     protected Metadata metadata;
@@ -327,6 +322,21 @@ public class MetadataTools {
     public boolean isSystem(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         return Boolean.TRUE.equals(metaProperty.getAnnotations().get(SYSTEM_ANN_NAME));
+    }
+
+    /**
+     * @return names of system properties
+     */
+    public List<String> getSystemProperties(MetaClass metaClass) {
+        List<String> result = new LinkedList<>();
+        while (metaClass != null) {
+            if (metaClass.getAnnotations().containsKey(SYSTEM_ANN_NAME)) {
+                //noinspection unchecked
+                result.addAll((Collection<String>) metaClass.getAnnotations().get(SYSTEM_ANN_NAME));
+            }
+            metaClass = metaClass.getAncestor();
+        }
+        return result;
     }
 
     /**

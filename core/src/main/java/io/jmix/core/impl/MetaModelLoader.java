@@ -17,10 +17,14 @@
 package io.jmix.core.impl;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
@@ -44,6 +48,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -70,6 +78,24 @@ public class MetaModelLoader {
 
     protected static final String VALIDATION_NOTNULL_MESSAGE = "_notnull_message";
     protected static final String VALIDATION_NOTNULL_UI_COMPONENT = "_notnull_ui_component";
+
+    protected static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(//todo taimanov move to CubaMetaModelLoader after versioned rework
+            JmixEntity.class,
+            Versioned.class
+    );
+
+    protected static final List<Class<? extends Annotation>> SYSTEM_ANNOTATIONS = ImmutableList.of(
+            Id.class,
+            JmixId.class,
+            EmbeddedId.class,
+            JmixGeneratedValue.class,
+            CreatedDate.class,
+            CreatedBy.class,
+            LastModifiedDate.class,
+            LastModifiedBy.class,
+            DeletedDate.class,
+            DeletedBy.class
+    );
 
     protected DatatypeRegistry datatypes;
 
@@ -467,7 +493,6 @@ public class MetaModelLoader {
         if (isUuidGeneratedValue(metaProperty, field)) {
             metaProperty.getDomain().getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, metaProperty.getName());
             metaProperty.getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, true);
-            metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
         }
 
         Column column = field.getAnnotation(Column.class);
@@ -481,9 +506,15 @@ public class MetaModelLoader {
             metaProperty.getAnnotations().put(MetadataTools.TEMPORAL_ANN_NAME, temporal.value());
         }
 
-        boolean system = isPrimaryKey(field) || propertyBelongsTo(field, metaProperty, MetadataTools.SYSTEM_INTERFACES);
-        if (system)
+        if (isSystem(field, metaProperty)) {
             metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
+            MetaClass metaClass = metaProperty.getDomain();
+            if (!metaClass.getAnnotations().containsKey(MetadataTools.SYSTEM_ANN_NAME)) {
+                metaClass.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, new LinkedList<String>());
+            }
+            //noinspection unchecked
+            ((List<String>) metaClass.getAnnotations().get(MetadataTools.SYSTEM_ANN_NAME)).add(metaProperty.getName());
+        }
     }
 
     protected void assignStore(MetaProperty metaProperty) {
@@ -496,7 +527,16 @@ public class MetaModelLoader {
         }
     }
 
-    private boolean propertyBelongsTo(Field field, MetaProperty metaProperty, List<Class> systemInterfaces) {
+    protected boolean isSystem(Field field, MetaProperty metaProperty) {
+        for (Class<? extends Annotation> annotation : SYSTEM_ANNOTATIONS) {
+            if (field.isAnnotationPresent(annotation)) {
+                return true;
+            }
+        }
+        return propertyBelongsTo(field, metaProperty, SYSTEM_INTERFACES);
+    }
+
+    protected boolean propertyBelongsTo(Field field, MetaProperty metaProperty, List<Class> systemInterfaces) {
         String getterName = "get" + StringUtils.capitalize(metaProperty.getName());
 
         Class<?> aClass = field.getDeclaringClass();

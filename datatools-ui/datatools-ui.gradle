@@ -24,13 +24,12 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core'
+    api 'io.jmix.data:jmix-data'
     api 'io.jmix.ui:jmix-ui'
-    api 'io.jmix.security:jmix-security'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
-    testImplementation 'io.jmix.data:jmix-data'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

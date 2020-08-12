@@ -20,13 +20,15 @@ import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntryHasUuid
+import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.data.entity.BaseUuidEntity
 import io.jmix.data.entity.dummy.DummyEntity
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
+import test_support.entity.auditing.SoftDeleteAuditableEntity
 import test_support.entity.soft_delete.AnnotatedUuidEntity
 
-class HasUuidTest extends DataSpec {
+class CommonAnnotationsTest extends DataSpec {
 
     @Autowired
     DataManager dataManager
@@ -35,7 +37,7 @@ class HasUuidTest extends DataSpec {
     @Autowired
     Metadata metadata;
 
-    def "entities enhanced properly"() {
+    def "HasUuid annotation test"() {
         setup:
         DummyEntity dummyEntity = dataManager.save(dataManager.create(DummyEntity))
         AnnotatedUuidEntity entity = dataManager.save(dataManager.create(AnnotatedUuidEntity))
@@ -71,6 +73,33 @@ class HasUuidTest extends DataSpec {
         cleanup:
         if (entity != null) dataManager.remove(entity)
         if (dummyEntity != null) dataManager.remove(dummyEntity)
+    }
+
+
+    def "System properties test"() {
+        setup:
+        MetaClass checkingClass = metadata.getClass(SoftDeleteAuditableEntity)
+
+        def metadataSystem = metadataTools.getSystemProperties(checkingClass) as Set
+        def mustBeSystem = ["id", "creator", "birthDate", "touchedBy", "touchDate", "whoDeleted", "whenDeleted"] as Set
+
+        expect:
+        metadataTools.isSystem(checkingClass.getProperty("id"))
+        metadataTools.isSystem(checkingClass.getProperty("creator"))
+        metadataTools.isSystem(checkingClass.getProperty("birthDate"))
+        metadataTools.isSystem(checkingClass.getProperty("touchedBy"))
+        metadataTools.isSystem(checkingClass.getProperty("touchDate"))
+        metadataTools.isSystem(checkingClass.getProperty("whoDeleted"))
+        metadataTools.isSystem(checkingClass.getProperty("whenDeleted"))
+
+        !metadataTools.isSystem(checkingClass.getProperty("title"))
+        !metadataTools.isSystem(checkingClass.getProperty("reason"))
+
+        metadataSystem == mustBeSystem
+
+
+        //todo taimanov add version check after /jmix-old#588
+
     }
 
 }

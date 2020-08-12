@@ -488,12 +488,11 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
         T selectedItem = getBrowseContainer().getItemOrNull();
         if (selectedItem != null) {
             FetchPlan fetchPlan = getEditContainer().getFetchPlan();
-            Map<String, Object> hits = getEditLoader().getHints();
 
             T reloadedItem = getBeanLocator().get(DataManager.class)
                     .load(Id.of(selectedItem))
                     .fetchPlan(fetchPlan)
-                    .hints(hits)
+                    .hints(getEditLoader().getHints())
                     .one();
             getBrowseContainer().replaceItem(reloadedItem);
         }

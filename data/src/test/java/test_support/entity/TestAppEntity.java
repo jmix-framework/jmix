@@ -16,6 +16,7 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.data.entity.StandardEntity;
 import test_support.entity.sec.User;
@@ -70,12 +71,14 @@ public class TestAppEntity extends StandardEntity {
         this.items = items;
     }
 
-    @ModelProperty(related = "appDate")
+    @ModelProperty
+    @DependsOnProperties("appDate")
     public Date getChangeDate() {
         return this.appDate;
     }
 
-    @ModelProperty(related = {"author,number"})
+    @ModelProperty
+    @DependsOnProperties({"author", "number"})
     public String getLabel() {
         return String.format("%s-%s", author != null ? author.getLogin() : "", number);
     }

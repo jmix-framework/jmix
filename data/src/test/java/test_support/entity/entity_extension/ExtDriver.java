@@ -17,6 +17,7 @@
 package test_support.entity.entity_extension;
 
 import io.jmix.core.entity.annotation.ReplaceEntity;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.Column;
@@ -50,7 +51,8 @@ public class ExtDriver extends Driver {
         this.notes = notes;
     }
 
-    @InstanceName(relatedProperties = {"name","info"})
+    @InstanceName
+    @DependsOnProperties({"name","info"})
     public String getInstanceName() {
         return name + ":" + info;
     }

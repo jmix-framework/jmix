@@ -7,6 +7,7 @@ package test_support.entity.multidb;
 
 
 import io.jmix.core.JmixEntity;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.annotation.Store;
 
@@ -33,7 +34,8 @@ public class Db1Order implements JmixEntity {
     private Db1Customer customer;
 
     @Transient
-    @ModelProperty(related = "mem1CustomerId")
+    @ModelProperty
+    @DependsOnProperties("mem1CustomerId")
     private Mem1Customer mem1Customer;
 
     @Column(name = "MEM_CUST_ID")

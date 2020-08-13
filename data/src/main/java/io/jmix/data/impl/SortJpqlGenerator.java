@@ -171,7 +171,7 @@ public class SortJpqlGenerator {
     }
 
     protected List<String> getNotPersistentPropertySortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {
-        List<String> related = metadataTools.getRelatedProperties(metaPropertyPath.getMetaProperty());
+        List<String> related = metadataTools.getDependsOnProperties(metaPropertyPath.getMetaProperty());
         MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
 
         if (!related.isEmpty()) {

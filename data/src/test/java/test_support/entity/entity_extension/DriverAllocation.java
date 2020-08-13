@@ -20,6 +20,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
@@ -66,7 +67,8 @@ public class DriverAllocation implements JmixEntity {
         this.driver = driver;
     }
 
-    @InstanceName(relatedProperties = {"driver", "car"})
+    @InstanceName
+    @DependsOnProperties({"driver", "car"})
     public String getCaption(MetadataTools metadataTools) {
         String str = driver == null ? "<no driver>" : metadataTools.getInstanceName(driver);
         str += " : ";

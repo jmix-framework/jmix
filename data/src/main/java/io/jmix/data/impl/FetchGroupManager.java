@@ -419,15 +419,15 @@ public class FetchGroupManager {
                 }
             }
 
-            List<String> relatedProperties = metadataTools.getRelatedProperties(entityClass, propertyName);
-            for (String relatedProperty : relatedProperties) {
-                MetaProperty relatedMetaProp = entityMetaClass.getProperty(relatedProperty);
-                if (!fetchPlan.containsProperty(relatedProperty) && (relatedMetaProp.getRange().isClass() || useFetchGroup)) {
-                    FetchGroupField field = createFetchGroupField(entityClass, parentField, relatedProperty);
+            List<String> dependsOnProperties = metadataTools.getDependsOnProperties(entityClass, propertyName);
+            for (String dependsOnProperty : dependsOnProperties) {
+                MetaProperty dependsOnMetaProp = entityMetaClass.getProperty(dependsOnProperty);
+                if (!fetchPlan.containsProperty(dependsOnProperty) && (dependsOnMetaProp.getRange().isClass() || useFetchGroup)) {
+                    FetchGroupField field = createFetchGroupField(entityClass, parentField, dependsOnProperty);
                     fetchGroupFields.add(field);
-                    if (relatedMetaProp.getRange().isClass()) {
-                        FetchPlan relatedFetchPlan = viewRepository.getFetchPlan(relatedMetaProp.getRange().asClass(), FetchPlan.INSTANCE_NAME);
-                        processFetchPlan(relatedFetchPlan, field, fetchGroupFields, useFetchGroup);
+                    if (dependsOnMetaProp.getRange().isClass()) {
+                        FetchPlan dependsOnPropFetchPlan = viewRepository.getFetchPlan(dependsOnMetaProp.getRange().asClass(), FetchPlan.INSTANCE_NAME);
+                        processFetchPlan(dependsOnPropFetchPlan, field, fetchGroupFields, useFetchGroup);
                     }
                 }
             }

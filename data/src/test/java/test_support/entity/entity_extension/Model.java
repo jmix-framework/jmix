@@ -19,6 +19,7 @@ import io.jmix.core.DeletePolicy;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.annotation.PostConstruct;
@@ -98,7 +99,8 @@ public class Model implements JmixEntity {
         this.plants = plants;
     }
 
-    @InstanceName(relatedProperties = {"manufacturer","name"})
+    @InstanceName
+    @DependsOnProperties({"manufacturer","name"})
     public String getInstanceName() {
         return manufacturer + ": " + name;
     }

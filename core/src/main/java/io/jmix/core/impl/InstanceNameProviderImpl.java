@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.method.ArgumentResolverComposite;
 import io.jmix.core.impl.method.ContextArgumentResolverComposite;
 import io.jmix.core.impl.method.MethodArgumentsProvider;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -158,20 +159,22 @@ public class InstanceNameProviderImpl implements InstanceNameProvider {
     protected Collection<MetaProperty> getInstanceNameProperties(MetaClass metaClass, @Nullable Method nameMethod, @Nullable MetaProperty nameProperty) {
         final Collection<MetaProperty> properties = new HashSet<>();
         if (nameMethod != null) {
-            return getPropertiesFromAnnotation(metaClass, nameMethod.getAnnotation(InstanceName.class));
+            return getPropertiesFromAnnotation(metaClass, nameMethod.getAnnotation(DependsOnProperties.class));
         }
         if (nameProperty != null) {
             properties.add(nameProperty);
-            InstanceName annotation = nameProperty.getAnnotatedElement().getAnnotation(InstanceName.class);
+            DependsOnProperties annotation = nameProperty.getAnnotatedElement().getAnnotation(DependsOnProperties.class);
             properties.addAll(getPropertiesFromAnnotation(metaClass, annotation));
         }
         return properties;
     }
 
-    private List<MetaProperty> getPropertiesFromAnnotation(MetaClass metaClass, InstanceName annotation) {
-        return Arrays.stream(annotation.relatedProperties())
-                .map(metaClass::getProperty)
-                .collect(Collectors.toList());
+    private List<MetaProperty> getPropertiesFromAnnotation(MetaClass metaClass, @Nullable DependsOnProperties annotation) {
+        return annotation == null ?
+                Collections.emptyList() :
+                Arrays.stream(annotation.value())
+                        .map(metaClass::getProperty)
+                        .collect(Collectors.toList());
     }
 
     @Nullable

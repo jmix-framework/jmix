@@ -28,16 +28,14 @@ import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
-import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.core.metamodel.annotation.NumberFormat;
+import io.jmix.core.metamodel.annotation.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.*;
+import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.impl.*;
 import io.jmix.core.validation.group.UiComponentChecks;
 import org.apache.commons.lang3.ArrayUtils;
@@ -715,12 +713,12 @@ public class MetaModelLoader {
             }
         }
 
-        ModelProperty modelPropertyAnnotation =
-                annotatedElement.getAnnotation(ModelProperty.class);
-        if (modelPropertyAnnotation != null) {
-            String[] related = modelPropertyAnnotation.related();
-            if (!(related.length == 1 && related[0].equals(""))) {
-                metaProperty.getAnnotations().put("relatedProperties", Joiner.on(',').join(related));
+        DependsOnProperties dependsOnAnnotation =
+                annotatedElement.getAnnotation(DependsOnProperties.class);
+        if (dependsOnAnnotation != null) {
+            String[] dependsOn = dependsOnAnnotation.value();
+            if (dependsOn.length != 0) {
+                metaProperty.getAnnotations().put("dependsOnProperties", Joiner.on(',').join(dependsOn));
             }
         }
 
@@ -811,8 +809,8 @@ public class MetaModelLoader {
 
     @Nullable
     protected Datatype getAdaptiveDatatype(AnnotatedElement annotatedElement) {
-        ModelProperty annotation = annotatedElement.getAnnotation(ModelProperty.class);
-        return annotation != null && !annotation.datatype().equals("") ? datatypes.get(annotation.datatype()) : null;
+        PropertyDatatype annotation = annotatedElement.getAnnotation(PropertyDatatype.class);
+        return annotation != null && !annotation.value().equals("") ? datatypes.get(annotation.value()) : null;
     }
 
     protected boolean setterExists(Field field) {

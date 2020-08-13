@@ -87,12 +87,12 @@ public class CrossDataStoreReferenceLoader {
             if (metaProperty.getRange().isClass()) {
                 MetaClass propertyMetaClass = metaProperty.getRange().asClass();
                 if (!Objects.equals(metadataTools.getStoreName(propertyMetaClass), storeName)) {
-                    List<String> relatedProperties = metadataTools.getRelatedProperties(metaProperty);
-                    if (relatedProperties.size() == 0) {
+                    List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
+                    if (dependsOnProperties.size() == 0) {
                         continue;
                     }
-                    if (relatedProperties.size() > 1) {
-                        log.warn("More than 1 related property is defined for attribute {}, skip handling cross-datastore reference", metaProperty);
+                    if (dependsOnProperties.size() > 1) {
+                        log.warn("More than 1 property is defined for attribute {} in DependsOnProperty annotation, skip handling cross-datastore reference", metaProperty);
                         continue;
                     }
                     List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.computeIfAbsent(entityClass, k -> new ArrayList<>());
@@ -279,8 +279,8 @@ public class CrossDataStoreReferenceLoader {
             this.property = metaProperty;
             this.fetchPlanProperty = fetchPlanProperty;
 
-            List<String> relatedProperties = metadataTools.getRelatedProperties(property);
-            relatedPropertyName = relatedProperties.get(0);
+            List<String> dependsOnProperties = metadataTools.getDependsOnProperties(property);
+            relatedPropertyName = dependsOnProperties.get(0);
 
             String pkName = metadataTools.getPrimaryKeyName(property.getRange().asClass());
             primaryKeyName = pkName != null

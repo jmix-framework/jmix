@@ -17,13 +17,14 @@
 package io.jmix.core.metamodel.model.utils;
 
 import com.google.common.base.Splitter;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class RelatedPropertiesCache {
     private final Map<String, Set<String>> propertiesMap = new HashMap<>();
@@ -36,19 +37,24 @@ public class RelatedPropertiesCache {
 
     protected RelatedPropertiesCache(Class clazz) {
         Objects.requireNonNull(clazz, "class is null");
-        for (Method method : clazz.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(ModelProperty.class)) {
+        List<Method> methods = Arrays.asList(clazz.getMethods());
+        List<String> methodNames = methods.stream().map(Method::getName).collect(Collectors.toList());
+        for (Method method : methods) {
+            if (method.getName().startsWith("get") && method.isAnnotationPresent(DependsOnProperties.class)) {
                 String propertyName = StringUtils.uncapitalize(method.getName().substring(3));
-                String[] related = method.getAnnotation(ModelProperty.class).related();
-                List<String> relatedPropertyNames;
-                if (related.length == 1) {
-                    relatedPropertyNames = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(related[0]);
-                } else {
-                    relatedPropertyNames = Arrays.asList(related);
-                }
-                for (String relatedPropertyName : relatedPropertyNames) {
-                    Set<String> set = propertiesMap.computeIfAbsent(relatedPropertyName, k -> new HashSet<>());
-                    set.add(propertyName);
+                // if read-only, i.e. doesn't have a setter
+                if (!methodNames.contains("set" + StringUtils.capitalize(propertyName))) {
+                    String[] dependsOnProperties = method.getAnnotation(DependsOnProperties.class).value();
+                    List<String> dependsOnPropertyNames;
+                    if (dependsOnProperties.length == 1) {
+                        dependsOnPropertyNames = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(dependsOnProperties[0]);
+                    } else {
+                        dependsOnPropertyNames = Arrays.asList(dependsOnProperties);
+                    }
+                    for (String relatedPropertyName : dependsOnPropertyNames) {
+                        Set<String> set = propertiesMap.computeIfAbsent(relatedPropertyName, k -> new HashSet<>());
+                        set.add(propertyName);
+                    }
                 }
             }
         }

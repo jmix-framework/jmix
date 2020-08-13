@@ -243,15 +243,15 @@ public class DataManagerImpl implements DataManager {
             if (property.getRange().isClass() && !property.getRange().getCardinality().isMany()) {
                 MetaClass propertyMetaClass = property.getRange().asClass();
                 if (!Objects.equals(metadataTools.getStoreName(propertyMetaClass), metadataTools.getStoreName(metaClass))) {
-                    List<String> relatedProperties = metadataTools.getRelatedProperties(property);
-                    if (relatedProperties.size() == 0) {
+                    List<String> dependsOnProperties = metadataTools.getDependsOnProperties(property);
+                    if (dependsOnProperties.size() == 0) {
                         continue;
                     }
-                    if (relatedProperties.size() > 1) {
-                        log.warn("More than 1 related property is defined for attribute {}, skip handling different data store", property);
+                    if (dependsOnProperties.size() > 1) {
+                        log.warn("More than 1 property is defined for attribute {} in DependsOnProperty annotation, skip handling different data store", property);
                         continue;
                     }
-                    String relatedPropertyName = relatedProperties.get(0);
+                    String relatedPropertyName = dependsOnProperties.get(0);
                     if (entityStates.isLoaded(entity, relatedPropertyName)) {
                         JmixEntity refEntity = EntityValues.getValue(entity, property.getName());
                         if (refEntity == null) {

@@ -731,27 +731,27 @@ public class MetadataTools {
     }
 
     /**
-     * @return list of related properties defined in {@link ModelProperty#related()}
+     * @return list of properties defined in {@link io.jmix.core.metamodel.annotation.DependsOnProperties}
      * or empty list
      */
-    public List<String> getRelatedProperties(Class<?> entityClass, String property) {
+    public List<String> getDependsOnProperties(Class<?> entityClass, String property) {
         checkNotNullArgument(entityClass, "entityClass is null");
 
         MetaClass metaClass = metadata.getClass(entityClass);
-        return getRelatedProperties(metaClass.getProperty(property));
+        return getDependsOnProperties(metaClass.getProperty(property));
     }
 
     /**
-     * @return list of related properties defined in {@link ModelProperty#related()}
+     * @return list of properties defined in {@link io.jmix.core.metamodel.annotation.DependsOnProperties}
      * or empty list
      */
-    public List<String> getRelatedProperties(MetaProperty metaProperty) {
+    public List<String> getDependsOnProperties(MetaProperty metaProperty) {
         checkNotNullArgument(metaProperty, "metaProperty is null");
 
-        String relatedProperties = (String) metaProperty.getAnnotations().get("relatedProperties");
+        String dependsOnProperties = (String) metaProperty.getAnnotations().get("dependsOnProperties");
         List<String> result = Collections.emptyList();
-        if (relatedProperties != null) {
-            result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(relatedProperties);
+        if (dependsOnProperties != null) {
+            result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(dependsOnProperties);
         }
         return result;
     }
@@ -845,9 +845,9 @@ public class MetadataTools {
         if (Objects.equals(thisStore, propStore))
             return null;
 
-        List<String> relatedProperties = getRelatedProperties(metaProperty);
-        if (relatedProperties.size() == 1)
-            return relatedProperties.get(0);
+        List<String> dependsOnProperties = getDependsOnProperties(metaProperty);
+        if (dependsOnProperties.size() == 1)
+            return dependsOnProperties.get(0);
         else
             return null;
     }

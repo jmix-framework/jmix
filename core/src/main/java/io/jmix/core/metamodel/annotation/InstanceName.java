@@ -28,6 +28,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @MetaAnnotation
 public @interface InstanceName {
-
-    String[] relatedProperties() default {};
 }

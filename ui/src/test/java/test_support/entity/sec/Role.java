@@ -15,6 +15,7 @@
  */
 package test_support.entity.sec;
 
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.data.entity.StandardEntity;
 
@@ -46,7 +47,8 @@ public class Role extends StandardEntity {
     @Column(name = "IS_DEFAULT_ROLE")
     private Boolean defaultRole;
 
-    @InstanceName(relatedProperties = {"locName","name"})
+    @InstanceName
+    @DependsOnProperties({"locName","name"})
     public String getCaption(){
         return String.format("%s [%s]",getLocName(),getName());
     }

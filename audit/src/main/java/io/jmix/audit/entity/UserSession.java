@@ -26,7 +26,7 @@ import org.springframework.security.core.session.SessionInformation;
 import javax.persistence.Transient;
 import java.util.Date;
 
-@ModelObject(name = "core_UserSession")
+@ModelObject(name = "core_UserSession", annotatedPropertiesOnly = true)
 @SystemLevel
 public class UserSession extends BaseUuidEntity {
 
@@ -41,13 +41,13 @@ public class UserSession extends BaseUuidEntity {
         return sessionInformation;
     }
 
+    public Object getPrincipal() {
+        return sessionInformation.getPrincipal();
+    }
+
     @ModelProperty
     public String getSessionId() {
         return sessionInformation.getSessionId();
-    }
-
-    public Object getPrincipal() {
-        return sessionInformation.getPrincipal();
     }
 
     @ModelProperty

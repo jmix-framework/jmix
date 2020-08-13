@@ -17,6 +17,7 @@ package test_support.entity;
 
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.data.entity.StandardEntity;
 
@@ -226,7 +227,8 @@ public class User extends StandardEntity {
         this.sysTenantId = sysTenantId;
     }
 
-    @InstanceName(relatedProperties = {"login","name"})
+    @InstanceName
+    @DependsOnProperties({"login","name"})
     public String getCaption(){
         return String.format("%s[%s]",getLogin(),getName());
     }

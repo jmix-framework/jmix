@@ -24,6 +24,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.data.entity.ReferenceToEntity;
@@ -161,7 +162,8 @@ public class CategoryAttribute extends StandardEntity {
         defaultEntity = metadata.create(ReferenceToEntity.class);
     }
 
-    @InstanceName(relatedProperties = {"name", "code"})
+    @InstanceName
+    @DependsOnProperties({"name", "code"})
     public String getCaption() {
         return String.format("%s (%s)", getName(), getCode());
     }

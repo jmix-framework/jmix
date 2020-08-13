@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +63,8 @@ public class FileDescriptor extends StandardEntity {
         this.createDate = createDate;
     }
 
-    @InstanceName(relatedProperties = {"createDate"})
+    @InstanceName
+    @DependsOnProperties("createDate")
     public String getCaption() {
         return String.format("%s (%s)", getName(), getCreateDate());
     }
@@ -70,7 +72,8 @@ public class FileDescriptor extends StandardEntity {
     /**
      * @return file name including extension
      */
-    @InstanceName(relatedProperties = {"createDate"})
+    @InstanceName
+    @DependsOnProperties("createDate")
     public String getName() {
         return name;
     }

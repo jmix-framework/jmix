@@ -100,7 +100,7 @@ public class ValidatorLoadFactory {
             throw new IllegalArgumentException("Bean name is not defined");
         }
 
-        AbstractValidator validator = (AbstractValidator) applicationContext.getBean(beanName);
+        Validator validator = (Validator) applicationContext.getBean(beanName);
 
         if (validator instanceof AbstractValidator) {
             ((AbstractValidator) validator).setMessage(loadMessage(element, messagePack));

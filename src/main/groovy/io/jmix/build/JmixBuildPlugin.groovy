@@ -147,7 +147,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                         toolVersion = '4.0.1'
                         ignoreFailures = false
                         omitVisitors = ['FindDoubleCheck']
-                        excludeFilter = rootProject.file("etc/spotbugs/spotbugs-exclude-filter.xml")
+                        excludeFilter = project.file("../etc/spotbugs/spotbugs-exclude-filter.xml")
                         effort = "max"
                         reportLevel = "medium"
                     }

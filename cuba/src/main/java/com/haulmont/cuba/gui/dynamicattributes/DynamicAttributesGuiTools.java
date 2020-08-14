@@ -33,6 +33,7 @@ import io.jmix.dynattr.impl.model.Category;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 import io.jmix.dynattrui.impl.AttributeValidators;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -64,7 +65,7 @@ public class DynamicAttributesGuiTools {
     @Autowired
     protected AttributeValidators attributeValidators;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     /**
      * Method checks whether any class in the view hierarchy contains dynamic attributes that must be displayed on the

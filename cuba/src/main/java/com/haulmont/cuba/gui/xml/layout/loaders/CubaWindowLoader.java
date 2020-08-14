@@ -16,8 +16,6 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import com.haulmont.cuba.gui.xml.DeclarativeTrackingAction;
-import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Facet;
@@ -49,7 +47,7 @@ public class CubaWindowLoader extends WindowLoader {
             List<Element> facetElements = timersElement.elements("timer");
 
             for (Element facetElement : facetElements) {
-                FacetLoader loader = beanLocator.get(FacetLoader.NAME);
+                FacetLoader loader = (FacetLoader) applicationContext.getBean(FacetLoader.NAME);
                 Facet facet = loader.load(facetElement, getComponentContext());
 
                 resultComponent.addFacet(facet);

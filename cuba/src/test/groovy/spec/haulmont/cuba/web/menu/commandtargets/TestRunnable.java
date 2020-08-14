@@ -16,13 +16,13 @@
 
 package spec.haulmont.cuba.web.menu.commandtargets;
 
-import io.jmix.core.BeanLocator;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class TestRunnable implements Runnable, BeanLocatorAware {
+public class TestRunnable implements Runnable, ApplicationContextAware {
 
     public static final ThreadLocal<Boolean> launched = new ThreadLocal<>();
-    public static final ThreadLocal<Boolean> beanLocatorSet = new ThreadLocal<>();
+    public static final ThreadLocal<Boolean> applicationContextIsSet = new ThreadLocal<>();
 
     @Override
     public void run() {
@@ -30,7 +30,7 @@ public class TestRunnable implements Runnable, BeanLocatorAware {
     }
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
-        beanLocatorSet.set(true);
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        applicationContextIsSet.set(true);
     }
 }

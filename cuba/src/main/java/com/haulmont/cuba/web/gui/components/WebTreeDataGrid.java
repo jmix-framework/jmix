@@ -85,7 +85,7 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(CubaTreeDataGridSettingsBinder.NAME);
+        return (ComponentSettingsBinder) this.applicationContext.getBean(CubaTreeDataGridSettingsBinder.NAME);
     }
 
     @Override
@@ -180,7 +180,7 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
 
     @Override
     public <T extends Renderer> T createRenderer(Class<T> type) {
-        return beanLocator.getPrototype(type);
+        return this.applicationContext.getBean(type);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
             return new FormatterBasedValueProvider<>(column.getFormatter());
         } else if (metaProperty != null) {
             if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
-                return new FormatterBasedValueProvider<>(beanLocator.getPrototype(CollectionFormatter.class));
+                return new FormatterBasedValueProvider<>(this.applicationContext.getBean(CollectionFormatter.class));
             }
             if (column instanceof DataGrid.Column
                     && ((DataGrid.Column<E>) column).getType() == Boolean.class) {
@@ -219,7 +219,7 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
     }
 
     protected LegacySettingsDelegate createSettingsDelegate() {
-        return beanLocator.getPrototype(LegacySettingsDelegate.NAME,
+        return (LegacySettingsDelegate) this.applicationContext.getBean(LegacySettingsDelegate.NAME,
                 this, new LegacyTreeDataGridSettingsConverter(), getSettingsBinder());
     }
 
@@ -249,6 +249,6 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
     }
 
     protected DataGridDelegate createDataGridDelegate() {
-        return beanLocator.getPrototype(DataGridDelegate.NAME);
+        return (DataGridDelegate) this.applicationContext.getBean(DataGridDelegate.NAME);
     }
 }

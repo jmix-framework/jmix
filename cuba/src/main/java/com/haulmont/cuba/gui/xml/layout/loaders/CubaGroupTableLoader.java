@@ -71,7 +71,7 @@ public class CubaGroupTableLoader extends GroupTableLoader {
         }
         ((GroupTable) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = beanLocator.get(DynAttrEmbeddingStrategies.class);
+        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
         embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
     }
 

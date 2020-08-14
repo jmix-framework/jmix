@@ -18,6 +18,7 @@ package spec.haulmont.cuba.components.formatters.screens;
 
 import io.jmix.core.TimeSource;
 import io.jmix.ui.component.Label;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.formatter.NumberFormatter;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
@@ -45,7 +46,7 @@ public class FormattersScreen extends Screen {
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        defaultNumberFormatterField.setFormatter(getBeanLocator().getPrototype(NumberFormatter.NAME));
+        defaultNumberFormatterField.setFormatter((Formatter) getApplicationContext().getBean(NumberFormatter.NAME));
 
         dateFormatterField.setValue(timeSource.currentTimestamp());
         dateTimeFormatterField.setValue(timeSource.currentTimestamp());

@@ -83,7 +83,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(CubaDataGridSettingsBinder.NAME);
+        return (ComponentSettingsBinder) this.applicationContext.getBean(CubaDataGridSettingsBinder.NAME);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
 
     @Override
     public <T extends Renderer> T createRenderer(Class<T> type) {
-        return beanLocator.getPrototype(type);
+        return this.applicationContext.getBean(type);
     }
 
     @Override
@@ -192,7 +192,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
             return new FormatterBasedValueProvider<>(column.getFormatter());
         } else if (metaProperty != null) {
             if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
-                return new FormatterBasedValueProvider<>(beanLocator.getPrototype(CollectionFormatter.class));
+                return new FormatterBasedValueProvider<>(this.applicationContext.getBean(CollectionFormatter.class));
             }
             if (column instanceof DataGrid.Column
                     && ((DataGrid.Column<E>) column).getType() == Boolean.class) {
@@ -217,7 +217,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
     }
 
     protected LegacySettingsDelegate createSettingsDelegate() {
-        return beanLocator.getPrototype(LegacySettingsDelegate.NAME,
+        return (LegacySettingsDelegate) this.applicationContext.getBean(LegacySettingsDelegate.NAME,
                 this, new LegacyDataGridSettingsConverter(), getSettingsBinder());
     }
 
@@ -243,7 +243,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
     }
 
     protected DataGridDelegate createDataGridDelegate() {
-        return beanLocator.getPrototype(DataGridDelegate.NAME);
+        return (DataGridDelegate) this.applicationContext.getBean(DataGridDelegate.NAME);
     }
 
     protected static class ColumnImpl<E extends JmixEntity>

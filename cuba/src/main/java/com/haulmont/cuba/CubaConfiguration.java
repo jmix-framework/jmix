@@ -67,12 +67,12 @@ import java.util.Collections;
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 public class CubaConfiguration {
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     protected UiControllerReflectionInspector uiControllerReflectionInspector;
 
     @Autowired
-    protected void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    protected void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Autowired
@@ -116,7 +116,7 @@ public class CubaConfiguration {
     }
 
     @Bean("cuba_UiControllers")
-    public UiControllersConfiguration screens(ApplicationContext applicationContext,
+    public UiControllersConfiguration screens(org.springframework.context.ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
@@ -128,7 +128,7 @@ public class CubaConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected UiControllerDependencyInjector uiControllerDependencyInjector(FrameOwner frameOwner, ScreenOptions options) {
         UiControllerDependencyInjector injector = new CubaUiControllerReflectionInspector(frameOwner, options);
-        injector.setBeanLocator(beanLocator);
+        injector.setApplicationContext(applicationContext);
         injector.setReflectionInspector(uiControllerReflectionInspector);
         return injector;
     }

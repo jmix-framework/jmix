@@ -21,10 +21,10 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.FilterDataContext;
@@ -32,6 +32,7 @@ import com.haulmont.cuba.gui.components.filter.dateinterval.DateInIntervalCompon
 import com.haulmont.cuba.gui.components.listeditor.ListEditorHelper;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.*;
+import io.jmix.core.DataManager;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
@@ -66,6 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
@@ -120,7 +122,7 @@ public class Param {
     protected boolean isFoldersFilterEntitiesSet = false;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     protected Metadata metadata;
@@ -570,7 +572,7 @@ public class Param {
         switch (type) {
             case DATATYPE:
                 if (isDateInterval) {
-                    DateInIntervalComponent dateInIntervalComponent = beanLocator.get(DateInIntervalComponent.class);
+                    DateInIntervalComponent dateInIntervalComponent = applicationContext.getBean(DateInIntervalComponent.class);
                     dateInIntervalComponent.addValueChangeListener(newValue -> {
                         _setValue(newValue == null ? null : newValue.getDescription(), valueProperty);
                     });
@@ -797,7 +799,7 @@ public class Param {
     }
 
     protected void showParseExceptionNotification(String message) {
-        WindowManager wm = beanLocator.get(WindowManagerProvider.class).get();
+        WindowManager wm = applicationContext.getBean(WindowManagerProvider.class).get();
         wm.showNotification(message, Frame.NotificationType.TRAY);
     }
 
@@ -836,7 +838,7 @@ public class Param {
                 try {
                     _setValue(UUID.fromString(strValue), valueProperty);
                 } catch (IllegalArgumentException ie) {
-                    beanLocator.get(WindowManagerProvider.class).get()
+                    applicationContext.getBean(WindowManagerProvider.class).get()
                             .showNotification(messages.getMainMessage("filter.param.uuid.Err"), Frame.NotificationType.TRAY);
                 }
             } else {
@@ -860,7 +862,7 @@ public class Param {
                     .getMetaAnnotationAttributes(property.getAnnotations(), Lookup.class)
                     .get("type");
         }
-        PersistenceManagerClient persistenceManager = beanLocator.get(PersistenceManagerClient.NAME);
+        PersistenceManagerClient persistenceManager = (PersistenceManagerClient) applicationContext.getBean(PersistenceManagerClient.NAME);
         boolean useLookupScreen = type != null ?
                 type == LookupType.SCREEN : persistenceManager.useLookupScreen(metaClass.getName());
 

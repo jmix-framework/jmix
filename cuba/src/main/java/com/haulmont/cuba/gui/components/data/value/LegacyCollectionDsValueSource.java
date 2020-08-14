@@ -20,14 +20,12 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.ExtendedEntities;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -36,6 +34,8 @@ import io.jmix.ui.component.data.ValueSource;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -50,7 +50,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * @param <V> value type
  */
 @SuppressWarnings("unchecked")
-public class LegacyCollectionDsValueSource<V extends JmixEntity> implements ValueSource<Collection<V>>, BeanLocatorAware {
+public class LegacyCollectionDsValueSource<V extends JmixEntity> implements ValueSource<Collection<V>>, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(LegacyCollectionDsValueSource.class);
 
@@ -71,14 +71,14 @@ public class LegacyCollectionDsValueSource<V extends JmixEntity> implements Valu
     }
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
-        metadata = beanLocator.get(Metadata.NAME);
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        metadata = applicationContext.getBean(Metadata.class);
 
         if (datasource instanceof NestedDatasource) {
             NestedDatasource nestedDs = (NestedDatasource) this.datasource;
             MetaProperty nestedDsProperty = nestedDs.getProperty();
 
-            MetadataTools metadataTools = beanLocator.get(MetadataTools.NAME);
+            MetadataTools metadataTools = applicationContext.getBean(MetadataTools.class);
 
             MetaClass masterDsEntityClass = nestedDs.getMaster().getMetaClass();
             MetaPropertyPath masterDsMpp = metadataTools.resolveMetaPropertyPath(masterDsEntityClass,

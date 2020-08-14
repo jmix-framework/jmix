@@ -93,12 +93,12 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
+        setPageLength(applicationContext.getBean(UiProperties.class).getLookupFieldPageLength());
     }
 
     @Override
     protected void initComponent(JmixPickerField<V> component) {
-        Messages messages = beanLocator.get(Messages.NAME);
+        Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
         setInputPrompt(messages.getMessage("searchPickerField.inputPrompt"));
 
         getComponent().setItemCaptionGenerator(this::generateItemCaption);
@@ -168,7 +168,7 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
         return new SearchNotifications() {
             @Override
             public void notFoundSuggestions(String filterString) {
-                Messages messages = beanLocator.get(Messages.NAME);
+                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
 
                 String message = messages.formatMessage("searchSelect.notFound", filterString);
                 // TODO: legacy-ui
@@ -177,7 +177,7 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
 
             @Override
             public void needMinSearchStringLength(String filterString, int minSearchStringLength) {
-                Messages messages = beanLocator.get(Messages.NAME);
+                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
 
                 String message = messages.formatMessage("", "searchSelect.minimumLengthOfFilter", minSearchStringLength);
                 // TODO: legacy-ui
@@ -509,7 +509,7 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = beanLocator.get(OptionsBinder.NAME);
+            OptionsBinder optionsBinder = (OptionsBinder) applicationContext.getBean(OptionsBinder.NAME);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
 

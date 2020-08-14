@@ -70,7 +70,7 @@ public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorage
     }
 
     protected void applyPermissions() {
-        Security security = beanLocator.get(Security.NAME);
+        Security security = (Security) applicationContext.getBean(Security.NAME);
 
         if (!security.isEntityOpPermitted(java.io.FileDescriptor.class, EntityOp.UPDATE)) {
             component.setUploadButtonEnabled(false);
@@ -92,7 +92,7 @@ public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorage
             return dataSupplier.commit(fileDescriptor);
         }
 
-        DataManager dataManager = beanLocator.get(DataManager.NAME);
+        DataManager dataManager = (DataManager) applicationContext.getBean(DataManager.NAME);
         return dataManager.commit(fileDescriptor);
     }
 

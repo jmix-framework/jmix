@@ -194,7 +194,7 @@ public class EntityCombinedScreen extends AbstractLookup {
     protected boolean lockIfNeeded(JmixEntity entity) {
         MetaClass metaClass = getMetaClassForLocking(entity);
 
-        LockInfo lockInfo = getBeanLocator().get(LockService.class).lock(metaClass.getName(), EntityValues.getId(entity).toString());
+        LockInfo lockInfo = getApplicationContext().getBean(LockService.class).lock(metaClass.getName(), EntityValues.getId(entity).toString());
         if (lockInfo == null) {
             justLocked = true;
         } else if (!(lockInfo instanceof LockNotSupported)) {
@@ -202,7 +202,7 @@ public class EntityCombinedScreen extends AbstractLookup {
                     messages.getMainMessage("entityLocked.msg"),
                     String.format(messages.getMainMessage("entityLocked.desc"),
                             lockInfo.getUserName(),
-                            getBeanLocator().get(DatatypeFormatter.class).formatDateTime(lockInfo.getSince())
+                            getApplicationContext().getBean(DatatypeFormatter.class).formatDateTime(lockInfo.getSince())
                     ),
                     Frame.NotificationType.HUMANIZED
             );
@@ -220,15 +220,15 @@ public class EntityCombinedScreen extends AbstractLookup {
             JmixEntity entity = ds.getItem();
             if (entity != null) {
                 MetaClass metaClass = getMetaClassForLocking(entity);
-                getBeanLocator().get(LockService.class).unlock(metaClass.getName(), EntityValues.getId(entity).toString());
+                getApplicationContext().getBean(LockService.class).unlock(metaClass.getName(), EntityValues.getId(entity).toString());
             }
         }
     }
 
     protected MetaClass getMetaClassForLocking(JmixEntity item) {
-        Metadata metadata = getBeanLocator().get(Metadata.NAME);
+        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
         // lock original metaClass, if any, because by convention all the configuration is based on original entities
-        MetaClass metaClass = getBeanLocator().get(ExtendedEntities.class).getOriginalMetaClass(metadata.getClass(item));
+        MetaClass metaClass = getApplicationContext().getBean(ExtendedEntities.class).getOriginalMetaClass(metadata.getClass(item));
         if (metaClass == null) {
             metaClass = getTable().getDatasource().getMetaClass();
         }

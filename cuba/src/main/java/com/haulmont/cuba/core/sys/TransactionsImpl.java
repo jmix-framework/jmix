@@ -19,13 +19,13 @@ package com.haulmont.cuba.core.sys;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TransactionParams;
 import com.haulmont.cuba.core.Transactions;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.Stores;
 import io.jmix.data.impl.PersistenceSupport;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Named;
 
 @Component(Transactions.NAME)
@@ -42,7 +42,7 @@ public class TransactionsImpl implements Transactions {
     protected PersistenceSupport persistenceSupport;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Override
     public Transaction create(TransactionParams params) {
@@ -79,7 +79,7 @@ public class TransactionsImpl implements Transactions {
         if (Stores.isMain(store))
             tm = this.transactionManager;
         else
-            tm = beanLocator.get("transactionManager_" + store, PlatformTransactionManager.class);
+            tm = applicationContext.getBean("transactionManager_" + store, PlatformTransactionManager.class);
         return tm;
     }
 }

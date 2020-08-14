@@ -104,7 +104,7 @@ public class CubaLookupPickerFieldLoader extends EntityComboBoxLoader {
     }
 
     protected GuiActionSupport getCubaGuiActionSupport() {
-        return beanLocator.get(GuiActionSupport.NAME);
+        return (GuiActionSupport) applicationContext.getBean(GuiActionSupport.NAME);
     }
 
     @Override

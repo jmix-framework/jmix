@@ -22,7 +22,6 @@ import io.jmix.core.ClassManager;
 import com.haulmont.cuba.gui.components.actions.ListActionType;
 import com.haulmont.cuba.gui.xml.DeclarativeAction;
 import com.haulmont.cuba.gui.xml.DeclarativeTrackingAction;
-import io.jmix.core.BeanLocator;
 import com.haulmont.cuba.gui.components.validators.DateValidator;
 import com.haulmont.cuba.gui.components.validators.DoubleValidator;
 import com.haulmont.cuba.gui.components.validators.IntegerValidator;
@@ -46,6 +45,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
@@ -123,7 +123,7 @@ public final class ComponentLoaderHelper {
 
     @Nullable
     public static DataGrid.Renderer loadLegacyRenderer(Element rendererElement, ComponentLoader.Context context,
-                                                       ClassManager classManager, BeanLocator beanLocator) {
+                                                       ClassManager classManager, ApplicationContext applicationContext) {
         String rendererType = rendererElement.attributeValue("type");
         if (StringUtils.isEmpty(rendererType)) {
             return null;
@@ -145,7 +145,7 @@ public final class ComponentLoaderHelper {
                     rendererType), context);
         }
 
-        return (DataGrid.Renderer) beanLocator.getPrototype(rendererClass);
+        return (DataGrid.Renderer) applicationContext.getBean(rendererClass);
     }
 
     public static void loadTableValidators(io.jmix.ui.component.Table component, Element element, ComponentLoader.Context context,

@@ -80,7 +80,7 @@ public class CubaTreeTableLoader extends TreeTableLoader {
         }
         ((TreeTable) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = beanLocator.get(DynAttrEmbeddingStrategies.class);
+        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
         embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
     }
 

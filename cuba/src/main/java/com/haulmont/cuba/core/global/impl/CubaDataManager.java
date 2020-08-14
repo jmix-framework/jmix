@@ -30,6 +30,7 @@ import io.jmix.core.validation.EntityValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -66,7 +67,7 @@ public class CubaDataManager implements DataManager {
     protected BeanValidation beanValidation;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Nullable
     @Override
@@ -186,7 +187,7 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
-        FluentLoader<E> loader = beanLocator.getPrototype(FluentLoader.class, entityClass);
+        FluentLoader<E> loader = applicationContext.getBean(FluentLoader.class, entityClass);
         loader.setDataManager(getDelegate());
         loader.joinTransaction(false);
         return loader;
@@ -194,7 +195,7 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
-        FluentLoader<E> loader = beanLocator.getPrototype(FluentLoader.class, entityId.getEntityClass());
+        FluentLoader<E> loader = applicationContext.getBean(FluentLoader.class, entityId.getEntityClass());
         loader.setDataManager(getDelegate());
         loader.joinTransaction(false);
         return loader.id(entityId.getValue());

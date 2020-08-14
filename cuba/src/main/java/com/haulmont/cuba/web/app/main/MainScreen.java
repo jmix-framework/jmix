@@ -16,7 +16,6 @@
 
 package com.haulmont.cuba.web.app.main;
 
-import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.Messages;
 import com.vaadin.server.WebBrowser;
 import io.jmix.ui.*;
@@ -70,7 +69,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
 
     protected void initLogoImage() {
         Image logoImage = getLogoImage();
-        String logoImagePath = getBeanLocator().get(Messages.class)
+        String logoImagePath = getApplicationContext().getBean(Messages.class)
                 .getMainMessage(APP_LOGO_IMAGE);
 
         if (logoImage != null
@@ -92,7 +91,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
         Image logoImage = getLogoImage();
         if (logoImage != null) {
             LayoutAnalyzerContextMenuProvider laContextMenuProvider =
-                    getBeanLocator().get(LayoutAnalyzerContextMenuProvider.NAME);
+                    (LayoutAnalyzerContextMenuProvider) getApplicationContext().getBean(LayoutAnalyzerContextMenuProvider.NAME);
             laContextMenuProvider.initContextMenu(this, logoImage);
         }
     }
@@ -157,7 +156,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
     protected void onAfterShow(AfterShowEvent event) {
         Screens screens = UiControllerUtils.getScreenContext(this)
                 .getScreens();
-        getBeanLocator().get(ScreenTools.class)
+        getApplicationContext().getBean(ScreenTools.class)
                 .openDefaultScreen(screens);
     }
 
@@ -215,7 +214,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
     }
 
     protected void openLoginScreen() {
-        String loginScreenId = getBeanLocator().get(UiProperties.class).getLoginScreenId();
+        String loginScreenId = getApplicationContext().getBean(UiProperties.class).getLoginScreenId();
 
         UiControllerUtils.getScreenContext(this)
                 .getScreens()
@@ -239,7 +238,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
         setStyleName(sideMenuPanel, SIDEMENU_COLLAPSED_STYLENAME, collapsed);
 
         if (collapseMenuButton != null) {
-            Messages messages = getBeanLocator().get(Messages.class);
+            Messages messages = getApplicationContext().getBean(Messages.class);
             if (collapsed) {
                 collapseMenuButton.setCaption(messages.getMainMessage("menuExpandGlyph"));
                 collapseMenuButton.setDescription(messages.getMainMessage("sideMenuExpand"));

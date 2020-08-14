@@ -17,13 +17,13 @@
 package com.haulmont.cuba.core.sys;
 
 import com.haulmont.cuba.core.*;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.Stores;
 import io.jmix.data.*;
 import io.jmix.data.persistence.DbTypeConverter;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
@@ -42,7 +42,7 @@ public class PersistenceImpl implements Persistence {
     protected volatile boolean softDeletion = true;
 
     @Autowired
-    private BeanLocator beanLocator;
+    private ApplicationContext applicationContext;
 
     @Autowired
     protected PersistenceTools tools;
@@ -148,7 +148,7 @@ public class PersistenceImpl implements Persistence {
         if (Stores.isMain(store))
             emf = this.jpaEmf;
         else
-            emf = beanLocator.get("entityManagerFactory_" + store);
+            emf = (EntityManagerFactory) applicationContext.getBean("entityManagerFactory_" + store);
 
         javax.persistence.EntityManager jpaEm = EntityManagerFactoryUtils.doGetTransactionalEntityManager(emf, null, true);
         if (jpaEm == null) {
@@ -169,7 +169,7 @@ public class PersistenceImpl implements Persistence {
     }
 
     protected EntityManager createEntityManager(javax.persistence.EntityManager jpaEm) {
-        return (EntityManager) beanLocator.getPrototype(EntityManager.NAME, jpaEm);
+        return (EntityManager) applicationContext.getBean(EntityManager.NAME, jpaEm);
     }
 
     @Override
@@ -190,9 +190,9 @@ public class PersistenceImpl implements Persistence {
     @Override
     public DataSource getDataSource(String store) {
         if (Stores.isMain(store))
-            return (DataSource) beanLocator.get("dataSource");
+            return (DataSource) applicationContext.getBean("dataSource");
         else
-            return (DataSource) beanLocator.get("dataSource_" + store);
+            return (DataSource) applicationContext.getBean("dataSource_" + store);
     }
 
     /**
@@ -202,7 +202,7 @@ public class PersistenceImpl implements Persistence {
     public void dispose() {
         jpaEmf.close();
         for (String store : stores.getAdditional()) {
-            EntityManagerFactory emf = beanLocator.get("entityManagerFactory_" + store);
+            EntityManagerFactory emf = (EntityManagerFactory) applicationContext.getBean("entityManagerFactory_" + store);
             emf.close();
         }
     }
@@ -211,6 +211,6 @@ public class PersistenceImpl implements Persistence {
         if (Stores.isMain(store))
             return jpaEmf;
         else
-            return beanLocator.get("entityManagerFactory_" + store);
+            return (EntityManagerFactory) applicationContext.getBean("entityManagerFactory_" + store);
     }
 }

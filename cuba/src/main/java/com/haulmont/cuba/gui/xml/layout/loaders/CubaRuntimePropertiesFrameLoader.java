@@ -123,7 +123,7 @@ public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
 
             LayoutLoader layoutLoader = getLayoutLoader(innerContext);
 
-            ScreenXmlLoader screenXmlLoader = beanLocator.get(ScreenXmlLoader.NAME);
+            ScreenXmlLoader screenXmlLoader = (ScreenXmlLoader) applicationContext.getBean(ScreenXmlLoader.NAME);
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(),
                     getContext().getParams());
@@ -140,7 +140,7 @@ public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
     }
 
     protected FragmentHelper getFragmentHelper() {
-        return beanLocator.get(FragmentHelper.NAME);
+        return (FragmentHelper) applicationContext.getBean(FragmentHelper.NAME);
     }
 
     @Override
@@ -227,7 +227,7 @@ public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
         }
 
         ScreenOptions options = parentContext.getOptions();
-        parentContext.addInjectTask(new FragmentLoaderInjectTask((Fragment) resultComponent, options, beanLocator));
-        parentContext.addInitTask(new FragmentHelper.FragmentLoaderInitTask((Fragment) resultComponent, options, (ComponentLoaderContext) context, beanLocator));
+        parentContext.addInjectTask(new FragmentLoaderInjectTask((Fragment) resultComponent, options, applicationContext));
+        parentContext.addInitTask(new FragmentHelper.FragmentLoaderInitTask((Fragment) resultComponent, options, (ComponentLoaderContext) context, applicationContext));
     }
 }

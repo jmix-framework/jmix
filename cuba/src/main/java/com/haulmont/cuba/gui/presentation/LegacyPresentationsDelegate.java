@@ -18,14 +18,15 @@ package com.haulmont.cuba.gui.presentation;
 
 import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.components.presentation.CubaPresentationActionsBuilder;
-import io.jmix.core.BeanLocator;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
+import io.jmix.ui.component.presentation.action.PresentationActionsBuilder;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,7 @@ public class LegacyPresentationsDelegate {
 
     protected ComponentSettingsBinder settingsBinder;
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public LegacyPresentationsDelegate(HasSettings component,
                                        Presentations presentations,
@@ -51,13 +52,13 @@ public class LegacyPresentationsDelegate {
     }
 
     @Autowired
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     public TablePresentationsLayout createTablePresentationsLayout(TablePresentationsLayout layout) {
         layout.setPresentationActionsBuilder(
-                beanLocator.getPrototype(CubaPresentationActionsBuilder.NAME, component, settingsBinder));
+                (PresentationActionsBuilder) applicationContext.getBean(CubaPresentationActionsBuilder.NAME, component, settingsBinder));
         layout.build();
         return layout;
     }

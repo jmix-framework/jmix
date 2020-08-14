@@ -43,13 +43,13 @@ class MenuItemCommandsTest extends UiScreenSpec {
         exportScreensPackages(['spec.haulmont.cuba.web.menu.commandtargets', 'com.haulmont.cuba.web.app.main'])
 
         TestMenuItemConsumer.launched.set(false)
-        TestMenuItemConsumer.beanLocatorSet.set(false)
+        TestMenuItemConsumer.applicationContextIsSet.set(false)
 
         TestMenuItemRunnable.launched.set(false)
-        TestMenuItemRunnable.beanLocatorSet.set(false)
+        TestMenuItemRunnable.applicationContextIsSet.set(false)
 
         TestRunnable.launched.set(false)
-        TestRunnable.beanLocatorSet.set(false)
+        TestRunnable.applicationContextIsSet.set(false)
 
         /*TestServiceProxy.mock(SecurityScopesService, Mock(SecurityScopesService) {
             isOnlyDefaultScope() >> {
@@ -164,7 +164,7 @@ class MenuItemCommandsTest extends UiScreenSpec {
         runnableCmd.getDescription() == 'Running "spec.haulmont.cuba.web.menu.commandtargets.TestRunnable"'
 
         TestRunnable.launched.get()
-        TestRunnable.beanLocatorSet.get()
+        TestRunnable.applicationContextIsSet.get()
     }
 
     def 'Create and run MenuItemRunnable command'() {
@@ -177,7 +177,7 @@ class MenuItemCommandsTest extends UiScreenSpec {
         menuItemRunnableCmd.getDescription() == 'Running "spec.haulmont.cuba.web.menu.commandtargets.TestMenuItemRunnable"'
 
         TestMenuItemRunnable.launched.get()
-        TestMenuItemRunnable.beanLocatorSet.get()
+        TestMenuItemRunnable.applicationContextIsSet.get()
     }
 
     def 'Create and run Consumer command'() {
@@ -190,7 +190,7 @@ class MenuItemCommandsTest extends UiScreenSpec {
         consumerCmd.getDescription() == 'Running "spec.haulmont.cuba.web.menu.commandtargets.TestMenuItemConsumer"'
 
         TestMenuItemConsumer.launched.get()
-        TestMenuItemConsumer.beanLocatorSet.get()
+        TestMenuItemConsumer.applicationContextIsSet.get()
     }
 
     MenuItem createScreenMenuItem() {

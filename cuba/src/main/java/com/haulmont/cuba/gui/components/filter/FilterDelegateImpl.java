@@ -21,6 +21,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.BeanLocator;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.*;
@@ -77,6 +78,7 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
@@ -137,7 +139,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected DynAttrMetadata dynAttrMetadata;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;

@@ -76,19 +76,19 @@ public class WebTreeTable<E extends JmixEntity> extends io.jmix.ui.component.imp
 
     @Override
     protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(CubaTreeTableSettingsBinder.NAME);
+        return (ComponentSettingsBinder) applicationContext.getBean(CubaTreeTableSettingsBinder.NAME);
     }
 
     protected LegacySettingsDelegate createSettingsDelegate() {
-        return beanLocator.getPrototype(LegacySettingsDelegate.NAME,
+        return (LegacySettingsDelegate) applicationContext.getBean(LegacySettingsDelegate.NAME,
                 this, new LegacyTableSettingsConverter(), getSettingsBinder());
     }
 
     @Override
     protected TablePresentations createTablePresentations() {
-        Presentations presentations = beanLocator.getPrototype(Presentations.NAME, this);
+        Presentations presentations = (Presentations) applicationContext.getBean(Presentations.NAME, this);
 
-        presentationsDelegate = beanLocator.getPrototype(LegacyPresentationsDelegate.NAME,
+        presentationsDelegate = (LegacyPresentationsDelegate) applicationContext.getBean(LegacyPresentationsDelegate.NAME,
                 this, presentations, getSettingsBinder());
 
         return presentations;
@@ -151,6 +151,6 @@ public class WebTreeTable<E extends JmixEntity> extends io.jmix.ui.component.imp
     }
 
     protected TableDelegate createTableDelegate() {
-        return beanLocator.getPrototype(TableDelegate.NAME);
+        return (TableDelegate) applicationContext.getBean(TableDelegate.NAME);
     }
 }

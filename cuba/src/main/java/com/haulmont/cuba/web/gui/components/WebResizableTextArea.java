@@ -58,12 +58,12 @@ public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResiza
     }
 
     protected LegacySettingsDelegate createSettingsDelegate() {
-        return beanLocator.getPrototype(LegacySettingsDelegate.NAME,
+        return (LegacySettingsDelegate) applicationContext.getBean(LegacySettingsDelegate.NAME,
                 this, new LegacyResizableTextAreaSettingsConverter(), getSettingsBinder());
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(CubaResizableTextAreaSettingsBinder.NAME);
+        return (ComponentSettingsBinder) applicationContext.getBean(CubaResizableTextAreaSettingsBinder.NAME);
     }
 
     @Override

@@ -18,24 +18,24 @@ package com.haulmont.cuba.gui.components.data.value;
 
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.meta.EntityValueSource;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.Objects;
 import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class DatasourceValueSource<E extends JmixEntity, V> implements EntityValueSource<E, V>, BeanLocatorAware {
+public class DatasourceValueSource<E extends JmixEntity, V> implements EntityValueSource<E, V>, ApplicationContextAware {
     protected final Datasource<E> datasource;
 
     protected MetaPropertyPath metaPropertyPath;
@@ -67,10 +67,10 @@ public class DatasourceValueSource<E extends JmixEntity, V> implements EntityVal
     }
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         MetaClass metaClass = datasource.getMetaClass();
 
-        MetadataTools metadataTools = beanLocator.get(MetadataTools.NAME);
+        MetadataTools metadataTools = applicationContext.getBean(MetadataTools.class);
         this.metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
 
         this.datasource.addStateChangeListener(this::datasourceStateChanged);

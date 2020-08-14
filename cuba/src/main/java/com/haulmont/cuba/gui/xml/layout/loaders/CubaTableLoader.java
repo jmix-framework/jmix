@@ -78,7 +78,7 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
         }
         ((Table) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = beanLocator.get(DynAttrEmbeddingStrategies.class);
+        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
         embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
     }
 

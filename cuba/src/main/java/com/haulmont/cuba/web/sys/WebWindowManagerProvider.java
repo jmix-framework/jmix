@@ -19,17 +19,16 @@ package com.haulmont.cuba.web.sys;
 
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
-import io.jmix.core.BeanLocator;
 import io.jmix.ui.AppUI;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 @Deprecated
 @Component(WindowManagerProvider.NAME)
 public class WebWindowManagerProvider implements WindowManagerProvider {
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Override
     public WindowManager get() {

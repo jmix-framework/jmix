@@ -73,7 +73,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
         String fieldFactoryBean = element.attributeValue("fieldFactoryBean");
         if (StringUtils.isNotEmpty(fieldFactoryBean)) {
-            FieldGroupFieldFactory fieldFactory = beanLocator.get(fieldFactoryBean, FieldGroupFieldFactory.class);
+            FieldGroupFieldFactory fieldFactory = applicationContext.getBean(fieldFactoryBean, FieldGroupFieldFactory.class);
             resultComponent.setFieldFactory(fieldFactory);
         }
 
@@ -196,19 +196,19 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
     }
 
     protected DynamicAttributesGuiTools getDynamicAttributesGuiTools() {
-        return beanLocator.get(DynamicAttributesGuiTools.NAME);
+        return (DynamicAttributesGuiTools) applicationContext.getBean(DynamicAttributesGuiTools.NAME);
     }
 
     protected MsgBundleTools getMessageBundleTools() {
-        return beanLocator.get(MsgBundleTools.class);
+        return applicationContext.getBean(MsgBundleTools.class);
     }
 
     protected DynAttrMetadata getDynAttrMetadata() {
-        return beanLocator.get(DynAttrMetadata.class);
+        return applicationContext.getBean(DynAttrMetadata.class);
     }
 
     protected MetadataTools getMetadataTools() {
-        return beanLocator.get(MetadataTools.NAME);
+        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
     }
 
     protected List<FieldGroup.FieldConfig> loadDynamicAttributeFields(Datasource ds) {
@@ -623,7 +623,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
         if (fieldGroup.getDatasource() != null) {
             MetaClass metaClass = fieldGroup.getDatasource().getMetaClass();
-            Security security = beanLocator.get(Security.class);
+            Security security = applicationContext.getBean(Security.class);
             boolean editableByPermission = (security.isEntityOpPermitted(metaClass, EntityOp.CREATE)
                     || security.isEntityOpPermitted(metaClass, EntityOp.UPDATE));
             if (!editableByPermission) {
@@ -668,7 +668,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
             MetaClass metaClass = getMetaClass(resultComponent, field);
             MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, field.getProperty());
 
-            Security security = beanLocator.get(Security.class);
+            Security security = applicationContext.getBean(Security.class);
             if (!security.isEntityAttrUpdatePermitted(metaClass, propertyPath.toString()) ||
                     (getMetadataTools().isEmbeddable(metaClass) &&
                             !security.isEntityOpPermitted(getParentEntityMetaClass(resultComponent), EntityOp.UPDATE))) {
@@ -690,7 +690,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
             MetaClass metaClass = getMetaClass(resultComponent, field);
             MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, field.getProperty());
 
-            Security security = beanLocator.get(Security.class);
+            Security security = applicationContext.getBean(Security.class);
             if (!security.isEntityAttrReadPermitted(metaClass, propertyPath.toString())) {
                 field.setVisible(false);
             }

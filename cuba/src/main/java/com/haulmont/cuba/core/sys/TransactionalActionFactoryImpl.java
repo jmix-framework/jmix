@@ -19,8 +19,8 @@ package com.haulmont.cuba.core.sys;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.TransactionalAction;
 import com.haulmont.cuba.core.global.TransactionalActionFactory;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.EntitySet;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 public class TransactionalActionFactoryImpl implements TransactionalActionFactory {
 
     @Inject
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Override
     public TransactionalAction getTransactionalAction(Supplier<CommitContext> supplier) {
@@ -41,13 +41,13 @@ public class TransactionalActionFactoryImpl implements TransactionalActionFactor
 
     @Override
     public TransactionalAction getTransactionalAction(CommitContext commitContext) {
-        return beanLocator.get(TransactionalAction.NAME, TransactionalAction.class)
+        return applicationContext.getBean(TransactionalAction.NAME, TransactionalAction.class)
                 .withCommitContext(commitContext);
     }
 
     @Override
     public TransactionalAction getTransactionalAction(Supplier<CommitContext> supplier, boolean joinTransaction) {
-        return beanLocator.get(TransactionalAction.NAME, TransactionalAction.class)
+        return applicationContext.getBean(TransactionalAction.NAME, TransactionalAction.class)
                 .withCommitContext(supplier).setJoinTransaction(joinTransaction);
     }
 
@@ -57,7 +57,7 @@ public class TransactionalActionFactoryImpl implements TransactionalActionFactor
                                                       BiConsumer<CommitContext, Throwable> onFailAction,
                                                       Consumer<CommitContext> afterCommitAction,
                                                       boolean joinTransaction) {
-        return beanLocator.get(TransactionalAction.NAME, TransactionalAction.class)
+        return applicationContext.getBean(TransactionalAction.NAME, TransactionalAction.class)
                 .withCommitContext(supplier)
                 .onSuccess(onSuccessAction)
                 .onFail(onFailAction)
@@ -67,6 +67,6 @@ public class TransactionalActionFactoryImpl implements TransactionalActionFactor
 
     @Override
     public TransactionalAction getTransactionalAction() {
-        return beanLocator.get(TransactionalAction.NAME, TransactionalAction.class);
+        return applicationContext.getBean(TransactionalAction.NAME, TransactionalAction.class);
     }
 }

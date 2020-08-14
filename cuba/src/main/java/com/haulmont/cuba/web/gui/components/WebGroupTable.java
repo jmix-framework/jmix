@@ -77,19 +77,19 @@ public class WebGroupTable<E extends JmixEntity> extends io.jmix.ui.component.im
 
     @Override
     protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(CubaGroupTableSettingsBinder.NAME);
+        return (ComponentSettingsBinder) applicationContext.getBean(CubaGroupTableSettingsBinder.NAME);
     }
 
     protected LegacySettingsDelegate createSettingsDelegate() {
-        return beanLocator.getPrototype(LegacySettingsDelegate.NAME,
+        return (LegacySettingsDelegate) applicationContext.getBean(LegacySettingsDelegate.NAME,
                 this, new LegacyGroupTableSettingsConverter(), getSettingsBinder());
     }
 
     @Override
     protected TablePresentations createTablePresentations() {
-        Presentations presentations = beanLocator.getPrototype(Presentations.NAME, this);
+        Presentations presentations = (Presentations) applicationContext.getBean(Presentations.NAME, this);
 
-        presentationsDelegate = beanLocator.getPrototype(LegacyPresentationsDelegate.NAME,
+        presentationsDelegate = (LegacyPresentationsDelegate) applicationContext.getBean(LegacyPresentationsDelegate.NAME,
                 this, presentations, getSettingsBinder());
 
         return presentations;
@@ -152,6 +152,6 @@ public class WebGroupTable<E extends JmixEntity> extends io.jmix.ui.component.im
     }
 
     protected TableDelegate createTableDelegate() {
-        return beanLocator.getPrototype(TableDelegate.NAME);
+        return (TableDelegate) applicationContext.getBean(TableDelegate.NAME);
     }
 }

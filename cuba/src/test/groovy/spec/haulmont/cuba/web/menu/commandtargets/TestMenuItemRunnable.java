@@ -16,16 +16,16 @@
 
 package spec.haulmont.cuba.web.menu.commandtargets;
 
-import io.jmix.core.BeanLocator;
-import io.jmix.core.impl.BeanLocatorAware;
 import io.jmix.ui.menu.MenuItem;
 import io.jmix.ui.menu.MenuItemRunnable;
 import io.jmix.ui.screen.FrameOwner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class TestMenuItemRunnable implements MenuItemRunnable, BeanLocatorAware {
+public class TestMenuItemRunnable implements MenuItemRunnable, ApplicationContextAware {
 
     public static final ThreadLocal<Boolean> launched = new ThreadLocal<>();
-    public static final ThreadLocal<Boolean> beanLocatorSet = new ThreadLocal<>();
+    public static final ThreadLocal<Boolean> applicationContextIsSet = new ThreadLocal<>();
 
     @Override
     public void run(FrameOwner origin, MenuItem menuItem) {
@@ -33,7 +33,7 @@ public class TestMenuItemRunnable implements MenuItemRunnable, BeanLocatorAware 
     }
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
-        beanLocatorSet.set(true);
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        applicationContextIsSet.set(true);
     }
 }

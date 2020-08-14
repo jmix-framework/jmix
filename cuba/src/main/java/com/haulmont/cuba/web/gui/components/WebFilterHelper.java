@@ -27,7 +27,7 @@ import com.vaadin.shared.ui.grid.DropMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
-import io.jmix.core.BeanLocator;
+import com.haulmont.cuba.core.global.BeanLocator;
 import com.haulmont.cuba.core.global.Configuration;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -39,6 +39,8 @@ import io.jmix.ui.widget.JmixTree;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -56,7 +58,7 @@ public class WebFilterHelper implements FilterHelper {
     protected UiComponents uiComponents;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Override
     public void setLookupNullSelectionAllowed(ComboBox lookupField, boolean value) {

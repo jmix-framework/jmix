@@ -28,6 +28,6 @@ public class DateValidationScreen extends Screen {
 
     @Install(to = "dateValidationLd", target = Target.DATA_LOADER)
     private DateValidationEntity dateValidationLdLoadDelegate(LoadContext<DateValidationEntity> loadContext) {
-        return getBeanLocator().get(Metadata.class).create(DateValidationEntity.class);
+        return getApplicationContext().getBean(Metadata.class).create(DateValidationEntity.class);
     }
 }

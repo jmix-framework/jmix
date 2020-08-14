@@ -83,7 +83,7 @@ public class CubaDataGridLoader extends DataGridLoader {
         }
         ((DataGrid) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = beanLocator.get(DynAttrEmbeddingStrategies.class);
+        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
         embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
     }
 
@@ -100,7 +100,7 @@ public class CubaDataGridLoader extends DataGridLoader {
     protected Class loadGeneratedType(Element columnElement) {
         String colGenType = columnElement.attributeValue("generatedType");
         if (StringUtils.isNotEmpty(colGenType)) {
-            return beanLocator.get(Scripting.class).loadClassNN(colGenType);
+            return applicationContext.getBean(Scripting.class).loadClassNN(colGenType);
         }
         return null;
     }
@@ -116,7 +116,7 @@ public class CubaDataGridLoader extends DataGridLoader {
     protected io.jmix.ui.component.DataGrid.Renderer loadRenderer(Element columnElement) {
         io.jmix.ui.component.DataGrid.Renderer renderer = super.loadRenderer(columnElement);
         if (renderer == null && columnElement.element("renderer") != null) {
-            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"), context, getClassManager(), beanLocator);
+            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"), context, getClassManager(), applicationContext);
         }
 
         return renderer;

@@ -158,11 +158,11 @@ public class AbstractWindow extends Screen
             if (closeAction instanceof ChangeTrackerCloseAction
                     && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges()
                     && hasUnsavedChanges()) {
-                ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+                ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
 
                 UnknownOperationResult result = new UnknownOperationResult();
 
-                if (this instanceof Committable && getBeanLocator().get(UiProperties.class).isUseSaveConfirmation()) {
+                if (this instanceof Committable && getApplicationContext().getBean(UiProperties.class).isUseSaveConfirmation()) {
                     Committable committable = (Committable) this;
 
                     screenValidation.showSaveConfirmationDialog(this, closeAction)
@@ -778,7 +778,7 @@ public class AbstractWindow extends Screen
     public void applySettings(Settings settings) {
         this.settings = settings;
 
-        ScreenSettings screenSettings = getBeanLocator().get(ScreenSettings.NAME);
+        ScreenSettings screenSettings = (ScreenSettings) getApplicationContext().getBean(ScreenSettings.NAME);
         screenSettings.applySettings(this, settings);
     }
 
@@ -786,7 +786,7 @@ public class AbstractWindow extends Screen
     public void applyDataLoadingSettings(Settings settings) {
         this.settings = settings;
 
-        ScreenSettings screenSettings = getBeanLocator().get(ScreenSettings.NAME);
+        ScreenSettings screenSettings = (ScreenSettings) getApplicationContext().getBean(ScreenSettings.NAME);
         screenSettings.applyDataLoadingSettings(this, settings);
     }
 
@@ -796,7 +796,7 @@ public class AbstractWindow extends Screen
     @Override
     public void saveSettings() {
         if (settings != null) {
-            ScreenSettings screenSettings = getBeanLocator().get(ScreenSettings.NAME);
+            ScreenSettings screenSettings = (ScreenSettings) getApplicationContext().getBean(ScreenSettings.NAME);
             screenSettings.saveSettings(this, settings);
         }
     }
@@ -868,7 +868,7 @@ public class AbstractWindow extends Screen
     }
 
     protected void showValidationErrors(ValidationErrors errors) {
-        ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
         screenValidation.showValidationErrors(this, errors);
     }
 
@@ -897,7 +897,7 @@ public class AbstractWindow extends Screen
      */
     @Override
     public boolean validateAll() {
-        ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
         ValidationErrors errors = screenValidation.validateUiComponents(getWindow());
 
         validateAdditionalRules(errors);
@@ -911,7 +911,7 @@ public class AbstractWindow extends Screen
         if (errors.isEmpty())
             return true;
 
-        ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.class);
+        ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
         screenValidation.showValidationErrors(this, errors);
 
         return false;

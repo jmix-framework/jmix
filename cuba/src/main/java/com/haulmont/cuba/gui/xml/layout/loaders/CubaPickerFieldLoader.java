@@ -83,7 +83,7 @@ public class CubaPickerFieldLoader extends EntityPickerLoader {
     }
 
     protected GuiActionSupport getCubaGuiActionSupport() {
-        return beanLocator.get(GuiActionSupport.NAME);
+        return (GuiActionSupport) applicationContext.getBean(GuiActionSupport.NAME);
     }
 
     @Override

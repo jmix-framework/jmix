@@ -56,11 +56,11 @@ public class WebGroupBox extends io.jmix.ui.component.impl.WebGroupBox implement
     }
 
     protected LegacySettingsDelegate createSettingsDelegate() {
-        return beanLocator.getPrototype(LegacySettingsDelegate.NAME,
+        return (LegacySettingsDelegate) applicationContext.getBean(LegacySettingsDelegate.NAME,
                 this, new LegacyGroupBoxSettingsConverter(), getSettingsBinder());
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(CubaGroupBoxSettingsBinder.NAME);
+        return (ComponentSettingsBinder) applicationContext.getBean(CubaGroupBoxSettingsBinder.NAME);
     }
 }

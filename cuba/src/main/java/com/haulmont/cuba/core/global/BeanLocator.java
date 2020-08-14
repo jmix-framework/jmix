@@ -16,31 +16,23 @@
 
 package com.haulmont.cuba.core.global;
 
-import com.haulmont.cuba.core.global.BeanLocator;
-import org.springframework.context.ApplicationContext;
-
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * Contains static methods for access to all managed beans of the application block.
- *
- * @see BeanLocator
+ * Provides access to all managed beans of the application block.
  */
-public class AppBeans {
+public interface BeanLocator {
 
-    private static ApplicationContext applicationContext;
+    String NAME = "core_BeanLocator";
 
     /**
-     * Return the bean instance that matches the given object type.
+     * Returns the bean instance that matches the given object type.
      * If the provided bean class contains a public static field <code>NAME</code>, this name is used to look up the
      * bean to improve performance.
      * @param beanType type the bean must match; can be an interface or superclass. {@code null} is disallowed.
      * @return an instance of the single bean matching the required type
      */
-    public static <T> T get(Class<T> beanType) {
-        return getBeanLocator().get(beanType);
-    }
+    <T> T get(Class<T> beanType);
 
     /**
      * Return an instance of the specified bean.
@@ -48,46 +40,35 @@ public class AppBeans {
      * @return      bean instance
      * @see         org.springframework.beans.factory.BeanFactory#getBean(String)
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T get(String name) {
-        return (T) getBeanLocator().get(name);
-    }
+    <T> T get(String name);
 
     /**
-     * Return an instance of the specified bean.
+     * Returns an instance of the specified bean.
      * @param name      the name of the bean to retrieve
      * @param beanType  type the bean must match. Can be an interface or superclass of the actual class.
-     *                  For example, if the value is Object.class, this method will succeed whatever the class of the
-     *                  returned instance.
+     * returned instance.
      * @return          bean instance
      */
-    public static <T> T get(String name, Class<T> beanType) {
-        return getBeanLocator().get(name, beanType);
-    }
+    <T> T get(String name, Class<T> beanType);
 
     /**
-     * Return an instance of prototype bean, specifying explicit constructor arguments.
+     * Returns an instance of prototype bean, specifying explicit constructor arguments.
      * @param name  the name of the bean to retrieve
      * @param args  constructor arguments
      * @return      bean instance
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T getPrototype(String name, Object... args) {
-        return (T) getBeanLocator().getPrototype(name, args);
-    }
+    <T> T getPrototype(String name, Object... args);
 
     /**
-     * Return an instance of prototype bean, specifying explicit constructor arguments.
+     * Returns an instance of prototype bean, specifying explicit constructor arguments.
      * @param beanType type the bean must match; can be an interface or superclass. {@code null} is disallowed.
      * @param args  constructor arguments
      * @return      bean instance
      */
-    public static <T> T getPrototype(Class<T> beanType, Object... args) {
-        return getBeanLocator().getPrototype(beanType, args);
-    }
+    <T> T getPrototype(Class<T> beanType, Object... args);
 
     /**
-     * Return the bean instances that match the given object type (including
+     * Returns the bean instances that match the given object type (including
      * subclasses).
      * <p>The Map returned by this method should always return bean names and
      * corresponding bean instances <i>in the order of definition</i> in the
@@ -96,27 +77,10 @@ public class AppBeans {
      * @return a Map with the matching beans, containing the bean names as
      * keys and the corresponding bean instances as values
      */
-    public static <T> Map<String, T> getAll(Class<T> beanType) {
-        return getBeanLocator().getAll(beanType);
-    }
+    <T> Map<String, T> getAll(Class<T> beanType);
 
     /**
      * Whether a bean with the given name is present.
      */
-    public static boolean containsBean(String name) {
-        return getBeanLocator().containsBean(name);
-    }
-
-    /**
-     * INTERNAL
-     */
-    public static void setApplicationContext(@Nullable ApplicationContext applicationContext) {
-        AppBeans.applicationContext = applicationContext;
-    }
-
-    private static BeanLocator getBeanLocator() {
-        if (applicationContext == null)
-            throw new IllegalStateException("ApplicationContext is not set");
-        return applicationContext.getBean(BeanLocator.NAME, BeanLocator.class);
-    }
+    boolean containsBean(String name);
 }

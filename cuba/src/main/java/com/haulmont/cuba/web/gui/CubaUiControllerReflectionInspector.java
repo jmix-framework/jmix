@@ -35,7 +35,7 @@ public class CubaUiControllerReflectionInspector extends UiControllerDependencyI
     @Override
     protected Object getInjectedInstance(Class<?> type, String name, Class annotationClass, AnnotatedElement element) {
         if (Config.class.isAssignableFrom(type)) {
-            Configuration configuration = beanLocator.get(Configuration.NAME);
+            Configuration configuration = (Configuration) applicationContext.getBean(Configuration.NAME);
             //noinspection unchecked
             return configuration.getConfig((Class<? extends Config>) type);
         }

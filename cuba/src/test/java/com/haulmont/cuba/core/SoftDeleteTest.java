@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.SoftDeleteOneToOneB;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.BeanLocator;
+import com.haulmont.cuba.core.global.BeanLocator;
 import io.jmix.core.FetchMode;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;

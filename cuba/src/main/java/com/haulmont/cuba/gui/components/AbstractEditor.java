@@ -87,7 +87,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
         Component commitAndCloseButton =
                 ComponentsHelper.findComponent(getFrame(), WINDOW_COMMIT_AND_CLOSE);
 
-        UiProperties properties = getBeanLocator().get(UiProperties.class);
+        UiProperties properties = getApplicationContext().getBean(UiProperties.class);
 
         boolean commitAndCloseButtonExists = false;
         String commitShortcut = properties.getCommitShortcut();
@@ -193,7 +193,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
 
         DatasourceImplementation parentDs = (DatasourceImplementation) ((DatasourceImplementation) ds).getParent();
 
-        DynamicAttributesGuiTools dynamicAttributesGuiTools = getBeanLocator().get(DynamicAttributesGuiTools.NAME);
+        DynamicAttributesGuiTools dynamicAttributesGuiTools = (DynamicAttributesGuiTools) getApplicationContext().getBean(DynamicAttributesGuiTools.NAME);
         if (dynamicAttributesGuiTools.screenContainsDynamicAttributes(ds.getView(), getFrame().getId())) {
             ds.setLoadDynamicAttributes(true);
         }
@@ -201,7 +201,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
         Class<? extends JmixEntity> entityClass = item.getClass();
         Object entityId = EntityValues.getId(item);
 
-        EntityStates entityStates = getBeanLocator().get(EntityStates.class);
+        EntityStates entityStates = getApplicationContext().getBean(EntityStates.class);
 
         if (parentDs != null) {
             if (!PersistenceHelper.isNew(item)
@@ -229,7 +229,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
         if (PersistenceHelper.isNew(item)
                 && !ds.getMetaClass().equals(metadata.getClass(item))) {
             JmixEntity newItem = ds.getDataSupplier().newInstance(ds.getMetaClass());
-            MetadataTools metadataTools = getBeanLocator().get(MetadataTools.NAME);
+            MetadataTools metadataTools = (MetadataTools) getApplicationContext().getBean(MetadataTools.NAME);
             metadataTools.copy(item, newItem);
             item = newItem;
         }
@@ -259,7 +259,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
 
         ((DatasourceImplementation) ds).setModified(false);
 
-        Security security = getBeanLocator().get(Security.NAME);
+        Security security = (Security) getApplicationContext().getBean(Security.NAME);
         if (!PersistenceHelper.isNew(item)) {
             if (security.isEntityOpPermitted(ds.getMetaClass(), EntityOp.UPDATE)) {
                 readOnlyDueToLock = false;
@@ -313,7 +313,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
      * nested items previously deleted by the user.
      */
     protected void handlePreviouslyDeletedCompositionItems(JmixEntity entity, DatasourceImplementation parentDs) {
-        Metadata metadata = getBeanLocator().get(Metadata.NAME);
+        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (!PersistenceHelper.isLoaded(entity, property.getName()))
                 return;
@@ -340,7 +340,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
     }
 
     protected MetaClass getMetaClassForLocking(Datasource ds) {
-        Metadata metadata = getBeanLocator().get(Metadata.NAME);
+        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
         // lock original metaClass, if any, because by convention all the configuration is based on original entities
         MetaClass metaClass = metadata.getExtendedEntities().getOriginalMetaClass(ds.getMetaClass());
         if (metaClass == null) {
@@ -403,7 +403,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
     public void validateAdditionalRules(ValidationErrors errors) {
         // all previous validations return no errors
         if (crossFieldValidate && errors.isEmpty()) {
-            BeanValidation beanValidation = getBeanLocator().get(BeanValidation.NAME);
+            BeanValidation beanValidation = (BeanValidation) getApplicationContext().getBean(BeanValidation.NAME);
 
             Validator validator = beanValidation.getValidator();
             Set<ConstraintViolation<JmixEntity>> violations = validator.validate(getItem(), UiCrossFieldChecks.class);
@@ -487,7 +487,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
         if (this.readOnly != readOnly) {
             this.readOnly = readOnly;
 
-            ReadOnlyScreensSupport readOnlyScreensSupport = getBeanLocator().get(ReadOnlyScreensSupport.NAME);
+            ReadOnlyScreensSupport readOnlyScreensSupport = (ReadOnlyScreensSupport) getApplicationContext().getBean(ReadOnlyScreensSupport.NAME);
             readOnlyScreensSupport.setScreenReadOnly(this, readOnly, showEnableEditingBtn);
 
             if (readOnlyDueToLock) {
@@ -571,7 +571,7 @@ public class AbstractEditor<T extends JmixEntity> extends AbstractWindow
         if (committed && !close) {
             if (showSaveNotification) {
                 JmixEntity entity = getItem();
-                MetadataTools metadataTools = getBeanLocator().get(MetadataTools.class);
+                MetadataTools metadataTools = getApplicationContext().getBean(MetadataTools.class);
 
                 showNotification(
                         // todo main message

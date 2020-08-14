@@ -18,7 +18,6 @@ package com.haulmont.cuba.gui.dynamicattributes;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.FileUploadField;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.dynattr.AttributeDefinition;
@@ -36,6 +35,7 @@ import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @org.springframework.stereotype.Component("cuba_DynamicAttributeComponentGenerationStrategy")
 public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
@@ -51,9 +51,9 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
                                                   Actions actions,
                                                   AttributeDependencies attributeDependencies,
                                                   FormatStringsRegistry formatStringsRegistry,
-                                                  BeanLocator beanLocator) {
+                                                  ApplicationContext applicationContext) {
         super(messages, uiComponents, dynamicModelMetadata, msgBundleTools, optionsLoader, attributeValidators,
-                windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry, beanLocator);
+                windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry, applicationContext);
     }
 
     @Override

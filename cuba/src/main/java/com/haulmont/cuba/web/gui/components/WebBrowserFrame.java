@@ -24,6 +24,6 @@ public class WebBrowserFrame extends io.jmix.ui.component.impl.WebBrowserFrame i
 
     @Override
     public <R extends Resource> R createResource(Class<R> type) {
-        return beanLocator.getPrototype(type);
+        return applicationContext.getBean(type);
     }
 }

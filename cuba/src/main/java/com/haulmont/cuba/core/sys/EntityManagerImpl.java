@@ -18,7 +18,10 @@ package com.haulmont.cuba.core.sys;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.TypedQuery;
-import io.jmix.core.*;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.data.PersistenceHints;
@@ -28,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +46,7 @@ public class EntityManagerImpl implements EntityManager {
     private JmixEntityManager delegate;
 
     @Autowired
-    private BeanLocator beanLocator;
+    private ApplicationContext applicationContext;
     @Autowired
     private MetadataTools metadataTools;
     @Autowired
@@ -135,7 +139,7 @@ public class EntityManagerImpl implements EntityManager {
         JmixQuery query = isNative ?
                 (JmixQuery) delegate.createNativeQuery("", resultClass) :
                 (JmixQuery) delegate.createQuery("", resultClass);
-        return (TypedQuery<T>) beanLocator.getPrototype(Query.NAME, query, resultClass);
+        return (TypedQuery<T>) applicationContext.getBean(Query.NAME, query, resultClass);
     }
 
     @Override

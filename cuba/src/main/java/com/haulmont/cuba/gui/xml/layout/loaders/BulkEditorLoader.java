@@ -190,6 +190,6 @@ public class BulkEditorLoader extends AbstractComponentLoader<BulkEditor> {
     }
 
     protected UserSessionSource getUserSessionSource() {
-        return beanLocator.get(UserSessionSource.NAME);
+        return (UserSessionSource) applicationContext.getBean(UserSessionSource.NAME);
     }
 }

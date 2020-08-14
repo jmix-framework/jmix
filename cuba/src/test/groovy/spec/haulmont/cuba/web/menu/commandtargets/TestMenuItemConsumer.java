@@ -16,16 +16,16 @@
 
 package spec.haulmont.cuba.web.menu.commandtargets;
 
-import io.jmix.core.BeanLocator;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class TestMenuItemConsumer implements Consumer<Map<String, Object>>, BeanLocatorAware {
+public class TestMenuItemConsumer implements Consumer<Map<String, Object>>, ApplicationContextAware {
 
     public static final ThreadLocal<Boolean> launched = new ThreadLocal<>();
-    public static final ThreadLocal<Boolean> beanLocatorSet = new ThreadLocal<>();
+    public static final ThreadLocal<Boolean> applicationContextIsSet = new ThreadLocal<>();
 
     @Override
     public void accept(Map<String, Object> stringObjectMap) {
@@ -33,7 +33,7 @@ public class TestMenuItemConsumer implements Consumer<Map<String, Object>>, Bean
     }
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
-        beanLocatorSet.set(true);
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        applicationContextIsSet.set(true);
     }
 }

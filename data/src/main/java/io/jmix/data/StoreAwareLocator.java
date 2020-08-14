@@ -16,7 +16,7 @@
 
 package io.jmix.data;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Stores;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,7 +36,7 @@ public class StoreAwareLocator {
     public static final String NAME = "data_StoreAwareLocator";
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public DataSource getDataSource(String storeName) {
         return getBean(storeName, "dataSource", DataSource.class);
@@ -68,9 +68,9 @@ public class StoreAwareLocator {
 
     protected <T> T getBean(String storeName, String beanName, Class<T> beanClass) {
         if (Stores.isMain(storeName)) {
-            return beanLocator.get(beanName, beanClass);
+            return applicationContext.getBean(beanName, beanClass);
         } else {
-            return beanLocator.get(storeName + StringUtils.capitalize(beanName), beanClass);
+            return applicationContext.getBean(storeName + StringUtils.capitalize(beanName), beanClass);
         }
     }
 }

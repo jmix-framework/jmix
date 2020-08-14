@@ -16,7 +16,7 @@
 
 package io.jmix.data;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.EntitySystemStateSupport;
 import io.jmix.core.PersistentAttributesLoadChecker;
@@ -36,8 +36,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class DataConfiguration {
 
     @Bean(name = PersistentAttributesLoadChecker.NAME)
-    protected PersistentAttributesLoadChecker persistentAttributesLoadChecker(BeanLocator beanLocator) {
-        return new DataPersistentAttributesLoadChecker(beanLocator);
+    protected PersistentAttributesLoadChecker persistentAttributesLoadChecker(ApplicationContext applicationContext) {
+        return new DataPersistentAttributesLoadChecker(applicationContext);
     }
 
     @Bean(name = EntitySystemStateSupport.NAME)

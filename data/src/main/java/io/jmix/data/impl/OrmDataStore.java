@@ -43,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -119,7 +120,7 @@ public class OrmDataStore implements DataStore {
     protected StoreAwareLocator storeAwareLocator;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Autowired(required = false)
     protected List<OrmLifecycleListener> ormLifecycleListeners;

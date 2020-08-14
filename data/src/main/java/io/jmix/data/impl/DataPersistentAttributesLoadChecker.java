@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -31,8 +31,8 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
 
     private StoreAwareLocator storeAwareLocator;
 
-    public DataPersistentAttributesLoadChecker(BeanLocator beanLocator) {
-        this.storeAwareLocator = beanLocator.get(StoreAwareLocator.NAME);
+    public DataPersistentAttributesLoadChecker(ApplicationContext applicationContext) {
+        this.storeAwareLocator = (StoreAwareLocator) applicationContext.getBean(StoreAwareLocator.NAME);
     }
 
     @Override

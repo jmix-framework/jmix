@@ -15,20 +15,46 @@
  */
 
 package io.jmix.audit.sessions;
+
 import io.jmix.audit.entity.UserSession;
 
 import java.util.stream.Stream;
 
+/**
+ * Provides information about current active user sessions
+ **/
 public interface UserSessions {
 
     String NAME = "core_UserSessions";
 
+    /**
+     * Returns all active user sessions
+     *
+     * @return active user sessions stream
+     **/
     Stream<UserSession> sessions();
 
+    /**
+     * Returns all principal sessions
+     *
+     * @param principal principal
+     * @return principal sessions stream
+     **/
     Stream<UserSession> sessions(Object principal);
 
+    /**
+     * Return current user sessions
+     *
+     * @param id user session id
+     * @return user session
+     **/
     UserSession get(String id);
 
+    /**
+     * Invalidate user session
+     *
+     * @param session user session to invalidate
+     **/
     void invalidate(UserSession session);
 
 }

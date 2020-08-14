@@ -15,6 +15,10 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A token enhancer that provides session info details
+ * for {@link OAuth2AccessToken} and {@link OAuth2Authentication}
+ **/
 @Component
 @Order(500)
 public class SessionTokenEnhancer implements TokenEnhancer {

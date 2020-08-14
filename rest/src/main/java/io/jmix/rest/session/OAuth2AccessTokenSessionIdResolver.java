@@ -13,10 +13,15 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * A {@link HttpSessionIdResolver} that uses {@link OAuth2AccessToken} to search session id.
+ * This class provides stateful sessions for the access token.
+ **/
 public class OAuth2AccessTokenSessionIdResolver implements HttpSessionIdResolver {
 
     public static final String SESSION_ID = OAuth2AccessTokenSessionIdResolver.class.getSimpleName() + ".SESSION_ID";

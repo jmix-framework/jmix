@@ -23,6 +23,9 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 import java.util.List;
 
+/**
+ * A composite token enhancer that loops over autowired enhancers.
+ **/
 public class ComplexTokenEnhancer implements TokenEnhancer {
 
     @Autowired

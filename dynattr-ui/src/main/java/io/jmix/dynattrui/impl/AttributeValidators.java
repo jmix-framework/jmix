@@ -16,7 +16,7 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.ui.component.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class AttributeValidators {
     public static final String NAME = "dynattrui_AttributeValidators";
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     /**
      * Returns validators for a dynamic attribute
@@ -57,7 +57,7 @@ public class AttributeValidators {
 
         // add custom groovy script validator
         if (attribute.getConfiguration().getValidatorGroovyScript() != null) {
-            GroovyScriptValidator validator = beanLocator.getPrototype(GroovyScriptValidator.NAME,
+            GroovyScriptValidator validator = (GroovyScriptValidator) applicationContext.getBean(GroovyScriptValidator.NAME,
                     attribute.getConfiguration().getValidatorGroovyScript());
             validators.add(validator);
         }
@@ -68,10 +68,10 @@ public class AttributeValidators {
     protected List<Validator<?>> createIntegerValidators(AttributeDefinition attribute) {
         List<Validator<?>> validators = new ArrayList<>();
         if (attribute.getConfiguration().getMinInt() != null) {
-            validators.add(beanLocator.getPrototype(MinValidator.NAME, attribute.getConfiguration().getMinInt()));
+            validators.add((Validator<?>) applicationContext.getBean(MinValidator.NAME, attribute.getConfiguration().getMinInt()));
         }
         if (attribute.getConfiguration().getMaxInt() != null) {
-            validators.add(beanLocator.getPrototype(MaxValidator.NAME, attribute.getConfiguration().getMaxInt()));
+            validators.add((Validator<?>) applicationContext.getBean(MaxValidator.NAME, attribute.getConfiguration().getMaxInt()));
         }
         return validators;
     }
@@ -79,10 +79,10 @@ public class AttributeValidators {
     protected List<Validator<?>> createDoubleValidators(AttributeDefinition attribute) {
         List<Validator<?>> validators = new ArrayList<>();
         if (attribute.getConfiguration().getMinDouble() != null) {
-            validators.add(beanLocator.getPrototype(DoubleMinValidator.NAME, attribute.getConfiguration().getMinDouble()));
+            validators.add((Validator<?>) applicationContext.getBean(DoubleMinValidator.NAME, attribute.getConfiguration().getMinDouble()));
         }
         if (attribute.getConfiguration().getMaxDouble() != null) {
-            validators.add(beanLocator.getPrototype(DoubleMaxValidator.NAME, attribute.getConfiguration().getMaxDouble()));
+            validators.add((Validator<?>) applicationContext.getBean(DoubleMaxValidator.NAME, attribute.getConfiguration().getMaxDouble()));
         }
         return validators;
     }
@@ -90,10 +90,10 @@ public class AttributeValidators {
     protected List<Validator<?>> createDecimalValidators(AttributeDefinition attribute) {
         List<Validator<?>> validators = new ArrayList<>();
         if (attribute.getConfiguration().getMinDecimal() != null) {
-            validators.add(beanLocator.getPrototype(DecimalMinValidator.NAME, attribute.getConfiguration().getMinDecimal()));
+            validators.add((Validator<?>) applicationContext.getBean(DecimalMinValidator.NAME, attribute.getConfiguration().getMinDecimal()));
         }
         if (attribute.getConfiguration().getMaxDecimal() != null) {
-            validators.add(beanLocator.getPrototype(DecimalMaxValidator.NAME, attribute.getConfiguration().getMaxDecimal()));
+            validators.add((Validator<?>) applicationContext.getBean(DecimalMaxValidator.NAME, attribute.getConfiguration().getMaxDecimal()));
         }
         return validators;
     }

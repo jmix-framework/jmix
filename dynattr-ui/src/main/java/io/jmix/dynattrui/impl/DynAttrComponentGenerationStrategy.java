@@ -18,7 +18,7 @@ package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -49,7 +49,6 @@ import org.springframework.core.Ordered;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static io.jmix.dynattr.AttributeType.*;
@@ -68,7 +67,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected Actions actions;
     protected AttributeDependencies attributeDependencies;
     protected FormatStringsRegistry formatStringsRegistry;
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     public DynAttrComponentGenerationStrategy(Messages messages, UiComponents uiComponents,
@@ -81,7 +80,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                                               Actions actions,
                                               AttributeDependencies attributeDependencies,
                                               FormatStringsRegistry formatStringsRegistry,
-                                              BeanLocator beanLocator) {
+                                              ApplicationContext applicationContext) {
         this.messages = messages;
         this.uiComponents = uiComponents;
         this.dynamicModelMetadata = dynamicModelMetadata;
@@ -93,7 +92,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         this.actions = actions;
         this.attributeDependencies = attributeDependencies;
         this.formatStringsRegistry = formatStringsRegistry;
-        this.beanLocator = beanLocator;
+        this.applicationContext = applicationContext;
     }
 
     public Component createComponent(ComponentGenerationContext context) {
@@ -331,7 +330,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         Set<AttributeDefinition> dependentAttributes = attributeDependencies.getDependentAttributes(attribute);
         if (!dependentAttributes.isEmpty()) {
             //noinspection unchecked
-            component.addValueChangeListener(beanLocator.getPrototype(AttributeRecalculationListener.class, attribute));
+            component.addValueChangeListener(applicationContext.getBean(AttributeRecalculationListener.class, attribute));
         }
     }
 

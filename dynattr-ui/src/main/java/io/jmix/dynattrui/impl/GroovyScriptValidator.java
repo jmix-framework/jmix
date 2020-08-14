@@ -16,7 +16,6 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.core.BeanLocator;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -43,8 +42,7 @@ import java.util.Collections;
  * <pre>
  *   &lt;bean id="ui_GroovyScriptValidator" class="io.jmix.ui.component.validation.GroovyScriptValidator" scope="prototype"/&gt;
  *   </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- *
+*
  * @param <T> any Object
  */
 @Component(GroovyScriptValidator.NAME)

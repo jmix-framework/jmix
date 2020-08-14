@@ -20,18 +20,46 @@ import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.util.Enumeration;
 
+/**
+ * Session scoped bean to provide {@link HttpSession} with attributes.
+ **/
 public interface SessionData extends Serializable {
 
     String NAME = "core_SessionData";
 
+    /**
+     * Return all session attributes
+     **/
     Enumeration<String> getAttributeNames();
 
+    /**
+     * Get session attribute
+     *
+     * @param name attribute name
+     * @return attribute value
+     **/
     Object getAttribute(String name);
 
+    /**
+     * Set session attribute
+     *
+     * @param name      attribute name
+     * @param attribute attribute value
+     **/
     void setAttribute(String name, Object attribute);
 
+    /**
+     * Provide current session id
+     *
+     * @return current session id
+     **/
     String getSessionId();
 
+    /**
+     * Provide current http session
+     *
+     * @return current http session
+     **/
     HttpSession getHttpSession();
 }
 

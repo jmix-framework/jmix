@@ -100,15 +100,17 @@ public class ValidatorLoadFactory {
             throw new IllegalArgumentException("Bean name is not defined");
         }
 
-        AbstractValidator validator = beanLocator.getPrototype(beanName);
+        Validator validator = beanLocator.getPrototype(beanName);
 
-        validator.setMessage(loadMessage(element, messagePack));
+        if (validator instanceof AbstractValidator) {
+            ((AbstractValidator) validator).setMessage(loadMessage(element, messagePack));
+        }
 
         return validator;
     }
 
     @SuppressWarnings("rawtypes")
-    protected AbstractValidator loadDecimalMinValidator(Element element, String messagePack) {
+    protected Validator loadDecimalMinValidator(Element element, String messagePack) {
         String value = element.attributeValue("value");
         if (Strings.isNullOrEmpty(value)) {
             throw new IllegalArgumentException("Min value is not defined");

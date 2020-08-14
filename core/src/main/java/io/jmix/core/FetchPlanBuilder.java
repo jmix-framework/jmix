@@ -20,6 +20,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,7 @@ public class FetchPlanBuilder {
     public static final String NAME = "core_FetchPlanBuilder";
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -94,7 +95,7 @@ public class FetchPlanBuilder {
         if (metaProperty.getRange().isClass()) {
             if (!builders.containsKey(propName)) {
                 Class<JmixEntity> refClass = metaProperty.getRange().asClass().getJavaClass();
-                builders.put(propName, beanLocator.getPrototype(FetchPlanBuilder.class, refClass));
+                builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
             }
         }
         if (parts.length > 1) {
@@ -110,7 +111,7 @@ public class FetchPlanBuilder {
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer) {
         properties.add(property);
         Class<JmixEntity> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
-        FetchPlanBuilder builder = beanLocator.getPrototype(FetchPlanBuilder.class, refClass);
+        FetchPlanBuilder builder = applicationContext.getBean(FetchPlanBuilder.class, refClass);
         consumer.accept(builder);
         builders.put(property, builder);
         return this;

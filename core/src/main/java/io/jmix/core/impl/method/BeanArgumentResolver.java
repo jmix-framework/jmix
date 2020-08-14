@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl.method;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -34,12 +34,12 @@ public class BeanArgumentResolver implements MethodArgumentResolver {
     public static final String NAME = "core_BeanArgumentResolver";
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         try {
-            beanLocator.get(parameter.getParameterType());
+            applicationContext.getBean(parameter.getParameterType());
             return true;
         } catch (NoSuchBeanDefinitionException ignored) {
         }
@@ -49,7 +49,7 @@ public class BeanArgumentResolver implements MethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter) {
         try {
-            return beanLocator.get(parameter.getParameterType());
+            return applicationContext.getBean(parameter.getParameterType());
         } catch (NoSuchBeanDefinitionException ignored) {
         }
         return null;

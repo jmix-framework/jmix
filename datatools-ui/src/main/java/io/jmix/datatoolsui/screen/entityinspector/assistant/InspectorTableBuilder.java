@@ -29,6 +29,7 @@ import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -63,8 +64,8 @@ public class InspectorTableBuilder {
     private Boolean withMultiselect = true;
     private Consumer<Table> buttonsPanelInitializer;
 
-    public static InspectorTableBuilder from(BeanLocator beanLocator, CollectionContainer collectionContainer) {
-        return beanLocator.getPrototype(InspectorTableBuilder.class, collectionContainer);
+    public static InspectorTableBuilder from(ApplicationContext applicationContext, CollectionContainer collectionContainer) {
+        return applicationContext.getBean(InspectorTableBuilder.class, collectionContainer);
     }
 
     protected InspectorTableBuilder(CollectionContainer collectionContainer) {

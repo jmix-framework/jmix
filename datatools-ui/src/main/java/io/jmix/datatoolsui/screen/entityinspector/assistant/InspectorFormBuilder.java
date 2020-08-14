@@ -36,6 +36,7 @@ import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -79,8 +80,8 @@ public class InspectorFormBuilder {
     private String fieldWidth = "400px";
     private List<String> disabledProperties;
 
-    public static InspectorFormBuilder from(BeanLocator beanLocator, InstanceContainer container) {
-        return beanLocator.getPrototype(InspectorFormBuilder.class, container);
+    public static InspectorFormBuilder from(ApplicationContext applicationContext, InstanceContainer container) {
+        return applicationContext.getBean(InspectorFormBuilder.class, container);
     }
 
     protected InspectorFormBuilder(InstanceContainer container) {

@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -50,8 +51,8 @@ public class InspectorFetchPlanBuilder {
     protected boolean withEmbedded = false;
     protected boolean withSystemProperties = false;
 
-    public static InspectorFetchPlanBuilder of(BeanLocator beanLocator, Class<? extends JmixEntity> entityClass) {
-        return beanLocator.getPrototype(InspectorFetchPlanBuilder.class, entityClass);
+    public static InspectorFetchPlanBuilder of(ApplicationContext applicationContext, Class<? extends JmixEntity> entityClass) {
+        return applicationContext.getBean(InspectorFetchPlanBuilder.class, entityClass);
     }
 
     protected InspectorFetchPlanBuilder(Class<? extends JmixEntity> entityClass) {

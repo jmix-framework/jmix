@@ -195,7 +195,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
         }
         textSelection.setVisible(true);
 
-        entitiesTable = InspectorTableBuilder.from(getBeanLocator(), createContainer(meta))
+        entitiesTable = InspectorTableBuilder.from(getApplicationContext(), createContainer(meta))
                 .withMaxTextLength(MAX_TEXT_LENGTH)
                 .withSystem(true)
                 .withButtons(this::createButtonsPanel)
@@ -230,7 +230,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
 
     private CollectionContainer createContainer(MetaClass meta) {
         entitiesDc = dataComponents.createCollectionContainer(meta.getJavaClass());
-        FetchPlan fetchPlan = InspectorFetchPlanBuilder.of(getBeanLocator(), meta.getJavaClass())
+        FetchPlan fetchPlan = InspectorFetchPlanBuilder.of(getApplicationContext(), meta.getJavaClass())
                 .withSystemProperties(true)
                 .build();
         entitiesDc.setFetchPlan(fetchPlan);

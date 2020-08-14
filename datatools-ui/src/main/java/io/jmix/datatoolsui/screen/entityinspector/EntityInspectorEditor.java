@@ -101,7 +101,7 @@ public class EntityInspectorEditor extends StandardEditor {
             Map<String, Object> params = screenOptions.getParams();
             if (params.get(PARENT_CONTEXT_PARAM) != null) {
                 parentDataContext = (DataContext) params.get(PARENT_CONTEXT_PARAM);
-                dataContext = new NoopDataContext(getBeanLocator());
+                dataContext = new NoopDataContext(getApplicationContext());
             } else {
                 dataContext = dataComponents.createDataContext();
             }
@@ -143,7 +143,7 @@ public class EntityInspectorEditor extends StandardEditor {
         if (!entityStates.isNew(entity)) {
             InstanceLoader loader = dataComponents.createInstanceLoader();
             loader.setDataContext(dataContext);
-            loader.setFetchPlan(InspectorFetchPlanBuilder.of(getBeanLocator(), entity.getClass())
+            loader.setFetchPlan(InspectorFetchPlanBuilder.of(getApplicationContext(), entity.getClass())
                     .withCollections(true)
                     .withEmbedded(true)
                     .withSystemProperties(true)
@@ -158,7 +158,7 @@ public class EntityInspectorEditor extends StandardEditor {
     }
 
     private void createForm(InstanceContainer container) {
-        Form form = InspectorFormBuilder.from(getBeanLocator(), container)
+        Form form = InspectorFormBuilder.from(getApplicationContext(), container)
                 .withDisabledProperties(parentProperty)
                 .build();
 
@@ -182,7 +182,7 @@ public class EntityInspectorEditor extends StandardEditor {
                             InstanceContainer embeddedContainer = dataComponents.createInstanceContainer(
                                     metaProperty.getRange().asClass().getJavaClass(), container, metaProperty.getName());
                             embeddedContainer.setItem(propertyValue);
-                            Form embeddedForm = InspectorFormBuilder.from(getBeanLocator(), embeddedContainer)
+                            Form embeddedForm = InspectorFormBuilder.from(getApplicationContext(), embeddedContainer)
                                     .withCaption(getPropertyCaption(metaClass, metaProperty))
                                     .build();
                             contentPane.add(embeddedForm);
@@ -232,7 +232,7 @@ public class EntityInspectorEditor extends StandardEditor {
         BoxLayout vbox = uiComponents.create(VBoxLayout.class);
         vbox.setSizeFull();
 
-        Table entitiesTable = InspectorTableBuilder.from(getBeanLocator(), createTableContainer(parent, childMeta, meta))
+        Table entitiesTable = InspectorTableBuilder.from(getApplicationContext(), createTableContainer(parent, childMeta, meta))
                 .withMaxTextLength(MAX_TEXT_LENGTH)
                 .withSystem(true)
                 .withButtons(table -> createButtonsPanel(table, childMeta))

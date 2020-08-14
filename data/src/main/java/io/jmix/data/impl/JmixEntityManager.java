@@ -56,6 +56,7 @@ public class JmixEntityManager implements EntityManager {
     private MetadataTools metadataTools;
     private EntityStates entityStates;
     private EntityListenerManager entityListenerMgr;
+    private EntityChangedEventManager entityChangedEventManager;
     private EntityPersistingEventManager entityPersistingEventMgr;
     private TimeSource timeSource;
     private AuditInfoProvider auditInfoProvider;
@@ -73,6 +74,7 @@ public class JmixEntityManager implements EntityManager {
         metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
         entityStates = (EntityStates) beanFactory.getBean(EntityStates.NAME);
         entityListenerMgr = (EntityListenerManager) beanFactory.getBean(EntityListenerManager.NAME);
+        entityChangedEventManager = (EntityChangedEventManager) beanFactory.getBean(EntityChangedEventManager.NAME);
         entityPersistingEventMgr = (EntityPersistingEventManager) beanFactory.getBean(EntityPersistingEventManager.NAME);
         timeSource = (TimeSource) beanFactory.getBean(TimeSource.NAME);
         auditInfoProvider = (AuditInfoProvider) beanFactory.getBean(AuditInfoProvider.NAME);
@@ -187,6 +189,7 @@ public class JmixEntityManager implements EntityManager {
 
     @Override
     public void flush() {
+        entityChangedEventManager.beforeFlush(support.getInstances(this));
         support.processFlush(this, false);
         delegate.flush();
     }

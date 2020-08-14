@@ -175,6 +175,14 @@ public class PersistenceSupport implements ApplicationContextAware {
         getInstanceContainerResourceHolder(getStorageName(session)).registerInstanceForUnitOfWork(entity, (UnitOfWork) session);
     }
 
+    public Collection<JmixEntity> getInstances(EntityManager entityManager) {
+        if (!TransactionSynchronizationManager.isActualTransactionActive())
+            throw new RuntimeException("No transaction");
+
+        UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
+        return getInstanceContainerResourceHolder(getStorageName(unitOfWork)).getInstances(unitOfWork);
+    }
+
     public Collection<JmixEntity> getSavedInstances(String storeName) {
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             throw new RuntimeException("No transaction");

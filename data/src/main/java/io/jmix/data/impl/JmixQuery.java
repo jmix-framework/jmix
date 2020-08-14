@@ -68,6 +68,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
     protected ExtendedEntities extendedEntities;
     protected FetchPlanRepository viewRepository;
     protected PersistenceSupport support;
+    protected EntityChangedEventManager entityChangedEventManager;
     protected FetchGroupManager fetchGroupMgr;
     protected EntityFetcher entityFetcher;
     protected LazyLoadingHelper lazyLoadingHelper;
@@ -105,6 +106,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         extendedEntities = (ExtendedEntities) beanFactory.getBean(ExtendedEntities.NAME);
         viewRepository = (FetchPlanRepository) beanFactory.getBean(FetchPlanRepository.NAME);
         support = (PersistenceSupport) beanFactory.getBean(PersistenceSupport.NAME);
+        entityChangedEventManager = (EntityChangedEventManager) beanFactory.getBean(EntityChangedEventManager.NAME);
         fetchGroupMgr = (FetchGroupManager) beanFactory.getBean(FetchGroupManager.NAME);
         entityFetcher = (EntityFetcher) beanFactory.getBean(EntityFetcher.NAME);
         lazyLoadingHelper = (LazyLoadingHelper) beanFactory.getBean(LazyLoadingHelper.NAME);
@@ -732,6 +734,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         if (jpaQuery.getFlushMode() == FlushModeType.AUTO
                 && (!isObjectLevelReadQuery || !((ObjectLevelReadQuery) elDbQuery).isReadOnly())) {
             // flush is expected
+            entityChangedEventManager.beforeFlush(support.getInstances(entityManager));
             support.processFlush(entityManager, true);
         }
     }

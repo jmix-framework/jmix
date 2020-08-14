@@ -21,6 +21,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.event.AttributeChanges;
 import io.jmix.data.event.EntityChangedEvent;
 
+import static io.jmix.data.event.EntityChangedEvent.Type.*;
+
 public class EntityChangedEventInfo {
     private final Object source;
     private final JmixEntity entity;
@@ -58,5 +60,14 @@ public class EntityChangedEventInfo {
 
     public AttributeChanges getChanges() {
         return changes;
+    }
+
+    public void mergeWith(EntityChangedEventInfo otherInfo) {
+        if (otherInfo.type == DELETED)
+            type = DELETED;
+        else if (otherInfo.type == CREATED)
+            type = CREATED;
+
+        changes.mergeWith(otherInfo.getChanges());
     }
 }

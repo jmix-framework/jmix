@@ -137,6 +137,9 @@ public class OrmDataStore implements DataStore {
     @Autowired
     protected ObjectProvider<JpqlQueryBuilder> jpqlQueryBuilderProvider;
 
+    @Autowired
+    protected PersistenceSupport persistenceSupport;
+
     protected String storeName;
 
     protected static final AtomicLong txCount = new AtomicLong();
@@ -618,7 +621,8 @@ public class OrmDataStore implements DataStore {
                 if (context.isJoinTransaction()) {
                     List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect(saved);
 
-                    em.flush();
+                    persistenceSupport.processFlush(em, false);
+                    ((EntityManager) em.getDelegate()).flush();
 
                     List<EntityChangedEvent> events = new ArrayList<>(eventsInfo.size());
                     for (EntityChangedEventInfo info : eventsInfo) {

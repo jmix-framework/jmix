@@ -17,7 +17,7 @@
 package io.jmix.ui.component.validation;
 
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -40,8 +40,7 @@ import java.util.Map;
  * <pre>
  *     &lt;bean id="ui_SizeValidator" class="io.jmix.ui.component.validation.SizeValidator" scope="prototype"/&gt;
  *     </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- *
+*
  * @param <T> Collection or String
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

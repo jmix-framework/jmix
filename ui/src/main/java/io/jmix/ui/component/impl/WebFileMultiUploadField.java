@@ -103,7 +103,7 @@ public class WebFileMultiUploadField extends WebAbstractComponent<JmixFileUpload
         impl.setDropZonePrompt(messages.getMessage("upload.dropZonePrompt"));
         impl.setDescription(null);
 
-        int maxUploadSizeMb = beanLocator.get(UiProperties.class).getMaxUploadSizeMb();
+        int maxUploadSizeMb = applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb();
         int maxSizeBytes = maxUploadSizeMb * BYTES_IN_MEGABYTE;
 
         impl.setFileSizeLimit(maxSizeBytes);
@@ -362,15 +362,15 @@ public class WebFileMultiUploadField extends WebAbstractComponent<JmixFileUpload
             if (fileSizeLimit % BYTES_IN_MEGABYTE == 0) {
                 fileSizeLimitString = String.valueOf(fileSizeLimit / BYTES_IN_MEGABYTE);
             } else {
-                DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.NAME);
+                DatatypeRegistry datatypeRegistry = (DatatypeRegistry) applicationContext.getBean(DatatypeRegistry.NAME);
                 Datatype<Double> doubleDatatype = datatypeRegistry.get(Double.class);
                 double fileSizeInMb = fileSizeLimit / ((double) BYTES_IN_MEGABYTE);
 
-                CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
+                CurrentAuthentication currentAuthentication = (CurrentAuthentication) applicationContext.getBean(CurrentAuthentication.NAME);
                 fileSizeLimitString = doubleDatatype.format(fileSizeInMb, currentAuthentication.getLocale());
             }
         } else {
-            fileSizeLimitString = String.valueOf(beanLocator.get(UiProperties.class).getMaxUploadSizeMb());
+            fileSizeLimitString = String.valueOf(applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb());
         }
         return fileSizeLimitString;
     }

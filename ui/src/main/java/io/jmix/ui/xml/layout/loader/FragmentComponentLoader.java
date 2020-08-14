@@ -119,7 +119,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
             LayoutLoader layoutLoader = getLayoutLoader(innerContext);
 
-            ScreenXmlLoader screenXmlLoader = beanLocator.get(ScreenXmlLoader.NAME);
+            ScreenXmlLoader screenXmlLoader = (ScreenXmlLoader) applicationContext.getBean(ScreenXmlLoader.NAME);
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(),
                     getComponentContext().getParams());
@@ -142,7 +142,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
     }
 
     protected FragmentHelper getFragmentHelper() {
-        return beanLocator.get(NAME);
+        return (FragmentHelper) applicationContext.getBean(NAME);
     }
 
     @Override
@@ -206,9 +206,9 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
         }
 
         ScreenOptions options = parentContext.getOptions();
-        parentContext.addInjectTask(new FragmentLoaderInjectTask(resultComponent, options, beanLocator));
+        parentContext.addInjectTask(new FragmentLoaderInjectTask(resultComponent, options, applicationContext));
         if (innerContext != null) {
-            parentContext.addInitTask(new FragmentLoaderInitTask(resultComponent, options, innerContext, beanLocator));
+            parentContext.addInitTask(new FragmentLoaderInitTask(resultComponent, options, innerContext, applicationContext));
         }
     }
 
@@ -266,6 +266,6 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
     }
 
     protected WindowConfig getWindowConfig() {
-        return beanLocator.get(WindowConfig.NAME);
+        return (WindowConfig) applicationContext.getBean(WindowConfig.NAME);
     }
 }

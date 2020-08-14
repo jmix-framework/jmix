@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
@@ -75,17 +76,17 @@ public class ExceptionDialog extends JmixWindow {
 
     protected AccessManager accessManager;
 
-    public ExceptionDialog(Throwable throwable, BeanLocator beanLocator) {
-        this(throwable, null, null, beanLocator);
+    public ExceptionDialog(Throwable throwable, ApplicationContext applicationContext) {
+        this(throwable, null, null, applicationContext);
     }
 
-    public ExceptionDialog(Throwable throwable, @Nullable String caption, @Nullable String message, BeanLocator beanLocator) {
-        messages = beanLocator.get(Messages.class);
-        windowConfig = beanLocator.get(WindowConfig.class);
-        properties = beanLocator.get(UiProperties.class);
-        currentAuthentication = beanLocator.get(CurrentAuthentication.class);
-        timeSource = beanLocator.get(TimeSource.class);
-        accessManager = beanLocator.get(AccessManager.class);
+    public ExceptionDialog(Throwable throwable, @Nullable String caption, @Nullable String message, ApplicationContext applicationContext) {
+        messages = applicationContext.getBean(Messages.class);
+        windowConfig = applicationContext.getBean(WindowConfig.class);
+        properties = applicationContext.getBean(UiProperties.class);
+        currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
+        timeSource = applicationContext.getBean(TimeSource.class);
+        accessManager = applicationContext.getBean(AccessManager.class);
 
         AppUI ui = AppUI.getCurrent();
 

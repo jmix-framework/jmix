@@ -48,7 +48,7 @@ public class WebPasswordField extends WebV8AbstractField<JmixPasswordField, Stri
         super.valueBindingConnected(valueSource);
 
         if (valueSource instanceof EntityValueSource) {
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             EntityValueSource entityValueSource = (EntityValueSource) valueSource;
 
             dataAwareComponentsTools.setupMaxLength(this, entityValueSource);

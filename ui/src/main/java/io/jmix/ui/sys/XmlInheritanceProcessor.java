@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.sys;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
@@ -58,7 +58,7 @@ public class XmlInheritanceProcessor {
     @Autowired
     protected ScreenXmlParser screenXmlParser;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public XmlInheritanceProcessor(Document document, Map<String, Object> params) {
         this.document = document;
@@ -88,7 +88,7 @@ public class XmlInheritanceProcessor {
                 throw new RuntimeException("Unable to read ancestor XML document", e);
             }
 
-            XmlInheritanceProcessor processor = beanLocator.getPrototype(XmlInheritanceProcessor.NAME,
+            XmlInheritanceProcessor processor = (XmlInheritanceProcessor) applicationContext.getBean(XmlInheritanceProcessor.NAME,
                     ancestorDocument, params);
             result = processor.getResultRoot();
             process(result, root);

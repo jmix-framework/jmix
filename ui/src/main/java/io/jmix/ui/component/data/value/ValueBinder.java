@@ -21,7 +21,8 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -58,13 +59,13 @@ public class ValueBinder {
     @Autowired
     protected BeanValidation beanValidation;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected AccessManager accessManager;
 
     public <V> ValueBinding<V> bind(HasValue<V> component, ValueSource<V> valueSource) {
-        if (valueSource instanceof BeanLocatorAware) {
-            ((BeanLocatorAware) valueSource).setBeanLocator(beanLocator);
+        if (valueSource instanceof ApplicationContextAware) {
+            ((ApplicationContextAware) valueSource).setApplicationContext(applicationContext);
         }
 
         ValueBindingImpl<V> binding = new ValueBindingImpl<>(component, valueSource);
@@ -137,7 +138,7 @@ public class ValueBinder {
             BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
 
             if (beanDescriptor.isBeanConstrained()) {
-                component.addValidator(beanLocator.getPrototype(BeanPropertyValidator.NAME, enclosingJavaClass, metaProperty.getName()));
+                component.addValidator((BeanPropertyValidator) applicationContext.getBean(BeanPropertyValidator.NAME, enclosingJavaClass, metaProperty.getName()));
             }
         }
     }

@@ -76,10 +76,10 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
     protected void initActions(@SuppressWarnings("unused") InitEvent event) {
         Window window = getWindow();
 
-        Messages messages = getBeanLocator().get(Messages.NAME);
-        Icons icons = getBeanLocator().get(Icons.NAME);
+        Messages messages = (Messages) getApplicationContext().getBean(Messages.NAME);
+        Icons icons = (Icons) getApplicationContext().getBean(Icons.NAME);
 
-        String commitShortcut = getBeanLocator().get(UiProperties.class).getCommitShortcut();
+        String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
 
         Action commitAndCloseAction = new BaseAction(WINDOW_COMMIT_AND_CLOSE)
                 .withCaption(messages.getMessage("actions.Ok"))
@@ -150,11 +150,11 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
         if (action instanceof ChangeTrackerCloseAction
                 && ((ChangeTrackerCloseAction) action).isCheckForUnsavedChanges()
                 && hasUnsavedChanges()) {
-            ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+            ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
 
             UnknownOperationResult result = new UnknownOperationResult();
 
-            if (getBeanLocator().get(UiProperties.class).isUseSaveConfirmation()) {
+            if (getApplicationContext().getBean(UiProperties.class).isUseSaveConfirmation()) {
                 screenValidation.showSaveConfirmationDialog(this, action)
                         .onCommit(() -> result.resume(closeWithCommit()))
                         .onDiscard(() -> result.resume(closeWithDiscard()))
@@ -245,7 +245,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
 
     protected String getLockName() {
         InstanceContainer<T> container = getEditedEntityContainer();
-        return getBeanLocator().get(ExtendedEntities.class)
+        return getApplicationContext().getBean(ExtendedEntities.class)
                 .getOriginalOrThisMetaClass(container.getEntityMetaClass())
                 .getName();
     }
@@ -279,7 +279,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
         if (dataContext.isModified(entity) || dataContext.isRemoved(entity))
             return true;
 
-        Metadata metadata = getBeanLocator().get(Metadata.NAME);
+        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
 
         for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (property.getRange().isClass()) {
@@ -377,7 +377,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
     protected OperationResult commitChanges() {
         ValidationErrors validationErrors = validateScreen();
         if (!validationErrors.isEmpty()) {
-            ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.class);
+            ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
             screenValidation.showValidationErrors(this, validationErrors);
 
             return OperationResult.fail();
@@ -437,7 +437,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
         if (this.readOnly != readOnly) {
             this.readOnly = readOnly;
 
-            ReadOnlyScreensSupport readOnlyScreensSupport = getBeanLocator().get(ReadOnlyScreensSupport.NAME);
+            ReadOnlyScreensSupport readOnlyScreensSupport = (ReadOnlyScreensSupport) getApplicationContext().getBean(ReadOnlyScreensSupport.NAME);
             readOnlyScreensSupport.setScreenReadOnly(this, readOnly);
 
             if (readOnlyDueToLock) {
@@ -490,14 +490,14 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
      * @return validation errors
      */
     protected ValidationErrors validateUiComponents() {
-        ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
         return screenValidation.validateUiComponents(getWindow());
     }
 
     protected void validateAdditionalRules(ValidationErrors errors) {
         // all previous validations return no errors
         if (isCrossFieldValidate() && errors.isEmpty()) {
-            ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+            ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
 
             ValidationErrors validationErrors = screenValidation.validateCrossFieldRules(this, getEditedEntity());
 
@@ -510,7 +510,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
     }
 
     private EntityStates getEntityStates() {
-        return getBeanLocator().get(EntityStates.NAME);
+        return (EntityStates) getApplicationContext().getBean(EntityStates.NAME);
     }
 
     protected void commitAndClose(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {

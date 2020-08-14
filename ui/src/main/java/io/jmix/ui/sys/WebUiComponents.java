@@ -17,7 +17,7 @@
 package io.jmix.ui.sys;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.ui.UiComponents;
@@ -30,7 +30,6 @@ import io.jmix.ui.component.mainwindow.impl.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +49,6 @@ public class WebUiComponents implements UiComponents {
     protected DatatypeRegistry datatypeRegistry;
     /*@Autowired
     protected CompositeDescriptorLoader compositeDescriptorLoader;*/ // todo composite
-    @Autowired
-    protected BeanLocator beanLocator;
 
     protected Map<String, Class<? extends Component>> classes = new ConcurrentHashMap<>();
     protected Map<Class, String> names = new ConcurrentHashMap<>();

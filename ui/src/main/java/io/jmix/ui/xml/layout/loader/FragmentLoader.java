@@ -19,7 +19,6 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.Fragment;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -28,7 +27,6 @@ import io.jmix.ui.xml.FacetLoader;
 import io.jmix.ui.xml.layout.ComponentRootLoader;
 import org.dom4j.Element;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class FragmentLoader extends ContainerLoader<Fragment> implements ComponentRootLoader<Fragment> {
@@ -91,7 +89,7 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
     }
 
     protected ScreenViewsLoader getScreenViewsLoader() {
-        return beanLocator.get(ScreenViewsLoader.NAME);
+        return (ScreenViewsLoader) applicationContext.getBean(ScreenViewsLoader.NAME);
     }
 
     protected void loadDataElement(Element element) {
@@ -106,7 +104,7 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
             hostScreenData = parent.getScreenData();
             parent = parent.getParent();
         }
-        ScreenDataXmlLoader screenDataXmlLoader = beanLocator.get(ScreenDataXmlLoader.class);
+        ScreenDataXmlLoader screenDataXmlLoader = applicationContext.getBean(ScreenDataXmlLoader.class);
         ScreenData screenData = UiControllerUtils.getScreenData(resultComponent.getFrameOwner());
         screenDataXmlLoader.load(screenData, dataEl, hostScreenData);
         ((ComponentLoaderContext) context).setScreenData(screenData);
@@ -118,7 +116,7 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
             List<Element> facetElements = facetsElement.elements();
 
             for (Element facetElement : facetElements) {
-                FacetLoader loader = beanLocator.get(FacetLoader.NAME);
+                FacetLoader loader = (FacetLoader) applicationContext.getBean(FacetLoader.NAME);
                 Facet facet = loader.load(facetElement, getComponentContext());
 
                 resultComponent.addFacet(facet);

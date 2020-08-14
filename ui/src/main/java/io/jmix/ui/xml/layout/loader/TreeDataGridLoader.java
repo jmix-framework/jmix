@@ -56,7 +56,7 @@ public class TreeDataGridLoader extends AbstractDataGridLoader<TreeDataGrid> {
             throw new GuiDevelopmentException("TreeDataGrid doesn't have 'hierarchyProperty' attribute",
                     context, "TreeDataGrid ID", element.attributeValue("id"));
         }
-        return new ContainerTreeDataGridItems(container, hierarchyProperty, beanLocator.getPrototype(AggregatableDelegate.class));
+        return new ContainerTreeDataGridItems(container, hierarchyProperty, applicationContext.getBean(AggregatableDelegate.class));
     }
 
     @Override

@@ -34,7 +34,7 @@ public abstract class AbstractOptionsBaseLoader<T extends OptionsField> extends 
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
             component.setOptionCaptionProvider(
-                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
         }
     }
 

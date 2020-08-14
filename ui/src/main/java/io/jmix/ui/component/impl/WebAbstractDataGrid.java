@@ -124,7 +124,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected Messages messages;
     protected MessageTools messageTools;
     protected PersistenceManagerClient persistenceManagerClient;
-    protected ApplicationContext applicationContext;
     protected ScreenValidation screenValidation;
     protected Actions actions;
     protected IconResolver iconResolver;
@@ -279,11 +278,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     @Autowired
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
-
-    @Autowired
     protected void setScreenValidation(ScreenValidation screenValidation) {
         this.screenValidation = screenValidation;
     }
@@ -329,7 +323,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     protected JmixGridEditorFieldFactory<E> createEditorFieldFactory() {
-        DataGridEditorFieldFactory fieldFactory = beanLocator.get(DataGridEditorFieldFactory.NAME);
+        DataGridEditorFieldFactory fieldFactory = (DataGridEditorFieldFactory) this.applicationContext.getBean(DataGridEditorFieldFactory.NAME);
         return new WebDataGridEditorFieldFactory<>(this, fieldFactory);
     }
 
@@ -809,7 +803,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             return new FormatterBasedValueProvider<>(column.getFormatter());
         } else if (metaProperty != null) {
             if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
-                return new FormatterBasedValueProvider<>(beanLocator.getPrototype(CollectionFormatter.class));
+                return new FormatterBasedValueProvider<>(this.applicationContext.getBean(CollectionFormatter.class));
             }
             if (metaProperty.getJavaType() == Boolean.class) {
                 return new YesNoIconPresentationValueProvider();
@@ -1465,8 +1459,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         }
 
         EntityDataGridItems<E> items = getEntityDataGridItemsNN();
-        DataComponents factory = beanLocator.get(DataComponents.class);
-        FetchPlanRepository viewRepository = beanLocator.get(FetchPlanRepository.NAME);
+        DataComponents factory = this.applicationContext.getBean(DataComponents.class);
+        FetchPlanRepository viewRepository = (FetchPlanRepository) this.applicationContext.getBean(FetchPlanRepository.NAME);
         MetaClass metaClass = items.getEntityMetaClass();
 
         InstanceContainer<E> instanceContainer;
@@ -2452,7 +2446,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                             new DevelopmentException(
                                     "Renderer should be specified explicitly for generated column: " + column.getId()));
 
-            column.setRenderer(beanLocator.getPrototype(rendererType));
+            column.setRenderer(this.applicationContext.getBean(rendererType));
         }
     }
 

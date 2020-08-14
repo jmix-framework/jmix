@@ -60,7 +60,7 @@ public class EntityPickerLoader extends AbstractFieldLoader<EntityPicker> {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
             resultComponent.setOptionCaptionProvider(
-                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
         }
     }
 
@@ -83,15 +83,15 @@ public class EntityPickerLoader extends AbstractFieldLoader<EntityPicker> {
     }
 
     protected Actions getActions() {
-        return beanLocator.get(Actions.NAME);
+        return (Actions) applicationContext.getBean(Actions.NAME);
     }
 
     protected GuiActionSupport getGuiActionSupport() {
-        return beanLocator.get(GuiActionSupport.NAME);
+        return (GuiActionSupport) applicationContext.getBean(GuiActionSupport.NAME);
     }
 
     protected Metadata getMetadata() {
-        return beanLocator.get(Metadata.NAME);
+        return (Metadata) applicationContext.getBean(Metadata.NAME);
     }
 
     @Override

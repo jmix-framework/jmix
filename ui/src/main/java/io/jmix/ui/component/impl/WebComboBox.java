@@ -103,7 +103,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     public void afterPropertiesSet() {
         initComponent(component);
 
-        setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
+        setPageLength(applicationContext.getBean(UiProperties.class).getLookupFieldPageLength());
     }
 
     protected void initComponent(JmixComboBox<V> component) {
@@ -165,7 +165,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         super.valueBindingConnected(valueSource);
 
         if (valueSource instanceof EntityValueSource) {
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             dataAwareComponentsTools.setupOptions(this, (EntityValueSource) valueSource);
         }
     }
@@ -219,7 +219,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = beanLocator.get(OptionsBinder.NAME);
+            OptionsBinder optionsBinder = (OptionsBinder) applicationContext.getBean(OptionsBinder.NAME);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
         }

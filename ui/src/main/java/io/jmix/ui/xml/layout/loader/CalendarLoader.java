@@ -163,7 +163,7 @@ public class CalendarLoader extends AbstractComponentLoader<Calendar> {
     protected void loadDatatype(HasDatatype component, Element element) {
         String datatypeAttribute = element.attributeValue("datatype");
         if (StringUtils.isNotEmpty(datatypeAttribute)) {
-            DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.NAME);
+            DatatypeRegistry datatypeRegistry = (DatatypeRegistry) applicationContext.getBean(DatatypeRegistry.NAME);
             component.setDatatype(datatypeRegistry.find(datatypeAttribute));
         }
     }
@@ -197,7 +197,7 @@ public class CalendarLoader extends AbstractComponentLoader<Calendar> {
     }
 
     protected DateTimeTransformations getDateTimeTransformations() {
-        return beanLocator.get(DateTimeTransformations.NAME);
+        return (DateTimeTransformations) applicationContext.getBean(DateTimeTransformations.NAME);
     }
 
     protected Object convertToType(Date date, Class javaType) {

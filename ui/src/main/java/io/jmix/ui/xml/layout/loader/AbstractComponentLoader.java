@@ -17,7 +17,6 @@
 package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Strings;
-import io.jmix.core.BeanLocator;
 import io.jmix.core.ClassManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
@@ -56,6 +55,7 @@ import org.dom4j.Attribute;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
@@ -101,15 +101,15 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     protected T resultComponent;
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     protected Environment environment;
 
     protected AbstractComponentLoader() {
     }
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -199,36 +199,36 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected Messages getMessages() {
-        return beanLocator.get(Messages.NAME);
+        return (Messages) applicationContext.getBean(Messages.NAME);
     }
 
     protected MessageTools getMessageTools() {
-        return beanLocator.get(MessageTools.NAME);
+        return (MessageTools) applicationContext.getBean(MessageTools.NAME);
     }
 
     protected ClassManager getClassManager() {
-        return beanLocator.get(ClassManager.NAME);
+        return (ClassManager) applicationContext.getBean(ClassManager.NAME);
     }
 
     protected UiProperties getProperties() {
-        return beanLocator.get(UiProperties.class);
+        return applicationContext.getBean(UiProperties.class);
     }
 
     protected MeterRegistry getMeterRegistry() {
-        return beanLocator.get(MeterRegistry.class);
+        return applicationContext.getBean(MeterRegistry.class);
     }
 
     protected ThemeConstants getTheme() {
-        ThemeConstantsManager manager = beanLocator.get(ThemeConstantsManager.NAME);
+        ThemeConstantsManager manager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
         return manager.getConstants();
     }
 
     protected LayoutLoader getLayoutLoader() {
-        return beanLocator.getPrototype(LayoutLoader.NAME, context);
+        return (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, context);
     }
 
     protected LayoutLoader getLayoutLoader(Context context) {
-        return beanLocator.getPrototype(LayoutLoader.NAME, context);
+        return (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, context);
     }
 
     protected void loadId(Component component, Element element) {
@@ -245,7 +245,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected void loadCss(Component component, Element element) {
         String css = element.attributeValue("css");
         if (StringUtils.isNotEmpty(css)) {
-            HtmlAttributes htmlAttributes = beanLocator.get(HtmlAttributes.NAME);
+            HtmlAttributes htmlAttributes = (HtmlAttributes) applicationContext.getBean(HtmlAttributes.NAME);
             htmlAttributes.applyCss(component, css);
         }
     }
@@ -500,7 +500,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected void loadPresentations(HasTablePresentations component, Element element) {
         String presentations = element.attributeValue("presentations");
         if (StringUtils.isNotEmpty(presentations)) {
-            if (beanLocator.containsBean(TablePresentations.NAME)) {
+            if (applicationContext.containsBean(TablePresentations.NAME)) {
                 component.usePresentations(Boolean.parseBoolean(presentations));
                 getComponentContext().addPostInitTask(new LoadPresentationsPostInitTask(component));
             } else {
@@ -526,7 +526,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         String iconPath = null;
 
         if (ICON_NAME_REGEX.matcher(icon).matches()) {
-            Icons icons = beanLocator.get(Icons.NAME);
+            Icons icons = (Icons) applicationContext.getBean(Icons.NAME);
             iconPath = icons.get(icon);
         }
 
@@ -629,7 +629,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
         Element propertiesEl = element.element("properties");
         if (propertiesEl != null) {
-            ActionCustomPropertyLoader propertyLoader = beanLocator.get(ActionCustomPropertyLoader.class);
+            ActionCustomPropertyLoader propertyLoader = applicationContext.getBean(ActionCustomPropertyLoader.class);
             for (Element propertyEl : propertiesEl.elements("property")) {
                 propertyLoader.load(targetAction,
                         propertyEl.attributeValue("name"), propertyEl.attributeValue("value"));
@@ -692,7 +692,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             }
 
             //noinspection unchecked
-            Object bean = beanLocator.get(beanClass);
+            Object bean = applicationContext.getBean(beanClass);
 
             try {
                 String shortcutValue = (String) MethodUtils.invokeMethod(bean, methodName);
@@ -746,7 +746,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected Action loadEntityPickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String type = element.attributeValue("type");
         if (StringUtils.isNotEmpty(type)) {
-            Actions actions = beanLocator.get(Actions.NAME);
+            Actions actions = (Actions) applicationContext.getBean(Actions.NAME);
 
             String id = loadActionId(element);
             Action action = actions.create(type, id);
@@ -760,7 +760,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        FormatterLoadFactory loadFactory = beanLocator.get(FormatterLoadFactory.NAME);
+        FormatterLoadFactory loadFactory = (FormatterLoadFactory) applicationContext.getBean(FormatterLoadFactory.NAME);
         for (Element childElement : element.elements()) {
             if (loadFactory.isFormatter(childElement)) {
                 return loadFactory.createFormatter(childElement);

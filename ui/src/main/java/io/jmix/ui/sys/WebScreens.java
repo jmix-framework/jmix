@@ -62,6 +62,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -85,7 +86,7 @@ public class WebScreens implements Screens {
     private static final org.slf4j.Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     protected WindowConfig windowConfig;
@@ -199,7 +200,7 @@ public class WebScreens implements Screens {
 
         ComponentLoaderContext componentLoaderContext = !(controller instanceof CubaLegacyFrame)
                 ? new ComponentLoaderContext(options)
-                : beanLocator.get(DsSupport.class).createComponentLoaderContext(options); // TODO refactor
+                : applicationContext.getBean(DsSupport.class).createComponentLoaderContext(options); // TODO refactor
 
         componentLoaderContext.setFullFrameId(windowInfo.getId());
         componentLoaderContext.setCurrentFrameId(windowInfo.getId());
@@ -216,7 +217,7 @@ public class WebScreens implements Screens {
         Timer.Sample injectSample = Timer.start(meterRegistry);
 
         UiControllerDependencyInjector dependencyInjector =
-                beanLocator.getPrototype(UiControllerDependencyInjector.NAME, controller, options);
+                (UiControllerDependencyInjector) applicationContext.getBean(UiControllerDependencyInjector.NAME, controller, options);
         dependencyInjector.inject();
 
         injectSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, windowInfo.getId()));
@@ -326,13 +327,13 @@ public class WebScreens implements Screens {
             }
         }
 
-        LayoutLoader layoutLoader = beanLocator.getPrototype(LayoutLoader.NAME, componentLoaderContext);
+        LayoutLoader layoutLoader = (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, componentLoaderContext);
         ComponentLoader<Window> windowLoader = layoutLoader.createWindowContent(window, element);
 
         if (controller instanceof CubaLegacyFrame) {
             screenViewsLoader.deployViews(element);
 
-            beanLocator.get(DsSupport.class)
+            applicationContext.getBean(DsSupport.class)
                     .initDsContext(controller, element, componentLoaderContext);
         }
 
@@ -1076,7 +1077,7 @@ public class WebScreens implements Screens {
 
         WindowBreadCrumbs windowBreadCrumbs = new WindowBreadCrumbs(appWorkArea.getMode());
         windowBreadCrumbs.setUI(ui);
-        windowBreadCrumbs.setBeanLocator(beanLocator);
+        windowBreadCrumbs.setApplicationContext(applicationContext);
 
         boolean showBreadCrumbs = uiProperties.isShowBreadCrumbs() || appWorkArea.getMode() == Mode.SINGLE;
         windowBreadCrumbs.setVisible(showBreadCrumbs);

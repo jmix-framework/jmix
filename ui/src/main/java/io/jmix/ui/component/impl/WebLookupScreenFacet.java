@@ -111,10 +111,10 @@ public class WebLookupScreenFacet<E extends JmixEntity, S extends Screen & Looku
     protected LookupBuilder<E> createLookupBuilder(Frame owner) {
         LookupBuilder<E> builder;
 
-        if (beanLocator == null) {
-            throw new IllegalStateException("Unable to create LookupScreenFacet. BeanLocator is null");
+        if (applicationContext == null) {
+            throw new IllegalStateException("Unable to create LookupScreenFacet. ApplicationContext is null");
         }
-        ScreenBuilders screenBuilders = beanLocator.get(ScreenBuilders.class);
+        ScreenBuilders screenBuilders = applicationContext.getBean(ScreenBuilders.class);
 
         if (entityClass != null) {
             builder = screenBuilders.lookup(entityClass, owner.getFrameOwner());

@@ -77,7 +77,7 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
         if (validatorsHolder != null) {
             List<Element> validators = validatorsHolder.elements();
 
-            ValidatorLoadFactory loadFactory = beanLocator.get(ValidatorLoadFactory.NAME);
+            ValidatorLoadFactory loadFactory = (ValidatorLoadFactory) applicationContext.getBean(ValidatorLoadFactory.NAME);
 
             for (Element validatorElem : validators) {
                 Validator validator = loadFactory.createValidator(validatorElem, context.getMessagesPack());
@@ -99,7 +99,7 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
         String datatypeAttribute = element.attributeValue("datatype");
         if (StringUtils.isNotEmpty(datatypeAttribute)) {
             //noinspection unchecked
-            DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.NAME);
+            DatatypeRegistry datatypeRegistry = (DatatypeRegistry) applicationContext.getBean(DatatypeRegistry.NAME);
             component.setDatatype(datatypeRegistry.find(datatypeAttribute));
         }
     }

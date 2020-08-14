@@ -131,7 +131,7 @@ public class DateFieldLoader extends AbstractFieldLoader<DateField> {
     }
 
     protected DateTimeTransformations getDateTimeTransformations() {
-        return beanLocator.get(DateTimeTransformations.NAME);
+        return (DateTimeTransformations) applicationContext.getBean(DateTimeTransformations.NAME);
     }
 
     protected Date parseDateOrDateTime(String value) throws ParseException {

@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.xml.layout;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.MessageTools;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
@@ -138,7 +138,7 @@ public interface ComponentLoader<T extends Component> {
     Element getElement(Element element);
     void setElement(Element element);
 
-    void setBeanLocator(BeanLocator beanLocator);
+    void setApplicationContext(ApplicationContext applicationContext);
     void setEnvironment(Environment environment);
 
     /**

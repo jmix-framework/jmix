@@ -191,7 +191,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = beanLocator.get(OptionsBinder.NAME);
+            OptionsBinder optionsBinder = (OptionsBinder) applicationContext.getBean(OptionsBinder.NAME);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
         }
@@ -202,7 +202,7 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         super.valueBindingConnected(valueSource);
 
         if (valueSource instanceof EntityValueSource) {
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             dataAwareComponentsTools.setupOptions(this, (EntityValueSource) valueSource);
         }
     }

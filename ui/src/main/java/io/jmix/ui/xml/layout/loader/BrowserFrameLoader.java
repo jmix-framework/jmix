@@ -63,7 +63,7 @@ public class BrowserFrameLoader extends AbstractResourceViewLoader<BrowserFrame>
                         context);
             }
 
-            Resources resources = beanLocator.get(Resources.class);
+            Resources resources = applicationContext.getBean(Resources.class);
             String resource = resources.getResourceAsString(srcdocFile);
 
             if (resource == null) {

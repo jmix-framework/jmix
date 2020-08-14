@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.GuiDevelopmentException;
@@ -47,7 +47,7 @@ public class LayoutLoader {
     protected LoaderResolver loaderResolver;
     protected LoaderHelper loaderHelper;
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     protected Environment environment;
 
     public LayoutLoader(ComponentLoader.Context context) {
@@ -55,8 +55,8 @@ public class LayoutLoader {
     }
 
     @Autowired
-    protected void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    protected void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Autowired
@@ -121,7 +121,7 @@ public class LayoutLoader {
             throw new GuiDevelopmentException("Loader instantiation error: " + e, context);
         }
 
-        loader.setBeanLocator(beanLocator);
+        loader.setApplicationContext(applicationContext);
         loader.setEnvironment(environment);
 
         loader.setContext(context);

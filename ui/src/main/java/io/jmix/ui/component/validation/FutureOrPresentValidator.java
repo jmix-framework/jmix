@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.validation;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.Messages;
 import io.jmix.core.TimeSource;
@@ -40,8 +40,7 @@ import java.util.Date;
  * <pre>
  *    &lt;bean id="ui_FutureOrPresentValidator" class="io.jmix.ui.component.validation.FutureOrPresentValidator" scope="prototype"/&gt;
  *    </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- *
+*
  * @param <T> {@link Date}, {@link LocalDate}, {@link LocalDateTime}, {@link LocalTime}, {@link OffsetDateTime},
  *            {@link OffsetTime}
  */

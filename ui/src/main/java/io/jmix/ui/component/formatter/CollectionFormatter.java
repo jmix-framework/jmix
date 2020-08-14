@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.formatter;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.MetadataTools;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,7 @@ import java.util.stream.Collectors;
  * Collection formatter to be used in screen descriptors and controllers.
  * <p>
  * This formatter formats collection into a string where the elements of the collection are separated by commas.
- * <p>
- * Use {@link BeanLocator} when creating the formatter programmatically.
- */
+*/
 @Component(CollectionFormatter.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CollectionFormatter implements Formatter<Collection> {

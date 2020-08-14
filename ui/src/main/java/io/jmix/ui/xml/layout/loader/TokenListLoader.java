@@ -204,7 +204,7 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
         String optionsCaptionProperty = lookupElement.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(optionsCaptionProperty)) {
             component.setLookupFieldOptionsCaptionProvider(
-                    new CaptionAdapter(optionsCaptionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+                    new CaptionAdapter(optionsCaptionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
         }
     }
 
@@ -226,7 +226,7 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
             component.setOptionCaptionProvider(
-                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
         }
     }
 

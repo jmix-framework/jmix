@@ -16,7 +16,7 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.ClassManager;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Fragment;
@@ -135,22 +135,22 @@ public class FragmentHelper {
     public static class FragmentLoaderInjectTask implements ComponentLoader.InjectTask {
         protected Fragment fragment;
         protected ScreenOptions options;
-        protected BeanLocator beanLocator;
+        protected ApplicationContext applicationContext;
 
-        public FragmentLoaderInjectTask(Fragment fragment, ScreenOptions options, BeanLocator beanLocator) {
+        public FragmentLoaderInjectTask(Fragment fragment, ScreenOptions options, ApplicationContext applicationContext) {
             this.fragment = fragment;
             this.options = options;
-            this.beanLocator = beanLocator;
+            this.applicationContext = applicationContext;
         }
 
         @Override
         public void execute(ComponentLoader.ComponentContext windowContext, Frame window) {
-            MeterRegistry meterRegistry = beanLocator.get(MeterRegistry.class);
+            MeterRegistry meterRegistry = applicationContext.getBean(MeterRegistry.class);
             Timer.Sample sample = Timer.start(meterRegistry);
 
             FrameOwner controller = fragment.getFrameOwner();
             UiControllerDependencyInjector dependencyInjector =
-                    beanLocator.getPrototype(UiControllerDependencyInjector.NAME, controller, options);
+                    (UiControllerDependencyInjector) applicationContext.getBean(UiControllerDependencyInjector.NAME, controller, options);
             dependencyInjector.inject();
 
             sample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, getFullFrameId(this.fragment)));
@@ -161,19 +161,19 @@ public class FragmentHelper {
         protected Fragment fragment;
         protected ScreenOptions options;
         protected ComponentLoaderContext fragmentLoaderContext;
-        protected BeanLocator beanLocator;
+        protected ApplicationContext applicationContext;
 
         public FragmentLoaderInitTask(Fragment fragment, ScreenOptions options,
-                                      ComponentLoaderContext fragmentLoaderContext, BeanLocator beanLocator) {
+                                      ComponentLoaderContext fragmentLoaderContext, ApplicationContext applicationContext) {
             this.fragment = fragment;
             this.options = options;
             this.fragmentLoaderContext = fragmentLoaderContext;
-            this.beanLocator = beanLocator;
+            this.applicationContext = applicationContext;
         }
 
         @Override
         public void execute(ComponentLoader.ComponentContext windowContext, Frame window) {
-            MeterRegistry meterRegistry = beanLocator.get(MeterRegistry.class);
+            MeterRegistry meterRegistry = applicationContext.getBean(MeterRegistry.class);
             Timer.Sample sample = Timer.start(meterRegistry);
 
             ScreenFragment frameOwner = fragment.getFrameOwner();
@@ -189,7 +189,7 @@ public class FragmentHelper {
             List<UiControllerProperty> properties = fragmentLoaderContext.getProperties();
             if (!properties.isEmpty()) {
                 UiControllerPropertyInjector propertyInjector =
-                        beanLocator.getPrototype(UiControllerPropertyInjector.NAME, frameOwner, properties);
+                        (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME, frameOwner, properties);
                 propertyInjector.inject();
             }
 

@@ -149,7 +149,7 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
             }
         }
 
-        return beanLocator.get(Messages.class)
+        return applicationContext.getBean(Messages.class)
                 .getMessage("databinding.conversion.error");
     }
 
@@ -347,7 +347,7 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
         super.valueBindingConnected(valueSource);
 
         if (valueSource instanceof EntityValueSource) {
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             EntityValueSource entityValueSource = (EntityValueSource) valueSource;
 
             dataAwareComponentsTools.setupCaseConversion(this, entityValueSource);

@@ -90,7 +90,7 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        setPageLength(beanLocator.get(UiProperties.class).getLookupFieldPageLength());
+        setPageLength(applicationContext.getBean(UiProperties.class).getLookupFieldPageLength());
     }
 
     @Override
@@ -362,7 +362,7 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = beanLocator.get(OptionsBinder.NAME);
+            OptionsBinder optionsBinder = (OptionsBinder) applicationContext.getBean(OptionsBinder.NAME);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
 

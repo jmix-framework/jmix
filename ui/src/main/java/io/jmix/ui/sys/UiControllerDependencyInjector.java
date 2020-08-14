@@ -17,7 +17,8 @@
 package io.jmix.ui.sys;
 
 import com.google.common.base.Strings;
-import io.jmix.core.BeanLocator;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
 import io.jmix.ui.*;
@@ -52,6 +53,7 @@ import org.springframework.context.event.EventListener;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Field;
@@ -85,7 +87,7 @@ public class UiControllerDependencyInjector {
     protected FrameOwner frameOwner;
     protected ScreenOptions options;
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     protected UiControllerReflectionInspector reflectionInspector;
 
     public UiControllerDependencyInjector(FrameOwner frameOwner, ScreenOptions options) {
@@ -94,8 +96,8 @@ public class UiControllerDependencyInjector {
     }
 
     @Autowired
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Autowired
@@ -441,7 +443,7 @@ public class UiControllerDependencyInjector {
         List<Method> eventListenerMethods = screenIntrospectionData.getEventListenerMethods();
 
         if (!eventListenerMethods.isEmpty()) {
-            Events events = beanLocator.get(Events.NAME);
+            Events events = (Events) applicationContext.getBean(Events.NAME);
 
             List<ApplicationListener> listeners = eventListenerMethods.stream()
                     .map(m -> new UiEventListenerMethodAdapter(frameOwner, clazz, m, events))
@@ -589,7 +591,7 @@ public class UiControllerDependencyInjector {
 
         } else if (Downloader.class.isAssignableFrom(type)) {
             // Injecting a Downloader
-            return beanLocator.<Downloader>get(Downloader.NAME);
+            return applicationContext.<Downloader>getBean(Downloader.NAME);
 
         } else if (Logger.class == type && element instanceof Field) {
             // injecting logger
@@ -620,17 +622,20 @@ public class UiControllerDependencyInjector {
 
         } else if (ThemeConstants.class == type) {
             // Injecting a Theme
-            ThemeConstantsManager themeManager = beanLocator.get(ThemeConstantsManager.NAME);
+            ThemeConstantsManager themeManager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
             return themeManager.getConstants();
 
         } else if (WebBrowserTools.class.isAssignableFrom(type)) {
             // Injecting WebBrowserTools
             return getScreenContext(frameOwner).getWebBrowserTools();
 
+        } else if (BeanFactory.class.isAssignableFrom(type)) {
+            return applicationContext;
+
         } else {
             Object instance;
             // Try to find a Spring bean
-            Map<String, ?> beans = beanLocator.getAll(type);
+            Map<String, ?> beans = applicationContext.getBeansOfType(type);
             if (!beans.isEmpty()) {
                 instance = beans.get(name);
                 // If a bean with required name found, return it. Otherwise return first found.
@@ -644,7 +649,7 @@ public class UiControllerDependencyInjector {
 
         // TODO: legacy-ui
         if (frameOwner instanceof CubaLegacyFrame) {
-            return beanLocator.get(LegacyDependencyResolver.class)
+            return applicationContext.getBean(LegacyDependencyResolver.class)
                     .resolveDependency(frameOwner, type, name);
         }
 
@@ -652,7 +657,7 @@ public class UiControllerDependencyInjector {
     }
 
     protected MessageBundle createMessageBundle(@SuppressWarnings("unused") AnnotatedElement element, FrameOwner frameOwner, Frame frame) {
-        MessageBundle messageBundle = beanLocator.getPrototype(MessageBundle.NAME);
+        MessageBundle messageBundle = (MessageBundle) applicationContext.getBean(MessageBundle.NAME);
 
         Class<? extends FrameOwner> screenClass = frameOwner.getClass();
         String packageName = UiControllerUtils.getPackage(screenClass);

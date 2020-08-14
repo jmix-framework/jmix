@@ -773,11 +773,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 if (component.getColumnGenerator(column.getId()) == null) {
                     if (propertyId.getRange().isClass()) {
                         if (StringUtils.isNotEmpty(isLink)) {
-                            setClickListener(propertyId.toString(), new LinkCellClickListener(this, beanLocator));
+                            setClickListener(propertyId.toString(), new LinkCellClickListener(this, applicationContext));
                         }
                     } else if (propertyId.getRange().isDatatype()) {
                         if (StringUtils.isNotEmpty(isLink)) {
-                            setClickListener(propertyId.toString(), new LinkCellClickListener(this, beanLocator));
+                            setClickListener(propertyId.toString(), new LinkCellClickListener(this, applicationContext));
                         } else {
                             if (column.getMaxTextLength() != null) {
                                 addGeneratedColumnInternal(propertyId, new AbbreviatedColumnGenerator(column, metadataTools));
@@ -1019,7 +1019,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
         int defaultRowHeaderWidth = 16;
         ThemeConstantsManager themeConstantsManager =
-                beanLocator.get(ThemeConstantsManager.NAME, ThemeConstantsManager.class);
+                applicationContext.getBean(ThemeConstantsManager.NAME, ThemeConstantsManager.class);
         ThemeConstants theme = themeConstantsManager.getConstants();
         if (theme != null) {
             defaultRowHeaderWidth = theme.getInt("cuba.web.Table.defaultRowHeaderWidth", 16);
@@ -1397,11 +1397,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
                 if (propertyPath.getRange().isClass()) {
                     if (StringUtils.isNotEmpty(isLink)) {
-                        setClickListener(propertyPath.toString(), new LinkCellClickListener(this, beanLocator));
+                        setClickListener(propertyPath.toString(), new LinkCellClickListener(this, applicationContext));
                     }
                 } else if (propertyPath.getRange().isDatatype()) {
                     if (StringUtils.isNotEmpty(isLink)) {
-                        setClickListener(propertyPath.toString(), new LinkCellClickListener(this, beanLocator));
+                        setClickListener(propertyPath.toString(), new LinkCellClickListener(this, applicationContext));
                     } else {
                         if (column.getMaxTextLength() != null) {
                             addGeneratedColumnInternal(propertyPath, new AbbreviatedColumnGenerator(column, metadataTools));
@@ -2636,7 +2636,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return beanLocator.get(TableSettingsBinder.NAME);
+        return (ComponentSettingsBinder) applicationContext.getBean(TableSettingsBinder.NAME);
     }
 
     protected boolean needUpdatePresentation(Map<String, Object> variables) {
@@ -2765,11 +2765,11 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     protected TablePresentationsLayout createTablePresentationsLayout() {
-        return new TablePresentationsLayout(this, getSettingsBinder(), beanLocator);
+        return new TablePresentationsLayout(this, getSettingsBinder(), applicationContext);
     }
 
     protected TablePresentations createTablePresentations() {
-        return beanLocator.getPrototype(TablePresentations.NAME, this);
+        return (TablePresentations) applicationContext.getBean(TablePresentations.NAME, this);
     }
 
     @Nullable

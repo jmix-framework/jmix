@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.validation;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -38,8 +38,7 @@ import java.util.Collection;
  * <pre>
  *     &lt;bean id="ui_NotEmptyValidator" class="io.jmix.ui.component.validation.NotEmptyValidator" scope="prototype"/&gt;
  *     </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- *
+*
  * @param <T> Collection or String
  */
 @Component(NotEmptyValidator.NAME)

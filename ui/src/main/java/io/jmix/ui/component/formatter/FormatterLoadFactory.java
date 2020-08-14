@@ -17,7 +17,7 @@
 package io.jmix.ui.component.formatter;
 
 import com.google.common.collect.ImmutableMap;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class FormatterLoadFactory {
 
     public static final String NAME = "ui_FormatterLoadFactory";
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     protected final Map<String, Function<Element, ? extends Formatter>> FORMATTERS_MAP =
             ImmutableMap.<String, Function<Element, ? extends Formatter>>builder()
@@ -47,8 +47,8 @@ public class FormatterLoadFactory {
                     .build();
 
     @Autowired
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -77,11 +77,11 @@ public class FormatterLoadFactory {
     }
 
     protected ClassNameFormatter loadClassNameFormatter(Element element) {
-        return beanLocator.getPrototype(ClassNameFormatter.NAME);
+        return (ClassNameFormatter) applicationContext.getBean(ClassNameFormatter.NAME);
     }
 
     protected CollectionFormatter loadCollectionFormatter(Element element) {
-        return beanLocator.getPrototype(CollectionFormatter.NAME);
+        return (CollectionFormatter) applicationContext.getBean(CollectionFormatter.NAME);
     }
 
     protected Formatter loadCustomFormatter(Element element) {
@@ -90,11 +90,11 @@ public class FormatterLoadFactory {
             throw new IllegalArgumentException("Bean name is not defined");
         }
 
-        return beanLocator.getPrototype(bean);
+        return (Formatter) applicationContext.getBean(bean);
     }
 
     protected DateFormatter loadDateFormatter(Element element) {
-        DateFormatter formatter = beanLocator.getPrototype(DateFormatter.NAME);
+        DateFormatter formatter = (DateFormatter) applicationContext.getBean(DateFormatter.NAME);
 
         String format = element.attributeValue("format");
         if (StringUtils.isNotEmpty(format)) {
@@ -115,7 +115,7 @@ public class FormatterLoadFactory {
     }
 
     protected NumberFormatter loadNumberFormatter(Element element) {
-        NumberFormatter formatter = beanLocator.getPrototype(NumberFormatter.NAME);
+        NumberFormatter formatter = (NumberFormatter) applicationContext.getBean(NumberFormatter.NAME);
 
         String format = element.attributeValue("format");
         if (StringUtils.isNotEmpty(format)) {

@@ -21,7 +21,7 @@ import com.vaadin.server.UserError;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Layout;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
@@ -63,14 +63,14 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     protected Consumer<ContextHelpIconClickEvent> contextHelpIconClickHandler;
     protected Registration contextHelpIconClickListener;
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     // private, lazily initialized
     private EventHub eventHub = null;
 
     @Autowired
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     protected EventHub getEventHub() {
@@ -392,12 +392,12 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
 
     @Nullable
     protected Resource getIconResource(String icon) {
-        return beanLocator.get(IconResolver.class).getIconResource(icon);
+        return applicationContext.getBean(IconResolver.class).getIconResource(icon);
     }
 
     @Nullable
     protected String getIconName(@Nullable Icons.Icon icon) {
-        return beanLocator.get(Icons.class).get(icon);
+        return applicationContext.getBean(Icons.class).get(icon);
     }
 
     @Override
@@ -625,10 +625,10 @@ public abstract class WebAbstractComponent<T extends com.vaadin.ui.Component>
     }
 
     protected UiProperties getUiProperties() {
-        return beanLocator.get(UiProperties.class);
+        return applicationContext.getBean(UiProperties.class);
     }
 
     protected HtmlSanitizer getHtmlSanitizer() {
-        return beanLocator.get(HtmlSanitizer.class);
+        return applicationContext.getBean(HtmlSanitizer.class);
     }
 }

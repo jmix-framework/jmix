@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component.formatter;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -29,9 +29,7 @@ import javax.annotation.Nullable;
  * <p>
  * The formatter formats the string that contains the class path, where the packages are separated by dots,
  * into a string that is the class name.
- * <p>
- * Use {@link BeanLocator} when creating the formatter programmatically.
- */
+*/
 @Component(ClassNameFormatter.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ClassNameFormatter implements Formatter<String> {

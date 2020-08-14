@@ -18,7 +18,7 @@ package io.jmix.ui.component.validation;
 
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -40,8 +40,7 @@ import java.util.regex.Pattern;
  * <pre>
  *     &lt;bean id="ui_RegexpValidator" class="io.jmix.ui.component.validation.RegexpValidator" scope="prototype"/&gt;
  *     </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- *
+*
  * @see Pattern
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

@@ -16,13 +16,13 @@
 
 package io.jmix.ui;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.Facet;
 
 /**
  * Factory to create UI facets.
  * <br>
- * An instance of the factory can be injected into screen controllers or obtained through {@link BeanLocator}.
+ * An instance of the factory can be injected into screen controllers or obtained through {@link ApplicationContext}.
  */
 public interface Facets {
 

@@ -19,7 +19,7 @@ package io.jmix.ui.component.impl;
 import com.google.common.base.Strings;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.TabWindow;
 import io.jmix.ui.icon.IconResolver;
@@ -41,7 +41,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
 
     protected ContentSwitchMode contentSwitchMode = ContentSwitchMode.DEFAULT;
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public WebTabWindow() {
         setSizeFull();
@@ -51,8 +51,8 @@ public class WebTabWindow extends WebWindow implements TabWindow {
     }
 
     @Autowired
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
         if (component.isAttached()) {
             TabSheet.Tab tabWindow = findTab();
             if (tabWindow != null) {
-                IconResolver iconResolver = beanLocator.get(IconResolver.NAME);
+                IconResolver iconResolver = (IconResolver) applicationContext.getBean(IconResolver.NAME);
                 tabWindow.setIcon(iconResolver.getIconResource(icon));
             }
         }
@@ -170,7 +170,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
     public String formatTabCaption() {
         String s = formatTabDescription();
 
-        int maxLength = beanLocator.get(UiProperties.class).getMainTabCaptionLength();
+        int maxLength = applicationContext.getBean(UiProperties.class).getMainTabCaptionLength();
         if (s.length() > maxLength) {
             return s.substring(0, maxLength) + "...";
         } else {

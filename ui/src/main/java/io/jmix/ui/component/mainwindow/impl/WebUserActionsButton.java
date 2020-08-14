@@ -153,7 +153,7 @@ public class WebUserActionsButton extends WebAbstractComponent<JmixMenuBar>
             throw new IllegalStateException("Logout button is not attached to UI");
         }
 
-        String loginScreenId = beanLocator.get(UiProperties.class).getLoginScreenId();
+        String loginScreenId = applicationContext.getBean(UiProperties.class).getLoginScreenId();
 
         Screen loginScreen = ui.getScreens().create(loginScreenId, OpenMode.ROOT);
 

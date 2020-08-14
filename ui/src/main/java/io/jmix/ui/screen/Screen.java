@@ -16,7 +16,7 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
@@ -55,7 +55,7 @@ public abstract class Screen implements FrameOwner {
 
     private EventHub eventHub = new EventHub();
 
-    private BeanLocator beanLocator;
+    private ApplicationContext applicationContext;
 
     // Global event listeners
     private List<ApplicationListener> uiEventListeners;
@@ -63,13 +63,13 @@ public abstract class Screen implements FrameOwner {
     // Extensions state
     private Map<Class<?>, Object> extensions;
 
-    protected BeanLocator getBeanLocator() {
-        return beanLocator;
+    protected ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
     @Autowired
-    protected void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    protected void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     protected EventHub getEventHub() {

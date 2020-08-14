@@ -17,7 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContextAware;
 import io.jmix.ui.Screens;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioFacet;
@@ -48,7 +48,7 @@ import java.util.function.Supplier;
                 @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
         }
 )
-public interface ScreenFacet<S extends Screen> extends Facet, BeanLocatorAware {
+public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContextAware {
 
     /**
      * Sets the id of screen to open.

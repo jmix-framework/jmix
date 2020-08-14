@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.validation;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,8 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <pre>
  *     &lt;bean id="ui_NotNullValidator" class="io.jmix.ui.component.validation.NotNullValidator" scope="prototype"/&gt;
  *     </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- *
+*
  * @param <T> value type
  */
 @Component(NotNullValidator.NAME)

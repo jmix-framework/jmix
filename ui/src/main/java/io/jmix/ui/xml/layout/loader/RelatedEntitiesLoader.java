@@ -105,6 +105,6 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
     }
 
     protected WindowConfig getWindowConfig() {
-        return beanLocator.get(WindowConfig.NAME);
+        return (WindowConfig) applicationContext.getBean(WindowConfig.NAME);
     }
 }

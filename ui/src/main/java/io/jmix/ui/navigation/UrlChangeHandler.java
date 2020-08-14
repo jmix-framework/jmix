@@ -18,7 +18,7 @@ package io.jmix.ui.navigation;
 
 import com.vaadin.server.Page;
 import io.jmix.core.AccessManager;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
@@ -58,7 +58,7 @@ public class UrlChangeHandler implements InitializingBean {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected UrlTools urlTools;
 
@@ -86,8 +86,8 @@ public class UrlChangeHandler implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        historyNavigator = beanLocator.getPrototype(HistoryNavigator.NAME, ui, this);
-        screenNavigator = beanLocator.getPrototype(ScreenNavigator.NAME, ui);
+        historyNavigator = (HistoryNavigator) applicationContext.getBean(HistoryNavigator.NAME, ui, this);
+        screenNavigator = (ScreenNavigator) applicationContext.getBean(ScreenNavigator.NAME, ui);
     }
 
     public void handleUrlChange(Page.PopStateEvent event) {
@@ -195,7 +195,7 @@ public class UrlChangeHandler implements InitializingBean {
 
         loginScreen.show();
 
-        RedirectHandler redirectHandler = beanLocator.getPrototype(RedirectHandler.NAME, ui);
+        RedirectHandler redirectHandler = (RedirectHandler) applicationContext.getBean(RedirectHandler.NAME, ui);
         redirectHandler.schedule(navigationState);
 
         setRedirectHandler(redirectHandler);

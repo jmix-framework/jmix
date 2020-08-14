@@ -16,7 +16,7 @@
 package io.jmix.ui.component.presentation;
 
 import com.vaadin.ui.*;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.AppUI;
@@ -58,14 +58,14 @@ public class TablePresentationsLayout extends VerticalLayout {
     protected Map<Object, MenuBar.MenuItem> presentationsMenuMap;
 
     protected Messages messages;
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     protected PresentationActionsBuilder presentationActionsBuilder;
 
-    public TablePresentationsLayout(Table component, ComponentSettingsBinder settingsBinder, BeanLocator beanLocator) {
+    public TablePresentationsLayout(Table component, ComponentSettingsBinder settingsBinder, ApplicationContext applicationContext) {
         this.table = component;
-        this.beanLocator = beanLocator;
-        this.messages = beanLocator.get(Messages.NAME);
+        this.applicationContext = applicationContext;
+        this.messages = (Messages) applicationContext.getBean(Messages.NAME);
 
         this.tableImpl = table.unwrapOrNull(JmixEnhancedTable.class);
 
@@ -317,7 +317,7 @@ public class TablePresentationsLayout extends VerticalLayout {
     @Nullable
     protected PresentationActionsBuilder getPresentationActionsBuilder() {
         if (presentationActionsBuilder == null)
-            presentationActionsBuilder = beanLocator.getPrototype(PresentationActionsBuilder.NAME, table, settingsBinder);
+            presentationActionsBuilder = (PresentationActionsBuilder) applicationContext.getBean(PresentationActionsBuilder.NAME, table, settingsBinder);
         return presentationActionsBuilder;
     }
 

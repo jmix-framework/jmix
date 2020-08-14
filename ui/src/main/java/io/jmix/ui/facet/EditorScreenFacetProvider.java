@@ -16,7 +16,7 @@
 
 package io.jmix.ui.facet;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.builder.EditMode;
 import io.jmix.ui.component.EditorScreenFacet;
@@ -38,7 +38,7 @@ public class EditorScreenFacetProvider
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Override
     public Class<EditorScreenFacet> getFacetClass() {
@@ -48,7 +48,7 @@ public class EditorScreenFacetProvider
     @Override
     public EditorScreenFacet create() {
         WebEditorScreenFacet editorScreenFacet = new WebEditorScreenFacet();
-        editorScreenFacet.setBeanLocator(beanLocator);
+        editorScreenFacet.setApplicationContext(applicationContext);
         return editorScreenFacet;
     }
 

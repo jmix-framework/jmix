@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.validation;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <pre>
  *     &lt;bean id="ui_NotBlankValidator" class="io.jmix.ui.component.validation.NotBlankValidator" scope="prototype"/&gt;
  *     </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- */
+*/
 @Component(NotBlankValidator.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotBlankValidator extends AbstractValidator<String> {

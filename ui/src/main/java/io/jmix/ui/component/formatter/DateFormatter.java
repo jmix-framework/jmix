@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component.formatter;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStrings;
@@ -36,9 +36,7 @@ import java.util.Date;
  * {@link Date} formatter to be used in screen descriptors and controllers.
  * <p>
  * This formatter formats the {@link Date} value into a string depending on the format string.
- * <p>
- * Use {@link BeanLocator} when creating the formatter programmatically.
- */
+*/
 @Component(DateFormatter.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DateFormatter implements Formatter<Date> {

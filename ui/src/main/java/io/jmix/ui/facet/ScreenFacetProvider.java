@@ -16,7 +16,7 @@
 
 package io.jmix.ui.facet;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.ScreenFacet;
 import io.jmix.ui.component.impl.WebScreenFacet;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class ScreenFacetProvider extends AbstractScreenFacetProvider<ScreenFacet
     public static final String NAME = "jmix_ScreenFacetProvider";
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Override
     public Class<ScreenFacet> getFacetClass() {
@@ -39,7 +39,7 @@ public class ScreenFacetProvider extends AbstractScreenFacetProvider<ScreenFacet
     @Override
     public ScreenFacet create() {
         WebScreenFacet screenFacet = new WebScreenFacet();
-        screenFacet.setBeanLocator(beanLocator);
+        screenFacet.setApplicationContext(applicationContext);
         return screenFacet;
     }
 

@@ -16,7 +16,7 @@
 
 package io.jmix.uidata.settings;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasTablePresentations;
@@ -50,7 +50,7 @@ public class ScreenSettingsManager {
     protected ComponentSettingsRegistry settingsRegistry;
 
     @Inject
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     /**
      * Applies settings for component if {@link ComponentSettingsBinder} is created for it. See
@@ -75,7 +75,7 @@ public class ScreenSettingsManager {
 
             ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
 
-            ComponentSettingsBinder binder = beanLocator.get(settingsRegistry.getBinderClass(settingsClass));
+            ComponentSettingsBinder binder = applicationContext.getBean(settingsRegistry.getBinderClass(settingsClass));
 
             if (component instanceof HasTablePresentations) {
                 ComponentSettings defaultSettings = binder.getSettings(component);
@@ -115,7 +115,7 @@ public class ScreenSettingsManager {
 
             Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
-            ComponentSettingsBinder binder = beanLocator.get(settingsRegistry.getBinderClass(settingsClass));
+            ComponentSettingsBinder binder = applicationContext.getBean(settingsRegistry.getBinderClass(settingsClass));
 
             if (binder instanceof DataLoadingSettingsBinder) {
                 ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
@@ -149,7 +149,7 @@ public class ScreenSettingsManager {
 
             ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
 
-            ComponentSettingsBinder binder = beanLocator.get(settingsRegistry.getBinderClass(settingsClass));
+            ComponentSettingsBinder binder = applicationContext.getBean(settingsRegistry.getBinderClass(settingsClass));
 
             boolean settingsChanged = binder.saveSettings(component, new SettingsWrapperImpl(settings));
             if (settingsChanged) {

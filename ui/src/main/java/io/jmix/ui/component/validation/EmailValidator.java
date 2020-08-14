@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component.validation;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
@@ -37,8 +37,7 @@ import java.util.List;
  * <pre>
  *     &lt;bean id="ui_EmailValidator" class="io.jmix.ui.component.validation.EmailValidator" scope="prototype"/&gt;
  *     </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- */
+*/
 @Component(EmailValidator.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EmailValidator extends AbstractValidator<String> {

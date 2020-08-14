@@ -92,7 +92,7 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
     @SuppressWarnings("unchecked")
     @Override
     protected ContainerTableItems createContainerTableSource(CollectionContainer container) {
-        return new ContainerGroupTableItems(container, beanLocator.getPrototype(AggregatableDelegate.class));
+        return new ContainerGroupTableItems(container, applicationContext.getBean(AggregatableDelegate.class));
     }
 
     @Override

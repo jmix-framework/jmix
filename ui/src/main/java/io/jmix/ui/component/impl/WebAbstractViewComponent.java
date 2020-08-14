@@ -48,7 +48,7 @@ public abstract class WebAbstractViewComponent<T extends com.vaadin.ui.Component
         }
 
         if (valueSource != null) {
-            ValueBinder binder = beanLocator.get(ValueBinder.NAME, ValueBinder.class);
+            ValueBinder binder = applicationContext.getBean(ValueBinder.NAME, ValueBinder.class);
 
             this.valueBinding = binder.bind(this, valueSource);
 

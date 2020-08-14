@@ -30,6 +30,7 @@ import io.jmix.ui.model.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -59,7 +60,7 @@ public class ScreenDataXmlLoader {
     protected ConditionXmlLoader conditionXmlLoader;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
@@ -76,7 +77,7 @@ public class ScreenDataXmlLoader {
             screenData.setDataContext(hostDataContext);
         } else {
             boolean readOnly = Boolean.parseBoolean(element.attributeValue("readOnly"));
-            DataContext dataContext = readOnly ? new NoopDataContext(beanLocator) : factory.createDataContext();
+            DataContext dataContext = readOnly ? new NoopDataContext(applicationContext) : factory.createDataContext();
             screenData.setDataContext(dataContext);
         }
 

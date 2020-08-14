@@ -52,10 +52,10 @@ public class StandardLookup<T extends JmixEntity> extends Screen implements Look
     protected void initActions(@SuppressWarnings("unused") InitEvent event) {
         Window window = getWindow();
 
-        Messages messages = getBeanLocator().get(Messages.class);
-        Icons icons = getBeanLocator().get(Icons.NAME);
+        Messages messages = getApplicationContext().getBean(Messages.class);
+        Icons icons = (Icons) getApplicationContext().getBean(Icons.NAME);
 
-        String commitShortcut = getBeanLocator().get(UiProperties.class).getCommitShortcut();
+        String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
 
         Action commitAction = new BaseAction(LOOKUP_SELECT_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Select"))

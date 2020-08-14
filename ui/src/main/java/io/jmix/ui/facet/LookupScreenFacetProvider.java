@@ -16,7 +16,7 @@
 
 package io.jmix.ui.facet;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.LookupScreenFacet;
 import io.jmix.ui.component.impl.WebLookupScreenFacet;
@@ -31,7 +31,7 @@ public class LookupScreenFacetProvider
     public static final String NAME = "ui_LookupScreenFacetProvider";
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected Metadata metadata;
 
@@ -43,7 +43,7 @@ public class LookupScreenFacetProvider
     @Override
     public LookupScreenFacet create() {
         WebLookupScreenFacet lookupScreenFacet = new WebLookupScreenFacet();
-        lookupScreenFacet.setBeanLocator(beanLocator);
+        lookupScreenFacet.setApplicationContext(applicationContext);
         return lookupScreenFacet;
     }
 

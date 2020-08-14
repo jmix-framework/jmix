@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.Future;
@@ -98,7 +99,7 @@ public abstract class App {
     @Autowired
     protected Events events;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected UiProperties uiProperties;
 
@@ -205,9 +206,9 @@ public abstract class App {
 
         log.debug("Initializing application");
 
-        appLog = new AppLog(10, beanLocator.get(TimeSource.NAME));
+        appLog = new AppLog(10, (TimeSource) applicationContext.getBean(TimeSource.NAME));
 
-        exceptionHandlers = new ExceptionHandlers(this, beanLocator);
+        exceptionHandlers = new ExceptionHandlers(this, applicationContext);
         cookies = new AppCookies();
 
         themeConstants = loadTheme();
@@ -535,8 +536,8 @@ public abstract class App {
 
                 UnknownOperationResult result = new UnknownOperationResult();
 
-                Messages messages = beanLocator.get(Messages.NAME);
-                Icons icons = beanLocator.get(Icons.NAME);
+                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+                Icons icons = (Icons) applicationContext.getBean(Icons.NAME);
 
                 Dialogs dialogs = ui.getDialogs();
 

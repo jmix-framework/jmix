@@ -60,7 +60,7 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
     }
 
     protected Metadata getMetadata() {
-        return beanLocator.get(Metadata.NAME);
+        return (Metadata) applicationContext.getBean(Metadata.NAME);
     }
 
     protected void loadPopupWidth(EntitySuggestionField suggestionField, Element element) {
@@ -74,7 +74,7 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
             suggestionField.setOptionCaptionProvider(
-                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
         }
     }
 
@@ -93,7 +93,7 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
     }
 
     protected Actions getActions() {
-        return beanLocator.get(Actions.NAME);
+        return (Actions) applicationContext.getBean(Actions.NAME);
     }
 
     protected void loadMetaClass(EntitySuggestionField suggestionField, Element element) {

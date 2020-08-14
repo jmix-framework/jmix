@@ -16,9 +16,9 @@
 package io.jmix.ui.exception;
 
 import com.vaadin.server.ErrorEvent;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContextAware;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import org.slf4j.Logger;
@@ -45,17 +45,17 @@ public class ExceptionHandlers {
     private static final Logger log = LoggerFactory.getLogger(ExceptionHandlers.class);
 
     protected App app;
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     protected List<ExceptionHandler> handlers = new ArrayList<>();
     protected List<UiExceptionHandler> genericHandlers = new ArrayList<>();
 
     protected ExceptionHandler defaultHandler;
 
-    public ExceptionHandlers(App app, BeanLocator beanLocator) {
+    public ExceptionHandlers(App app, ApplicationContext applicationContext) {
         this.app = app;
-        this.beanLocator = beanLocator;
-        this.defaultHandler = new DefaultExceptionHandler(beanLocator);
+        this.applicationContext = applicationContext;
+        this.defaultHandler = new DefaultExceptionHandler(applicationContext);
     }
 
     /**
@@ -127,7 +127,7 @@ public class ExceptionHandlers {
         removeAll();
 
         // Web handlers
-        Map<String, ExceptionHandlersConfiguration> map = beanLocator.getAll(ExceptionHandlersConfiguration.class);
+        Map<String, ExceptionHandlersConfiguration> map = applicationContext.getBeansOfType(ExceptionHandlersConfiguration.class);
 
         // Project-level handlers must run before platform-level
         List<ExceptionHandlersConfiguration> configurations = new ArrayList<>(map.values());
@@ -138,8 +138,8 @@ public class ExceptionHandlers {
                 try {
                     ExceptionHandler handler = ReflectionHelper.<ExceptionHandler>newInstance(aClass);
 
-                    if (handler instanceof BeanLocatorAware) {
-                        ((BeanLocatorAware) handler).setBeanLocator(beanLocator);
+                    if (handler instanceof ApplicationContextAware) {
+                        ((ApplicationContextAware) handler).setApplicationContext(applicationContext);
                     }
 
                     addHandler(handler);
@@ -150,7 +150,7 @@ public class ExceptionHandlers {
         }
 
         // GUI handlers
-        Map<String, UiExceptionHandler> handlerMap = beanLocator.getAll(UiExceptionHandler.class);
+        Map<String, UiExceptionHandler> handlerMap = applicationContext.getBeansOfType(UiExceptionHandler.class);
 
         List<UiExceptionHandler> handlers = new ArrayList<>(handlerMap.values());
         handlers.sort(new OrderComparator());

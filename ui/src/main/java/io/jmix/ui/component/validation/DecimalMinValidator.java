@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.validation;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -45,8 +45,7 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
  * <pre>
  *   &lt;bean id="ui_DecimalMinValidator" class="io.jmix.ui.component.validation.DecimalMinValidator" scope="prototype"/&gt;
  *   </pre>
- * Use {@link BeanLocator} when creating the validator programmatically.
- *
+*
  * @param <T> BigDecimal, BigInteger, Long, Integer and String that represents BigDecimal value with current locale
  */
 @Component(DecimalMinValidator.NAME)

@@ -23,7 +23,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.themes.ValoTheme;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
@@ -69,7 +69,7 @@ public class WindowBreadCrumbs extends CssLayout {
         this.ui = ui;
     }
 
-    public void setBeanLocator(BeanLocator beanLocator) {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         setWidth(100, Unit.PERCENTAGE);
         setHeightUndefined();
         setPrimaryStyleName(C_HEADLINE_CONTAINER);
@@ -84,12 +84,12 @@ public class WindowBreadCrumbs extends CssLayout {
         linksLayout.setSizeUndefined();
 
         if (workAreaMode == Mode.SINGLE) {
-            Messages messages = beanLocator.get(Messages.NAME);
+            Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
 
             JmixButton closeBtn = new JmixButton("");
             closeBtn.setDescription(messages.getMessage("windowBreadCrumbs.closeButton.description"));
             closeBtn.setClickHandler(this::onCloseWindowButtonClick);
-            closeBtn.setIcon(resolveIcon(beanLocator, JmixIcon.CLOSE));
+            closeBtn.setIcon(resolveIcon(applicationContext, JmixIcon.CLOSE));
             closeBtn.setStyleName("c-closetab-button");
 
             this.closeBtn = closeBtn;
@@ -101,7 +101,7 @@ public class WindowBreadCrumbs extends CssLayout {
         addComponent(logoLayout);
         addComponent(enclosingLayout);
 
-        boolean controlsVisible = beanLocator.get(UiProperties.class).isShowBreadCrumbs();
+        boolean controlsVisible = applicationContext.getBean(UiProperties.class).isShowBreadCrumbs();
 
         enclosingLayout.setVisible(controlsVisible);
 
@@ -111,9 +111,9 @@ public class WindowBreadCrumbs extends CssLayout {
     }
 
     @Nullable
-    protected Resource resolveIcon(BeanLocator beanLocator, JmixIcon icon) {
-        String iconName = beanLocator.get(Icons.class).get(icon);
-        return beanLocator.get(IconResolver.class).getIconResource(iconName);
+    protected Resource resolveIcon(ApplicationContext applicationContext, JmixIcon icon) {
+        String iconName = applicationContext.getBean(Icons.class).get(icon);
+        return applicationContext.getBean(IconResolver.class).getIconResource(iconName);
     }
 
     protected void onCloseWindowButtonClick(@SuppressWarnings("unused") MouseEventDetails meDetails) {

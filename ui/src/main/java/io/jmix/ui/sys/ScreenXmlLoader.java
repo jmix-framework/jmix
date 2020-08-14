@@ -16,7 +16,7 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Resources;
 import io.jmix.ui.monitoring.ScreenLifeCycle;
@@ -50,7 +50,7 @@ public class ScreenXmlLoader {
     @Autowired
     protected ScreenXmlParser screenXmlParser;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected MeterRegistry meterRegistry;
 
@@ -96,7 +96,7 @@ public class ScreenXmlLoader {
     protected Document createDocument(String template, Map<String, Object> params) {
         Document originalDocument = screenXmlParser.parseDescriptor(template);
 
-        XmlInheritanceProcessor processor = beanLocator.getPrototype(XmlInheritanceProcessor.NAME,
+        XmlInheritanceProcessor processor = (XmlInheritanceProcessor) applicationContext.getBean(XmlInheritanceProcessor.NAME,
                 originalDocument, params);
         Element resultRoot = processor.getResultRoot();
 

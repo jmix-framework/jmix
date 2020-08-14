@@ -99,7 +99,7 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
 
         if (!StringUtils.isEmpty(captionProperty)) {
             resultComponent.setItemCaptionProvider(
-                    new CaptionAdapter(captionProperty, beanLocator.get(Metadata.class), beanLocator.get(MetadataTools.class)));
+                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
         }
     }
 

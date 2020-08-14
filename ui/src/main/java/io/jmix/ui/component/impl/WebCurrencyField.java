@@ -167,7 +167,7 @@ public class WebCurrencyField<V extends Number> extends WebV8AbstractField<JmixC
             }
         }
 
-        return beanLocator.get(Messages.class)
+        return applicationContext.getBean(Messages.class)
                 .getMessage("databinding.conversion.error");
     }
 

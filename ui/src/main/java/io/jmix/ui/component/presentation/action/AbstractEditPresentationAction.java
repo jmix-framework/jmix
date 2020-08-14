@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.presentation.action;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.presentation.PresentationEditor;
 import io.jmix.ui.component.Table;
@@ -29,7 +29,7 @@ public abstract class AbstractEditPresentationAction extends AbstractPresentatio
     protected Class<? extends PresentationEditor> editorClass;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public AbstractEditPresentationAction(Table table, String id, ComponentSettingsBinder settingsBinder) {
         super(table, id, settingsBinder);
@@ -44,7 +44,7 @@ public abstract class AbstractEditPresentationAction extends AbstractPresentatio
     protected PresentationEditor createEditor(TablePresentation presentation, ComponentSettingsBinder settingsBinder) {
         Class<? extends PresentationEditor> windowClass = getPresentationEditorClass();
 
-        return beanLocator.getPrototype(windowClass,
+        return applicationContext.getBean(windowClass,
                 table.getFrame().getFrameOwner(),
                 presentation,
                 table,

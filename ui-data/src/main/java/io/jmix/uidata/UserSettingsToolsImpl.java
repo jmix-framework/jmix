@@ -16,7 +16,7 @@
 
 package io.jmix.uidata;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.AppWorkArea;
@@ -42,7 +42,7 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
     protected UiProperties uiProperties;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public AppWorkArea.Mode loadAppWindowMode() {
         String s = userSettingService.loadSetting("appWindowMode");
@@ -94,14 +94,14 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
     @Override
     public <T extends ComponentSettings> T toComponentSettings(String settings, Class<T> settingsClass) {
         // screen id is empty as we won't commit any changes
-        ScreenSettings screenSettings = beanLocator.getPrototype(ScreenSettings.NAME, "");
+        ScreenSettings screenSettings = (ScreenSettings) applicationContext.getBean(ScreenSettings.NAME, "");
         return screenSettings.toComponentSettings(settings, settingsClass);
     }
 
     @Override
     public String toSettingsString(ComponentSettings settings) {
         // screen id is empty as we won't commit any changes
-        ScreenSettings screenSettings = beanLocator.getPrototype(ScreenSettings.NAME, "");
+        ScreenSettings screenSettings = (ScreenSettings) applicationContext.getBean(ScreenSettings.NAME, "");
         return screenSettings.toSettingsString(settings);
     }
 

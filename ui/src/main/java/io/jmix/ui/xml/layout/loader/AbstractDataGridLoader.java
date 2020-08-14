@@ -252,16 +252,16 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     }
 
     protected Metadata getMetadata() {
-        return beanLocator.get(Metadata.NAME);
+        return (Metadata) applicationContext.getBean(Metadata.NAME);
     }
 
     protected FetchPlanRepository getViewRepository() {
-        return beanLocator.get(FetchPlanRepository.NAME);
+        return (FetchPlanRepository) applicationContext.getBean(FetchPlanRepository.NAME);
     }
 
     @SuppressWarnings("unchecked")
     protected DataGridItems createContainerDataGridSource(CollectionContainer container) {
-        return new ContainerDataGridItems(container, beanLocator.getPrototype(AggregatableDelegate.class));
+        return new ContainerDataGridItems(container, applicationContext.getBean(AggregatableDelegate.class));
     }
 
     protected DataGridItems createEmptyDataGridItems(MetaClass metaClass) {
@@ -597,7 +597,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     }
 
     protected DataGrid.Renderer loadRendererByClass(Element rendererElement, Class<? extends DataGrid.Renderer> rendererClass) {
-        DataGrid.Renderer renderer = beanLocator.getPrototype(rendererClass);
+        DataGrid.Renderer renderer = applicationContext.getBean(rendererClass);
 
         if (renderer instanceof DataGrid.HasNullRepresentation) {
             loadNullRepresentation(rendererElement, (DataGrid.HasNullRepresentation) renderer);
@@ -664,7 +664,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     }
 
     protected MetadataTools getMetadataTools() {
-        return beanLocator.get(MetadataTools.NAME);
+        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
     }
 
     protected void loadSelectionMode(DataGrid component, Element element) {

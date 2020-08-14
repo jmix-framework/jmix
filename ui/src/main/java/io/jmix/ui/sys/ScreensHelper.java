@@ -39,6 +39,7 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -70,7 +71,7 @@ public class ScreensHelper {
     @Autowired
     protected LayoutLoaderConfig layoutLoaderConfig;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected Dom4jTools dom4JTools;
     @Autowired
@@ -545,7 +546,7 @@ public class ScreensHelper {
             try {
                 Document document = dom4JTools.readDocument(text);
                 XmlInheritanceProcessor processor =
-                        beanLocator.getPrototype(XmlInheritanceProcessor.NAME, document, emptyMap());
+                        (XmlInheritanceProcessor) applicationContext.getBean(XmlInheritanceProcessor.NAME, document, emptyMap());
                 Element root = processor.getResultRoot();
                 if (root.getName().equals("window")
                         || root.getName().equals(Fragment.NAME)) {

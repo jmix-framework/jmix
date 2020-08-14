@@ -67,7 +67,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
 
     protected void initLogoImage() {
         Image logoImage = getLogoImage();
-        String logoImagePath = getBeanLocator().get(Messages.class)
+        String logoImagePath = getApplicationContext().getBean(Messages.class)
                 .getMessage(APP_LOGO_IMAGE);
 
         if (logoImage != null
@@ -89,7 +89,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
         Image logoImage = getLogoImage();
         if (logoImage != null) {
             LayoutAnalyzerContextMenuProvider laContextMenuProvider =
-                    getBeanLocator().get(LayoutAnalyzerContextMenuProvider.NAME);
+                    (LayoutAnalyzerContextMenuProvider) getApplicationContext().getBean(LayoutAnalyzerContextMenuProvider.NAME);
             laContextMenuProvider.initContextMenu(this, logoImage);
         }
     }
@@ -154,7 +154,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
     protected void onAfterShow(AfterShowEvent event) {
         Screens screens = UiControllerUtils.getScreenContext(this)
                 .getScreens();
-        getBeanLocator().get(ScreenTools.class)
+        getApplicationContext().getBean(ScreenTools.class)
                 .openDefaultScreen(screens);
     }
 
@@ -211,7 +211,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
     }
 
     protected void openLoginScreen() {
-        String loginScreenId = getBeanLocator().get(UiProperties.class).getLoginScreenId();
+        String loginScreenId = getApplicationContext().getBean(UiProperties.class).getLoginScreenId();
 
         UiControllerUtils.getScreenContext(this)
                 .getScreens()
@@ -235,7 +235,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
         setStyleName(sideMenuPanel, SIDEMENU_COLLAPSED_STYLENAME, collapsed);
 
         if (collapseMenuButton != null) {
-            Messages messages = getBeanLocator().get(Messages.class);
+            Messages messages = getApplicationContext().getBean(Messages.class);
             if (collapsed) {
                 collapseMenuButton.setCaption(messages.getMessage("menuExpandGlyph"));
                 collapseMenuButton.setDescription(messages.getMessage("sideMenuExpand"));

@@ -89,15 +89,15 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
     }
 
     protected GuiActionSupport getGuiActionSupport() {
-        return beanLocator.get(GuiActionSupport.NAME);
+        return (GuiActionSupport) applicationContext.getBean(GuiActionSupport.NAME);
     }
 
     protected Actions getActions() {
-        return beanLocator.get(Actions.NAME);
+        return (Actions) applicationContext.getBean(Actions.NAME);
     }
 
     protected Metadata getMetadata() {
-        return beanLocator.get(Metadata.NAME);
+        return (Metadata) applicationContext.getBean(Metadata.NAME);
     }
 
     @Override

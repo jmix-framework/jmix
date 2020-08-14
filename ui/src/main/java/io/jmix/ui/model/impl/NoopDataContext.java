@@ -20,6 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.ui.model.DataContext;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -33,10 +34,10 @@ import java.util.function.Function;
  */
 public class NoopDataContext implements DataContext {
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
-    public NoopDataContext(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public NoopDataContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Nullable
@@ -83,7 +84,7 @@ public class NoopDataContext implements DataContext {
 
     @Override
     public <T extends JmixEntity> T create(Class<T> entityClass) {
-        return beanLocator.get(Metadata.class).create(entityClass);
+        return applicationContext.getBean(Metadata.class).create(entityClass);
     }
 
     @Override

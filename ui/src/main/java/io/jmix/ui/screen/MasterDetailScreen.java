@@ -239,7 +239,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
         ListComponent<T> table = getTable();
         CreateAction createAction = (CreateAction) table.getActionNN("create");
         createAction.withHandler(actionPerformedEvent -> {
-            T entity = getBeanLocator().get(Metadata.class).create(getEntityClass());
+            T entity = getApplicationContext().getBean(Metadata.class).create(getEntityClass());
             T trackedEntity = getScreenData().getDataContext().merge(entity);
             // todo dynamic attributes
 /*            DynamicAttributesGuiTools tools = getBeanLocator().get(DynamicAttributesGuiTools.NAME);
@@ -287,9 +287,9 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
             }
         });
 
-        MetaClass entityMetaClass = getBeanLocator().get(Metadata.class).getClass(getEntityClass());
+        MetaClass entityMetaClass = getApplicationContext().getBean(Metadata.class).getClass(getEntityClass());
         UiEntityContext entityContext = new UiEntityContext(entityMetaClass);
-        getBeanLocator().get(AccessManager.class).applyRegisteredConstraints(entityContext);
+        getApplicationContext().getBean(AccessManager.class).applyRegisteredConstraints(entityContext);
 
         editAction.addEnabledRule(() ->
                 table.getSelected().size() == 1
@@ -375,14 +375,14 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
      * Pessimistic lock before start of editing, if it is configured for the entity.
      */
     protected boolean lockIfNeeded(JmixEntity entity) {
-        LockManager lockService = getBeanLocator().get(LockManager.class);
+        LockManager lockService = getApplicationContext().getBean(LockManager.class);
 
         LockInfo lockInfo = lockService.lock(getLockName(), EntityValues.getId(entity).toString());
         if (lockInfo == null) {
             justLocked = true;
         } else if (!(lockInfo instanceof LockNotSupported)) {
-            Messages messages = getBeanLocator().get(Messages.class);
-            DatatypeFormatter datatypeFormatter = getBeanLocator().get(DatatypeFormatter.NAME);
+            Messages messages = getApplicationContext().getBean(Messages.class);
+            DatatypeFormatter datatypeFormatter = (DatatypeFormatter) getApplicationContext().getBean(DatatypeFormatter.NAME);
             Notifications notifications = getScreenContext().getNotifications();
 
             notifications.create(Notifications.NotificationType.HUMANIZED)
@@ -404,7 +404,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
         if (justLocked) {
             JmixEntity entity = getEditContainer().getItemOrNull();
             if (entity != null) {
-                getBeanLocator().get(LockManager.class).unlock(getLockName(), EntityValues.getId(entity).toString());
+                getApplicationContext().getBean(LockManager.class).unlock(getLockName(), EntityValues.getId(entity).toString());
             }
         }
     }
@@ -414,7 +414,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
      */
     protected String getLockName() {
         InstanceContainer<T> container = getEditContainer();
-        return getBeanLocator().get(ExtendedEntities.class)
+        return getApplicationContext().getBean(ExtendedEntities.class)
                 .getOriginalOrThisMetaClass(container.getEntityMetaClass())
                 .getName();
     }
@@ -450,7 +450,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
     protected OperationResult commitEditorChanges() {
         ValidationErrors validationErrors = validateEditorForm();
         if (!validationErrors.isEmpty()) {
-            ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.class);
+            ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
             screenValidation.showValidationErrors(this, validationErrors);
             return OperationResult.fail();
         }
@@ -488,7 +488,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
         if (selectedItem != null) {
             FetchPlan fetchPlan = getEditContainer().getFetchPlan();
 
-            T reloadedItem = getBeanLocator().get(DataManager.class)
+            T reloadedItem = getApplicationContext().getBean(DataManager.class)
                     .load(Id.of(selectedItem))
                     .fetchPlan(fetchPlan)
                     .hints(getEditLoader().getHints())
@@ -536,7 +536,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
      * @return validation errors
      */
     protected ValidationErrors validateUiComponents() {
-        ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
         return screenValidation.validateUiComponents(getForm().getComponents());
     }
 
@@ -548,7 +548,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
     protected void validateAdditionalRules(ValidationErrors errors) {
         // all previous validations return no errors
         if (isCrossFieldValidate() && errors.isEmpty()) {
-            ScreenValidation screenValidation = getBeanLocator().get(ScreenValidation.NAME);
+            ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
 
             ValidationErrors validationErrors =
                     screenValidation.validateCrossFieldRules(this, getEditContainer().getItem());

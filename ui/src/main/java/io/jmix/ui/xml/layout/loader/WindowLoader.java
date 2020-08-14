@@ -117,7 +117,7 @@ public class WindowLoader extends ContainerLoader<Window> implements ComponentRo
     protected void loadScreenData(Window window, Element element) {
         Element dataEl = element.element("data");
         if (dataEl != null) {
-            ScreenDataXmlLoader screenDataXmlLoader = beanLocator.get(ScreenDataXmlLoader.class);
+            ScreenDataXmlLoader screenDataXmlLoader = applicationContext.getBean(ScreenDataXmlLoader.class);
             ScreenData screenData = UiControllerUtils.getScreenData(window.getFrameOwner());
             screenDataXmlLoader.load(screenData, dataEl, null);
 
@@ -203,7 +203,7 @@ public class WindowLoader extends ContainerLoader<Window> implements ComponentRo
             List<Element> facetElements = facetsElement.elements();
 
             for (Element facetElement : facetElements) {
-                FacetLoader loader = beanLocator.get(FacetLoader.NAME);
+                FacetLoader loader = (FacetLoader) applicationContext.getBean(FacetLoader.NAME);
                 Facet facet = loader.load(facetElement, getComponentContext());
 
                 resultComponent.addFacet(facet);

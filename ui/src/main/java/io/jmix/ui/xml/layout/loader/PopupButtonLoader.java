@@ -102,7 +102,7 @@ public class PopupButtonLoader extends AbstractComponentLoader<PopupButton> {
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String type = element.attributeValue("type");
         if (StringUtils.isNotEmpty(type)) {
-            Actions actions = beanLocator.get(Actions.NAME);
+            Actions actions = (Actions) applicationContext.getBean(Actions.NAME);
 
             String id = loadActionId(element);
             Action action = actions.create(type, id);

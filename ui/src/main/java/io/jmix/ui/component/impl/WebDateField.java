@@ -144,10 +144,10 @@ public class WebDateField<V extends Comparable<V>>
 
     @Override
     public void afterPropertiesSet() {
-        CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.class);
+        CurrentAuthentication currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         Locale locale = currentAuthentication.getLocale();
 
-        FormatStringsRegistry formatStringsRegistry = beanLocator.get(FormatStringsRegistry.NAME);
+        FormatStringsRegistry formatStringsRegistry = (FormatStringsRegistry) applicationContext.getBean(FormatStringsRegistry.NAME);
 
         dateField.setDateFormat(formatStringsRegistry.getFormatStrings(locale).getDateFormat());
         dateField.setResolution(DateResolution.DAY);
@@ -283,7 +283,7 @@ public class WebDateField<V extends Comparable<V>>
 
     protected void handleDateOutOfRange(V value) {
         if (getFrame() != null) {
-            Messages messages = beanLocator.get(Messages.NAME);
+            Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
             Notifications notifications = ComponentsHelper.getScreenContext(this).getNotifications();
 
             notifications.create()
@@ -515,7 +515,7 @@ public class WebDateField<V extends Comparable<V>>
 
         if (valueSource instanceof EntityValueSource) {
             EntityValueSource entityValueSource = (EntityValueSource) valueSource;
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             dataAwareComponentsTools.setupDateFormat(this, entityValueSource);
             dataAwareComponentsTools.setupZoneId(this, entityValueSource);
 
@@ -695,7 +695,7 @@ public class WebDateField<V extends Comparable<V>>
             return;
         }
 
-        Messages messages = beanLocator.get(Messages.NAME);
+        Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
 
         V value = constructModelValue();
         if (!checkRange(value, false)) {

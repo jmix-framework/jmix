@@ -32,7 +32,6 @@ import io.jmix.ui.component.data.ValueConversionException;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.widget.JmixMaskedTextField;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.InitializingBean;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,7 +204,7 @@ public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, S
     }
 
     protected String getConversionErrorMessage() {
-        Messages messages = beanLocator.get(Messages.NAME);
+        Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
         return messages.getMessage("databinding.conversion.error");
     }
 

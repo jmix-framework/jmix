@@ -17,7 +17,7 @@ package io.jmix.ui.exception;
 
 import com.vaadin.server.ErrorEvent;
 import com.vaadin.ui.Window;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.App;
@@ -34,13 +34,13 @@ import java.net.SocketException;
  */
 public class DefaultExceptionHandler implements ExceptionHandler {
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     protected Messages messages;
 
-    public DefaultExceptionHandler(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
-        messages = beanLocator.get(Messages.class);
+    public DefaultExceptionHandler(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        messages = applicationContext.getBean(Messages.class);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
         if (rootCause == null) {
             rootCause = exception;
         }
-        ExceptionDialog dialog = new ExceptionDialog(rootCause, beanLocator);
+        ExceptionDialog dialog = new ExceptionDialog(rootCause, applicationContext);
         for (Window window : ui.getWindows()) {
             if (window.isModal()) {
                 dialog.setModal(true);

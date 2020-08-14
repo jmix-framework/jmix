@@ -209,7 +209,7 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
         if (isEmpty() && isRequired()) {
             String requiredMessage = getRequiredMessage();
             if (requiredMessage == null) {
-                Messages messages = beanLocator.get(Messages.NAME);
+                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
                 requiredMessage = messages.getMessage("validationFail.defaultRequiredMessage");
             }
             throw new RequiredValueMissingException(requiredMessage, this);
@@ -243,7 +243,7 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
             return null;
         }
 
-        DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.class);
+        DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
 
         String datatypeId = datatypeRegistry
 //                .getIdOrNull(datatype); TODO VM
@@ -259,11 +259,11 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
 
         String msgKey = String.format("databinding.conversion.error.%s", datatypeId);
 
-        String msg = beanLocator.get(Messages.class)
+        String msg = applicationContext.getBean(Messages.class)
                 .getMessage(msgKey);
 
         if (msgKey.equals(msg)) {
-            msg = beanLocator.get(Messages.class)
+            msg = applicationContext.getBean(Messages.class)
                     .getMessage("databinding.conversion.error.defaultMessage");
         }
 

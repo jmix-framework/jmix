@@ -76,7 +76,7 @@ public abstract class WebAbstractResourceView<T extends AbstractEmbedded> extend
 
     @Override
     public <R extends Resource> R setSource(Class<R> type) {
-        R resource = beanLocator.getPrototype(type);
+        R resource = applicationContext.getBean(type);
 
         updateValue(resource);
 

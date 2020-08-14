@@ -286,11 +286,11 @@ public class FormLoader extends AbstractComponentLoader<Form> {
     }
 
     protected MetadataTools getMetadataTools() {
-        return beanLocator.get(MetadataTools.NAME);
+        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
     }
 
     protected UiComponentsGenerator getUiComponentsGenerator() {
-        return beanLocator.get(UiComponentsGenerator.NAME);
+        return (UiComponentsGenerator) applicationContext.getBean(UiComponentsGenerator.NAME);
     }
 
     protected void loadCaptionPosition(Form resultComponent, Element element) {

@@ -23,6 +23,7 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
@@ -33,9 +34,9 @@ public class LinkCellClickListener implements Table.CellClickListener {
     protected Table table;
     protected Metadata metadata;
 
-    public LinkCellClickListener(Table table, BeanLocator beanLocator) {
+    public LinkCellClickListener(Table table, ApplicationContext applicationContext) {
         this.table = table;
-        this.metadata = beanLocator.get(Metadata.class);
+        this.metadata = applicationContext.getBean(Metadata.class);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
             wm = window.getWindowManager();
         }
 
-        Messages messages = beanLocator.get(Messages.NAME, Messages.class);
+        Messages messages = applicationContext.get(Messages.NAME, Messages.class);
 
         if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted()) {
             wm.showNotification(messages.getMessage("OpenAction.objectIsDeleted"),
@@ -82,11 +83,11 @@ public class LinkCellClickListener implements Table.CellClickListener {
             DataSupplier dataSupplier = frameOwner.getDsContext().getDataSupplier();
             entity = dataSupplier.reload(entity, View.MINIMAL);
         } else {
-            DataManager dataManager = beanLocator.get(DataManager.NAME, DataManager.class);
+            DataManager dataManager = applicationContext.get(DataManager.NAME, DataManager.class);
             entity = dataManager.reload(entity, View.MINIMAL);
         }
 
-        WindowConfig windowConfig = beanLocator.get(WindowConfig.NAME, WindowConfig.class);
+        WindowConfig windowConfig = applicationContext.get(WindowConfig.NAME, WindowConfig.class);
 
         String windowAlias = null;
         if (column.getXmlDescriptor() != null) {

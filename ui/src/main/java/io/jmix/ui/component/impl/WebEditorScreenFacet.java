@@ -145,7 +145,7 @@ public class WebEditorScreenFacet<E extends JmixEntity, S extends Screen & Edito
     protected EditorBuilder<E> createEditorBuilder(Frame owner, @Nullable E entityToEdit) {
         EditorBuilder<E> builder;
 
-        ScreenBuilders screenBuilders = beanLocator.get(ScreenBuilders.class);
+        ScreenBuilders screenBuilders = applicationContext.getBean(ScreenBuilders.class);
 
         if (entityClass != null) {
             builder = screenBuilders.editor(entityClass, owner.getFrameOwner());

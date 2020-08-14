@@ -18,7 +18,8 @@ package io.jmix.ui.menu;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.ScreenBuilders;
@@ -77,7 +78,7 @@ public class MenuItemCommands {
     @Autowired
     protected ScreenBuilders screenBuilders;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected MeterRegistry meterRegistry;
 
@@ -283,7 +284,7 @@ public class MenuItemCommands {
                         .collect(Collectors.toList());
             }
 
-            UiControllerPropertyInjector propertyInjector = beanLocator.getPrototype(UiControllerPropertyInjector.NAME,
+            UiControllerPropertyInjector propertyInjector = (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME,
                     screen, properties);
             propertyInjector.inject();
 
@@ -377,7 +378,7 @@ public class MenuItemCommands {
 
             Timer.Sample sample = Timer.start(meterRegistry);
 
-            Object beanInstance = beanLocator.get(bean);
+            Object beanInstance = applicationContext.getBean(bean);
             try {
                 Method methodWithParams = MethodUtils.getAccessibleMethod(beanInstance.getClass(), beanMethod, Map.class);
                 if (methodWithParams != null) {
@@ -456,8 +457,8 @@ public class MenuItemCommands {
                 throw new DevelopmentException(String.format("Failed to get a new instance of %s", runnableClass));
             }
 
-            if (classInstance instanceof BeanLocatorAware) {
-                ((BeanLocatorAware) classInstance).setBeanLocator(beanLocator);
+            if (classInstance instanceof ApplicationContextAware) {
+                ((ApplicationContextAware) classInstance).setApplicationContext(applicationContext);
             }
 
             if (classInstance instanceof MenuItemRunnable) {

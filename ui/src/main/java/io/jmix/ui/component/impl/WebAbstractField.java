@@ -62,7 +62,7 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
         }
 
         if (valueSource != null) {
-            ValueBinder binder = beanLocator.get(ValueBinder.class);
+            ValueBinder binder = applicationContext.getBean(ValueBinder.class);
 
             this.valueBinding = binder.bind(this, valueSource);
 
@@ -285,7 +285,7 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
         if (isEmpty(value) && isRequired()) {
             String requiredMessage = getRequiredMessage();
             if (requiredMessage == null) {
-                Messages messages = beanLocator.get(Messages.NAME);
+                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
                 requiredMessage = messages.getMessage("validationFail.defaultRequiredMessage");
             }
             throw new RequiredValueMissingException(requiredMessage, this);

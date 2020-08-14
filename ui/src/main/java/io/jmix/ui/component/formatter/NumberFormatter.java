@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component.formatter;
 
-import io.jmix.core.BeanLocator;
+
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -35,9 +35,7 @@ import java.text.DecimalFormat;
  * Number formatter to be used in screen descriptors and controllers.
  * <p>
  * This formatter formats the {@link Number} value into a string depending on the format string.
- * <p>
- * Use {@link BeanLocator} when creating the formatter programmatically.
- */
+*/
 @Component(NumberFormatter.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NumberFormatter implements Formatter<Number> {

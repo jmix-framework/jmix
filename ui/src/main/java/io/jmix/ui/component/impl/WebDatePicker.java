@@ -92,7 +92,7 @@ public class WebDatePicker<V> extends WebV8AbstractField<InlineDateField, LocalD
 
         if (valueSource instanceof EntityValueSource) {
             EntityValueSource entityValueSource = (EntityValueSource) valueSource;
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             dataAwareComponentsTools.setupDateRange(this, entityValueSource);
         }
     }

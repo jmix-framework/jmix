@@ -22,7 +22,7 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContextAware;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.FileStorageResource;
 import io.jmix.ui.component.Image;
@@ -100,8 +100,8 @@ public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements I
             return;
         }
 
-        if (valueSource instanceof BeanLocatorAware) {
-            ((BeanLocatorAware) valueSource).setBeanLocator(beanLocator);
+        if (valueSource instanceof ApplicationContextAware) {
+            ((ApplicationContextAware) valueSource).setApplicationContext(applicationContext);
         }
 
         valueChangeSubscription = valueSource.addValueChangeListener(event -> updateComponent());
@@ -132,12 +132,12 @@ public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements I
         }
 
         if (resourceObject instanceof byte[]) {
-            return beanLocator.getPrototype(StreamResource.class)
+            return applicationContext.getBean(StreamResource.class)
                     .setStreamSupplier(() ->
                             new ByteArrayInputStream((byte[]) resourceObject));
         }
         if (isFileReference(resourceObject)) {
-            return beanLocator.getPrototype(FileStorageResource.class)
+            return applicationContext.getBean(FileStorageResource.class)
                     .setFileReference(resourceObject);
         }
 
@@ -147,7 +147,7 @@ public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements I
     }
 
     protected boolean isFileReference(final Object resourceObject) {
-        FileStorage<?, ?> defaultFileStorage = beanLocator.get(FileStorageLocator.class).getDefault();
+        FileStorage<?, ?> defaultFileStorage = applicationContext.getBean(FileStorageLocator.class).getDefault();
         return defaultFileStorage.getReferenceType().isAssignableFrom(resourceObject.getClass());
     }
 

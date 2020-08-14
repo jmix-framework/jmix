@@ -134,7 +134,7 @@ public abstract class WebAbstractSelectList<V, I, T extends JmixAbstractListSele
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = beanLocator.get(OptionsBinder.NAME, OptionsBinder.class);
+            OptionsBinder optionsBinder = applicationContext.getBean(OptionsBinder.NAME, OptionsBinder.class);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
         }
@@ -163,7 +163,7 @@ public abstract class WebAbstractSelectList<V, I, T extends JmixAbstractListSele
         super.valueBindingConnected(valueSource);
 
         if (valueSource instanceof EntityValueSource) {
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             dataAwareComponentsTools.setupOptions(this, (EntityValueSource) valueSource);
         }
     }

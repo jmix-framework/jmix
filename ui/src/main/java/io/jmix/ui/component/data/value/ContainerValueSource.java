@@ -17,13 +17,13 @@
 package io.jmix.ui.component.data.value;
 
 import com.google.common.base.Joiner;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.impl.BeanLocatorAware;
+import org.springframework.context.ApplicationContextAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -38,7 +38,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class ContainerValueSource<E extends JmixEntity, V> implements EntityValueSource<E, V>, BeanLocatorAware {
+public class ContainerValueSource<E extends JmixEntity, V> implements EntityValueSource<E, V>, ApplicationContextAware {
 
     protected final InstanceContainer<E> container;
 
@@ -71,10 +71,10 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
     }
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         MetaClass metaClass = container.getEntityMetaClass();
 
-        MetadataTools metadataTools = beanLocator.get(MetadataTools.NAME);
+        MetadataTools metadataTools = (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
         this.metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
 
         this.container.addItemChangeListener(this::containerItemChanged);
@@ -89,7 +89,7 @@ public class ContainerValueSource<E extends JmixEntity, V> implements EntityValu
             String pathToTarget = Joiner.on('.').join(
                     Arrays.copyOfRange(this.metaPropertyPath.getPath(), i, this.metaPropertyPath.length()));
 
-            DataComponents dataComponents = beanLocator.get(DataComponents.class);
+            DataComponents dataComponents = applicationContext.getBean(DataComponents.class);
             @SuppressWarnings("unchecked")
             InstanceContainer<JmixEntity> propertyCont = dataComponents.createInstanceContainer(intermediatePath.getRangeJavaClass());
 

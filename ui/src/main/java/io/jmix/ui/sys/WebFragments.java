@@ -16,7 +16,7 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.ui.*;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
@@ -50,7 +50,7 @@ public class WebFragments implements Fragments {
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
@@ -153,7 +153,7 @@ public class WebFragments implements Fragments {
             innerContext.setFrame(fragment);
             innerContext.setParent(loaderContext);
 
-            LayoutLoader layoutLoader = beanLocator.getPrototype(LayoutLoader.NAME, innerContext);
+            LayoutLoader layoutLoader = (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, innerContext);
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(), emptyMap());
 
@@ -172,8 +172,8 @@ public class WebFragments implements Fragments {
             loaderContext.getPostInitTasks().addAll(innerContext.getPostInitTasks());
         }
 
-        loaderContext.addInjectTask(new FragmentLoaderInjectTask(fragment, options, beanLocator));
-        loaderContext.addInitTask(new FragmentLoaderInitTask(fragment, options, loaderContext, beanLocator));
+        loaderContext.addInjectTask(new FragmentLoaderInjectTask(fragment, options, applicationContext));
+        loaderContext.addInitTask(new FragmentLoaderInitTask(fragment, options, loaderContext, applicationContext));
 
         loadSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.LOAD, windowInfo.getId()));
 

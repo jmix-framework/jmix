@@ -17,13 +17,13 @@
 package io.jmix.ui;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.Component;
 
 /**
  * Factory to create UI components in client independent manner.
  * <br>
- * An instance of the factory can be injected into screen controllers or obtained through {@link BeanLocator}.
+ * An instance of the factory can be injected into screen controllers or obtained through {@link ApplicationContext}.
  */
 public interface UiComponents {
 

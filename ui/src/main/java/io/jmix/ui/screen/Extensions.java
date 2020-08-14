@@ -17,7 +17,7 @@
 package io.jmix.ui.screen;
 
 import com.google.common.collect.ImmutableMap;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -156,22 +156,21 @@ public final class Extensions {
     }
 
     /**
-     * Gets bean locator associated with the frame owner. Extensions can get various application beans from bean locator.
+     * Returns Spring ApplicationContext associated with the frame owner. Extensions can use it to get application beans.
      * <br>
      * Example:
      * <pre>{@code
-     *    BeanLocator beanLocator = Extensions.getBeanLocator(screen);
-     *    Messages messages = beanLocator.get(Messages.class);
+     *    ApplicationContext applicationContext = Extensions.getApplicationContext(screen);
+     *    Messages messages = applicationContext.getBean(Messages.class);
      * }</pre>
      *
      * @param frameOwner UI controller
-     * @return bean locator
      */
-    public static BeanLocator getBeanLocator(FrameOwner frameOwner) {
+    public static ApplicationContext getApplicationContext(FrameOwner frameOwner) {
         if (frameOwner instanceof Screen) {
-            return ((Screen) frameOwner).getBeanLocator();
+            return ((Screen) frameOwner).getApplicationContext();
         } else if (frameOwner instanceof ScreenFragment) {
-            return ((ScreenFragment) frameOwner).getBeanLocator();
+            return ((ScreenFragment) frameOwner).getApplicationContext();
         }
 
         throw new IllegalArgumentException("Unsupported type of screen " + frameOwner);

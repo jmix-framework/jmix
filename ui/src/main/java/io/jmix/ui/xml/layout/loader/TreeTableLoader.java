@@ -49,7 +49,7 @@ public class TreeTableLoader extends AbstractTableLoader<TreeTable> {
             throw new GuiDevelopmentException("TreeTable doesn't have 'hierarchyProperty' attribute", context,
                     "TreeTable ID", element.attributeValue("id"));
         }
-        return new ContainerTreeTableItems(container, hierarchyProperty, beanLocator.getPrototype(AggregatableDelegate.class));
+        return new ContainerTreeTableItems(container, hierarchyProperty, applicationContext.getBean(AggregatableDelegate.class));
     }
 
     @Override

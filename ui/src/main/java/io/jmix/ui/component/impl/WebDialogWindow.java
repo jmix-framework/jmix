@@ -20,7 +20,7 @@ import com.vaadin.event.Action;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Component;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
@@ -45,7 +45,7 @@ import static io.jmix.ui.component.impl.WebWrapperUtils.toSizeUnit;
 public class WebDialogWindow extends WebWindow implements DialogWindow, InitializingBean {
     protected JmixWindow dialogWindow;
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public WebDialogWindow() {
         this.dialogWindow = new GuiDialogWindow(this);
@@ -61,7 +61,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     protected void setupDefaultSize() {
-        ThemeConstantsManager themeConstantsManager = beanLocator.get(ThemeConstantsManager.NAME);
+        ThemeConstantsManager themeConstantsManager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
         ThemeConstants theme = themeConstantsManager.getConstants();
 
         dialogWindow.setWidth(theme.get("cuba.web.WebWindowManager.dialog.width"));
@@ -103,7 +103,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     protected UiProperties getUiProperties() {
-        return beanLocator.get(UiProperties.class);
+        return applicationContext.getBean(UiProperties.class);
     }
 
     protected void onCloseButtonClick(JmixWindow.PreCloseEvent preCloseEvent) {
@@ -147,8 +147,8 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     @Autowired
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -158,7 +158,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
         if (icon == null) {
             dialogWindow.setIcon(null);
         } else {
-            IconResolver iconResolver = beanLocator.get(IconResolver.NAME);
+            IconResolver iconResolver = (IconResolver) applicationContext.getBean(IconResolver.NAME);
             dialogWindow.setIcon(iconResolver.getIconResource(icon));
         }
     }
@@ -329,7 +329,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
         @Override
         public Action[] getActions(Object target, Object sender) {
             if (!initialized) {
-                Messages messages = beanLocator.get(Messages.NAME);
+                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
 
                 analyzeAction = new Action(messages.getMessage("actions.analyzeLayout"));
 

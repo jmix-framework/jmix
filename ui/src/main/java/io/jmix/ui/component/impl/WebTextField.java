@@ -97,7 +97,7 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
         super.valueBindingConnected(valueSource);
 
         if (valueSource instanceof EntityValueSource) {
-            DataAwareComponentsTools dataAwareComponentsTools = beanLocator.get(DataAwareComponentsTools.class);
+            DataAwareComponentsTools dataAwareComponentsTools = applicationContext.getBean(DataAwareComponentsTools.class);
             EntityValueSource entityValueSource = (EntityValueSource) valueSource;
 
             dataAwareComponentsTools.setupCaseConversion(this, entityValueSource);
@@ -131,7 +131,7 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
                     return "";
 
                 if (range.isClass()) {
-                    MetadataTools metadataTools = beanLocator.get(MetadataTools.class);
+                    MetadataTools metadataTools = applicationContext.getBean(MetadataTools.class);
                     if (range.getCardinality().isMany()) {
                         return ((Collection<JmixEntity>) modelValue).stream()
                                 .map(metadataTools::getInstanceName)
@@ -140,7 +140,7 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
                         return metadataTools.getInstanceName((JmixEntity) modelValue);
                     }
                 } else if (range.isEnum()) {
-                    Messages messages = beanLocator.get(Messages.class);
+                    Messages messages = applicationContext.getBean(Messages.class);
                     return messages.getMessage((Enum) modelValue);
                 }
             }
@@ -218,7 +218,7 @@ public class WebTextField<V> extends WebV8AbstractField<JmixTextField, String, V
             }
         }
 
-        return beanLocator.get(Messages.class)
+        return applicationContext.getBean(Messages.class)
                 .getMessage("databinding.conversion.error");
     }
 

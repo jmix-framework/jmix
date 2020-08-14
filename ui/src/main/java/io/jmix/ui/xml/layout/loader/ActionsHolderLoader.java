@@ -37,7 +37,7 @@ public abstract class ActionsHolderLoader<T extends ActionsHolder> extends Abstr
 
         String actionTypeId = element.attributeValue("type");
         if (StringUtils.isNotEmpty(actionTypeId)) {
-            Actions actions = beanLocator.get(Actions.NAME);
+            Actions actions = (Actions) applicationContext.getBean(Actions.NAME);
             Action instance = actions.create(actionTypeId, id);
 
             if (instance instanceof ListAction) {
@@ -95,7 +95,7 @@ public abstract class ActionsHolderLoader<T extends ActionsHolder> extends Abstr
     protected void loadCustomProperties(Action instance, Element element) {
         Element propertiesEl = element.element("properties");
         if (propertiesEl != null) {
-            ActionCustomPropertyLoader propertyLoader = beanLocator.get(ActionCustomPropertyLoader.class);
+            ActionCustomPropertyLoader propertyLoader = applicationContext.getBean(ActionCustomPropertyLoader.class);
             for (Element propertyEl : propertiesEl.elements("property")) {
                 propertyLoader.load(instance,
                         propertyEl.attributeValue("name"), propertyEl.attributeValue("value"));

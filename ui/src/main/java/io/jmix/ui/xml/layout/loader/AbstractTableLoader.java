@@ -185,7 +185,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                 if (StringUtils.isNotEmpty(generatorMethod)) {
                     //noinspection unchecked
                     resultComponent.addGeneratedColumn(String.valueOf(column),
-                            beanLocator.getPrototype(DeclarativeColumnGenerator.NAME, resultComponent, generatorMethod));
+                            (Table.ColumnGenerator) applicationContext.getBean(DeclarativeColumnGenerator.NAME, resultComponent, generatorMethod));
                 }
             }
         }
@@ -257,16 +257,16 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     }
 
     protected Metadata getMetadata() {
-        return beanLocator.get(Metadata.NAME);
+        return (Metadata) applicationContext.getBean(Metadata.NAME);
     }
 
     protected FetchPlanRepository getViewRepository() {
-        return beanLocator.get(FetchPlanRepository.NAME);
+        return (FetchPlanRepository) applicationContext.getBean(FetchPlanRepository.NAME);
     }
 
     @SuppressWarnings("unchecked")
     protected ContainerTableItems createContainerTableSource(CollectionContainer container) {
-        return new ContainerTableItems(container, beanLocator.getPrototype(AggregatableDelegate.class));
+        return new ContainerTableItems(container, applicationContext.getBean(AggregatableDelegate.class));
     }
 
     protected TableItems createEmptyTableItems(MetaClass metaClass) {
@@ -274,7 +274,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     }
 
     protected MetadataTools getMetadataTools() {
-        return beanLocator.get(MetadataTools.NAME);
+        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
     }
 
     protected void loadTextSelectionEnabled(Table table, Element element) {
@@ -540,7 +540,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     }
 
     protected void setColumnType(Table.Column column, String datatypeName) {
-        DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.class);
+        DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
         Datatype datatype = datatypeRegistry.get(datatypeName);
         column.setType(datatype.getJavaClass());
     }

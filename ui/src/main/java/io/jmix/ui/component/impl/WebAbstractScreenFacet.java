@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.Screens;
@@ -44,7 +44,7 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public abstract class WebAbstractScreenFacet<S extends Screen> extends WebAbstractFacet
         implements ScreenFacet<S> {
 
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     protected String screenId;
     protected Class<S> screenClass;
@@ -60,8 +60,8 @@ public abstract class WebAbstractScreenFacet<S extends Screen> extends WebAbstra
     protected S screen;
 
     @Override
-    public void setBeanLocator(BeanLocator beanLocator) {
-        this.beanLocator = beanLocator;
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
@@ -217,12 +217,12 @@ public abstract class WebAbstractScreenFacet<S extends Screen> extends WebAbstra
 
     protected void injectScreenProperties(S screen, Collection<UiControllerProperty> properties) {
         if (CollectionUtils.isNotEmpty(properties)) {
-            if (beanLocator == null) {
-                throw new IllegalStateException("Unable to inject properties. BeanLocator is null.");
+            if (applicationContext == null) {
+                throw new IllegalStateException("Unable to inject properties. ApplicationContext is null.");
             }
 
             UiControllerPropertyInjector injector =
-                    beanLocator.getPrototype(UiControllerPropertyInjector.NAME,
+                    (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME,
                             screen, owner.getFrameOwner(), properties);
 
             injector.inject();

@@ -135,7 +135,7 @@ public class WebSlider<V extends Number> extends WebV8AbstractField<JmixSlider<V
                     .asDatatype();
         }
 
-        DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.class);
+        DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
         return (Datatype<V>) datatypeRegistry.get(Double.class);
     }
 

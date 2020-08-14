@@ -235,7 +235,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
         if (fileSizeLimit > 0) {
             return fileSizeLimit;
         } else {
-            int maxUploadSizeMb = beanLocator.get(UiProperties.class).getMaxUploadSizeMb();
+            int maxUploadSizeMb = applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb();
 
             return (long) maxUploadSizeMb * BYTES_IN_MEGABYTE;
         }
@@ -253,15 +253,15 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
             if (fileSizeLimit % BYTES_IN_MEGABYTE == 0) {
                 fileSizeLimitString = String.valueOf(fileSizeLimit / BYTES_IN_MEGABYTE);
             } else {
-                DatatypeRegistry datatypeRegistry = beanLocator.get(DatatypeRegistry.NAME);
+                DatatypeRegistry datatypeRegistry = (DatatypeRegistry) applicationContext.getBean(DatatypeRegistry.NAME);
                 Datatype<Double> doubleDatatype = datatypeRegistry.get(Double.class);
                 double fileSizeInMb = fileSizeLimit / ((double) BYTES_IN_MEGABYTE);
 
-                CurrentAuthentication currentAuthentication = beanLocator.get(CurrentAuthentication.NAME);
+                CurrentAuthentication currentAuthentication = (CurrentAuthentication) applicationContext.getBean(CurrentAuthentication.NAME);
                 fileSizeLimitString = doubleDatatype.format(fileSizeInMb, currentAuthentication.getLocale());
             }
         } else {
-            fileSizeLimitString = String.valueOf(beanLocator.get(UiProperties.class).getMaxUploadSizeMb());
+            fileSizeLimitString = String.valueOf(applicationContext.getBean(UiProperties.class).getMaxUploadSizeMb());
         }
         return fileSizeLimitString;
     }
@@ -414,7 +414,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     @Override
     public void setClearButtonIcon(@Nullable String icon) {
         if (icon != null) {
-            IconResolver iconResolver = beanLocator.get(IconResolver.NAME);
+            IconResolver iconResolver = (IconResolver) applicationContext.getBean(IconResolver.NAME);
             Resource iconResource = iconResolver.getIconResource(icon);
             component.setClearButtonIcon(iconResource);
         } else {
@@ -472,7 +472,7 @@ public abstract class WebAbstractSingleFileUploadField<R> extends WebV8AbstractF
     @Override
     public void setUploadButtonIcon(@Nullable String icon) {
         if (!StringUtils.isEmpty(icon)) {
-            IconResolver iconResolver = beanLocator.get(IconResolver.class);
+            IconResolver iconResolver = applicationContext.getBean(IconResolver.class);
             component.setUploadButtonIcon(iconResolver.getIconResource(icon));
         } else {
             component.setUploadButtonIcon(null);

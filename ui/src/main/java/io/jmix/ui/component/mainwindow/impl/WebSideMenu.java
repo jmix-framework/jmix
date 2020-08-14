@@ -70,7 +70,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
 
     @Override
     public void loadMenuConfig() {
-        SideMenuBuilder menuBuilder = beanLocator.getPrototype(SideMenuBuilder.NAME);
+        SideMenuBuilder menuBuilder = (SideMenuBuilder) applicationContext.getBean(SideMenuBuilder.NAME);
         menuBuilder.build(this);
     }
 
@@ -405,7 +405,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
             this.icon = icon;
 
             if (icon != null) {
-                Resource iconResource = menu.beanLocator.get(IconResolver.class)
+                Resource iconResource = menu.applicationContext.getBean(IconResolver.class)
                         .getIconResource(this.icon);
                 delegateItem.setIcon(iconResource);
             } else {

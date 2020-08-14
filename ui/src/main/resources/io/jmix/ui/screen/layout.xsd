@@ -1428,7 +1428,7 @@
                     <xs:element name="max" minOccurs="0" type="maxMinValidatorType"/>
                     <xs:element name="min" minOccurs="0" type="maxMinValidatorType"/>
                     <xs:element name="email" minOccurs="0" type="messageValidatorType"/>
-                    <xs:element name="custom" minOccurs="0" type="messageValidatorType"/>
+                    <xs:element name="custom" minOccurs="0" type="customValidatorType"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

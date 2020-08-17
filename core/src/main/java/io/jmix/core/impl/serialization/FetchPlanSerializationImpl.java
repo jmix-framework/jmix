@@ -152,7 +152,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
 
     protected class ViewDeserializer implements JsonDeserializer<FetchPlan> {
 
-        protected List<FetchPlanBuilder> loadedBuilders = new ArrayList<>();
+        protected List<FetchPlanBuilder> fetchPlanBuilders = new ArrayList<>();
 
         @Override
         public FetchPlan deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -195,7 +195,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                     String propertyName = viewPropertyObj.getAsJsonPrimitive("name").getAsString();
                     JsonElement nestedPlanElement = viewPropertyObj.get("view");
                     if (nestedPlanElement == null) {
-                        builder.add(propertyName, FetchPlan.BASE, fetchMode);//todo taiamanov BASE instead of null discuss
+                        builder.add(propertyName, FetchPlan.BASE, fetchMode);//todo taimanov BASE instead of null (investigate)
                     } else {
                         MetaProperty metaProperty = viewMetaClass.getProperty(propertyName);
                         if (metaProperty == null) {
@@ -213,18 +213,18 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                                 JsonPrimitive viewNamePrimitive = nestedViewObject.getAsJsonPrimitive("name");
                                 if (viewNamePrimitive != null) {
                                     nestedBuilder.name(viewNamePrimitive.getAsString());
-                                    loadedBuilders.add(nestedBuilder);
+                                    fetchPlanBuilders.add(nestedBuilder);
                                 }
                                 JsonArray nestedProperties = nestedViewObject.getAsJsonArray("properties");
                                 fillViewProperties(nestedBuilder, nestedProperties, nestedViewMetaClass);
-                            });//todo taimanov overload this method with fetchMode param?
+                            }, fetchMode);
 
                         } else if (nestedPlanElement.isJsonPrimitive()) {
                             //if view was serialized with the ViewSerializationOption.COMPACT_FORMAT
                             String nestedPlanName = nestedPlanElement.getAsString();
-                            FetchPlanBuilder loadedBuilder = findLoadedBuilder(loadedBuilders, nestedPlanEntityClass, nestedPlanName);
+                            FetchPlanBuilder loadedBuilder = findFetchPlanBuilder(fetchPlanBuilders, nestedPlanEntityClass, nestedPlanName);
                             if (loadedBuilder != null) {
-                                builder.add(propertyName, loadedBuilder);//todo taimanov ", fetchMode" (overload method and consider fetchMode if builder used?)
+                                builder.add(propertyName, loadedBuilder, fetchMode);
                             } else {
                                 throw new FetchPlanSerializationException(String.format("View %s was not defined in the JSON", nestedPlanName));
                             }
@@ -236,7 +236,7 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
     }
 
     @Nullable
-    protected FetchPlanBuilder findLoadedBuilder(Collection<FetchPlanBuilder> loadedBuilders, Class<? extends JmixEntity> aClass, String viewName) {
+    protected FetchPlanBuilder findFetchPlanBuilder(Collection<FetchPlanBuilder> loadedBuilders, Class<? extends JmixEntity> aClass, String viewName) {
         for (FetchPlanBuilder builder : loadedBuilders) {
             if (aClass.equals(builder.getEntityClass()) && viewName.equals(builder.getName())) {
                 return builder;

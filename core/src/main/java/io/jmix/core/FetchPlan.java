@@ -23,8 +23,6 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
-
 /**
  * Class to declare a graph of objects that must be retrieved from the database.
  * <p>
@@ -80,24 +78,8 @@ public class FetchPlan implements Serializable {
         }
     }
 
-    protected static void putProperties(Map<String, FetchPlanProperty> thisProperties, Collection<FetchPlanProperty> sourceProperties) {
-        for (FetchPlanProperty sourceProperty : sourceProperties) {
-            String sourcePropertyName = sourceProperty.getName();
 
-            if (thisProperties.containsKey(sourcePropertyName)) {
-                FetchPlan sourcePropertyView = sourceProperty.getFetchPlan();
 
-                if (sourcePropertyView != null && isNotEmpty(sourcePropertyView.getProperties())) {
-
-                    Map<String, FetchPlanProperty> thisViewProperties = thisProperties.get(sourcePropertyName).getFetchPlan().properties;
-                    putProperties(thisViewProperties, sourcePropertyView.getProperties());
-                }
-
-            } else {
-                thisProperties.put(sourceProperty.getName(), sourceProperty);
-            }
-        }
-    }
 
     public static FetchPlan copy(FetchPlan fetchPlan) {
         Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
@@ -133,12 +115,10 @@ public class FetchPlan implements Serializable {
     }
 
     /**
-     * //todo taimanov return immutable collection
-     *
      * @return collection of properties
      */
     public Collection<FetchPlanProperty> getProperties() {
-        return properties.values();
+        return Collections.unmodifiableCollection(properties.values());
     }
 
     @Override

@@ -69,7 +69,12 @@ public class FetchPlanBuilder {
         metaClass = metadata.getClass(entityClass);
     }
 
-    //todo taimanov javadocs. note that build can be invoked several times
+    /**
+     * Builds fetch plan and makes builder immutable.<br/>
+     * Subsequent method invocations returns the same object.
+     *
+     * @return created FetchPlan
+     */
     public FetchPlan build() {
         if (result != null)
             return result;
@@ -81,25 +86,22 @@ public class FetchPlanBuilder {
         List<FetchPlanProperty> fetchPlanProperties = new LinkedList<>();
         for (String property : properties) {
             FetchPlanBuilder builder = builders.get(property);
-            if (builder == null) {
-                FetchPlan refView = fetchPlans.get(property);
-                if (refView == null) {
-                    fetchPlanProperties.add(new FetchPlanProperty(property, null));
-                } else {
-                    FetchMode fetchMode = fetchModes.get(property);
-                    if (fetchMode == null) {
-                        fetchPlanProperties.add(new FetchPlanProperty(property, refView));
-                    } else {
-                        fetchPlanProperties.add(new FetchPlanProperty(property, refView, fetchMode));
-                    }
-                }
-            } else {
-                fetchPlanProperties.add(new FetchPlanProperty(property, builder.build()));
-            }
+
+            fetchPlanProperties.add(new FetchPlanProperty(property,
+                    builder != null ? builder.build() : fetchPlans.get(property),
+                    fetchModes.getOrDefault(property, FetchMode.AUTO)));
         }
 
-        result = new FetchPlan(metaClass.getJavaClass(), name, fetchPlanProperties, loadPartialEntities);
+        result = createFetchPlan(metaClass.getJavaClass(), name, fetchPlanProperties, loadPartialEntities);
         return result;
+    }
+
+    //extended in CUBA module for legacy support
+    protected FetchPlan createFetchPlan(Class<? extends JmixEntity> entityClass,
+                                        String name,
+                                        List<FetchPlanProperty> properties,
+                                        boolean loadPartialEntities) {
+        return new FetchPlan(entityClass, name, properties, loadPartialEntities);
     }
 
     public FetchPlanBuilder add(String property) {
@@ -135,6 +137,12 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer, FetchMode fetchMode) {
+        add(property, consumer);
+        fetchModes.put(property, fetchMode);
+        return this;
+    }
+
     public FetchPlanBuilder add(String property, String fetchPlanName) {
         checkState();
         properties.add(property);
@@ -144,15 +152,15 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlanBuilder add(String property, String fetchPlanName, FetchMode fetchMode) {
-        checkState();
         add(property, fetchPlanName);
         fetchModes.put(property, fetchMode);
         return this;
     }
 
-    public FetchPlanBuilder add(String property, FetchPlanBuilder builder) {
+    public FetchPlanBuilder add(String property, FetchPlanBuilder builder, FetchMode fetchMode) {
         properties.add(property);
         builders.put(property, builder);
+        fetchModes.put(property, fetchMode);
         return this;
     }
 
@@ -173,7 +181,6 @@ public class FetchPlanBuilder {
 
     protected void addSystemProperties() {
         checkState();
-        metadataTools = AppBeans.get(MetadataTools.NAME);
         for (String propertyName : metadataTools.getSystemProperties(metaClass)) {
             if (!this.properties.contains(propertyName)) {
                 if (metaClass.getProperty(propertyName).getRange().isClass()) {
@@ -185,7 +192,9 @@ public class FetchPlanBuilder {
         }
     }
 
-    //todo taimanov it is actually setFetchPlan, not add. rename?
+    /**
+     * Adds all properties from specified {@code fetchPlan}. Replaces existing nested fetchPlans.
+     */
     public FetchPlanBuilder addFetchPlan(FetchPlan fetchPlan) {
         checkState();
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
@@ -196,17 +205,21 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    /**
+     * Adds all properties from specified by {@code fetchPlanName} FetchPlan. Replaces existing nested fetchPlans.
+     */
     public FetchPlanBuilder addFetchPlan(String fetchPlanName) {
         checkState();
         addFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName));
         return this;
     }
 
-    //todo taimanov decide [this method will replace FetchPlanParams#src]:
-    // 1) rename to addAncestor and process ancestors first
-    // 2) rework all addFetchPlanMethods to make deep recursive merge through builder?
-    // 3) [selected now] deep merge now and make shallow merge with other Views on build?
-
+    /**
+     * Deep merges {@code fetchPlan} into current fetchPlan by adding all properties recursively.
+     *
+     * @param fetchPlan
+     * @return
+     */
     public FetchPlanBuilder mergeFetchPlan(FetchPlan fetchPlan) {
         checkState();
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
@@ -214,20 +227,18 @@ public class FetchPlanBuilder {
             boolean isNew = properties.add(propName);
             if (isNew) {
                 fetchPlans.put(propName, property.getFetchPlan());
-                fetchModes.put(propName, property.getFetchMode());
-            } else {//property already exists
+            } else if (property.getFetchPlan() != null) {//property already exists
                 MetaProperty metaProperty = metaClass.getProperty(propName);
-
                 if (metaProperty.getRange().isClass()) {//ref property need to be merged with existing property
                     if (!builders.containsKey(propName)) {
                         Class<JmixEntity> refClass = metaProperty.getRange().asClass().getJavaClass();
                         builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
                         builders.get(propName).mergeFetchPlan(fetchPlans.get(propName));
                     }
-                    //todo taimanov invesitgate fetchMode usage
-                    builders.get(propName).mergeFetchPlan(property.getFetchPlan());//todo taimanov make sure that fetchPlan is not null when property is reference. or make some mechanism to guarantee that?
+                    builders.get(propName).mergeFetchPlan(property.getFetchPlan());
                 }
             }
+            fetchModes.put(propName, property.getFetchMode());
         }
 
         return this;
@@ -259,8 +270,12 @@ public class FetchPlanBuilder {
         return name;
     }
 
+    public boolean isBuilt() {
+        return result != null;
+    }
+
     /**
-     * Checks whether {@link FetchPlan} has been built. Builder cannot be modified after {@link FetchPlanBuilder#build()} invocation//todo
+     * Checks whether {@link FetchPlan} has been built. Builder cannot be modified after {@link FetchPlanBuilder#build()} invocation
      *
      * @throws RuntimeException if FetchPlan is already built
      */
@@ -268,5 +283,6 @@ public class FetchPlanBuilder {
         if (result != null)
             throw new RuntimeException("FetchPlanBuilder cannot be modified after build() invocation");
     }
+
 
 }

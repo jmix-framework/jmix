@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Component(ViewBuilder.NAME)
@@ -37,6 +38,11 @@ public class ViewBuilder extends FetchPlanBuilder {
 
     protected ViewBuilder(Class<? extends JmixEntity> entityClass) {
         super(entityClass);
+    }
+
+    @Override
+    protected FetchPlan createFetchPlan(Class<? extends JmixEntity> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
+        return new View(entityClass, name, properties, loadPartialEntities);
     }
 
     public ViewBuilder add(String property) {

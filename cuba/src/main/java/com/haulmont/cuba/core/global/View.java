@@ -22,8 +22,10 @@ import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
@@ -39,6 +41,7 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
  * <li>{@link #MINIMAL}</li>
  * <li>{@link #BASE}</li>
  * </ul>
+ *
  * @deprecated Use {@link FetchPlans} to build {@link FetchPlan} instead
  */
 @Deprecated
@@ -84,7 +87,7 @@ public class View extends FetchPlan {
     public static final String LOCAL = FetchPlan.LOCAL;
 
     /**
-     *  A synonym for {@link #INSTANCE_NAME}. Left for backward compatibility
+     * A synonym for {@link #INSTANCE_NAME}. Left for backward compatibility
      */
     public static final String MINIMAL = "_minimal";
 
@@ -125,6 +128,16 @@ public class View extends FetchPlan {
         this(new ViewParams().src(src).entityClass(entityClass).name(name).includeSystemProperties(includeSystemProperties));
     }
 
+    public View(Class<? extends JmixEntity> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
+        super(entityClass, name);
+        this.loadPartialEntities = loadPartialEntities;
+
+        for (FetchPlanProperty property : properties) {
+            this.properties.put(property.getName(), property);
+        }
+    }
+
+
     public View(ViewParams viewParams) {
         super(viewParams.entityClass, viewParams.name);
 
@@ -140,6 +153,28 @@ public class View extends FetchPlan {
 
             for (FetchPlan view : sources) {
                 putProperties(this.properties, view.getProperties());
+            }
+        }
+    }
+
+    //move to static helper in io.jmix.core and provide package local method to get map in case of problems with cast to View
+    protected static void putProperties(Map<String, FetchPlanProperty> thisProperties, Collection<FetchPlanProperty> sourceProperties) {
+        for (FetchPlanProperty sourceProperty : sourceProperties) {
+            String sourcePropertyName = sourceProperty.getName();
+
+            if (thisProperties.containsKey(sourcePropertyName)) {
+                View thisPropertyView = (View) thisProperties.get(sourcePropertyName).getFetchPlan();
+                if (thisPropertyView != null) {
+                    FetchPlan sourcePropertyView = sourceProperty.getFetchPlan();
+                    if (sourcePropertyView != null && isNotEmpty(sourcePropertyView.getProperties())) {
+                        Map<String, FetchPlanProperty> thisViewProperties = thisPropertyView.properties;
+                        putProperties(thisViewProperties, sourcePropertyView.getProperties());
+                    }
+                } else {
+                    thisProperties.put(sourceProperty.getName(), sourceProperty);
+                }
+            } else {
+                thisProperties.put(sourceProperty.getName(), sourceProperty);
             }
         }
     }

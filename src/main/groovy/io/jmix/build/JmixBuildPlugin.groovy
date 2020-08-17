@@ -4,6 +4,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
@@ -76,7 +77,6 @@ class JmixBuildPlugin implements Plugin<Project> {
         if (!project.name.startsWith('sample-')) {
             project.with {
                 apply plugin: 'maven-publish'
-                apply plugin: 'maven' // remove after https://youtrack.jetbrains.com/issue/IDEA-227215 is fixed
 
                 afterEvaluate {
                     java {
@@ -104,8 +104,12 @@ class JmixBuildPlugin implements Plugin<Project> {
                                 from components.java
                             }
                         }
-
                     }
+                }
+
+                // remove after https://youtrack.jetbrains.com/issue/IDEA-227215 is fixed
+                tasks.withType(GenerateModuleMetadata) {
+                    enabled = false
                 }
             }
         }

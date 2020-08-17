@@ -18,12 +18,14 @@ package test_support.entity.sales;
 
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.pessimisticlocking.PessimisticLock;
 import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "test$Customer")
 @Table(name = "TEST_CUSTOMER")
+@PessimisticLock(timeoutSec = 60)
 public class Customer extends StandardEntity {
 
     private static final long serialVersionUID = -5023394946853765350L;

@@ -20,12 +20,8 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.datatype.DatatypeFormatter;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.pessimisticlocking.LockInfo;
 import io.jmix.core.pessimisticlocking.LockManager;
-import io.jmix.core.pessimisticlocking.LockNotSupported;
-import io.jmix.ui.Notifications;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
@@ -375,24 +371,14 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
      * Pessimistic lock before start of editing, if it is configured for the entity.
      */
     protected boolean lockIfNeeded(JmixEntity entity) {
-        LockManager lockService = getApplicationContext().getBean(LockManager.class);
-
-        LockInfo lockInfo = lockService.lock(getLockName(), EntityValues.getId(entity).toString());
-        if (lockInfo == null) {
-            justLocked = true;
-        } else if (!(lockInfo instanceof LockNotSupported)) {
-            Messages messages = getApplicationContext().getBean(Messages.class);
-            DatatypeFormatter datatypeFormatter = (DatatypeFormatter) getApplicationContext().getBean(DatatypeFormatter.NAME);
-            Notifications notifications = getScreenContext().getNotifications();
-
-            notifications.create(Notifications.NotificationType.HUMANIZED)
-                    .withCaption(messages.getMessage("entityLocked.msg"))
-                    .withDescription(String.format(messages.getMessage("entityLocked.desc"),
-                            lockInfo.getUserName(),
-                            datatypeFormatter.formatDateTime(lockInfo.getSince())))
-                    .show();
-
-            return false;
+        Object entityId = EntityValues.getId(entity);
+        if (entityId != null) {
+            PessimisticLockStatus lockStatus = getLockingSupport().lock(entityId);
+            if (lockStatus == PessimisticLockStatus.LOCKED) {
+                justLocked = true;
+            } else if (lockStatus == PessimisticLockStatus.FAILED) {
+                return false;
+            }
         }
         return true;
     }
@@ -407,6 +393,10 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
                 getApplicationContext().getBean(LockManager.class).unlock(getLockName(), EntityValues.getId(entity).toString());
             }
         }
+    }
+
+    private PessimisticLockSupport getLockingSupport() {
+        return getApplicationContext().getBean(PessimisticLockSupport.class, this, getEditContainer());
     }
 
     /**

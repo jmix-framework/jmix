@@ -17,13 +17,9 @@
 package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
-import io.jmix.core.EntityStates;
-import io.jmix.core.ExtendedEntities;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -34,8 +30,9 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
@@ -44,6 +41,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -200,58 +198,42 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
     }
 
     protected void setupLock() {
-        // todo pessimistic locking
-        /*InstanceContainer<T> container = getEditedEntityContainer();
-        Security security = getBeanLocator().get(Security.class);
+        Object entityId = EntityValues.getId(entityToEdit);
 
-        if (!getEntityStates().isNew(entityToEdit)
-                && security.isEntityOpPermitted(container.getEntityMetaClass(), EntityOp.UPDATE)) {
-            this.readOnlyDueToLock = false;
+        if (!getEntityStates().isNew(entityToEdit) && entityId != null) {
 
-            LockService lockService = getBeanLocator().get(LockService.class);
+            AccessManager accessManager = getApplicationContext().getBean(AccessManager.class);
+            UiEntityContext entityContext = new UiEntityContext(getEditedEntityContainer().getEntityMetaClass());
+            accessManager.applyRegisteredConstraints(entityContext);
 
-            LockInfo lockInfo = lockService.lock(getLockName(), entityToEdit.getId().toString());
-            if (lockInfo == null) {
-                this.justLocked = true;
-
-                addAfterDetachListener(afterDetachEvent ->
-                        releaseLock()
-                );
-            } else if (!(lockInfo instanceof LockNotSupported)) {
-                Messages messages = getBeanLocator().get(Messages.class);
-                DatatypeFormatter datatypeFormatter = getBeanLocator().get(DatatypeFormatter.class);
-
-                getScreenContext().getNotifications().create(NotificationType.HUMANIZED)
-                        .withCaption(messages.getMainMessage("entityLocked.msg"))
-                        .withDescription(
-                                messages.formatMainMessage("entityLocked.desc",
-                                        lockInfo.getUser().getLogin(),
-                                        datatypeFormatter.formatDateTime(lockInfo.getSince())
-                                ))
-                        .show();
-
-                disableCommitActions();
-
-                this.readOnlyDueToLock = true;
+            if (entityContext.isEditPermitted()) {
+                readOnlyDueToLock = false;
+                PessimisticLockStatus lockStatus = getLockingSupport().lock(entityId);
+                if (lockStatus == PessimisticLockStatus.LOCKED) {
+                    justLocked = true;
+                    addAfterDetachListener(afterDetachEvent ->
+                            releaseLock()
+                    );
+                } else if (lockStatus == PessimisticLockStatus.FAILED){
+                    disableCommitActions();
+                    readOnlyDueToLock = true;
+                }
             }
-        }*/
+        }
     }
 
     protected void releaseLock() {
-        // todo pessimistic locking
-        /*if (isLocked()) {
-            Entity entity = getEditedEntityContainer().getItemOrNull();
+        if (isLocked()) {
+            JmixEntity entity = getEditedEntityContainer().getItemOrNull();
             if (entity != null) {
-                getBeanLocator().get(LockService.class).unlock(getLockName(), entity.getId().toString());
+                Object entityId = Objects.requireNonNull(EntityValues.getId(entity));
+                getLockingSupport().unlock(entityId);
             }
-        }*/
+        }
     }
 
-    protected String getLockName() {
-        InstanceContainer<T> container = getEditedEntityContainer();
-        return getApplicationContext().getBean(ExtendedEntities.class)
-                .getOriginalOrThisMetaClass(container.getEntityMetaClass())
-                .getName();
+    private PessimisticLockSupport getLockingSupport() {
+        return getApplicationContext().getBean(PessimisticLockSupport.class, this, getEditedEntityContainer());
     }
 
     protected boolean doNotReloadEditedEntity() {

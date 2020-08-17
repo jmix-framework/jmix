@@ -16,11 +16,16 @@
 package com.haulmont.cuba.core.global;
 
 import com.haulmont.chile.core.annotations.NamePattern;
-import io.jmix.core.JmixEntity;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.AppBeans;
+import io.jmix.core.Metadata;
+import io.jmix.core.*;
+import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 /**
  * Class to declare a graph of objects that must be retrieved from the database.
@@ -34,13 +39,43 @@ import javax.annotation.Nullable;
  * <li>{@link #MINIMAL}</li>
  * <li>{@link #BASE}</li>
  * </ul>
+ * @deprecated Use {@link FetchPlans} to build {@link FetchPlan} instead
  */
+@Deprecated
 public class View extends FetchPlan {
 
     /**
      * Parameters object to be used in constructors.
      */
-    public static class ViewParams extends FetchPlanParams {
+    public static class ViewParams {
+        protected List<View> src = Collections.emptyList();
+        protected Class<? extends JmixEntity> entityClass;
+        protected String name;
+        protected boolean includeSystemProperties;
+
+        public ViewParams src(View src) {
+            this.src = Collections.singletonList(src);
+            return this;
+        }
+
+        public void src(List<View> sources) {
+            this.src = sources;
+        }
+
+        public ViewParams entityClass(Class<? extends JmixEntity> entityClass) {
+            this.entityClass = entityClass;
+            return this;
+        }
+
+        public ViewParams name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ViewParams includeSystemProperties(boolean includeSystemProperties) {
+            this.includeSystemProperties = includeSystemProperties;
+            return this;
+        }
     }
 
     /**
@@ -67,30 +102,111 @@ public class View extends FetchPlan {
     private static final long serialVersionUID = 4313784222934349594L;
 
     public View(Class<? extends JmixEntity> entityClass) {
-        super(entityClass);
+        this(new ViewParams().entityClass(entityClass));
     }
 
     public View(Class<? extends JmixEntity> entityClass, boolean includeSystemProperties) {
-        super(entityClass, includeSystemProperties);
+        this(new ViewParams().entityClass(entityClass).includeSystemProperties(includeSystemProperties));
     }
 
     public View(Class<? extends JmixEntity> entityClass, String name) {
-        super(entityClass, name);
+        this(new ViewParams().entityClass(entityClass).name(name));
     }
 
     public View(Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
-        super(entityClass, name, includeSystemProperties);
+        this(new ViewParams().entityClass(entityClass).name(name).includeSystemProperties(includeSystemProperties));
     }
 
     public View(View src, String name, boolean includeSystemProperties) {
-        super(src, name, includeSystemProperties);
+        this(new ViewParams().src(src).name(name).includeSystemProperties(includeSystemProperties));
     }
 
     public View(View src, @Nullable Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
-        super(src, entityClass, name, includeSystemProperties);
+        this(new ViewParams().src(src).entityClass(entityClass).name(name).includeSystemProperties(includeSystemProperties));
     }
 
     public View(ViewParams viewParams) {
-        super(viewParams);
+        super(viewParams.entityClass, viewParams.name);
+
+        if (viewParams.includeSystemProperties)
+            addSystemProperties();
+
+        List<View> sources = viewParams.src;
+
+        if (isNotEmpty(sources)) {
+            if (this.entityClass == null) {
+                this.entityClass = sources.get(0).getEntityClass();
+            }
+
+            for (FetchPlan view : sources) {
+                putProperties(this.properties, view.getProperties());
+            }
+        }
     }
+
+
+    /**
+     * Add a property to this view.
+     *
+     * @param name      property name
+     * @param view      a view for a reference attribute, or null
+     * @param fetchMode fetch mode for a reference attribute
+     * @return this view instance for chaining
+     */
+    public View addProperty(String name, @Nullable FetchPlan view, FetchMode fetchMode) {
+        properties.put(name, new FetchPlanProperty(name, view, fetchMode));
+        return this;
+    }
+
+    @Deprecated
+    public View addProperty(String name, @Nullable FetchPlan view, boolean lazy) {
+        properties.put(name, new FetchPlanProperty(name, view, lazy));
+        return this;
+    }
+
+    /**
+     * Add a property to this view.
+     *
+     * @param name property name
+     * @param view a view for a reference attribute, or null
+     * @return this view instance for chaining
+     */
+    public View addProperty(String name, FetchPlan view) {
+        properties.put(name, new FetchPlanProperty(name, view));
+        return this;
+    }
+
+    /**
+     * Add a property to this view.
+     *
+     * @param name property name
+     * @return this view instance for chaining
+     */
+    public View addProperty(String name) {
+        properties.put(name, new FetchPlanProperty(name, null));
+        return this;
+    }
+
+    /**
+     * Specifies whether the view affects loading of local attributes. By default only reference attributes are affected and
+     * local are always loaded.
+     *
+     * @param loadPartialEntities true to affect loading of local attributes
+     * @return this view instance for chaining
+     */
+    public View setLoadPartialEntities(boolean loadPartialEntities) {
+        this.loadPartialEntities = loadPartialEntities;
+        return this;
+    }
+
+    public View addSystemProperties() {
+        io.jmix.core.Metadata metadata = io.jmix.core.AppBeans.get(Metadata.NAME);
+        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+        MetaClass metaClass = metadata.getClass(getEntityClass());
+        for (String propertyName : metadataTools.getSystemProperties(metaClass)) {
+            addProperty(propertyName);
+        }
+        return this;
+    }
+
 }

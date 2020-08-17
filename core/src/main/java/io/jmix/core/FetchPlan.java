@@ -16,7 +16,6 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.metamodel.model.MetaClass;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -42,47 +41,9 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 public class FetchPlan implements Serializable {
 
     /**
-     * Parameters object to be used in constructors.
-     */
-    public static class FetchPlanParams {
-        protected List<FetchPlan> src = Collections.emptyList();
-        protected Class<? extends JmixEntity> entityClass;
-        protected String name;
-        protected boolean includeSystemProperties;
-
-        public <T extends FetchPlanParams> T src(FetchPlan src) {
-            this.src = Collections.singletonList(src);
-            //noinspection unchecked
-            return (T) this;
-        }
-
-        public void src(List<FetchPlan> sources) {
-            this.src = sources;
-        }
-
-        public <T extends FetchPlanParams> T entityClass(Class<? extends JmixEntity> entityClass) {
-            this.entityClass = entityClass;
-            //noinspection unchecked
-            return (T) this;
-        }
-
-        public <T extends FetchPlanParams> T name(String name) {
-            this.name = name;
-            //noinspection unchecked
-            return (T) this;
-        }
-
-        public <T extends FetchPlanParams> T includeSystemProperties(boolean includeSystemProperties) {
-            this.includeSystemProperties = includeSystemProperties;
-            //noinspection unchecked
-            return (T) this;
-        }
-    }
-
-    /**
      * Includes all local non-system properties.
      */
-    public static final String LOCAL = "_local";
+    public static final String LOCAL = "_local";//todo taimanov include system properties but exclude in View/ViewBuilder
 
     /**
      * Includes only properties contained in {@link io.jmix.core.metamodel.annotation.InstanceName}.
@@ -93,72 +54,33 @@ public class FetchPlan implements Serializable {
      * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
      * (effectively {@link #INSTANCE_NAME} + {@link #LOCAL}).
      */
-    public static final String BASE = "_base";
+    public static final String BASE = "_base";//todo taimanov include system properties but exclude in View/ViewBuilder
 
     private static final long serialVersionUID = 4313784222934349594L;
 
-    private Class<? extends JmixEntity> entityClass;
+    protected Class<? extends JmixEntity> entityClass;
 
     private String name;
 
-    private Map<String, FetchPlanProperty> properties = new LinkedHashMap<>();
+    protected Map<String, FetchPlanProperty> properties = new LinkedHashMap<>();
 
-    private boolean loadPartialEntities;
+    protected boolean loadPartialEntities;
 
-    public FetchPlan(Class<? extends JmixEntity> entityClass) {
-        this(entityClass, "", true);
+    protected FetchPlan(Class<? extends JmixEntity> entityClass, String name) {
+        this.entityClass = entityClass;
+        this.name = name != null ? name : "";
     }
 
-    public FetchPlan(Class<? extends JmixEntity> entityClass, boolean includeSystemProperties) {
-        this(entityClass, "", includeSystemProperties);
-    }
+    FetchPlan(Class<? extends JmixEntity> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
+        this(entityClass, name);
+        this.loadPartialEntities = loadPartialEntities;
 
-    public FetchPlan(Class<? extends JmixEntity> entityClass, String name) {
-        this(entityClass, name, true);
-    }
-
-    public FetchPlan(Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
-        this(new FetchPlanParams().entityClass(entityClass)
-                .name(name)
-                .includeSystemProperties(includeSystemProperties)
-        );
-    }
-
-    public FetchPlan(FetchPlan src, String name, boolean includeSystemProperties) {
-        this(src, null, name, includeSystemProperties);
-    }
-
-    public FetchPlan(FetchPlan src, @Nullable Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
-        this(new FetchPlanParams().src(src)
-                .entityClass(entityClass != null ? entityClass : src.entityClass)
-                .name(name)
-                .includeSystemProperties(includeSystemProperties)
-        );
-    }
-
-    public FetchPlan(FetchPlanParams viewParams) {
-        this.entityClass = viewParams.entityClass;
-        this.name = viewParams.name != null ? viewParams.name : "";
-
-        if (viewParams.includeSystemProperties)
-            addSystemProperties();
-
-        List<FetchPlan> sources = viewParams.src;
-
-        if (isNotEmpty(sources)) {
-            Class<? extends JmixEntity> entityClass = sources.get(0).entityClass;
-
-            if (this.entityClass == null) {
-                this.entityClass = entityClass;
-            }
-
-            for (FetchPlan view : sources) {
-                putProperties(this.properties, view.getProperties());
-            }
+        for (FetchPlanProperty property : properties) {
+            this.properties.put(property.getName(), property);
         }
     }
 
-    protected void putProperties(Map<String, FetchPlanProperty> thisProperties, Collection<FetchPlanProperty> sourceProperties) {
+    protected static void putProperties(Map<String, FetchPlanProperty> thisProperties, Collection<FetchPlanProperty> sourceProperties) {
         for (FetchPlanProperty sourceProperty : sourceProperties) {
             String sourcePropertyName = sourceProperty.getName();
 
@@ -180,13 +102,10 @@ public class FetchPlan implements Serializable {
     public static FetchPlan copy(FetchPlan fetchPlan) {
         Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
 
-        FetchPlanParams params = new FetchPlanParams()
-                .entityClass(fetchPlan.getEntityClass())
-                .name(fetchPlan.getName());
-        FetchPlan copy = new FetchPlan(params);
-        for (FetchPlanProperty property : fetchPlan.getProperties()) {
-            copy.addProperty(property.getName(), copyNullable(property.getFetchPlan()), property.getFetchMode());
-        }
+        FetchPlan copy = new FetchPlan(fetchPlan.entityClass,
+                fetchPlan.name,
+                new LinkedList<>(fetchPlan.getProperties()),
+                fetchPlan.loadPartialEntities);
 
         return copy;
     }
@@ -214,52 +133,12 @@ public class FetchPlan implements Serializable {
     }
 
     /**
+     * //todo taimanov return immutable collection
+     *
      * @return collection of properties
      */
     public Collection<FetchPlanProperty> getProperties() {
         return properties.values();
-    }
-
-    /**
-     * Add a property to this view.
-     *
-     * @param name      property name
-     * @param view      a view for a reference attribute, or null
-     * @param fetchMode fetch mode for a reference attribute
-     * @return this view instance for chaining
-     */
-    public FetchPlan addProperty(String name, @Nullable FetchPlan view, FetchMode fetchMode) {
-        properties.put(name, new FetchPlanProperty(name, view, fetchMode));
-        return this;
-    }
-
-    @Deprecated
-    public FetchPlan addProperty(String name, @Nullable FetchPlan view, boolean lazy) {
-        properties.put(name, new FetchPlanProperty(name, view, lazy));
-        return this;
-    }
-
-    /**
-     * Add a property to this view.
-     *
-     * @param name property name
-     * @param view a view for a reference attribute, or null
-     * @return this view instance for chaining
-     */
-    public FetchPlan addProperty(String name, FetchPlan view) {
-        properties.put(name, new FetchPlanProperty(name, view));
-        return this;
-    }
-
-    /**
-     * Add a property to this view.
-     *
-     * @param name property name
-     * @return this view instance for chaining
-     */
-    public FetchPlan addProperty(String name) {
-        properties.put(name, new FetchPlanProperty(name, null));
-        return this;
     }
 
     @Override
@@ -308,33 +187,9 @@ public class FetchPlan implements Serializable {
     /**
      * If true, the view affects loading of local attributes. If false, only reference attributes are affected and
      * local are always loaded.
-     *
-     * @see #setLoadPartialEntities(boolean)
      */
     public boolean loadPartialEntities() {
         return loadPartialEntities;
-    }
-
-    /**
-     * Specifies whether the view affects loading of local attributes. By default only reference attributes are affected and
-     * local are always loaded.
-     *
-     * @param loadPartialEntities true to affect loading of local attributes
-     * @return this view instance for chaining
-     */
-    public FetchPlan setLoadPartialEntities(boolean loadPartialEntities) {
-        this.loadPartialEntities = loadPartialEntities;
-        return this;
-    }
-
-    public FetchPlan addSystemProperties() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-        MetaClass metaClass = metadata.getClass(getEntityClass());
-        for (String propertyName : metadataTools.getSystemProperties(metaClass)) {
-            addProperty(propertyName);
-        }
-        return this;
     }
 
     protected List<String> getInterfaceProperties(Class<?> intf) {

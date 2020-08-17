@@ -45,6 +45,8 @@ public class FetchPlanBuilder {
     @Autowired
     protected Metadata metadata;
     @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
     protected Class<? extends JmixEntity> entityClass;
@@ -53,7 +55,10 @@ public class FetchPlanBuilder {
     protected Map<String, FetchPlanBuilder> builders = new HashMap<>();
     protected Map<String, FetchPlan> fetchPlans = new HashMap<>();
     protected Map<String, FetchMode> fetchModes = new HashMap<>();
-    protected boolean systemProperties;
+    protected boolean systemProperties = false;
+    protected boolean loadPartialEntities = false;
+    protected String name = "";
+    protected FetchPlan result = null;
 
     protected FetchPlanBuilder(Class<? extends JmixEntity> entityClass) {
         this.entityClass = entityClass;
@@ -64,30 +69,42 @@ public class FetchPlanBuilder {
         metaClass = metadata.getClass(entityClass);
     }
 
+    //todo taimanov javadocs. note that build can be invoked several times
     public FetchPlan build() {
-        FetchPlan fetchPlan = new FetchPlan(metaClass.getJavaClass(), systemProperties);
+        if (result != null)
+            return result;
+
+        if (systemProperties) {
+            addSystemProperties();
+        }
+
+        List<FetchPlanProperty> fetchPlanProperties = new LinkedList<>();
         for (String property : properties) {
             FetchPlanBuilder builder = builders.get(property);
             if (builder == null) {
                 FetchPlan refView = fetchPlans.get(property);
                 if (refView == null) {
-                    fetchPlan.addProperty(property);
+                    fetchPlanProperties.add(new FetchPlanProperty(property, null));
                 } else {
                     FetchMode fetchMode = fetchModes.get(property);
                     if (fetchMode == null) {
-                        fetchPlan.addProperty(property, refView);
+                        fetchPlanProperties.add(new FetchPlanProperty(property, refView));
                     } else {
-                        fetchPlan.addProperty(property, refView, fetchMode);
+                        fetchPlanProperties.add(new FetchPlanProperty(property, refView, fetchMode));
                     }
                 }
             } else {
-                fetchPlan.addProperty(property, builder.build());
+                fetchPlanProperties.add(new FetchPlanProperty(property, builder.build()));
             }
         }
-        return fetchPlan;
+
+        result = new FetchPlan(metaClass.getJavaClass(), name, fetchPlanProperties, loadPartialEntities);
+        return result;
     }
 
     public FetchPlanBuilder add(String property) {
+        checkState();
+
         String[] parts = property.split("\\.");
         String propName = parts[0];
         MetaProperty metaProperty = metaClass.getProperty(propName);
@@ -109,6 +126,7 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer) {
+        checkState();
         properties.add(property);
         Class<JmixEntity> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
         FetchPlanBuilder builder = applicationContext.getBean(FetchPlanBuilder.class, refClass);
@@ -118,6 +136,7 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlanBuilder add(String property, String fetchPlanName) {
+        checkState();
         properties.add(property);
         FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(metaClass.getProperty(property).getRange().asClass(), fetchPlanName);
         fetchPlans.put(property, fetchPlan);
@@ -125,12 +144,21 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlanBuilder add(String property, String fetchPlanName, FetchMode fetchMode) {
+        checkState();
         add(property, fetchPlanName);
         fetchModes.put(property, fetchMode);
         return this;
     }
 
+    public FetchPlanBuilder add(String property, FetchPlanBuilder builder) {
+        properties.add(property);
+        builders.put(property, builder);
+        return this;
+    }
+
+
     public FetchPlanBuilder addAll(String... properties) {
+        checkState();
         for (String property : properties) {
             add(property);
         }
@@ -138,11 +166,28 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlanBuilder addSystem() {
+        checkState();
         this.systemProperties = true;
         return this;
     }
-    
+
+    protected void addSystemProperties() {
+        checkState();
+        metadataTools = AppBeans.get(MetadataTools.NAME);
+        for (String propertyName : metadataTools.getSystemProperties(metaClass)) {
+            if (!this.properties.contains(propertyName)) {
+                if (metaClass.getProperty(propertyName).getRange().isClass()) {
+                    add(propertyName, FetchPlan.INSTANCE_NAME);
+                } else {
+                    add(propertyName);
+                }
+            }
+        }
+    }
+
+    //todo taimanov it is actually setFetchPlan, not add. rename?
     public FetchPlanBuilder addFetchPlan(FetchPlan fetchPlan) {
+        checkState();
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             properties.add(property.getName());
             fetchPlans.put(property.getName(), property.getFetchPlan());
@@ -152,7 +197,76 @@ public class FetchPlanBuilder {
     }
 
     public FetchPlanBuilder addFetchPlan(String fetchPlanName) {
+        checkState();
         addFetchPlan(fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName));
         return this;
     }
+
+    //todo taimanov decide [this method will replace FetchPlanParams#src]:
+    // 1) rename to addAncestor and process ancestors first
+    // 2) rework all addFetchPlanMethods to make deep recursive merge through builder?
+    // 3) [selected now] deep merge now and make shallow merge with other Views on build?
+
+    public FetchPlanBuilder mergeFetchPlan(FetchPlan fetchPlan) {
+        checkState();
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
+            String propName = property.getName();
+            boolean isNew = properties.add(propName);
+            if (isNew) {
+                fetchPlans.put(propName, property.getFetchPlan());
+                fetchModes.put(propName, property.getFetchMode());
+            } else {//property already exists
+                MetaProperty metaProperty = metaClass.getProperty(propName);
+
+                if (metaProperty.getRange().isClass()) {//ref property need to be merged with existing property
+                    if (!builders.containsKey(propName)) {
+                        Class<JmixEntity> refClass = metaProperty.getRange().asClass().getJavaClass();
+                        builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
+                        builders.get(propName).mergeFetchPlan(fetchPlans.get(propName));
+                    }
+                    //todo taimanov invesitgate fetchMode usage
+                    builders.get(propName).mergeFetchPlan(property.getFetchPlan());//todo taimanov make sure that fetchPlan is not null when property is reference. or make some mechanism to guarantee that?
+                }
+            }
+        }
+
+        return this;
+    }
+
+    public FetchPlanBuilder partial() {
+        checkState();
+        loadPartialEntities = true;
+        return this;
+    }
+
+    public FetchPlanBuilder partial(boolean partial) {
+        checkState();
+        loadPartialEntities = partial;
+        return this;
+    }
+
+    public FetchPlanBuilder name(String name) {
+        checkState();
+        this.name = name;
+        return this;
+    }
+
+    public Class<? extends JmixEntity> getEntityClass() {
+        return entityClass;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Checks whether {@link FetchPlan} has been built. Builder cannot be modified after {@link FetchPlanBuilder#build()} invocation//todo
+     *
+     * @throws RuntimeException if FetchPlan is already built
+     */
+    protected void checkState() {
+        if (result != null)
+            throw new RuntimeException("FetchPlanBuilder cannot be modified after build() invocation");
+    }
+
 }

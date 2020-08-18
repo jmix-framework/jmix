@@ -23,18 +23,20 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.rest.property.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
+import org.springframework.http.MediaType;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@ComponentScan("io.jmix.rest")
+@ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, CoreSecurityConfiguration.class})
+@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 @PropertySource("classpath:/io/jmix/rest/module.properties")
-public class RestConfiguration {
+public class RestConfiguration implements WebMvcConfigurer {
 
     @Autowired
     protected RestProperties restProperties;
@@ -44,5 +46,20 @@ public class RestConfiguration {
         CommonsMultipartResolver resolver = new CommonsMultipartResolver();
         resolver.setMaxUploadSize(restProperties.getMaxUploadSize());
         return resolver;
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.defaultContentType(MediaType.APPLICATION_JSON);
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/rest/**")
+                .allowedOrigins(restProperties.getAllowedOrigins())
+                .allowedHeaders("*")
+                .allowedMethods("*")
+                .allowCredentials(true)
+                .exposedHeaders("X-Total-Count", "Content-Disposition");
     }
 }

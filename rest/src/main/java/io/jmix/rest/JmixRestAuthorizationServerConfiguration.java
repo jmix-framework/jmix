@@ -64,7 +64,6 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setSupportRefreshToken(restProperties.isSupportRefreshToken());
         defaultTokenServices.setReuseRefreshToken(restProperties.isReuseRefreshToken());
-//        defaultTokenServices.setTokenEnhancer(accessTokenConverter());
         return defaultTokenServices;
     }
 
@@ -92,13 +91,7 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints
-//                .tokenGranter(new JmixRestTokenGranter(
-//                        authenticationManager,
-//                        endpoints.getTokenServices(),
-//                        endpoints.getClientDetailsService(),
-//                        endpoints.getOAuth2RequestFactory()))
-                .pathMapping("/oauth/token", "/rest/oauth/token")
+        endpoints.pathMapping("/oauth/token", "/rest/oauth/token")
                 .authenticationManager(authenticationManager)
                 .tokenServices(tokenServices())
                 .tokenStore(tokenStore());

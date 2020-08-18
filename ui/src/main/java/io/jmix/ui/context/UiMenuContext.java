@@ -36,6 +36,6 @@ public class UiMenuContext implements AccessContext {
     }
 
     public void setDenied() {
-        this.permitted = true;
+        this.permitted = false;
     }
 }

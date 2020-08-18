@@ -67,9 +67,21 @@ public class AuthenticationPolicyStore implements ResourcePolicyStore {
     }
 
     @Override
+    public Collection<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
+        return extractFromAuthentication(auth -> auth.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
+                index -> index.getPolicies(wildcard)));
+    }
+
+    @Override
     public Collection<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute) {
         return extractFromAuthentication(auth -> auth.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
                 index -> index.getPolicies(metaClass.getName(), attribute)));
+    }
+
+    @Override
+    public Collection<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard) {
+        return extractFromAuthentication(auth -> auth.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
+                index -> index.getPolicies(entityWildcard, attributeWildcard)));
     }
 
     @Override

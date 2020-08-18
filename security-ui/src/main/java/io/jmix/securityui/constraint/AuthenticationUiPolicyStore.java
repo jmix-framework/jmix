@@ -61,7 +61,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
         @Override
         public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
             policyById = resourcePolicies.stream()
-                    .filter(p -> Objects.equals(p.getResource(), ResourcePolicyType.SCREEN))
+                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.SCREEN))
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 
@@ -76,7 +76,7 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
         @Override
         public void indexAll(Collection<ResourcePolicy> resourcePolicies) {
             policyById = resourcePolicies.stream()
-                    .filter(p -> Objects.equals(p.getResource(), ResourcePolicyType.MENU))
+                    .filter(p -> Objects.equals(p.getType(), ResourcePolicyType.MENU))
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 

@@ -21,6 +21,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
+import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyEffect;
 import org.springframework.stereotype.Component;
 
@@ -50,10 +51,22 @@ public class SecureOperationsImpl implements SecureOperations {
 
     protected boolean isEntityOperationPermitted(MetaClass metaClass, EntityPolicyAction entityPolicyAction,
                                                  ResourcePolicyStore policyStore) {
-        return policyStore.getEntityResourcePolicies(metaClass).stream()
-                .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW) &&
-                        (Objects.equals(policy.getAction(), entityPolicyAction.getId()) ||
-                                Objects.equals(policy.getAction(), EntityPolicyAction.ALL.getId())));
+
+        boolean result = policyStore.getEntityResourcePolicies(metaClass).stream()
+                .anyMatch(policy -> isEntityOperationPermitted(policy, entityPolicyAction));
+
+        if (!result) {
+            result = policyStore.getEntityResourcePoliciesByWildcard("*").stream()
+                    .anyMatch(policy -> isEntityOperationPermitted(policy, entityPolicyAction));
+        }
+
+        return result;
+    }
+
+    protected boolean isEntityOperationPermitted(ResourcePolicy policy, EntityPolicyAction entityPolicyAction) {
+        return Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW) &&
+                (Objects.equals(policy.getAction(), entityPolicyAction.getId()) ||
+                        Objects.equals(policy.getAction(), EntityPolicyAction.ALL.getId()));
     }
 
     @Override
@@ -84,20 +97,35 @@ public class SecureOperationsImpl implements SecureOperations {
                                             ResourcePolicyStore policyStore) {
 
         boolean result = policyStore.getEntityAttributesResourcePolicies(metaClass, name).stream()
-                .anyMatch(policy -> Objects.equals(policy.getAction(), policyAction.getId()) &&
-                        Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+                .anyMatch(policy -> isEntityAttrPermitted(policy, policyAction));
 
         if (!result) {
             result = policyStore.getEntityAttributesResourcePolicies(metaClass, "*").stream()
-                    .anyMatch(policy -> Objects.equals(policy.getAction(), policyAction.getId()) &&
-                            Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+                    .anyMatch(policy -> isEntityAttrPermitted(policy, policyAction));
         }
+
+        if (!result) {
+            result = policyStore.getEntityAttributesResourcePoliciesByWildcard("*", "*").stream()
+                    .anyMatch(policy -> isEntityAttrPermitted(policy, policyAction));
+        }
+
         return result;
+    }
+
+    protected boolean isEntityAttrPermitted(ResourcePolicy policy, EntityAttributePolicyAction policyAction) {
+        return Objects.equals(policy.getAction(), policyAction.getId()) && Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW);
     }
 
     @Override
     public boolean isSpecificPermitted(String resourceName, ResourcePolicyStore policyStore) {
-        return policyStore.getSpecificResourcePolicies(resourceName).stream()
+        boolean result = policyStore.getSpecificResourcePolicies(resourceName).stream()
                 .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+
+        if (!result) {
+            result = policyStore.getSpecificResourcePolicies("*").stream()
+                    .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+        }
+
+        return result;
     }
 }

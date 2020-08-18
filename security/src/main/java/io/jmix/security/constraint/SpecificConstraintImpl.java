@@ -39,10 +39,12 @@ public class SpecificConstraintImpl implements SpecificConstraint<SpecificOperat
         this.resourceName = resourceName;
     }
 
+    @Autowired
     public void setSecureOperations(SecureOperations secureOperations) {
         this.secureOperations = secureOperations;
     }
 
+    @Autowired
     public void setPolicyStore(ResourcePolicyStore policyStore) {
         this.policyStore = policyStore;
     }
@@ -54,7 +56,7 @@ public class SpecificConstraintImpl implements SpecificConstraint<SpecificOperat
 
     @Override
     public void applyTo(SpecificOperationAccessContext context) {
-        if (secureOperations.isSpecificPermitted(resourceName, policyStore)) {
+        if (!secureOperations.isSpecificPermitted(resourceName, policyStore)) {
             context.setDenied();
         }
     }

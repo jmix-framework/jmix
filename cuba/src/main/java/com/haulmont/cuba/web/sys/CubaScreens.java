@@ -21,6 +21,7 @@ import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenEditorWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenFragmentWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenLookupWrapper;
@@ -32,20 +33,11 @@ import io.jmix.ui.Fragments;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentContainer;
-import io.jmix.ui.component.ContentMode;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.SizeUnit;
-import io.jmix.ui.component.Window;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.SelectHandlerAdapter;
 import io.jmix.ui.component.impl.WebAppWorkArea;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.screen.EditorScreen;
-import io.jmix.ui.screen.LookupScreen;
-import io.jmix.ui.screen.MapScreenOptions;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.WebScreens;
 
 import javax.annotation.Nullable;
@@ -393,5 +385,10 @@ public final class CubaScreens extends WebScreens implements WindowManager {
     @Override
     public void showWebPage(String url, @Nullable Map<String, Object> params) {
         ui.getWebBrowserTools().showWebPage(url, params);
+    }
+
+    @Override
+    protected void internalBeforeShow(Screen screen) {
+        ((CubaScreenDataImpl) UiControllerUtils.getScreenData(screen)).getLoadBeforeShowStrategy().loadData(screen);
     }
 }

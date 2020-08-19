@@ -19,7 +19,7 @@ package spec.haulmont.cuba.web.view.screens;
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.EditedEntityContainer;
-import io.jmix.ui.screen.LoadDataBeforeShow;
+import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.StandardEditor;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;

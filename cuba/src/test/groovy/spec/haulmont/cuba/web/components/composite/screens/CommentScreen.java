@@ -16,7 +16,7 @@
 
 package spec.haulmont.cuba.web.components.composite.screens;
 
-import io.jmix.ui.screen.LoadDataBeforeShow;
+import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;

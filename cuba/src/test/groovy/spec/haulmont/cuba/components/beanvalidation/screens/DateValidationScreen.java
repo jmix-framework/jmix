@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.components.beanvalidation.screens;
 
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
 import com.haulmont.cuba.web.model.beanvalidation.DateValidationEntity;
 import io.jmix.core.LoadContext;
 import io.jmix.ui.screen.*;

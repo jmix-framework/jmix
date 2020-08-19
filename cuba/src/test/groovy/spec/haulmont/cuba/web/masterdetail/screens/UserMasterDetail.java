@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.web.masterdetail.screens;
 
 import com.haulmont.cuba.core.model.common.User;
+import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.*;
 
 @UiController

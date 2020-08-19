@@ -23,6 +23,7 @@ import com.haulmont.cuba.core.global.impl.CubaMetadata;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.CubaMetaModelLoader;
+import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
 import com.haulmont.cuba.web.sys.CubaAppUIBeanProvider;
@@ -42,6 +43,7 @@ import io.jmix.ui.AppUIBeanProvider;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.menu.MenuItemCommands;
+import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.UiControllerDependencyInjector;
@@ -141,6 +143,12 @@ public class CubaConfiguration {
     @Bean(MetadataTools.NAME)
     protected MetadataTools metadataTools() {
         return new CubaMetadataTools();
+    }
+
+    @Bean(ScreenData.NAME)
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    protected ScreenData screenData() {
+        return new CubaScreenDataImpl();
     }
 
     @EventListener

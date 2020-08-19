@@ -24,8 +24,8 @@ import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.impl.FragmentImplementation;
 import io.jmix.ui.component.impl.FrameImplementation;
+import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.monitoring.ScreenLifeCycle;
-import io.jmix.ui.model.impl.ScreenDataImpl;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.ScreenOptions;
@@ -35,9 +35,9 @@ import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInjectTask;
 import io.jmix.ui.sys.ScreenContextImpl;
 import io.jmix.ui.sys.ScreenXmlLoader;
 import io.jmix.ui.xml.layout.ComponentLoader;
-import io.micrometer.core.instrument.Timer;
 import io.jmix.ui.xml.layout.loader.ContainerLoader;
 import io.jmix.ui.xml.layout.loader.LayoutLoader;
+import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -97,7 +97,7 @@ public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
         setScreenContext(controller,
                 new ScreenContextImpl(windowInfo, parentContext.getOptions(), getScreenContext(hostController))
         );
-        setScreenData(controller, new ScreenDataImpl());
+        setScreenData(controller, applicationContext.getBean(ScreenData.class));
 
         FragmentImplementation fragmentImpl = (FragmentImplementation) fragment;
         fragmentImpl.setFrameOwner(controller);

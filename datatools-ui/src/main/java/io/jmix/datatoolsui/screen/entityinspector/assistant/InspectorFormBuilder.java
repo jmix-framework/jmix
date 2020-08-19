@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.datatoolsui.screen.entityinspector.EntityInspectorBrowser;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
@@ -221,7 +221,7 @@ public class InspectorFormBuilder {
             lookupAction.setOpenMode(OpenMode.THIS_TAB);
 
             pickerField.addAction(lookupAction);
-            pickerField.addAction(actions.create(ClearAction.class));
+            pickerField.addAction(actions.create(EntityClearAction.class));
 
             field = pickerField;
         }

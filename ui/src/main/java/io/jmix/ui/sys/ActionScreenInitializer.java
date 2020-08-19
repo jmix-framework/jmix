@@ -18,6 +18,7 @@ package io.jmix.ui.sys;
 
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.builder.LookupBuilder;
+import io.jmix.ui.builder.ScreenBuilder;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -71,6 +72,27 @@ public class ActionScreenInitializer {
 
     public void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler) {
         this.afterCloseHandler = afterCloseHandler;
+    }
+
+    public ScreenBuilder initBuilder(ScreenBuilder builder) {
+        if (screenClass != null) {
+            builder = builder.withScreenClass(screenClass);
+        }
+
+        if (screenId != null) {
+            builder = builder.withScreenId(screenId);
+        }
+
+        if (screenOptionsSupplier != null) {
+            ScreenOptions screenOptions = screenOptionsSupplier.get();
+            builder = builder.withOptions(screenOptions);
+        }
+
+        if (openMode != null) {
+            builder = builder.withOpenMode(openMode);
+        }
+
+        return builder;
     }
 
     public EditorBuilder initBuilder(EditorBuilder builder) {

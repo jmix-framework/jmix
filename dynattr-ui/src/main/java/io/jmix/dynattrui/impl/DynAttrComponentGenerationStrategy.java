@@ -34,7 +34,7 @@ import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ListOptions;
@@ -290,7 +290,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             setLookupActionScreen(lookupAction, attribute);
 
             entityPicker.addAction(lookupAction);
-            entityPicker.addAction(actions.create(ClearAction.class));
+            entityPicker.addAction(actions.create(EntityClearAction.class));
 
             setValueSource(entityPicker, context);
             setValidators(entityPicker, attribute);

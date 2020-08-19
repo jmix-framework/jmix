@@ -33,22 +33,13 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstanceLoader;
-import io.jmix.ui.screen.Install;
-import io.jmix.ui.screen.LoadDataBeforeShow;
-import io.jmix.ui.screen.LookupComponent;
-import io.jmix.ui.screen.StandardLookup;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.Target;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.BooleanUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("sys_Category.browse")
 @UiDescriptor("category-browse.xml")
 @LookupComponent("categoriesTable")
-@LoadDataBeforeShow
 public class CategoryBrowse extends StandardLookup<Category> {
 
     @Autowired

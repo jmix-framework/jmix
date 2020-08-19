@@ -64,7 +64,6 @@ import static org.eclipse.persistence.jpa.jpql.parser.Expression.WHERE;
 
 @UiController("sys_CategoryAttribute.edit")
 @UiDescriptor("category-attrs-edit.xml")
-@LoadDataBeforeShow
 @EditedEntityContainer("categoryAttributeDc")
 @DialogMode(forceDialog = true)
 public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {

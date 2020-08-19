@@ -39,7 +39,6 @@ import java.util.TreeMap;
 @UiController("sys_Category.edit")
 @UiDescriptor("category-edit.xml")
 @EditedEntityContainer("categoryDc")
-@LoadDataBeforeShow
 public class CategoryEdit extends StandardEditor<Category> {
 
     protected static final String ATTRIBUTES_LOCATION_TAB = "attributesLocationTab";

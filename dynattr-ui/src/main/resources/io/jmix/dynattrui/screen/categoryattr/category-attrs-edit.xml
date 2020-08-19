@@ -37,6 +37,9 @@
             <loader id="targetScreensDl"/>
         </collection>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout expand="tabSheet" spacing="true">
         <tabSheet id="tabSheet" width="100%">
             <tab id="mainTab" caption="msg://mainTab.caption" spacing="true" margin="true" expand="attributeBox">

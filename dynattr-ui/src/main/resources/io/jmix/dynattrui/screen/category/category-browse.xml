@@ -42,6 +42,10 @@
                 width="800"
                 resizable="true"/>
 
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
     <layout spacing="true">
         <!-- TODO filter
         <filter id="categoriesFilter" dataLoader="categoriesDl" applyTo="categoriesTable">

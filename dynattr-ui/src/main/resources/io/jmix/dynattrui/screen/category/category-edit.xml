@@ -33,6 +33,10 @@
     <dialogMode height="600"
                 width="800"/>
 
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
     <layout spacing="true" expand="tabSheet">
         <tabSheet id="tabSheet" height="100%">
             <tab id="mainTab" caption="msg://mainTab.caption" spacing="true" margin="true" expand="categoryAttrsBox">

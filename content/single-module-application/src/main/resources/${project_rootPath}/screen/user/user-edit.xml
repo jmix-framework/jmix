@@ -9,6 +9,9 @@
             <loader/>
         </instance>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <dialogMode height="600"
                 width="800"/>
     <layout spacing="true" expand="roleAssignmentGroupBox">

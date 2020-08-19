@@ -24,6 +24,8 @@ import java.util.Set;
  */
 public interface ScreenData {
 
+    String NAME = "ui_ScreenData";
+
     /**
      * Returns screen's {@code DataContext}.
      */
@@ -34,16 +36,6 @@ public interface ScreenData {
      * Sets {@code DataContext} instance for the screen.
      */
     void setDataContext(DataContext dataContext);
-
-    /**
-     * Returns a strategy to load data before showing the screen.
-     */
-    LoadBeforeShowStrategy getLoadBeforeShowStrategy();
-
-    /**
-     * Sets a strategy to load data before showing the screen.
-     */
-    void setLoadBeforeShowStrategy(LoadBeforeShowStrategy strategy);
 
     /**
      * Performs {@link DataLoader#load()} for all loaders registered in the screen.

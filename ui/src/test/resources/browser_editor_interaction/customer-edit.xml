@@ -23,6 +23,9 @@
             <loader/>
         </instance>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <form id="form" dataContainer="customerDc">
             <textField id="nameField" property="name"/>

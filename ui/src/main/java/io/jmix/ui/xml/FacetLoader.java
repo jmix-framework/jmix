@@ -16,20 +16,19 @@
 
 package io.jmix.ui.xml;
 
-import io.jmix.ui.component.Facet;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import io.jmix.core.JmixModulesAwareBeanSelector;
 import io.jmix.ui.Facets;
+import io.jmix.ui.component.Facet;
 import io.jmix.ui.xml.layout.ComponentLoader.ComponentContext;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
 
 @Component(FacetLoader.NAME)
 @ParametersAreNonnullByDefault
@@ -37,22 +36,27 @@ public class FacetLoader {
 
     public static final String NAME = "ui_FacetLoader";
 
-    protected Map<String, FacetProvider> registrations = new HashMap<>();
+    protected Multimap<String, FacetProvider<?>> registrations = HashMultimap.create();
+
+    @Autowired
+    protected JmixModulesAwareBeanSelector beanSelector;
 
     @Autowired
     protected Facets facets;
 
     @Autowired(required = false)
-    protected void setFacetRegistrations(List<FacetProvider> registrations) {
-        this.registrations = registrations.stream()
-                .collect(toMap(FacetProvider::getFacetTag, identity()));
+    protected void setFacetRegistrations(List<FacetProvider<?>> facetProviders) {
+        for (FacetProvider<?> facetProvider : facetProviders) {
+            registrations.put(facetProvider.getFacetTag(), facetProvider);
+        }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Facet load(Element element, ComponentContext context) {
-        @SuppressWarnings("unchecked")
-        FacetProvider<Facet> facetProvider = registrations.get(element.getName());
+        Collection<FacetProvider<?>> facetProviders = registrations.get(element.getName());
+        FacetProvider facetProvider = beanSelector.selectFrom(facetProviders);
         if (facetProvider == null) {
-            throw new IllegalArgumentException("There is no such facet for XML tag " + element.getName());
+            throw new IllegalArgumentException("There is no facet for XML tag " + element.getName());
         }
 
         Facet facet = facets.create(facetProvider.getFacetClass());

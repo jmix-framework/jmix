@@ -21,6 +21,9 @@
                   class="test_support.entity.model_objects.OrderLineObject">
         </instance>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <form id="form" dataContainer="orderLineObjectDc">
             <textField id="productField" property="product"/>

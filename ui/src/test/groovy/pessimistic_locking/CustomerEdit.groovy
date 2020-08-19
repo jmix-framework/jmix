@@ -16,12 +16,15 @@
 
 package pessimistic_locking
 
-import io.jmix.ui.screen.*
+
+import io.jmix.ui.screen.EditedEntityContainer
+import io.jmix.ui.screen.StandardEditor
+import io.jmix.ui.screen.UiController
+import io.jmix.ui.screen.UiDescriptor
 import test_support.entity.sales.Customer
 
 @UiController('test$Customer.edit')
 @UiDescriptor('customer-edit.xml')
 @EditedEntityContainer('customerDc')
-@LoadDataBeforeShow
 class CustomerEdit extends StandardEditor<Customer> {
 }

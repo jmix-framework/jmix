@@ -22,6 +22,9 @@
             <loader id="customerObjectsDl"/>
         </collection>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <groupTable id="customerObjectsTable"
                     dataContainer="customerObjectsDc">

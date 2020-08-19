@@ -27,7 +27,6 @@ import test_support.entity.model_objects.CustomerObject
 @UiController("test_CustomerObject.browse")
 @UiDescriptor("customer-object-browse.xml")
 @LookupComponent("customerObjectsTable")
-@LoadDataBeforeShow
 class CustomerObjectBrowse extends StandardLookup<CustomerObject> {
 
     @Autowired

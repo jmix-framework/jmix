@@ -17,7 +17,10 @@ package io.jmix.ui.sys;
 
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.Events;
+import io.jmix.core.Messages;
+import io.jmix.core.UuidProvider;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
 import io.jmix.ui.*;
@@ -42,7 +45,7 @@ import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.logging.UserActionsLogger;
-import io.jmix.ui.model.impl.ScreenDataImpl;
+import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlTools;
@@ -186,7 +189,7 @@ public class WebScreens implements Screens {
                         ui.getUrlRouting(),
                         ui.getWebBrowserTools())
         );
-        setScreenData(controller, new ScreenDataImpl());
+        setScreenData(controller, applicationContext.getBean(ScreenData.class));
 
         WindowImplementation windowImpl = (WindowImplementation) window;
         windowImpl.setFrameOwner(controller);
@@ -368,7 +371,7 @@ public class WebScreens implements Screens {
 
         fireEvent(screen, BeforeShowEvent.class, new BeforeShowEvent(screen));
 
-        loadDataBeforeShow(screen);
+        internalBeforeShow(screen);
 
         beforeShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.BEFORE_SHOW, screen.getId()));
 
@@ -477,8 +480,7 @@ public class WebScreens implements Screens {
         return OperationResult.success();
     }
 
-    protected void loadDataBeforeShow(Screen screen) {
-        UiControllerUtils.getScreenData(screen).getLoadBeforeShowStrategy().loadData(screen);
+    protected void internalBeforeShow(Screen screen) {
     }
 
     protected void changeUrl(Screen screen) {

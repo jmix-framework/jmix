@@ -37,6 +37,9 @@
             </loader>
         </collection>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <pagination id="pagination"
                     dataLoader="customersLd"/>

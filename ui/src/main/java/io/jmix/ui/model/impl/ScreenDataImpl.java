@@ -17,12 +17,17 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.ui.model.*;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@Component(ScreenData.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenDataImpl implements ScreenData {
 
     protected DataContext dataContext;
@@ -30,8 +35,6 @@ public class ScreenDataImpl implements ScreenData {
     protected Map<String, InstanceContainer> containers = new HashMap<>();
 
     protected Map<String, DataLoader> loaders = new HashMap<>();
-
-    protected LoadBeforeShowStrategy loadBeforeShowStrategy = new AnnotationBasedLoaderBeforeShow();
 
     @Nullable
     @Override
@@ -79,16 +82,6 @@ public class ScreenDataImpl implements ScreenData {
         for (DataLoader loader : loaders.values()) {
             loader.load();
         }
-    }
-
-    @Override
-    public LoadBeforeShowStrategy getLoadBeforeShowStrategy() {
-        return loadBeforeShowStrategy;
-    }
-
-    @Override
-    public void setLoadBeforeShowStrategy(LoadBeforeShowStrategy strategy) {
-        loadBeforeShowStrategy = strategy;
     }
 
     @Override

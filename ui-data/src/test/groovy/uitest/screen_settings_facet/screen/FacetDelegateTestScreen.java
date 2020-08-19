@@ -16,13 +16,15 @@
 
 package uitest.screen_settings_facet.screen;
 
-import io.jmix.ui.screen.*;
+import io.jmix.ui.screen.Install;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("facet-delegate-test-screen.xml")
-@LoadDataBeforeShow
 public class FacetDelegateTestScreen extends Screen {
 
     @Autowired

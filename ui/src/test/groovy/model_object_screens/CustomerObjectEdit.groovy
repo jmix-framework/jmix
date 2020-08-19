@@ -26,7 +26,6 @@ import test_support.entity.model_objects.CustomerObject
 @UiController("test_CustomerObject.edit")
 @UiDescriptor("customer-object-edit.xml")
 @EditedEntityContainer("customerObjectDc")
-@LoadDataBeforeShow
 class CustomerObjectEdit extends StandardEditor<CustomerObject> {
 
     @Autowired

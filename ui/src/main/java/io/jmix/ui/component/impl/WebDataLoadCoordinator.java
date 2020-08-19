@@ -63,10 +63,6 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
     @Override
     public void setOwner(@Nullable Frame owner) {
         super.setOwner(owner);
-        if (owner != null) {
-            UiControllerUtils.getScreenData(owner.getFrameOwner())
-                    .setLoadBeforeShowStrategy(screen -> { /* do nothing */ });
-        }
     }
 
     @Override

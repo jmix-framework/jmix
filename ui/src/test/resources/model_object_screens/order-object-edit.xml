@@ -22,6 +22,9 @@
             <collection id="lineObjectsDc" property="lines"/>
         </instance>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <form id="form" dataContainer="orderObjectDc">
             <dateField id="dateField" property="date"/>

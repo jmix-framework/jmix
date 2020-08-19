@@ -30,13 +30,10 @@ import test_support.entity.model_objects.OrderLineObject
 import test_support.entity.model_objects.OrderObject
 
 import java.time.LocalDate
-import java.util.HashSet
-import java.util.Set
 
 @UiController("test_OrderObject.edit")
 @UiDescriptor("order-object-edit.xml")
 @EditedEntityContainer("orderObjectDc")
-@LoadDataBeforeShow
 class OrderObjectEdit extends StandardEditor<OrderObject> {
 
     @Autowired

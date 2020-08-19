@@ -17,7 +17,6 @@
 package pagination_component.screen;
 
 import io.jmix.ui.component.Table;
-import io.jmix.ui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
@@ -26,7 +25,6 @@ import test_support.entity.sales.Customer;
 
 @UiController
 @UiDescriptor("table-pagination-test-screen.xml")
-@LoadDataBeforeShow
 public class TablePaginationTestScreen extends Screen {
 
     @Autowired

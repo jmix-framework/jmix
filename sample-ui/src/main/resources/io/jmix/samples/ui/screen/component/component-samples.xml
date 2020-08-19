@@ -29,6 +29,8 @@
     </data>
 
     <facets>
+        <dataLoadCoordinator auto="true"/>
+
         <notification id="notificationFacet"
                       type="TRAY"
                       caption="Notification Facet"

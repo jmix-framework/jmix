@@ -27,6 +27,9 @@
             </loader>
         </collection>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <groupTable id="customersTable"
                     dataContainer="customersDc">

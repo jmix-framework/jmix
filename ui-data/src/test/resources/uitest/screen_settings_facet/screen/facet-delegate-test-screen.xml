@@ -30,6 +30,8 @@
         </collection>
     </data>
     <facets>
+        <dataLoadCoordinator auto="true"/>
+
         <uidata:screenSettings id="facet"
                                auto="true"/>
     </facets>

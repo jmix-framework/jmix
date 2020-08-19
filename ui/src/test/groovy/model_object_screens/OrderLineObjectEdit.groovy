@@ -26,7 +26,6 @@ import test_support.entity.model_objects.OrderLineObject
 @UiController("test_OrderLineObject.edit")
 @UiDescriptor("order-line-object-edit.xml")
 @EditedEntityContainer("orderLineObjectDc")
-@LoadDataBeforeShow
 class OrderLineObjectEdit extends StandardEditor<OrderLineObject> {
 
     @Autowired

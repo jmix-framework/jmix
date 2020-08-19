@@ -26,7 +26,6 @@ import test_support.entity.model_objects.OrderObject
 @UiController("test_OrderObject.browse")
 @UiDescriptor("order-object-browse.xml")
 @LookupComponent("orderObjectsTable")
-@LoadDataBeforeShow
 class OrderObjectBrowse extends StandardLookup<OrderObject> {
 
     @Autowired

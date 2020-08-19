@@ -20,6 +20,9 @@
         <action id="save" icon="icons/ok.png" caption="mainMsg://actions.Ok" shortcut="CTRL-ENTER"/>
         <action id="cancel" icon="icons/cancel.png" caption="mainMsg://actions.Cancel" description="Esc"/>
     </actions>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <split id="split" height="100%" orientation="horizontal" reversePosition="true" width="100%">
             <vbox id="lookupBox" expand="table" height="100%" margin="false,true,false,false" spacing="true">

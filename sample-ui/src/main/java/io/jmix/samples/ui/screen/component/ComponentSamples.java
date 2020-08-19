@@ -25,19 +25,17 @@ import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
-import io.jmix.ui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Arrays;
 import java.util.List;
 
 @UiDescriptor("component-samples.xml")
 @UiController("component-samples")
-@LoadDataBeforeShow
 @Route("components")
 public class ComponentSamples extends Screen {
 

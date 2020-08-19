@@ -21,6 +21,9 @@
                   class="test_support.entity.model_objects.CustomerObject">
         </instance>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout>
         <form id="form" dataContainer="customerObjectDc">
             <textField id="nameField" property="name"/>

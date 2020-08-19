@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,7 +56,7 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
     protected boolean nullOptionVisible = true;
 
     protected FilterMode filterMode = FilterMode.CONTAINS;
-    protected FilterPredicate filterPredicate;
+    protected Predicate<OptionsCaptionFilteringContext> optionsCaptionFilter;
 
     protected Consumer<String> newOptionHandler;
 
@@ -327,15 +328,15 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
                 : null;
     }
 
-    @Override
-    public void setFilterPredicate(@Nullable FilterPredicate filterPredicate) {
-        this.filterPredicate = filterPredicate;
-    }
-
     @Nullable
     @Override
-    public FilterPredicate getFilterPredicate() {
-        return filterPredicate;
+    public Predicate<OptionsCaptionFilteringContext> getOptionsCaptionFilter() {
+        return optionsCaptionFilter;
+    }
+
+    @Override
+    public void setOptionsCaptionFilter(@Nullable Predicate<OptionsCaptionFilteringContext> filter) {
+        this.optionsCaptionFilter = filter;
     }
 
     @Nullable
@@ -398,8 +399,9 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
     }
 
     protected boolean filterItemTest(String itemCaption, String filterText) {
-        if (filterPredicate != null) {
-            return filterPredicate.test(itemCaption, filterText);
+        if (optionsCaptionFilter != null) {
+            OptionsCaptionFilteringContext context = new OptionsCaptionFilteringContext(itemCaption, filterText);
+            return optionsCaptionFilter.test(context);
         }
 
         if (filterMode == FilterMode.NO) {

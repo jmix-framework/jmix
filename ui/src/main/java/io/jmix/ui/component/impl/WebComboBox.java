@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,7 +65,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> optionStyleProvider;
 
-    protected FilterPredicate filterPredicate;
+    protected Predicate<OptionsCaptionFilteringContext> optionsCaptionFilter;
 
     protected MetadataTools metadataTools;
     protected IconResolver iconResolver;
@@ -145,8 +146,9 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
     }
 
     protected boolean filterItemTest(String itemCaption, String filterText) {
-        if (filterPredicate != null) {
-            return filterPredicate.test(itemCaption, filterText);
+        if (optionsCaptionFilter != null) {
+            OptionsCaptionFilteringContext context = new OptionsCaptionFilteringContext(itemCaption, filterText);
+            return optionsCaptionFilter.test(context);
         }
 
         if (filterMode == FilterMode.NO) {
@@ -452,15 +454,15 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         return optionStyleProvider;
     }
 
-    @Override
-    public void setFilterPredicate(@Nullable FilterPredicate filterPredicate) {
-        this.filterPredicate = filterPredicate;
-    }
-
     @Nullable
     @Override
-    public FilterPredicate getFilterPredicate() {
-        return filterPredicate;
+    public Predicate<OptionsCaptionFilteringContext> getOptionsCaptionFilter() {
+        return optionsCaptionFilter;
+    }
+
+    @Override
+    public void setOptionsCaptionFilter(@Nullable Predicate<OptionsCaptionFilteringContext> filter) {
+        this.optionsCaptionFilter = filter;
     }
 
     @Nullable

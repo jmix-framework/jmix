@@ -21,6 +21,7 @@ import com.google.common.reflect.TypeToken;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * A filtering dropdown single-select component. Items are filtered based on user input.
@@ -139,19 +140,6 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
     Function<? super V, Resource> getOptionImageProvider();
 
     /**
-     * Enables to setup how items should be filtered.
-     *
-     * @param filterPredicate items filter predicate
-     */
-    void setFilterPredicate(@Nullable FilterPredicate filterPredicate);
-
-    /**
-     * @return items filter predicate
-     */
-    @Nullable
-    FilterPredicate getFilterPredicate();
-
-    /**
      * Returns the suggestion pop-up's width as a string. By default this
      * width is set to {@code null}.
      *
@@ -174,17 +162,50 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
     void setPopupWidth(@Nullable String width);
 
     /**
-     * A predicate that tests whether an item with the given caption matches to the given search string.
+     * @return a predicate that tests whether an item with the given caption matches
+     * to the given search string.
      */
-    @FunctionalInterface
-    interface FilterPredicate {
+    @Nullable
+    Predicate<OptionsCaptionFilteringContext> getOptionsCaptionFilter();
+
+    /**
+     * Sets a predicate that tests whether an item with the given caption matches
+     * to the given search string.
+     *
+     * @param filter a predicate to set
+     */
+    void setOptionsCaptionFilter(@Nullable Predicate<OptionsCaptionFilteringContext> filter);
+
+    /**
+     * Caption filtering context. Can be used to test whether an item with the given caption
+     * matches to the given search string.
+     */
+    class OptionsCaptionFilteringContext {
+        protected String itemCaption;
+        protected String searchString;
 
         /**
-         * @param itemCaption  a caption of item
-         * @param searchString search string as is
-         * @return true if item with the given caption matches to the given search string or false otherwise
+         * @param itemCaption  the caption of the item to filter, not {@code null}
+         * @param searchString the user entered search string, not {@code null}
          */
-        boolean test(String itemCaption, String searchString);
+        public OptionsCaptionFilteringContext(String itemCaption, String searchString) {
+            this.itemCaption = itemCaption;
+            this.searchString = searchString;
+        }
+
+        /**
+         * @return the caption of the item to filter, not {@code null}
+         */
+        public String getItemCaption() {
+            return itemCaption;
+        }
+
+        /**
+         * @return the user entered search string, not {@code null}
+         */
+        public String getSearchString() {
+            return searchString;
+        }
     }
 
     enum FilterMode {

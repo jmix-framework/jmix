@@ -39,9 +39,11 @@ import io.jmix.ui.widget.JmixSearchSelectPickerField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -440,6 +442,17 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
         return resource != null && ((WebResource) resource).hasSource()
                 ? ((WebResource) resource).getResource()
                 : null;
+    }
+
+    @Nullable
+    @Override
+    public Predicate<OptionsCaptionFilteringContext> getOptionsCaptionFilter() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setOptionsCaptionFilter(@Nullable Predicate<OptionsCaptionFilteringContext> filter) {
+        throw new UnsupportedOperationException();
     }
 
     // just stub

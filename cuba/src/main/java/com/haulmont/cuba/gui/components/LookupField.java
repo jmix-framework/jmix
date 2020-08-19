@@ -16,11 +16,14 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.components.compatibility.LookupFieldFilterPredicateAdapter;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.component.ComboBox;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -72,6 +75,32 @@ public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V> {
     void setOptionIconProvider(Class<V> optionClass, Function<? super V, String> optionIconProvider);
 
     /**
+     * Enables to setup how items should be filtered.
+     *
+     * @param filterPredicate items filter predicate
+     * @deprecated Use {@link #setOptionsCaptionFilter(Predicate)} instead
+     */
+    @Deprecated
+    default void setFilterPredicate(@Nullable FilterPredicate filterPredicate) {
+        setOptionsCaptionFilter(new LookupFieldFilterPredicateAdapter(filterPredicate));
+    }
+
+    /**
+     * @return items filter predicate
+     * @deprecated Use {@link #setOptionsCaptionFilter(Predicate)} instead
+     */
+    @Deprecated
+    @Nullable
+    default FilterPredicate getFilterPredicate() {
+        Predicate<OptionsCaptionFilteringContext> captionFilter = getOptionsCaptionFilter();
+        if (captionFilter instanceof LookupFieldFilterPredicateAdapter) {
+            return ((LookupFieldFilterPredicateAdapter) captionFilter).getFilterPredicate();
+        }
+
+        return null;
+    }
+
+    /**
      * Interface to be implemented if {@link #setNewOptionAllowed(boolean)} is set to true.
      */
     @Deprecated
@@ -105,5 +134,22 @@ public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V> {
          * @return icon name or null to show no icon
          */
         String getItemIcon(T item);
+    }
+
+    /**
+     * A predicate that tests whether an item with the given caption matches to the given search string.
+     *
+     * @deprecated Use {@link #setOptionsCaptionFilter(Predicate)} instead
+     */
+    @Deprecated
+    @FunctionalInterface
+    interface FilterPredicate {
+
+        /**
+         * @param itemCaption  a caption of item
+         * @param searchString search string as is
+         * @return true if item with the given caption matches to the given search string or false otherwise
+         */
+        boolean test(String itemCaption, String searchString);
     }
 }

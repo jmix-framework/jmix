@@ -19,7 +19,7 @@ package io.jmix.ui.xml.layout.loader;
 import io.jmix.core.Metadata;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.ComboBox;
@@ -85,7 +85,7 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
         Actions actions = getActions();
 
         getResultComponent().addAction(actions.create(LookupAction.ID));
-        getResultComponent().addAction(actions.create(ClearAction.ID));
+        getResultComponent().addAction(actions.create(EntityClearAction.ID));
     }
 
     protected GuiActionSupport getGuiActionSupport() {
@@ -102,6 +102,6 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        return loadEntityPickerDeclarativeAction(actionsHolder, element);
+        return loadValuePickerDeclarativeAction(actionsHolder, element);
     }
 }

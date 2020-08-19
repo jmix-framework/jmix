@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.*;
@@ -357,11 +357,11 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
                     entityPicker.addAction(actions.create(LookupAction.ID));
                     boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(entityPicker);
                     if (!actionsByMetaAnnotations) {
-                        entityPicker.addAction(actions.create(ClearAction.ID));
+                        entityPicker.addAction(actions.create(EntityClearAction.ID));
                     }
                 } else {
                     entityPicker.addAction(actions.create(OpenAction.ID));
-                    entityPicker.addAction(actions.create(ClearAction.ID));
+                    entityPicker.addAction(actions.create(EntityClearAction.ID));
                 }
             } else {
                 EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);

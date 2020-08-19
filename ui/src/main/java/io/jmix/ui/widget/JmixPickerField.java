@@ -140,7 +140,6 @@ public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements 
         suppressTextChangeListener = false;
     }
 
-    @SuppressWarnings("unchecked")
     protected String getStringRepresentation() {
         if (textFieldValueProvider != null) {
             return textFieldValueProvider.apply(getValue());

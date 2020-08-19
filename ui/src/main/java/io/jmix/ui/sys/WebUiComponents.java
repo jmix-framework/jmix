@@ -93,6 +93,8 @@ public class WebUiComponents implements UiComponents {
         classes.put(TimeField.NAME, WebTimeField.class);
         classes.put(ComboBox.NAME, WebComboBox.class);
         classes.put(EntityPicker.NAME, WebEntityPicker.class);
+        classes.put(ValuePicker.NAME, WebValuePicker.class);
+        classes.put(ValuesPicker.NAME, WebValuesPicker.class);
         classes.put(SuggestionField.NAME, WebSuggestionField.class);
         classes.put(EntitySuggestionField.NAME, WebEntitySuggestionField.class);
         classes.put(ColorPicker.NAME, WebColorPicker.class);

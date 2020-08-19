@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
@@ -128,7 +128,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
             entityPicker.addAction(lookupAction);
             boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(entityPicker);
             if (!actionsByMetaAnnotations) {
-                entityPicker.addAction(actions.create(ClearAction.ID));
+                entityPicker.addAction(actions.create(EntityClearAction.ID));
             }
         } else {
             EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);

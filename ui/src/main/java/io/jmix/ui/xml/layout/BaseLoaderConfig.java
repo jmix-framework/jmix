@@ -70,6 +70,8 @@ public abstract class BaseLoaderConfig {
         loaders.put(ComboBox.NAME, ComboBoxLoader.class);
         loaders.put(SuggestionField.NAME, SuggestionFieldLoader.class);
         loaders.put(EntitySuggestionField.NAME, EntitySuggestionFieldLoader.class);
+        loaders.put(ValuePicker.NAME, ValuePickerLoader.class);
+        loaders.put(ValuesPicker.NAME, ValuesPickerLoader.class);
         loaders.put(EntityPicker.NAME, EntityPickerLoader.class);
         loaders.put(ColorPicker.NAME, ColorPickerLoader.class);
         loaders.put(EntityComboBox.NAME, EntityComboBoxLoader.class);

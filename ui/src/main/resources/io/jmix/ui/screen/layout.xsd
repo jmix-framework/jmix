@@ -750,6 +750,25 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="valuePickerStylename">
+        <xs:union>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="tiny"/>
+                    <xs:enumeration value="small"/>
+                    <xs:enumeration value="large"/>
+                    <xs:enumeration value="huge"/>
+                    <xs:enumeration value="borderless"/>
+                    <xs:enumeration value="align-right"/>
+                    <xs:enumeration value="align-center"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="entityPickerStylename">
         <xs:union>
             <xs:simpleType>
@@ -2151,6 +2170,33 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- ValuePicker -->
+    <xs:complexType name="valuePickerComponent">
+        <xs:complexContent>
+            <xs:extension base="baseFieldComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
+                    <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                    <xs:element name="formatter" minOccurs="0" type="componentFormatter"/>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasBuffered"/>
+                <xs:attributeGroup ref="hasTabIndex"/>
+
+                <xs:attribute name="fieldEditable" type="xs:boolean"/>
+                <xs:attribute name="stylename" type="valuePickerStylename"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- ValuesPicker -->
+    <xs:complexType name="valuesPickerComponent">
+        <xs:complexContent>
+            <xs:extension base="valuePickerComponent">
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <!-- EntityPicker -->
     <xs:complexType name="entityPickerComponent">
         <xs:complexContent>
@@ -2158,13 +2204,15 @@
                 <xs:sequence>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="validators" minOccurs="0" type="baseValidatorType"/>
+                    <xs:element name="formatter" minOccurs="0" type="componentFormatter"/>
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasBuffered"/>
-                <xs:attributeGroup ref="hasCaptionSource"/>
+                <xs:attributeGroup ref="hasCaptionSource"/> <!--TODO: remove-->
                 <xs:attributeGroup ref="hasTabIndex"/>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
+                <xs:attribute name="fieldEditable" type="xs:boolean"/>
                 <xs:attribute name="stylename" type="entityPickerStylename"/>
             </xs:extension>
         </xs:complexContent>
@@ -3927,6 +3975,8 @@
                 <xs:element name="comboBox" type="comboBoxComponent"/>
                 <xs:element name="suggestionField" type="suggestionFieldComponent"/>
                 <xs:element name="entitySuggestionField" type="entitySuggestionFieldComponent"/>
+                <xs:element name="valuePicker" type="valuePickerComponent"/>
+                <xs:element name="valuesPicker" type="valuesPickerComponent"/>
                 <xs:element name="entityPicker" type="entityPickerComponent"/>
                 <xs:element name="entityComboBox" type="entityComboBoxComponent"/>
 
@@ -4019,6 +4069,11 @@
             <xs:choice maxOccurs="unbounded">
                 <xs:element name="action" type="componentAction"/>
             </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="componentFormatter">
+        <xs:sequence>
+            <xs:group ref="formatters" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 

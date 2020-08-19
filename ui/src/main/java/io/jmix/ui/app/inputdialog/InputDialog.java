@@ -29,7 +29,7 @@ import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ContainerOptions;
@@ -403,7 +403,7 @@ public class InputDialog extends Screen {
     protected Field createEntityField(InputParameter parameter) {
         MetaClass metaClass = metadata.getClass(parameter.getEntityClass());
         Action lookupAction = actions.create(LookupAction.ID);
-        Action clearAction = actions.create(ClearAction.ID);
+        Action clearAction = actions.create(EntityClearAction.ID);
 
         if (persistenceManagerClient.useLookupScreen(metaClass.getName())) {
             EntityPicker pickerField = uiComponents.create(EntityPicker.NAME);

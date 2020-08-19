@@ -14,52 +14,46 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.action.entitypicker;
+package io.jmix.ui.action.valuepicker;
 
 import io.jmix.core.Messages;
-import io.jmix.core.JmixEntity;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.EntityPicker;
-import io.jmix.ui.component.data.ValueSource;
-import io.jmix.ui.component.data.meta.EntityValueSource;
-import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.component.ValuePicker;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.ui.model.DataContext;
-import io.jmix.ui.screen.FrameOwner;
-import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.InitializingBean;
-
-import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 /**
- * Standard entity picker action for clearing the field value.
+ * Standard value picker action for clearing the field value.
  * <p>
- * Should be defined for {@link EntityPicker} or its subclass in a screen XML descriptor.
+ * Should be defined for {@link ValuePicker} or its subclass in a screen XML descriptor.
  */
-@StudioAction(category = "EntityPicker Actions", description = "Clears the entity picker value")
-@ActionType(ClearAction.ID)
-public class ClearAction extends BaseAction implements EntityPicker.EntityPickerAction, InitializingBean {
+@StudioAction(category = "ValuePicker Actions", description = "Clears the value picker value")
+@ActionType(ValueClearAction.ID)
+public class ValueClearAction extends BaseAction implements ValuePicker.ValuePickerAction, InitializingBean {
 
-    public static final String ID = "entity_clear";
+    public static final String ID = "value_clear";
 
-    protected EntityPicker entityPicker;
+    protected ValuePicker valuePicker;
+
     protected Icons icons;
     protected Messages messages;
     protected UiProperties properties;
 
     protected boolean editable = true;
 
-    public ClearAction() {
-        super(ID);
+    public ValueClearAction() {
+        this(ID);
     }
 
-    public ClearAction(String id) {
+    public ValueClearAction(String id) {
         super(id);
     }
 
@@ -78,16 +72,16 @@ public class ClearAction extends BaseAction implements EntityPicker.EntityPicker
         setShortcut(properties.getPickerClearShortcut());
 
         if (getShortcutCombination() != null) {
-            setDescription(messages.getMessage("entityPicker.action.clear.tooltip")
+            setDescription(messages.getMessage("valuePicker.action.clear.tooltip")
                     + " (" + getShortcutCombination().format() + ")");
         } else {
-            setDescription(messages.getMessage("entityPicker.action.clear.tooltip"));
+            setDescription(messages.getMessage("valuePicker.action.clear.tooltip"));
         }
     }
 
     @Override
-    public void setEntityPicker(@Nullable EntityPicker entityPicker) {
-        this.entityPicker = entityPicker;
+    public void setPicker(@Nullable ValuePicker valuePicker) {
+        this.valuePicker = valuePicker;
     }
 
     @Override
@@ -95,9 +89,9 @@ public class ClearAction extends BaseAction implements EntityPicker.EntityPicker
         setEditable(editable);
 
         if (editable) {
-            setIcon(icons.get(JmixIcon.ENTITYPICKER_CLEAR));
+            setIcon(icons.get(JmixIcon.VALUEPICKER_CLEAR));
         } else {
-            setIcon(icons.get(JmixIcon.ENTITYPICKER_CLEAR_READONLY));
+            setIcon(icons.get(JmixIcon.VALUEPICKER_CLEAR_READONLY));
         }
     }
 
@@ -118,7 +112,7 @@ public class ClearAction extends BaseAction implements EntityPicker.EntityPicker
     protected void setIcons(Icons icons) {
         this.icons = icons;
 
-        setIcon(icons.get(JmixIcon.ENTITYPICKER_CLEAR));
+        setIcon(icons.get(JmixIcon.VALUEPICKER_CLEAR));
     }
 
     @Override
@@ -137,20 +131,7 @@ public class ClearAction extends BaseAction implements EntityPicker.EntityPicker
      */
     @SuppressWarnings("unchecked")
     public void execute() {
-        // remove entity if it is a composition
-        Object value = entityPicker.getValue();
-        ValueSource valueSource = entityPicker.getValueSource();
-        if (value != null && !value.equals(entityPicker.getEmptyValue()) && valueSource instanceof EntityValueSource) {
-            EntityValueSource entityValueSource = (EntityValueSource) entityPicker.getValueSource();
-            JmixEntity entity = (JmixEntity) entityPicker.getValue();
-            if (entityValueSource.getMetaPropertyPath() != null
-                    && entityValueSource.getMetaPropertyPath().getMetaProperty().getType() == MetaProperty.Type.COMPOSITION) {
-                FrameOwner screen = entityPicker.getFrame().getFrameOwner();
-                DataContext dataContext = UiControllerUtils.getScreenData(screen).getDataContext();
-                dataContext.remove(entity);
-            }
-        }
         // Set the value as if the user had set it
-        entityPicker.setValueFromUser(entityPicker.getEmptyValue());
+        valuePicker.setValueFromUser(valuePicker.getEmptyValue());
     }
 }

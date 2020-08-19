@@ -43,8 +43,9 @@ public enum JmixIcon implements Icons.Icon {
     UNLOCK_ACTION("font-icon:UNLOCK"),
     BULK_EDIT_ACTION("font-icon:TABLE"),
 
-    ENTITYPICKER_CLEAR("font-icon:TIMES"),
-    ENTITYPICKER_CLEAR_READONLY("font-icon:TIMES"),
+    VALUEPICKER_CLEAR("font-icon:TIMES"),
+    VALUEPICKER_CLEAR_READONLY("font-icon:TIMES"),
+
     ENTITYPICKER_LOOKUP("font-icon:ELLIPSIS_H"),
     ENTITYPICKER_LOOKUP_READONLY("font-icon:ELLIPSIS_H"),
     ENTITYPICKER_OPEN("font-icon:SEARCH"),

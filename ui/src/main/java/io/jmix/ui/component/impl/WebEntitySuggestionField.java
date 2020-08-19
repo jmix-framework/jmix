@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
 public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPicker<V>
@@ -82,7 +83,7 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
 
     @Override
     protected void initComponent(JmixPickerField<V> component) {
-        getComponent().setTextViewConverter(this::convertToTextView);
+        getComponent().setTextViewConverter(this::formatValue);
 
         getComponent().setSearchExecutor(query -> {
             cancelSearch();
@@ -97,16 +98,13 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         this.locale = currentAuthentication.getLocale();
     }
 
-    protected String convertToTextView(@Nullable V value) {
-        if (value == null) {
-            return "";
-        }
-
+    @Override
+    protected String formatValue(@Nullable V value) {
         if (optionCaptionProvider != null) {
-            return optionCaptionProvider.apply(value);
+            return nullToEmpty(optionCaptionProvider.apply(value));
         }
 
-        return metadataTools.getInstanceName(value);
+        return super.formatValue(value);
     }
 
     protected void cancelSearch() {
@@ -209,6 +207,11 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
     @Override
     public Subscription addFieldValueChangeListener(Consumer<FieldValueChangeEvent<V>> listener) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isFieldEditable() {
+        return false;
     }
 
     @Override

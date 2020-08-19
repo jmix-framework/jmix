@@ -743,7 +743,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return null;
     }
 
-    protected Action loadEntityPickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+    protected Action loadValuePickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String type = element.attributeValue("type");
         if (StringUtils.isNotEmpty(type)) {
             Actions actions = (Actions) applicationContext.getBean(Actions.NAME);
@@ -767,6 +767,13 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             }
         }
         return null;
+    }
+
+    protected void loadFormatter(HasFormatter component, Element element) {
+        Formatter formatter = loadFormatter(element);
+        if (formatter != null) {
+            component.setFormatter(formatter);
+        }
     }
 
     protected void loadOrientation(HasOrientation component, Element element) {

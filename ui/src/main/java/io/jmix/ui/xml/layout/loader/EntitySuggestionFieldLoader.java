@@ -105,7 +105,7 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        return loadEntityPickerDeclarativeAction(actionsHolder, element);
+        return loadValuePickerDeclarativeAction(actionsHolder, element);
     }
 
     protected void loadSuggestionsLimit(EntitySuggestionField suggestionField, Element element) {

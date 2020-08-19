@@ -25,14 +25,13 @@ import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
- * Generic UI component designed to select and display an entity instance. Consists of the text field and the set of buttons
- * defined by actions.
+ * Generic UI component designed to select and display an entity instance.
+ * Consists of the text field and the set of buttons defined by actions.
  *
  * @see EntityComboBox
  */
-public interface EntityPicker<V extends JmixEntity> extends Field<V>, ActionsHolder, Buffered,
-        LookupComponent, Component.Focusable, HasOptionCaptionProvider<V>, SupportsUserAction<V>,
-        HasOptionIconProvider<V> {
+public interface EntityPicker<V extends JmixEntity> extends ValuePicker<V>,
+        LookupComponent, HasOptionCaptionProvider<V>, HasOptionIconProvider<V> {
 
     String NAME = "entityPicker";
 
@@ -44,57 +43,17 @@ public interface EntityPicker<V extends JmixEntity> extends Field<V>, ActionsHol
     MetaClass getMetaClass();
     void setMetaClass(@Nullable MetaClass metaClass);
 
-    void setFieldEditable(boolean editable);
+    interface EntityPickerAction extends ValuePickerAction {
 
-    /**
-     * Adds a listener that will be fired in case field is editable.
-     *
-     * @param listener a listener to add
-     * @return a {@link Subscription} object
-     * @see #setFieldEditable(boolean)
-     */
-    Subscription addFieldValueChangeListener(Consumer<FieldValueChangeEvent<V>> listener);
+        void setEntityPicker(@Nullable EntityPicker valuePicker);
 
-    /**
-     * The event is fired when a user inputs value manually.
-     * <p>
-     * Field editing can be enabled via {@link #setFieldEditable(boolean)}.
-     *
-     * @param <V> field value type
-     */
-    class FieldValueChangeEvent<V extends JmixEntity> extends EventObject {
-
-        protected final String text;
-        protected final V prevValue;
-
-        public FieldValueChangeEvent(EntityPicker<V> source, String text, V prevValue) {
-            super(source);
-            this.text = text;
-            this.prevValue = prevValue;
-        }
-
-        @SuppressWarnings("unchecked")
         @Override
-        public EntityPicker<V> getSource() {
-            return (EntityPicker<V>) super.getSource();
+        default void setPicker(@Nullable ValuePicker valuePicker) {
+            if (!(valuePicker instanceof EntityPicker)) {
+                throw new IllegalArgumentException("Incorrect component type. Must be " +
+                        "'EntityPicker' or its inheritors");
+            }
+            setEntityPicker(((EntityPicker) valuePicker));
         }
-
-        public String getText() {
-            return text;
-        }
-
-        public V getPrevValue() {
-            return prevValue;
-        }
-    }
-
-    interface EntityPickerAction {
-        String PROP_EDITABLE = "editable";
-
-        void setEntityPicker(@Nullable EntityPicker entityPicker);
-
-        void editableChanged(boolean editable);
-
-        boolean isEditable();
     }
 }

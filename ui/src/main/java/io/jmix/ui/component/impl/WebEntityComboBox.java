@@ -29,6 +29,7 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.OptionsBinding;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.options.OptionsBinder;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.widget.JmixComboBoxPickerField;
@@ -177,7 +178,23 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
     }
 
     @Override
+    public boolean isFieldEditable() {
+        return false;
+    }
+
+    @Override
     public void setFieldEditable(boolean editable) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Nullable
+    @Override
+    public Formatter<V> getFormatter() {
+        return null;
+    }
+
+    @Override
+    public void setFormatter(@Nullable Formatter<? super V> formatter) {
         throw new UnsupportedOperationException();
     }
 

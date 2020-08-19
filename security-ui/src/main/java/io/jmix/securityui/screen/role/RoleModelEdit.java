@@ -48,7 +48,6 @@ import java.util.stream.Collectors;
 @UiDescriptor("role-model-edit.xml")
 @EditedEntityContainer("roleModelDc")
 @Route(value = "roles/edit", parentPrefix = "roles")
-@LoadDataBeforeShow
 public class RoleModelEdit extends StandardEditor<RoleModel> {
 
     @Named("resourcePoliciesTable.edit")

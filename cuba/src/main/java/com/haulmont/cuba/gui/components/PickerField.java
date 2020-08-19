@@ -502,7 +502,7 @@ public interface PickerField<V extends JmixEntity> extends Field<V>, EntityPicke
             super(NAME, pickerField);
             caption = "";
             icon = AppBeans.get(Icons.class)
-                    .get(JmixIcon.ENTITYPICKER_CLEAR);
+                    .get(JmixIcon.VALUEPICKER_CLEAR);
             setShortcut(properties.getPickerClearShortcut());
         }
 

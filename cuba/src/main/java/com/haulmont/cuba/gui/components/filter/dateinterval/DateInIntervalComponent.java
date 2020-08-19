@@ -98,7 +98,7 @@ public class DateInIntervalComponent {
         layout.add(openEditorBtn);
 
         Button clearBtn = componentsFactory.createComponent(Button.class);
-        clearBtn.setIconFromSet(JmixIcon.ENTITYPICKER_CLEAR);
+        clearBtn.setIconFromSet(JmixIcon.VALUEPICKER_CLEAR);
         clearBtn.setStyleName("c-dateintervaleditor-button");
         clearBtn.setCaption("");
         clearBtn.setAction(new AbstractAction("clear") {

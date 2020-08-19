@@ -24,7 +24,7 @@ import io.jmix.core.entity.annotation.Lookup;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.ui.Actions;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.data.ValueSource;
@@ -120,7 +120,7 @@ public class GuiActionSupport {
                             break;
 
                         case "clear":
-                            pickerField.addAction(actions.create(ClearAction.ID));
+                            pickerField.addAction(actions.create(EntityClearAction.ID));
                             break;
 
                         default:

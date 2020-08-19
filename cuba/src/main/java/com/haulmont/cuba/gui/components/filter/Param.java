@@ -47,7 +47,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.entitypicker.ClearAction;
+import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueConversionException;
@@ -879,7 +879,7 @@ public class Param {
 
                 picker.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
                 picker.addAction(actions.create(OpenAction.ID));
-                picker.addAction(actions.create(ClearAction.ID));
+                picker.addAction(actions.create(EntityClearAction.ID));
 
                 picker.addValueChangeListener(e ->
                         _setValue(e.getValue(), valueProperty));
@@ -922,7 +922,7 @@ public class Param {
 
                 EntityComboBox<JmixEntity> lookup = uiComponents.create(EntityComboBox.NAME);
                 lookup.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
-                lookup.addAction(actions.create(ClearAction.ID));
+                lookup.addAction(actions.create(EntityClearAction.ID));
                 lookup.setOptions(new ContainerOptions<>(container));
 
                 Consumer<CollectionContainer.CollectionChangeEvent<?>> listener = e -> lookup.setValue(null);

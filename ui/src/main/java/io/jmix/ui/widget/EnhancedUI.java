@@ -18,7 +18,10 @@ package io.jmix.ui.widget;
 
 import com.vaadin.server.Resource;
 
+import javax.annotation.Nullable;
+
 public interface EnhancedUI {
+    @Nullable
     Resource createVersionedResource(String value);
 
     String getWebJarPath(String webjar, String partialPath);

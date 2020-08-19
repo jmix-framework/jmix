@@ -37,6 +37,7 @@ import io.jmix.ui.sys.*;
 import io.jmix.ui.sys.event.UiEventsMulticaster;
 import io.jmix.ui.theme.ThemeConstantsRepository;
 import io.jmix.ui.widget.AppUIUtils;
+import io.jmix.ui.widget.EnhancedUI;
 import io.jmix.ui.widget.JmixFileDownloader;
 import io.jmix.ui.widget.JmixTimer;
 import io.jmix.ui.widget.client.ui.AppUIClientRpc;
@@ -59,7 +60,7 @@ import java.util.stream.Collectors;
 @Theme("${jmix.ui.theme:helium}")
 @Push(transport = Transport.WEBSOCKET_XHR)
 @SpringUI
-public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiContext {
+public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHandler.UiContext {
 
     private static final Logger log = LoggerFactory.getLogger(AppUI.class);
 
@@ -686,14 +687,17 @@ public class AppUI extends UI implements ErrorHandler, UiExceptionHandler.UiCont
     }
 
     @Nullable
+    @Override
     public Resource createVersionedResource(String value) {
         return iconResolver.getIconResource(value);
     }
 
+    @Override
     public String getWebJarPath(String webjar, String partialPath) {
         return webJarResourceResolver.getWebJarPath(webjar, partialPath);
     }
 
+    @Override
     public String translateToWebPath(String fullWebJarPath) {
         return webJarResourceResolver.translateToWebPath(fullWebJarPath);
     }

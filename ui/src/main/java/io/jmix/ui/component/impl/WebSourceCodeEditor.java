@@ -19,11 +19,13 @@ package io.jmix.ui.component.impl;
 import com.google.common.base.Strings;
 import com.vaadin.server.ClientConnector;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.AppUI;
 import io.jmix.ui.component.HighlightMode;
 import io.jmix.ui.component.SourceCodeEditor;
 import io.jmix.ui.component.autocomplete.AutoCompleteSupport;
 import io.jmix.ui.component.autocomplete.Suggester;
 import io.jmix.ui.widget.JmixSourceCodeEditor;
+import io.jmix.ui.widget.addon.aceeditor.AceEditor;
 import io.jmix.ui.widget.addon.aceeditor.AceMode;
 import io.jmix.ui.widget.addon.aceeditor.Suggestion;
 import io.jmix.ui.widget.addon.aceeditor.SuggestionExtension;
@@ -74,19 +76,19 @@ public class WebSourceCodeEditor extends WebV8AbstractField<JmixSourceCodeEditor
     }
 
     protected void handleAttach(ClientConnector.AttachEvent attachEvent) {
-//        AceEditor component = (AceEditor) attachEvent.getSource();
-//        AppUI appUi = (AppUI) component.getUI();
-//        if (appUi == null) {
-//            return;
-//        }
-//
-//        String acePath = appUi.getWebJarPath("ace-builds", "ace.js");
-//        String path = appUi.translateToWebPath(acePath.substring(0, acePath.lastIndexOf("/"))) + "/";
-//
-//        component.setBasePath(path);
-//        component.setThemePath(path);
-//        component.setWorkerPath(path);
-//        component.setModePath(path);
+        AceEditor component = (AceEditor) attachEvent.getSource();
+        AppUI appUi = (AppUI) component.getUI();
+        if (appUi == null) {
+            return;
+        }
+
+        String acePath = appUi.getWebJarPath("ace-builds", "ace.js");
+        String path = appUi.translateToWebPath(acePath.substring(0, acePath.lastIndexOf("/"))) + "/";
+
+        component.setBasePath(path);
+        component.setThemePath(path);
+        component.setWorkerPath(path);
+        component.setModePath(path);
     }
 
     @Override

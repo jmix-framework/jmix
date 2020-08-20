@@ -72,6 +72,8 @@ public class DynamicAttributesGuiTools {
     protected AttributeValidators attributeValidators;
     @Autowired
     protected ApplicationContext applicationContext;
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     /**
      * Method checks whether any class in the view hierarchy contains dynamic attributes that must be displayed on the
@@ -122,8 +124,9 @@ public class DynamicAttributesGuiTools {
     @SuppressWarnings("unchecked")
     public void reloadDynamicAttributes(JmixEntity entity) {
         MetaClass metaClass = metadata.getClassNN(entity.getClass());
-        FetchPlan fetchPlan = new FetchPlan(metaClass.getJavaClass(), false)
-                .addProperty(metadataTools.getPrimaryKeyName(metaClass));
+        FetchPlan fetchPlan = fetchPlans.builder(metaClass.getJavaClass())
+                .addIfNotEmpty(metadataTools.getPrimaryKeyName(metaClass))
+                .build();
         LoadContext loadContext = new LoadContext(metaClass)
                 .setFetchPlan(fetchPlan)
                 .setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true)

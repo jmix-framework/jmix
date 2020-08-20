@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -82,6 +83,30 @@ public class ViewBuilder extends FetchPlanBuilder {
 
     public ViewBuilder addView(String viewName) {
         super.addFetchPlan(viewName);
+        return this;
+    }
+
+    @Override
+    public ViewBuilder partial() {
+        super.partial();
+        return this;
+    }
+
+    @Override
+    public ViewBuilder partial(boolean partial) {
+        super.partial(partial);
+        return this;
+    }
+
+    @Override
+    public ViewBuilder name(String name) {
+        super.name(name);
+        return this;
+    }
+
+    @Override
+    public ViewBuilder addIfNotEmpty(@Nullable String property) {
+        super.addIfNotEmpty(property);
         return this;
     }
 }

@@ -17,9 +17,10 @@
 package com.haulmont.cuba.core.global.impl;
 
 import com.haulmont.cuba.core.global.View;
+import com.haulmont.cuba.core.global.ViewBuilder;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -42,13 +43,12 @@ public class CubaFetchPlanRepository extends FetchPlanRepositoryImpl {
                         name, metaClass.getName()));
             }
 
-            FetchPlan fetchPlan;
-            fetchPlan = new FetchPlan(javaClass, name, false);
-            addAttributesToInstanceNameFetchPlan(metaClass, fetchPlan, info, visited);
+            ViewBuilder viewBuilder = ViewBuilder.of(javaClass).name(name);
+            addAttributesToInstanceNameFetchPlan(metaClass, viewBuilder, info, visited);
 
-            storeFetchPlan(metaClass, fetchPlan);
+            storeFetchPlan(metaClass, viewBuilder.build());
 
-            return fetchPlan;
+            return viewBuilder.build();
 
         }
         return super.deployDefaultFetchPlan(metaClass, name, visited);

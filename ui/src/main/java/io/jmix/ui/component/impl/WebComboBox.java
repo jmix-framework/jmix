@@ -37,8 +37,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -397,16 +395,6 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
             setNullSelectionCaption(generateItemCaption(null));
         }
         component.setPlaceholder(inputPrompt);
-    }
-
-    @Override
-    public void setLookupSelectHandler(Consumer selectHandler) {
-        // do nothing
-    }
-
-    @Override
-    public Collection getLookupSelectedItems() {
-        return Collections.singleton(getValue());
     }
 
     @Override

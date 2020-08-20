@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 /**
  * A component which can be set as lookup component for a screen.
  */
-public interface LookupComponent<E extends JmixEntity> extends Component {
+public interface LookupComponent<E> extends Component {
     /**
      * @param selectHandler handler that should be executed when a user select an item in the lookup screen
      */
@@ -40,7 +40,7 @@ public interface LookupComponent<E extends JmixEntity> extends Component {
     /**
      * Component that fires {@link LookupSelectionChangeEvent} when lookup selected items set is changed.
      */
-    interface LookupSelectionChangeNotifier<T extends JmixEntity> extends LookupComponent<T> {
+    interface LookupSelectionChangeNotifier<T> extends LookupComponent<T> {
         Subscription addLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<T>> listener);
 
         /**
@@ -50,7 +50,7 @@ public interface LookupComponent<E extends JmixEntity> extends Component {
         void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<T>> listener);
     }
 
-    class LookupSelectionChangeEvent<T extends JmixEntity> extends EventObject {
+    class LookupSelectionChangeEvent<T> extends EventObject {
         public LookupSelectionChangeEvent(LookupComponent<T> source) {
             super(source);
         }
@@ -58,7 +58,7 @@ public interface LookupComponent<E extends JmixEntity> extends Component {
         @SuppressWarnings("unchecked")
         @Override
         public LookupComponent<T> getSource() {
-            return (LookupComponent) super.getSource();
+            return (LookupComponent<T>) super.getSource();
         }
     }
 }

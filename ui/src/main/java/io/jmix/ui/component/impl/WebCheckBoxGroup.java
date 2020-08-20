@@ -37,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -137,11 +136,6 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
     }
 
     @Override
-    public void setLookupSelectHandler(Consumer selectHandler) {
-        // do nothing
-    }
-
-    @Override
     protected Set<V> convertToPresentation(@Nullable Collection<V> modelValue) throws ConversionException {
         return new LinkedHashSet<>(CollectionUtils.isNotEmpty(modelValue)
                 ? modelValue
@@ -167,14 +161,6 @@ public class WebCheckBoxGroup<V> extends WebV8AbstractField<JmixCheckBoxGroup<V>
         return new LinkedHashSet<>(componentRawValue != null
                 ? componentRawValue
                 : Collections.emptySet());
-    }
-
-    @Override
-    public Collection getLookupSelectedItems() {
-        Collection<V> value = getValue();
-        return value != null
-                ? Collections.unmodifiableSet(new LinkedHashSet<>(value))
-                : Collections.emptySet();
     }
 
     @Nullable

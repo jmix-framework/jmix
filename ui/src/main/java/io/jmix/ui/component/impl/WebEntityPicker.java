@@ -166,12 +166,12 @@ public class WebEntityPicker<V extends JmixEntity> extends WebValuePicker<V> imp
     }
 
     @Override
-    public void setLookupSelectHandler(Consumer selectHandler) {
+    public void setLookupSelectHandler(Consumer<Collection<V>> selectHandler) {
         // do nothing
     }
 
     @Override
-    public Collection getLookupSelectedItems() {
+    public Collection<V> getLookupSelectedItems() {
         V value = getValue();
         if (value == null) {
             return Collections.emptyList();

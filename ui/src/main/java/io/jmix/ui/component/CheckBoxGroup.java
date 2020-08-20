@@ -27,7 +27,7 @@ import java.util.function.Function;
  *
  * @param <I> item type
  */
-public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, LookupComponent, Component.Focusable, HasOrientation {
+public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, Component.Focusable, HasOrientation {
 
     String NAME = "checkBoxGroup";
 

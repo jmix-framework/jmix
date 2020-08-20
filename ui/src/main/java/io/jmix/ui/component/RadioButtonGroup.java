@@ -26,7 +26,7 @@ import java.util.function.Function;
  *
  * @param <I> item type
  */
-public interface RadioButtonGroup<I> extends OptionsField<I, I>, LookupComponent, Component.Focusable, HasOrientation {
+public interface RadioButtonGroup<I> extends OptionsField<I, I>, Component.Focusable, HasOrientation {
 
     String NAME = "radioButtonGroup";
 

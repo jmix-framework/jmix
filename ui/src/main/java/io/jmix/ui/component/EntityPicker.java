@@ -17,12 +17,9 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
-import java.util.EventObject;
-import java.util.function.Consumer;
 
 /**
  * Generic UI component designed to select and display an entity instance.
@@ -31,7 +28,7 @@ import java.util.function.Consumer;
  * @see EntityComboBox
  */
 public interface EntityPicker<V extends JmixEntity> extends ValuePicker<V>,
-        LookupComponent, HasOptionCaptionProvider<V>, HasOptionIconProvider<V> {
+        LookupComponent<V>, HasOptionCaptionProvider<V>, HasOptionIconProvider<V> {
 
     String NAME = "entityPicker";
 

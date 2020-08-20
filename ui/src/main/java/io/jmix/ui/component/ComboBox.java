@@ -28,7 +28,7 @@ import java.util.function.Predicate;
  *
  * @param <V> type of options and value
  */
-public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffered, LookupComponent,
+public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffered,
         Component.Focusable, HasOptionsStyleProvider<V> {
 
     String NAME = "comboBox";

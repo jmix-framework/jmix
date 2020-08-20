@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.components.compatibility.LookupFieldFilterPredicateAdapter;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.LookupComponent;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -32,7 +33,7 @@ import java.util.function.Predicate;
  * @deprecated Use {@link ComboBox} instead
  */
 @Deprecated
-public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V> {
+public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V>, LookupComponent<V> {
 
     String NAME = "lookupField";
 

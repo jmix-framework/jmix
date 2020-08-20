@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.ui.component.LookupComponent;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -25,5 +26,6 @@ import com.haulmont.cuba.gui.data.Datasource;
  * @deprecated Use {@link io.jmix.ui.component.RadioButtonGroup} instead
  */
 @Deprecated
-public interface RadioButtonGroup<I> extends OptionsField<I, I>, io.jmix.ui.component.RadioButtonGroup<I> {
+public interface RadioButtonGroup<I>
+        extends OptionsField<I, I>, io.jmix.ui.component.RadioButtonGroup<I>, LookupComponent<I> {
 }

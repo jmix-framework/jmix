@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.ui.component.LookupComponent;
 
 import java.util.Collection;
 
@@ -27,5 +28,6 @@ import java.util.Collection;
  * @deprecated Use {@link io.jmix.ui.component.CheckBox} instead
  */
 @Deprecated
-public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, io.jmix.ui.component.CheckBoxGroup<I> {
+public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>,
+        io.jmix.ui.component.CheckBoxGroup<I>, LookupComponent<I> {
 }

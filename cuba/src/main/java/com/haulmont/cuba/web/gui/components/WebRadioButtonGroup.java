@@ -18,6 +18,8 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.RadioButtonGroup;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 @Deprecated
@@ -31,5 +33,18 @@ public class WebRadioButtonGroup<V> extends io.jmix.ui.component.impl.WebRadioBu
     @Override
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    public Collection<V> getLookupSelectedItems() {
+        V value = getValue();
+        return value != null
+                ? Collections.singletonList(value)
+                : Collections.emptyList();
+    }
+
+    @Override
+    public void setLookupSelectHandler(Consumer<Collection<V>> selectHandler) {
+        // do nothing
     }
 }

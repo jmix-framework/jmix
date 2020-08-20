@@ -19,6 +19,8 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.CheckBoxGroup;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
 @Deprecated
@@ -31,5 +33,18 @@ public class WebCheckBoxGroup<I> extends io.jmix.ui.component.impl.WebCheckBoxGr
     @Override
     public void removeValidator(Consumer<Collection<I>> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    public Collection<I> getLookupSelectedItems() {
+        Collection<I> value = getValue();
+        return value != null
+                ? Collections.unmodifiableSet(new LinkedHashSet<>(value))
+                : Collections.emptySet();
+    }
+
+    @Override
+    public void setLookupSelectHandler(Consumer<Collection<I>> selectHandler) {
+        // do nothing
     }
 }

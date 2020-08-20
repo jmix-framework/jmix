@@ -19,6 +19,8 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.LookupField;
 import io.jmix.ui.component.impl.WebComboBox;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -69,5 +71,15 @@ public class WebLookupField<V> extends WebComboBox<V> implements LookupField<V> 
     @Override
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    public Collection<V> getLookupSelectedItems() {
+        return Collections.singleton(getValue());
+    }
+
+    @Override
+    public void setLookupSelectHandler(Consumer<Collection<V>> selectHandler) {
+        // do nothing
     }
 }

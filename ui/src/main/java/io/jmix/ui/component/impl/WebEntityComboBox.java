@@ -67,8 +67,6 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
 
     protected IconResolver iconResolver;
 
-    protected boolean refreshOptionsOnLookupClose = false;
-
     public WebEntityComboBox() {
     }
 
@@ -423,16 +421,6 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
             // reset item captions
             getComponent().setItemCaptionGenerator(this::generateItemCaption);
         }
-    }
-
-    @Override
-    public void setRefreshOptionsOnLookupClose(boolean refresh) {
-        refreshOptionsOnLookupClose = refresh;
-    }
-
-    @Override
-    public boolean isRefreshOptionsOnLookupClose() {
-        return refreshOptionsOnLookupClose;
     }
 
     @SuppressWarnings("unchecked")

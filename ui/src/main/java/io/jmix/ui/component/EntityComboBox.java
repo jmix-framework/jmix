@@ -29,13 +29,4 @@ public interface EntityComboBox<V extends JmixEntity> extends ComboBox<V>, Entit
     static <T extends JmixEntity> TypeToken<EntityComboBox<T>> of(Class<T> valueClass) {
         return new TypeToken<EntityComboBox<T>>() {};
     }
-
-    /**
-     * Use this method to enable items refreshing in component after closing lookup window.
-     *
-     * @deprecated Override LookupAction if needed instead of using this option.
-     */
-    @Deprecated
-    void setRefreshOptionsOnLookupClose(boolean refresh);
-    boolean isRefreshOptionsOnLookupClose();
 }

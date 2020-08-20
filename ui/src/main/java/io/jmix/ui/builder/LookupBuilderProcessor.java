@@ -201,9 +201,6 @@ public class LookupBuilderProcessor {
                 if (entityOptions.containsItem(newValue)) {
                     entityOptions.updateItem(newValue);
                 }
-                if (entityComboBox.isRefreshOptionsOnLookupClose()) {
-                    entityOptions.refresh();
-                }
             }
         }
 

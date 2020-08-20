@@ -103,6 +103,8 @@ public class WebTokenList<V extends JmixEntity>
     protected Supplier<Screen> lookupProvider;
     protected Function<? super V, String> optionCaptionProvider;
 
+    protected boolean refreshOptionsOnLookupClose = false;
+
     public WebTokenList() {
         component = new JmixTokenList<>(this);
     }
@@ -265,12 +267,12 @@ public class WebTokenList<V extends JmixEntity>
 
     @Override
     public void setRefreshOptionsOnLookupClose(boolean refresh) {
-        entityComboBox.setRefreshOptionsOnLookupClose(refresh);
+        this.refreshOptionsOnLookupClose = refresh;
     }
 
     @Override
     public boolean isRefreshOptionsOnLookupClose() {
-        return entityComboBox.isRefreshOptionsOnLookupClose();
+        return refreshOptionsOnLookupClose;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

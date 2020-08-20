@@ -55,11 +55,6 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
                 addDefaultActions();
             }
         }
-
-        String refreshOptionsOnLookupClose = element.attributeValue("refreshOptionsOnLookupClose");
-        if (refreshOptionsOnLookupClose != null) {
-            getResultComponent().setRefreshOptionsOnLookupClose(Boolean.parseBoolean(refreshOptionsOnLookupClose));
-        }
     }
 
     protected void loadMetaClass(EntityComboBox resultComponent, Element element) {

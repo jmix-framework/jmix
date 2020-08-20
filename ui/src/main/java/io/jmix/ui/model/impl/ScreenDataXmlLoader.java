@@ -405,10 +405,9 @@ public class ScreenDataXmlLoader {
 
     protected FetchPlan loadInlineFetchPlan(Element viewElem, Class<JmixEntity> entityClass) {
         FetchPlanLoader.FetchPlanInfo viewInfo = fetchPlanLoader.getFetchPlanInfo(viewElem, metadata.getClass(entityClass));
-        FetchPlan.FetchPlanParams viewParams = fetchPlanLoader.getFetchPlanParams(viewInfo, a -> fetchPlanRepository.getFetchPlan(viewInfo.getMetaClass(), a));
-        FetchPlan view = new FetchPlan(viewParams);
-        fetchPlanLoader.loadFetchPlanProperties(viewElem, view, viewInfo.isSystemProperties(), (metaClass, viewName) -> fetchPlanRepository.getFetchPlan(metaClass, viewName));
-        return view;
+        FetchPlanBuilder builder = fetchPlanLoader.getFetchPlanBuilder(viewInfo, a -> fetchPlanRepository.getFetchPlan(viewInfo.getMetaClass(), a));
+        fetchPlanLoader.loadFetchPlanProperties(viewElem, builder, viewInfo.isSystemProperties(), (metaClass, viewName) -> fetchPlanRepository.getFetchPlan(metaClass, viewName));
+        return builder.build();
     }
 
 

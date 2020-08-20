@@ -30,6 +30,8 @@ public class WebLookupPickerField<V extends JmixEntity> extends WebEntityComboBo
 
     protected V nullOption;
 
+    protected boolean refreshOptionsOnLookupClose = false;
+
     @Deprecated
     @Override
     public PickerField.LookupAction addLookupAction() {
@@ -96,5 +98,15 @@ public class WebLookupPickerField<V extends JmixEntity> extends WebEntityComboBo
     @Override
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    public void setRefreshOptionsOnLookupClose(boolean refresh) {
+        refreshOptionsOnLookupClose = refresh;
+    }
+
+    @Override
+    public boolean isRefreshOptionsOnLookupClose() {
+        return refreshOptionsOnLookupClose;
     }
 }

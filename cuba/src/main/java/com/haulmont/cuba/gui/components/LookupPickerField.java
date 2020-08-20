@@ -35,4 +35,13 @@ public interface LookupPickerField<V extends JmixEntity> extends EntityComboBox<
     static <T extends JmixEntity> TypeToken<LookupPickerField<T>> of(Class<T> valueClass) {
         return new TypeToken<LookupPickerField<T>>() {};
     }
+
+    /**
+     * Use this method to enable items refreshing in component after closing lookup window.
+     *
+     * @deprecated Override LookupAction if needed instead of using this option.
+     */
+    @Deprecated
+    void setRefreshOptionsOnLookupClose(boolean refresh);
+    boolean isRefreshOptionsOnLookupClose();
 }

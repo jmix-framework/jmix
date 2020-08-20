@@ -53,9 +53,6 @@ class MessageSourceTest extends Specification {
         where:
 
         code                                               | locale || expectedMessage
-        'io.jmix.core.entity/StandardEntity.version'       | LOC_EN || 'Version'
-        'io.jmix.core.entity/StandardEntity.version'       | LOC_RU || 'Версия'
-
         'test_support.addon1.entity/TestAddon1Entity.name' | LOC_EN || 'Name'
         'test_support.addon1.entity/TestAddon1Entity.name' | LOC_RU || 'Наименование'
 

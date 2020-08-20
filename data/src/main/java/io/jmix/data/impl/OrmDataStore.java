@@ -93,6 +93,9 @@ public class OrmDataStore implements DataStore {
     protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
+    protected FetchPlans fetchPlans;
+
+    @Autowired
     protected AccessManager accessManager;
 
     @Autowired
@@ -875,8 +878,7 @@ public class OrmDataStore implements DataStore {
         FetchPlan fetchPlan = context.getFetchPlan() != null ? context.getFetchPlan() :
                 fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
 
-        return FetchPlan.copy(fetchPlan)
-                .setLoadPartialEntities(context.isLoadPartialEntities());
+        return fetchPlans.builder(metaClass.getJavaClass()).partial(context.isLoadPartialEntities()).build();
     }
 
     @SuppressWarnings("unchecked")

@@ -77,12 +77,10 @@ public class FetchPlan implements Serializable {
             this.properties.put(property.getName(), property);
         }
     }
-
-
-
-
+    @Deprecated //todo taimanov rework to consider actual class (through fetchPlans)
     public static FetchPlan copy(FetchPlan fetchPlan) {
         Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
+
 
         FetchPlan copy = new FetchPlan(fetchPlan.entityClass,
                 fetchPlan.name,
@@ -93,6 +91,7 @@ public class FetchPlan implements Serializable {
     }
 
     @Nullable
+    @Deprecated //todo taimanov rework to consider actual class (through fetchPlans)
     public static FetchPlan copyNullable(@Nullable FetchPlan fetchPlan) {
         if (fetchPlan == null) {
             return null;

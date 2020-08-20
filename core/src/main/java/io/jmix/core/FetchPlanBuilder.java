@@ -24,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.function.Consumer;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
  * Builds {@link FetchPlan}s.
  * <p>
  * Use {@link FetchPlans} factory to get the builder.
+ * //todo taimanov cover with javadocs, especially about override/merge method behaviour
  */
 @Component(FetchPlanBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -127,6 +129,13 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    public FetchPlanBuilder addIfNotEmpty(@Nullable String property) {
+        if (property != null && !property.isEmpty()) {
+            add(property);
+        }
+        return this;
+    }
+
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer) {
         checkState();
         properties.add(property);
@@ -157,9 +166,16 @@ public class FetchPlanBuilder {
         return this;
     }
 
-    public FetchPlanBuilder add(String property, FetchPlanBuilder builder, FetchMode fetchMode) {
+    public FetchPlanBuilder add(String property, FetchPlanBuilder builder) {
+        checkState();
         properties.add(property);
         builders.put(property, builder);
+        return this;
+    }
+
+
+    public FetchPlanBuilder add(String property, FetchPlanBuilder builder, FetchMode fetchMode) {
+        add(property, builder);
         fetchModes.put(property, fetchMode);
         return this;
     }
@@ -220,26 +236,36 @@ public class FetchPlanBuilder {
      * @param fetchPlan
      * @return
      */
-    public FetchPlanBuilder mergeFetchPlan(FetchPlan fetchPlan) {
+    public FetchPlanBuilder merge(FetchPlan fetchPlan) {//todo taimanov autotests for different merge/addFetchPlan scenarios and modifications
         checkState();
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
-            String propName = property.getName();
-            boolean isNew = properties.add(propName);
+            mergeProperty(property.getName(), property.getFetchPlan(), property.getFetchMode());
+        }
+        return this;
+    }
+
+
+    public FetchPlanBuilder mergeProperty(String propName, @Nullable FetchPlan propFetchPlan, @Nullable FetchMode propFetchMode) {
+        boolean isNew = properties.add(propName);
+
+        if (propFetchPlan != null) {
             if (isNew) {
-                fetchPlans.put(propName, property.getFetchPlan());
-            } else if (property.getFetchPlan() != null) {//property already exists
+                fetchPlans.put(propName, propFetchPlan);
+            } else {//property already exists
                 MetaProperty metaProperty = metaClass.getProperty(propName);
                 if (metaProperty.getRange().isClass()) {//ref property need to be merged with existing property
                     if (!builders.containsKey(propName)) {
                         Class<JmixEntity> refClass = metaProperty.getRange().asClass().getJavaClass();
                         builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
-                        builders.get(propName).mergeFetchPlan(fetchPlans.get(propName));
+                        builders.get(propName).merge(fetchPlans.get(propName));
                     }
-                    builders.get(propName).mergeFetchPlan(property.getFetchPlan());
+                    builders.get(propName).merge(propFetchPlan);
                 }
             }
-            fetchModes.put(propName, property.getFetchMode());
         }
+
+        if (propFetchMode != null)
+            fetchModes.put(propName, propFetchMode);
 
         return this;
     }

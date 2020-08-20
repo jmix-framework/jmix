@@ -54,6 +54,9 @@ public class EntityStates {
     @Autowired
     protected Metadata metadata;
 
+    @Autowired
+    protected FetchPlans fetchPlans;
+
     private static final Logger log = LoggerFactory.getLogger(EntityStates.class);
 
     /**
@@ -393,12 +396,12 @@ public class EntityStates {
     public FetchPlan getCurrentFetchPlan(JmixEntity entity) {
         checkNotNullArgument(entity);
 
-        FetchPlan fetchPlan = new FetchPlan(entity.getClass(), false);
-        recursivelyGetCurrentFetchPlan(entity, fetchPlan, new HashSet<>());
-        return fetchPlan;
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(entity.getClass());
+        recursivelyConstructCurrentFetchPlan(entity, fetchPlanBuilder, new HashSet<>());
+        return fetchPlanBuilder.build();
     }
 
-    protected void recursivelyGetCurrentFetchPlan(JmixEntity entity, FetchPlan fetchPlan, HashSet<Object> visited) {
+    protected void recursivelyConstructCurrentFetchPlan(JmixEntity entity, FetchPlanBuilder builder, HashSet<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -406,29 +409,29 @@ public class EntityStates {
         // Using MetaClass of the fetchPlan helps in the case when the entity is an item of a collection, and the collection
         // can contain instances of different subclasses. So we don't want to add specific properties of subclasses
         // to the resulting view.
-        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
+        MetaClass metaClass = metadata.getClass(builder.getEntityClass());
 
         for (MetaProperty property : metaClass.getProperties()) {
             if (!isLoaded(entity, property.getName()))
                 continue;
 
-            if (property.getRange().isClass()) {
-                FetchPlan propertyFetchPlan = new FetchPlan(property.getRange().asClass().getJavaClass());
-                fetchPlan.addProperty(property.getName(), propertyFetchPlan);
+            if (property.getRange().isClass()) {//todo taimanov systemProperties was true [def]
+                FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
+                builder.add(property.getName(), propertyBuilder);
                 if (isLoaded(entity, property.getName())) {
                     Object value = EntityValues.getValue(entity, property.getName());
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {
-                                recursivelyGetCurrentFetchPlan((JmixEntity) item, propertyFetchPlan, visited);
+                                recursivelyConstructCurrentFetchPlan((JmixEntity) item, propertyBuilder, visited);
                             }
                         } else {
-                            recursivelyGetCurrentFetchPlan((JmixEntity) value, propertyFetchPlan, visited);
+                            recursivelyConstructCurrentFetchPlan((JmixEntity) value, propertyBuilder, visited);
                         }
                     }
                 }
             } else {
-                fetchPlan.addProperty(property.getName());
+                builder.add(property.getName());
             }
         }
     }

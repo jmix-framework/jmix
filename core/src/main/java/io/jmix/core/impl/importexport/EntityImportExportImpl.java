@@ -18,7 +18,6 @@ package io.jmix.core.impl.importexport;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityEntrySoftDelete;
-import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.core.entity.EntitySystemValues;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
@@ -63,6 +62,9 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     // todo DynamicAttributesManagerAPI
 //    @Autowired
@@ -215,7 +217,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         //1. entities that should be persisted are processed first, fields that should be references to existing entities
         //are stored in the referenceInfoList variable
         for (JmixEntity srcEntity : entities) {
-            FetchPlan regularView = buildViewFromImportView(importView);
+            FetchPlan regularView = constructFetchPlanFromImportView(importView).build();
             //set softDeletion to false because we can import deleted entity, so we'll restore it and update
             //TODO: dynamic attributes
             LoadContext<? extends JmixEntity> ctx = new LoadContext(metadata.getClass(srcEntity.getClass()))
@@ -663,28 +665,23 @@ public class EntityImportExportImpl implements EntityImportExport {
     }
 
     /**
-     * Method builds a regular {@link FetchPlan} from the {@link EntityImportView}. The regular view will include all
+     * Method constructs {@link FetchPlanBuilder} for a regular {@link FetchPlan} from the {@link EntityImportView}. The regular fetchPlan will include all
      * properties defined in the import view.
      */
-    protected FetchPlan buildViewFromImportView(EntityImportView importView) {
-        FetchPlan regularView = new FetchPlan(importView.getEntityClass());
+    protected FetchPlanBuilder constructFetchPlanFromImportView(EntityImportView importView) {
+        FetchPlanBuilder regularViewBuilder = fetchPlans.builder(importView.getEntityClass());
         MetaClass metaClass = metadata.getClass(importView.getEntityClass());
         for (EntityImportViewProperty importViewProperty : importView.getProperties()) {
             EntityImportView importViewPropertyView = importViewProperty.getView();
             if (importViewPropertyView == null) {
                 MetaProperty metaProperty = metaClass.getProperty(importViewProperty.getName());
                 if (metaProperty.isReadOnly()) continue;
-                if (metaProperty.getRange().isClass()) {
-                    MetaClass propertyMetaClass = metaProperty.getRange().asClass();
-                    regularView.addProperty(importViewProperty.getName(), new FetchPlan(propertyMetaClass.getJavaClass(), false));
-                } else {
-                    regularView.addProperty(importViewProperty.getName());
-                }
+                regularViewBuilder.add(importViewProperty.getName());
             } else {
-                regularView.addProperty(importViewProperty.getName(), buildViewFromImportView(importViewPropertyView));
+                regularViewBuilder.add(importViewProperty.getName(), constructFetchPlanFromImportView(importViewPropertyView));
             }
         }
-        return regularView;
+        return regularViewBuilder;
     }
 
     protected Collection getFilteredIds(JmixEntity entity, String propertyName) {
@@ -736,7 +733,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         if (result == null) {
             LoadContext<? extends JmixEntity> ctx = new LoadContext(metadata.getClass(entity.getClass()))
                     .setSoftDeletion(false)
-                    .setFetchPlan(new FetchPlan(metadata.getClass(entity).getJavaClass(), false))
+                    .setFetchPlan(fetchPlans.builder(metadata.getClass(entity).getJavaClass()).build())
                     .setId(EntityValues.getId(entity));
             result = dataManager.load(ctx);
             if (result == null) {

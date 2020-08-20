@@ -26,10 +26,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -51,6 +51,9 @@ public class FetchPlanLoader {
     private final Logger log = LoggerFactory.getLogger(FetchPlanLoader.class);
 
     protected Metadata metadata;
+
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     @Autowired
     public void setMetadata(Metadata metadata) {
@@ -94,29 +97,27 @@ public class FetchPlanLoader {
     }
 
 
-    public FetchPlan.FetchPlanParams getFetchPlanParams(FetchPlanInfo fetchPlanInfo, Function<String, FetchPlan> ancestorFetchPlanResolver) {
+    public FetchPlanBuilder getFetchPlanBuilder(FetchPlanInfo fetchPlanInfo, Function<String, FetchPlan> ancestorFetchPlanResolver) {
         MetaClass metaClass = fetchPlanInfo.getMetaClass();
         String fetchPlanName = fetchPlanInfo.name;
 
-        FetchPlan.FetchPlanParams fetchPlanParams = new FetchPlan.FetchPlanParams().entityClass(metaClass.getJavaClass()).name(fetchPlanName);
+        FetchPlanBuilder fetchPlanParams = fetchPlans.builder(metaClass.getJavaClass()).name(fetchPlanName);
         if (isNotEmpty(fetchPlanInfo.ancestors)) {
-            List<FetchPlan> ancestorsFetchPlans = fetchPlanInfo.ancestors.stream()
+            fetchPlanInfo.ancestors.stream()
                     .map(ancestorFetchPlanResolver)
-                    .collect(Collectors.toList());
-
-            fetchPlanParams.src(ancestorsFetchPlans);
+                    .forEach(fetchPlanParams::merge);
         }
-        fetchPlanParams.includeSystemProperties(fetchPlanInfo.systemProperties);
+        if (fetchPlanInfo.systemProperties) fetchPlanParams.addSystem();
         return fetchPlanParams;
     }
 
 
     public void loadFetchPlanProperties(Element fetchPlanElem,
-                                        FetchPlan fetchPlan,
+                                        FetchPlanBuilder fetchPlanBuilder,
                                         boolean systemProperties,
                                         BiFunction<MetaClass, String, FetchPlan> refFetchPlanResolver) {
-        final MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
-        final String fetchPlanName = fetchPlan.getName();
+        final MetaClass metaClass = metadata.getClass(fetchPlanBuilder.getEntityClass());
+        final String fetchPlanName = fetchPlanBuilder.getName();
 
         Set<String> propertyNames = new HashSet<>();
 
@@ -135,7 +136,7 @@ public class FetchPlanLoader {
                         metaClass.getName(), fetchPlanName, propertyName));
             }
 
-            FetchPlan refFetchPlan = null;
+            FetchPlanBuilder refFetchPlanBuilder = null;
             String refFetchPlanName = propElem.attributeValue("fetchPlan");
             if (refFetchPlanName == null) {
                 refFetchPlanName = propElem.attributeValue("view");
@@ -147,7 +148,7 @@ public class FetchPlanLoader {
                 throw new RuntimeException("cannot find range for meta property: " + metaProperty);
             }
 
-            final List<Element> propertyElements = propElem.elements("property");;
+            final List<Element> propertyElements = propElem.elements("property");
             boolean inlineFetchPlan = !propertyElements.isEmpty();
 
             if (!range.isClass() && (refFetchPlanName != null || inlineFetchPlan)) {
@@ -157,32 +158,28 @@ public class FetchPlanLoader {
 
             if (refFetchPlanName != null) {
                 refMetaClass = getMetaClass(propElem, range);
-                refFetchPlan = refFetchPlanResolver.apply(refMetaClass, refFetchPlanName);
+                refFetchPlanBuilder = fetchPlans.builder(refMetaClass.getJavaClass())
+                        .addFetchPlan(refFetchPlanResolver.apply(refMetaClass, refFetchPlanName));
             }
 
             if (inlineFetchPlan) {
                 // try to import anonymous fetch plan
                 Class<? extends JmixEntity> rangeClass = range.asClass().getJavaClass();
 
-                if (refFetchPlan != null) {
-                    refFetchPlan = new FetchPlan(refFetchPlan, rangeClass, "", false); // system properties are already in the source fetch plan
-                } else {
-                    FetchPlanProperty existingProperty = fetchPlan.getProperty(propertyName);
-                    if (existingProperty != null && existingProperty.getFetchPlan() != null) {
-                        refFetchPlan = new FetchPlan(existingProperty.getFetchPlan(), rangeClass, "", systemProperties);
-                    } else {
-                        refFetchPlan = new FetchPlan(rangeClass, systemProperties);
-                    }
+                if (refFetchPlanBuilder == null) {
+                    refFetchPlanBuilder = fetchPlans.builder(rangeClass);
+                    if (systemProperties)
+                        refFetchPlanBuilder.addSystem();//todo taimanov discuss: prohibit "systemProperties" if CUBA module isn't applied?
+                    loadFetchPlanProperties(propElem, refFetchPlanBuilder, systemProperties, refFetchPlanResolver);
                 }
-                loadFetchPlanProperties(propElem, refFetchPlan, systemProperties, refFetchPlanResolver);
             }
-
             FetchMode fetchMode = FetchMode.AUTO;
             String fetch = propElem.attributeValue("fetch");
             if (fetch != null)
                 fetchMode = FetchMode.valueOf(fetch);
-
-            fetchPlan.addProperty(propertyName, refFetchPlan, fetchMode);
+            fetchPlanBuilder.mergeProperty(propertyName,
+                    refFetchPlanBuilder != null ? refFetchPlanBuilder.build() : null,
+                    fetchMode);
         }
     }
 

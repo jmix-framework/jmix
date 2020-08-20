@@ -24,7 +24,6 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
@@ -44,11 +43,11 @@ import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.widget.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -97,17 +96,14 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     public void setApplicationContext(ApplicationContext applicationContext) {
         super.setApplicationContext(applicationContext);
 
+        messages = (Messages) applicationContext.getBean(Messages.NAME);
+
         UiComponents cf = (UiComponents) applicationContext.getBean(UiComponents.NAME);
         setInitialLayout(cf.create(VBoxLayout.NAME));
 
         this.tabbedContainer = createTabbedModeContainer();
 
         loadModeFromSettings();
-    }
-
-    @Autowired
-    public void setMessages(Messages messages) {
-        this.messages = messages;
     }
 
     @Override

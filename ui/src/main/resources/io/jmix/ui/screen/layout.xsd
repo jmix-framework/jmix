@@ -2018,6 +2018,8 @@
                 <xs:attribute name="datatype" type="dateTimeDatatypeEnum"/>
                 <xs:attribute name="timeMode" type="timeModeEnum"/>
 
+                <xs:attribute name="autofill" type="xs:boolean"/>
+
                 <xs:attributeGroup ref="hasBuffered"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasContextHelp"/>

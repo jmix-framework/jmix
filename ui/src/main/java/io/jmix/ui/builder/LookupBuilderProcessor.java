@@ -17,9 +17,7 @@
 package io.jmix.ui.builder;
 
 
-import io.jmix.core.DataManager;
 import io.jmix.core.*;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -41,10 +39,10 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.LookupScreen;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,6 +67,8 @@ public class LookupBuilderProcessor {
     protected DataManager dataManager;
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected FetchPlans fetchPlans;
 
     @SuppressWarnings("unchecked")
     public <E extends JmixEntity> Screen buildLookup(LookupBuilder<E> builder) {
@@ -332,7 +332,10 @@ public class LookupBuilderProcessor {
                 if (viewProperty != null) {
                     fetchPlan = viewProperty.getFetchPlan();
                     if (fetchPlan != null && initializeMasterReference && inverseMetaProperty != null) {
-                        fetchPlan.addProperty(inverseMetaProperty.getName());
+                        fetchPlan = fetchPlans.builder(fetchPlan.getEntityClass())//todo taimanov make method fetchPlans.modify(oldFetchPlan)
+                                .addFetchPlan(fetchPlan)
+                                .add(inverseMetaProperty.getName())
+                                .build();
                     }
                 }
             }

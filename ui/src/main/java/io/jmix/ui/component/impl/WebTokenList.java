@@ -17,7 +17,6 @@
 package io.jmix.ui.component.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -36,8 +35,8 @@ import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.data.options.MapEntityOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -45,9 +44,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -91,6 +90,7 @@ public class WebTokenList<V extends JmixEntity>
     protected Icons icons;
     protected EntityStates entityStates;
     protected DataManager dataManager;
+    protected FetchPlans fetchPlans;
 
     protected Function<Object, String> tokenStyleGenerator;
 
@@ -157,6 +157,11 @@ public class WebTokenList<V extends JmixEntity>
     @Autowired
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
+    }
+
+    @Autowired
+    public void setFetchPlans(FetchPlans fetchPlans) {
+        this.fetchPlans = fetchPlans;
     }
 
     @Override
@@ -872,7 +877,10 @@ public class WebTokenList<V extends JmixEntity>
                     }
                     MetaProperty inverseMetaProperty = metaPropertyPath.getMetaProperty().getInverse();
                     if (inverseMetaProperty != null && !inverseMetaProperty.getRange().getCardinality().isMany()) {
-                        curView.addProperty(inverseMetaProperty.getName());
+                        curView = fetchPlans.builder(curView.getEntityClass())//todo taimanov "fetchPlans.modify"
+                                .addFetchPlan(curView)
+                                .add(inverseMetaProperty.getName())
+                                .build();
                     }
                 }
                 if (curView != view) {

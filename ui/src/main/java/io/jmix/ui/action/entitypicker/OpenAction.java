@@ -20,7 +20,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.EntitySystemValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
@@ -299,7 +299,7 @@ public class OpenAction<E extends JmixEntity> extends BaseAction implements Enti
 
         JmixEntity entity = entityPicker.getValue();
 
-        if (EntityValues.isSoftDeleted(entity)) {
+        if (EntitySystemValues.isSoftDeleted(entity)) {
             ScreenContext screenContext = ComponentsHelper.getScreenContext(entityPicker);
             Notifications notifications = screenContext.getNotifications();
 

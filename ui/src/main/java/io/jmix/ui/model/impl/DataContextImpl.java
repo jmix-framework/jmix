@@ -20,10 +20,7 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.EntityPropertyChangeEvent;
-import io.jmix.core.entity.EntityPropertyChangeListener;
-import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.Versioned;
+import io.jmix.core.entity.*;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -346,8 +343,8 @@ public class DataContextImpl implements DataContext {
         EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
         entitySystemStateSupport.copySystemState(srcEntity, dstEntity);
 
-        if (dstEntity instanceof Versioned) {
-            ((Versioned) dstEntity).setVersion(((Versioned) srcEntity).getVersion());
+        if (EntitySystemValues.isVersionedSupported(dstEntity)) {
+            EntitySystemValues.setVersion(dstEntity, EntitySystemValues.getVersion(srcEntity));
         }
     }
 

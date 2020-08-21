@@ -21,7 +21,7 @@ import io.jmix.core.EntityStates
 import io.jmix.core.JmixEntity
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
-import io.jmix.core.entity.Versioned
+import io.jmix.core.entity.EntitySystemValues
 import io.jmix.core.impl.StandardSerialization
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
@@ -32,7 +32,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
-
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class DataContextSpec extends Specification {
@@ -99,10 +98,10 @@ class DataContextSpec extends Specification {
         T e = reserialize(entity)
         entityStates.makeDetached((JmixEntity) e)
 
-        if (e instanceof Versioned) {
-            Versioned versioned = (Versioned) e
-            versioned.version = versioned.version ?: 0
-            versioned.version++
+        if (EntitySystemValues.isVersionedSupported((JmixEntity) e)) {
+            def version = (Integer) EntitySystemValues.getVersion((JmixEntity) e) ?: 0;
+            version++
+            EntitySystemValues.setVersion((JmixEntity) e, version)
         }
 
         if (e instanceof JmixEntity && e.__getEntityEntry() instanceof EntityEntryAuditable) {

@@ -31,7 +31,6 @@ public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {
 
     protected UiSecureOperations uiOperations;
     protected UiPolicyStore policyStore;
-    protected WindowConfig windowConfig;
 
     @Autowired
     public void setUiOperations(UiSecureOperations uiOperations) {
@@ -43,11 +42,6 @@ public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {
         this.policyStore = policyStore;
     }
 
-    @Autowired
-    public void setWindowConfig(WindowConfig windowConfig) {
-        this.windowConfig = windowConfig;
-    }
-
     @Override
     public Class<UiMenuContext> getContextType() {
         return UiMenuContext.class;
@@ -55,12 +49,7 @@ public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {
 
     @Override
     public void applyTo(UiMenuContext context) {
-        if (uiOperations.isMenuItemPermitted(context.getMenuItemId(), policyStore)) {
-            if (windowConfig.hasWindow(context.getMenuItemId())
-                    && !uiOperations.isScreenPermitted(context.getMenuItemId(), policyStore)) {
-                context.setDenied();
-            }
-        } else {
+        if (!uiOperations.isMenuItemPermitted(context.getMenuItemId(), policyStore)) {
             context.setDenied();
         }
     }

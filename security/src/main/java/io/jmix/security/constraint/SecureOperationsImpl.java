@@ -46,7 +46,7 @@ public class SecureOperationsImpl implements SecureOperations {
 
     @Override
     public boolean isEntityDeletePermitted(MetaClass metaClass, ResourcePolicyStore policyContainer) {
-        return false;
+        return isEntityOperationPermitted(metaClass, EntityPolicyAction.DELETE, policyContainer);
     }
 
     protected boolean isEntityOperationPermitted(MetaClass metaClass, EntityPolicyAction entityPolicyAction,

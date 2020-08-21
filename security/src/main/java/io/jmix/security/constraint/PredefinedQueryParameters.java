@@ -29,7 +29,7 @@ public class PredefinedQueryParameters {
     public static final String NAME = "sec_PredefinedQueryParameters";
 
     public static final String PARAM_SESSION_ATTR = "session$";
-    public static final String PARAM_USER_LOGIN = "userLogin";
+    public static final String PARAM_USER_LOGIN = "username";
     public static final String PARAM_USER_ID = "userId";
 
     @Autowired
@@ -46,7 +46,7 @@ public class PredefinedQueryParameters {
         if (paramName.startsWith(PARAM_SESSION_ATTR)) {
             String attrName = paramName.substring(PARAM_SESSION_ATTR.length());
 
-            if (PARAM_SESSION_ATTR.equals(attrName)) {
+            if (PARAM_USER_LOGIN.equals(attrName)) {
                 return currentAuthentication.getUser().getUsername();
             } else if (PARAM_USER_ID.equals(attrName)) {
                 return UUID.fromString(currentAuthentication.getUser().getKey());

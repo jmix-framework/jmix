@@ -19,6 +19,7 @@ package io.jmix.ui.model;
 import io.jmix.core.AccessManager;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
+import io.jmix.core.Stores;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.context.UiEntityAttributeContext;
@@ -48,6 +49,9 @@ public class DataComponents {
 
     @Autowired
     protected AccessManager accessManager;
+
+    @Autowired
+    protected Stores stores;
 
     protected void autowire(Object instance) {
         beanFactory.autowireBean(instance);
@@ -167,6 +171,7 @@ public class DataComponents {
     public KeyValueContainer createKeyValueContainer() {
         KeyValueContainerImpl container = new KeyValueContainerImpl();
         autowire(container);
+        container.getEntityMetaClass().setStore(stores.get(Stores.NOOP));
         return container;
     }
 
@@ -176,6 +181,7 @@ public class DataComponents {
     public KeyValueContainer createKeyValueContainer(MetaClass metaClass) {
         KeyValueContainerImpl container = new KeyValueContainerImpl(metaClass);
         autowire(container);
+        container.getEntityMetaClass().setStore(stores.get(Stores.NOOP));
         return container;
     }
 
@@ -185,6 +191,7 @@ public class DataComponents {
     public KeyValueCollectionContainer createKeyValueCollectionContainer() {
         KeyValueCollectionContainerImpl container = new KeyValueCollectionContainerImpl();
         autowire(container);
+        container.getEntityMetaClass().setStore(stores.get(Stores.NOOP));
         container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
         return container;
     }

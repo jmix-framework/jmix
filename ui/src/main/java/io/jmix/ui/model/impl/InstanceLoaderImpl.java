@@ -47,6 +47,8 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     protected QueryStringProcessor queryStringProcessor;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected AccessConstraintsRegistry accessConstraintsRegistry;
 
     protected DataContext dataContext;
     protected InstanceContainer<E> container;
@@ -130,6 +132,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
         loadContext.setFetchPlan(resolveFetchPlan());
         loadContext.setSoftDeletion(softDeletion);
         loadContext.setHints(hints);
+        loadContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
         return loadContext;
     }

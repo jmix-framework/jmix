@@ -41,6 +41,8 @@ public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoa
     protected SorterFactory sorterFactory;
     @Autowired
     protected QueryStringProcessor queryStringProcessor;
+    @Autowired
+    protected AccessConstraintsRegistry accessConstraintsRegistry;
 
     protected DataContext dataContext;
     protected CollectionContainer<E> container;
@@ -126,6 +128,7 @@ public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoa
         loadContext.setFetchPlan(resolveFetchPlan());
         loadContext.setSoftDeletion(softDeletion);
         loadContext.setHints(hints);
+        loadContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
         return loadContext;
     }

@@ -133,6 +133,8 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         setupAuditing(nestedCtClass, ctClass, info);
         setupSoftDelete(nestedCtClass, ctClass, info);
         setupHasUuid(nestedCtClass, ctClass, info);
+        setupVersion(nestedCtClass, ctClass, info);
+
 
         nestedCtClass.writeFile(outputDir);
     }
@@ -165,8 +167,12 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         CtField deletedByField = info.getAnnotatedField(DELETED_BY);
 
         if (deletedDateField != null) {
-            createStandardMethods("DeletedDate", deletedDateField, nestedClass, ctClass);
-            createStandardMethods("DeletedBy", deletedByField, nestedClass, ctClass);
+            createObjectSetter("DeletedDate", deletedDateField, nestedClass, ctClass);
+            createObjectGetter("DeletedDate", deletedDateField, nestedClass, ctClass);
+            createTypeGetter("DeletedDate", deletedDateField, nestedClass, ctClass);
+            createObjectSetter("DeletedBy", deletedByField, nestedClass, ctClass);
+            createObjectGetter("DeletedBy", deletedByField, nestedClass, ctClass);
+            createTypeGetter("DeletedBy", deletedByField, nestedClass, ctClass);
 
             CtMethod isDeletedMethod = CtNewMethod.make(CtClass.booleanType, "isDeleted",
                     null, null,
@@ -196,10 +202,14 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         CtField lastModifiedDateField = info.getAnnotatedField(LAST_MODIFIED_DATE);
         CtField lastModifiedByField = info.getAnnotatedField(LAST_MODIFIED_BY);
 
-        createSetterAndTypeGetter("CreatedDate", createdDateField, nestedClass, ctClass);
-        createSetterAndTypeGetter("CreatedBy", createdByField, nestedClass, ctClass);
-        createSetterAndTypeGetter("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
-        createSetterAndTypeGetter("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
+        createObjectSetter("CreatedDate", createdDateField, nestedClass, ctClass);
+        createTypeGetter("CreatedDate", createdDateField, nestedClass, ctClass);
+        createObjectSetter("CreatedBy", createdByField, nestedClass, ctClass);
+        createTypeGetter("CreatedBy", createdByField, nestedClass, ctClass);
+        createObjectSetter("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
+        createTypeGetter("LastModifiedDate", lastModifiedDateField, nestedClass, ctClass);
+        createObjectSetter("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
+        createTypeGetter("LastModifiedBy", lastModifiedByField, nestedClass, ctClass);
 
         if (createdDateField != null || createdByField != null || lastModifiedDateField != null || lastModifiedByField != null) {
             nestedClass.addInterface(classPool.get("io.jmix.core.entity.EntityEntryAuditable"));
@@ -244,6 +254,20 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         }
     }
 
+    protected void setupVersion(CtClass nestedClass, CtClass ctClass, AnnotationsInfo info)
+            throws NotFoundException, CannotCompileException {
+        CtField versionField = info.getAnnotatedField(VERSION);
+
+        if (versionField != null) {
+            createObjectSetter("Version", versionField, nestedClass, ctClass);
+            createObjectGetter("Version", versionField, nestedClass, ctClass);
+
+            nestedClass.addInterface(classPool.get("io.jmix.core.entity.EntityEntryVersioned"));
+            logger.debug(String.format("Versioned enabled for %s. Fields: version: %s",
+                    ctClass.getSimpleName(), versionField.getName()));
+        }
+    }
+
     protected void setupHasUuidForField(CtClass nestedClass, CtClass ctClass, String uuidFieldName)
             throws NotFoundException, CannotCompileException {
         CtClass uuidClass = classPool.get(UUID.class.getName());
@@ -264,35 +288,12 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         nestedClass.addInterface(classPool.get("io.jmix.core.entity.EntityEntryHasUuid"));
     }
 
-    /**
-     * Creates setter, getter, and type getter for specified {@code propName} referring to {@code propField}
-     *
-     * @param propName should be capitalized
-     */
-    protected void createStandardMethods(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
-            throws CannotCompileException, NotFoundException {
-
-        if (propField == null)
-            return;
-
-        createSetterAndTypeGetter(propName, propField, nestedClass, ctClass);
-
-        CtMethod getDeletedDateMethod = CtNewMethod.make(classPool.get(Object.class.getName()), "get" + propName,
-                null, null,
-                String.format("return ((%s)getSource()).get%s();",
-                        ctClass.getName(),
-                        StringUtils.capitalize(propField.getName())),
-                nestedClass);
-        nestedClass.addMethod(getDeletedDateMethod);
-    }
-
-    protected void createSetterAndTypeGetter(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
+    protected void createObjectSetter(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
             throws CannotCompileException, NotFoundException {
         if (propField == null)
             return;
 
         CtClass objectClass = classPool.get(Object.class.getName());
-        CtClass classClass = classPool.get(Class.class.getName());
 
         nestedClass.addMethod(CtNewMethod.make(CtClass.voidType, "set" + propName, new CtClass[]{objectClass}, null,
                 String.format("((%s)getSource()).set%s((%s)$1);",
@@ -300,12 +301,32 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                         StringUtils.capitalize(propField.getName()),
                         propField.getType().getName()),
                 nestedClass));
+    }
+
+    protected void createObjectGetter(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
+            throws CannotCompileException, NotFoundException {
+        if (propField == null)
+            return;
+
+        nestedClass.addMethod(CtNewMethod.make(classPool.get(Object.class.getName()), "get" + propName,
+                null, null,
+                String.format("return ((%s)getSource()).get%s();",
+                        ctClass.getName(),
+                        StringUtils.capitalize(propField.getName())),
+                nestedClass));
+    }
+
+    protected void createTypeGetter(String propName, @Nullable CtField propField, CtClass nestedClass, CtClass ctClass)
+            throws CannotCompileException, NotFoundException {
+        if (propField == null)
+            return;
+
+        CtClass classClass = classPool.get(Class.class.getName());
 
         nestedClass.addMethod(CtNewMethod.make(classClass, "get" + propName + "Class", null, null,
                 String.format("return %s.class;", propField.getType().getName()),
                 nestedClass));
     }
-
 
     protected void makeEntityEntryField(CtClass ctClass) throws CannotCompileException, NotFoundException {
         CtField ctField = new CtField(classPool.get(ENTITY_ENTRY_TYPE), GEN_ENTITY_ENTRY_VAR_NAME, ctClass);

@@ -178,6 +178,8 @@ public class AnnotationsInfo {
         DELETED_BY("io.jmix.core.annotation.DeletedBy"),
         DELETED_DATE("io.jmix.core.annotation.DeletedDate"),
 
+        VERSION("javax.persistence.Version"),
+
         ID("javax.persistence.Id"), //todo make not unique and support composite primary keys in EnhancingStep
         EMBEDDED_ID("javax.persistence.EmbeddedId"),
         JMIX_GENERATED_VALUE("io.jmix.core.entity.annotation.JmixGeneratedValue", false);

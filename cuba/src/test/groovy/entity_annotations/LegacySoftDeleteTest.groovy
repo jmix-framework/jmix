@@ -21,6 +21,7 @@ import com.haulmont.cuba.core.model.entity_annotations.LegacySoftDeleteEntity
 import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntrySoftDelete
+import io.jmix.core.entity.EntitySystemValues
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.impl.CoreUser
@@ -106,8 +107,8 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
         newEntityEntry.getDeletedDate() != null
         newEntityEntry.getDeletedBy() == "admin"
 
-        EntityValues.isSoftDeleted(legacyEntity)
-        EntityValues.isSoftDeleted(newEntity)
+        EntitySystemValues.isSoftDeleted(legacyEntity)
+        EntitySystemValues.isSoftDeleted(newEntity)
     }
 
 }

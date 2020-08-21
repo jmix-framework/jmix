@@ -15,7 +15,6 @@
  */
 package com.haulmont.cuba.core.entity;
 
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.data.entity.BaseUuidEntity;
 

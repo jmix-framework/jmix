@@ -22,12 +22,16 @@ import com.haulmont.cuba.core.entity.HasUuid;
 import com.haulmont.cuba.core.entity.SoftDelete;
 import com.haulmont.cuba.core.entity.Updatable;
 import io.jmix.core.Stores;
+import com.haulmont.cuba.core.entity.Versioned;
 import io.jmix.core.impl.MetaModelLoader;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class CubaMetaModelLoader extends MetaModelLoader {
@@ -36,7 +40,8 @@ public class CubaMetaModelLoader extends MetaModelLoader {
             Creatable.class,
             Updatable.class,
             SoftDelete.class,
-            HasUuid.class
+            HasUuid.class,
+            Versioned.class
     );
 
 
@@ -50,5 +55,22 @@ public class CubaMetaModelLoader extends MetaModelLoader {
             return true;
         }
         return super.isSystem(field, metaProperty);
+    }
+
+    protected boolean propertyBelongsTo(Field field, MetaProperty metaProperty, List<Class> systemInterfaces) {
+        String getterName = "get" + StringUtils.capitalize(metaProperty.getName());
+
+        Class<?> aClass = field.getDeclaringClass();
+        List<Class<?>> allInterfaces = ClassUtils.getAllInterfaces(aClass);
+        for (Class intf : allInterfaces) {
+            Method[] methods = intf.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().equals(getterName) && method.getParameterTypes().length == 0) {
+                    if (systemInterfaces.contains(intf))
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 }

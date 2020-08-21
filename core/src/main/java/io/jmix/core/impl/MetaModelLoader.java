@@ -24,7 +24,6 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
@@ -34,8 +33,8 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
-import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.Store;
+import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.*;
 import io.jmix.core.validation.group.UiComponentChecks;
 import org.apache.commons.lang3.ArrayUtils;
@@ -77,14 +76,10 @@ public class MetaModelLoader {
     protected static final String VALIDATION_NOTNULL_MESSAGE = "_notnull_message";
     protected static final String VALIDATION_NOTNULL_UI_COMPONENT = "_notnull_ui_component";
 
-    protected static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(//todo taimanov move to CubaMetaModelLoader after versioned rework
-            JmixEntity.class,
-            Versioned.class
-    );
-
     protected static final List<Class<? extends Annotation>> SYSTEM_ANNOTATIONS = ImmutableList.of(
             Id.class,
             JmixId.class,
+            Version.class,
             EmbeddedId.class,
             JmixGeneratedValue.class,
             CreatedDate.class,
@@ -529,23 +524,6 @@ public class MetaModelLoader {
         for (Class<? extends Annotation> annotation : SYSTEM_ANNOTATIONS) {
             if (field.isAnnotationPresent(annotation)) {
                 return true;
-            }
-        }
-        return propertyBelongsTo(field, metaProperty, SYSTEM_INTERFACES);
-    }
-
-    protected boolean propertyBelongsTo(Field field, MetaProperty metaProperty, List<Class> systemInterfaces) {
-        String getterName = "get" + StringUtils.capitalize(metaProperty.getName());
-
-        Class<?> aClass = field.getDeclaringClass();
-        List<Class<?>> allInterfaces = ClassUtils.getAllInterfaces(aClass);
-        for (Class intf : allInterfaces) {
-            Method[] methods = intf.getDeclaredMethods();
-            for (Method method : methods) {
-                if (method.getName().equals(getterName) && method.getParameterTypes().length == 0) {
-                    if (systemInterfaces.contains(intf))
-                        return true;
-                }
             }
         }
         return false;

@@ -21,11 +21,11 @@ import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
@@ -38,6 +38,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -313,10 +317,15 @@ public class MetadataTools {
      * Determine whether the given property is system-level. A property is considered system if satisfies any of conditions:
      * <ul>
      *     <li>has {@link Id} annotation</li>
-     *     <li>used as Uuid Key (see {@link EntityEntryHasUuid})</li>
-     *     <li>defined not in an entity class but in one of its base interfaces:
-     *         {@link JmixEntity}, {@link Versioned}
-     *     </li>
+     *     <li>has {@link JmixId} annotation</li>
+     *     <li>has {@link JmixGeneratedValue} annotation</li>
+     *     <li>has {@link Version} annotation</li>
+     *     <li>has {@link CreatedDate} annotation</li>
+     *     <li>has {@link CreatedBy} annotation</li>
+     *     <li>has {@link LastModifiedDate} annotation</li>
+     *     <li>has {@link LastModifiedBy} annotation</li>
+     *     <li>has {@link DeletedDate} annotation</li>
+     *     <li>has {@link DeletedBy} annotation</li>
      * </ul>
      */
     public boolean isSystem(MetaProperty metaProperty) {

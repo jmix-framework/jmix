@@ -200,12 +200,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
      */
     @Override
     @Nullable
-    public FetchPlan findFetchPlan(MetaClass metaClass, @Nullable String name) {
+    public FetchPlan findFetchPlan(MetaClass metaClass, String name) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
-
-        if (name == null) {
-            return null;
-        }
+        Preconditions.checkNotNullArgument(metaClass, "name is null");
 
         lock.readLock().lock();
         try {

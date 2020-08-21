@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityEntrySoftDelete;
+import io.jmix.core.entity.EntitySystemValues;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -448,7 +449,7 @@ public class JmixEntityManager implements EntityManager {
 
         T entity = delegate.find(javaClass, realId, lockMode, properties);
 
-        if (entity != null && EntityValues.isSoftDeleted((JmixEntity) entity)
+        if (entity != null && EntitySystemValues.isSoftDeleted((JmixEntity) entity)
                 && isSoftDeletion(properties))
             return null; // in case of entity cache
         else

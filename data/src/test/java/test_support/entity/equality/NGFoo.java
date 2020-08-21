@@ -18,7 +18,6 @@ package test_support.entity.equality;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.UuidProvider;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
@@ -27,7 +26,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_NGFOO")
 @Entity(name = "test_NGFoo")
-public class NGFoo implements JmixEntity, Versioned {
+public class NGFoo implements JmixEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,12 +53,10 @@ public class NGFoo implements JmixEntity, Versioned {
         this.uuid = uuid;
     }
 
-    @Override
     public Integer getVersion() {
         return version;
     }
 
-    @Override
     public void setVersion(Integer version) {
         this.version = version;
     }

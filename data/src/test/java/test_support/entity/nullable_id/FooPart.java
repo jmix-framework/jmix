@@ -17,14 +17,13 @@
 package test_support.entity.nullable_id;
 
 import io.jmix.core.JmixEntity;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_NULLABLE_ID_FOO_PART")
 @Entity(name = "test_nullable_id_FooPart")
-public class FooPart implements JmixEntity, Versioned {
+public class FooPart implements JmixEntity {
 
     private static final long serialVersionUID = -2076556357974563130L;
 
@@ -61,12 +60,10 @@ public class FooPart implements JmixEntity, Versioned {
         this.id = id;
     }
 
-    @Override
     public Integer getVersion() {
         return version;
     }
 
-    @Override
     public void setVersion(Integer version) {
         this.version = version;
     }

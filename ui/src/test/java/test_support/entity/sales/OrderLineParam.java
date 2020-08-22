@@ -21,7 +21,7 @@ import io.jmix.data.entity.StandardEntity;
 import javax.persistence.*;
 
 @Table(name = "TEST_ORDER_LINE_PARAM")
-@Entity(name = "test$OrderLineParam")
+@Entity(name = "test_OrderLineParam")
 public class OrderLineParam extends StandardEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 

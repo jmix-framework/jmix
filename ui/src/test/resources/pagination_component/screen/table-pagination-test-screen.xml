@@ -18,7 +18,7 @@
     <data>
         <collection id="customersDc" class="test_support.entity.sales.Customer">
             <loader id="customersLd" maxResults="2">
-                <query><![CDATA[select e from test$Customer e]]></query>
+                <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
     </data>

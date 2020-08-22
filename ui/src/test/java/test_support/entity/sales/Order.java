@@ -28,7 +28,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Entity(name = "test$Order")
+@Entity(name = "test_Order")
 @Table(name = "TEST_ORDER")
 public class Order extends StandardEntity {
 

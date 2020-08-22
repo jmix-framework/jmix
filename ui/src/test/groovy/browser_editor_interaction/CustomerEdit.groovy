@@ -23,7 +23,7 @@ import io.jmix.ui.screen.UiController
 import io.jmix.ui.screen.UiDescriptor
 import test_support.entity.sales.Customer
 
-@UiController('test$Customer.edit')
+@UiController('test_Customer.edit')
 @UiDescriptor('customer-edit.xml')
 @EditedEntityContainer('customerDc')
 class CustomerEdit extends StandardEditor<Customer> {

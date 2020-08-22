@@ -25,7 +25,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Table(name = "TEST_ORDER_LINE")
-@Entity(name = "test$OrderLine")
+@Entity(name = "test_OrderLine")
 public class OrderLine extends StandardEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 

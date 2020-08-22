@@ -23,7 +23,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Entity(name = "test$Product")
+@Entity(name = "test_Product")
 @Table(name = "TEST_PRODUCT")
 public class Product extends StandardEntity {
 

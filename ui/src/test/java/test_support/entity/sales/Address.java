@@ -23,7 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@ModelObject(name = "test$Address")
+@ModelObject(name = "test_Address")
 public class Address implements JmixEntity {
 
     private static final long serialVersionUID = 2116285103670251834L;

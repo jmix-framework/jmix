@@ -14,7 +14,7 @@ import test_support.entity.sales.Customer;
 
 import javax.inject.Named;
 
-@UiController("test$Customer.md")
+@UiController("test_Customer.md")
 @UiDescriptor("customer-md.xml")
 @LookupComponent("table")
 public class CustomerMasterDetail extends MasterDetailScreen<Customer> {

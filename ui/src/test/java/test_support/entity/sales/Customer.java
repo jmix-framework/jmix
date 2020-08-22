@@ -23,7 +23,7 @@ import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 
-@Entity(name = "test$Customer")
+@Entity(name = "test_Customer")
 @Table(name = "TEST_CUSTOMER")
 @PessimisticLock(timeoutSec = 60)
 public class Customer extends StandardEntity {

@@ -23,7 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Entity(name = "test$Producttag")
+@Entity(name = "test_ProductTag")
 @Table(name = "TEST_PRODUCT_TAG")
 public class ProductTag extends StandardEntity {
 

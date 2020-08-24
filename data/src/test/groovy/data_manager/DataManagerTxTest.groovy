@@ -49,7 +49,10 @@ class DataManagerTxTest extends DataSpec {
         txDef.setName('test-save')
         def txStatus = txManager.getTransaction(txDef)
 
-        dataManager.save(new Customer(name: "cust1"))
+        def customer = dataManager.create(Customer)
+        customer.name = 'cust1'
+
+        dataManager.save(customer)
 
         txManager.commit(txStatus)
 
@@ -70,7 +73,10 @@ class DataManagerTxTest extends DataSpec {
         txDef.setName('test-save')
         def txStatus = txManager.getTransaction(txDef)
 
-        dataManager.save(new SaveContext().saving(new Customer(name: "cust1")).setJoinTransaction(false))
+        def customer = dataManager.create(Customer)
+        customer.name = 'cust1'
+
+        dataManager.save(new SaveContext().saving(customer).setJoinTransaction(false))
 
         txManager.commit(txStatus)
 
@@ -82,7 +88,10 @@ class DataManagerTxTest extends DataSpec {
     }
 
     def "joins current transaction on load"() {
-        dataManager.save(new Customer(name: "cust1"))
+        def customer = dataManager.create(Customer)
+        customer.name = 'cust1'
+        dataManager.save(customer)
+
         listener.beforeDetachConsumer = { entity ->
             assert TransactionSynchronizationManager.getCurrentTransactionName() == 'test-load'
         }
@@ -104,7 +113,10 @@ class DataManagerTxTest extends DataSpec {
     }
 
     def "can start new transaction on load"() {
-        dataManager.save(new Customer(name: "cust1"))
+        def customer = dataManager.create(Customer)
+        customer.name = 'cust1'
+        dataManager.save(customer)
+
         listener.beforeDetachConsumer = { entity ->
             assert TransactionSynchronizationManager.getCurrentTransactionName().startsWith(OrmDataStore.LOAD_TX_PREFIX)
         }

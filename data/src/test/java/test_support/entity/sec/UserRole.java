@@ -18,18 +18,17 @@ package test_support.entity.sec;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 
 /**
  * Link between users and roles.
- *
  */
 @Entity(name = "sec$UserRole")
 @Table(name = "SEC_USER_ROLE")
 @SystemLevel
-public class UserRole extends StandardEntity {
+public class UserRole extends BaseEntity {
     private static final long serialVersionUID = 8543853035155300992L;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -16,13 +16,11 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.StandardEntity;
-
 import javax.persistence.*;
 
 @Entity(name = "test_TestAppEntityItem")
 @Table(name = "TEST_APP_ENTITY_ITEM")
-public class TestAppEntityItem extends StandardEntity {
+public class TestAppEntityItem extends BaseEntity {
 
     private static final long serialVersionUID = 8256929425690816623L;
 

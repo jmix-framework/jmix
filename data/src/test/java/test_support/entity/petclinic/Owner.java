@@ -17,15 +17,14 @@
 package test_support.entity.petclinic;
 
 
-
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 
 @Entity(name = "app_Owner")
-public class Owner extends StandardEntity {
+public class Owner extends BaseEntity {
 
     private static final long serialVersionUID = -552022260926623206L;
 

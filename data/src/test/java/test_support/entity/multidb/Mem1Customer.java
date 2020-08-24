@@ -5,19 +5,35 @@
 
 package test_support.entity.multidb;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.annotation.Store;
-import io.jmix.data.entity.BaseUuidEntity;
+
+import javax.persistence.Id;
+import java.util.UUID;
 
 @ModelObject(name = "test_Mem1Customer")
 @Store(name = "mem1")
-public class Mem1Customer extends BaseUuidEntity {
+public class Mem1Customer implements JmixEntity {
+
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
 
     @ModelProperty
     @InstanceName
     private String name;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

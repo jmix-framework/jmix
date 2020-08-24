@@ -16,8 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.StandardEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -26,7 +24,7 @@ import java.util.Date;
 
 @Table(name = "TEST_DATE_TIME_ENTITY")
 @Entity(name = "test_TestDateTimeEntity")
-public class TestDateTimeEntity extends StandardEntity {
+public class TestDateTimeEntity extends BaseEntity {
     private static final long serialVersionUID = -543881549652353366L;
 
     @Column(name = "NAME")

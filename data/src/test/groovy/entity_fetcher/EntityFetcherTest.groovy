@@ -39,14 +39,16 @@ class EntityFetcherTest extends DataSpec {
 
     def "fetching entity with non-persistent reference"() {
         // setup the entity like it is stored in a custom datastore and linked as transient property
-        def npCustomer = new Customer(status: Status.OK)
-        entityStates.makeDetached(npCustomer)
-        ((FetchGroupTracker) npCustomer)._persistence_setFetchGroup(new JmixEntityFetchGroup(['status'] , entityStates))
+        def npCustomer = dataManager.create(Customer)
+        npCustomer.status = Status.OK
 
-        def entity = new TestEntityWithNonPersistentRef(
-                name: 'c',
-                customer: npCustomer
-        )
+        entityStates.makeDetached(npCustomer)
+        ((FetchGroupTracker) npCustomer)._persistence_setFetchGroup(new JmixEntityFetchGroup(['status'], entityStates))
+
+        def entity = dataManager.create(TestEntityWithNonPersistentRef)
+        entity.name = 'c'
+        entity.customer = npCustomer
+
         def view = fetchPlans.builder(TestEntityWithNonPersistentRef).addAll('name', 'customer.name').build()
 
         when:

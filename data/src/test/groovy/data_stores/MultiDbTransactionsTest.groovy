@@ -5,10 +5,11 @@
 
 package data_stores
 
-
+import io.jmix.core.Metadata
 import io.jmix.core.Stores
 import io.jmix.data.StoreAwareLocator
 import org.apache.commons.lang3.RandomStringUtils
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
 import test_support.DataSpec
@@ -19,7 +20,6 @@ import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Db1Order
 import test_support.entity.sec.User
 
-import org.springframework.beans.factory.annotation.Autowired
 
 class MultiDbTransactionsTest extends DataSpec {
 
@@ -29,12 +29,18 @@ class MultiDbTransactionsTest extends DataSpec {
     TestBeforeCommitTransactionListener listener
     @Autowired
     TestService testService
+    @Autowired
+    Metadata metadata
 
     User user
     List entities = []
 
     def setup() {
-        user = new User(login: 'u1', name: 'user1')
+
+        user = metadata.create(User)
+        user.login = 'u1'
+        user.name = 'user1'
+
         mainTransaction().executeWithoutResult {
             locator.getEntityManager(Stores.MAIN).persist(this.user)
         }
@@ -55,17 +61,25 @@ class MultiDbTransactionsTest extends DataSpec {
     }
 
     private void createColour() {
-        def colour = new Colour(name: "color-" + RandomStringUtils.randomAlphabetic(5), description: "some color")
+        def colour = metadata.create(Colour)
+
+        colour.name = "color-" + RandomStringUtils.randomAlphabetic(5)
+        colour.description = "some color"
+
         locator.getEntityManager(Stores.MAIN).persist(colour)
     }
 
     private void createCustomer() {
-        def customer = new Db1Customer(name: "cust-" + RandomStringUtils.randomAlphabetic(5))
+        def customer = metadata.create(Db1Customer)
+        customer.name = "cust-" + RandomStringUtils.randomAlphabetic(5)
+
         locator.getEntityManager('db1').persist(customer)
     }
 
     private void createOrder() {
-        Db1Order order = new Db1Order(orderDate: new Date())
+        Db1Order order = metadata.create(Db1Order)
+        order.orderDate = new Date()
+
         locator.getEntityManager('db1').persist(order)
     }
 

@@ -51,8 +51,12 @@ class DataManagerCommitTest extends DataSpec {
 
 
     void setup() {
-        appEntity = new TestAppEntity(name: 'appEntity')
-        appEntityItem = new TestAppEntityItem(name: 'appEntityItem', appEntity: appEntity)
+        appEntity = dataManager.create(TestAppEntity)
+        appEntity.name = 'appEntity'
+
+        appEntityItem = dataManager.create(TestAppEntityItem)
+        appEntity.name = 'appEntityItem'
+        appEntityItem.appEntity = appEntity
 
         dataManager.save(appEntity, appEntityItem)
     }
@@ -84,7 +88,9 @@ class DataManagerCommitTest extends DataSpec {
 
         when:
 
-        def entity = new TestSecondAppEntity(name: 'secondAppEntity', appEntity: loadedAppEntity)
+        def entity = dataManager.create(TestSecondAppEntity)
+        entity.name = 'secondAppEntity'
+        entity.appEntity = loadedAppEntity
 
         def commitView = fetchPlans.builder(TestSecondAppEntity)
                 .add("name")
@@ -102,8 +108,14 @@ class DataManagerCommitTest extends DataSpec {
 
     def "commit returns object fetched according to passed view even if it was reloaded in EntityChangedEvent listener"() {
         given:
-        def customer = dataManager.save(new Customer(name: 'c1'))
-        def order = new Order(number: '1', customer: customer)
+        def customer = dataManager.create(Customer)
+        customer.name = 'c1'
+
+        customer = dataManager.save(customer)
+
+        def order = dataManager.create(Order)
+        order.number = '1'
+        order.customer = customer
 
         orderChangedEventListener.enabled = true
 
@@ -120,8 +132,15 @@ class DataManagerCommitTest extends DataSpec {
     }
 
     def "save entities with null id"() {
-        def foo = dataManager.save(new Foo(name: 'foo'))
-        def part = new FooPart(name: 'p1', foo: foo)
+        def foo = dataManager.create(Foo)
+        foo.name = 'foo'
+
+        foo = dataManager.save(foo)
+
+        def part = dataManager.create(FooPart)
+        part.name = 'p1'
+        part.foo = foo
+
         foo.parts = [part]
 
         when:

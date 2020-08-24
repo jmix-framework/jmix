@@ -19,7 +19,7 @@ package test_support.entity.sales;
 
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 
@@ -28,7 +28,7 @@ import javax.persistence.*;
 @PublishEntityChangedEvents
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
-public class OrderLine extends StandardEntity {
+public class OrderLine extends BaseEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 
     @ManyToOne(fetch = FetchType.LAZY)

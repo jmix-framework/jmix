@@ -18,11 +18,9 @@ package test_support.entity;
 
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.data.entity.StandardEntity;
-
 
 @ModelObject(name = "test_TestNotStoredEntity")
-public class TestNotStoredEntity extends StandardEntity {
+public class TestNotStoredEntity extends BaseEntity {
 
     @ModelProperty
     private String name;

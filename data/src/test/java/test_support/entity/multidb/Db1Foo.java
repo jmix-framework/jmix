@@ -5,22 +5,37 @@
 
 package test_support.entity.multidb;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.Store;
-import io.jmix.data.entity.BaseLongIdEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity(name = "test_Db1Foo")
 @Table(name = "FOO")
 @Store(name = "db1")
-public class Db1Foo extends BaseLongIdEntity {
+public class Db1Foo implements JmixEntity {
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected Long id;
 
     @Column(name = "NAME")
     @InstanceName
     private String name;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.data.entity;
 
+package test_support.entity;
+
+import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,19 +27,19 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.util.Date;
+import java.util.UUID;
 
-/**
- * The most widely used base class for entities. <br>
- * Optimistically locked, implements Updatable and SoftDelete.
- */
 @MappedSuperclass
-@ModelObject(name = "sys$StandardEntity")
-public abstract class StandardEntity extends BaseUuidEntity {
-
-    private static final long serialVersionUID = 5642226839555253331L;
+@ModelObject(name = "test_BaseEntity")
+public class BaseEntity implements JmixEntity {
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Version
     @Column(name = "VERSION", nullable = false)
@@ -65,6 +68,18 @@ public abstract class StandardEntity extends BaseUuidEntity {
     @DeletedBy
     @Column(name = "DELETED_BY", length = 50)
     protected String deletedBy;
+
+    public BaseEntity() {
+        this.id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Integer getVersion() {
         return version;
@@ -104,10 +119,6 @@ public abstract class StandardEntity extends BaseUuidEntity {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
-    }
-
-    public Boolean isDeleted() {
-        return deleteTs != null;
     }
 
     public Date getDeleteTs() {

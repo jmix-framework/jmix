@@ -17,7 +17,7 @@
 package test_support.entity.sales;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +25,7 @@ import javax.persistence.Table;
 
 @Entity(name = "sales_Product")
 @Table(name = "SALES_PRODUCT")
-public class Product extends StandardEntity {
+public class Product extends BaseEntity {
     private static final long serialVersionUID = -6622694363298254041L;
 
     @Column(name = "NAME")

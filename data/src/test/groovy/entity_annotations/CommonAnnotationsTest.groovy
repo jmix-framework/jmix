@@ -21,10 +21,9 @@ import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntryHasUuid
 import io.jmix.core.metamodel.model.MetaClass
-import io.jmix.data.entity.BaseUuidEntity
-import io.jmix.data.entity.dummy.DummyEntity
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
+import test_support.entity.BaseEntity
 import test_support.entity.auditing.SoftDeleteAuditableEntity
 import test_support.entity.soft_delete.AnnotatedUuidEntity
 
@@ -39,20 +38,14 @@ class CommonAnnotationsTest extends DataSpec {
 
     def "HasUuid annotation test"() {
         setup:
-        DummyEntity dummyEntity = dataManager.save(dataManager.create(DummyEntity))
         AnnotatedUuidEntity entity = dataManager.save(dataManager.create(AnnotatedUuidEntity))
         UUID someId = UUID.fromString("7ca7670b-b352-4e62-87a2-de9ca59ad2c1")
         UUID anotherId = UUID.fromString('e61703bf-bf36-4364-ba66-67655e1810d6')
 
         expect:
         metadataTools.hasUuid(metadata.getClass(AnnotatedUuidEntity))
-        metadataTools.hasUuid(metadata.getClass(BaseUuidEntity))
 
         "someNotPrimaryId".equals(metadataTools.getUuidPropertyName(AnnotatedUuidEntity))
-        "id".equals(metadataTools.getUuidPropertyName(BaseUuidEntity))
-
-        dummyEntity.__getEntityEntry() instanceof EntityEntryHasUuid
-        ((EntityEntryHasUuid) dummyEntity.__getEntityEntry()).getUuid() != null
 
         entity.getId() != null
         entity.getSomeNotPrimaryId() != null
@@ -72,7 +65,6 @@ class CommonAnnotationsTest extends DataSpec {
 
         cleanup:
         if (entity != null) dataManager.remove(entity)
-        if (dummyEntity != null) dataManager.remove(dummyEntity)
     }
 
 
@@ -97,9 +89,7 @@ class CommonAnnotationsTest extends DataSpec {
 
         metadataSystem == mustBeSystem
 
-
         //todo taimanov add version check after /jmix-old#588
-
     }
 
 }

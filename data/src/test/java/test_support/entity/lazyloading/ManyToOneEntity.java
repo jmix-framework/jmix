@@ -16,13 +16,13 @@
 
 package test_support.entity.lazyloading;
 
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_MANY_TO_ONE_ENTITY")
 @Entity(name = "test_ManyToOneEntity")
-public class ManyToOneEntity extends StandardEntity {
+public class ManyToOneEntity extends BaseEntity {
     @Column(name = "NAME")
     protected String name;
     @ManyToOne(fetch = FetchType.LAZY)

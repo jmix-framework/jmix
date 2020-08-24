@@ -74,6 +74,9 @@ public class EntityManagerTest {
     @Autowired
     TestCustomerListener customerListener;
 
+    @Autowired
+    Metadata metadata;
+
     List<EntityChangedEvent<Customer>> customerEvents = new ArrayList<>();
 
     @BeforeEach
@@ -86,14 +89,13 @@ public class EntityManagerTest {
         try {
             jdbc.update("delete from SALES_CUSTOMER");
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
             // ignore
         }
     }
 
     @Test
     public void testContainerEm() {
-        Customer customer = new Customer();
+        Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 
         // when:
@@ -111,7 +113,7 @@ public class EntityManagerTest {
     @Disabled
     @Test
     public void testApplicationEm() {
-        Customer customer = new Customer();
+        Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 
         EntityManager em = entityManagerFactory.createEntityManager();
@@ -126,7 +128,7 @@ public class EntityManagerTest {
 
     @Test
     public void testFind() {
-        Customer customer = new Customer();
+        Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 
         tx.executeWithoutResult(status -> {
@@ -144,7 +146,7 @@ public class EntityManagerTest {
 
     @Test
     public void testFind_Partially() {
-        Customer customer = new Customer();
+        Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 
         tx.executeWithoutResult(status -> {
@@ -165,7 +167,7 @@ public class EntityManagerTest {
 
     @Test
     public void testMerge() {
-        Customer customer = new Customer();
+        Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 
         tx.executeWithoutResult(status -> {
@@ -189,7 +191,7 @@ public class EntityManagerTest {
 
     @Test
     public void testSoftDelete() {
-        Customer customer = new Customer();
+        Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 
         tx.executeWithoutResult(status -> {
@@ -211,7 +213,7 @@ public class EntityManagerTest {
 
     @Test
     public void testHardDelete() {
-        Customer customer = new Customer();
+        Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 
         tx.executeWithoutResult(status -> {

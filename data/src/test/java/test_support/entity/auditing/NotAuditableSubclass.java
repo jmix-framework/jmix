@@ -16,21 +16,37 @@
 
 package test_support.entity.auditing;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Table(name = "TEST_NOT_AUDITABLE")
 @Entity(name = "test_NotAuditable")
-public class NotAuditableSubclass extends BaseUuidEntity {
+public class NotAuditableSubclass implements JmixEntity {
     private static final long serialVersionUID = -7383950720335219425L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "TITLE")
     @InstanceName
     private String title;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;

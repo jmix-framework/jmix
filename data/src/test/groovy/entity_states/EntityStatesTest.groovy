@@ -47,14 +47,37 @@ class EntityStatesTest extends DataSpec {
 
     def "test getCurrentFetchPlan for object graph"() {
         given:
-        Group group = dataManager.save(new Group(name: randomName('group')))
-        Role role1 = dataManager.save(new Role(name: randomName('role1')))
-        Role role2 = dataManager.save(new Role(name: randomName('role2')))
 
-        User user = new User(name: "user", login: randomName('login'), group: group)
-        def userRole1 = new UserRole(role: role1, user: user)
-        def userRole2 = new UserRole(role: role2, user: user)
+        Group group = dataManager.create(Group)
+        group.name = randomName('group')
+
+        group = dataManager.save(group)
+
+        Role role1 = dataManager.create(Role)
+        role1.name = randomName('role1')
+
+        role1 = dataManager.save(role1)
+
+        Role role2 = dataManager.create(Role)
+        role2.name = randomName('role2')
+
+        role2 = dataManager.save(role2)
+
+        User user = dataManager.create(User)
+        user.name = "user"
+        user.login = randomName('login')
+        user.group = group
+
+        def userRole1 = dataManager.create(UserRole)
+        userRole1.role = role1
+        userRole1.user = user
+
+        def userRole2 = dataManager.create(UserRole)
+        userRole2.role = role2
+        userRole2.user = user
+
         user.userRoles = [userRole1, userRole2]
+
         dataManager.save(user, userRole1, userRole2)
 
         def fetchPlan = fetchPlans.builder(User).addFetchPlan(FetchPlan.LOCAL)
@@ -85,9 +108,19 @@ class EntityStatesTest extends DataSpec {
 
     def "test getCurrentFetchPlan for object graph with inheritance"() {
         given:
-        def order = new Order(number: '1')
-        def lineA = new OrderLineA(order: order, quantity: 1, param1: 'p1')
-        def lineB = new OrderLineB(order: order, quantity: 1, param2: 'p2')
+        def order = dataManager.create(Order)
+        order.number = '1'
+
+        def lineA = dataManager.create(OrderLineA)
+        lineA.order = order
+        lineA.quantity = 1
+        lineA.param1 = 'p1'
+
+        def lineB = dataManager.create(OrderLineB)
+        lineB.order = order
+        lineB.quantity = 1
+        lineB.param2 = 'p2'
+
         order.orderLines = [lineA, lineB]
 
         def orderFetchPlan = entityStates.getCurrentFetchPlan(order)

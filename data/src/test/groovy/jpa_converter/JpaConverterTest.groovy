@@ -36,7 +36,9 @@ class JpaConverterTest extends DataSpec {
     def "test"() {
         def uri = new URI("https://jmix.io")
         def phone = new TestPhone('7', '9271112233')
-        def entity = new TestConverterEntity(uri: uri, phone: phone)
+        def entity = dataManager.create(TestConverterEntity)
+        entity.uri = uri
+        entity.phone = phone
 
         when:
         dataManager.save(entity)

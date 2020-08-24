@@ -104,7 +104,7 @@ public class QueryTest {
 
     @Test
     public void testSoftDelete() {
-        Customer customer = new Customer();
+        Customer customer = dataManager.create(Customer.class);
         customer.setName("c1");
 
         tx.executeWithoutResult(status -> {

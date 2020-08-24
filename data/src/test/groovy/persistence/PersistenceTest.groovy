@@ -16,7 +16,8 @@
 
 package persistence
 
-
+import io.jmix.core.Metadata
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
 
@@ -27,10 +28,13 @@ class PersistenceTest extends DataSpec {
 
     @PersistenceContext
     EntityManager entityManager
+    @Autowired
+    Metadata metadata
 
     def "persist and load entity"() {
 
-        def entity = new TestAppEntity(name: 'test1')
+        def entity = metadata.create(TestAppEntity)
+        entity.name = 'test1'
 
         when:
 

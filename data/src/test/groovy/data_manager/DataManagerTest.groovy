@@ -65,8 +65,14 @@ class DataManagerTest extends DataSpec {
 
     def "load by collection of ids"() {
 
-        def product1 = new Product(name: 'p1', quantity: 100)
-        def product2 = new Product(name: 'p2', quantity: 200)
+        def product1 = dataManager.create(Product)
+        product1.name = 'p1'
+        product1.quantity = 100
+
+        def product2 = dataManager.create(Product)
+        product2.name = 'p2'
+        product2.quantity = 200
+
         dataManager.save(product1, product2)
 
         when:
@@ -82,7 +88,10 @@ class DataManagerTest extends DataSpec {
 
     def "load by collection of ids throws exception if some instance not found"() {
 
-        def product1 = new Product(name: 'p1', quantity: 100)
+        def product1 = dataManager.create(Product)
+        product1.name = 'p1'
+        product1.quantity = 100
+
         dataManager.save(product1)
 
         when:
@@ -166,8 +175,11 @@ class DataManagerTest extends DataSpec {
     def "load key-value entity with sort by property"() {
         setup:
 
-        def entity1 = new TestAppEntity(name: 'entityA')
-        def entity2 = new TestAppEntity(name: 'entityB')
+        def entity1 = dataManager.create(TestAppEntity)
+        entity1.name = 'entityA'
+
+        def entity2 = dataManager.create(TestAppEntity)
+        entity1.name = 'entityB'
 
         dataManager.save(entity1, entity2)
 
@@ -204,7 +216,9 @@ class DataManagerTest extends DataSpec {
     }
 
     def "remove"() {
-        def entity1 = new TestAppEntity(name: 'entityA')
+        def entity1 = dataManager.create(TestAppEntity)
+        entity1.name = 'entityA'
+
         dataManager.save(entity1)
 
         when:

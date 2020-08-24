@@ -16,17 +16,21 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.BaseUuidEntity;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URI;
+import java.util.UUID;
 
 @Entity(name = "test_TestConverterEntity")
 @Table(name = "TEST_CONVERTER_ENTITY")
-public class TestConverterEntity extends BaseUuidEntity {
+public class TestConverterEntity implements JmixEntity {
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "URI")
     private URI uri;
@@ -34,6 +38,14 @@ public class TestConverterEntity extends BaseUuidEntity {
     @Convert(converter = TestPhoneConverter.class)
     @Column(name = "PHONE")
     private TestPhone phone;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public URI getUri() {
         return uri;

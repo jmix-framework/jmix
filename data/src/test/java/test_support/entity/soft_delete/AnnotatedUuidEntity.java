@@ -35,7 +35,6 @@ public class AnnotatedUuidEntity implements JmixEntity {
     @Column(name = "ID")
     protected Long id;
 
-
     @Column(name = "SOME_NOT_PRIMARY_ID")
     @JmixGeneratedValue
     protected UUID someNotPrimaryId;

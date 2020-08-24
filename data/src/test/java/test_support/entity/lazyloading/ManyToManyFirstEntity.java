@@ -1,13 +1,13 @@
 package test_support.entity.lazyloading;
 
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Table(name = "TEST_MANY_TO_MANY_FIRST_ENTITY")
 @Entity(name = "test_ManyToManyFirstEntity")
-public class ManyToManyFirstEntity extends StandardEntity {
+public class ManyToManyFirstEntity extends BaseEntity {
     @Column(name = "NAME")
     protected String name;
 

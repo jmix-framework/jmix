@@ -16,12 +16,12 @@
 
 package jpql_macros
 
-import test_support.entity.TestDateTimeEntity
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
-import test_support.DataSpec
-
 import org.springframework.beans.factory.annotation.Autowired
+import test_support.DataSpec
+import test_support.entity.TestDateTimeEntity
+
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -45,12 +45,12 @@ class DateTimeMacroTest extends DataSpec {
         offsetDateTime = OffsetDateTime.now()
         nowDate = new Date()
 
-        entity = new TestDateTimeEntity(
-                localDate: localDate,
-                localDateTime: localDateTime,
-                offsetDateTime: offsetDateTime,
-                nowDate: nowDate
-        )
+        entity = dataManager.create(TestDateTimeEntity)
+
+        entity.localDate = localDate
+        entity.localDateTime = localDateTime
+        entity.offsetDateTime = offsetDateTime
+        entity.nowDate = nowDate
 
         dataManager.save(entity)
     }

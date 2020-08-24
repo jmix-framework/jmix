@@ -21,7 +21,7 @@ import io.jmix.core.TimeSource;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.data.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 
 import java.util.Date;
 

@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDelete;
 import com.haulmont.chile.core.annotations.NamePattern;
 

@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

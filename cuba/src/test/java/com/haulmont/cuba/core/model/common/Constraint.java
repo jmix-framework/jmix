@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.security.ConstraintOperationType;
 

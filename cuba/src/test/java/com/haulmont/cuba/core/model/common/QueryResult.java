@@ -17,7 +17,7 @@
 
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.data.entity.BaseIdentityIdEntity;
+import com.haulmont.cuba.core.entity.BaseIdentityIdEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 
 import javax.persistence.Column;

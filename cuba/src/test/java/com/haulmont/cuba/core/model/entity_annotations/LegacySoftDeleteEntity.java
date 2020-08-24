@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.entity_annotations;
 
 import com.haulmont.cuba.core.entity.SoftDelete;
-import io.jmix.data.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

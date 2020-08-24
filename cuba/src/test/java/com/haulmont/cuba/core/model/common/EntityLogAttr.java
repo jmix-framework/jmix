@@ -24,7 +24,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.data.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;

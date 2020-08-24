@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.sales;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import com.haulmont.chile.core.annotations.NamePattern;
 

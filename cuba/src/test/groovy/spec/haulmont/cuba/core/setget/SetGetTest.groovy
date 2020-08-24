@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.Many2ManyB
 import com.haulmont.cuba.core.model.SetGetEntity
 import io.jmix.core.Metadata
 import io.jmix.core.entity.EntityEntryHasUuid
-import io.jmix.data.entity.StandardEntity
+import com.haulmont.cuba.core.entity.StandardEntity
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 

@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.not_persistent;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 

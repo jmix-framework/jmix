@@ -18,7 +18,7 @@
 package com.haulmont.cuba.core.model.common;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.data.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;

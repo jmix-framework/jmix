@@ -24,7 +24,7 @@ import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

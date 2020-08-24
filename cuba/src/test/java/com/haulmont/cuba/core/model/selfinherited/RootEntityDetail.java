@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.selfinherited;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 
 import javax.persistence.*;
 

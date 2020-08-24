@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
-import io.jmix.data.entity.BaseIdentityIdEntity;
+import com.haulmont.cuba.core.entity.BaseIdentityIdEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

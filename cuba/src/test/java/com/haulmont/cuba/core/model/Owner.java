@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.chile.core.annotations.NamePattern;
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;

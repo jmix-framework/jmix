@@ -22,7 +22,6 @@ import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;

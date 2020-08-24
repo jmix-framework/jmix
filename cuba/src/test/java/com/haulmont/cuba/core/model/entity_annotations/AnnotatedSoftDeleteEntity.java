@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.model.entity_annotations;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
-import io.jmix.data.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

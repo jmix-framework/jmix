@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.web.model.compositecomponent;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

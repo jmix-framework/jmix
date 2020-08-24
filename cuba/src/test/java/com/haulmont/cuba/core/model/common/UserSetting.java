@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.entity.Creatable;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 
 import javax.persistence.*;
 import java.util.Date;

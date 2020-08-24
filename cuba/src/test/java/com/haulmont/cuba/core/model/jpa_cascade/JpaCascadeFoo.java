@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.jpa_cascade;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.util.List;

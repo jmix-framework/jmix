@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.model.fetchjoin;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 
 import javax.persistence.*;
 

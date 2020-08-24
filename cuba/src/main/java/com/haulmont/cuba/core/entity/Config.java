@@ -16,7 +16,6 @@
 package com.haulmont.cuba.core.entity;
 
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Lob;

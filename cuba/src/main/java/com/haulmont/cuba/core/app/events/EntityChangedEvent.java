@@ -23,8 +23,6 @@ import io.jmix.core.ExtendedEntities;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.entity.BaseIdentityIdEntity;
-import io.jmix.data.entity.BaseIntIdentityIdEntity;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.ResolvableTypeProvider;

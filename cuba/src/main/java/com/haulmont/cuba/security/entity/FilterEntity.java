@@ -16,7 +16,7 @@
  */
 package com.haulmont.cuba.security.entity;
 
-import io.jmix.data.entity.StandardEntity;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import com.haulmont.chile.core.annotations.NamePattern;
 
@@ -25,7 +25,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.UUID;
 
 /**
  * A filter component settings.

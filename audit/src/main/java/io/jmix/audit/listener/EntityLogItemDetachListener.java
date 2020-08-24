@@ -72,6 +72,7 @@ public class EntityLogItemDetachListener implements BeforeDetachEntityListener<E
                     continue;
 
                 EntityLogAttr attr = new EntityLogAttr();
+                attr.setId(UUID.randomUUID());
                 attr.setLogItem(item);
                 attr.setName(name);
                 attr.setValue(properties.getProperty(name));

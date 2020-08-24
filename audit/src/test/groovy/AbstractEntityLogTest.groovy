@@ -5,6 +5,7 @@ import io.jmix.audit.entity.LoggedAttribute
 import io.jmix.audit.entity.LoggedEntity
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.JmixEntity
+import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
@@ -48,6 +49,8 @@ class AbstractEntityLogTest extends Specification {
     protected MetadataTools metadataTools
     @Autowired
     protected JdbcTemplate jdbc
+    @Autowired
+    protected Metadata metadata
     @PersistenceContext
     protected EntityManager em
 
@@ -61,11 +64,17 @@ class AbstractEntityLogTest extends Specification {
 
     protected void saveEntityLogAutoConfFor(String entityName, String... attributes) {
 
-        LoggedEntity le = new LoggedEntity(name: entityName, auto: true)
+        LoggedEntity le = metadata.create(LoggedEntity)
+        le.name = entityName
+        le.auto = true
+
         em.persist(le)
 
         attributes.each {
-            LoggedAttribute la = new LoggedAttribute(entity: le, name: it)
+            LoggedAttribute la = metadata.create(LoggedAttribute)
+            la.entity = le
+            la.name = it
+
             em.persist(la)
         }
 
@@ -73,11 +82,18 @@ class AbstractEntityLogTest extends Specification {
 
     protected void saveManualEntityLogAutoConfFor(String entityName, String... attributes) {
 
-        LoggedEntity le = new LoggedEntity(name: entityName, auto: false, manual: true)
+        LoggedEntity le = metadata.create(LoggedEntity)
+        le.name = entityName
+        le.auto = false
+        le.manual = true
+
         em.persist(le)
 
         attributes.each {
-            LoggedAttribute la = new LoggedAttribute(entity: le, name: it)
+            LoggedAttribute la = metadata.create(LoggedAttribute)
+            la.entity = le
+            la.name = it
+
             em.persist(la)
         }
 

@@ -16,13 +16,15 @@
 
 package io.jmix.audit.entity;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.BaseUuidEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Configuration element of <code>EntityLog</code> bean.
@@ -30,9 +32,14 @@ import java.util.Date;
 @Entity(name = "audit_LoggedAttribute")
 @Table(name = "AUDIT_LOGGED_ATTR")
 @SystemLevel
-public class LoggedAttribute extends BaseUuidEntity {
+public class LoggedAttribute implements JmixEntity {
 
     private static final long serialVersionUID = -615000337312303671L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "CREATE_TS")
     @CreatedDate
@@ -48,6 +55,14 @@ public class LoggedAttribute extends BaseUuidEntity {
 
     @Column(name = "NAME")
     private String name;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Date getCreateTs() {
         return createTs;

@@ -17,18 +17,17 @@
 package io.jmix.audit.entity;
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.BaseUuidEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Configuration element of <code>EntityLog</code> bean.
@@ -36,9 +35,14 @@ import java.util.Set;
 @Entity(name = "audit_LoggedEntity")
 @Table(name = "AUDIT_LOGGED_ENTITY")
 @SystemLevel
-public class LoggedEntity extends BaseUuidEntity {
+public class LoggedEntity implements JmixEntity {
 
     private static final long serialVersionUID = 2189206984294705835L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @CreatedDate
     @Column(name = "CREATE_TS")
@@ -60,6 +64,14 @@ public class LoggedEntity extends BaseUuidEntity {
     @OneToMany(mappedBy = "entity")
     @OnDelete(DeletePolicy.CASCADE)
     private Set<LoggedAttribute> attributes;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Date getCreateTs() {
         return createTs;

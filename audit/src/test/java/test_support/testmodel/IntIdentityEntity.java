@@ -17,18 +17,29 @@
 package test_support.testmodel;
 
 
-import io.jmix.data.entity.BaseIntIdentityIdEntity;
+import io.jmix.core.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity(name = "test$IntIdentityEntity")
 @Table(name = "TEST_INT_IDENTITY")
-public class IntIdentityEntity extends BaseIntIdentityIdEntity {
+public class IntIdentityEntity implements JmixEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    protected Integer id;
 
     @Column(name = "NAME")
     private String name;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

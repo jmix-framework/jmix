@@ -16,20 +16,40 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.BaseUuidEntity;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity(name = "test_Foo")
 @Table(name = "TEST_FOO")
-public class Foo extends BaseUuidEntity {
+public class Foo implements JmixEntity {
 
     private static final long serialVersionUID = -700103428544298828L;
 
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
+
     @Column(name = "NAME")
     private String name;
+
+    public Foo() {
+        this.id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

@@ -16,20 +16,28 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.BaseUuidEntity;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 @Entity(name = "test_ReadOnlyPropertyEntity")
 @Table(name = "TEST_READONLY_PROPERTY_ENTITY")
-public class TestReadOnlyPropertyEntity extends BaseUuidEntity {
+public class TestReadOnlyPropertyEntity implements JmixEntity {
 
     private static final long serialVersionUID = -8628312032421692288L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "NAME")
     private String name;
@@ -39,6 +47,18 @@ public class TestReadOnlyPropertyEntity extends BaseUuidEntity {
 
     @ModelProperty
     private List<Foo> roList;
+
+    public TestReadOnlyPropertyEntity() {
+        this.id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

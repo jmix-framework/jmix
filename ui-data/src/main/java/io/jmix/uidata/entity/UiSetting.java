@@ -15,17 +15,16 @@
  */
 package io.jmix.uidata.entity;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.uidata.UserSettingServiceImpl;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Record for user setting.
@@ -35,9 +34,14 @@ import java.util.Date;
 @Entity(name = "ui_Setting")
 @Table(name = "UI_SETTING")
 @SystemLevel
-public class UiSetting extends BaseUuidEntity {
+public class UiSetting implements JmixEntity {
 
     private static final long serialVersionUID = -4324101071593066529L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @CreatedDate
     @Column(name = "CREATE_TS")
@@ -56,6 +60,14 @@ public class UiSetting extends BaseUuidEntity {
     @Lob
     @Column(name = "VALUE_")
     private String value;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Date getCreateTs() {
         return createTs;

@@ -16,17 +16,28 @@
 
 package test_support.entity;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 @Table(name = "TEST_UIDATA_PROJECT")
 @Entity(name = "test_uidata_Project")
-public class Project extends StandardEntity {
+public class Project implements JmixEntity {
     private static final long serialVersionUID = 1662802734694727725L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    protected Integer version;
 
     @Column(name = "NAME")
     @InstanceName
@@ -44,6 +55,22 @@ public class Project extends StandardEntity {
 
     @Column(name = "ACTIVE")
     private Boolean active;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
 
     public Boolean getActive() {
         return active;

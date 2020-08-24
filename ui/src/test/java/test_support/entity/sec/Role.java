@@ -17,7 +17,7 @@ package test_support.entity.sec;
 
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,7 +28,7 @@ import javax.persistence.Table;
  */
 @Entity(name = "sec$Role")
 @Table(name = "SEC_ROLE")
-public class Role extends StandardEntity {
+public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -4889116218059626402L;
 

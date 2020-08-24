@@ -15,19 +15,22 @@
  */
 package io.jmix.samples.ui.entity;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.BaseUser;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 /**
  * User
@@ -35,9 +38,14 @@ import java.util.Collections;
 @Entity(name = "sample_User")
 @Table(name = "SAMPLE_USER")
 //@Listeners("jmix_UserEntityListener")
-public class SampleUser extends StandardEntity implements BaseUser {
+public class SampleUser implements JmixEntity, BaseUser {
 
     private static final long serialVersionUID = 5007187642916030394L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "USERNAME", nullable = false)
     protected String username;
@@ -70,6 +78,14 @@ public class SampleUser extends StandardEntity implements BaseUser {
 
     @Column(name = "ENABLED")
     protected Boolean enabled = true;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

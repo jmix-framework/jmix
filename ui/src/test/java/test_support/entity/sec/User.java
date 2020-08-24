@@ -21,7 +21,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Entity(name = "sec$User")
 @Table(name = "SEC_USER")
-public class User extends StandardEntity {
+public class User extends BaseEntity {
 
     private static final long serialVersionUID = 5007187642916030394L;
 
@@ -100,9 +100,9 @@ public class User extends StandardEntity {
     protected boolean disabledDefaultRoles;
 
     @InstanceName
-    @DependsOnProperties({"login","name"})
-    public String getCaption(){
-        return String.format("%s[%s]",getLogin(),getName());
+    @DependsOnProperties({"login", "name"})
+    public String getCaption() {
+        return String.format("%s[%s]", getLogin(), getName());
     }
 
     public boolean isDisabledDefaultRoles() {

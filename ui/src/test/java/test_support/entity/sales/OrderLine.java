@@ -17,16 +17,16 @@
 package test_support.entity.sales;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Table(name = "TEST_ORDER_LINE")
 @Entity(name = "test_OrderLine")
-public class OrderLine extends StandardEntity {
+public class OrderLine extends BaseEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -14,34 +14,36 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.entity;
+package test_support.entity;
 
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.ui.presentation.model.TablePresentation;
+import io.jmix.core.metamodel.annotation.ModelObject;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.annotation.Nullable;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 import java.util.Date;
 import java.util.UUID;
 
-/**
- * A screen presentation settings.
- */
-@Entity(name = "ui_TablePresentation")
-@Table(name = "UI_TABLE_PRESENTATION")
-@SystemLevel
-public class UiTablePresentation implements JmixEntity, TablePresentation {
-
+@MappedSuperclass
+@ModelObject(name = "test_BaseEntity")
+public class BaseEntity implements JmixEntity {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue
     protected UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    protected Integer version;
 
     @CreatedDate
     @Column(name = "CREATE_TS")
@@ -51,21 +53,6 @@ public class UiTablePresentation implements JmixEntity, TablePresentation {
     @Column(name = "CREATED_BY", length = 50)
     protected String createdBy;
 
-    @Column(name = "COMPONENT")
-    private String componentId;
-
-    @Column(name = "NAME")
-    private String name;
-
-    @Column(name = "SETTINGS", length = 4000)
-    private String settings;
-
-    @Column(name = "USER_LOGIN")
-    private String userLogin;
-
-    @Column(name = "IS_AUTO_SAVE")
-    private Boolean autoSave;
-
     @LastModifiedDate
     @Column(name = "UPDATE_TS")
     protected Date updateTs;
@@ -74,8 +61,17 @@ public class UiTablePresentation implements JmixEntity, TablePresentation {
     @Column(name = "UPDATED_BY", length = 50)
     protected String updatedBy;
 
-    @Transient
-    private Boolean isDefault;
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    protected Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    protected String deletedBy;
+
+    public BaseEntity() {
+        this.id = UUID.randomUUID();
+    }
 
     public UUID getId() {
         return id;
@@ -85,12 +81,20 @@ public class UiTablePresentation implements JmixEntity, TablePresentation {
         this.id = id;
     }
 
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
     public Date getCreateTs() {
         return createTs;
     }
 
-    public void setCreateTs(Date date) {
-        this.createTs = date;
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
     }
 
     public String getCreatedBy() {
@@ -117,61 +121,19 @@ public class UiTablePresentation implements JmixEntity, TablePresentation {
         this.updatedBy = updatedBy;
     }
 
-    @Override
-    public String getName() {
-        return name;
+    public Date getDeleteTs() {
+        return deleteTs;
     }
 
-    @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
     }
 
-    @Override
-    public String getSettings() {
-        return settings;
+    public String getDeletedBy() {
+        return deletedBy;
     }
 
-    @Override
-    public void setSettings(String settings) {
-        this.settings = settings;
-    }
-
-    @Nullable
-    public String getUserLogin() {
-        return userLogin;
-    }
-
-    public void setUserLogin(@Nullable String userLogin) {
-        this.userLogin = userLogin;
-    }
-
-    @Override
-    public Boolean getDefault() {
-        return isDefault;
-    }
-
-    @Override
-    public void setDefault(Boolean isDefault) {
-        this.isDefault = isDefault;
-    }
-
-    @Override
-    public Boolean getAutoSave() {
-        return autoSave;
-    }
-
-    @Override
-    public void setAutoSave(Boolean autoSave) {
-        this.autoSave = autoSave;
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    @Override
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 }

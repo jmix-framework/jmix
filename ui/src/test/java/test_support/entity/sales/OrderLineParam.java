@@ -16,13 +16,13 @@
 
 package test_support.entity.sales;
 
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_ORDER_LINE_PARAM")
 @Entity(name = "test_OrderLineParam")
-public class OrderLineParam extends StandardEntity {
+public class OrderLineParam extends BaseEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 
     @Column(name = "NAME")

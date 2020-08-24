@@ -16,7 +16,7 @@
 package test_support.entity.sec;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
+import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 
@@ -25,7 +25,7 @@ import javax.persistence.*;
  */
 @Entity(name = "sec$Group")
 @Table(name = "SEC_GROUP")
-public class Group extends StandardEntity {
+public class Group extends BaseEntity {
 
     private static final long serialVersionUID = -4581386806900761785L;
 

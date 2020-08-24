@@ -16,13 +16,11 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.StandardEntity;
-
 import javax.persistence.*;
 
 @Entity(name = "test_JpaLifecycleCallbacksEntity")
 @Table(name = "TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY")
-public class TestJpaLifecycleCallbacksEntity extends StandardEntity {
+public class TestJpaLifecycleCallbacksEntity extends BaseEntity {
 
     private static final long serialVersionUID = -4655299292272704686L;
 

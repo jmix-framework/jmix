@@ -75,8 +75,8 @@ class DataManagerCommitTest extends DataSpec {
         def view = fetchPlans.builder(TestAppEntity)
                 .add("createTs")
                 .add("items.createTs")
+                .partial()
                 .build()
-                .setLoadPartialEntities(true)
 
         def loadedAppEntity = dataManager.load(Id.of(appEntity)).fetchPlan(view).one()
 

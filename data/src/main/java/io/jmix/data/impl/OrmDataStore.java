@@ -878,7 +878,7 @@ public class OrmDataStore implements DataStore {
         FetchPlan fetchPlan = context.getFetchPlan() != null ? context.getFetchPlan() :
                 fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
 
-        return fetchPlans.builder(metaClass.getJavaClass()).partial(context.isLoadPartialEntities()).build();
+        return fetchPlans.builder(fetchPlan).partial(context.isLoadPartialEntities()).build();
     }
 
     @SuppressWarnings("unchecked")

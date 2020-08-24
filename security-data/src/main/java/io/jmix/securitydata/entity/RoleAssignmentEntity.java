@@ -16,23 +16,127 @@
 
 package io.jmix.securitydata.entity;
 
-import io.jmix.data.entity.StandardEntity;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.UUID;
 
 @Table(name = "SEC_ROLE_ASSIGNMENT_ENTITY")
 @Entity(name = "sec_RoleAssignmentEntity")
-public class RoleAssignmentEntity extends StandardEntity {
+public class RoleAssignmentEntity implements JmixEntity {
     private static final long serialVersionUID = -6805425065569471069L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    private UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    private Integer version;
+
+    @CreatedDate
+    @Column(name = "CREATE_TS")
+    private Date createTs;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY", length = 50)
+    private String createdBy;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_TS")
+    private Date updateTs;
+
+    @LastModifiedBy
+    @Column(name = "UPDATED_BY", length = 50)
+    private String updatedBy;
+
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    private Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    protected String deletedBy;
 
     @Column(name = "USER_KEY", nullable = false)
     private @NotNull String userKey;
 
     @Column(name = "ROLE_CODE", nullable = false)
     private @NotNull String roleCode;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getDeleteTs() {
+        return deleteTs;
+    }
+
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
 
     public String getRoleCode() {
         return roleCode;

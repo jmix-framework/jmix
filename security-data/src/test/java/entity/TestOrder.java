@@ -16,16 +16,32 @@
 
 package entity;
 
-import io.jmix.data.entity.StandardEntity;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.util.UUID;
 
 @Entity(name = "test_Order")
-public class TestOrder extends StandardEntity {
+public class TestOrder implements JmixEntity {
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "number")
     private String number;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getNumber() {
         return number;

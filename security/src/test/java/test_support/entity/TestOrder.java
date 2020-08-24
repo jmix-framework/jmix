@@ -16,15 +16,13 @@
 
 package test_support.entity;
 
-import io.jmix.data.entity.StandardEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test_Order")
 @Table(name = "TEST_ORDER")
-public class TestOrder extends StandardEntity {
+public class TestOrder extends BaseEntity {
 
     @Column(name = "NUMBER")
     private String number;

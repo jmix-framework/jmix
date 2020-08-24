@@ -332,8 +332,7 @@ public class LookupBuilderProcessor {
                 if (viewProperty != null) {
                     fetchPlan = viewProperty.getFetchPlan();
                     if (fetchPlan != null && initializeMasterReference && inverseMetaProperty != null) {
-                        fetchPlan = fetchPlans.builder(fetchPlan.getEntityClass())//todo taimanov make method fetchPlans.modify(oldFetchPlan)
-                                .addFetchPlan(fetchPlan)
+                        fetchPlan = fetchPlans.builder(fetchPlan)
                                 .add(inverseMetaProperty.getName())
                                 .build();
                     }

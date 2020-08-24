@@ -877,8 +877,7 @@ public class WebTokenList<V extends JmixEntity>
                     }
                     MetaProperty inverseMetaProperty = metaPropertyPath.getMetaProperty().getInverse();
                     if (inverseMetaProperty != null && !inverseMetaProperty.getRange().getCardinality().isMany()) {
-                        curView = fetchPlans.builder(curView.getEntityClass())//todo taimanov "fetchPlans.modify"
-                                .addFetchPlan(curView)
+                        curView = fetchPlans.builder(curView)
                                 .add(inverseMetaProperty.getName())
                                 .build();
                     }

@@ -18,6 +18,8 @@ package io.jmix.core.entity;
 
 import io.jmix.core.JmixEntity;
 
+import javax.annotation.Nullable;
+
 public class EntitySystemValues {
     /**
      * @return true if entity has been soft deleted, false - otherwise or if entity doesn't support soft deletion
@@ -27,22 +29,20 @@ public class EntitySystemValues {
                 && ((EntityEntrySoftDelete) entity.__getEntityEntry()).isDeleted();
     }
 
-    public static boolean isVersionedSupported(JmixEntity entity) {
+    public static boolean isVersionSupported(JmixEntity entity) {
         return entity.__getEntityEntry() instanceof EntityEntryVersioned;
     }
 
-    public static Object getVersion(JmixEntity entity) {
-        if (isVersionedSupported(entity)) {
+    public static @Nullable Object getVersion(JmixEntity entity) {
+        if (isVersionSupported(entity)) {
             ((EntityEntryVersioned) entity.__getEntityEntry()).getVersion();
         }
         return null;
     }
 
     public static void setVersion(JmixEntity entity, Object version) {
-        if (isVersionedSupported(entity)) {
+        if (isVersionSupported(entity)) {
             ((EntityEntryVersioned) entity.__getEntityEntry()).setVersion(version);
         }
     }
-
-
 }

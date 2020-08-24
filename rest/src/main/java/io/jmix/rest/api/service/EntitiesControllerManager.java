@@ -687,8 +687,9 @@ public class EntitiesControllerManager {
 
     protected FetchPlan findOrCreateResponseView(MetaClass metaClass, String responseView) {
         if (StringUtils.isEmpty(responseView)) {
+            //noinspection ConstantConditions
             return fetchPlans.builder(JmixEntity.class)
-                    .addIfNotEmpty(metadataTools.getPrimaryKeyName(metaClass))
+                    .add(metadataTools.getPrimaryKeyName(metaClass))
                     .add(EntitySerialization.ENTITY_NAME_PROP)
                     .add(EntitySerialization.INSTANCE_NAME_PROP)
                     .build();

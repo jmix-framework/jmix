@@ -17,6 +17,7 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
@@ -158,7 +159,7 @@ public class EclipseLinkDetachedTest {
         tx = persistence.createTransaction();
         try {
             em = persistence.getEntityManager();
-            FetchPlan view = new FetchPlan(User.class).addProperty("login")
+            FetchPlan view = new View(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
             assertNotNull(user);
@@ -190,7 +191,7 @@ public class EclipseLinkDetachedTest {
         tx = persistence.createTransaction();
         try {
             em = persistence.getEntityManager();
-            FetchPlan view = new FetchPlan(User.class).addProperty("login")
+            FetchPlan view = new View(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
             assertNotNull(user);
@@ -228,7 +229,7 @@ public class EclipseLinkDetachedTest {
         tx = persistence.createTransaction();
         try {
             em = persistence.getEntityManager();
-            FetchPlan view = new FetchPlan(User.class).addProperty("login")
+            FetchPlan view = new View(User.class).addProperty("login")
                     .setLoadPartialEntities(true);
             user = em.find(User.class, userId, view);
             assertNotNull(user);

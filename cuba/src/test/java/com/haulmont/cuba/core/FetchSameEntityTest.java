@@ -19,6 +19,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.FetchSameLinkAEntity;
 import com.haulmont.cuba.core.model.FetchSameLinkBEntity;
 import com.haulmont.cuba.core.model.FetchSameMainEntity;
@@ -94,18 +95,18 @@ public class FetchSameEntityTest {
     public void testUnFetched() throws Exception {
         DataManager dataManager = AppBeans.get(DataManager.class);
 
-        FetchPlan a1View = new FetchPlan(FetchSameLinkAEntity.class)
+        FetchPlan a1View = new View(FetchSameLinkAEntity.class)
                 .addProperty("name")
-                .addProperty("mainEntity", new FetchPlan(FetchSameMainEntity.class));
+                .addProperty("mainEntity", new View(FetchSameMainEntity.class));
 
-        FetchPlan a2View = new FetchPlan(FetchSameLinkAEntity.class)
+        FetchPlan a2View = new View(FetchSameLinkAEntity.class)
                 .addProperty("description");
 
-        FetchPlan bView = new FetchPlan(FetchSameLinkBEntity.class)
+        FetchPlan bView = new View(FetchSameLinkBEntity.class)
                 .addProperty("name")
                 .addProperty("linkAEntity", a2View);
 
-        FetchPlan mainView = new FetchPlan(FetchSameMainEntity.class)
+        FetchPlan mainView = new View(FetchSameMainEntity.class)
                 .addProperty("description")
                 .addProperty("linkAEntities", a1View)
                 .addProperty("linkBEntities", bView);

@@ -18,6 +18,7 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
@@ -98,13 +99,13 @@ public class DataManagerCommit2Test {
             tx.commit();
         }
 
-        view = new FetchPlan(User.class, true)
+        view = new View(User.class, true)
                 .addProperty("login")
                 .addProperty("loginLowerCase")
                 .addProperty("name")
                 .addProperty("password")
-                .addProperty("group", new FetchPlan(Group.class).addProperty("name"))
-                .addProperty("userRoles", new FetchPlan(UserRole.class));
+                .addProperty("group", new View(Group.class).addProperty("name"))
+                .addProperty("userRoles", new View(UserRole.class));
     }
 
     @AfterEach
@@ -127,10 +128,10 @@ public class DataManagerCommit2Test {
             user.setLogin("login" + user.getId());
             user.setGroup(group);
 
-            FetchPlan userView = new FetchPlan(User.class, true)
+            FetchPlan userView = new View(User.class, true)
                     .addProperty("login")
                     .addProperty("name")
-                    .addProperty("group", new FetchPlan(Group.class, false)
+                    .addProperty("group", new View(Group.class, false)
                             .addProperty("name")
                             .addProperty("createTs"));
 
@@ -143,9 +144,9 @@ public class DataManagerCommit2Test {
 
     @Test
     public void testViewOnSecondLevelAfterCommitNew() throws Exception {
-        FetchPlan groupView = new FetchPlan(Group.class, false)
+        FetchPlan groupView = new View(Group.class, false)
                 .addProperty("createTs")
-                .addProperty("constraints", new FetchPlan(Constraint.class, false)
+                .addProperty("constraints", new View(Constraint.class, false)
                         .addProperty("createTs"))
                 .setLoadPartialEntities(true);
 
@@ -159,13 +160,13 @@ public class DataManagerCommit2Test {
             user.setLogin("login" + user.getId());
             user.setGroup(group);
 
-            FetchPlan userView = new FetchPlan(User.class, true)
+            FetchPlan userView = new View(User.class, true)
                     .addProperty("login")
                     .addProperty("name")
-                    .addProperty("group", new FetchPlan(Group.class, false)
+                    .addProperty("group", new View(Group.class, false)
                             .addProperty("createTs")
                             .addProperty("constraints",
-                                    new FetchPlan(Constraint.class, false)
+                                    new View(Constraint.class, false)
                                             .addProperty("entityName")));
 
             User committedUser = dataManager.commit(user, userView);
@@ -187,10 +188,10 @@ public class DataManagerCommit2Test {
         user.setName("testUser-changed");
         user.setGroup(group2);
 
-        FetchPlan userView = new FetchPlan(User.class, true)
+        FetchPlan userView = new View(User.class, true)
                 .addProperty("login")
                 .addProperty("name")
-                .addProperty("group", new FetchPlan(Group.class)
+                .addProperty("group", new View(Group.class)
                         .addProperty("name")
                         .addProperty("createTs"));
 

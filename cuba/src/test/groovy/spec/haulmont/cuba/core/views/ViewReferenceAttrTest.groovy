@@ -18,6 +18,7 @@ package spec.haulmont.cuba.core.views
 
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
+import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.testsupport.TestSupport
@@ -50,7 +51,7 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
     }
 
     def "Negative (String): PL-9999 Raise exception at the moment of view creation if not reference attribute has view"() {
-        FetchPlan wrongView = new FetchPlan(User.class)
+        FetchPlan wrongView = new View(User.class)
                 .addProperty(
                         "name",
                         viewRepository.getFetchPlan(User.class, "user.locale")
@@ -75,7 +76,7 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
     }
 
     def "Negative (Boxed primitive): PL-9999 Raise exception at the moment of view creation if not reference attribute has view"() {
-        FetchPlan wrongView = new FetchPlan(User.class)
+        FetchPlan wrongView = new View(User.class)
                 .addProperty(
                         "active",
                         viewRepository.getFetchPlan(User.class, "user.locale")
@@ -100,11 +101,11 @@ class ViewReferenceAttrTest extends CoreTestSpecification {
     }
 
     def "Positive: PL-9999 Raise exception at the moment of view creation if not reference attribute has view"() {
-        FetchPlan correctView = new FetchPlan(User.class)
+        FetchPlan correctView = new View(User.class)
                 .addProperty("login")
                 .addProperty(
                         "group",
-                        new FetchPlan(Group.class)
+                        new View(Group.class)
                                 .addProperty("name")
                 )
 

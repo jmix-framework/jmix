@@ -240,7 +240,7 @@ public class CheckLoadedStateTest {
 
         UserRelatedNews testRecord = dataManager.commit(record);
 
-        FetchPlan view = new FetchPlan(UserRelatedNews.class, false);
+        View view = new View(UserRelatedNews.class, false);
         view.addProperty("userLogin");
         view.addProperty("name");
 
@@ -287,7 +287,7 @@ public class CheckLoadedStateTest {
         UserRelatedNews committedRecord = dataManager.commit(record);
         recursiveUserRelatedIds.add(committedRecord.getId());
 
-        FetchPlan view = new FetchPlan(UserRelatedNews.class, false);
+        View view = new View(UserRelatedNews.class, false);
         view.addProperty("parent");
         view.addProperty("name");
 

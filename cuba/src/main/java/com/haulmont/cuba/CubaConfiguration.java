@@ -17,6 +17,7 @@
 package com.haulmont.cuba;
 
 import com.haulmont.cuba.core.global.CubaMetadataTools;
+import com.haulmont.cuba.core.global.Views;
 import com.haulmont.cuba.core.global.impl.CubaFetchPlanRepository;
 import com.haulmont.cuba.core.global.impl.CubaInstanceNameProviderImpl;
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
@@ -110,6 +111,11 @@ public class CubaConfiguration {
     @Bean(FetchPlanRepository.NAME)
     protected FetchPlanRepository fetchPlanRepository() {
         return new CubaFetchPlanRepository();
+    }
+
+    @Bean(FetchPlans.NAME)
+    protected FetchPlans fetchPlans() {
+        return new Views();
     }
 
     @Bean(MetaModelLoader.NAME)

@@ -16,17 +16,17 @@
 
 package spec.haulmont.cuba.core.deletepolicy
 
-import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_ManyToMany_First
-import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
+import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
-import io.jmix.core.Metadata
+import com.haulmont.cuba.core.global.View
+import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_ManyToMany_First
+import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
 import io.jmix.core.FetchPlan
-import com.haulmont.cuba.core.Persistence
+import io.jmix.core.Metadata
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
     @Autowired
@@ -70,9 +70,9 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
 
     def "unlink @ManyToMany property if it is owning side and is loaded"() {
         setup:
-        FetchPlan firstView = new FetchPlan(DeletePolicy_ManyToMany_First.class)
+        FetchPlan firstView = new View(DeletePolicy_ManyToMany_First.class)
                 .addProperty("firstFld")
-        FetchPlan rootView = new FetchPlan(DeletePolicy_Root.class)
+        FetchPlan rootView = new View(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("manytomany", firstView)
 
@@ -116,9 +116,9 @@ class DeletePolicy_Unlink_ManyToManyTest extends CoreTestSpecification {
 
     def "unlink @ManyToMany property if it is owning side and isn't loaded"() {
         setup:
-        FetchPlan firstView = new FetchPlan(DeletePolicy_ManyToMany_First.class)
+        FetchPlan firstView = new View(DeletePolicy_ManyToMany_First.class)
                 .addProperty("firstFld")
-        FetchPlan rootView = new FetchPlan(DeletePolicy_Root.class)
+        FetchPlan rootView = new View(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("manytomany", firstView)
 

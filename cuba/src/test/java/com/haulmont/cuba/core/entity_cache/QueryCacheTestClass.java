@@ -19,10 +19,7 @@ package com.haulmont.cuba.core.entity_cache;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.haulmont.cuba.core.*;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestAppender;
@@ -817,7 +814,7 @@ public class QueryCacheTestClass {
         List<User> resultList;
 
         //load with view: one parameter login
-        FetchPlan userLoginView = new FetchPlan(User.class)
+        FetchPlan userLoginView = new View(User.class)
                 .addProperty("login");
 
         try (Transaction tx = persistence.createTransaction()) {
@@ -863,9 +860,9 @@ public class QueryCacheTestClass {
         appender.clearMessages();
 
         //load with view: group
-        FetchPlan groupView = new FetchPlan(Group.class, false)
+        FetchPlan groupView = new View(Group.class, false)
                 .addProperty("name");
-        FetchPlan userGroupView = new FetchPlan(User.class)
+        FetchPlan userGroupView = new View(User.class)
                 .addProperty("group", groupView);
 
         try (Transaction tx = persistence.createTransaction()) {
@@ -973,7 +970,7 @@ public class QueryCacheTestClass {
         List<User> resultList;
 
         //load with view: one parameter login
-        FetchPlan userLoginView = new FetchPlan(User.class)
+        FetchPlan userLoginView = new View(User.class)
                 .addProperty("login").setLoadPartialEntities(true);
 
         try (Transaction tx = persistence.createTransaction()) {
@@ -1019,9 +1016,9 @@ public class QueryCacheTestClass {
         appender.clearMessages();
 
         //load with view: group
-        FetchPlan groupView = new FetchPlan(Group.class, false)
+        FetchPlan groupView = new View(Group.class, false)
                 .addProperty("name").setLoadPartialEntities(true);
-        FetchPlan userGroupView = new FetchPlan(User.class)
+        FetchPlan userGroupView = new View(User.class)
                 .addProperty("group", groupView).setLoadPartialEntities(true);
 
         try (Transaction tx = persistence.createTransaction()) {

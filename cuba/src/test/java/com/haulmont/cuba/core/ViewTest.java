@@ -165,11 +165,11 @@ public class ViewTest {
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setParameter(1, userId);
 
-            FetchPlan view = new FetchPlan(User.class)
+            FetchPlan view = new View(User.class)
                     .addProperty("name")
                     .addProperty("login")
                     .addProperty("group",
-                            new FetchPlan(Group.class)
+                            new View(Group.class)
                                     .addProperty("name")
                     )
                     .setLoadPartialEntities(true);
@@ -228,12 +228,12 @@ public class ViewTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            FetchPlan view = new FetchPlan(User.class)
+            FetchPlan view = new View(User.class)
                     .addProperty("name")
                     .addProperty("login")
                     .addProperty("createTs")
                     .addProperty("group",
-                            new FetchPlan(Group.class)
+                            new View(Group.class)
                                     .addProperty("name")
                                     .addProperty("createTs")
                     ).setLoadPartialEntities(true);
@@ -262,11 +262,11 @@ public class ViewTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            FetchPlan view = new FetchPlan(User.class, false)
+            FetchPlan view = new View(User.class, false)
                     .addProperty("name")
                     .addProperty("login")
                     .addProperty("group",
-                            new FetchPlan(Group.class, false)
+                            new View(Group.class, false)
                                     .addProperty("name")
                     ).setLoadPartialEntities(true);
 
@@ -299,12 +299,12 @@ public class ViewTest {
     @Test
     public void testViewWithoutSystemProperties_update() throws Exception {
 
-        FetchPlan view = new FetchPlan(User.class, false)
+        View view = new View(User.class, false)
                 .addProperty("name")
                 .addProperty("login")
                 .addProperty("loginLowerCase")
                 .addProperty("group",
-                        new FetchPlan(Group.class, false)
+                        new View(Group.class, false)
                                 .addProperty("name")
                 );
         view.setLoadPartialEntities(true);
@@ -352,7 +352,7 @@ public class ViewTest {
             long ts = timeSource.currentTimeMillis();
             Thread.sleep(1000);
 
-            FetchPlan minimalView = metadata.getViewRepository().getView(User.class, FetchPlan.INSTANCE_NAME);
+            View minimalView = (View) metadata.getViewRepository().getView(User.class, FetchPlan.INSTANCE_NAME);
             minimalView.setLoadPartialEntities(true);
 
             EntityManager em = persistence.getEntityManager();
@@ -394,9 +394,9 @@ public class ViewTest {
      */
     @Test
     public void testLazyLoadAfterLoadWithView() throws Exception {
-        FetchPlan view = new FetchPlan(User.class, false)
+        FetchPlan view = new View(User.class, false)
                 .addProperty("name")
-                .addProperty("group", new FetchPlan(Group.class)
+                .addProperty("group", new View(Group.class)
                         .addProperty("name"))
                 .setLoadPartialEntities(true);
 
@@ -450,13 +450,13 @@ public class ViewTest {
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setParameter(1, userId);
 
-            FetchPlan userRoleView = new FetchPlan(UserRole.class).addProperty("role", new FetchPlan(Role.class).addProperty("name"));
-            FetchPlan view = new FetchPlan(User.class)
+            FetchPlan userRoleView = new View(UserRole.class).addProperty("role", new View(Role.class).addProperty("name"));
+            FetchPlan view = new View(User.class)
                     .addProperty("name")
                     .addProperty("login")
                     .addProperty("userRoles", userRoleView, true)
                     .addProperty("group",
-                            new FetchPlan(Group.class)
+                            new View(Group.class)
                                     .addProperty("name")
                     ).setLoadPartialEntities(true);
             q.setView(view);
@@ -495,7 +495,7 @@ public class ViewTest {
     @Test
     public void testViewCopy() throws Exception {
         ViewRepository viewRepository = metadata.getViewRepository();
-        FetchPlan view = viewRepository.getView(User.class, FetchPlan.LOCAL);
+        View view = (View) viewRepository.getView(User.class, FetchPlan.LOCAL);
         view.addProperty("group", viewRepository.getView(Group.class, FetchPlan.INSTANCE_NAME));
 
         assertNotNull(view.getProperty("group"));
@@ -505,15 +505,15 @@ public class ViewTest {
     @Test
     public void testFetchGroupIsAbsentIfViewIsFull() throws Exception {
         ViewRepository viewRepository = metadata.getViewRepository();
-        FetchPlan view = viewRepository.getView(User.class, FetchPlan.LOCAL);
-        view.addProperty("group", new FetchPlan(Group.class)
+        View view = (View) viewRepository.getView(User.class, FetchPlan.LOCAL);
+        view.addProperty("group", new View(Group.class)
                 .addProperty("name"))
-                .addProperty("userRoles", new FetchPlan(UserRole.class)
-                        .addProperty("role", new FetchPlan(Role.class)
+                .addProperty("userRoles", new View(UserRole.class)
+                        .addProperty("role", new View(Role.class)
                                 .addProperty("name")))
-                .addProperty("substitutions", new FetchPlan(UserSubstitution.class)
+                .addProperty("substitutions", new View(UserSubstitution.class)
                         .addProperty("startDate")
-                        .addProperty("substitutedUser", new FetchPlan(User.class)
+                        .addProperty("substitutedUser", new View(User.class)
                                 .addProperty("login")
                                 .addProperty("name")));
 
@@ -536,8 +536,8 @@ public class ViewTest {
     @Test
     public void testSelfReferenceInView() {
         ViewRepository viewRepository = metadata.getViewRepository();
-        FetchPlan view = viewRepository.getView(RootEntity.class, FetchPlan.LOCAL);
-        view.addProperty("entity", new FetchPlan(ChildEntity.class)
+        View view = (View) viewRepository.getView(RootEntity.class, FetchPlan.LOCAL);
+        view.addProperty("entity", new View(ChildEntity.class)
                 .addProperty("name").addProperty("description"), FetchMode.AUTO);
         RootEntity e;
         try (Transaction tx = persistence.createTransaction()) {
@@ -554,10 +554,10 @@ public class ViewTest {
 
     @Test
     public void testNestedCollectionInJoinedInheritance() throws Exception {
-        FetchPlan childEntityView = new FetchPlan(ChildEntity.class, false)
+        View childEntityView = new View(ChildEntity.class, false)
                 .addProperty("description")
                 .addProperty("name")
-                .addProperty("details", new FetchPlan(RootEntityDetail.class, false)
+                .addProperty("details", new View(RootEntityDetail.class, false)
                         .addProperty("info"));
         childEntityView.setLoadPartialEntities(true);
 
@@ -580,8 +580,8 @@ public class ViewTest {
         Transaction tx = persistence.createTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            FetchPlan linkView = new FetchPlan(LinkEntity.class).addProperty("name");
-            FetchPlan view = new FetchPlan(MultiLinkEntity.class)
+            FetchPlan linkView = new View(LinkEntity.class).addProperty("name");
+            FetchPlan view = new View(MultiLinkEntity.class)
                     .addProperty("a", linkView)
                     .addProperty("b", linkView)
                     .addProperty("c", linkView)

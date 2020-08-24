@@ -16,20 +16,18 @@
 
 package spec.haulmont.cuba.core.persistence_tools
 
+import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
 import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.Metadata
-import io.jmix.core.FetchPlan
-import com.haulmont.cuba.core.Persistence
 import io.jmix.data.PersistenceTools
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification
-
-import org.springframework.beans.factory.annotation.Autowired
-
 
 class GetOldValueTest extends CoreTestSpecification {
     @Autowired
@@ -124,7 +122,7 @@ class GetOldValueTest extends CoreTestSpecification {
         def order
         def oldValue
 
-        def view = new FetchPlan(Order).addProperty('number').setLoadPartialEntities(true)
+        def view = new View(Order).addProperty('number').setLoadPartialEntities(true)
 
         when:
 
@@ -158,7 +156,7 @@ class GetOldValueTest extends CoreTestSpecification {
         def order
         def oldValue
 
-        def view = new FetchPlan(Order).addProperty('orderLines', new FetchPlan(OrderLine).addProperty('productName'))
+        def view = new View(Order).addProperty('orderLines', new View(OrderLine).addProperty('productName'))
 
         when:
 
@@ -184,7 +182,7 @@ class GetOldValueTest extends CoreTestSpecification {
         List<OrderLine> oldValue
         OrderLine orderLine11, orderLine12
 
-        def view = new FetchPlan(Order).addProperty('orderLines', new FetchPlan(OrderLine).addProperty('productName'))
+        def view = new View(Order).addProperty('orderLines', new View(OrderLine).addProperty('productName'))
 
         persistence.runInTransaction { em ->
             orderLine11 = metadata.create(OrderLine)

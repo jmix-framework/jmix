@@ -16,8 +16,8 @@
 
 package spec.haulmont.cuba.core.views
 
+import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.model.common.User
-import io.jmix.core.FetchPlan
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 class ViewSystemPropertiesTest extends CoreTestSpecification {
@@ -26,7 +26,7 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
 
         when:
 
-        def view = new FetchPlan(User, true)
+        def view = new View(User, true)
 
         then:
         view.containsProperty('version')
@@ -42,7 +42,7 @@ class ViewSystemPropertiesTest extends CoreTestSpecification {
 
         when:
 
-        def view = new FetchPlan(User, false)
+        def view = new View(User, false)
 
         then:
 

@@ -18,6 +18,7 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.fetchjoin.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
@@ -163,15 +164,15 @@ public class FetchJoinTest {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
 
-            FetchPlan fView = new FetchPlan(JoinF.class).addProperty("name");
-            FetchPlan eView = new FetchPlan(JoinE.class).addProperty("name").addProperty("f", fView, FetchMode.JOIN);
-            FetchPlan dView = new FetchPlan(JoinD.class).addProperty("name");
-            FetchPlan cView = new FetchPlan(JoinC.class).addProperty("name")
+            FetchPlan fView = new View(JoinF.class).addProperty("name");
+            FetchPlan eView = new View(JoinE.class).addProperty("name").addProperty("f", fView, FetchMode.JOIN);
+            FetchPlan dView = new View(JoinD.class).addProperty("name");
+            FetchPlan cView = new View(JoinC.class).addProperty("name")
                     .addProperty("d", dView, FetchMode.JOIN)
                     .addProperty("e", eView, FetchMode.JOIN);
-            FetchPlan bView = new FetchPlan(JoinB.class).addProperty("name")
+            FetchPlan bView = new View(JoinB.class).addProperty("name")
                     .addProperty("c", cView, FetchMode.JOIN);
-            FetchPlan aView = new FetchPlan(JoinA.class).addProperty("name")
+            FetchPlan aView = new View(JoinA.class).addProperty("name")
                     .addProperty("b", bView, FetchMode.JOIN);
 
             JoinA loadedA = em.find(JoinA.class, joinA.getId(), aView);
@@ -188,19 +189,19 @@ public class FetchJoinTest {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
 
-            FetchPlan partyView = new FetchPlan(Party.class).addProperty("name");
-            FetchPlan productView = new FetchPlan(Product.class).addProperty("name");
-            FetchPlan customerView = new FetchPlan(Customer.class)
+            FetchPlan partyView = new View(Party.class).addProperty("name");
+            FetchPlan productView = new View(Product.class).addProperty("name");
+            FetchPlan customerView = new View(Customer.class)
                     .addProperty("customerNumber")
                     .addProperty("party", partyView);
-            FetchPlan salesPersonView = new FetchPlan(SalesPerson.class)
+            FetchPlan salesPersonView = new View(SalesPerson.class)
                     .addProperty("salespersonNumber")
                     .addProperty("party", partyView);
-            FetchPlan orderView = new FetchPlan(Order.class)
+            FetchPlan orderView = new View(Order.class)
                     .addProperty("orderNumber")
                     .addProperty("customer", customerView)
                     .addProperty("salesPerson", salesPersonView);
-            FetchPlan orderLineView = new FetchPlan(OrderLine.class)
+            FetchPlan orderLineView = new View(OrderLine.class)
                     .addProperty("order", orderView)
                     .addProperty("product", productView);
 
@@ -216,14 +217,14 @@ public class FetchJoinTest {
 
     @Test
     public void testLoadingJoinedInheritance() throws Exception {
-        FetchPlan typeLocalView = new FetchPlan(JoinType.class).addProperty("name");
-        FetchPlan classTypeView = new FetchPlan(JoinClassType.class)
+        FetchPlan typeLocalView = new View(JoinType.class).addProperty("name");
+        FetchPlan classTypeView = new View(JoinClassType.class)
                 .addProperty("name")
                 .addProperty("types", typeLocalView);
-        FetchPlan typeView = new FetchPlan(JoinType.class)
+        FetchPlan typeView = new View(JoinType.class)
                 .addProperty("name")
                 .addProperty("classType", classTypeView);
-        FetchPlan userView = new FetchPlan(JoinUser.class)
+        FetchPlan userView = new View(JoinUser.class)
                 .addProperty("name")
                 .addProperty("type", typeView);
 

@@ -19,14 +19,15 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.Permission;
 import com.haulmont.cuba.core.model.common.PermissionType;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,10 +111,10 @@ public class UpdateDetachedTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            FetchPlan view = new FetchPlan(Permission.class)
+            FetchPlan view = new View(Permission.class)
                     .addProperty("target")
                     .addProperty("role",
-                            new FetchPlan(Role.class)
+                            new View(Role.class)
                                     .addProperty("name")
                     );
 
@@ -144,10 +145,10 @@ public class UpdateDetachedTest {
         try {
             EntityManager em = persistence.getEntityManager();
 
-            FetchPlan view = new FetchPlan(Permission.class)
+            FetchPlan view = new View(Permission.class)
                     .addProperty("target")
                     .addProperty("role",
-                            new FetchPlan(Role.class)
+                            new View(Role.class)
                                     .addProperty("name")
                     );
 
@@ -179,10 +180,10 @@ public class UpdateDetachedTest {
 
         LoadContext<Permission> ctx = new LoadContext<>(Permission.class);
         ctx.setId(permissionId);
-        ctx.setView(new FetchPlan(Permission.class)
+        ctx.setView(new View(Permission.class)
                 .addProperty("target")
                 .addProperty("role",
-                        new FetchPlan(Role.class)
+                        new View(Role.class)
                                 .addProperty("name")
                 )
         );

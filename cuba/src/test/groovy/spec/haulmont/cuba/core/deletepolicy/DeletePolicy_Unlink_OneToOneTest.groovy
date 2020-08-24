@@ -19,6 +19,7 @@ package spec.haulmont.cuba.core.deletepolicy
 import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
+import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_First
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToOne_Second
 import io.jmix.core.FetchPlan
@@ -59,15 +60,15 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
 
     def "unlink @OneToOny property if it isn't owning side"() {
         setup:
-        FetchPlan secondView_1 = new FetchPlan(DeletePolicy_OneToOne_Second.class)
+        FetchPlan secondView_1 = new View(DeletePolicy_OneToOne_Second.class)
                 .addProperty("secondFld")
-        FetchPlan firstView_1 = new FetchPlan(DeletePolicy_OneToOne_First.class)
+        FetchPlan firstView_1 = new View(DeletePolicy_OneToOne_First.class)
                 .addProperty("firstFld")
                 .addProperty("second", secondView_1)
 
-        FetchPlan firstView_2 = new FetchPlan(DeletePolicy_OneToOne_First.class)
+        FetchPlan firstView_2 = new View(DeletePolicy_OneToOne_First.class)
                 .addProperty("firstFld")
-        FetchPlan secondView_2 = new FetchPlan(DeletePolicy_OneToOne_Second.class)
+        FetchPlan secondView_2 = new View(DeletePolicy_OneToOne_Second.class)
                 .addProperty("secondFld")
                 .addProperty("first", firstView_2)
 
@@ -97,9 +98,9 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
 
     def "unlink @OneToOny property if it is owning side and is loaded"() {
         setup:
-        FetchPlan firstView = new FetchPlan(DeletePolicy_OneToOne_First.class)
+        FetchPlan firstView = new View(DeletePolicy_OneToOne_First.class)
                 .addProperty("firstFld")
-        FetchPlan secondView_2 = new FetchPlan(DeletePolicy_OneToOne_Second.class)
+        FetchPlan secondView_2 = new View(DeletePolicy_OneToOne_Second.class)
                 .addProperty("secondFld")
                 .addProperty("first", firstView)
 
@@ -129,9 +130,9 @@ class DeletePolicy_Unlink_OneToOneTest extends CoreTestSpecification {
 
     def "unlink @OneToOny property if it is owning side and isn't loaded"() {
         setup:
-        FetchPlan firstView = new FetchPlan(DeletePolicy_OneToOne_First.class)
+        FetchPlan firstView = new View(DeletePolicy_OneToOne_First.class)
                 .addProperty("firstFld")
-        FetchPlan secondView_2 = new FetchPlan(DeletePolicy_OneToOne_Second.class)
+        FetchPlan secondView_2 = new View(DeletePolicy_OneToOne_Second.class)
                 .addProperty("secondFld")
                 .addProperty("first", firstView)
 

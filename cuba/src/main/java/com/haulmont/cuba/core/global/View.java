@@ -19,13 +19,11 @@ import com.haulmont.chile.core.annotations.NamePattern;
 import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.*;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
@@ -242,6 +240,15 @@ public class View extends FetchPlan {
             addProperty(propertyName);
         }
         return this;
+    }
+
+
+    public static View copy(View fetchPlan) {
+        Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
+        return new View(fetchPlan.getEntityClass(),
+                fetchPlan.getName(),
+                new LinkedList<>(fetchPlan.getProperties()),
+                fetchPlan.loadPartialEntities());
     }
 
 }

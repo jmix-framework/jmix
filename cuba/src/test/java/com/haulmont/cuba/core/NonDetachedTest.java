@@ -19,6 +19,7 @@ package com.haulmont.cuba.core;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.CascadeDeletionPolicyEntity;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Server;
@@ -104,11 +105,11 @@ public class NonDetachedTest {
             tx.commit();
         }
 
-        orderView = new FetchPlan(Order.class)
+        orderView = new View(Order.class)
                 .addProperty("date")
                 .addProperty("amount")
-                .addProperty("customer", new FetchPlan(Customer.class).addProperty("name"))
-                .addProperty("user", new FetchPlan(User.class).addProperty("login").addProperty("name"));
+                .addProperty("customer", new View(Customer.class).addProperty("name"))
+                .addProperty("user", new View(User.class).addProperty("login").addProperty("name"));
     }
 
     @AfterEach

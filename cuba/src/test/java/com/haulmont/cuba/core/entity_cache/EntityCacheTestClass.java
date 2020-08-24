@@ -22,6 +22,7 @@ import com.haulmont.cuba.core.*;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositeOne;
 import com.haulmont.cuba.core.model.entitycache_unfetched.CompositePropertyOne;
@@ -314,8 +315,8 @@ public class EntityCacheTestClass {
         User user;
 
         // no name in group
-        FetchPlan groupView = new FetchPlan(Group.class, false);
-        FetchPlan userView = new FetchPlan(User.class)
+        FetchPlan groupView = new View(Group.class, false);
+        FetchPlan userView = new View(User.class)
                 .addProperty("login")
                 .addProperty("group", groupView)
                 .setLoadPartialEntities(true);
@@ -351,9 +352,9 @@ public class EntityCacheTestClass {
         appender.clearMessages();
 
         // name in group - from cache again
-        FetchPlan groupView1 = new FetchPlan(Group.class, true)
+        FetchPlan groupView1 = new View(Group.class, true)
                 .addProperty("name");
-        FetchPlan userView1 = new FetchPlan(User.class)
+        FetchPlan userView1 = new View(User.class)
                 .addProperty("login")
                 .addProperty("group", groupView1)
                 .setLoadPartialEntities(true);
@@ -730,13 +731,13 @@ public class EntityCacheTestClass {
     }
 
     private User loadUserWithRoles() throws Exception {
-        FetchPlan roleView = new FetchPlan(Role.class)
+        FetchPlan roleView = new View(Role.class)
                 .addProperty("name");
-        FetchPlan userRoleView = new FetchPlan(UserRole.class)
+        FetchPlan userRoleView = new View(UserRole.class)
                 .addProperty("role", roleView);
-        FetchPlan groupView = new FetchPlan(Group.class)
+        FetchPlan groupView = new View(Group.class)
                 .addProperty("name");
-        FetchPlan userView = new FetchPlan(User.class)
+        FetchPlan userView = new View(User.class)
                 .addProperty("login")
                 .addProperty("name")
                 .addProperty("userRoles", userRoleView)
@@ -760,9 +761,9 @@ public class EntityCacheTestClass {
 
     private UserSetting loadUserSetting() throws Exception {
         UserSetting us;
-        FetchPlan usView = new FetchPlan(UserSetting.class)
+        FetchPlan usView = new View(UserSetting.class)
                 .addProperty("name")
-                .addProperty("user", new FetchPlan(User.class)
+                .addProperty("user", new View(User.class)
                         .addProperty("login"));
         try (Transaction tx = persistence.createTransaction()) {
             us = persistence.getEntityManager().find(UserSetting.class, this.userSetting.getId(), usView);
@@ -872,7 +873,7 @@ public class EntityCacheTestClass {
 
             Query query = persistence.getEntityManager().createQuery("select u from test$User u where u.id = :id")
                     .setParameter("id", user.getId());
-            query.setView(FetchPlan.copy(fetchPlan).setLoadPartialEntities(true));
+            query.setView(View.copy((View) fetchPlan).setLoadPartialEntities(true));
             ((QueryImpl) query).setSingleResultExpected(true);
             User userL = (User) query.getSingleResult();
             //User userL = persistence.getEntityManager().find(User.class, user.getId(), view);

@@ -22,7 +22,7 @@ import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.FetchPlan
-import io.jmix.core.FetchPlanRepository
+import io.jmix.core.FetchPlans
 import io.jmix.core.Metadata
 import io.jmix.data.PersistenceTools
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,6 +37,8 @@ class GetReferenceIdTest extends CoreTestSpecification {
     private PersistenceTools persistenceTools
     @Autowired
     private TestSupport testSupport
+    @Autowired
+    private FetchPlans fetchPlans
 
     private Customer customer1
     private Order order1
@@ -93,8 +95,7 @@ class GetReferenceIdTest extends CoreTestSpecification {
 
         def tx = persistence.createTransaction()
         try {
-            def view = AppBeans.get(FetchPlanRepository).getFetchPlan(Order, FetchPlan.LOCAL)
-            view.setLoadPartialEntities(true)
+            def view = fetchPlans.builder(Order).addFetchPlan(FetchPlan.LOCAL).partial().build()
 
             order = persistence.getEntityManager().find(Order, order1.id, view)
             refId = persistenceTools.getReferenceId(order, 'customer')

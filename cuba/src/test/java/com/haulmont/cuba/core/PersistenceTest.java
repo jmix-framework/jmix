@@ -16,21 +16,21 @@
  */
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.Metadata;
-import io.jmix.data.*;
+import io.jmix.data.PersistenceTools;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Set;
 import java.util.UUID;
 
@@ -91,7 +91,7 @@ public class PersistenceTest {
             EntityManager em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
-                    new FetchPlan(User.class, false).addProperty("login").setLoadPartialEntities(true));
+                    new View(User.class, false).addProperty("login").setLoadPartialEntities(true));
 
             assertTrue(persistence.getTools().isLoaded(user, "login"));
             assertFalse(persistence.getTools().isLoaded(user, "name"));
@@ -103,8 +103,8 @@ public class PersistenceTest {
             em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
-                    new FetchPlan(User.class, false).addProperty("login").setLoadPartialEntities(true),
-                    new FetchPlan(User.class, false).addProperty("name").setLoadPartialEntities(true)
+                    new View(User.class, false).addProperty("login").setLoadPartialEntities(true),
+                    new View(User.class, false).addProperty("name").setLoadPartialEntities(true)
             );
 
             assertTrue(persistence.getTools().isLoaded(user, "login"));
@@ -117,8 +117,8 @@ public class PersistenceTest {
             em = persistence.getEntityManager();
 
             user = em.find(User.class, userId,
-                    new FetchPlan(User.class, false).addProperty("login").setLoadPartialEntities(true),
-                    new FetchPlan(User.class, false).addProperty("group", new FetchPlan(Group.class).addProperty("name")).setLoadPartialEntities(true)
+                    new View(User.class, false).addProperty("login").setLoadPartialEntities(true),
+                    new View(User.class, false).addProperty("group", new View(Group.class).addProperty("name")).setLoadPartialEntities(true)
             );
 
             assertTrue(persistence.getTools().isLoaded(user, "login"));

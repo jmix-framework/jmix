@@ -19,6 +19,7 @@ package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.ScheduledTask;
 import com.haulmont.cuba.core.model.common.User;
@@ -83,16 +84,16 @@ public class PersistenceAttributeLoadedCheckTest {
             tx.commit();
         }
 
-        taskView = new FetchPlan(ScheduledTask.class, true)
+        taskView = new View(ScheduledTask.class, true)
                 .addProperty("beanName");
 
-        userView = new FetchPlan(User.class, true)
+        userView = new View(User.class, true)
                 .addProperty("login")
                 .addProperty("loginLowerCase")
                 .addProperty("name")
                 .addProperty("password")
-                .addProperty("group", new FetchPlan(Group.class).addProperty("name"))
-                .addProperty("userRoles", new FetchPlan(UserRole.class));
+                .addProperty("group", new View(Group.class).addProperty("name"))
+                .addProperty("userRoles", new View(UserRole.class));
     }
 
     @AfterEach

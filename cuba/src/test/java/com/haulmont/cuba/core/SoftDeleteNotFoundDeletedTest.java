@@ -15,21 +15,22 @@
  */
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.SoftDelete_Project;
 import com.haulmont.cuba.core.model.SoftDelete_Service;
 import com.haulmont.cuba.core.model.SoftDelete_Task;
 import com.haulmont.cuba.core.model.SoftDelete_TaskValue;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.UUID;
 
 @CoreTest
@@ -99,13 +100,13 @@ public class SoftDeleteNotFoundDeletedTest {
 
     @Test
     public void testLoadDeletedObject() {
-        FetchPlan taskView_Message = new FetchPlan(SoftDelete_Task.class).addProperty("message");
-        FetchPlan taskView_Service = new FetchPlan(SoftDelete_Task.class)
-                .addProperty("service", new FetchPlan(SoftDelete_Service.class).addProperty("code"));
-        FetchPlan taskValueView = new FetchPlan(SoftDelete_TaskValue.class)
+        FetchPlan taskView_Message = new View(SoftDelete_Task.class).addProperty("message");
+        FetchPlan taskView_Service = new View(SoftDelete_Task.class)
+                .addProperty("service", new View(SoftDelete_Service.class).addProperty("code"));
+        FetchPlan taskValueView = new View(SoftDelete_TaskValue.class)
                 .addProperty("task", taskView_Message);
 
-        FetchPlan projectView = new FetchPlan(SoftDelete_Project.class)
+        FetchPlan projectView = new View(SoftDelete_Project.class)
                 .addProperty("name")
                 .addProperty("aValue", taskValueView)
                 .addProperty("task", taskView_Service);

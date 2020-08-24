@@ -17,6 +17,7 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.EntityDiff;
 import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.testsupport.CoreTest;
@@ -25,9 +26,9 @@ import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -165,7 +166,7 @@ public class PersistenceHelperTest {
             em.persist(server);
         });
 
-        FetchPlan view = new FetchPlan(Server.class).addProperty("name").addProperty("data")
+        FetchPlan view = new View(Server.class).addProperty("name").addProperty("data")
                 .setLoadPartialEntities(true);
         Server reloadedServer = persistence.callInTransaction((em) -> {
             return em.find(Server.class, server.getId(), view);

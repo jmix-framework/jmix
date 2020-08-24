@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
+import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_OneToMany_First
 import com.haulmont.cuba.core.model.deletepolicy.DeletePolicy_Root
 import io.jmix.core.FetchPlan
@@ -68,16 +69,16 @@ class DeletePolicy_Unlink_OneToManyTest extends CoreTestSpecification {
     def "unlink @OneToMany property if it isn't owning side and is loaded"() {
         setup:
 
-        FetchPlan rootView_2 = new FetchPlan(DeletePolicy_Root.class)
+        FetchPlan rootView_2 = new View(DeletePolicy_Root.class)
                 .addProperty("rootFld")
-        FetchPlan firstView_1 = new FetchPlan(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_1 = new View(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
-        FetchPlan rootView_1 = new FetchPlan(DeletePolicy_Root.class)
+        FetchPlan rootView_1 = new View(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("onetomany", firstView_1)
 
-        FetchPlan firstView_2 = new FetchPlan(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_2 = new View(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
 
@@ -124,16 +125,16 @@ class DeletePolicy_Unlink_OneToManyTest extends CoreTestSpecification {
     def "unlink @OneToMany property if it isn't owning side and isn't loaded"() {
         setup:
 
-        FetchPlan rootView_2 = new FetchPlan(DeletePolicy_Root.class)
+        FetchPlan rootView_2 = new View(DeletePolicy_Root.class)
                 .addProperty("rootFld")
-        FetchPlan firstView_1 = new FetchPlan(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_1 = new View(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
-        FetchPlan rootView_1 = new FetchPlan(DeletePolicy_Root.class)
+        FetchPlan rootView_1 = new View(DeletePolicy_Root.class)
                 .addProperty("rootFld")
                 .addProperty("onetomany", firstView_1)
 
-        FetchPlan firstView_2 = new FetchPlan(DeletePolicy_OneToMany_First.class)
+        FetchPlan firstView_2 = new View(DeletePolicy_OneToMany_First.class)
                 .addProperty("firstFld")
                 .addProperty("root", rootView_2)
 

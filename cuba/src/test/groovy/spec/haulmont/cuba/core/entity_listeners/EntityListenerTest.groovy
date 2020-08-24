@@ -19,6 +19,7 @@ import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
+import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.listener.TestUserDetachListener
 import com.haulmont.cuba.core.listener.TestUserEntityListener
 import com.haulmont.cuba.core.model.common.Group
@@ -102,7 +103,7 @@ class EntityListenerTest extends CoreTestSpecification {
             em.persist(user)
         }
 
-        def view = new FetchPlan(User).addProperty('name')
+        def view = new View(User).addProperty('name')
         def loadContext = LoadContext.create(User).setId(user.id).setView(view)
 
         when:
@@ -147,9 +148,9 @@ class EntityListenerTest extends CoreTestSpecification {
 
         when: "loading entity with view"
 
-        def view = new FetchPlan(User)
+        def view = new View(User)
                 .addProperty('name')
-                .addProperty('group', new FetchPlan(Group)
+                .addProperty('group', new View(Group)
                         .addProperty('name'))
         dataManager.load(LoadContext.create(User).setId(user.id).setView(view))
 

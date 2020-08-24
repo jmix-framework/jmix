@@ -17,13 +17,13 @@
 
 package com.haulmont.cuba.core;
 
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.Role;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.FetchPlan;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,10 +75,10 @@ public class UnfetchedAttributeTest {
 
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setView(
-                    new FetchPlan(User.class, false)
+                    new View(User.class, false)
                             .addProperty("login")
-                            .addProperty("userRoles", new FetchPlan(UserRole.class)
-                                    .addProperty("role", new FetchPlan(Role.class)
+                            .addProperty("userRoles", new View(UserRole.class)
+                                    .addProperty("role", new View(Role.class)
                                             .addProperty("name")))
             );
             q.setParameter(1, user.getId());
@@ -110,10 +110,10 @@ public class UnfetchedAttributeTest {
 
             Query q = em.createQuery("select u from test$User u where u.id = ?1");
             q.setView(
-                    new FetchPlan(User.class, false)
+                    new View(User.class, false)
                             .addProperty("login")
-                            .addProperty("userRoles", new FetchPlan(UserRole.class)
-                                    .addProperty("role", new FetchPlan(Role.class)
+                            .addProperty("userRoles", new View(UserRole.class)
+                                    .addProperty("role", new View(Role.class)
                                             .addProperty("name")))
             );
             q.setParameter(1, user.getId());

@@ -19,6 +19,7 @@ package spec.haulmont.cuba.core.tx_listeners
 import com.haulmont.cuba.core.Persistence
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.Role
 import com.haulmont.cuba.core.model.common.User
@@ -26,7 +27,6 @@ import com.haulmont.cuba.core.model.common.UserRole
 import com.haulmont.cuba.core.testsupport.TestSupport
 import com.haulmont.cuba.core.tx_listener.TestAfterCompleteTxListener
 import io.jmix.core.EntityStates
-import io.jmix.core.FetchPlan
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 
@@ -107,9 +107,9 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
         def entityStates = AppBeans.get(EntityStates)
         TestAfterCompleteTxListener.test = 'accessName'
 
-        def view = new FetchPlan(User)
+        def view = new View(User)
                 .addProperty('login')
-                .addProperty('group', new FetchPlan(Group).addProperty('name'))
+                .addProperty('group', new View(Group).addProperty('name'))
         view.setLoadPartialEntities(true)
 
         when:
@@ -135,10 +135,10 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
         def entityStates = AppBeans.get(EntityStates)
         TestAfterCompleteTxListener.test = 'accessGroup'
 
-        def view = new FetchPlan(User)
+        def view = new View(User)
                 .addProperty('login')
-                .addProperty('userRoles', new FetchPlan(UserRole)
-                        .addProperty('role', new FetchPlan(Role)
+                .addProperty('userRoles', new View(UserRole)
+                        .addProperty('role', new View(Role)
                                 .addProperty('name')))
         view.setLoadPartialEntities(true)
 
@@ -164,7 +164,7 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
         def entityStates = AppBeans.get(EntityStates)
         TestAfterCompleteTxListener.test = 'accessUserRoles'
 
-        def view = new FetchPlan(User)
+        def view = new View(User)
                 .addProperty('login')
         view.setLoadPartialEntities(true)
 

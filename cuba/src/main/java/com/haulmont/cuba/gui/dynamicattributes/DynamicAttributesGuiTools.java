@@ -124,8 +124,9 @@ public class DynamicAttributesGuiTools {
     @SuppressWarnings("unchecked")
     public void reloadDynamicAttributes(JmixEntity entity) {
         MetaClass metaClass = metadata.getClassNN(entity.getClass());
+        //noinspection ConstantConditions
         FetchPlan fetchPlan = fetchPlans.builder(metaClass.getJavaClass())
-                .addIfNotEmpty(metadataTools.getPrimaryKeyName(metaClass))
+                .add(metadataTools.getPrimaryKeyName(metaClass))
                 .build();
         LoadContext loadContext = new LoadContext(metaClass)
                 .setFetchPlan(fetchPlan)

@@ -315,18 +315,19 @@ public class MetadataTools {
     }
 
     /**
-     * Determine whether the given property is system-level. A property is considered system if satisfies any of conditions:
+     * Determine whether the given property is system. A property is considered system if it has one of the following
+     * annotations:
      * <ul>
-     *     <li>has {@link Id} annotation</li>
-     *     <li>has {@link JmixId} annotation</li>
-     *     <li>has {@link JmixGeneratedValue} annotation</li>
-     *     <li>has {@link Version} annotation</li>
-     *     <li>has {@link CreatedDate} annotation</li>
-     *     <li>has {@link CreatedBy} annotation</li>
-     *     <li>has {@link LastModifiedDate} annotation</li>
-     *     <li>has {@link LastModifiedBy} annotation</li>
-     *     <li>has {@link DeletedDate} annotation</li>
-     *     <li>has {@link DeletedBy} annotation</li>
+     *     <li>{@link Id}</li>
+     *     <li>{@link JmixId}</li>
+     *     <li>{@link JmixGeneratedValue}</li>
+     *     <li>{@link Version}</li>
+     *     <li>{@link CreatedDate}</li>
+     *     <li>{@link CreatedBy}</li>
+     *     <li>{@link LastModifiedDate}</li>
+     *     <li>{@link LastModifiedBy}</li>
+     *     <li>{@link DeletedDate}</li>
+     *     <li>{@link DeletedBy}</li>
      * </ul>
      */
     public boolean isSystem(MetaProperty metaProperty) {

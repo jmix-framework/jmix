@@ -98,7 +98,7 @@ class DataContextSpec extends Specification {
         T e = reserialize(entity)
         entityStates.makeDetached((JmixEntity) e)
 
-        if (EntitySystemValues.isVersionedSupported((JmixEntity) e)) {
+        if (EntitySystemValues.isVersionSupported((JmixEntity) e)) {
             def version = (Integer) EntitySystemValues.getVersion((JmixEntity) e) ?: 0;
             version++
             EntitySystemValues.setVersion((JmixEntity) e, version)

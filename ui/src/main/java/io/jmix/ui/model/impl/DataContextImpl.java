@@ -343,7 +343,7 @@ public class DataContextImpl implements DataContext {
         EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
         entitySystemStateSupport.copySystemState(srcEntity, dstEntity);
 
-        if (EntitySystemValues.isVersionedSupported(dstEntity)) {
+        if (EntitySystemValues.isVersionSupported(dstEntity)) {
             EntitySystemValues.setVersion(dstEntity, EntitySystemValues.getVersion(srcEntity));
         }
     }

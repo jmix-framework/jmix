@@ -129,13 +129,6 @@ public class FetchPlanBuilder {
         return this;
     }
 
-    public FetchPlanBuilder addIfNotEmpty(@Nullable String property) {
-        if (property != null && !property.isEmpty()) {
-            add(property);
-        }
-        return this;
-    }
-
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer) {
         checkState();
         properties.add(property);

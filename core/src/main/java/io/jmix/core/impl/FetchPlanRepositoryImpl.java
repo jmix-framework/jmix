@@ -211,7 +211,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             checkInitialized();
 
             FetchPlan fetchPlan = retrieveFetchPlan(metaClass, name, new HashSet<>());
-            return FetchPlan.copyNullable(fetchPlan);
+            return fetchPlan != null ? fetchPlans.copy(fetchPlan) : null;
         } finally {
             lock.readLock().unlock();
         }
@@ -423,8 +423,6 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                 ancestorFetchPlanName -> getAncestorFetchPlan(metaClass, ancestorFetchPlanName, visited)
         );
 
-        FetchPlan fetchPlan = fetchPlanBuilder.build();
-
         visited.add(fetchPlanInfo);
         fetchPlanLoader.loadFetchPlanProperties(fetchPlanElem, fetchPlanBuilder, fetchPlanInfo.isSystemProperties(),
                 (MetaClass refMetaClass, String refFetchPlanName) -> {
@@ -457,6 +455,8 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                     return refFetchPlan;
                 });
         visited.remove(fetchPlanInfo);
+
+        FetchPlan fetchPlan = fetchPlanBuilder.build();
 
         storeFetchPlan(metaClass, fetchPlan);
 

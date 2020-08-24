@@ -158,7 +158,7 @@ public class FetchPlanLoader {
 
             if (refFetchPlanName != null) {
                 refMetaClass = getMetaClass(propElem, range);
-                refFetchPlanBuilder = fetchPlans.builder(refMetaClass.getJavaClass())
+                refFetchPlanBuilder = fetchPlans.builder(refMetaClass.getJavaClass()).name(refFetchPlanName)
                         .addFetchPlan(refFetchPlanResolver.apply(refMetaClass, refFetchPlanName));
             }
 

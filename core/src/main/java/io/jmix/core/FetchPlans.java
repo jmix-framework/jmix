@@ -16,9 +16,12 @@
 
 package io.jmix.core;
 
+import io.jmix.core.common.util.Preconditions;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedList;
 
 /**
  * Factory for {@link FetchPlanBuilder}.
@@ -37,4 +40,27 @@ public class FetchPlans {
     public FetchPlanBuilder builder(Class<? extends JmixEntity> entityClass) {
         return fetchPlanBuilderProvider.getObject(entityClass);
     }
+
+    /**
+     * Returns {@link FetchPlan} builder that contains all properties from {@code fetchPlan}
+     */
+    public FetchPlanBuilder builder(FetchPlan fetchPlan) {
+        return builder(fetchPlan.getEntityClass()).addFetchPlan(fetchPlan);
+    }
+
+
+    /**
+     * @return clone of {@code fetchPlan}
+     */
+    public FetchPlan copy(FetchPlan fetchPlan) {
+        Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
+
+        FetchPlan copy = new FetchPlan(fetchPlan.entityClass,
+                fetchPlan.name,
+                new LinkedList<>(fetchPlan.getProperties()),
+                fetchPlan.loadPartialEntities);
+
+        return copy;
+    }
+
 }

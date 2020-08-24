@@ -19,12 +19,12 @@ package test_support.app.entity;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import test_support.base.entity.StandardEntity;
+import test_support.base.entity.BaseEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "app_Pet")
-public class Pet extends StandardEntity {
+public class Pet extends BaseEntity {
 
     private static final long serialVersionUID = 6106462788935207865L;
 

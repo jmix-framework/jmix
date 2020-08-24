@@ -29,7 +29,7 @@ import test_support.app.TestAppConfiguration
 import test_support.app.entity.Address
 import test_support.app.entity.Owner
 import test_support.app.entity.Pet
-import test_support.base.entity.StandardEntity
+import test_support.base.entity.BaseEntity
 
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -60,7 +60,7 @@ class MetadataToolsTest extends Specification {
         !metadataTools.isPersistent(TestAddon1Entity)
 
         // @MappedSuperclass
-        !metadataTools.isPersistent(StandardEntity)
+        !metadataTools.isPersistent(BaseEntity)
     }
 
     def "persistent properties"() {
@@ -94,7 +94,7 @@ class MetadataToolsTest extends Specification {
         !metadataTools.isPersistent(metadata.getClass(Pet).getProperty('nick'))
 
         // property of @MappedSuperclass
-        !metadataTools.isPersistent(metadata.getClass(StandardEntity).getProperty('createTs'))
+        !metadataTools.isPersistent(metadata.getClass(BaseEntity).getProperty('createTs'))
     }
 
     def "embeddable entities"() {

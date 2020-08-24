@@ -19,7 +19,7 @@ package test_support.app.entity.sales;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
-import test_support.base.entity.StandardEntity;
+import test_support.base.entity.BaseEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -28,7 +28,7 @@ import java.util.List;
 
 @Entity(name = "core_Order")
 @Table(name = "CORE_ORDER")
-public class Order extends StandardEntity {
+public class Order extends BaseEntity {
     private static final long serialVersionUID = -7505471093968920870L;
 
     @Column(name = "NUM")

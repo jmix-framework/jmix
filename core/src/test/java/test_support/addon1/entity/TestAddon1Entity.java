@@ -18,10 +18,10 @@ package test_support.addon1.entity;
 
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import test_support.base.entity.StandardEntity;
+import test_support.base.entity.BaseEntity;
 
 @ModelObject(name = "addon1_TestEntity")
-public class TestAddon1Entity extends StandardEntity {
+public class TestAddon1Entity extends BaseEntity {
 
     @ModelProperty
     private String name;

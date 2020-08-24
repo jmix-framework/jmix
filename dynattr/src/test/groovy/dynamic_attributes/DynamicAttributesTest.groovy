@@ -66,20 +66,17 @@ class DynamicAttributesTest extends Specification {
     protected Group group1, group2
 
     void setup() {
-        userCategory = new io.jmix.dynattr.impl.model.Category(
-                name: 'user',
-                entityType: 'dynattr$User'
-        )
+        userCategory = metadata.create(io.jmix.dynattr.impl.model.Category)
+        userCategory.name = 'user'
+        userCategory.entityType = 'dynattr$User'
 
-        userRoleCategory = new io.jmix.dynattr.impl.model.Category(
-                name: 'userRole',
-                entityType: 'dynattr$UserRole'
-        )
+        userRoleCategory = metadata.create(io.jmix.dynattr.impl.model.Category)
+        userRoleCategory.name = 'userRole'
+        userRoleCategory.entityType = 'dynattr$UserRole'
 
-        roleCategory = new io.jmix.dynattr.impl.model.Category(
-                name: 'role',
-                entityType: 'dynattr$Role'
-        )
+        roleCategory = metadata.create(io.jmix.dynattr.impl.model.Category)
+        roleCategory.name = 'role'
+        roleCategory.entityType = 'dynattr$Role'
 
         createUserAttributes()
 
@@ -130,88 +127,80 @@ class DynamicAttributesTest extends Specification {
     }
 
     protected void createUserAttributes() {
-        userAttribute = new CategoryAttribute(
-                name: 'userAttribute',
-                code: 'userAttribute',
-                dataType: AttributeType.STRING,
-                categoryEntityType: 'dynattr$User',
-                category: userCategory,
-                defaultEntity: new ReferenceToEntity()
-        )
+        userAttribute = metadata.create(CategoryAttribute)
+        userAttribute.name = 'userAttribute'
+        userAttribute.code = 'userAttribute'
+        userAttribute.dataType = AttributeType.STRING
+        userAttribute.categoryEntityType = 'dynattr$User'
+        userAttribute.category = userCategory
+        userAttribute.defaultEntity = new ReferenceToEntity()
 
-        userGroupAttribute = new CategoryAttribute(
-                name: 'userGroupAttribute',
-                code: 'userGroupAttribute',
-                dataType: AttributeType.ENTITY,
-                categoryEntityType: 'dynattr$User',
-                category: userCategory,
-                entityClass: 'test_support.entity.Group',
-                defaultEntity: new ReferenceToEntity()
-        )
+        userGroupAttribute = metadata.create(CategoryAttribute)
+        userGroupAttribute.name = 'userGroupAttribute'
+        userGroupAttribute.code = 'userGroupAttribute'
+        userGroupAttribute.dataType = AttributeType.ENTITY
+        userGroupAttribute.categoryEntityType = 'dynattr$User'
+        userGroupAttribute.category = userCategory
+        userGroupAttribute.entityClass = 'test_support.entity.Group'
+        userGroupAttribute.defaultEntity = new ReferenceToEntity()
 
-        userGroupCollectionAttribute = new CategoryAttribute(
-                name: 'userGroupCollectionAttribute',
-                code: 'userGroupCollectionAttribute',
-                dataType: AttributeType.ENTITY,
-                categoryEntityType: 'dynattr$User',
-                category: userCategory,
-                entityClass: 'test_support.entity.Group',
-                isCollection: true,
-                defaultEntity: new ReferenceToEntity()
-        )
+        userGroupCollectionAttribute = metadata.create(CategoryAttribute)
+        userGroupCollectionAttribute.name = 'userGroupCollectionAttribute'
+        userGroupCollectionAttribute.code = 'userGroupCollectionAttribute'
+        userGroupCollectionAttribute.dataType = AttributeType.ENTITY
+        userGroupCollectionAttribute.categoryEntityType = 'dynattr$User'
+        userGroupCollectionAttribute.category = userCategory
+        userGroupCollectionAttribute.entityClass = 'test_support.entity.Group'
+        userGroupCollectionAttribute.isCollection = true
+        userGroupCollectionAttribute.defaultEntity = new ReferenceToEntity()
 
-        userIntCollectionAttribute = new CategoryAttribute(
-                name: 'userIntCollectionAttribute',
-                code: 'userIntCollectionAttribute',
-                dataType: AttributeType.INTEGER,
-                categoryEntityType: 'dynattr$User',
-                category: userCategory,
-                isCollection: true,
-                defaultEntity: new ReferenceToEntity()
-        )
+        userIntCollectionAttribute = metadata.create(CategoryAttribute)
+        userIntCollectionAttribute.name = 'userIntCollectionAttribute'
+        userIntCollectionAttribute.code = 'userIntCollectionAttribute'
+        userIntCollectionAttribute.dataType = AttributeType.INTEGER
+        userIntCollectionAttribute.categoryEntityType = 'dynattr$User'
+        userIntCollectionAttribute.category = userCategory
+        userIntCollectionAttribute.isCollection = true
+        userIntCollectionAttribute.defaultEntity = new ReferenceToEntity()
 
-        userEnumAttribute = new CategoryAttribute(
-                name: 'userEnumAttribute',
-                code: 'userEnumAttribute',
-                dataType: AttributeType.ENUMERATION,
-                categoryEntityType: 'dynattr$User',
-                category: userCategory,
-                enumeration: 'option1,option2,option3',
-                defaultEntity: new ReferenceToEntity()
-        )
+        userEnumAttribute = metadata.create(CategoryAttribute)
+        userEnumAttribute.name = 'userEnumAttribute'
+        userEnumAttribute.code = 'userEnumAttribute'
+        userEnumAttribute.dataType = AttributeType.ENUMERATION
+        userEnumAttribute.categoryEntityType = 'dynattr$User'
+        userEnumAttribute.category = userCategory
+        userEnumAttribute.enumeration = 'option1,option2,option3'
+        userEnumAttribute.defaultEntity = new ReferenceToEntity()
 
-        userEnumCollectionAttribute = new CategoryAttribute(
-                name: 'userEnumCollectionAttribute',
-                code: 'userEnumCollectionAttribute',
-                dataType: AttributeType.ENUMERATION,
-                categoryEntityType: 'dynattr$User',
-                category: userCategory,
-                enumeration: 'option1,option2,option3',
-                isCollection: true,
-                defaultEntity: new ReferenceToEntity()
-        )
+        userEnumCollectionAttribute = metadata.create(CategoryAttribute)
+        userEnumCollectionAttribute.name = 'userEnumCollectionAttribute'
+        userEnumCollectionAttribute.code = 'userEnumCollectionAttribute'
+        userEnumCollectionAttribute.dataType = AttributeType.ENUMERATION
+        userEnumCollectionAttribute.categoryEntityType = 'dynattr$User'
+        userEnumCollectionAttribute.category = userCategory
+        userEnumCollectionAttribute.enumeration = 'option1,option2,option3'
+        userEnumCollectionAttribute.isCollection = true
+        userEnumCollectionAttribute.defaultEntity = new ReferenceToEntity()
     }
 
     protected void createUserRoleAttributes() {
-        userRoleAttribute = new CategoryAttribute(
-                name: 'userRoleAttribute',
-                code: 'userRoleAttribute',
-                dataType: AttributeType.STRING,
-                categoryEntityType: 'dynattr$UserRole',
-                category: userRoleCategory,
-                defaultEntity: new ReferenceToEntity()
-        )
+        userRoleAttribute = metadata.create(CategoryAttribute)
+        userRoleAttribute.name = 'userRoleAttribute'
+        userRoleAttribute.code = 'userRoleAttribute'
+        userRoleAttribute.dataType = AttributeType.STRING
+        userRoleAttribute.categoryEntityType = 'dynattr$UserRole'
+        userRoleAttribute.category = userRoleCategory
+        userRoleAttribute.defaultEntity = new ReferenceToEntity()
     }
 
     protected void createRoleAttributes() {
-        roleAttribute = new CategoryAttribute(
-                name: 'roleAttribute',
-                code: 'roleAttribute',
-                dataType: AttributeType.STRING,
-                categoryEntityType: 'dynattr$Role',
-                category: roleCategory,
-                defaultEntity: new ReferenceToEntity()
-        )
+        roleAttribute = metadata.create(CategoryAttribute)
+        roleAttribute.name = 'roleAttribute'
+        roleAttribute.code = 'roleAttribute'
+        roleAttribute.dataType = AttributeType.STRING
+        roleAttribute.categoryEntityType = 'dynattr$Role'
+        roleAttribute.category = roleCategory
+        roleAttribute.defaultEntity = new ReferenceToEntity()
     }
 
     def "create user and save with dynamic attributes"() {

@@ -27,7 +27,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.data.impl.context.CrudEntityContext;
 import io.jmix.dynattr.*;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
@@ -165,7 +164,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
         if (collectionAttributeValue.getChildValues() != null) {
             for (CategoryAttributeValue existingChild : collectionAttributeValue.getChildValues()) {
-                if (!existingChild.isDeleted()) {
+                if (existingChild.getDeleteTs() == null) {
                     if (!collection.contains(existingChild.getValue())) {
                         entityManager.remove(existingChild);
                     }
@@ -261,7 +260,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
             for (CategoryAttributeValue value : reloadedCollectionValues) {
                 if (value.getCategoryAttribute().getDataType() == AttributeType.ENTITY && value.getChildValues() != null) {
                     for (CategoryAttributeValue child : value.getChildValues()) {
-                        if (!child.isDeleted()) {
+                        if (child.getDeleteTs() == null) {
                             entityValues.add(child);
                         }
                     }
@@ -273,7 +272,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 if (value.getChildValues() != null) {
                     value.setTransientCollectionValue(
                             value.getChildValues().stream()
-                                    .filter(v -> !v.isDeleted())
+                                    .filter(v -> v.getDeleteTs() == null)
                                     .map(CategoryAttributeValue::getValue)
                                     .collect(Collectors.toList())
                     );
@@ -321,7 +320,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                     .getResultList();
         }
         return result.stream()
-                .filter(v -> !v.isDeleted())
+                .filter(v -> v.getDeleteTs() == null)
                 .collect(Collectors.toList());
     }
 
@@ -384,7 +383,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
         EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
 
         List<UUID> ids = values.stream()
-                .map(BaseUuidEntity::getId)
+                .map(CategoryAttributeValue::getId)
                 .collect(Collectors.toList());
 
         FetchPlan fetchPlan = fetchPlans.builder(CategoryAttributeValue.class)

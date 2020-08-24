@@ -16,14 +16,22 @@
 
 package io.jmix.dynattrui.impl.model;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.data.entity.BaseUuidEntity;
+
+import javax.persistence.Id;
+import java.util.UUID;
 
 @ModelObject(name = "sys_AttributeLocalizedValue")
 @SystemLevel
-public class AttributeLocalizedValue extends BaseUuidEntity {
+public class AttributeLocalizedValue implements JmixEntity {
+
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
 
     @ModelProperty
     protected String name;
@@ -37,7 +45,12 @@ public class AttributeLocalizedValue extends BaseUuidEntity {
     @ModelProperty
     protected String language;
 
-    public AttributeLocalizedValue() {
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {

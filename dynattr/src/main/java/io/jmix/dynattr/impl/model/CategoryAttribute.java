@@ -20,18 +20,25 @@ package io.jmix.dynattr.impl.model;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.data.entity.ReferenceToEntity;
-import io.jmix.data.entity.StandardEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.ConfigurationExclusionStrategy;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
@@ -42,12 +49,45 @@ import java.util.*;
 @Entity(name = "sys_CategoryAttribute")
 @Table(name = "SYS_CATEGORY_ATTR")
 @SystemLevel
-public class CategoryAttribute extends StandardEntity {
+public class CategoryAttribute implements JmixEntity {
 
     private static final long serialVersionUID = -6959392628534815752L;
 
     public static final int NAME_FIELD_LENGTH = 255;
     public static final int CODE_FIELD_LENGTH = 50;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    private UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    private Integer version;
+
+    @CreatedDate
+    @Column(name = "CREATE_TS")
+    private Date createTs;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY", length = 50)
+    private String createdBy;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_TS")
+    private Date updateTs;
+
+    @LastModifiedBy
+    @Column(name = "UPDATED_BY", length = 50)
+    private String updatedBy;
+
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    private Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    private String deletedBy;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
@@ -160,6 +200,70 @@ public class CategoryAttribute extends StandardEntity {
     @PostConstruct
     public void init(Metadata metadata) {
         defaultEntity = metadata.create(ReferenceToEntity.class);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getDeleteTs() {
+        return deleteTs;
+    }
+
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 
     @InstanceName

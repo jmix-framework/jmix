@@ -16,16 +16,25 @@
 
 package io.jmix.dynattrui.impl.model;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.data.entity.BaseUuidEntity;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import java.util.UUID;
 
 @ModelObject(name = "sys_TargetScreenComponent")
 @SystemLevel
-public class TargetScreenComponent extends BaseUuidEntity {
+public class TargetScreenComponent implements JmixEntity {
 
     private static final long serialVersionUID = -6064270441563369464L;
+
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
 
     @ModelProperty
     protected String screen;
@@ -33,12 +42,18 @@ public class TargetScreenComponent extends BaseUuidEntity {
     @ModelProperty
     protected String component;
 
-    public TargetScreenComponent() {
-    }
-
     public TargetScreenComponent(String screen, String component) {
         this.screen = screen;
         this.component = component;
+        this.id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getScreen() {

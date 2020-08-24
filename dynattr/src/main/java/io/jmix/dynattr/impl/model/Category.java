@@ -19,15 +19,22 @@ package io.jmix.dynattr.impl.model;
 
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.data.entity.StandardEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @javax.persistence.Entity(name = "sys_Category")
 @Table(name = "SYS_CATEGORY")
@@ -35,9 +42,41 @@ import java.util.List;
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.INTEGER)
 @DiscriminatorValue("0")
 @SystemLevel
-public class Category extends StandardEntity {
-
+public class Category implements JmixEntity {
     private static final long serialVersionUID = 7160259865207148541L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    protected Integer version;
+
+    @CreatedDate
+    @Column(name = "CREATE_TS")
+    protected Date createTs;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY", length = 50)
+    protected String createdBy;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_TS")
+    protected Date updateTs;
+
+    @LastModifiedBy
+    @Column(name = "UPDATED_BY", length = 50)
+    protected String updatedBy;
+
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    protected Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    protected String deletedBy;
 
     @Column(name = "NAME", nullable = false)
     protected String name;
@@ -64,6 +103,70 @@ public class Category extends StandardEntity {
 
     @Column(name = "SPECIAL")
     protected String special;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getDeleteTs() {
+        return deleteTs;
+    }
+
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
 
     public String getName() {
         return name;

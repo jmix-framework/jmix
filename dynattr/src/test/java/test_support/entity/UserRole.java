@@ -17,11 +17,20 @@
 package test_support.entity;
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.StandardEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Link between users and roles.
@@ -29,9 +38,110 @@ import javax.persistence.*;
 @Entity(name = "dynattr$UserRole")
 @Table(name = "DYNATTR_USER_ROLE")
 @SystemLevel
-public class UserRole extends StandardEntity {
+public class UserRole implements JmixEntity {
 
     private static final long serialVersionUID = 8543853035155300992L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    protected Integer version;
+
+    @CreatedDate
+    @Column(name = "CREATE_TS")
+    protected Date createTs;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY", length = 50)
+    protected String createdBy;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_TS")
+    protected Date updateTs;
+
+    @LastModifiedBy
+    @Column(name = "UPDATED_BY", length = 50)
+    protected String updatedBy;
+
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    protected Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    protected String deletedBy;
+
+    public UserRole() {
+        id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getDeleteTs() {
+        return deleteTs;
+    }
+
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "USER_ID")

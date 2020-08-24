@@ -15,23 +15,65 @@
  */
 package test_support.entity;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.data.entity.StandardEntity;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * User
  */
 @Entity(name = "dynattr$User")
 @Table(name = "DYNATTR_USER")
-public class User extends StandardEntity {
+public class User implements JmixEntity {
 
     private static final long serialVersionUID = 5007187642916030394L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    protected Integer version;
+
+    @CreatedDate
+    @Column(name = "CREATE_TS")
+    protected Date createTs;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY", length = 50)
+    protected String createdBy;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_TS")
+    protected Date updateTs;
+
+    @LastModifiedBy
+    @Column(name = "UPDATED_BY", length = 50)
+    protected String updatedBy;
+
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    protected Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    protected String deletedBy;
 
     @Column(name = "LOGIN", length = 50, nullable = false)
     protected String login;
@@ -88,15 +130,72 @@ public class User extends StandardEntity {
     @Column(name = "SYS_TENANT_ID")
     protected String sysTenantId;
 
-    @Transient
-    protected boolean disabledDefaultRoles;
-
-    public boolean isDisabledDefaultRoles() {
-        return disabledDefaultRoles;
+    public User() {
+        id = UUID.randomUUID();
     }
 
-    public void setDisabledDefaultRoles(boolean disabledDefaultRoles) {
-        this.disabledDefaultRoles = disabledDefaultRoles;
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getDeleteTs() {
+        return deleteTs;
+    }
+
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 
     public String getLogin() {
@@ -239,11 +338,5 @@ public class User extends StandardEntity {
 
     public void setChangePasswordAtNextLogon(Boolean changePasswordAtNextLogon) {
         this.changePasswordAtNextLogon = changePasswordAtNextLogon;
-    }
-
-    @Transient
-    @Deprecated
-    public String getSalt() {
-        return id != null ? id.toString() : "";
     }
 }

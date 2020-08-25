@@ -200,12 +200,9 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
      */
     @Override
     @Nullable
-    public FetchPlan findFetchPlan(MetaClass metaClass, @Nullable String name) {
+    public FetchPlan findFetchPlan(MetaClass metaClass, String name) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
-
-        if (name == null) {
-            return null;
-        }
+        Preconditions.checkNotNullArgument(metaClass, "name is null");
 
         lock.readLock().lock();
         try {
@@ -291,15 +288,11 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
             if (metadataTools.isPersistent(metaProperty)) {
                 addPersistentAttributeToInstanceNameFetchPlan(metaClass, visited, info, fetchPlan, metaProperty);
             } else {
-                List<String> relatedProperties = metadataTools.getRelatedProperties(metaProperty);
-                for (String relatedPropertyName : relatedProperties) {
-                    MetaProperty relatedProperty = metaClass.getProperty(relatedPropertyName);
+                List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
+                for (String dependsOnPropertyName : dependsOnProperties) {
+                    MetaProperty relatedProperty = metaClass.getProperty(dependsOnPropertyName);
                     if (metadataTools.isPersistent(relatedProperty)) {
                         addPersistentAttributeToInstanceNameFetchPlan(metaClass, visited, info, fetchPlan, relatedProperty);
-                    } else {
-                        log.warn(
-                                "Transient attribute '{}' is listed in 'related' properties of another transient attribute '{}'",
-                                relatedPropertyName, metaProperty.getName());
                     }
                 }
             }

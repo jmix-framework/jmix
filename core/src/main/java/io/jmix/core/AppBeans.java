@@ -16,19 +16,12 @@
 
 package io.jmix.core;
 
-import org.springframework.context.ApplicationContext;
-
 import javax.annotation.Nullable;
 import java.util.Map;
 
-/**
- * Contains static methods for access to all managed beans of the application block.
- *
- * @see BeanLocator
- */
 public class AppBeans {
 
-    private static ApplicationContext applicationContext;
+    private static org.springframework.context.ApplicationContext applicationContext;
 
     /**
      * Return the bean instance that matches the given object type.
@@ -38,7 +31,7 @@ public class AppBeans {
      * @return an instance of the single bean matching the required type
      */
     public static <T> T get(Class<T> beanType) {
-        return getBeanLocator().get(beanType);
+        return applicationContext.getBean(beanType);
     }
 
     /**
@@ -49,7 +42,7 @@ public class AppBeans {
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(String name) {
-        return (T) getBeanLocator().get(name);
+        return (T) applicationContext.getBean(name);
     }
 
     /**
@@ -61,7 +54,7 @@ public class AppBeans {
      * @return          bean instance
      */
     public static <T> T get(String name, Class<T> beanType) {
-        return getBeanLocator().get(name, beanType);
+        return applicationContext.getBean(name, beanType);
     }
 
     /**
@@ -72,7 +65,7 @@ public class AppBeans {
      */
     @SuppressWarnings("unchecked")
     public static <T> T getPrototype(String name, Object... args) {
-        return (T) getBeanLocator().getPrototype(name, args);
+        return (T) applicationContext.getBean(name, args);
     }
 
     /**
@@ -82,7 +75,7 @@ public class AppBeans {
      * @return      bean instance
      */
     public static <T> T getPrototype(Class<T> beanType, Object... args) {
-        return getBeanLocator().getPrototype(beanType, args);
+        return applicationContext.getBean(beanType, args);
     }
 
     /**
@@ -96,26 +89,20 @@ public class AppBeans {
      * keys and the corresponding bean instances as values
      */
     public static <T> Map<String, T> getAll(Class<T> beanType) {
-        return getBeanLocator().getAll(beanType);
+        return applicationContext.getBeansOfType(beanType);
     }
 
     /**
      * Whether a bean with the given name is present.
      */
     public static boolean containsBean(String name) {
-        return getBeanLocator().containsBean(name);
+        return applicationContext.containsBean(name);
     }
 
     /**
      * INTERNAL
      */
-    public static void setApplicationContext(@Nullable ApplicationContext applicationContext) {
+    public static void setApplicationContext(@Nullable org.springframework.context.ApplicationContext applicationContext) {
         AppBeans.applicationContext = applicationContext;
-    }
-
-    private static BeanLocator getBeanLocator() {
-        if (applicationContext == null)
-            throw new IllegalStateException("ApplicationContext is not set");
-        return applicationContext.getBean(BeanLocator.NAME, BeanLocator.class);
     }
 }

@@ -21,7 +21,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.EntityInitializer;
 import io.jmix.core.JmixEntity;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -42,7 +42,7 @@ public class EntityPostConstructInitializer implements EntityInitializer {
     public static final String NAME = "core_EntityPostConstructInitializer";
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     // stores methods in the execution order, all methods are accessible
     protected LoadingCache<Class<?>, List<Method>> postConstructMethodsCache =
@@ -64,7 +64,7 @@ public class EntityPostConstructInitializer implements EntityInitializer {
                 for (Parameter parameter : method.getParameters()) {
                     Class<?> parameterClass = parameter.getType();
                     try {
-                        params.add(beanLocator.get(parameterClass));
+                        params.add(applicationContext.getBean(parameterClass));
                     } catch (NoSuchBeanDefinitionException e) {
                         String message = String.format("Unable to create %s entity. Argument of the %s type at the @PostConstruct method is not a bean",
                                 entity.getClass().getName(), parameter.getType().getName());

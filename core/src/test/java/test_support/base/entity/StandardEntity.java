@@ -17,7 +17,6 @@ package test_support.base.entity;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -31,7 +30,7 @@ import java.util.Date;
 
 @MappedSuperclass
 @ModelObject(name = "base$StandardEntity")
-public abstract class StandardEntity extends BaseUuidEntity implements Versioned {
+public abstract class StandardEntity extends BaseUuidEntity {
 
     private static final long serialVersionUID = 5642226839555253331L;
 
@@ -63,12 +62,10 @@ public abstract class StandardEntity extends BaseUuidEntity implements Versioned
     @Column(name = "DELETED_BY", length = 50)
     protected String deletedBy;
 
-    @Override
     public Integer getVersion() {
         return version;
     }
 
-    @Override
     public void setVersion(Integer version) {
         this.version = version;
     }

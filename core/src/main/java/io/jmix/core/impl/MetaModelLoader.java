@@ -17,22 +17,23 @@
 package io.jmix.core.impl;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.MetaAnnotation;
-import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.core.metamodel.annotation.NumberFormat;
+import io.jmix.core.metamodel.annotation.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
+import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.*;
 import io.jmix.core.validation.group.UiComponentChecks;
@@ -44,6 +45,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -70,6 +75,20 @@ public class MetaModelLoader {
 
     protected static final String VALIDATION_NOTNULL_MESSAGE = "_notnull_message";
     protected static final String VALIDATION_NOTNULL_UI_COMPONENT = "_notnull_ui_component";
+
+    protected static final List<Class<? extends Annotation>> SYSTEM_ANNOTATIONS = ImmutableList.of(
+            Id.class,
+            JmixId.class,
+            Version.class,
+            EmbeddedId.class,
+            JmixGeneratedValue.class,
+            CreatedDate.class,
+            CreatedBy.class,
+            LastModifiedDate.class,
+            LastModifiedBy.class,
+            DeletedDate.class,
+            DeletedBy.class
+    );
 
     protected DatatypeRegistry datatypes;
 
@@ -467,7 +486,6 @@ public class MetaModelLoader {
         if (isUuidGeneratedValue(metaProperty, field)) {
             metaProperty.getDomain().getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, metaProperty.getName());
             metaProperty.getAnnotations().put(MetadataTools.UUID_KEY_ANN_NAME, true);
-            metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
         }
 
         Column column = field.getAnnotation(Column.class);
@@ -481,9 +499,15 @@ public class MetaModelLoader {
             metaProperty.getAnnotations().put(MetadataTools.TEMPORAL_ANN_NAME, temporal.value());
         }
 
-        boolean system = isPrimaryKey(field) || propertyBelongsTo(field, metaProperty, MetadataTools.SYSTEM_INTERFACES);
-        if (system)
+        if (isSystem(field, metaProperty)) {
             metaProperty.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, true);
+            MetaClass metaClass = metaProperty.getDomain();
+            if (!metaClass.getAnnotations().containsKey(MetadataTools.SYSTEM_ANN_NAME)) {
+                metaClass.getAnnotations().put(MetadataTools.SYSTEM_ANN_NAME, new LinkedList<String>());
+            }
+            //noinspection unchecked
+            ((List<String>) metaClass.getAnnotations().get(MetadataTools.SYSTEM_ANN_NAME)).add(metaProperty.getName());
+        }
     }
 
     protected void assignStore(MetaProperty metaProperty) {
@@ -496,18 +520,10 @@ public class MetaModelLoader {
         }
     }
 
-    private boolean propertyBelongsTo(Field field, MetaProperty metaProperty, List<Class> systemInterfaces) {
-        String getterName = "get" + StringUtils.capitalize(metaProperty.getName());
-
-        Class<?> aClass = field.getDeclaringClass();
-        List<Class<?>> allInterfaces = ClassUtils.getAllInterfaces(aClass);
-        for (Class intf : allInterfaces) {
-            Method[] methods = intf.getDeclaredMethods();
-            for (Method method : methods) {
-                if (method.getName().equals(getterName) && method.getParameterTypes().length == 0) {
-                    if (systemInterfaces.contains(intf))
-                        return true;
-                }
+    protected boolean isSystem(Field field, MetaProperty metaProperty) {
+        for (Class<? extends Annotation> annotation : SYSTEM_ANNOTATIONS) {
+            if (field.isAnnotationPresent(annotation)) {
+                return true;
             }
         }
         return false;
@@ -675,12 +691,12 @@ public class MetaModelLoader {
             }
         }
 
-        ModelProperty modelPropertyAnnotation =
-                annotatedElement.getAnnotation(ModelProperty.class);
-        if (modelPropertyAnnotation != null) {
-            String[] related = modelPropertyAnnotation.related();
-            if (!(related.length == 1 && related[0].equals(""))) {
-                metaProperty.getAnnotations().put("relatedProperties", Joiner.on(',').join(related));
+        DependsOnProperties dependsOnAnnotation =
+                annotatedElement.getAnnotation(DependsOnProperties.class);
+        if (dependsOnAnnotation != null) {
+            String[] dependsOn = dependsOnAnnotation.value();
+            if (dependsOn.length != 0) {
+                metaProperty.getAnnotations().put("dependsOnProperties", Joiner.on(',').join(dependsOn));
             }
         }
 
@@ -771,8 +787,8 @@ public class MetaModelLoader {
 
     @Nullable
     protected Datatype getAdaptiveDatatype(AnnotatedElement annotatedElement) {
-        ModelProperty annotation = annotatedElement.getAnnotation(ModelProperty.class);
-        return annotation != null && !annotation.datatype().equals("") ? datatypes.get(annotation.datatype()) : null;
+        PropertyDatatype annotation = annotatedElement.getAnnotation(PropertyDatatype.class);
+        return annotation != null && !annotation.value().equals("") ? datatypes.get(annotation.value()) : null;
     }
 
     protected boolean setterExists(Field field) {

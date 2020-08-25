@@ -17,14 +17,13 @@
 package test_support.app.entity.nullable_id;
 
 import io.jmix.core.JmixEntity;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_NBAR")
 @Entity(name = "test_NBar")
-public class NBar implements JmixEntity, Versioned {
+public class NBar implements JmixEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,12 +42,10 @@ public class NBar implements JmixEntity, Versioned {
     @JoinColumn(name = "FOO_ID")
     private NFoo foo;
 
-    @Override
     public Integer getVersion() {
         return version;
     }
 
-    @Override
     public void setVersion(Integer version) {
         this.version = version;
     }

@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.BeanLocator;
+import org.springframework.context.ApplicationContext;
 import io.jmix.core.DataStore;
 import io.jmix.core.Stores;
 import org.springframework.stereotype.Component;
@@ -40,12 +40,12 @@ public class DataStoreFactory {
     protected Stores stores;
 
     @Autowired
-    protected BeanLocator beanLocator;
+    protected ApplicationContext applicationContext;
 
     public DataStore get(String name) {
         String beanName = stores.get(name).getDescriptor().getBeanName();
         return dataStores.computeIfAbsent(name, key -> {
-            DataStore dataStore = beanLocator.getPrototype(beanName);
+            DataStore dataStore = (DataStore) applicationContext.getBean(beanName);
             dataStore.setName(name);
             return dataStore;
         });

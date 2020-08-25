@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,19 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.core.entity;
 
-/**
- * Interface to be implemented by optimistically locked entities.
- *
- */
-public interface Versioned {
+package test_support;
 
-    Integer getVersion();
-
-    /**
-     * Do not set version if you are not sure - it must be null for a new entity or loaded from the database
-     * for a persistent one.
-     */
-    void setVersion(Integer version);
+public class TestBean {
 }

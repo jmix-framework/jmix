@@ -16,9 +16,7 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -141,11 +139,10 @@ public class FetchPlan implements Serializable {
     public FetchPlan(FetchPlanParams viewParams) {
         this.entityClass = viewParams.entityClass;
         this.name = viewParams.name != null ? viewParams.name : "";
-        if (viewParams.includeSystemProperties) {
-            for (String propertyName : findSystemProperties(entityClass)) {
-                addProperty(propertyName);
-            }
-        }
+
+        if (viewParams.includeSystemProperties)
+            addSystemProperties();
+
         List<FetchPlan> sources = viewParams.src;
 
         if (isNotEmpty(sources)) {
@@ -330,33 +327,14 @@ public class FetchPlan implements Serializable {
         return this;
     }
 
-    protected Set<String> findSystemProperties(Class entityClass) {
-        Set<String> result = new LinkedHashSet<>();
-
+    public FetchPlan addSystemProperties() {
         Metadata metadata = AppBeans.get(Metadata.NAME);
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-        MetaClass metaClass = metadata.getClass(entityClass);
-
-        String pkName = metadataTools.getPrimaryKeyName(metaClass);
-        if (pkName != null) {
-            result.add(pkName);
+        MetaClass metaClass = metadata.getClass(getEntityClass());
+        for (String propertyName : metadataTools.getSystemProperties(metaClass)) {
+            addProperty(propertyName);
         }
-
-        addSystemPropertiesFrom(Versioned.class, entityClass, metaClass, metadataTools, result);
-
-        return result;
-    }
-
-    protected void addSystemPropertiesFrom(Class<?> baseClass, Class<?> entityClass, MetaClass metaClass,
-                                           MetadataTools metadataTools, Set<String> result) {
-        if (baseClass.isAssignableFrom(entityClass)) {
-            for (String property : getInterfaceProperties(baseClass)) {
-                MetaProperty metaProperty = metaClass.findProperty(property);
-                if (metaProperty != null && metadataTools.isPersistent(metaProperty)) {
-                    result.add(property);
-                }
-            }
-        }
+        return this;
     }
 
     protected List<String> getInterfaceProperties(Class<?> intf) {

@@ -16,10 +16,7 @@
 
 package fetch_plan_builder;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.FetchPlans;
+import io.jmix.core.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +29,8 @@ import test_support.app.TestAppConfiguration;
 import test_support.app.entity.Owner;
 import test_support.app.entity.Pet;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -41,7 +40,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FetchPlanBuilderTest {
 
     @Autowired
-    FetchPlans fetchPlans;
+    private FetchPlans fetchPlans;
+
+    @Autowired
+    private MetadataTools metadataTools;
+
+    @Autowired
+    private Metadata metadata;
 
     @Test
     public void testBuild() {
@@ -223,8 +228,8 @@ public class FetchPlanBuilderTest {
     }
 
     private boolean containsSystemProperties(FetchPlan view) {
-        return view.containsProperty("id")
-                && view.containsProperty("version");
+        List<String> systemProperties = metadataTools.getSystemProperties(metadata.getClass(view.getEntityClass()));
+        return systemProperties.stream().allMatch(view::containsProperty);
     }
 
 }

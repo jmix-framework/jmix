@@ -57,7 +57,6 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     protected List<AccessConstraint<?>> accessConstraints;
     protected int queryKey;
 
-    protected boolean loadDynamicAttributes;
     protected boolean loadPartialEntities = true;
     protected boolean joinTransaction = true;
 
@@ -200,6 +199,7 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     /**
      * @return custom hints which are used by the query
      */
+    @Nullable
     public Map<String, Object> getHints() {
         return hints == null ? Collections.emptyMap() : Collections.unmodifiableMap(hints);
     }
@@ -216,17 +216,10 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     }
 
     /**
-     * @return whether to load dynamic attributes
+     * Sets custom hints that should be used by the query.
      */
-    public boolean isLoadDynamicAttributes() {
-        return loadDynamicAttributes;
-    }
-
-    /**
-     * @param loadDynamicAttributes whether to load dynamic attributes
-     */
-    public LoadContext<E> setLoadDynamicAttributes(boolean loadDynamicAttributes) {
-        this.loadDynamicAttributes = loadDynamicAttributes;
+    public LoadContext<E> setHints(Map<String, Object> hints) {
+        this.hints = hints;
         return this;
     }
 
@@ -287,7 +280,6 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
         if (hints != null) {
             ctx.getHints().putAll(hints);
         }
-        ctx.loadDynamicAttributes = loadDynamicAttributes;
         ctx.joinTransaction = joinTransaction;
         return ctx;
     }
@@ -295,8 +287,8 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     @Override
     public String toString() {
         return String.format(
-                "LoadContext{metaClass=%s, query=%s, view=%s, id=%s, softDeletion=%s, partialEntities=%s, dynamicAttributes=%s}",
-                metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities, loadDynamicAttributes
+                "LoadContext{metaClass=%s, query=%s, view=%s, id=%s, softDeletion=%s, partialEntities=%s}",
+                metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities
         );
     }
 

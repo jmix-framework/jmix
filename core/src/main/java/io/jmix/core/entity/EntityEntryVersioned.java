@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.annotation;
-
-import io.jmix.core.entity.annotation.MetaAnnotation;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package io.jmix.core.entity;
 
 /**
+ * Interface to be implemented by optimistically locked entities.
  */
-@Target({java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@MetaAnnotation
-public @interface InstanceName {
+public interface EntityEntryVersioned {
+
+    Object getVersion();
+
+    /**
+     * Do not set version if you are not sure - it must be null for a new entity or loaded from the database
+     * for a persistent one.
+     */
+    void setVersion(Object version);
 }

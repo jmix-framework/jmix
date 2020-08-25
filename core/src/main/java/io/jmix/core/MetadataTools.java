@@ -17,16 +17,15 @@
 package io.jmix.core;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.Versioned;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
@@ -39,6 +38,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
@@ -77,10 +80,6 @@ public class MetadataTools {
     public static final String DELETED_DATE_ANN_NAME = DeletedDate.class.getName();
     public static final String DELETED_BY_ANN_NAME = DeletedBy.class.getName();
 
-    public static final List<Class> SYSTEM_INTERFACES = ImmutableList.of(
-            JmixEntity.class,
-            Versioned.class
-    );
 
     @Autowired
     protected Metadata metadata;
@@ -318,15 +317,35 @@ public class MetadataTools {
      * Determine whether the given property is system-level. A property is considered system if satisfies any of conditions:
      * <ul>
      *     <li>has {@link Id} annotation</li>
-     *     <li>used as Uuid Key (see {@link EntityEntryHasUuid})</li>
-     *     <li>defined not in an entity class but in one of its base interfaces:
-     *         {@link JmixEntity}, {@link Versioned}
-     *     </li>
+     *     <li>has {@link JmixId} annotation</li>
+     *     <li>has {@link JmixGeneratedValue} annotation</li>
+     *     <li>has {@link Version} annotation</li>
+     *     <li>has {@link CreatedDate} annotation</li>
+     *     <li>has {@link CreatedBy} annotation</li>
+     *     <li>has {@link LastModifiedDate} annotation</li>
+     *     <li>has {@link LastModifiedBy} annotation</li>
+     *     <li>has {@link DeletedDate} annotation</li>
+     *     <li>has {@link DeletedBy} annotation</li>
      * </ul>
      */
     public boolean isSystem(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
         return Boolean.TRUE.equals(metaProperty.getAnnotations().get(SYSTEM_ANN_NAME));
+    }
+
+    /**
+     * @return names of system properties
+     */
+    public List<String> getSystemProperties(MetaClass metaClass) {
+        List<String> result = new LinkedList<>();
+        while (metaClass != null) {
+            if (metaClass.getAnnotations().containsKey(SYSTEM_ANN_NAME)) {
+                //noinspection unchecked
+                result.addAll((Collection<String>) metaClass.getAnnotations().get(SYSTEM_ANN_NAME));
+            }
+            metaClass = metaClass.getAncestor();
+        }
+        return result;
     }
 
     /**
@@ -721,27 +740,27 @@ public class MetadataTools {
     }
 
     /**
-     * @return list of related properties defined in {@link ModelProperty#related()}
+     * @return list of properties defined in {@link io.jmix.core.metamodel.annotation.DependsOnProperties}
      * or empty list
      */
-    public List<String> getRelatedProperties(Class<?> entityClass, String property) {
+    public List<String> getDependsOnProperties(Class<?> entityClass, String property) {
         checkNotNullArgument(entityClass, "entityClass is null");
 
         MetaClass metaClass = metadata.getClass(entityClass);
-        return getRelatedProperties(metaClass.getProperty(property));
+        return getDependsOnProperties(metaClass.getProperty(property));
     }
 
     /**
-     * @return list of related properties defined in {@link ModelProperty#related()}
+     * @return list of properties defined in {@link io.jmix.core.metamodel.annotation.DependsOnProperties}
      * or empty list
      */
-    public List<String> getRelatedProperties(MetaProperty metaProperty) {
+    public List<String> getDependsOnProperties(MetaProperty metaProperty) {
         checkNotNullArgument(metaProperty, "metaProperty is null");
 
-        String relatedProperties = (String) metaProperty.getAnnotations().get("relatedProperties");
+        String dependsOnProperties = (String) metaProperty.getAnnotations().get("dependsOnProperties");
         List<String> result = Collections.emptyList();
-        if (relatedProperties != null) {
-            result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(relatedProperties);
+        if (dependsOnProperties != null) {
+            result = Splitter.on(',').omitEmptyStrings().trimResults().splitToList(dependsOnProperties);
         }
         return result;
     }
@@ -835,9 +854,9 @@ public class MetadataTools {
         if (Objects.equals(thisStore, propStore))
             return null;
 
-        List<String> relatedProperties = getRelatedProperties(metaProperty);
-        if (relatedProperties.size() == 1)
-            return relatedProperties.get(0);
+        List<String> dependsOnProperties = getDependsOnProperties(metaProperty);
+        if (dependsOnProperties.size() == 1)
+            return dependsOnProperties.get(0);
         else
             return null;
     }

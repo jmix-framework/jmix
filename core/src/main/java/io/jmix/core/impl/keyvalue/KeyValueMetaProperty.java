@@ -28,8 +28,6 @@ import java.lang.reflect.AnnotatedElement;
  */
 public class KeyValueMetaProperty extends MetadataObjectImpl implements MetaProperty {
 
-    private static final long serialVersionUID = 839160118855669248L;
-
     protected final MetaClass metaClass;
     protected final transient Range range;
     protected final Class javaClass;
@@ -45,6 +43,7 @@ public class KeyValueMetaProperty extends MetadataObjectImpl implements MetaProp
         this.javaClass = javaClass;
         this.type = type;
         this.mandatory = false;
+        this.store = metaClass.getStore();
     }
 
     @Override

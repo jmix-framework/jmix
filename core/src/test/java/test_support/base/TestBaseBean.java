@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl;
+package test_support.base;
 
-import io.jmix.core.BeanLocator;
+import test_support.TestBean;
 
-public interface BeanLocatorAware {
-    void setBeanLocator(BeanLocator beanLocator);
+public class TestBaseBean extends TestBean {
 }

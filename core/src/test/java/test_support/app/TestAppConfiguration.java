@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import test_support.TestBean;
 
 @Configuration
 @JmixModule
@@ -36,5 +37,10 @@ public class TestAppConfiguration {
     @Bean
     TestFileStorage testFileStorage2() {
         return new TestFileStorage();
+    }
+
+    @Bean
+    TestBean testAppBean() {
+        return new TestAppBean();
     }
 }

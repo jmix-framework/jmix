@@ -34,14 +34,4 @@ public @interface ModelProperty {
      * Whether the attribute is required.
      */
     boolean mandatory() default false;
-
-    /**
-     * Explicitly defined datatype that overrides a datatype inferred from the attribute Java type.
-     */
-    String datatype() default "";
-
-    /**
-     * Related properties are fetched from the database when this property is included in a view.
-     */
-    String[] related() default "";
 }

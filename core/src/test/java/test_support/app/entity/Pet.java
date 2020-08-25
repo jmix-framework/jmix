@@ -16,6 +16,7 @@
 
 package test_support.app.entity;
 
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import test_support.base.entity.StandardEntity;
@@ -34,13 +35,9 @@ public class Pet extends StandardEntity {
     @ModelProperty
     private String nick;
 
-    @ModelProperty(related = "name, nick")
+    @ModelProperty
+    @DependsOnProperties({"name", "nick"})
     public String getDescription() {
-        return "Name: " + name + ", nick: " + nick;
-    }
-
-    @ModelProperty(related = {"name", "nick"})
-    public String getDescription2() {
         return "Name: " + name + ", nick: " + nick;
     }
 

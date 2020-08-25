@@ -71,12 +71,16 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
 
     @Override
     public FluentValuesLoader loadValues(String queryString) {
-        return new FluentValuesLoader(queryString, dataManager.getDelegate());
+        FluentValuesLoader loader = applicationContext.getBean(FluentValuesLoader.class, queryString);
+        loader.setDataManager(dataManager.getDelegate());
+        return loader;
     }
 
     @Override
     public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        return new FluentValueLoader<>(queryString, valueClass, dataManager.getDelegate());
+        FluentValueLoader loader = applicationContext.getBean(FluentValueLoader.class, queryString, valueClass);
+        loader.setDataManager(dataManager.getDelegate());
+        return loader;
     }
 
     @Nullable

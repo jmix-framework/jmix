@@ -203,12 +203,16 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public FluentValuesLoader loadValues(String queryString) {
-        return new FluentValuesLoader(queryString, delegate);
+        FluentValuesLoader loader = applicationContext.getBean(FluentValuesLoader.class, queryString);
+        loader.setDataManager(delegate);
+        return loader;
     }
 
     @Override
     public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        return new FluentValueLoader<>(queryString, valueClass, delegate);
+        FluentValueLoader loader = applicationContext.getBean(FluentValueLoader.class, queryString, valueClass);
+        loader.setDataManager(delegate);
+        return loader;
     }
 
     @Override

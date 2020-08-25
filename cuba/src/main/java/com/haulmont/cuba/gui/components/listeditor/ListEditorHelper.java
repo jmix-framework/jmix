@@ -20,12 +20,12 @@ import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.components.ListEditor;
 import com.haulmont.cuba.security.global.UserSession;
+import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
-import io.jmix.ui.component.ListEditor;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -33,10 +33,9 @@ import java.util.Date;
 import java.util.TimeZone;
 import java.util.function.Function;
 
-import static io.jmix.ui.component.ListEditor.ItemType.*;
+import static com.haulmont.cuba.gui.components.ListEditor.ItemType.*;
 
 /**
- *
  */
 public class ListEditorHelper {
 
@@ -55,10 +54,11 @@ public class ListEditorHelper {
             return null;
         switch (itemType) {
             case ENTITY:
-                if (v instanceof JmixEntity)
-                    return AppBeans.get(MetadataTools.class).getInstanceName((JmixEntity) v);
-                else
+                if (v instanceof JmixEntity) {
+                    return AppBeans.get(InstanceNameProvider.class).getInstanceName((JmixEntity) v);
+                } else {
                     return v.toString();
+                }
             case STRING:
                 return (String) v;
             case DATE:

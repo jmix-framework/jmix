@@ -25,4 +25,6 @@
             template="/com/haulmont/cuba/gui/backgroundwork/background-work-progress-window.xml"/>
     <screen id="fileUploadDialog"
             template="/com/haulmont/cuba/gui/app/core/file/file-upload-dialog.xml"/>
+    <screen id="list-editor-popup"
+            template="/com/haulmont/cuba/gui/components/listeditor/list-editor-popup.xml"/>
 </screen-config>

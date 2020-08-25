@@ -17,10 +17,16 @@
 
 package com.haulmont.cuba.gui.dynamicattributes;
 
+import com.google.common.base.Strings;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.core.global.View;
+import com.haulmont.cuba.gui.WindowParams;
+import com.haulmont.cuba.gui.components.PickerField;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
@@ -258,5 +264,45 @@ public class DynamicAttributesGuiTools {
                 EntityValues.setValue(item, propertyName, Date.from(currentTimestamp.toInstant()));
             }
         }
+    }
+
+    /**
+     * Creates the lookup action that will open the lookup screen with the dynamic filter applied. This filter contains
+     * a condition with join and where clauses
+     */
+    public PickerField.LookupAction createLookupAction(PickerField pickerField,
+                                                       String joinClause,
+                                                       String whereClause) {
+        FilteringLookupAction filteringLookupAction = new FilteringLookupAction(pickerField, joinClause, whereClause);
+        Map<String, Object> params = new HashMap<>();
+        WindowParams.DISABLE_RESUME_SUSPENDED.set(params, true);
+        WindowParams.DISABLE_AUTO_REFRESH.set(params, true);
+        filteringLookupAction.setLookupScreenParams(params);
+        return filteringLookupAction;
+    }
+
+    /**
+     * Creates the collection datasource that is used for selecting the dynamic attribute value. If the
+     * CategoryAttribute has "where" or "join" clauses then only items that satisfy these clauses will be presented in
+     * the options datasource
+     */
+    public CollectionDatasource createOptionsDatasourceForLookup(MetaClass metaClass, String joinClause, String whereClause) {
+        CollectionDatasource optionsDatasource = DsBuilder.create()
+                .setMetaClass(metaClass)
+                .setViewName(View.MINIMAL)
+                .buildCollectionDatasource();
+
+        String query = "select e from " + metaClass.getName() + " e";
+
+        if (!Strings.isNullOrEmpty(joinClause)) {
+            query += " " + joinClause;
+        }
+        if (!Strings.isNullOrEmpty(whereClause)) {
+            query += " where " + whereClause.replaceAll("\\{E\\}", "e");
+        }
+
+        optionsDatasource.setQuery(query);
+        optionsDatasource.refresh();
+        return optionsDatasource;
     }
 }

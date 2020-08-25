@@ -16,6 +16,7 @@
 
 package io.jmix.ui;
 
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
@@ -60,6 +61,7 @@ import java.util.stream.Collectors;
 @Theme("${jmix.ui.theme:helium}")
 @Push(transport = Transport.WEBSOCKET_XHR)
 @SpringUI
+@PreserveOnRefresh
 public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHandler.UiContext {
 
     private static final Logger log = LoggerFactory.getLogger(AppUI.class);

@@ -29,7 +29,8 @@ public class RememberMeProperties {
     int tokenValiditySeconds;
 
     public RememberMeProperties(@DefaultValue("Z9w8F82fGKmJHE7H") String key,
-                                @DefaultValue("604800") int tokenValiditySeconds) {
+                                //30 days by default
+                                @DefaultValue("2592000") int tokenValiditySeconds) {
         this.key = key;
         this.tokenValiditySeconds = tokenValiditySeconds;
     }

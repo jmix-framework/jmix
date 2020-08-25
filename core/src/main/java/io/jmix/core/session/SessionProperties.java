@@ -24,13 +24,13 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class SessionProperties {
 
-    int maximumUserSessions;
+    int maximumSessionsPerUser;
 
-    public SessionProperties(@DefaultValue("100") int maximumUserSessions) {
-        this.maximumUserSessions = maximumUserSessions;
+    public SessionProperties(@DefaultValue("100") int maximumSessionsPerUser) {
+        this.maximumSessionsPerUser = maximumSessionsPerUser;
     }
 
-    public int getMaximumUserSessions() {
-        return maximumUserSessions;
+    public int getMaximumSessionsPerUser() {
+        return maximumSessionsPerUser;
     }
 }

@@ -168,7 +168,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        ListEditor listEditor = uiComponents.create(ListEditor.NAME);
+        /*ListEditor listEditor = uiComponents.create(ListEditor.NAME);
 
         listEditor.setEntityJoinClause(attribute.getConfiguration().getJoinClause());
         listEditor.setEntityWhereClause(attribute.getConfiguration().getWhereClause());
@@ -196,7 +196,8 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
         setValueSource(listEditor, context);
 
-        return listEditor;
+        return listEditor;*/
+        return null;
     }
 
     protected Component createStringField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -307,13 +308,13 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected void setValidators(Field field, AttributeDefinition attribute) {
         Collection<Validator<?>> validators = attributeValidators.getValidators(attribute);
         for (Validator<?> validator : validators) {
-            if (field instanceof ListEditor) {
+            /*if (field instanceof ListEditor) {
                 //noinspection unchecked
                 ((ListEditor) field).addListItemValidator(validator);
             } else {
                 //noinspection unchecked
                 field.addValidator(validator);
-            }
+            }*/
         }
     }
 
@@ -354,7 +355,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
     }
 
-    protected ListEditor.ItemType getListEditorItemType(AttributeType attributeType) {
+    /*protected ListEditor.ItemType getListEditorItemType(AttributeType attributeType) {
         switch (attributeType) {
             case ENTITY:
                 return ListEditor.ItemType.ENTITY;
@@ -374,7 +375,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             default:
                 throw new IllegalStateException(String.format("PropertyType %s not supported", attributeType));
         }
-    }
+    }*/
 
     protected Map<String, ?> getLocalizedEnumerationMap(AttributeDefinition attribute) {
         String enumeration = attribute.getEnumeration();

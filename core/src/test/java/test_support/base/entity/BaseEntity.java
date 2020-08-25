@@ -17,6 +17,7 @@ package test_support.base.entity;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,13 +25,15 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import java.util.Date;
+import java.util.UUID;
 
 @MappedSuperclass
-@ModelObject(name = "base$StandardEntity")
-public abstract class StandardEntity extends BaseUuidEntity {
+@ModelObject(name = "base$BaseEntity")
+public abstract class BaseEntity extends BaseUuidEntity {
 
     private static final long serialVersionUID = 5642226839555253331L;
 

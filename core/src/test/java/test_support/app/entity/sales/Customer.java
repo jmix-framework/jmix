@@ -19,7 +19,7 @@ package test_support.app.entity.sales;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.impl.EnumUtils;
-import test_support.base.entity.StandardEntity;
+import test_support.base.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 @Entity(name = "core_Customer")
 @Table(name = "CORE_CUSTOMER")
-public class Customer extends StandardEntity {
+public class Customer extends BaseEntity {
 
     @Column(name = "NAME")
     @InstanceName

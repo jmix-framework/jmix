@@ -26,11 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Primary
 @Component(DataManager.NAME)
 public class DataManagerImpl implements DataManager {
 
@@ -55,14 +57,16 @@ public class DataManagerImpl implements DataManager {
     protected ObjectProvider<FluentLoader> fluentLoaderProvider;
 
     @Autowired
+    protected ObjectProvider<FluentValueLoader> fluentValueLoaderProvider;
+
+    @Autowired
+    protected ObjectProvider<FluentValuesLoader> fluentValuesLoaderProvider;
+
+    @Autowired
     protected ObjectProvider<CrossDataStoreReferenceLoader> crossDataStoreReferenceLoaderProvider;
 
     @Autowired
     protected ExtendedEntities extendedEntities;
-
-    // todo entity log
-//    @Autowired
-//    protected EntityLogAPI entityLog;
 
     @Nullable
     @Override
@@ -197,12 +201,12 @@ public class DataManagerImpl implements DataManager {
 
     @Override
     public FluentValuesLoader loadValues(String queryString) {
-        return new FluentValuesLoader(queryString, this);
+        return fluentValuesLoaderProvider.getObject(queryString);
     }
 
     @Override
     public <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass) {
-        return new FluentValueLoader<>(queryString, valueClass, this);
+        return fluentValueLoaderProvider.getObject(queryString, valueClass);
     }
 
     protected SaveContext createSaveContext(SaveContext context) {

@@ -18,7 +18,7 @@ package test_support.app.entity.sales;
 
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import test_support.base.entity.StandardEntity;
+import test_support.base.entity.BaseEntity;
 
 import javax.persistence.*;
 
@@ -26,7 +26,7 @@ import javax.persistence.*;
 @Entity(name = "core_OrderLine")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
-public class OrderLine extends StandardEntity {
+public class OrderLine extends BaseEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 
     @ManyToOne(fetch = FetchType.LAZY)

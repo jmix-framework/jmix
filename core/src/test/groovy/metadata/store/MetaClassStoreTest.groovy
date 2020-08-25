@@ -30,9 +30,7 @@ import test_support.app.TestAppConfiguration
 import test_support.app.entity.Address
 import test_support.app.entity.Owner
 import test_support.app.entity.Pet
-import test_support.base.entity.BaseGenericIdEntity
-import test_support.base.entity.BaseUuidEntity
-import test_support.base.entity.StandardEntity
+import test_support.base.entity.BaseEntity
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(
@@ -56,7 +54,7 @@ class MetaClassStoreTest extends Specification {
 
     def "store of mapped superclass is UNDEFINED"() {
 
-        def metaClass = metadata.getClass(StandardEntity)
+        def metaClass = metadata.getClass(BaseEntity)
 
         expect:
 
@@ -97,7 +95,7 @@ class MetaClassStoreTest extends Specification {
 
     def "store of mapped superclass property is UNDEFINED"() {
 
-        def metaProperty = metadata.getClass(StandardEntity).getProperty('createTs')
+        def metaProperty = metadata.getClass(BaseEntity).getProperty('createTs')
 
         expect:
 

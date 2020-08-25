@@ -18,15 +18,12 @@ package metadata
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
-import io.jmix.core.Stores
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
-import test_support.app.entity.Address
-import test_support.app.entity.Owner
 import test_support.base.entity.BaseGenericIdEntity
 import test_support.base.entity.BaseUuidEntity
-import test_support.base.entity.StandardEntity
+import test_support.base.entity.BaseEntity
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.AppContextTestExecutionListener
@@ -48,7 +45,7 @@ class MetadataTest extends Specification {
     def "entities are in metadata"() {
         expect:
 
-        metadata.findClass(StandardEntity)
+        metadata.findClass(BaseEntity)
         metadata.findClass(TestAddon1Entity)
     }
 
@@ -57,7 +54,7 @@ class MetadataTest extends Specification {
         given:
 
         def pet = metadata.getClass(Pet)
-        def standardEntity = metadata.getClass(StandardEntity)
+        def standardEntity = metadata.getClass(BaseEntity)
         def baseUuidEntity = metadata.getClass(BaseUuidEntity)
         def baseGenericIdEntity = metadata.getClass(BaseGenericIdEntity)
 
@@ -76,7 +73,7 @@ class MetadataTest extends Specification {
 
     def "inherited properties"() {
 
-        def baseMetaClass = metadata.getClass(StandardEntity)
+        def baseMetaClass = metadata.getClass(BaseEntity)
         def baseProp = baseMetaClass.getProperty('createTs')
         def baseIdProp = baseMetaClass.getProperty('id')
 

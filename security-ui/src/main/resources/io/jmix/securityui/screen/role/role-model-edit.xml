@@ -25,6 +25,9 @@
             <collection id="rowLevelPoliciesDc" property="rowLevelPolicies"/>
         </instance>
     </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
     <layout spacing="true" expand="policiesTabSheet">
         <form id="form" dataContainer="roleModelDc">
             <column width="350px">

@@ -26,13 +26,27 @@ public class UiSecureOperationsImpl implements UiSecureOperations {
 
     @Override
     public boolean isScreenPermitted(String windowId, UiPolicyStore policyStore) {
-        return policyStore.getScreenResourcePolicies(windowId).stream()
+        boolean result = policyStore.getScreenResourcePolicies(windowId).stream()
                 .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+
+        if (!result) {
+            result = policyStore.getScreenResourcePolicies("*").stream()
+                    .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+        }
+
+        return result;
     }
 
     @Override
     public boolean isMenuItemPermitted(String menuId, UiPolicyStore policyStore) {
-        return policyStore.getMenuResourcePolicies(menuId).stream()
+        boolean result = policyStore.getMenuResourcePolicies(menuId).stream()
                 .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+
+        if (!result) {
+            result = policyStore.getMenuResourcePolicies("*").stream()
+                    .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
+        }
+
+        return result;
     }
 }

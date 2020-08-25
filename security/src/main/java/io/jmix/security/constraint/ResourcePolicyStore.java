@@ -28,7 +28,11 @@ public interface ResourcePolicyStore {
 
     Collection<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass);
 
+    Collection<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard);
+
     Collection<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute);
+
+    Collection<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard);
 
     Collection<ResourcePolicy> getSpecificResourcePolicies(String resourceName);
 }

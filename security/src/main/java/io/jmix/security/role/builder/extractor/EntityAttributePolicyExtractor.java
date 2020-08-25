@@ -71,6 +71,7 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
                     ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.ENTITY_ATTRIBUTE,
                             resource,
                             action.getId(),
+                            ResourcePolicy.DEFAULT_EFFECT,
                             scope);
                     resourcePolicies.add(resourcePolicy);
                 }

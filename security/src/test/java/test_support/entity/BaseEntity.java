@@ -14,82 +14,64 @@
  * limitations under the License.
  */
 
-package io.jmix.securitydata.entity;
+package test_support.entity;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.ModelObject;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Version;
 import java.util.Date;
 import java.util.UUID;
 
-@Table(name = "SEC_RESOURCE_POLICY_ENTITY")
-@Entity(name = "sec_ResourcePolicyEntity")
-public class ResourcePolicyEntity implements JmixEntity {
-
-    private static final long serialVersionUID = 6076849779978232260L;
-
+@MappedSuperclass
+@ModelObject(name = "sec_BaseEntity")
+public class BaseEntity implements JmixEntity {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue
-    private UUID id;
+    protected UUID id;
 
     @Version
     @Column(name = "VERSION", nullable = false)
-    private Integer version;
+    protected Integer version;
 
     @CreatedDate
     @Column(name = "CREATE_TS")
-    private Date createTs;
+    protected Date createTs;
 
     @CreatedBy
     @Column(name = "CREATED_BY", length = 50)
-    private String createdBy;
+    protected String createdBy;
 
     @LastModifiedDate
     @Column(name = "UPDATE_TS")
-    private Date updateTs;
+    protected Date updateTs;
 
     @LastModifiedBy
     @Column(name = "UPDATED_BY", length = 50)
-    private String updatedBy;
+    protected String updatedBy;
 
     @DeletedDate
     @Column(name = "DELETE_TS")
-    private Date deleteTs;
+    protected Date deleteTs;
 
     @DeletedBy
     @Column(name = "DELETED_BY", length = 50)
-    private String deletedBy;
+    protected String deletedBy;
 
-    @NotNull
-    @Column(name = "TYPE_", nullable = false)
-    private String type;
-
-    @NotNull
-    @Column(name = "RESOURCE_", nullable = false, length = 1000)
-    private String resource;
-
-    @Column(name = "ACTION_")
-    private String action;
-
-    @Column(name = "EFFECT")
-    private String effect;
-
-    @Column(name = "SCOPE_")
-    private String scope;
-
-    @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ROLE_ENTITY_ID")
-    private RoleEntity role;
+    public BaseEntity() {
+        this.id = UUID.randomUUID();
+    }
 
     public UUID getId() {
         return id;
@@ -153,53 +135,5 @@ public class ResourcePolicyEntity implements JmixEntity {
 
     public void setDeletedBy(String deletedBy) {
         this.deletedBy = deletedBy;
-    }
-
-    public RoleEntity getRole() {
-        return role;
-    }
-
-    public void setRole(RoleEntity role) {
-        this.role = role;
-    }
-
-    public String getEffect() {
-        return effect;
-    }
-
-    public void setEffect(String effect) {
-        this.effect = effect;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getResource() {
-        return resource;
-    }
-
-    public void setResource(String resource) {
-        this.resource = resource;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
     }
 }

@@ -16,17 +16,59 @@
 
 package io.jmix.securitydata.entity;
 
-import io.jmix.data.entity.StandardEntity;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.UUID;
 
 @Table(name = "SEC_ROW_LEVEL_POLICY_ENTITY")
 @Entity(name = "sec_RowLevelPolicyEntity")
-public class RowLevelPolicyEntity extends StandardEntity {
+public class RowLevelPolicyEntity implements JmixEntity {
     private static final long serialVersionUID = -8009316149061437606L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    private UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    private Integer version;
+
+    @CreatedDate
+    @Column(name = "CREATE_TS")
+    private Date createTs;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY", length = 50)
+    private String createdBy;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_TS")
+    private Date updateTs;
+
+    @LastModifiedBy
+    @Column(name = "UPDATED_BY", length = 50)
+    private String updatedBy;
+
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    private Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    private String deletedBy;
 
     @NotNull
     @Column(name = "TYPE_", nullable = false)
@@ -56,6 +98,70 @@ public class RowLevelPolicyEntity extends StandardEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ENTITY_ID")
     private RoleEntity role;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getDeleteTs() {
+        return deleteTs;
+    }
+
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
 
     public String getEntityName() {
         return entityName;

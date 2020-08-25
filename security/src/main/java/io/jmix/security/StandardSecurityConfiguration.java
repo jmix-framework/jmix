@@ -114,7 +114,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
                 .rememberMe().rememberMeServices(rememberMeServices())
                 .and()
                 .sessionManagement().sessionAuthenticationStrategy(sessionControlAuthenticationStrategy())
-                .maximumSessions(sessionProperties.getMaximumUserSessions()).sessionRegistry(sessionRegistry)
+                .maximumSessions(sessionProperties.getMaximumSessionsPerUser()).sessionRegistry(sessionRegistry)
                 .and().and()
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin();
@@ -145,7 +145,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
                 = new RegisterSessionAuthenticationStrategy(sessionRegistry);
         ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlStrategy
                 = new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry);
-        concurrentSessionControlStrategy.setMaximumSessions(sessionProperties.getMaximumUserSessions());
+        concurrentSessionControlStrategy.setMaximumSessions(sessionProperties.getMaximumSessionsPerUser());
 
         List<SessionAuthenticationStrategy> strategies = new LinkedList<>();
 

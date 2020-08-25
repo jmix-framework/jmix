@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
  * Builds {@link FetchPlan}s.
  * <p>
  * Use {@link FetchPlans} factory to get the builder.
- * //todo taimanov cover with javadocs, especially about override/merge method behaviour
  */
 @Component(FetchPlanBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -106,6 +105,12 @@ public class FetchPlanBuilder {
         return new FetchPlan(entityClass, name, properties, loadPartialEntities);
     }
 
+    /**
+     * Adds property.
+     *
+     * @param property name of direct property or dot separated path to indirect property. e.g. "address.country.name"
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder add(String property) {
         checkState();
 
@@ -129,6 +134,13 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    /**
+     * Adds property.
+     *
+     * @param property property name
+     * @param consumer to build property fetchPlan
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer) {
         checkState();
         properties.add(property);
@@ -139,12 +151,27 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    /**
+     * Adds property.
+     *
+     * @param property  property name
+     * @param consumer  to build property fetchPlan
+     * @param fetchMode fetch mode for property
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer, FetchMode fetchMode) {
         add(property, consumer);
         fetchModes.put(property, fetchMode);
         return this;
     }
 
+    /**
+     * Adds property with FetchPlan specified by {@code fetchPlanName}.
+     *
+     * @param property property name
+     * @throws FetchPlanNotFoundException if specified by {@code fetchPlanName} FetchPlan not found for entity determined by {@code property}
+     * @throws RuntimeException           if FetchPlan has been already built
+     */
     public FetchPlanBuilder add(String property, String fetchPlanName) {
         checkState();
         properties.add(property);
@@ -153,12 +180,25 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    /**
+     * Adds property with FetchPlan specified by {@code fetchPlanName}.
+     *
+     * @param property property name
+     * @throws FetchPlanNotFoundException if specified by {@code fetchPlanName} FetchPlan not found for entity determined by {@code property}
+     * @throws RuntimeException           if FetchPlan has been already built
+     */
     public FetchPlanBuilder add(String property, String fetchPlanName, FetchMode fetchMode) {
         add(property, fetchPlanName);
         fetchModes.put(property, fetchMode);
         return this;
     }
 
+    /**
+     * Adds property with FetchPlan specified by {@code builder}.
+     *
+     * @param property property name
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder add(String property, FetchPlanBuilder builder) {
         checkState();
         properties.add(property);
@@ -166,14 +206,26 @@ public class FetchPlanBuilder {
         return this;
     }
 
-
+    /**
+     * Adds property with FetchPlan specified by {@code builder}.
+     *
+     * @param property  property name
+     * @param fetchMode fetch mode for property
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder add(String property, FetchPlanBuilder builder, FetchMode fetchMode) {
         add(property, builder);
         fetchModes.put(property, fetchMode);
         return this;
     }
 
-
+    /**
+     * Adds all listed properties to FetchPlan
+     *
+     * @param properties list of properties determined as for simple {@code add(String)} method
+     * @throws RuntimeException if FetchPlan has been already built
+     * @see FetchPlanBuilder#add(String)
+     */
     public FetchPlanBuilder addAll(String... properties) {
         checkState();
         for (String property : properties) {
@@ -182,6 +234,11 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    /**
+     * Adds all system properties determined by {@link MetadataTools#getSystemProperties(MetaClass)} to FetchPlan
+     *
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder addSystem() {
         checkState();
         this.systemProperties = true;
@@ -203,6 +260,7 @@ public class FetchPlanBuilder {
 
     /**
      * Adds all properties from specified {@code fetchPlan}. Replaces existing nested fetchPlans.
+     * @throws RuntimeException if FetchPlan has been already built
      */
     public FetchPlanBuilder addFetchPlan(FetchPlan fetchPlan) {
         checkState();
@@ -216,6 +274,7 @@ public class FetchPlanBuilder {
 
     /**
      * Adds all properties from specified by {@code fetchPlanName} FetchPlan. Replaces existing nested fetchPlans.
+     * @throws RuntimeException if FetchPlan has been already built
      */
     public FetchPlanBuilder addFetchPlan(String fetchPlanName) {
         checkState();
@@ -226,10 +285,9 @@ public class FetchPlanBuilder {
     /**
      * Deep merges {@code fetchPlan} into current fetchPlan by adding all properties recursively.
      *
-     * @param fetchPlan
-     * @return
+     * @throws RuntimeException if FetchPlan has been already built
      */
-    public FetchPlanBuilder merge(FetchPlan fetchPlan) {//todo taimanov autotests for different merge/addFetchPlan scenarios and modifications
+    public FetchPlanBuilder merge(FetchPlan fetchPlan) {
         checkState();
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             mergeProperty(property.getName(), property.getFetchPlan(), property.getFetchMode());
@@ -237,7 +295,12 @@ public class FetchPlanBuilder {
         return this;
     }
 
-
+    /**
+     * Deep merges {@code fetchPlan} into property's fetchPlan by adding all properties recursively.
+     *
+     * @param propName name of property to merge {@code propFetchPlan} to
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder mergeProperty(String propName, @Nullable FetchPlan propFetchPlan, @Nullable FetchMode propFetchMode) {
         boolean isNew = properties.add(propName);
 
@@ -263,11 +326,22 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    /**
+     * Sets {@link FetchPlan#loadPartialEntities()} to true
+     *
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder partial() {
         checkState();
         loadPartialEntities = true;
         return this;
     }
+
+    /**
+     * Specifies {@link FetchPlan#loadPartialEntities()}
+     *
+     * @throws RuntimeException if FetchPlan has been already built
+     */
 
     public FetchPlanBuilder partial(boolean partial) {
         checkState();
@@ -275,6 +349,11 @@ public class FetchPlanBuilder {
         return this;
     }
 
+    /**
+     * Sets {@link FetchPlan#name}
+     *
+     * @throws RuntimeException if FetchPlan has been already built
+     */
     public FetchPlanBuilder name(String name) {
         checkState();
         this.name = name;
@@ -285,10 +364,16 @@ public class FetchPlanBuilder {
         return entityClass;
     }
 
+    /**
+     * @return {@link FetchPlan#name} for fetchPlan under construction
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return wheser {@link FetchPlan} has been already built and builder is not modifiable anymore
+     */
     public boolean isBuilt() {
         return result != null;
     }

@@ -46,6 +46,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.persistence.Id;
 import javax.persistence.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -334,7 +335,24 @@ public class MetadataTools {
     }
 
     /**
-     * @return names of system properties
+     * <b>System Properties</b> - is important properties used for identification, audit, soft-delete and optimistic lock
+     * purposes
+     * More formally, it is properties with annotations:
+     * <ul>
+     *     <li>{@link Id},</li>
+     *     <li>{@link JmixId},</li>
+     *     <li>{@link EmbeddedId}</li>
+     *     <li>{@link JmixGeneratedValue}</li>
+     *     <li>{@link CreatedDate}</li>
+     *     <li>{@link CreatedBy}</li>
+     *     <li>{@link LastModifiedDate}</li>
+     *     <li>{@link LastModifiedBy}</li>
+     *     <li>{@link DeletedDate}</li>
+     *     <li>{@link DeletedBy}</li>
+     *     <li>{@link javax.persistence.Version}</li>
+     * </ul>
+     *
+     * @return names of system properties used in Entity determined by {@code metaClass} parameter
      */
     public List<String> getSystemProperties(MetaClass metaClass) {
         List<String> result = new LinkedList<>();

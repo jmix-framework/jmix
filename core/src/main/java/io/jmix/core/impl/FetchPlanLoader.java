@@ -169,7 +169,7 @@ public class FetchPlanLoader {
                 if (refFetchPlanBuilder == null) {
                     refFetchPlanBuilder = fetchPlans.builder(rangeClass);
                     if (systemProperties)
-                        refFetchPlanBuilder.addSystem();//todo taimanov discuss: prohibit "systemProperties" if CUBA module isn't applied?
+                        refFetchPlanBuilder.addSystem();
                     loadFetchPlanProperties(propElem, refFetchPlanBuilder, systemProperties, refFetchPlanResolver);
                 }
             }

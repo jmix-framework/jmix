@@ -26,6 +26,8 @@ import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Pet
+import test_support.app.entity.fetch_plans.ChildTestEntity
+import test_support.app.entity.fetch_plans.ParentTestEntity
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 @TestExecutionListeners(
@@ -54,7 +56,27 @@ class FetchPlanRepositoryTest extends Specification {
         fetchPlan.containsProperty('name')
     }
 
-    def "predefined fetch plans do not contain system properties"() {
+    def "fetchplan overwrite mechanism works correctly"() {
+
+        setup:
+
+        def childPlan = repository.getFetchPlan(ChildTestEntity, "childTestEntity.overwrite")
+        def parentPlan = repository.getFetchPlan(ParentTestEntity, "parentTestEntity.common")
+
+
+        expect:
+
+        childPlan.containsProperty("birthDate")
+        !childPlan.containsProperty("name")
+
+        parentPlan.getProperty("firstborn").fetchPlan.containsProperty("birthDate")
+        !parentPlan.getProperty("firstborn").fetchPlan.containsProperty("name")
+
+        parentPlan.getProperty("youngerChildren").fetchPlan.containsProperty("birthDate")
+        !parentPlan.getProperty("youngerChildren").fetchPlan.containsProperty("name")
+    }
+
+    def "local fetch plan contains system properties"() {
 
         given:
 
@@ -62,7 +84,7 @@ class FetchPlanRepositoryTest extends Specification {
 
         expect:
 
-        !containsSystemProperties(localFetchPlan)
+        containsSystemProperties(localFetchPlan)
 
     }
 

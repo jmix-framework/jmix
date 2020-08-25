@@ -210,8 +210,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         try {
             checkInitialized();
 
-            FetchPlan fetchPlan = retrieveFetchPlan(metaClass, name, new HashSet<>());
-            return fetchPlan != null ? fetchPlans.copy(fetchPlan) : null;
+            return retrieveFetchPlan(metaClass, name, new HashSet<>());
         } finally {
             lock.readLock().unlock();
         }
@@ -272,13 +271,13 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
-        for (MetaProperty property : metaClass.getProperties()) {
-            if (!property.getRange().isClass()
-                    && !metadataTools.isSystem(property)
-                    && metadataTools.isPersistent(property)) {
-                fetchPlanBuilder.add(property.getName());
-            }
-        }
+        metaClass.getProperties().stream()
+                .filter(this::belongsToLocal)
+                .forEach(property -> fetchPlanBuilder.add(property.getName()));
+    }
+
+    protected boolean belongsToLocal(MetaProperty property) {
+        return !property.getRange().isClass() && metadataTools.isPersistent(property);
     }
 
     protected void addAttributesToInstanceNameFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder, FetchPlanLoader.FetchPlanInfo info, Set<FetchPlanLoader.FetchPlanInfo> visited) {
@@ -467,14 +466,14 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         return fetchPlan;
     }
 
-    protected void replaceOverridden(FetchPlan replacementFetchPlan) {//todo taimanov check/cover this logic by autotests
+    protected void replaceOverridden(FetchPlan replacementFetchPlan) {
         HashSet<FetchPlan> checked = new HashSet<>();
 
         for (Map<String, FetchPlan> fetchPlanMap : storage.values()) {
 
             for (String name : fetchPlanMap.keySet()) {
                 FetchPlan fetchPlan = fetchPlanMap.get(name);
-                if (!checked.contains(fetchPlan)) {//todo taimanov check 'checked' in autotests too
+                if (!checked.contains(fetchPlan)) {
                     FetchPlanBuilder updated = replaceOverridden(fetchPlan, replacementFetchPlan, checked);
                     if (updated != null) {
                         fetchPlanMap.put(name, updated.build());

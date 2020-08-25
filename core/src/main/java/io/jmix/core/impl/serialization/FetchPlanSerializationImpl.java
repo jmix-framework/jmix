@@ -195,7 +195,8 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                     String propertyName = viewPropertyObj.getAsJsonPrimitive("name").getAsString();
                     JsonElement nestedPlanElement = viewPropertyObj.get("view");
                     if (nestedPlanElement == null) {
-                        builder.add(propertyName, FetchPlan.BASE, fetchMode);//todo taimanov BASE instead of null (investigate)
+                        builder.add(propertyName, b -> {
+                        }, fetchMode);
                     } else {
                         MetaProperty metaProperty = viewMetaClass.getProperty(propertyName);
                         if (metaProperty == null) {

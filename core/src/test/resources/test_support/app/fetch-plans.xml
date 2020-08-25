@@ -17,4 +17,22 @@
 
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
+    <fetchPlan class="test_support.app.entity.fetch_plans.ChildTestEntity" name="childTestEntity.overwrite"
+               extends="_base">
+        <property name="parent" fetchPlan="_base"/>
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.app.entity.fetch_plans.ParentTestEntity" name="parentTestEntity.common"
+               extends="_local">
+        <property name="firstborn" fetchPlan="childTestEntity.overwrite"/>
+        <property name="youngerChildren" fetchPlan="childTestEntity.overwrite"/>
+    </fetchPlan>
+
+    <fetchPlan class="test_support.app.entity.fetch_plans.ChildTestEntity" name="childTestEntity.overwrite"
+               overwrite="true">
+        <property name="birthDate"/>
+    </fetchPlan>
+
+
 </fetchPlans>

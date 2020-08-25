@@ -111,7 +111,7 @@ public class FluentLoaderFetchPlanBuilderTest {
                         "owner.address.city")));
 
         fetchPlan = loadContext.getFetchPlan();
-        assertFalse(containsSystemProperties(fetchPlan));
+        assertTrue(containsSystemProperties(fetchPlan));//all system properties of Pet is local
         checkPetFetchPlan(fetchPlan);
 
         //noinspection unchecked
@@ -121,7 +121,7 @@ public class FluentLoaderFetchPlanBuilderTest {
                         "owner.address.city")));
 
         fetchPlan = loadContext.getFetchPlan();
-        assertFalse(containsSystemProperties(fetchPlan));
+        assertTrue(containsSystemProperties(fetchPlan));
         checkPetFetchPlan(fetchPlan);
 
         //noinspection unchecked
@@ -143,7 +143,7 @@ public class FluentLoaderFetchPlanBuilderTest {
                         "owner.address.city"));
 
         fetchPlan = loadContext.getFetchPlan();
-        assertFalse(containsSystemProperties(fetchPlan));
+        assertTrue(containsSystemProperties(fetchPlan));
         checkPetFetchPlan(fetchPlan);
     }
 

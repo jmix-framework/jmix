@@ -415,7 +415,7 @@ public class EntityStates {
             if (!isLoaded(entity, property.getName()))
                 continue;
 
-            if (property.getRange().isClass()) {//todo taimanov systemProperties was true [def]
+            if (property.getRange().isClass()) {
                 FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
                 builder.add(property.getName(), propertyBuilder);
                 if (isLoaded(entity, property.getName())) {

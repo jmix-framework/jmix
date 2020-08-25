@@ -40,7 +40,7 @@ public class FetchPlan implements Serializable {
     /**
      * Includes all local non-system properties.
      */
-    public static final String LOCAL = "_local";//todo taimanov include system properties but exclude in View/ViewBuilder
+    public static final String LOCAL = "_local";
 
     /**
      * Includes only properties contained in {@link io.jmix.core.metamodel.annotation.InstanceName}.
@@ -51,7 +51,7 @@ public class FetchPlan implements Serializable {
      * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
      * (effectively {@link #INSTANCE_NAME} + {@link #LOCAL}).
      */
-    public static final String BASE = "_base";//todo taimanov include system properties but exclude in View/ViewBuilder
+    public static final String BASE = "_base";
 
     private static final long serialVersionUID = 4313784222934349594L;
 

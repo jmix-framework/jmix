@@ -17,6 +17,7 @@
 package datamanager
 
 import io.jmix.core.*
+import io.jmix.core.annotation.Secure
 import io.jmix.core.security.AccessDeniedException
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.core.security.impl.CoreUser
@@ -37,6 +38,10 @@ import javax.sql.DataSource
 class DataManagerEntityOperationsTest extends SecuritySpecification {
     @Autowired
     DataManager dataManager
+
+    @Secure
+    @Autowired
+    DataManager secureDataManager
 
     @Autowired
     AuthenticationManager authenticationManager
@@ -105,6 +110,22 @@ class DataManagerEntityOperationsTest extends SecuritySpecification {
         then:
 
         newOrder == order
+    }
+
+    def "load is denied on secure DataManager"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+
+        def newOrder = secureDataManager.load(Id.of(order))
+                .optional()
+                .orElse(null)
+
+        then:
+
+        newOrder == null
 
     }
 

@@ -61,6 +61,8 @@ public class ViewTest {
     private TestSupport testSupport;
     @Autowired
     private ViewRepository viewRepository;
+    @Autowired
+    private FetchPlans fetchPlans;
 
     private UUID userId;
     private UUID groupId;
@@ -597,5 +599,13 @@ public class ViewTest {
         } finally {
             tx.end();
         }
+    }
+
+    @Test
+    public void viewClassTest() {
+        FetchPlanBuilder builder = fetchPlans.builder(User.class);
+        FetchPlan plan = builder.build();
+        assertTrue(ViewBuilder.class.isAssignableFrom(builder.getClass()));
+        assertTrue(View.class.isAssignableFrom(plan.getClass()));
     }
 }

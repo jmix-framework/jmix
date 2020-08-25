@@ -24,7 +24,9 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 /**
@@ -43,7 +45,7 @@ public class CubaFetchPlanRepository extends FetchPlanRepositoryImpl {
                         name, metaClass.getName()));
             }
 
-            ViewBuilder viewBuilder = ViewBuilder.of(javaClass).name(name);
+            ViewBuilder viewBuilder = (ViewBuilder) fetchPlans.builder(javaClass).name(name);
             addAttributesToInstanceNameFetchPlan(metaClass, viewBuilder, info, visited);
 
             storeFetchPlan(metaClass, viewBuilder.build());
@@ -57,5 +59,18 @@ public class CubaFetchPlanRepository extends FetchPlanRepositoryImpl {
     @Override
     protected boolean isDefaultFetchPlan(String fetchPlanName) {
         return super.isDefaultFetchPlan(fetchPlanName) || View.MINIMAL.equals(fetchPlanName);
+    }
+
+    @Nullable
+    @Override
+    public FetchPlan findFetchPlan(MetaClass metaClass, @Nullable String name) {
+        FetchPlan fetchPlan = super.findFetchPlan(metaClass, name);
+
+        return fetchPlan != null ? fetchPlans.builder(fetchPlan).name(fetchPlan.getName()).build() : null;
+    }
+
+    @Override
+    protected boolean belongsToLocal(MetaProperty property) {
+        return super.belongsToLocal(property) && !metadataTools.isSystem(property);
     }
 }

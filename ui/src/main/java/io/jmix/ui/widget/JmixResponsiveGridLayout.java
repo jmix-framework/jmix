@@ -175,7 +175,7 @@ public class JmixResponsiveGridLayout extends AbstractComponent
         markAsDirty();
     }
 
-    protected void removeComponent(Component component) {
+    protected void removeComponent(@Nullable Component component) {
         if (component == null) {
             return;
         }
@@ -351,7 +351,6 @@ public class JmixResponsiveGridLayout extends AbstractComponent
         }
 
         public void setHeight(float height, Unit unit) {
-            Preconditions.checkArgument(unit != null, "Unit can not be null");
             checkInitializedState();
 
             this.height = height;
@@ -534,11 +533,12 @@ public class JmixResponsiveGridLayout extends AbstractComponent
             this.columnId = columnId;
         }
 
+        @Nullable
         public Component getComponent() {
             return component;
         }
 
-        public void setComponent(Component component) {
+        public void setComponent(@Nullable Component component) {
             this.component = component;
 
             if (component != null) {

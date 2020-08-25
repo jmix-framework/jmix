@@ -169,7 +169,7 @@ public class WebResponsiveGridLayout extends WebAbstractComponent<JmixResponsive
     }
 
     @Override
-    public void setWidth(String width) {
+    public void setWidth(@Nullable String width) {
         throw new UnsupportedOperationException("ResponsiveGridLayout doesn't support explicit width value");
     }
 
@@ -429,7 +429,7 @@ public class WebResponsiveGridLayout extends WebAbstractComponent<JmixResponsive
             this.component = component;
 
             this.component.setParent(getOwner());
-            ((WebResponsiveGridLayout) getOwner()).addOwnComponent(this.component);
+            getOwner().addOwnComponent(this.component);
 
             assignFrame(component);
 
@@ -451,7 +451,7 @@ public class WebResponsiveGridLayout extends WebAbstractComponent<JmixResponsive
         protected void removeContentIfPresent() {
             if (component != null) {
                 component.setParent(null);
-                ((WebResponsiveGridLayout) getOwner()).removeOwnComponent(component);
+                getOwner().removeOwnComponent(component);
 
                 component = null;
             }

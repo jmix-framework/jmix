@@ -42,7 +42,6 @@ public final class ResponsiveGridLayoutSerializationHelper {
     private static final String COLUMN_BASE_STYLE_NAME = "col";
 
     private static final String STYLE_PROPERTY = "style";
-    private static final String COLUMN_ID_PROPERTY = "columnId";
     private static final String JTEST_ID_PROPERTY = "jTestId";
 
     private static final String WORD_SEPARATOR = "-";
@@ -99,7 +98,7 @@ public final class ResponsiveGridLayoutSerializationHelper {
             rowObject.addProperty(JTEST_ID_PROPERTY, row.getJTestId());
         }
 
-        // A negative number implies unspecified size, so we don't need to add it.
+        // A negative number implies an unspecified size, so we don't need to add it.
         if (row.getHeight() >= 0) {
             rowObject.addProperty("height", getCssSize(row.getHeight(), row.getHeightUnits()));
         }
@@ -130,7 +129,7 @@ public final class ResponsiveGridLayoutSerializationHelper {
         styles.add(column.getStyleName());
 
         colObject.addProperty(STYLE_PROPERTY, joinStyles(STYLE_SEPARATOR, styles));
-        colObject.addProperty(COLUMN_ID_PROPERTY, column.getColumnId());
+        colObject.addProperty("columnId", column.getColumnId());
         if (!Strings.isNullOrEmpty(column.getJTestId())) {
             colObject.addProperty(JTEST_ID_PROPERTY, column.getJTestId());
         }
@@ -165,7 +164,7 @@ public final class ResponsiveGridLayoutSerializationHelper {
         );
     }
 
-    public static String toStyle(RowColumnsValue columnsValue) {
+    private static String toStyle(RowColumnsValue columnsValue) {
         return String.valueOf(columnsValue.getColumns());
     }
 
@@ -225,7 +224,7 @@ public final class ResponsiveGridLayoutSerializationHelper {
     }
 
     @Nullable
-    public static String toStyle(ColumnsValue columnsValue) {
+    private static String toStyle(ColumnsValue columnsValue) {
         if (columnsValue.isAuto()) {
             return "auto";
         }
@@ -268,7 +267,7 @@ public final class ResponsiveGridLayoutSerializationHelper {
         );
     }
 
-    public static String toStyle(OrderValue orderValue) {
+    private static String toStyle(OrderValue orderValue) {
         return orderValue.getValue() != null
                 ? orderValue.getValue()
                 : String.valueOf(orderValue.getOrder());
@@ -291,7 +290,7 @@ public final class ResponsiveGridLayoutSerializationHelper {
         );
     }
 
-    public static String toStyle(OffsetValue offset) {
+    private static String toStyle(OffsetValue offset) {
         return String.valueOf(offset.getColumns());
     }
 

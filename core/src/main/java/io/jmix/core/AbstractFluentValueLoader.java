@@ -16,6 +16,9 @@
 
 package io.jmix.core;
 
+import io.jmix.core.constraint.AccessConstraint;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.TemporalType;
 import java.util.*;
 
@@ -29,11 +32,16 @@ class AbstractFluentValueLoader {
     private boolean softDeletion = true;
     private Map<String, Object> parameters = new HashMap<>();
     private Set<String> noConversionParams = new HashSet<>();
+    private List<AccessConstraint<?>> accessConstraints;
     private int firstResult;
     private int maxResults;
 
-    AbstractFluentValueLoader(String queryString, DataManager dataManager) {
+    AbstractFluentValueLoader(String queryString) {
         this.queryString = queryString;
+    }
+
+    @Autowired
+    public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
     }
 
@@ -54,6 +62,7 @@ class AbstractFluentValueLoader {
 
         loadContext.getQuery().setFirstResult(firstResult);
         loadContext.getQuery().setMaxResults(maxResults);
+        loadContext.setAccessConstraints(accessConstraints);
 
         loadContext.setJoinTransaction(joinTransaction);
 
@@ -78,6 +87,14 @@ class AbstractFluentValueLoader {
      */
     public AbstractFluentValueLoader softDeletion(boolean softDeletion) {
         this.softDeletion = softDeletion;
+        return this;
+    }
+
+    /**
+     * Sets access constraints.
+     */
+    public AbstractFluentValueLoader accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        this.accessConstraints = accessConstraints;
         return this;
     }
 

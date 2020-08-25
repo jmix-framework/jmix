@@ -17,16 +17,22 @@
 package io.jmix.core;
 
 import io.jmix.core.entity.KeyValueEntity;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.TemporalType;
 import java.util.*;
 
+@Component(FluentValuesLoader.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentValuesLoader extends AbstractFluentValueLoader {
+    public static final String NAME = "core_FluentValuesLoader";
 
     private List<String> properties = new ArrayList<>();
 
-    public FluentValuesLoader(String queryString, DataManager dataManager) {
-        super(queryString, dataManager);
+    public FluentValuesLoader(String queryString) {
+        super(queryString);
     }
 
     protected ValueLoadContext createLoadContext() {

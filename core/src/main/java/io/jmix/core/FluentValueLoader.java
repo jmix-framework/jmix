@@ -17,6 +17,9 @@
 package io.jmix.core;
 
 import io.jmix.core.entity.KeyValueEntity;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.TemporalType;
 import java.math.BigDecimal;
@@ -27,14 +30,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Component(FluentValueLoader.NAME)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentValueLoader<T> extends AbstractFluentValueLoader {
+    public static final String NAME = "core_FluentValueLoader";
 
     private final Class<T> valueClass;
 
     private final static String PROP_NAME = "p1";
 
-    public FluentValueLoader(String queryString, Class<T> valueClass, DataManager dataManager) {
-        super(queryString, dataManager);
+    public FluentValueLoader(String queryString, Class<T> valueClass) {
+        super(queryString);
         this.valueClass = valueClass;
     }
 

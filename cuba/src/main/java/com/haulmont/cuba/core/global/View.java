@@ -16,7 +16,6 @@
 package com.haulmont.cuba.core.global;
 
 import com.haulmont.chile.core.annotations.NamePattern;
-import io.jmix.core.AppBeans;
 import io.jmix.core.Metadata;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
@@ -233,7 +232,7 @@ public class View extends FetchPlan {
     }
 
     public View addSystemProperties() {
-        io.jmix.core.Metadata metadata = io.jmix.core.AppBeans.get(Metadata.NAME);
+        io.jmix.core.Metadata metadata = AppBeans.get(Metadata.NAME);
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
         MetaClass metaClass = metadata.getClass(getEntityClass());
         for (String propertyName : metadataTools.getSystemProperties(metaClass)) {

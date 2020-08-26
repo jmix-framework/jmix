@@ -16,10 +16,7 @@
 
 package entity_manager;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.core.EntityStates;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlans;
+import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.event.EntityChangedEvent;

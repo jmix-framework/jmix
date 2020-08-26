@@ -27,8 +27,6 @@ import spock.lang.Specification
 import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, DataTestConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DataSpec extends Specification {
 
     @Autowired

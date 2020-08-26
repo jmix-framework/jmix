@@ -63,10 +63,4 @@ public class CoreConfiguration {
     public MeterRegistry simpleMeterRegistry() {
         return new SimpleMeterRegistry();
     }
-
-    @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 5)
-    public void onApplicationContextRefreshFirst(ContextRefreshedEvent event) {
-        AppBeans.setApplicationContext(event.getApplicationContext());
-    }
 }

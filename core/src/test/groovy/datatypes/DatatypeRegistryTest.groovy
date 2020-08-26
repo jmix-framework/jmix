@@ -22,15 +22,11 @@ import io.jmix.core.metamodel.datatype.impl.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
 
 import java.time.*
 
 @ContextConfiguration(classes = [CoreConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DatatypeRegistryTest extends Specification {
 
     @Autowired

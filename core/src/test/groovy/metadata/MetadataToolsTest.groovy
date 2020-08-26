@@ -20,9 +20,8 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
+
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.app.TestAppConfiguration
@@ -34,8 +33,6 @@ import test_support.base.entity.BaseEntity
 import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MetadataToolsTest extends Specification {
 
     @Autowired

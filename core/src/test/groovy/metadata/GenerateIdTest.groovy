@@ -21,17 +21,14 @@ import io.jmix.core.Metadata
 import io.jmix.core.entity.EntityValues
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
+
 import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.generated_id.GBar
 import test_support.app.entity.nullable_and_generated_id.NGBar
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class GenerateIdTest extends Specification {
 
     @Autowired

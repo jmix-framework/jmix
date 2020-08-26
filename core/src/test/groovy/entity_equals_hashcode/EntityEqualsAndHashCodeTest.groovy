@@ -20,9 +20,8 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.core.impl.StandardSerialization
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
+
 import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.generated_id.GFoo
@@ -31,8 +30,6 @@ import test_support.app.entity.nullable_id.NFoo
 import test_support.base.TestBaseConfiguration
 
 @ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class EntityEqualsAndHashCodeTest extends Specification {
 
     @Autowired

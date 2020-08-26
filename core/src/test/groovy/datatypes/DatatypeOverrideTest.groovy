@@ -18,19 +18,16 @@ package datatypes
 
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.TestStringDatatype
-import test_support.AppContextTestExecutionListener
+
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.datatype.impl.StringDatatype
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class DatatypeOverrideTest extends Specification {
 
     @Autowired

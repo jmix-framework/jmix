@@ -22,10 +22,9 @@ import io.jmix.core.pessimisticlocking.LockInfo
 import io.jmix.core.pessimisticlocking.LockManager
 import io.jmix.core.security.impl.AuthenticatorImpl
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
+
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.LockableChildEntity
 import test_support.app.entity.LockableParentEntity
@@ -37,8 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertNull
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAppConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class LockManagerTest extends Specification {
 
     @Autowired

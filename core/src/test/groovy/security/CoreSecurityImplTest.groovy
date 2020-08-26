@@ -27,17 +27,14 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Ignore
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
+
 import test_support.addon1.TestAddon1Configuration
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class CoreSecurityImplTest extends Specification {
 
     @Autowired

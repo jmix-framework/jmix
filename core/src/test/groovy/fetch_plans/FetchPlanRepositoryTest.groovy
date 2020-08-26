@@ -19,9 +19,8 @@ package fetch_plans
 import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
+
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.app.TestAppConfiguration
@@ -30,10 +29,6 @@ import test_support.app.entity.fetch_plans.ChildTestEntity
 import test_support.app.entity.fetch_plans.ParentTestEntity
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(
-        value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
-)
 class FetchPlanRepositoryTest extends Specification {
 
     @Autowired

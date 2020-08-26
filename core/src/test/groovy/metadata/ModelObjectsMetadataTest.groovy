@@ -22,15 +22,12 @@ import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityPropertyChangeListener
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.metamodel.datatype.DatatypeRegistry
-import io.jmix.core.metamodel.model.MetaClass
-import io.jmix.core.metamodel.model.MetaProperty
 import io.jmix.core.metamodel.model.Range
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Ignore
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
+
 import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.model_objects.CustomerObject
@@ -42,10 +39,6 @@ import test_support.app.entity.model_objects.OrderObject
 import java.time.LocalDate
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(
-        value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
-)
 class ModelObjectsMetadataTest extends Specification {
 
     @Autowired

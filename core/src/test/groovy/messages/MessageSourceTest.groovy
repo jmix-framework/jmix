@@ -18,14 +18,13 @@ package messages
 
 import spock.lang.Unroll
 import test_support.addon1.TestAddon1Configuration
-import test_support.AppContextTestExecutionListener
+
 import test_support.app.TestAppConfiguration
 import io.jmix.core.CoreConfiguration
 import org.springframework.context.MessageSource
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -33,8 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import static test_support.TestLocales.*
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class MessageSourceTest extends Specification {
 
 

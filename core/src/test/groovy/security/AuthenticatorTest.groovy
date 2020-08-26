@@ -26,15 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
-import test_support.AppContextTestExecutionListener
 
 @ContextConfiguration(classes = [CoreConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
-@TestExecutionListeners(value = AppContextTestExecutionListener,
-        mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 class AuthenticatorTest extends Specification {
 
     @Autowired

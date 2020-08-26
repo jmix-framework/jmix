@@ -38,7 +38,7 @@ import java.util.*;
 public class FetchPlan implements Serializable {
 
     /**
-     * Includes all local non-system properties.
+     * Includes all local properties.
      */
     public static final String LOCAL = "_local";
 
@@ -48,7 +48,7 @@ public class FetchPlan implements Serializable {
     public static final String INSTANCE_NAME = "_instance_name";
 
     /**
-     * Includes all local non-system properties and properties defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
+     * Includes all local properties and properties defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
      * (effectively {@link #INSTANCE_NAME} + {@link #LOCAL}).
      */
     public static final String BASE = "_base";

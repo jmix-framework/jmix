@@ -1,16 +1,24 @@
 package test_support.app.entity.fetch_plans;
 
-import test_support.base.entity.StandardEntity;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity(name = "app_ChildTestEntity")
-public class ChildTestEntity extends StandardEntity {
+public class ChildTestEntity implements JmixEntity {
 
     private static final long serialVersionUID = -4176110169739408116L;
+
+    @Id
+    @Column(name = "UUID")
+    @JmixGeneratedValue
+    private UUID uuid;
 
     @ManyToOne
     @Column(name = "PARENT_ID")
@@ -21,6 +29,14 @@ public class ChildTestEntity extends StandardEntity {
 
     @Column(name = "NAME")
     protected String name;
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
 
 
     public ParentTestEntity getParent() {

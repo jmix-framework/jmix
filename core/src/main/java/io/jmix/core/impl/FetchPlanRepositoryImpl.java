@@ -271,9 +271,11 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
-        metaClass.getProperties().stream()
-                .filter(this::belongsToLocal)
-                .forEach(property -> fetchPlanBuilder.add(property.getName()));
+        for (MetaProperty property : metaClass.getProperties()) {
+            if (belongsToLocal(property)) {
+                fetchPlanBuilder.add(property.getName());
+            }
+        }
     }
 
     protected boolean belongsToLocal(MetaProperty property) {

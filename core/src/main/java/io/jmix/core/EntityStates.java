@@ -414,7 +414,6 @@ public class EntityStates {
         for (MetaProperty property : metaClass.getProperties()) {
             if (!isLoaded(entity, property.getName()))
                 continue;
-
             if (property.getRange().isClass()) {
                 FetchPlanBuilder propertyBuilder = fetchPlans.builder(property.getRange().asClass().getJavaClass());
                 builder.add(property.getName(), propertyBuilder);
@@ -447,9 +446,9 @@ public class EntityStates {
     public boolean isDeleted(Object entity) {
         checkNotNullArgument(entity, "entity is null");
         if (entity instanceof JmixEntity) {
-            JmixEntity casted = (JmixEntity) entity;
+            JmixEntity jmixEntity = (JmixEntity) entity;
 
-            if (EntitySystemValues.isSoftDeleted(casted))
+            if (EntitySystemValues.isSoftDeleted(jmixEntity))
                 return true;
 
             if (((JmixEntity) entity).__getEntityEntry().isRemoved()) {

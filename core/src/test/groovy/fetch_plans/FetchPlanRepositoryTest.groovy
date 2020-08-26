@@ -84,13 +84,14 @@ class FetchPlanRepositoryTest extends Specification {
 
         expect:
 
-        containsSystemProperties(localFetchPlan)
+        localFetchPlan.containsProperty("id")
+        localFetchPlan.containsProperty("version");
+        localFetchPlan.containsProperty("createTs");
+        localFetchPlan.containsProperty("createdBy");
+        localFetchPlan.containsProperty("updateTs");
+        localFetchPlan.containsProperty("updatedBy");
+        localFetchPlan.containsProperty("deleteTs");
+        localFetchPlan.containsProperty("deletedBy");
 
-    }
-
-    private boolean containsSystemProperties(FetchPlan fetchPlan) {
-
-        def systemProperties = metadataTools.getSystemProperties(metadata.getClass(fetchPlan.getEntityClass()))
-        systemProperties.any { systemProperty -> fetchPlan.containsProperty(systemProperty) }
     }
 }

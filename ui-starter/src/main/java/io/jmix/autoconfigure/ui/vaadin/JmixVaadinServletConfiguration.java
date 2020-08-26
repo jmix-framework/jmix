@@ -119,7 +119,7 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
 
     protected List<String> getUIPaths() {
         List<String> uiMappings = new ArrayList<>();
-        logger.info("Checking the application context for Vaadin UI mappings");
+        logger.debug("Checking the application context for Vaadin UI mappings");
         // more checks are performed by the UI provider
         final String[] uiBeanNames = applicationContext
                 .getBeanNamesForAnnotation(SpringUI.class);
@@ -202,7 +202,7 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
     @Bean
     public Controller vaadinUiForwardingController() {
         VaadinServlet servlet = vaadinServlet();
-        getLogger().info("Registering Vaadin servlet of type [{}]",
+        getLogger().debug("Registering Vaadin servlet of type [{}]",
                 servlet.getClass().getCanonicalName());
         ServletForwardingController controller = new ServletForwardingController();
         controller.setServletName(vaadinServletRegistration().getServletName());
@@ -258,7 +258,7 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
 
     @SuppressWarnings("unchecked")
     protected ServletRegistrationBean createServletRegistrationBean() {
-        getLogger().info("Registering Vaadin servlet");
+        getLogger().debug("Registering Vaadin servlet");
         final String[] urlMappings = getUrlMappings();
         getLogger().info("Servlet will be mapped to URLs {}",
                 (Object) urlMappings);
@@ -278,7 +278,7 @@ public class JmixVaadinServletConfiguration implements InitializingBean {
 
     protected void addInitParameters(
             ServletRegistrationBean servletRegistrationBean) {
-        getLogger().info("Setting servlet init parameters");
+        getLogger().debug("Setting servlet init parameters");
 
         addInitParameter(servletRegistrationBean,
                 Constants.SERVLET_PARAMETER_PRODUCTION_MODE,

@@ -473,12 +473,11 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
         for (Map<String, FetchPlan> fetchPlanMap : storage.values()) {
 
-            for (String name : fetchPlanMap.keySet()) {
-                FetchPlan fetchPlan = fetchPlanMap.get(name);
-                if (!checked.contains(fetchPlan)) {
-                    FetchPlanBuilder updated = replaceOverridden(fetchPlan, replacementFetchPlan, checked);
+            for (Map.Entry<String, FetchPlan> entry : fetchPlanMap.entrySet()) {
+                if (!checked.contains(entry.getValue())) {
+                    FetchPlanBuilder updated = replaceOverridden(entry.getValue(), replacementFetchPlan, checked);
                     if (updated != null) {
-                        fetchPlanMap.put(name, updated.build());
+                        fetchPlanMap.put(entry.getKey(), updated.build());
                     }
                 }
             }

@@ -17,6 +17,8 @@
 package io.jmix.core.impl;
 
 import io.jmix.core.Events;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggerConfiguration;
@@ -41,6 +43,8 @@ public class LoggingConfigurer {
 
     public static final String LOGGING_LEVEL_PROP_PREFIX = "jmix.logging.level.";
 
+    private static final Logger log = LoggerFactory.getLogger(LoggingConfigurer.class);
+
     @Autowired
     private Environment environment;
 
@@ -50,7 +54,12 @@ public class LoggingConfigurer {
         LoggingSystem loggingSystem = LoggingSystem.get(this.getClass().getClassLoader());
 
         for (String loggerName : getDefinedLoggers()) {
-            LoggerConfiguration loggerConfiguration = loggingSystem.getLoggerConfiguration(loggerName);
+            LoggerConfiguration loggerConfiguration = null;
+            try {
+                loggerConfiguration = loggingSystem.getLoggerConfiguration(loggerName);
+            } catch (Exception e) {
+                log.debug("Cannot get logger configuration for {}: {}", loggerName, e.toString());
+            }
             if (loggerConfiguration == null) {
                 String value = environment.getProperty(LOGGING_LEVEL_PROP_PREFIX + loggerName);
                 loggingSystem.setLogLevel(loggerName, LogLevel.valueOf(value));

@@ -137,7 +137,7 @@ public class CrossDataStoreReferenceLoader {
                                                 Map<Class<? extends JmixEntity>, List<CrossDataStoreProperty>> crossPropertiesMap) {
         Set<JmixEntity> resultSet = new HashSet<>();
         for (JmixEntity entity : entities) {
-            metadataTools.traverseAttributesByView(fetchPlan, entity, new EntityAttributeVisitor() {
+            metadataTools.traverseAttributesByFetchPlan(fetchPlan, entity, new EntityAttributeVisitor() {
                 @Override
                 public void visit(JmixEntity entity, MetaProperty property) {
                     List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.get(entity.getClass());

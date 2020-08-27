@@ -617,17 +617,17 @@ public class MetadataTools {
     }
 
     /**
-     * Collects all meta-properties of the given meta-class included to the given view as {@link MetaPropertyPath}s.
+     * Collects all meta-properties of the given meta-class included to the given fetchPlan as {@link MetaPropertyPath}s.
      *
-     * @param view      view
+     * @param fetchPlan fetch plan
      * @param metaClass meta-class
      * @return collection of paths
      */
-    public Collection<MetaPropertyPath> getViewPropertyPaths(FetchPlan view, MetaClass metaClass) {
+    public Collection<MetaPropertyPath> getFetchPlanPropertyPaths(FetchPlan fetchPlan, MetaClass metaClass) {
         List<MetaPropertyPath> propertyPaths = new ArrayList<>(metaClass.getProperties().size());
         for (final MetaProperty metaProperty : metaClass.getProperties()) {
             final MetaPropertyPath metaPropertyPath = new MetaPropertyPath(metaClass, metaProperty);
-            if (fetchPlanContainsProperty(view, metaPropertyPath)) {
+            if (fetchPlanContainsProperty(fetchPlan, metaPropertyPath)) {
                 propertyPaths.add(metaPropertyPath);
             }
         }
@@ -635,17 +635,9 @@ public class MetadataTools {
     }
 
     /**
-     * @deprecated replaced by {@link MetadataTools#fetchPlanContainsProperty(FetchPlan, MetaPropertyPath)}
-     */
-    @Deprecated
-    public boolean viewContainsProperty(@Nullable FetchPlan view, MetaPropertyPath propertyPath) {
-        return fetchPlanContainsProperty(view, propertyPath);
-    }
-
-    /**
-     * Determine whether the view contains a property, traversing a view branch according to the given property path.
+     * Determine whether the fetch plan contains a property, traversing a fetch plan branch according to the given property path.
      *
-     * @param fetchPlan    view instance. If null, return false immediately.
+     * @param fetchPlan    fetch plan instance. If null, return false immediately.
      * @param propertyPath property path defining the property
      */
     public boolean fetchPlanContainsProperty(@Nullable FetchPlan fetchPlan, MetaPropertyPath propertyPath) {
@@ -936,35 +928,36 @@ public class MetadataTools {
     }
 
     /**
-     * Depth-first traversal of the object graph by the view starting from the specified entity instance.
-     * Visits attributes defined in the view.
+     * Depth-first traversal of the object graph by the fetch plan starting from the specified entity instance.
+     * Visits attributes defined in the fetch plan.
      *
-     * @param view    view instance
+     * @param fetchPlan    fetchPlan instance
      * @param entity  entity graph entry point
      * @param visitor the attribute visitor implementation
      */
-    public void traverseAttributesByView(FetchPlan view, JmixEntity entity, EntityAttributeVisitor visitor) {
-        checkNotNullArgument(view, "view is null");
+    public void traverseAttributesByFetchPlan(FetchPlan fetchPlan, JmixEntity entity, EntityAttributeVisitor visitor) {
+        checkNotNullArgument(fetchPlan, "fetchPlan is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
 
-        internalTraverseAttributesByFetchPlan(view, entity, visitor, new HashMap<>(), false);
+        internalTraverseAttributesByFetchPlan(fetchPlan, entity, visitor, new HashMap<>(), false);
     }
 
     /**
-     * Depth-first traversal of the object graph by the view starting from the specified entity instance.
-     * Visits attributes defined in the view. Not loaded attributes by the view aren't visited.
+     * Depth-first traversal of the object graph by the fetch plan starting from the specified entity instance.
+     * Visits attributes defined in the fetch plan.
      *
-     * @param view    view instance
+     * @param fetchPlan    fetchPlan instance
      * @param entity  entity graph entry point
+     * @param checkLoaded if true, skips not loaded attributes
      * @param visitor the attribute visitor implementation
      */
-    public void traverseLoadedAttributesByView(FetchPlan view, JmixEntity entity, EntityAttributeVisitor visitor) {
-        checkNotNullArgument(view, "view is null");
+    public void traverseAttributesByFetchPlan(FetchPlan fetchPlan, JmixEntity entity, boolean checkLoaded, EntityAttributeVisitor visitor) {
+        checkNotNullArgument(fetchPlan, "fetchPlan is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
 
-        internalTraverseAttributesByFetchPlan(view, entity, visitor, new HashMap<>(), true);
+        internalTraverseAttributesByFetchPlan(fetchPlan, entity, visitor, new HashMap<>(), checkLoaded);
     }
 
     /**
@@ -1181,20 +1174,20 @@ public class MetadataTools {
         }
     }
 
-    protected void internalTraverseAttributesByFetchPlan(FetchPlan view, JmixEntity entity, EntityAttributeVisitor visitor,
+    protected void internalTraverseAttributesByFetchPlan(FetchPlan fetchPlan, JmixEntity entity, EntityAttributeVisitor visitor,
                                                          Map<JmixEntity, Set<FetchPlan>> visited, boolean checkLoaded) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {
             fetchPlans = new HashSet<>();
             visited.put(entity, fetchPlans);
-        } else if (fetchPlans.contains(view)) {
+        } else if (fetchPlans.contains(fetchPlan)) {
             return;
         }
-        fetchPlans.add(view);
+        fetchPlans.add(fetchPlan);
 
         MetaClass metaClass = metadata.getClass(entity.getClass());
 
-        for (FetchPlanProperty property : view.getProperties()) {
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (visitor.skip(metaProperty))
                 continue;
@@ -1202,20 +1195,20 @@ public class MetadataTools {
             if (checkLoaded && !persistentAttributesLoadChecker.isLoaded(entity, metaProperty.getName()))
                 continue;
 
-            FetchPlan propertyView = property.getFetchPlan();
+            FetchPlan propertyFetchPlan = property.getFetchPlan();
 
             visitor.visit(entity, metaProperty);
 
             Object value = EntityValues.getValue(entity, property.getName());
 
-            if (value != null && propertyView != null) {
+            if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
                     for (Object item : ((Collection) value)) {
                         if (item instanceof JmixEntity)
-                            internalTraverseAttributesByFetchPlan(propertyView, (JmixEntity) item, visitor, visited, checkLoaded);
+                            internalTraverseAttributesByFetchPlan(propertyFetchPlan, (JmixEntity) item, visitor, visited, checkLoaded);
                     }
                 } else if (value instanceof JmixEntity) {
-                    internalTraverseAttributesByFetchPlan(propertyView, (JmixEntity) value, visitor, visited, checkLoaded);
+                    internalTraverseAttributesByFetchPlan(propertyFetchPlan, (JmixEntity) value, visitor, visited, checkLoaded);
                 }
             }
         }

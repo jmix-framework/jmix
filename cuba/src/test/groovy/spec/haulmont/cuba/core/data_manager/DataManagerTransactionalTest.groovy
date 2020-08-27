@@ -241,6 +241,39 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
         testSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
     }
 
+    def "save returns detached entities"() {
+        Customer customer1 = new Customer(name: 'Smith')
+        Order order1 = new Order(customer: customer1, number: '111')
+        def orderLine11 = new OrderLine(order: order1, productName: 'abc')
+        def orderLine12 = new OrderLine(order: order1, productName: 'def')
+        txDataManager.save(customer1, order1, orderLine11, orderLine12)
+
+        FetchPlan orderView = new View(Order)
+                .addProperty('number')
+                .addProperty('customer', new View(Customer).addProperty('name'))
+                .addProperty('orderLines', new View(OrderLine).addProperty('product'))
+
+        Transaction tx = persistence.createTransaction()
+
+        when:
+
+        Order order = txDataManager.load(Order)
+                .id(order1.id)
+                .view(orderView).one()
+        order.number = '222'
+
+        Order savedOrder = txDataManager.save(order, orderView)
+
+        then:
+
+        checkObjectGraph(savedOrder)
+
+        cleanup:
+
+        tx.end()
+        testSupport.deleteRecord(orderLine11, orderLine12, order1, customer1)
+    }
+
     def "load entity with embedded"() {
         def embedded = new AddressEmbedded(street: 'street1')
         def container = new AddressEmbeddedContainer(name: 'name1', address: embedded)

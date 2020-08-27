@@ -94,7 +94,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
@@ -990,7 +989,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
             return container.getFetchPlan() != null ?
                     // if a view is specified - use view properties
-                    metadataTools.getViewPropertyPaths(container.getFetchPlan(), container.getEntityMetaClass()) :
+                    metadataTools.getFetchPlanPropertyPaths(container.getFetchPlan(), container.getEntityMetaClass()) :
                     // otherwise use all properties from meta-class
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }

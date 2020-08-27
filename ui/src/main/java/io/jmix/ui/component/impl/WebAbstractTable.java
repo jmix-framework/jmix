@@ -1627,7 +1627,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
             return container.getFetchPlan() != null ?
                     // if a view is specified - use view properties
-                    metadataTools.getViewPropertyPaths(container.getFetchPlan(), container.getEntityMetaClass()) :
+                    metadataTools.getFetchPlanPropertyPaths(container.getFetchPlan(), container.getEntityMetaClass()) :
                     // otherwise use all properties from meta-class
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }

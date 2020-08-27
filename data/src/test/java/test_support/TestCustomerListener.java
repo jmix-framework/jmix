@@ -17,13 +17,15 @@
 package test_support;
 
 import io.jmix.data.event.EntityChangedEvent;
+import io.jmix.data.event.EntityPersistingEvent;
 import io.jmix.data.listener.BeforeDetachEntityListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import test_support.entity.sales.Customer;
+import test_support.entity.sales.Status;
 
-import java.util.UUID;
 import java.util.function.Consumer;
 
 @Component("test_TestCustomerListener")
@@ -53,6 +55,13 @@ public class TestCustomerListener implements BeforeDetachEntityListener<Customer
     public void onCustomerChanged(EntityChangedEvent<Customer> event) {
         if (changedEventConsumer != null) {
             changedEventConsumer.accept(event);
+        }
+    }
+
+    @EventListener
+    public void onCustomerCreate(EntityPersistingEvent<Customer> event) {
+        if (event.getEntity().getStatus() == null) {
+            event.getEntity().setStatus(Status.OK);
         }
     }
 

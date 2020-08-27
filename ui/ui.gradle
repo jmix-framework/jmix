@@ -41,6 +41,7 @@ dependencies {
     api 'org.webjars:jquery'
     api 'org.webjars:jquery-ui'
     api 'org.webjars.bower:jquery-file-upload'
+    api 'org.webjars.npm:object-fit-images'
 
     implementation 'com.google.code.gson:gson'
 

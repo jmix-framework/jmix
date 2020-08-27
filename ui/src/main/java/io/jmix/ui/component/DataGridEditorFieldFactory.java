@@ -27,20 +27,6 @@ public interface DataGridEditorFieldFactory {
     /**
      * Generates component for {@link DataGrid} editor.
      *
-     * @param datasource editing item datasource
-     * @param property   editing item property
-     * @return generated component
-     * @throws IllegalStateException if created component doesn't implement the {@link Field} interface
-     * @deprecated Use {@link #createField(EntityValueSource, String)} instead
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    Field createField(Datasource datasource, String property);*/
-
-    /**
-     * Generates component for {@link DataGrid} editor.
-     *
      * @param valueSource editing item value source
      * @param property    editing item property
      * @return generated component

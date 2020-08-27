@@ -576,7 +576,6 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             column.setMaximumWidth(maximumWidth);
         }
 
-        column.setFormatter(loadFormatter(element));
         column.setRenderer(loadRenderer(element));
 
         loadAggregation(column, element);

@@ -2731,7 +2731,6 @@
                     <xs:attribute name="valueDescription" type="resourceString"/>
                 </xs:complexType>
             </xs:element>
-            <xs:group ref="formatters" minOccurs="0"/>
             <xs:group ref="renderers" minOccurs="0"/>
         </xs:sequence>
 

@@ -20,12 +20,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.ValueSourceProvider;
-import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.InstanceContainer;
 
@@ -486,17 +484,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     void setEditorCancelCaption(String cancelCaption);
 
     /**
-     * Gets the id of the item that is currently being edited.
-     *
-     * @return the id of the item that is currently being edited, or
-     * {@code null} if no item is being edited at the moment
-     * @deprecated use {@link #getEditedItem()} instead
-     */
-    @Deprecated
-    @Nullable
-    Object getEditedItemId();
-
-    /**
      * Returns the item that is currently being edited.
      *
      * @return the item that is currently being edited, or
@@ -511,19 +498,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @return {@code true} if the editor is open
      */
     boolean isEditorActive();
-
-    /**
-     * Opens the editor interface for the provided item Id. Scrolls the Grid to
-     * bring the item to view if it is not already visible.
-     *
-     * @param itemId the id of the item to edit
-     * @throws IllegalStateException    if the editor is not enabled or already editing an item in buffered mode
-     * @throws IllegalArgumentException if datasource doesn't contain item with given id
-     * @see #setEditorEnabled(boolean)
-     * @deprecated Use {@link #edit(JmixEntity)}
-     */
-    @Deprecated
-    void editItem(Object itemId);
 
     /**
      * Opens the editor interface for the provided entity. Scrolls the Grid to
@@ -547,23 +521,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @return true if editor validates cross field rules
      */
     boolean isEditorCrossFieldValidate();
-
-    /**
-     * Field generator that generates component for column in {@link DataGrid} editor.
-     */
-    @Deprecated
-    interface ColumnEditorFieldGenerator {
-        /**
-         * Generates component for {@link DataGrid} editor.
-         *
-         * @param datasource editing item datasource
-         * @param property   editing item property
-         * @return generated component
-         */
-        /*
-        TODO: legacy-ui
-        Field createField(Datasource datasource, String property);*/
-    }
 
     /**
      * class which stores information that can be used
@@ -611,16 +568,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
             super(component);
             this.item = item;
             this.fields = fields;
-        }
-
-        /**
-         * @return an item Id
-         * @deprecated use {@link #getItem()} instead
-         */
-        @Nullable
-        @Deprecated
-        public Object getItemId() {
-            return EntityValues.getId(item);
         }
 
         /**
@@ -675,15 +622,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     Subscription addEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener);
 
     /**
-     * Removes a previously registered DataGrid editor pre commit listener.
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener);
-
-    /**
      * An event that is fired after the item is updated.
      * Provides access to the components that were used in the editor,
      * giving the possibility to use their values programmatically.
@@ -708,15 +646,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     Subscription addEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener);
 
     /**
-     * Removes a previously registered DataGrid editor post commit listener.
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener);
-
-    /**
      * An event that is fired when the DataGrid editor is closed.
      * Provides access to the components that were used in the editor,
      * giving the possibility to use their values programmatically.
@@ -739,15 +668,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param listener the listener to register
      */
     Subscription addEditorCloseListener(Consumer<EditorCloseEvent> listener);
-
-    /**
-     * Removes a previously registered DataGrid editor close listener.
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeEditorCloseListener(Consumer<EditorCloseEvent> listener);
 
     /**
      * An event that is fired before the DataGrid editor is opened.
@@ -787,15 +707,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param listener the listener to register
      */
     Subscription addEditorOpenListener(Consumer<EditorOpenEvent> listener);
-
-    /**
-     * Removes a previously registered DataGrid editor open listener.
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeEditorOpenListener(Consumer<EditorOpenEvent> listener);
 
     /**
      * Repaint UI representation of the DataGrid without refreshing the table data.
@@ -940,15 +851,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     void setSelectionMode(SelectionMode selectionMode);
 
     /**
-     * Allows to define different styles for DataGrid rows.
-     *
-     * @deprecated use {@link Function} instead
-     */
-    @Deprecated
-    interface RowStyleProvider<E extends JmixEntity> extends Function<E, String> {
-    }
-
-    /**
      * Adds style provider for the DataGrid rows.
      * <p>
      * DataGrid can use several providers to obtain many style names for rows.
@@ -963,98 +865,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param styleProvider a style provider to remove, not null
      */
     void removeRowStyleProvider(Function<? super E, String> styleProvider);
-
-    /**
-     * Allows to define different styles for DataGrid cells.
-     *
-     * @deprecated use {@link Column#setStyleProvider(Function)} instead
-     */
-    @Deprecated
-    interface CellStyleProvider<E extends JmixEntity> {
-        /**
-         * Called by {@link DataGrid} to get a style for cell.
-         *
-         * @param entity   an entity instance represented by the current row
-         * @param columnId id of the DataGrid column
-         * @return style name or null to apply the default
-         */
-        String getStyleName(E entity, String columnId);
-    }
-
-    /**
-     * Adds style provider for the DataGrid cells.
-     * <p>
-     * DataGrid can use several providers to obtain many style names for cells.
-     *
-     * @deprecated use {@link Column#setStyleProvider(Function)} instead
-     */
-    @Deprecated
-    void addCellStyleProvider(CellStyleProvider<? super E> styleProvider);
-
-    /**
-     * Removes style provider for the DataGrid cells.
-     *
-     * @deprecated use {@link Column#setStyleProvider(Function)} instead
-     */
-    @Deprecated
-    void removeCellStyleProvider(CellStyleProvider<? super E> styleProvider);
-
-    /**
-     * A callback interface for generating optional descriptions (tooltips) for
-     * DataGrid cells. If a cell has both a {@link RowDescriptionProvider row
-     * description} and a cell description, the latter has precedence.
-     *
-     * @deprecated use {@link Column#getDescriptionProvider()} instead
-     */
-    @Deprecated
-    interface CellDescriptionProvider<E extends JmixEntity> {
-
-        /**
-         * Called by DataGrid to generate a description (tooltip) for a cell. The
-         * description may contain HTML markup.
-         *
-         * @param entity   an entity instance represented by the current row
-         * @param columnId id of the DataGrid column
-         * @return the cell description or {@code null} for no description
-         */
-        String getDescription(E entity, String columnId);
-    }
-
-    /**
-     * Returns the {@code CellDescriptionProvider} instance used to generate
-     * descriptions (tooltips) for DataGrid cells.
-     *
-     * @return the description provider or {@code null} if no provider is set
-     * @deprecated use {@link Column#getDescriptionProvider()} instead
-     */
-    @Deprecated
-    @Nullable
-    CellDescriptionProvider<E> getCellDescriptionProvider();
-
-    /**
-     * Sets the {@code CellDescriptionProvider} instance for generating
-     * optional descriptions (tooltips) for individual DataGrid cells. If a
-     * {@link RowDescriptionProvider} is also set, the row description it
-     * generates is displayed for cells for which {@code provider} returns null.
-     *
-     * @param provider the description provider to use or {@code null} to remove a
-     *                 previously set provider if any
-     * @deprecated use {@link Column#setDescriptionProvider(Function)} instead
-     */
-    @Deprecated
-    void setCellDescriptionProvider(@Nullable CellDescriptionProvider<? super E> provider);
-
-    /**
-     * A callback interface for generating optional descriptions (tooltips) for
-     * DataGrid rows. If a description is generated for a row, it is used for
-     * all the cells in the row for which a {@link CellDescriptionProvider cell
-     * description} is not generated.
-     *
-     * @deprecated use {@link Function} instead
-     */
-    @Deprecated
-    interface RowDescriptionProvider<E extends JmixEntity> extends Function<E, String> {
-    }
 
     /**
      * Returns the {@code RowDescriptionProvider} instance used to generate
@@ -1356,15 +1166,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         }
 
         /**
-         * @return an item Id
-         * @deprecated use {@link #getItem()} instead
-         */
-        @Deprecated
-        public Object getItemId() {
-            return EntityValues.getId(item);
-        }
-
-        /**
          * @return id of the DataGrid column
          */
         public String getColumnId() {
@@ -1555,62 +1356,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     }
 
     /**
-     * Interface that implements conversion between a model and a presentation type.
-     *
-     * @param <P> the presentation type. Must be compatible with what
-     *            {@link #getPresentationType()} returns.
-     * @param <M> the model type. Must be compatible with what
-     *            {@link #getModelType()} returns.
-     * @deprecated Use {@link Column#setRenderer(Renderer, Function)}
-     * and presentation provider represented by a {@link Function} instead
-     */
-    @Deprecated
-    interface Converter<P, M> {
-
-        /**
-         * Converts the given value from target type to source type.
-         *
-         * @param value      the value to convert, compatible with the target type.
-         *                   Can be null
-         * @param targetType the requested type of the return value
-         * @param locale     the locale to use for conversion. Can be null
-         * @return the converted value compatible with the source type
-         */
-        M convertToModel(@Nullable P value, Class<? extends M> targetType, @Nullable Locale locale);
-
-        /**
-         * Converts the given value from source type to target type.
-         *
-         * @param value      the value to convert, compatible with the target type.
-         *                   Can be null
-         * @param targetType the requested type of the return value
-         * @param locale     the locale to use for conversion. Can be null
-         * @return the converted value compatible with the source type
-         */
-        P convertToPresentation(@Nullable M value, Class<? extends P> targetType, @Nullable Locale locale);
-
-        /**
-         * The source type of the converter.
-         * <p>
-         * Values of this type can be passed to
-         * {@link #convertToPresentation(Object, Class, Locale)}.
-         *
-         * @return The source type
-         */
-        Class<M> getModelType();
-
-        /**
-         * The target type of the converter.
-         * <p>
-         * Values of this type can be passed to
-         * {@link #convertToModel(Object, Class, Locale)}.
-         *
-         * @return The target type
-         */
-        Class<P> getPresentationType();
-    }
-
-    /**
      * An event that is fired when a column's collapsing changes.
      */
     class ColumnCollapsingChangeEvent extends AbstractDataGridEvent implements HasUserOriginated {
@@ -1678,15 +1423,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     Subscription addColumnCollapsingChangeListener(Consumer<ColumnCollapsingChangeEvent> listener);
 
     /**
-     * Removes a previously registered column collapsing change listener.
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeColumnCollapsingChangeListener(Consumer<ColumnCollapsingChangeEvent> listener);
-
-    /**
      * An event that is fired when the columns are reordered.
      */
     class ColumnReorderEvent extends AbstractDataGridEvent implements HasUserOriginated {
@@ -1725,15 +1461,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param listener the listener to register
      */
     Subscription addColumnReorderListener(Consumer<ColumnReorderEvent> listener);
-
-    /**
-     * Removes a previously registered column reorder listener.
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeColumnReorderListener(Consumer<ColumnReorderEvent> listener);
 
     /**
      * An event that is fired when a column is resized.
@@ -1785,15 +1512,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param listener the listener to register
      */
     Subscription addColumnResizeListener(Consumer<ColumnResizeEvent> listener);
-
-    /**
-     * Removes a previously registered column resize listener.
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeColumnResizeListener(Consumer<ColumnResizeEvent> listener);
 
     /**
      * Event sent when the selection changes. It specifies what in a selection has changed, and where the
@@ -1877,15 +1595,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param listener the listener to register
      */
     Subscription addSelectionListener(Consumer<SelectionEvent<E>> listener);
-
-    /**
-     * Removes a previously registered selection change listener
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeSelectionListener(Consumer<SelectionEvent<E>> listener);
 
     /**
      * Describes sorting direction.
@@ -1991,15 +1700,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     Subscription addSortListener(Consumer<SortEvent> listener);
 
     /**
-     * Removes a previously registered sort order change listener
-     *
-     * @param listener the listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeSortListener(Consumer<SortEvent> listener);
-
-    /**
      * Context click event fired by a {@link DataGrid}. ContextClickEvent happens
      * when context click happens on the client-side inside the DataGrid.
      */
@@ -2022,13 +1722,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param listener the listener to register
      */
     Subscription addContextClickListener(Consumer<ContextClickEvent> listener);
-
-    /**
-     * Removes a previously registered context click listener
-     *
-     * @param listener the listener to remove
-     */
-    void removeContextClickListener(Consumer<ContextClickEvent> listener);
 
     /**
      * Click event fired by a {@link DataGrid}
@@ -2086,13 +1779,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param listener the listener to register
      */
     Subscription addItemClickListener(Consumer<ItemClickEvent<E>> listener);
-
-    /**
-     * Removes a previously registered item click listener
-     *
-     * @param listener the listener to remove
-     */
-    void removeItemClickListener(Consumer<ItemClickEvent<E>> listener);
 
     /**
      * Class for holding information about a mouse click event. A {@link DataGridClickEvent} is fired when the user
@@ -2623,7 +2309,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * A column in the DataGrid.
      */
-    interface Column<E extends JmixEntity> extends HasFormatter, Serializable {
+    interface Column<E extends JmixEntity> extends Serializable {
 
         /**
          * @return id of a column
@@ -2887,7 +2573,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * The presentation provider is a {@link Function} that takes the value of this
          * column on a single row, and converts that to a value that the renderer accepts.
          * <p>
-         * The presentation provider takes precedence over {@link Converter} and {@link Function formatter}.
+         * The presentation provider takes precedence over {@link Function formatter}.
          *
          * @param renderer             the renderer to use
          * @param presentationProvider the presentation provider to use
@@ -2900,48 +2586,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          */
         @Nullable
         Function getPresentationProvider();
-
-        /**
-         * @deprecated use {@link #getPresentationProvider()} instead
-         */
-        @Deprecated
-        @Nullable
-        @Override
-        Formatter getFormatter();
-
-        /**
-         * If either {@link Function presentation provider} or {@link Converter}
-         * are set they take precedence over {@link Formatter formatter}.
-         *
-         * @deprecated use {@link #getPresentationProvider()} instead
-         */
-        @Deprecated
-        @Override
-        void setFormatter(@Nullable Formatter formatter);
-
-        /**
-         * Returns the converter instance used by this column.
-         *
-         * @return the converter
-         * @deprecated use {@link #getPresentationProvider()} instead
-         */
-        @Nullable
-        @Deprecated
-        Converter<?, ?> getConverter();
-
-        /**
-         * Sets the converter used to convert from the property value type to
-         * the renderer presentation type. If given converter is null, then the
-         * default converter will be used.
-         * <p>
-         * Takes precedence over {@link Function formatter}, but is inferior to the {@link Function presentation provider}.
-         *
-         * @param converter the converter to use, or {@code null} to not use any
-         *                  converters
-         * @deprecated use {@link #setRenderer(Renderer, Function)} instead
-         */
-        @Deprecated
-        void setConverter(@Nullable Converter<?, ?> converter);
 
         /**
          * Returns whether the properties corresponding to this column should be
@@ -2969,22 +2613,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * @see DataGrid#isEditorActive()
          */
         void setEditable(boolean editable);
-
-        /**
-         * @return field generator that generates component for
-         * this column in {@link DataGrid} editor.
-         */
-        @Nullable
-        @Deprecated
-        ColumnEditorFieldGenerator getEditorFieldGenerator();
-
-        /**
-         * @param fieldFactory field generator that generates a component
-         *                     for this column in {@link DataGrid} editor.
-         * @deprecated Use {{@link #setEditFieldGenerator(Function)}} instead
-         */
-        @Deprecated
-        void setEditorFieldGenerator(@Nullable ColumnEditorFieldGenerator fieldFactory);
 
         /**
          * @return field generator that generates a component
@@ -3024,8 +2652,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * descriptions for cells in this column.
          * <p>
          * This method uses the {@link ContentMode#PREFORMATTED} content mode.
-         * <p>
-         * It has priority over {@link DataGrid#setCellDescriptionProvider(CellDescriptionProvider)}.
          *
          * @param descriptionProvider a description provider to set,
          *                            or {@code null} to remove a previously set generator
@@ -3035,8 +2661,6 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
         /**
          * Sets the description provider that is used for generating
          * descriptions for cells in this column.
-         * <p>
-         * It has priority over {@link DataGrid#setCellDescriptionProvider(CellDescriptionProvider)}.
          *
          * @param descriptionProvider a description provider to set,
          *                            or {@code null} to remove a previously set generator

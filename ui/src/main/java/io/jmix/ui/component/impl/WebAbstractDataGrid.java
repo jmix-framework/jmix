@@ -67,7 +67,6 @@ import io.jmix.ui.component.datagrid.DataGridDataProvider;
 import io.jmix.ui.component.datagrid.DataGridItemsEventsDelegate;
 import io.jmix.ui.component.datagrid.SortableDataGridDataProvider;
 import io.jmix.ui.component.formatter.CollectionFormatter;
-import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.renderer.RendererWrapper;
 import io.jmix.ui.component.valueprovider.*;
 import io.jmix.ui.context.UiEntityAttributeContext;
@@ -158,10 +157,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected TablePagination pagination;
 
     protected List<Function<? super E, String>> rowStyleProviders;
-    protected List<CellStyleProvider<? super E>> cellStyleProviders;
 
     protected Function<? super E, String> rowDescriptionProvider;
-    protected CellDescriptionProvider<? super E> cellDescriptionProvider;
 
     protected DetailsGenerator<E> detailsGenerator = null;
 
@@ -769,19 +766,12 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     @Nullable
     protected ValueProvider getColumnPresentationValueProvider(Column<E> column) {
         Function presentationProvider = column.getPresentationProvider();
-        Converter converter = column.getConverter();
-        Formatter<?> formatter = column.getFormatter();
         Renderer renderer = column.getRenderer();
         // The following priority is used to determine a value provider:
-        // a presentation provider > a converter > a formatter > a renderer's presentation provider >
-        // a value provider that always returns its input argument > a default presentation provider
-        //noinspection RedundantCast
+        // a presentation provider > a renderer's presentation provider > a value provider
+        // that always returns its input argument > a default presentation provider
         return presentationProvider != null
                 ? (ValueProvider) presentationProvider::apply
-                : converter != null
-                ? new DataGridConverterBasedValueProvider(converter)
-                : formatter != null
-                ? new FormatterBasedValueProvider(formatter)
                 : renderer != null && ((AbstractRenderer) renderer).getPresentationValueProvider() != null
                 ? ((AbstractRenderer) renderer).getPresentationValueProvider()
                 : renderer != null
@@ -797,10 +787,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                 ? column.getPropertyPath().getMetaProperty()
                 : null;
 
-        if (column.getFormatter() != null) {
-            //noinspection unchecked
-            return new FormatterBasedValueProvider<>(column.getFormatter());
-        } else if (metaProperty != null) {
+        if (metaProperty != null) {
             if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
                 return new FormatterBasedValueProvider<>(this.applicationContext.getBean(CollectionFormatter.class));
             }
@@ -1228,13 +1215,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         component.getEditor().setCancelCaption(cancelCaption);
     }
 
-    @Nullable
-    @Override
-    public Object getEditedItemId() {
-        E item = getEditedItem();
-        return item != null ? EntityValues.getId(item) : null;
-    }
-
     @Override
     public E getEditedItem() {
         return component.getEditor() instanceof JmixEditorImpl
@@ -1245,20 +1225,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     @Override
     public boolean isEditorActive() {
         return component.getEditor().isOpen();
-    }
-
-    @Override
-    public void editItem(Object itemId) {
-        checkNotNullArgument(itemId, "Item's Id must be non null");
-
-        DataGridItems<E> dataGridItems = getItems();
-        if (dataGridItems == null
-                || dataGridItems.getState() == BindingState.INACTIVE) {
-            return;
-        }
-
-        E item = getItems().getItem(itemId);
-        edit(item);
     }
 
     @Override
@@ -1300,7 +1266,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             editorOpenListener = component.getEditor().addOpenListener(this::onEditorOpen);
         }
 
-        return getEventHub().subscribe(EditorOpenEvent.class, listener);
+        getEventHub().subscribe(EditorOpenEvent.class, listener);
+
+        return () -> internalRemoveEditorOpenListener(listener);
     }
 
     protected void onEditorOpen(com.vaadin.ui.components.grid.EditorOpenEvent<E> editorOpenEvent) {
@@ -1312,8 +1280,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         publish(EditorOpenEvent.class, e);
     }
 
-    @Override
-    public void removeEditorOpenListener(Consumer<EditorOpenEvent> listener) {
+    protected void internalRemoveEditorOpenListener(Consumer<EditorOpenEvent> listener) {
         unsubscribe(EditorOpenEvent.class, listener);
 
         if (!hasSubscriptions(EditorOpenEvent.class)) {
@@ -1328,7 +1295,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             editorCancelListener = component.getEditor().addCancelListener(this::onEditorCancel);
         }
 
-        return getEventHub().subscribe(EditorCloseEvent.class, listener);
+        getEventHub().subscribe(EditorCloseEvent.class, listener);
+
+        return () -> internalRemoveEditorCloseListener(listener);
     }
 
     protected void onEditorCancel(EditorCancelEvent<E> cancelEvent) {
@@ -1340,8 +1309,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         publish(EditorCloseEvent.class, e);
     }
 
-    @Override
-    public void removeEditorCloseListener(Consumer<EditorCloseEvent> listener) {
+    protected void internalRemoveEditorCloseListener(Consumer<EditorCloseEvent> listener) {
         unsubscribe(EditorCloseEvent.class, listener);
 
         if (!hasSubscriptions(EditorCloseEvent.class)) {
@@ -1358,7 +1326,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             editorBeforeSaveListener = editor.addBeforeSaveListener(this::onEditorBeforeSave);
         }
 
-        return getEventHub().subscribe(EditorPreCommitEvent.class, listener);
+        getEventHub().subscribe(EditorPreCommitEvent.class, listener);
+
+        return () -> internalRemoveEditorPreCommitListener(listener);
     }
 
     protected void onEditorBeforeSave(JmixEditorBeforeSaveEvent<E> event) {
@@ -1368,8 +1338,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         publish(EditorPreCommitEvent.class, e);
     }
 
-    @Override
-    public void removeEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener) {
+    protected void internalRemoveEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener) {
         unsubscribe(EditorPreCommitEvent.class, listener);
 
         if (!hasSubscriptions(EditorPreCommitEvent.class)) {
@@ -1384,7 +1353,27 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             editorSaveListener = component.getEditor().addSaveListener(this::onEditorSave);
         }
 
-        return getEventHub().subscribe(EditorPostCommitEvent.class, listener);
+        getEventHub().subscribe(EditorPostCommitEvent.class, listener);
+
+        return () -> internalRemoveEditorPostCommitListener(listener);
+    }
+
+    protected void onEditorSave(EditorSaveEvent<E> saveEvent) {
+        //noinspection unchecked
+        JmixEditorSaveEvent<E> event = ((JmixEditorSaveEvent) saveEvent);
+        Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
+
+        EditorPostCommitEvent<E> e = new EditorPostCommitEvent<>(this, event.getBean(), fields);
+        publish(EditorPostCommitEvent.class, e);
+    }
+
+    protected void internalRemoveEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener) {
+        unsubscribe(EditorPostCommitEvent.class, listener);
+
+        if (!hasSubscriptions(EditorPostCommitEvent.class)) {
+            editorSaveListener.remove();
+            editorSaveListener = null;
+        }
     }
 
     @Override
@@ -1398,53 +1387,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     public boolean isEditorCrossFieldValidate() {
         return editorCrossFieldValidate;
     }
-
-    protected void onEditorSave(EditorSaveEvent<E> saveEvent) {
-        //noinspection unchecked
-        JmixEditorSaveEvent<E> event = ((JmixEditorSaveEvent) saveEvent);
-        Map<String, Field> fields = convertToJmixFields(event.getColumnFieldMap());
-
-        EditorPostCommitEvent<E> e = new EditorPostCommitEvent<>(this, event.getBean(), fields);
-        publish(EditorPostCommitEvent.class, e);
-    }
-
-    @Override
-    public void removeEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener) {
-        unsubscribe(EditorPostCommitEvent.class, listener);
-
-        if (!hasSubscriptions(EditorPostCommitEvent.class)) {
-            editorSaveListener.remove();
-            editorSaveListener = null;
-        }
-    }
-
-    /*
-    TODO: legacy-ui
-    protected Datasource createItemDatasource(E item) {
-        if (itemDatasources == null) {
-            itemDatasources = new WeakHashMap<>();
-        }
-
-        Object fieldDatasource = itemDatasources.get(item);
-        if (fieldDatasource instanceof Datasource) {
-            return (Datasource) fieldDatasource;
-        }
-
-        EntityDataGridItems<E> items = getEntityDataGridItemsNN();
-        Datasource datasource = DsBuilder.create()
-                .setAllowCommit(false)
-                .setMetaClass(items.getEntityMetaClass())
-                .setRefreshMode(CollectionDatasource.RefreshMode.NEVER)
-                .setViewName(View.LOCAL)
-                .buildDatasource();
-
-        ((DatasourceImplementation) datasource).valid();
-
-        //noinspection unchecked
-        datasource.setItem(item);
-
-        return datasource;
-    }*/
 
     protected InstanceContainer<E> createInstanceContainer(E item) {
         if (itemDatasources == null) {
@@ -1546,24 +1488,19 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                 EditorFieldGenerationContext<E> context = new EditorFieldGenerationContext<>(bean, valueSourceProvider);
                 columnComponent = column.getEditFieldGenerator().apply(context);
             } else {
-                String fieldPropertyId = String.valueOf(column.getPropertyId());
-                if (column.getEditorFieldGenerator() != null) {
-                    throw new UnsupportedOperationException("TODO: legacy-ui");
-                    /*
-                    TODO: legacy-ui
-                    Datasource fieldDatasource = dataGrid.createItemDatasource(bean);
-                    columnComponent = column.getEditorFieldGenerator().createField(fieldDatasource, fieldPropertyId);*/
-                } else {
-                    InstanceContainer<E> container = dataGrid.createInstanceContainer(bean);
-                    columnComponent = fieldFactory.createField(
-                            new ContainerValueSource<>(container, fieldPropertyId), fieldPropertyId);
-                }
+                columnComponent = createField(column, bean);
             }
 
             columnComponent.setParent(dataGrid);
             columnComponent.setFrame(dataGrid.getFrame());
 
             return createCustomField(columnComponent);
+        }
+
+        protected Field createField(ColumnImpl<E> column, E bean) {
+            String fieldPropertyId = String.valueOf(column.getPropertyId());
+            InstanceContainer<E> container = dataGrid.createInstanceContainer(bean);
+            return fieldFactory.createField(new ContainerValueSource<>(container, fieldPropertyId), fieldPropertyId);
         }
 
         protected JmixEditorField createCustomField(final Field columnComponent) {
@@ -2286,41 +2223,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         }
     }
 
-    @Override
-    public void addCellStyleProvider(CellStyleProvider<? super E> styleProvider) {
-        if (this.cellStyleProviders == null) {
-            this.cellStyleProviders = new LinkedList<>();
-        }
-
-        if (!this.cellStyleProviders.contains(styleProvider)) {
-            this.cellStyleProviders.add(styleProvider);
-
-            repaint();
-        }
-    }
-
-    @Override
-    public void removeCellStyleProvider(CellStyleProvider<? super E> styleProvider) {
-        if (this.cellStyleProviders != null) {
-            if (this.cellStyleProviders.remove(styleProvider)) {
-                repaint();
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nullable
-    @Override
-    public CellDescriptionProvider<E> getCellDescriptionProvider() {
-        return (CellDescriptionProvider<E>) cellDescriptionProvider;
-    }
-
-    @Override
-    public void setCellDescriptionProvider(@Nullable CellDescriptionProvider<? super E> provider) {
-        this.cellDescriptionProvider = provider;
-        repaint();
-    }
-
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
@@ -2420,7 +2322,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         column.setWidth(existingColumn.getWidth());
         column.setExpandRatio(existingColumn.getExpandRatio());
         column.setResizable(existingColumn.isResizable());
-        column.setFormatter(existingColumn.getFormatter());
         column.setStyleProvider(existingColumn.getStyleProvider());
         column.setDescriptionProvider(existingColumn.getDescriptionProvider(),
                 ((ColumnImpl) existingColumn).getDescriptionContentMode());
@@ -2455,9 +2356,10 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             columnCollapsingChangeListenerRegistration =
                     component.addColumnVisibilityChangeListener(this::onColumnVisibilityChanged);
         }
+
         getEventHub().subscribe(ColumnCollapsingChangeEvent.class, listener);
 
-        return () -> removeColumnCollapsingChangeListener(listener);
+        return () -> internalRemoveColumnCollapsingChangeListener(listener);
     }
 
     protected void onColumnVisibilityChanged(Grid.ColumnVisibilityChangeEvent e) {
@@ -2473,8 +2375,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         publish(ColumnCollapsingChangeEvent.class, event);
     }
 
-    @Override
-    public void removeColumnCollapsingChangeListener(Consumer<ColumnCollapsingChangeEvent> listener) {
+    protected void internalRemoveColumnCollapsingChangeListener(Consumer<ColumnCollapsingChangeEvent> listener) {
         unsubscribe(ColumnCollapsingChangeEvent.class, listener);
 
         if (!hasSubscriptions(ColumnCollapsingChangeEvent.class)
@@ -2493,7 +2394,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
         getEventHub().subscribe(ColumnResizeEvent.class, listener);
 
-        return () -> removeColumnResizeListener(listener);
+        return () -> internalRemoveColumnResizeListener(listener);
     }
 
     protected void onColumnResize(Grid.ColumnResizeEvent e) {
@@ -2503,8 +2404,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         publish(ColumnResizeEvent.class, event);
     }
 
-    @Override
-    public void removeColumnResizeListener(Consumer<ColumnResizeEvent> listener) {
+    protected void internalRemoveColumnResizeListener(Consumer<ColumnResizeEvent> listener) {
         unsubscribe(ColumnResizeEvent.class, listener);
 
         if (!hasSubscriptions(ColumnResizeEvent.class)
@@ -2520,18 +2420,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     @Override
-    public void removeSortListener(Consumer<SortEvent> listener) {
-        unsubscribe(SortEvent.class, listener);
-    }
-
-    @Override
     public Subscription addColumnReorderListener(Consumer<ColumnReorderEvent> listener) {
         return getEventHub().subscribe(ColumnReorderEvent.class, listener);
-    }
-
-    @Override
-    public void removeColumnReorderListener(Consumer<ColumnReorderEvent> listener) {
-        unsubscribe(ColumnReorderEvent.class, listener);
     }
 
     @SuppressWarnings("unchecked")
@@ -2542,20 +2432,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
     @SuppressWarnings("unchecked")
     @Override
-    public void removeSelectionListener(Consumer<SelectionEvent<E>> listener) {
-        unsubscribe(SelectionEvent.class, (Consumer) listener);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
     public Subscription addItemClickListener(Consumer<ItemClickEvent<E>> listener) {
         return getEventHub().subscribe(ItemClickEvent.class, (Consumer) listener);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void removeItemClickListener(Consumer<ItemClickEvent<E>> listener) {
-        unsubscribe(ItemClickEvent.class, (Consumer) listener);
     }
 
     @Override
@@ -2565,7 +2443,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                     component.addContextClickListener(this::onContextClick);
         }
 
-        return getEventHub().subscribe(ContextClickEvent.class, listener);
+        getEventHub().subscribe(ContextClickEvent.class, listener);
+
+        return () -> internalRemoveContextClickListener(listener);
     }
 
     protected void onContextClick(com.vaadin.event.ContextClickEvent e) {
@@ -2575,8 +2455,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         publish(ContextClickEvent.class, event);
     }
 
-    @Override
-    public void removeContextClickListener(Consumer<ContextClickEvent> listener) {
+    protected void internalRemoveContextClickListener(Consumer<ContextClickEvent> listener) {
         unsubscribe(ContextClickEvent.class, listener);
 
         if (!hasSubscriptions(ContextClickEvent.class)
@@ -3152,19 +3031,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             }
         }
 
-        if (cellStyleProviders != null) {
-            for (CellStyleProvider<? super E> styleProvider : cellStyleProviders) {
-                String styleName = styleProvider.getStyleName(item, column.getId());
-                if (styleName != null) {
-                    if (joinedStyle == null) {
-                        joinedStyle = new StringBuilder(styleName);
-                    } else {
-                        joinedStyle.append(" ").append(styleName);
-                    }
-                }
-            }
-        }
-
         return joinedStyle != null ? joinedStyle.toString() : null;
     }
 
@@ -3190,10 +3056,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             return ((ColumnImpl) column).getDescriptionContentMode() == ContentMode.HTML
                     ? sanitize(cellDescription)
                     : cellDescription;
-        }
-
-        if (cellDescriptionProvider != null) {
-            return cellDescriptionProvider.getDescription(item, column.getId());
         }
 
         return null;
@@ -3282,13 +3144,11 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         protected boolean resizable;
         protected boolean editable;
         protected boolean generated;
-        protected Formatter formatter;
         protected AggregationInfo aggregation;
         protected String valueDescription;
 
         protected AbstractRenderer<E, ?> renderer;
         protected Function presentationProvider;
-        protected Converter converter;
 
         protected Function<? super E, String> styleProvider;
         protected Function<? super E, String> descriptionProvider;
@@ -3299,7 +3159,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         protected WebAbstractDataGrid<?, E> owner;
         protected Grid.Column<E, ?> gridColumn;
 
-        protected ColumnEditorFieldGenerator fieldGenerator;
         protected Function<EditorFieldGenerationContext<E>, Field<?>> generator;
 
         protected ColumnImpl(String id, @Nullable MetaPropertyPath propertyPath, WebAbstractDataGrid<?, E> owner) {
@@ -3568,18 +3427,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         }
 
         @Nullable
-        @Override
-        public Formatter getFormatter() {
-            return formatter;
-        }
-
-        @Override
-        public void setFormatter(@Nullable Formatter formatter) {
-            this.formatter = formatter;
-            updateRendererInternal();
-        }
-
-        @Nullable
         protected MetaProperty getMetaProperty() {
             return getPropertyPath() != null
                     ? getPropertyPath().getMetaProperty()
@@ -3642,18 +3489,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             return presentationProvider;
         }
 
-        @Nullable
-        @Override
-        public Converter<?, ?> getConverter() {
-            return converter;
-        }
-
-        @Override
-        public void setConverter(@Nullable Converter<?, ?> converter) {
-            this.converter = converter;
-            updateRendererInternal();
-        }
-
         public boolean isGenerated() {
             return generated;
         }
@@ -3674,7 +3509,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             return editable
                     && propertyPath != null  // We can't generate field for editor in case we don't have propertyPath
                     && (!generated && !isRepresentsCollection()
-                    || fieldGenerator != null
                     || generator != null)
                     && isEditingPermitted();
         }
@@ -3711,18 +3545,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             if (gridColumn != null) {
                 gridColumn.setEditable(isShouldBeEditable());
             }
-        }
-
-        @Nullable
-        @Override
-        public ColumnEditorFieldGenerator getEditorFieldGenerator() {
-            return fieldGenerator;
-        }
-
-        @Override
-        public void setEditorFieldGenerator(@Nullable ColumnEditorFieldGenerator fieldFactory) {
-            this.fieldGenerator = fieldFactory;
-            updateEditable();
         }
 
         @Nullable

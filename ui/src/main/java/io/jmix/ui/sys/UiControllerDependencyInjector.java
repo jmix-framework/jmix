@@ -17,8 +17,6 @@
 package io.jmix.ui.sys;
 
 import com.google.common.base.Strings;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
 import io.jmix.ui.*;
@@ -45,8 +43,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.EventListener;
@@ -631,7 +632,28 @@ public class UiControllerDependencyInjector {
 
         } else if (BeanFactory.class.isAssignableFrom(type)) {
             return applicationContext;
+        } else if (ObjectProvider.class.isAssignableFrom(type)) {
+            if (!(element instanceof Field
+                    && ((Field) element).getGenericType() instanceof ParameterizedType)
+                    && !(element instanceof Method
+                    && ((Method) element).getGenericParameterTypes().length > 0
+                    && ((Method) element).getGenericParameterTypes()[0] instanceof ParameterizedType)) {
+                throw new UnsupportedOperationException("Unable to inject ObjectProvider without generic parameter");
+            }
 
+            Type genericType;
+            if (element instanceof Field) {
+                genericType = ((ParameterizedType) ((Field) element).getGenericType())
+                        .getActualTypeArguments()[0];
+            } else {
+                genericType = ((ParameterizedType) ((Method) element).getGenericParameterTypes()[0])
+                        .getActualTypeArguments()[0];
+            }
+
+            if (genericType instanceof ParameterizedType) {
+                genericType = ((ParameterizedType) genericType).getRawType();
+            }
+            return applicationContext.getBeanProvider((Class<?>) genericType);
         } else {
             Object instance;
             // Try to find a Spring bean

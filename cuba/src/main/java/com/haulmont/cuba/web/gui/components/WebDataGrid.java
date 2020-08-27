@@ -16,38 +16,61 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.gui.components.RowsCount;
+import com.haulmont.cuba.gui.components.valueprovider.DataGridConverterBasedValueProvider;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.DsBuilder;
+import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.settings.binder.CubaDataGridSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
+import com.haulmont.cuba.settings.converter.LegacyDataGridSettingsConverter;
 import com.haulmont.cuba.web.gui.components.datagrid.DataGridDelegate;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixEntity;
-import com.haulmont.cuba.settings.converter.LegacyDataGridSettingsConverter;
-import io.jmix.ui.component.data.DataGridItems;
-import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.component.ContentMode;
+import io.jmix.ui.component.DataGridEditorFieldFactory;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.data.BindingState;
+import io.jmix.ui.component.data.DataGridItems;
+import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.component.formatter.CollectionFormatter;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
 import io.jmix.ui.component.valueprovider.StringPresentationValueProvider;
 import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.widget.JmixGridEditorFieldFactory;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.WeakHashMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Deprecated
 public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl.WebDataGrid<E> implements DataGrid<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected DataGridDelegate dataGridDelegate;
+
+    protected List<CellStyleProvider<? super E>> cellStyleProviders;
+    protected CellDescriptionProvider<? super E> cellDescriptionProvider;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -187,9 +210,9 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
                 ? column.getPropertyPath().getMetaProperty()
                 : null;
 
-        if (column.getFormatter() != null) {
+        if (column instanceof DataGrid.Column && ((DataGrid.Column<E>) column).getFormatter() != null) {
             //noinspection unchecked
-            return new FormatterBasedValueProvider<>(column.getFormatter());
+            return new FormatterBasedValueProvider<>(((DataGrid.Column<E>) column).getFormatter());
         } else if (metaProperty != null) {
             if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
                 return new FormatterBasedValueProvider<>(this.applicationContext.getBean(CollectionFormatter.class));
@@ -246,12 +269,245 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
         return (DataGridDelegate) this.applicationContext.getBean(DataGridDelegate.NAME);
     }
 
+    @Nullable
+    @Override
+    public Object getEditedItemId() {
+        E item = getEditedItem();
+        return item != null ? EntityValues.getId(item) : null;
+    }
+
+    @Override
+    public void editItem(Object itemId) {
+        checkNotNullArgument(itemId, "Item's Id must be non null");
+
+        DataGridItems<E> dataGridItems = getItems();
+        if (dataGridItems == null
+                || dataGridItems.getState() == BindingState.INACTIVE) {
+            return;
+        }
+
+        E item = getItems().getItem(itemId);
+        edit(item);
+    }
+
+    @Override
+    public void removeEditorPreCommitListener(Consumer<EditorPreCommitEvent> listener) {
+        internalRemoveEditorPreCommitListener(listener);
+    }
+
+    @Override
+    public void removeEditorPostCommitListener(Consumer<EditorPostCommitEvent> listener) {
+        internalRemoveEditorPostCommitListener(listener);
+    }
+
+    @Override
+    public void removeEditorCloseListener(Consumer<EditorCloseEvent> listener) {
+        internalRemoveEditorCloseListener(listener);
+    }
+
+    @Override
+    public void removeEditorOpenListener(Consumer<EditorOpenEvent> listener) {
+        internalRemoveEditorOpenListener(listener);
+    }
+
+    @Override
+    public void removeColumnCollapsingChangeListener(Consumer<ColumnCollapsingChangeEvent> listener) {
+        internalRemoveColumnCollapsingChangeListener(listener);
+    }
+
+    @Override
+    public void removeColumnReorderListener(Consumer<ColumnReorderEvent> listener) {
+        unsubscribe(ColumnReorderEvent.class, listener);
+    }
+
+    @Override
+    public void removeColumnResizeListener(Consumer<ColumnResizeEvent> listener) {
+        internalRemoveColumnResizeListener(listener);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void removeSelectionListener(Consumer<SelectionEvent<E>> listener) {
+        unsubscribe(SelectionEvent.class, (Consumer) listener);
+    }
+
+    @Override
+    public void removeSortListener(Consumer<SortEvent> listener) {
+        unsubscribe(SortEvent.class, listener);
+    }
+
+    @Override
+    public void removeContextClickListener(Consumer<ContextClickEvent> listener) {
+        internalRemoveContextClickListener(listener);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void removeItemClickListener(Consumer<ItemClickEvent<E>> listener) {
+        unsubscribe(ItemClickEvent.class, (Consumer) listener);
+    }
+
+    @Override
+    public void addCellStyleProvider(CellStyleProvider<? super E> styleProvider) {
+        if (this.cellStyleProviders == null) {
+            this.cellStyleProviders = new ArrayList<>();
+        }
+
+        if (!this.cellStyleProviders.contains(styleProvider)) {
+            this.cellStyleProviders.add(styleProvider);
+
+            repaint();
+        }
+    }
+
+    @Override
+    public void removeCellStyleProvider(CellStyleProvider<? super E> styleProvider) {
+        if (this.cellStyleProviders != null) {
+            if (this.cellStyleProviders.remove(styleProvider)) {
+                repaint();
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public CellDescriptionProvider<E> getCellDescriptionProvider() {
+        return (CellDescriptionProvider<E>) cellDescriptionProvider;
+    }
+
+    @Override
+    public void setCellDescriptionProvider(@Nullable CellDescriptionProvider<? super E> provider) {
+        this.cellDescriptionProvider = provider;
+        repaint();
+    }
+
+    @Nullable
+    @Override
+    protected String getGeneratedCellStyle(E item, io.jmix.ui.component.DataGrid.Column<E> column) {
+        StringBuilder joinedStyle = null;
+
+        if (column.getStyleProvider() != null) {
+            String styleName = column.getStyleProvider().apply(item);
+            if (styleName != null) {
+                joinedStyle = new StringBuilder(styleName);
+            }
+        }
+
+        if (cellStyleProviders != null) {
+            for (CellStyleProvider<? super E> styleProvider : cellStyleProviders) {
+                String styleName = styleProvider.getStyleName(item, column.getId());
+                if (styleName != null) {
+                    if (joinedStyle == null) {
+                        joinedStyle = new StringBuilder(styleName);
+                    } else {
+                        joinedStyle.append(" ").append(styleName);
+                    }
+                }
+            }
+        }
+
+        return joinedStyle != null ? joinedStyle.toString() : null;
+    }
+
+    @Nullable
+    @Override
+    protected String getGeneratedCellDescription(E item, io.jmix.ui.component.DataGrid.Column<E> column) {
+        if (column.getDescriptionProvider() != null) {
+            String cellDescription = column.getDescriptionProvider().apply(item);
+            return ((WebAbstractDataGrid.ColumnImpl) column).getDescriptionContentMode() == ContentMode.HTML
+                    ? sanitize(cellDescription)
+                    : cellDescription;
+        }
+
+        if (cellDescriptionProvider != null) {
+            return cellDescriptionProvider.getDescription(item, column.getId());
+        }
+
+        return null;
+    }
+
+    @Override
+    @Nullable
+    protected ValueProvider getColumnPresentationValueProvider(io.jmix.ui.component.DataGrid.Column<E> column) {
+        Function presentationProvider = column.getPresentationProvider();
+        Converter<?, ?> converter = null;
+        Formatter<?> formatter = null;
+        if (column instanceof DataGrid.Column) {
+            converter = ((DataGrid.Column<E>) column).getConverter();
+            formatter = ((DataGrid.Column<E>) column).getFormatter();
+        }
+        Renderer renderer = column.getRenderer();
+        // The following priority is used to determine a value provider:
+        // a presentation provider > a converter > a formatter > a renderer's presentation provider >
+        // a value provider that always returns its input argument > a default presentation provider
+        return presentationProvider != null
+                ? (ValueProvider) presentationProvider::apply
+                : converter != null
+                ? new DataGridConverterBasedValueProvider(converter)
+                : formatter != null
+                ? new FormatterBasedValueProvider(formatter)
+                : renderer != null && ((AbstractRenderer) renderer).getPresentationValueProvider() != null
+                ? ((AbstractRenderer) renderer).getPresentationValueProvider()
+                : renderer != null
+                // In case renderer != null and there are no other user specified value providers
+                // We use a value provider that always returns its input argument instead of a default
+                // value provider as we want to keep the original value type.
+                ? ValueProvider.identity()
+                : getDefaultPresentationValueProvider(column);
+    }
+
+    @Override
+    protected void copyColumnProperties(io.jmix.ui.component.DataGrid.Column<E> column, io.jmix.ui.component.DataGrid.Column<E> existingColumn) {
+        super.copyColumnProperties(column, existingColumn);
+
+        if (column instanceof DataGrid.Column && existingColumn instanceof DataGrid.Column) {
+            ((DataGrid.Column<E>) column).setFormatter(((DataGrid.Column<E>) existingColumn).getFormatter());
+        }
+    }
+
+    @Override
+    protected JmixGridEditorFieldFactory<E> createEditorFieldFactory() {
+        DataGridEditorFieldFactory fieldFactory =
+                (DataGridEditorFieldFactory) this.applicationContext.getBean(DataGridEditorFieldFactory.NAME);
+        return new WebDataGridEditorFieldFactory<>(this, fieldFactory);
+    }
+
+    protected Datasource createItemDatasource(E item) {
+        if (itemDatasources == null) {
+            itemDatasources = new WeakHashMap<>();
+        }
+
+        Object fieldDatasource = itemDatasources.get(item);
+        if (fieldDatasource instanceof Datasource) {
+            return (Datasource) fieldDatasource;
+        }
+
+        EntityDataGridItems<E> items = getEntityDataGridItemsNN();
+        Datasource datasource = DsBuilder.create()
+                .setAllowCommit(false)
+                .setMetaClass(items.getEntityMetaClass())
+                .setRefreshMode(CollectionDatasource.RefreshMode.NEVER)
+                .setViewName(View.LOCAL)
+                .buildDatasource();
+
+        ((DatasourceImplementation) datasource).valid();
+
+        //noinspection unchecked
+        datasource.setItem(item);
+
+        return datasource;
+    }
+
     protected static class ColumnImpl<E extends JmixEntity>
             extends WebAbstractDataGrid.ColumnImpl<E>
             implements DataGrid.Column<E> {
 
         protected final Class type;
         protected Class generatedType;
+        protected Converter converter;
+        protected Formatter formatter;
+        protected ColumnEditorFieldGenerator fieldGenerator;
 
         public ColumnImpl(String id, @Nullable MetaPropertyPath propertyPath, WebAbstractDataGrid<?, E> owner) {
             this(id, propertyPath, propertyPath != null ? propertyPath.getRangeJavaClass() : String.class, owner);
@@ -279,6 +535,70 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
         @Override
         public Class getGeneratedType() {
             return generatedType;
+        }
+
+        @Nullable
+        @Override
+        public Converter<?, ?> getConverter() {
+            return converter;
+        }
+
+        @Override
+        public void setConverter(@Nullable Converter<?, ?> converter) {
+            this.converter = converter;
+            updateRendererInternal();
+        }
+
+        @Nullable
+        @Override
+        public Formatter getFormatter() {
+            return formatter;
+        }
+
+        @Override
+        public void setFormatter(@Nullable Formatter formatter) {
+            this.formatter = formatter;
+            updateRendererInternal();
+        }
+
+        @Nullable
+        @Override
+        public ColumnEditorFieldGenerator getEditorFieldGenerator() {
+            return fieldGenerator;
+        }
+
+        @Override
+        public void setEditorFieldGenerator(@Nullable ColumnEditorFieldGenerator fieldFactory) {
+            this.fieldGenerator = fieldFactory;
+            updateEditable();
+        }
+
+        @Override
+        public boolean isShouldBeEditable() {
+            return editable
+                    && propertyPath != null  // We can't generate field for editor in case we don't have propertyPath
+                    && (!generated && !isRepresentsCollection()
+                    || fieldGenerator != null
+                    || generator != null)
+                    && isEditingPermitted();
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected static class WebDataGridEditorFieldFactory<E extends JmixEntity> extends WebAbstractDataGrid.WebDataGridEditorFieldFactory {
+
+        public WebDataGridEditorFieldFactory(WebAbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
+            super(dataGrid, fieldFactory);
+        }
+
+        @Override
+        protected Field createField(WebAbstractDataGrid.ColumnImpl column, JmixEntity bean) {
+            if (column instanceof ColumnImpl && ((ColumnImpl) column).getEditorFieldGenerator() != null) {
+                String fieldPropertyId = String.valueOf(column.getPropertyId());
+                Datasource fieldDataSource = ((WebDataGrid) dataGrid).createItemDatasource(bean);
+                return ((ColumnImpl) column).getEditorFieldGenerator().createField(fieldDataSource, fieldPropertyId);
+            }
+            return super.createField(column, bean);
         }
     }
 }

@@ -93,6 +93,7 @@ public class CubaDataGridLoader extends DataGridLoader {
                                                               MetaClass metaClass) {
         DataGrid.Column column = (DataGrid.Column) super.loadColumn(component, element, metaClass);
         column.setGeneratedType(loadGeneratedType(element));
+        column.setFormatter(loadFormatter(element));
         return column;
     }
 

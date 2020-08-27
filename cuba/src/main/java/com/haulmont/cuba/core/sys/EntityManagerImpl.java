@@ -88,7 +88,7 @@ public class EntityManagerImpl implements EntityManager {
     public <T extends JmixEntity> T merge(T entity, @Nullable FetchPlan fetchPlan) {
         T managed = merge(entity);
         if (fetchPlan != null) {
-            metadataTools.traverseAttributesByView(fetchPlan, managed, (e, p) -> { /* do nothing, just fetch */ });
+            metadataTools.traverseAttributesByFetchPlan(fetchPlan, managed, (e, p) -> { /* do nothing, just fetch */ });
         }
         return managed;
     }

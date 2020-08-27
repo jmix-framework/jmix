@@ -222,7 +222,7 @@ public class OrmDataStore implements DataStore {
 
             if (context.isJoinTransaction()) {
                 em.flush();
-                detachEntity(em, result, fetchPlan);
+                detachEntity(em, result, fetchPlan, false);
             }
 
         } catch (RuntimeException e) {
@@ -317,7 +317,7 @@ public class OrmDataStore implements DataStore {
             if (context.isJoinTransaction()) {
                 em.flush();
                 for (E entity : resultList) {
-                    detachEntity(em, entity, fetchPlan);
+                    detachEntity(em, entity, fetchPlan, false);
                 }
             }
 
@@ -533,8 +533,8 @@ public class OrmDataStore implements DataStore {
                         }
 
                         if (!context.isDiscardSaved()) {
-                            FetchPlan view = getFetchPlanFromContextOrNull(context, entity);
-                            entityFetcher.fetch(entity, view, true);
+                            FetchPlan fetchPlan = getFetchPlanFromContextOrNull(context, entity);
+                            entityFetcher.fetch(entity, fetchPlan, true);
                         }
                     }
                 }
@@ -634,7 +634,7 @@ public class OrmDataStore implements DataStore {
                     }
 
                     for (JmixEntity entity : saved) {
-                        em.detach(entity);
+                        detachEntity(em, entity, getFetchPlanFromContextOrNull(context, entity), true);
                     }
 
                     entityChangedEventManager.publish(events);
@@ -815,12 +815,7 @@ public class OrmDataStore implements DataStore {
 
     @Nullable
     protected FetchPlan getFetchPlanFromContextOrNull(SaveContext context, JmixEntity entity) {
-        FetchPlan view = context.getFetchPlans().get(entity);
-        if (view == null) {
-            return null;
-        }
-
-        return view;
+        return context.getFetchPlans().get(entity);
     }
 
     protected Query createQuery(EntityManager em, LoadContext<?> context, boolean singleResult, boolean countQuery) {
@@ -1123,11 +1118,17 @@ public class OrmDataStore implements DataStore {
         return txManager.getTransaction(def);
     }
 
-    protected <E extends JmixEntity> void detachEntity(EntityManager em, @Nullable E rootEntity, FetchPlan view) {
+    protected <E extends JmixEntity> void detachEntity(EntityManager em, @Nullable E rootEntity,
+                                                       @Nullable FetchPlan fetchPlan, boolean loadedOnly) {
         if (rootEntity == null)
             return;
+
         em.detach(rootEntity);
-        metadataTools.traverseAttributesByView(view, rootEntity, (entity, property) -> {
+
+        if (fetchPlan == null)
+            return;
+
+        metadataTools.traverseAttributesByFetchPlan(fetchPlan, rootEntity, loadedOnly, (entity, property) -> {
             if (property.getRange().isClass() && !metadataTools.isEmbedded(property)) {
                 Object value = getValue(entity, property.getName());
                 if (value != null) {

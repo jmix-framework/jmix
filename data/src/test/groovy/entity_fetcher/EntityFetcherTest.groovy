@@ -43,7 +43,7 @@ class EntityFetcherTest extends DataSpec {
         npCustomer.status = Status.OK
 
         entityStates.makeDetached(npCustomer)
-        ((FetchGroupTracker) npCustomer)._persistence_setFetchGroup(new JmixEntityFetchGroup(['status'], entityStates))
+        ((FetchGroupTracker) npCustomer)._persistence_setFetchGroup(new JmixEntityFetchGroup(['id', 'status'], entityStates))
 
         def entity = dataManager.create(TestEntityWithNonPersistentRef)
         entity.name = 'c'

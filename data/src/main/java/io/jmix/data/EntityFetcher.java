@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
 import javax.persistence.Basic;
 import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
@@ -59,8 +61,10 @@ public class EntityFetcher {
 
     /**
      * Fetch instance by fetch plan.
+     *
+     * @param fetchPlan if null, nothing happens
      */
-    public void fetch(JmixEntity instance, FetchPlan fetchPlan) {
+    public void fetch(JmixEntity instance, @Nullable FetchPlan fetchPlan) {
         if (fetchPlan == null)
             return;
         fetch(instance, fetchPlan, new HashMap<>(), false);
@@ -68,8 +72,10 @@ public class EntityFetcher {
 
     /**
      * Fetch instance by fetch plan.
+     *
+     * @param fetchPlanName if null, nothing happens
      */
-    public void fetch(JmixEntity instance, String fetchPlanName) {
+    public void fetch(JmixEntity instance, @Nullable String fetchPlanName) {
         if (fetchPlanName == null)
             return;
         FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
@@ -79,11 +85,12 @@ public class EntityFetcher {
     /**
      * Fetch instance by fetch plan.
      *
+     * @param fetchPlan if null, nothing happens
      * @param optimizeForDetached if true, detached objects encountered in the graph will be first checked whether all
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(JmixEntity instance, FetchPlan fetchPlan, boolean optimizeForDetached) {
+    public void fetch(JmixEntity instance, @Nullable FetchPlan fetchPlan, boolean optimizeForDetached) {
         if (fetchPlan == null)
             return;
         fetch(instance, fetchPlan, new HashMap<>(), optimizeForDetached);
@@ -92,11 +99,12 @@ public class EntityFetcher {
     /**
      * Fetch instance by fetch plan.
      *
+     * @param fetchPlanName if null, nothing happens
      * @param optimizeForDetached if true, detached objects encountered in the graph will be first checked whether all
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(JmixEntity instance, String fetchPlanName, boolean optimizeForDetached) {
+    public void fetch(JmixEntity instance, @Nullable String fetchPlanName, boolean optimizeForDetached) {
         if (fetchPlanName == null)
             return;
         FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);

@@ -1,0 +1,239 @@
+package datamanager
+
+import io.jmix.core.AccessConstraintsRegistry
+import io.jmix.core.DataManager
+import io.jmix.core.Metadata
+import io.jmix.core.security.SecurityContextHelper
+import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.impl.InMemoryUserRepository
+import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider
+import io.jmix.security.role.assignment.RoleAssignment
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import spock.lang.Ignore
+import test_support.SecuritySpecification
+import test_support.annotated_role_builder.TestLazyLoadingRole
+import test_support.entity.ManyToManyFirstEntity
+import test_support.entity.ManyToManySecondEntity
+import test_support.entity.ManyToOneEntity
+import test_support.entity.OneToManyEntity
+
+import javax.sql.DataSource
+
+class DataManagerLazyLoadingTest extends SecuritySpecification {
+    @Autowired
+    DataManager dataManager
+
+    @Autowired
+    AuthenticationManager authenticationManager
+
+    @Autowired
+    InMemoryUserRepository userRepository
+
+    @Autowired
+    InMemoryRoleAssignmentProvider roleAssignmentProvider
+
+    @Autowired
+    Metadata metadata
+
+    @Autowired
+    AccessConstraintsRegistry accessConstraintsRegistry
+
+    @Autowired
+    DataSource dataSource
+
+    CoreUser user1
+
+    UUID manyToOneId, oneToManyId
+
+    Authentication systemAuthentication
+
+    public static final String PASSWORD = "123"
+
+    def setup() {
+        user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
+        userRepository.createUser(user1)
+        roleAssignmentProvider.addAssignment(new RoleAssignment(user1.key, TestLazyLoadingRole.NAME))
+
+        prepareManyToOne()
+        prepareManyToMany()
+
+        systemAuthentication = SecurityContextHelper.getAuthentication()
+    }
+
+    def cleanup() {
+        SecurityContextHelper.setAuthentication(systemAuthentication)
+
+        userRepository.removeUser(user1)
+
+        roleAssignmentProvider.removeAssignments(user1.key)
+
+        new JdbcTemplate(dataSource).execute('delete from TEST_MANY_TO_MANY_FIRST_ENTITY_MANY_TO_MANY_SECOND_ENTITY_LINK;' +
+                ' delete from TEST_MANY_TO_MANY_FIRST_ENTITY;' +
+                ' delete from TEST_MANY_TO_MANY_SECOND_ENTITY;' +
+                ' delete from TEST_MANY_TO_ONE_ENTITY;' +
+                ' delete from TEST_ONE_TO_MANY_ENTITY;')
+    }
+
+
+    @Ignore
+    def "lazy load manyToOne with constraints"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+
+        def manyToOneEntity = dataManager.load(ManyToOneEntity.class)
+                .id(manyToOneId)
+                .accessConstraints(accessConstraintsRegistry.getConstraints())
+                .one()
+        manyToOneEntity.getOneToManyEntity()
+        dataManager.save(manyToOneEntity)
+
+        def oneToManyEntity = dataManager.load(OneToManyEntity.class)
+                .id(oneToManyId)
+                .one()
+
+        manyToOneEntity = dataManager.load(ManyToOneEntity.class)
+                .id(manyToOneId)
+                .one()
+
+        def oneToManyWithConstraints = dataManager.load(OneToManyEntity.class)
+                .accessConstraints(accessConstraintsRegistry.getConstraints())
+                .list()
+        def oneToManyWithoutConstraints = dataManager.load(OneToManyEntity.class)
+                .list()
+
+        def manyToOneWithConstraints = dataManager.load(ManyToOneEntity.class)
+                .accessConstraints(accessConstraintsRegistry.getConstraints())
+                .list()
+
+        def manyToOneWithoutConstraints = dataManager.load(ManyToOneEntity.class)
+                .list()
+
+        then:
+
+        oneToManyWithConstraints.size() == 1
+        oneToManyWithoutConstraints.size() == 2
+        manyToOneWithConstraints.size() == 2
+        manyToOneWithoutConstraints.size() == 4
+        oneToManyEntity.manyToOneEntities.size() == 2
+        manyToOneEntity.oneToManyEntity == oneToManyEntity
+    }
+
+    @Ignore
+    def "lazy load manyToMany with constraints"() {
+        setup:
+
+        authenticate('user1')
+
+        when:
+
+        def manyToManySecondEntity = dataManager.load(ManyToManySecondEntity.class)
+                .accessConstraints(accessConstraintsRegistry.getConstraints())
+                .one()
+        manyToManySecondEntity.getManyToManyFirstEntities()
+
+        then:
+
+        manyToManySecondEntity.getManyToManyFirstEntities().size() == 3
+
+        when:
+
+        dataManager.save(manyToManySecondEntity)
+        def id = manyToManySecondEntity.__getEntityEntry().getEntityId()
+        def resultWithConstraints = dataManager.load(ManyToManySecondEntity.class)
+                .id(id)
+                .accessConstraints(accessConstraintsRegistry.getConstraints())
+                .one()
+        def resultWithoutConstraints = dataManager.load(ManyToManySecondEntity.class)
+                .id(id)
+                .one()
+
+        then:
+
+        resultWithConstraints.getManyToManyFirstEntities().size() == 3
+        resultWithoutConstraints.getManyToManyFirstEntities().size() == 5
+    }
+
+    protected void authenticate(String username) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, PASSWORD))
+        SecurityContextHelper.setAuthentication(authentication)
+    }
+
+    def prepareManyToMany() {
+        ManyToManyFirstEntity manyToManyEntity1 = metadata.create(ManyToManyFirstEntity.class)
+        manyToManyEntity1.setName("1")
+        dataManager.save(manyToManyEntity1)
+
+        ManyToManyFirstEntity manyToManyEntity2 = metadata.create(ManyToManyFirstEntity.class)
+        manyToManyEntity2.setName("2")
+        dataManager.save(manyToManyEntity2)
+
+        ManyToManyFirstEntity manyToManyEntity3 = metadata.create(ManyToManyFirstEntity.class)
+        manyToManyEntity3.setName("3")
+        dataManager.save(manyToManyEntity3)
+
+        ManyToManyFirstEntity manyToManyEntity4 = metadata.create(ManyToManyFirstEntity.class)
+        manyToManyEntity4.setName("allowed_4")
+        dataManager.save(manyToManyEntity4)
+
+        ManyToManyFirstEntity manyToManyEntity5 = metadata.create(ManyToManyFirstEntity.class)
+        manyToManyEntity5.setName("allowed_5")
+        dataManager.save(manyToManyEntity5)
+
+        List<ManyToManyFirstEntity> manyToManyEntities = new ArrayList<>()
+        manyToManyEntities.add(manyToManyEntity1)
+        manyToManyEntities.add(manyToManyEntity2)
+        manyToManyEntities.add(manyToManyEntity3)
+        manyToManyEntities.add(manyToManyEntity4)
+        manyToManyEntities.add(manyToManyEntity5)
+
+        ManyToManySecondEntity manyToManyTwoEntity1 = metadata.create(ManyToManySecondEntity.class)
+        manyToManyTwoEntity1.setName("1")
+        manyToManyTwoEntity1.setManyToManyFirstEntities(manyToManyEntities)
+        dataManager.save(manyToManyTwoEntity1)
+
+        ManyToManySecondEntity manyToManyTwoEntity2 = metadata.create(ManyToManySecondEntity.class)
+        manyToManyTwoEntity2.setName("allowed_2")
+        manyToManyTwoEntity2.setManyToManyFirstEntities(manyToManyEntities)
+        dataManager.save(manyToManyTwoEntity2)
+    }
+
+    def prepareManyToOne() {
+        OneToManyEntity oneToManyEntity = metadata.create(OneToManyEntity.class)
+        oneToManyEntity.setName("1")
+        dataManager.save(oneToManyEntity)
+        oneToManyId = oneToManyEntity.__getEntityEntry().getEntityId()
+
+        ManyToOneEntity manyToOneEntity = metadata.create(ManyToOneEntity.class)
+        manyToOneEntity.setName("1")
+        manyToOneEntity.setOneToManyEntity(oneToManyEntity)
+        dataManager.save(manyToOneEntity)
+
+        manyToOneEntity = metadata.create(ManyToOneEntity.class)
+        manyToOneEntity.setName("allowed_1")
+        manyToOneEntity.setOneToManyEntity(oneToManyEntity)
+        dataManager.save(manyToOneEntity)
+        manyToOneId = manyToOneEntity.__getEntityEntry().getEntityId()
+
+        oneToManyEntity = metadata.create(OneToManyEntity.class)
+        oneToManyEntity.setName("allowed_2")
+        dataManager.save(oneToManyEntity)
+
+        manyToOneEntity = metadata.create(ManyToOneEntity.class)
+        manyToOneEntity.setName("2")
+        manyToOneEntity.setOneToManyEntity(oneToManyEntity)
+        dataManager.save(manyToOneEntity)
+
+        manyToOneEntity = metadata.create(ManyToOneEntity.class)
+        manyToOneEntity.setName("allowed_2")
+        manyToOneEntity.setOneToManyEntity(oneToManyEntity)
+        dataManager.save(manyToOneEntity)
+    }
+}

@@ -16,10 +16,10 @@
 
 package io.jmix.audit.entity;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.data.entity.BaseUuidEntity;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.session.SessionInformation;
 
@@ -28,7 +28,7 @@ import java.util.Date;
 
 @ModelObject(name = "core_UserSession", annotatedPropertiesOnly = true)
 @SystemLevel
-public class UserSession extends BaseUuidEntity {
+public class UserSession implements JmixEntity {
 
     @Transient
     protected SessionInformation sessionInformation;
@@ -51,7 +51,7 @@ public class UserSession extends BaseUuidEntity {
     }
 
     @ModelProperty
-    public String getPrincipalName(){
+    public String getPrincipalName() {
         return new TestingAuthenticationToken(getPrincipal(), null).getName();
     }
 

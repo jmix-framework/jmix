@@ -23,7 +23,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
-import io.jmix.core.impl.importexport.EntityImportViewJsonBuilder;
+import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.impl.context.CrudEntityContext;
 import io.jmix.rest.api.common.RestControllerUtils;
@@ -67,7 +67,7 @@ public class EntitiesControllerManager {
     protected EntitySerialization entitySerialization;
 
     @Autowired
-    protected EntityImportViewJsonBuilder entityImportViewJsonBuilder;
+    protected EntityImportPlanJsonBuilder entityImportPlanJsonBuilder;
 
     @Autowired
     protected EntityImportExport entityImportExport;
@@ -434,11 +434,11 @@ public class EntitiesControllerManager {
             throw new RestAPIException("Cannot deserialize an entity from JSON", "", HttpStatus.BAD_REQUEST, e);
         }
 
-        EntityImportView entityImportView = entityImportViewJsonBuilder.buildFromJson(entityJson, metaClass);
+        EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
 
         Collection<JmixEntity> importedEntities;
         try {
-            importedEntities = entityImportExport.importEntities(Collections.singletonList(entity), entityImportView, true);
+            importedEntities = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan, true);
         } catch (EntityImportException e) {
             throw new RestAPIException("Entity creation failed", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
@@ -524,11 +524,11 @@ public class EntitiesControllerManager {
         //noinspection unchecked
         EntityValues.setId(entity, id);
 
-        EntityImportView entityImportView = entityImportViewJsonBuilder.buildFromJson(entityJson, metaClass);
+        EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
         Collection<JmixEntity> importedEntities;
         try {
             importedEntities = entityImportExport.importEntities(Collections.singletonList(entity),
-                    entityImportView, true, restProperties.isOptimisticLockingEnabled());
+                    entityImportPlan, true, restProperties.isOptimisticLockingEnabled());
         } catch (EntityImportException e) {
             throw new RestAPIException("Entity update failed", e.getMessage(), HttpStatus.BAD_REQUEST, e);
         }
@@ -655,10 +655,10 @@ public class EntitiesControllerManager {
     }
 
     /**
-     * We pass the EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES because for create and update operations in the
-     * result JSON we don't want to return results for entity methods annotated with @MetaProperty annotation. We do this because such methods
-     * may use other entities properties (references to other entities) and as a result we get an UnfetchedAttributeException while
-     * producing the JSON for response
+     * We pass the EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES because for create and update
+     * operations in the result JSON we don't want to return results for entity methods annotated with @MetaProperty
+     * annotation. We do this because such methods may use other entities properties (references to other entities) and
+     * as a result we get an UnfetchedAttributeException while producing the JSON for response
      */
     protected String createEntityJson(JmixEntity entity, MetaClass metaClass, String responseView, String version) {
         Preconditions.checkNotNullArgument(entity);

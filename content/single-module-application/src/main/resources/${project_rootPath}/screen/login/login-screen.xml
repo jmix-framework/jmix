@@ -43,6 +43,9 @@
                     </cssLayout>
                     <hbox id="rememberLocalesBox"
                           stylename="c-login-remember-locales">
+                        <checkBox id="rememberMeCheckBox"
+                                  caption="msg://loginScreen.rememberMe"
+                                  stylename="c-login-remember-me"/>
                         <comboBox id="localesField"
                                      nullOptionVisible="false"
                                      stylename="c-login-locale"

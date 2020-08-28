@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -49,7 +50,7 @@ public class FluentLoader<E extends JmixEntity> {
     private String fetchPlanName;
     private FetchPlanBuilder fetchPlanBuilder;
     private boolean softDeletion = true;
-    private Map<String, Object> hints;
+    private Map<String, Serializable> hints;
     private List<AccessConstraint<?>> accessConstraints;
 
     @Autowired
@@ -230,7 +231,7 @@ public class FluentLoader<E extends JmixEntity> {
     /**
      * Sets custom hint that should be used by the query.
      */
-    public FluentLoader<E> hint(String hintName, Object value) {
+    public FluentLoader<E> hint(String hintName, Serializable value) {
         if (hints == null) {
             hints = new HashMap<>();
         }
@@ -241,7 +242,7 @@ public class FluentLoader<E extends JmixEntity> {
     /**
      * Sets custom hints that should be used by the query.
      */
-    public FluentLoader<E> hints(Map<String, Object> hints) {
+    public FluentLoader<E> hints(Map<String, Serializable> hints) {
         this.hints = hints;
         return this;
     }
@@ -409,7 +410,7 @@ public class FluentLoader<E extends JmixEntity> {
         /**
          * Sets custom hint that should be used by the query.
          */
-        public ById<E> hint(String hintName, Object value) {
+        public ById<E> hint(String hintName, Serializable value) {
             if (loader.hints == null) {
                 loader.hints = new HashMap<>();
             }
@@ -420,7 +421,7 @@ public class FluentLoader<E extends JmixEntity> {
         /**
          * Sets custom hints that should be used by the query.
          */
-        public ById<E> hints(Map<String, Object> hints) {
+        public ById<E> hints(Map<String, Serializable> hints) {
             loader.hints = hints;
             return this;
         }
@@ -584,7 +585,7 @@ public class FluentLoader<E extends JmixEntity> {
         /**
          * Sets custom hint that should be used by the query.
          */
-        public ByIds<E> hint(String hintName, Object value) {
+        public ByIds<E> hint(String hintName, Serializable value) {
             if (loader.hints == null) {
                 loader.hints = new HashMap<>();
             }
@@ -595,7 +596,7 @@ public class FluentLoader<E extends JmixEntity> {
         /**
          * Sets custom hints that should be used by the query.
          */
-        public ByIds<E> hints(Map<String, Object> hints) {
+        public ByIds<E> hints(Map<String, Serializable> hints) {
             loader.hints = hints;
             return this;
         }
@@ -768,7 +769,7 @@ public class FluentLoader<E extends JmixEntity> {
         /**
          * Sets custom hint that should be used by the query.
          */
-        public ByQuery hint(String hintName, Object value) {
+        public ByQuery hint(String hintName, Serializable value) {
             if (loader.hints == null) {
                 loader.hints = new HashMap<>();
             }
@@ -779,7 +780,7 @@ public class FluentLoader<E extends JmixEntity> {
         /**
          * Sets custom hints that should be used by the query.
          */
-        public ByQuery hints(Map<String, Object> hints) {
+        public ByQuery hints(Map<String, Serializable> hints) {
             loader.hints = hints;
             return this;
         }

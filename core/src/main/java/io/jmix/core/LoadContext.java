@@ -60,7 +60,7 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     protected boolean loadPartialEntities = true;
     protected boolean joinTransaction = true;
 
-    protected Map<String, Object> hints; // lazy initialized map
+    protected Map<String, Serializable> hints; // lazy initialized map
 
     /**
      * @param metaClass metaclass of the loaded entities
@@ -207,7 +207,7 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     /**
      * Sets custom hint that should be used by the query.
      */
-    public LoadContext<E> setHint(String hintName, Object value) {
+    public LoadContext<E> setHint(String hintName, Serializable value) {
         if (hints == null) {
             hints = new HashMap<>();
         }
@@ -218,7 +218,7 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
     /**
      * Sets custom hints that should be used by the query.
      */
-    public LoadContext<E> setHints(Map<String, Object> hints) {
+    public LoadContext<E> setHints(Map<String, Serializable> hints) {
         this.hints = hints;
         return this;
     }

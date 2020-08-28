@@ -16,17 +16,21 @@
 
 package io.jmix.audit.entity;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import io.jmix.data.entity.BaseUuidEntity;
+
+import javax.persistence.Id;
+import java.util.UUID;
 
 /**
  * Record containing changed entity attribute.
  */
 @ModelObject(name = "audit_EntityLogAttr")
 @SystemLevel
-public class EntityLogAttr extends BaseUuidEntity {
+public class EntityLogAttr implements JmixEntity {
 
     private static final long serialVersionUID = 4258700403293876630L;
 
@@ -34,6 +38,10 @@ public class EntityLogAttr extends BaseUuidEntity {
     public static final String MP_SUFFIX = "-mp";
     public static final String OLD_VALUE_SUFFIX = "-oldVl";
     public static final String OLD_VALUE_ID_SUFFIX = "-oldVlId";
+
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
 
     @ModelProperty
     private EntityLogItem logItem;
@@ -55,6 +63,14 @@ public class EntityLogAttr extends BaseUuidEntity {
 
     @ModelProperty
     private String messagesPack;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public EntityLogItem getLogItem() {
         return logItem;

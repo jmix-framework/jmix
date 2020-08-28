@@ -19,11 +19,11 @@ package io.jmix.audit.entity;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.data.entity.BaseUuidEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,6 +32,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Record containing information about entity lifecycle event.
@@ -41,7 +42,7 @@ import java.util.Set;
 @Table(name = "AUDIT_ENTITY_LOG")
 @Listeners("audit_EntityLogItemDetachListener")
 @SystemLevel
-public class EntityLogItem extends BaseUuidEntity {
+public class EntityLogItem implements JmixEntity {
 
     private static final long serialVersionUID = 5859030306889056606L;
 
@@ -75,6 +76,11 @@ public class EntityLogItem extends BaseUuidEntity {
                 return null;
         }
     }
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "CREATE_TS")
     @CreatedDate
@@ -118,6 +124,13 @@ public class EntityLogItem extends BaseUuidEntity {
         entityRef = metadata.create(ReferenceToEntity.class);
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Date getCreateTs() {
         return createTs;

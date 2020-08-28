@@ -62,6 +62,7 @@ import io.jmix.ui.component.table.*;
 import io.jmix.ui.context.UiEntityAttributeContext;
 import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.context.UiShowEntityInfoContext;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataComponents;
@@ -152,6 +153,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected Actions actions;
     protected UiComponentsGenerator uiComponentsGenerator;
     protected Aggregations aggregations;
+    protected AggregatableDelegate<Object> aggregatableDelegate;
 
     protected Locale locale;
 
@@ -2501,15 +2503,28 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         throw new IllegalArgumentException(msg);
     }
 
+    protected AggregatableDelegate<Object> getAggregatableDelegate() {
+        if (aggregatableDelegate == null) {
+            aggregatableDelegate = applicationContext.getBean(AggregatableDelegate.class);
+        }
+
+        if (getItems() != null) {
+            aggregatableDelegate.setItemProvider(getItems()::getItem);
+            aggregatableDelegate.setItemValueProvider(getItems()::getItemValue);
+        }
+        return aggregatableDelegate;
+    }
+
+    @SuppressWarnings("unchecked")
     protected Map<Object, Object> __aggregateValues(AggregationContainer container, AggregationContainer.Context context) {
-        if (!(getItems() instanceof AggregatableTableItems)) {
-            throw new IllegalStateException("Table items must implement AggregatableTableItems in " +
-                    "order to use aggregation");
+        if (!isAggregatable() || getItems() == null) {
+            throw new IllegalStateException("Table must be aggregatable and items must not be null in order to " +
+                    "use aggregation");
         }
 
         List<AggregationInfo> aggregationInfos = getAggregationInfos(container);
 
-        Map<AggregationInfo, Object> results = ((AggregatableTableItems<E>) getItems()).aggregateValues(
+        Map<AggregationInfo, Object> results = getAggregatableDelegate().aggregateValues(
                 aggregationInfos.toArray(new AggregationInfo[0]),
                 context.getItemIds()
         );
@@ -2517,15 +2532,16 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         return convertAggregationKeyMapToColumnIdKeyMap(container, results);
     }
 
+    @SuppressWarnings("unchecked")
     protected Map<Object, Object> __aggregate(AggregationContainer container, AggregationContainer.Context context) {
-        if (!(getItems() instanceof AggregatableTableItems)) {
-            throw new IllegalStateException("Table items must implement AggregatableTableItems in " +
-                    "order to use aggregation");
+        if (!isAggregatable() || getItems() == null) {
+            throw new IllegalStateException("Table must be aggregatable and items must not be null in order to " +
+                    "use aggregation");
         }
 
         List<AggregationInfo> aggregationInfos = getAggregationInfos(container);
 
-        Map<AggregationInfo, String> results = ((AggregatableTableItems<E>) getItems()).aggregate(
+        Map<AggregationInfo, String> results = getAggregatableDelegate().aggregate(
                 aggregationInfos.toArray(new AggregationInfo[0]),
                 context.getItemIds()
         );

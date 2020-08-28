@@ -18,6 +18,7 @@ package io.jmix.ui.component.table;
 
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Property;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -72,8 +73,12 @@ public class TableItemWrapper implements Item {
         return tableDataContainer.getTableItems().getType(propertyId);
     }
 
+    @Nullable
     public Object getPropertyValue(Object propertyId) {
-        return tableDataContainer.getTableItems().getItemValue(itemId, propertyId);
+        if (!(propertyId instanceof MetaPropertyPath)) {
+            throw new IllegalArgumentException("Property id must be an instance of MetaPropertyPath");
+        }
+        return tableDataContainer.getTableItems().getItemValue(itemId, (MetaPropertyPath) propertyId);
     }
 
     public void addValueChangeListener(Property.ValueChangeListener propertyValueChangeListener) {

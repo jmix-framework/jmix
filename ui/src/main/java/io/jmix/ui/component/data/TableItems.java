@@ -17,6 +17,7 @@
 package io.jmix.ui.component.data;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.Table;
 
 import javax.annotation.Nullable;
@@ -44,7 +45,7 @@ public interface TableItems<I> extends DataUnit {
     }
 
     @Nullable
-    Object getItemValue(Object itemId, Object propertyId);
+    Object getItemValue(Object itemId, MetaPropertyPath propertyId);
 
     int size();
 

@@ -52,7 +52,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.AggregatableDataGridItems;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.ValueSourceProvider;
@@ -71,6 +70,7 @@ import io.jmix.ui.component.renderer.RendererWrapper;
 import io.jmix.ui.component.valueprovider.*;
 import io.jmix.ui.context.UiEntityAttributeContext;
 import io.jmix.ui.context.UiShowEntityInfoContext;
+import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataComponents;
@@ -126,6 +126,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected Actions actions;
     protected IconResolver iconResolver;
     protected Aggregations aggregations;
+    protected AggregatableDelegate<Object> aggregatableDelegate;
 
     // Style names used by grid itself
     protected final List<String> internalStyles = new ArrayList<>(2);
@@ -2744,33 +2745,45 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         return emptyStateClickEventHandler;
     }
 
-    @SuppressWarnings("unchecked")
+    protected AggregatableDelegate<Object> getAggregatableDelegate() {
+        if (aggregatableDelegate == null) {
+            aggregatableDelegate = applicationContext.getBean(AggregatableDelegate.class);
+        }
+
+        if (getItems() != null) {
+            aggregatableDelegate.setItemProvider(getItems()::getItem);
+            aggregatableDelegate.setItemValueProvider(getItems()::getItemValue);
+        }
+        return aggregatableDelegate;
+    }
+
     protected Map<String, String> __aggregate() {
-        if (!(getItems() instanceof AggregatableDataGridItems)) {
-            throw new IllegalStateException("DataGrid items must implement AggregatableDataGridItems in " +
-                    "order to use aggregation");
+        if (!isAggregatable() || getItems() == null) {
+            throw new IllegalStateException("DataGrid must be aggregatable and items must not be null in order to " +
+                    "use aggregation");
         }
 
         List<AggregationInfo> aggregationInfos = getAggregationInfos();
-        Map<AggregationInfo, String> aggregationInfoMap = ((AggregatableDataGridItems) getItems()).aggregate(
+
+        Map<AggregationInfo, String> aggregationInfoMap = getAggregatableDelegate().aggregate(
                 aggregationInfos.toArray(new AggregationInfo[0]),
-                getItems().getItems().map(e -> EntityValues.getId(e)).collect(Collectors.toList())
+                getItems().getItems().map(EntityValues::getId).collect(Collectors.toList())
         );
 
         return convertAggregationKeyMapToColumnIdKeyMap(aggregationInfoMap);
     }
 
-    @SuppressWarnings("unchecked")
     protected Map<String, Object> __aggregateValues() {
-        if (!(getItems() instanceof AggregatableDataGridItems)) {
-            throw new IllegalStateException("DataGrid items must implement AggregatableDataGridItems in " +
-                    "order to use aggregation");
+        if (!isAggregatable() || getItems() == null) {
+            throw new IllegalStateException("DataGrid must be aggregatable and items must not be null in order to " +
+                    "use aggregation");
         }
 
         List<AggregationInfo> aggregationInfos = getAggregationInfos();
-        Map<AggregationInfo, Object> aggregationInfoMap = ((AggregatableDataGridItems) getItems()).aggregateValues(
+
+        Map<AggregationInfo, Object> aggregationInfoMap = getAggregatableDelegate().aggregateValues(
                 aggregationInfos.toArray(new AggregationInfo[0]),
-                getItems().getItems().map(e -> EntityValues.getId(e)).collect(Collectors.toList())
+                getItems().getItems().map(EntityValues::getId).collect(Collectors.toList())
         );
 
         return convertAggregationKeyMapToColumnIdKeyMap(aggregationInfoMap);
@@ -2870,7 +2883,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     }
 
     protected void updateAggregationRow() {
-        boolean isAggregatable = isAggregatable() && getItems() instanceof AggregatableDataGridItems;
+        boolean isAggregatable = isAggregatable() && getItems() != null;
         if (isAggregatable) {
             Map<String, String> results = __aggregate();
             fillAggregationRow(results);

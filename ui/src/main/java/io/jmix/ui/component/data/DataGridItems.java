@@ -17,6 +17,7 @@
 package io.jmix.ui.component.data;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.DataGrid;
 
 import javax.annotation.Nullable;
@@ -45,6 +46,14 @@ public interface DataGridItems<T> extends DataUnit {
      */
     @Nullable
     T getItem(@Nullable Object itemId);
+
+    /**
+     * @param itemId the item id
+     * @param propertyId the property id
+     * @return the item value
+     */
+    @Nullable
+    Object getItemValue(Object itemId, MetaPropertyPath propertyId);
 
     /**
      * @param item the item for obtaining the index

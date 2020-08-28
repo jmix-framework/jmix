@@ -23,7 +23,6 @@ import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.datagrid.ContainerTreeDataGridItems;
 import io.jmix.ui.component.data.datagrid.EmptyTreeDataGridItems;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import org.dom4j.Element;
 
@@ -56,7 +55,7 @@ public class TreeDataGridLoader extends AbstractDataGridLoader<TreeDataGrid> {
             throw new GuiDevelopmentException("TreeDataGrid doesn't have 'hierarchyProperty' attribute",
                     context, "TreeDataGrid ID", element.attributeValue("id"));
         }
-        return new ContainerTreeDataGridItems(container, hierarchyProperty, applicationContext.getBean(AggregatableDelegate.class));
+        return new ContainerTreeDataGridItems(container, hierarchyProperty);
     }
 
     @Override

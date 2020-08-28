@@ -16,14 +16,15 @@
 
 package io.jmix.ui.component.data.datagrid;
 
-import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
-import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
+import io.jmix.ui.component.data.meta.EntityDataGridItems;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -47,6 +48,12 @@ public class EmptyDataGridItems<E extends JmixEntity>
 
     @Override
     public E getItem(@Nullable Object itemId) {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
         return null;
     }
 

@@ -17,13 +17,12 @@
 package io.jmix.ui.component.data.table;
 
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.GroupTableItems;
 import io.jmix.ui.gui.data.GroupInfo;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.LinkedMap;
@@ -54,8 +53,8 @@ public class ContainerGroupTableItems<E extends JmixEntity>
     protected Object[] sortProperties;
     protected boolean[] sortAscending;
 
-    public ContainerGroupTableItems(CollectionContainer<E> container, AggregatableDelegate aggregatableDelegate) {
-        super(container, aggregatableDelegate);
+    public ContainerGroupTableItems(CollectionContainer<E> container) {
+        super(container);
     }
 
     @Override

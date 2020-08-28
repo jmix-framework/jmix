@@ -33,7 +33,6 @@ import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.datagrid.EmptyDataGridItems;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.DataLoadersHelper;
 import io.jmix.ui.screen.FrameOwner;
@@ -262,7 +261,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
     @SuppressWarnings("unchecked")
     protected DataGridItems createContainerDataGridSource(CollectionContainer container) {
-        return new ContainerDataGridItems(container, applicationContext.getBean(AggregatableDelegate.class));
+        return new ContainerDataGridItems(container);
     }
 
     protected DataGridItems createEmptyDataGridItems(MetaClass metaClass) {

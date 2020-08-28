@@ -16,24 +16,23 @@
 
 package io.jmix.ui.component.data.datagrid;
 
-import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeDataGridItems;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public class ContainerTreeDataGridItems<E extends JmixEntity>
-            extends ContainerDataGridItems<E>
-            implements TreeDataGridItems<E> {
+        extends ContainerDataGridItems<E>
+        implements TreeDataGridItems<E> {
 
     private final String hierarchyProperty;
 
-    public ContainerTreeDataGridItems(CollectionContainer<E> container, String hierarchyProperty, AggregatableDelegate aggregatableDelegate) {
-        super(container, aggregatableDelegate);
+    public ContainerTreeDataGridItems(CollectionContainer<E> container, String hierarchyProperty) {
+        super(container);
         this.hierarchyProperty = hierarchyProperty;
     }
 

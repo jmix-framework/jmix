@@ -18,6 +18,8 @@ package io.jmix.ui.component.table;
 
 import com.vaadin.v7.data.Property;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("deprecation")
 public class TableItemPropertyWrapper implements Property, Property.ValueChangeNotifier {
     protected boolean readOnly;
@@ -29,6 +31,7 @@ public class TableItemPropertyWrapper implements Property, Property.ValueChangeN
         this.propertyId = propertyId;
     }
 
+    @Nullable
     @Override
     public Object getValue() {
         return itemWrapper.getPropertyValue(propertyId);

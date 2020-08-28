@@ -50,7 +50,7 @@ public class AggregatableDelegate<K> {
     protected DatatypeRegistry datatypeRegistry;
 
     protected Function<K, Object> itemProvider;
-    protected BiFunction<MetaPropertyPath, K, Object> itemValueProvider;
+    protected BiFunction<K, MetaPropertyPath, Object> itemValueProvider;
 
     @Autowired
     public void setAggregations(Aggregations aggregations) {
@@ -71,7 +71,7 @@ public class AggregatableDelegate<K> {
         this.itemProvider = itemProvider;
     }
 
-    public void setItemValueProvider(BiFunction<MetaPropertyPath, K, Object> itemValueProvider) {
+    public void setItemValueProvider(BiFunction<K, MetaPropertyPath, Object> itemValueProvider) {
         this.itemValueProvider = itemValueProvider;
     }
 
@@ -194,7 +194,7 @@ public class AggregatableDelegate<K> {
     protected List valuesByProperty(MetaPropertyPath propertyPath, Collection<K> itemIds) {
         final List<Object> values = new ArrayList<>(itemIds.size());
         for (final K itemId : itemIds) {
-            final Object value = itemValueProvider.apply(propertyPath, itemId);
+            final Object value = itemValueProvider.apply(itemId, propertyPath);
             if (value != null) {
                 values.add(value);
             }

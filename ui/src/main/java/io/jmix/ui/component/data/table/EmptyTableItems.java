@@ -63,7 +63,7 @@ public class EmptyTableItems<E extends JmixEntity> implements EntityTableItems<E
 
     @Nullable
     @Override
-    public Object getItemValue(Object itemId, Object propertyId) {
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
         return null;
     }
 

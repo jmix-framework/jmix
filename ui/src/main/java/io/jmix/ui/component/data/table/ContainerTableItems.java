@@ -23,8 +23,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.component.AggregationInfo;
-import io.jmix.ui.component.data.AggregatableTableItems;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
@@ -40,14 +38,13 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 public class ContainerTableItems<E extends JmixEntity> implements EntityTableItems<E>, TableItems.Sortable<E>,
-        ContainerDataUnit<E>, AggregatableTableItems<E> {
+        ContainerDataUnit<E> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerTableItems.class);
 
@@ -59,19 +56,11 @@ public class ContainerTableItems<E extends JmixEntity> implements EntityTableIte
 
     protected EventHub events = new EventHub();
 
-    public ContainerTableItems(CollectionContainer<E> container, AggregatableDelegate aggregatableDelegate) {
+    public ContainerTableItems(CollectionContainer<E> container) {
         this.container = container;
         this.container.addItemChangeListener(this::containerItemChanged);
         this.container.addCollectionChangeListener(this::containerCollectionChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
-
-        this.aggregatableDelegate = aggregatableDelegate;
-        initAggregatableDelegate();
-    }
-
-    protected void initAggregatableDelegate() {
-        aggregatableDelegate.setItemProvider(ContainerTableItems.this::getItem);
-        aggregatableDelegate.setItemValueProvider(ContainerTableItems.this::getItemValue);
     }
 
     public CollectionContainer<E> getContainer() {
@@ -124,9 +113,8 @@ public class ContainerTableItems<E extends JmixEntity> implements EntityTableIte
 
     @Nullable
     @Override
-    public Object getItemValue(Object itemId, Object propertyId) {
-        MetaPropertyPath propertyPath = (MetaPropertyPath) propertyId;
-        return EntityValues.getValueEx(container.getItem(itemId), propertyPath);
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
+        return EntityValues.getValueEx(container.getItem(itemId), propertyId);
     }
 
     @Override
@@ -286,19 +274,6 @@ public class ContainerTableItems<E extends JmixEntity> implements EntityTableIte
         } else {
             log.debug("Container {} sorter is null", container);
         }
-    }
-
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<AggregationInfo, String> aggregate(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
-        return aggregatableDelegate.aggregate(aggregationInfos, itemIds);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<AggregationInfo, Object> aggregateValues(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
-        return aggregatableDelegate.aggregateValues(aggregationInfos, itemIds);
     }
 
     @Override

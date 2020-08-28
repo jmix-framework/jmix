@@ -19,20 +19,19 @@ package io.jmix.ui.component.data.table;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeTableItems;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
 public class ContainerTreeTableItems<E extends JmixEntity>
-            extends ContainerTableItems<E>
-            implements TreeTableItems<E> {
+        extends ContainerTableItems<E>
+        implements TreeTableItems<E> {
 
     private final String hierarchyProperty;
 
-    public ContainerTreeTableItems(CollectionContainer<E> container, String hierarchyProperty, AggregatableDelegate aggregatableDelegate) {
-        super(container, aggregatableDelegate);
+    public ContainerTreeTableItems(CollectionContainer<E> container, String hierarchyProperty) {
+        super(container);
         this.hierarchyProperty = hierarchyProperty;
     }
 

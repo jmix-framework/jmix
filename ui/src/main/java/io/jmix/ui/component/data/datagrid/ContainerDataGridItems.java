@@ -16,21 +16,17 @@
 
 package io.jmix.ui.component.data.datagrid;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Sort;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.metamodel.model.PropertyPath;
-import io.jmix.ui.component.AggregationInfo;
-import io.jmix.ui.component.data.AggregatableDataGridItems;
 import io.jmix.ui.component.data.BindingState;
-import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.DataGridItems;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.HasLoader;
@@ -39,14 +35,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class ContainerDataGridItems<E extends JmixEntity>
-        implements EntityDataGridItems<E>, AggregatableDataGridItems<E>, DataGridItems.Sortable<E>, ContainerDataUnit<E> {
+        implements EntityDataGridItems<E>, DataGridItems.Sortable<E>, ContainerDataUnit<E> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerDataGridItems.class);
 
@@ -54,18 +48,13 @@ public class ContainerDataGridItems<E extends JmixEntity>
 
     protected boolean suppressSorting;
 
-    protected AggregatableDelegate aggregatableDelegate;
-
     protected EventHub events = new EventHub();
 
-    public ContainerDataGridItems(CollectionContainer<E> container, AggregatableDelegate aggregatableDelegate) {
+    public ContainerDataGridItems(CollectionContainer<E> container) {
         this.container = container;
         this.container.addItemChangeListener(this::containerItemChanged);
         this.container.addCollectionChangeListener(this::containerCollectionChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
-
-        this.aggregatableDelegate = aggregatableDelegate;
-        initAggregatableDelegate();
     }
 
     @Override
@@ -108,6 +97,12 @@ public class ContainerDataGridItems<E extends JmixEntity>
     @Override
     public E getItem(@Nullable Object itemId) {
         return itemId == null ? null : container.getItemOrNull(itemId);
+    }
+
+    @Nullable
+    @Override
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
+        return EntityValues.getValueEx(container.getItem(itemId), propertyId);
     }
 
     @Override
@@ -224,23 +219,5 @@ public class ContainerDataGridItems<E extends JmixEntity>
     @Override
     public void enableSorting() {
         suppressSorting = false;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<AggregationInfo, String> aggregate(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
-        return aggregatableDelegate.aggregate(aggregationInfos, itemIds);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public Map<AggregationInfo, Object> aggregateValues(@Nullable AggregationInfo[] aggregationInfos, Collection<?> itemIds) {
-        return aggregatableDelegate.aggregateValues(aggregationInfos, itemIds);
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected void initAggregatableDelegate() {
-        aggregatableDelegate.setItemProvider(container::getItem);
-        aggregatableDelegate.setItemValueProvider((property, itemId) -> EntityValues.getValueEx(container.getItem(itemId), (PropertyPath) property));
     }
 }

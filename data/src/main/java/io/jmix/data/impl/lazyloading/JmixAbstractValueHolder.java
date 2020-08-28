@@ -17,6 +17,7 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.JmixEntity;
+import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
@@ -24,11 +25,26 @@ import org.eclipse.persistence.indirection.WeavedAttributeValueHolderInterface;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
 
 public abstract class JmixAbstractValueHolder implements ValueHolderInterface, WeavedAttributeValueHolderInterface,
         Cloneable, Serializable {
     protected volatile boolean isInstantiated;
     protected volatile Object value;
+    protected PreservedLoadContext preservedLoadContext;
+
+    public void setPreservedLoadContext(boolean softDeletion, Map<String, Serializable> hints, List<AccessConstraint<?>> accessConstraints) {
+        PreservedLoadContext lc = new PreservedLoadContext();
+        lc.setSoftDeletion(softDeletion);
+        lc.setHints(hints);
+        lc.setAccessConstraints(accessConstraints);
+        this.preservedLoadContext = lc;
+    }
+
+    protected PreservedLoadContext getPreservedLoadContext() {
+        return preservedLoadContext;
+    }
 
     @Override
     public boolean isCoordinatedWithProperty() {
@@ -109,6 +125,38 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
                 break;
             default:
                 break;
+        }
+    }
+
+    protected static class PreservedLoadContext implements Serializable {
+        private static final long serialVersionUID = 7963025798626360359L;
+
+        protected boolean softDeletion;
+        protected Map<String, Serializable> hints;
+        protected transient List<AccessConstraint<?>> accessConstraints;
+
+        public boolean isSoftDeletion() {
+            return softDeletion;
+        }
+
+        public void setSoftDeletion(boolean softDeletion) {
+            this.softDeletion = softDeletion;
+        }
+
+        public Map<String, Serializable> getHints() {
+            return hints;
+        }
+
+        public void setHints(Map<String, Serializable> hints) {
+            this.hints = hints;
+        }
+
+        public List<AccessConstraint<?>> getAccessConstraints() {
+            return accessConstraints;
+        }
+
+        public void setAccessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            this.accessConstraints = accessConstraints;
         }
     }
 }

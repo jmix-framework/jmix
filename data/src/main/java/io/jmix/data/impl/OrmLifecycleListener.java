@@ -16,6 +16,7 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.FetchPlan;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
@@ -51,7 +52,7 @@ public interface OrmLifecycleListener {
     /**
      * Invoked when entities are loaded from ORM store
      */
-    default void onLoad(Collection<JmixEntity> entities, LoadContext loadContext) {
+    default void onLoad(Collection<JmixEntity> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
     }
 
     /**

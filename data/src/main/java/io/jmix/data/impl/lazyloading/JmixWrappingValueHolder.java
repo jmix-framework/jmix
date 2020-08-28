@@ -20,9 +20,11 @@ import io.jmix.core.*;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.eclipse.persistence.indirection.IndirectCollection;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     private static final long serialVersionUID = 8740384435315015951L;
@@ -56,17 +58,58 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
                 MetaClass metaClass = metadata.getClass(valueClass);
                 LoadContext lc = new LoadContext(metaClass);
                 lc.setId(entityId);
+                PreservedLoadContext plc = getPreservedLoadContext();
+                lc.setSoftDeletion(false);
+                lc.setHints(plc.getHints());
+                if (plc.getAccessConstraints() != null && !plc.getAccessConstraints().isEmpty()) {
+                    lc.setAccessConstraints(plc.getAccessConstraints());
+                }
                 value = dataManager.load(lc);
                 EntityAttributeVisitor av = new EntityAttributeVisitor() {
                     @Override
                     public void visit(JmixEntity entity, MetaProperty property) {
-                        visitEntity(entity, property, parentEntity);
+                        if (property.getRange().asClass().getJavaClass().isAssignableFrom(parentEntity.getClass())) {
+                            visitEntity(entity, property, parentEntity);
+                        }
+                        if (plc.isSoftDeletion()) {
+                            switch (property.getRange().getCardinality()) {
+                                case ONE_TO_ONE:
+                                case MANY_TO_ONE:
+                                    try {
+                                        Field declaredField = entity.getClass().getDeclaredField("_persistence_" + property.getName() + "_vh");
+                                        boolean accessible = declaredField.isAccessible();
+                                        declaredField.setAccessible(true);
+                                        Object fieldInstance = declaredField.get(entity);
+                                        if (fieldInstance instanceof JmixAbstractValueHolder) {
+                                            ((JmixAbstractValueHolder) fieldInstance).setPreservedLoadContext(
+                                                    plc.isSoftDeletion(),
+                                                    plc.getHints(),
+                                                    plc.getAccessConstraints());
+                                        }
+                                        declaredField.setAccessible(accessible);
+                                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                                    }
+                                    break;
+                                case ONE_TO_MANY:
+                                case MANY_TO_MANY:
+                                    IndirectCollection fieldValue = entity.__getEntityEntry().getAttributeValue(property.getName());
+                                    if (fieldValue != null && fieldValue.getValueHolder() instanceof JmixAbstractValueHolder) {
+                                        JmixAbstractValueHolder vh = (JmixAbstractValueHolder) fieldValue.getValueHolder();
+                                        vh.setPreservedLoadContext(
+                                                plc.isSoftDeletion(),
+                                                plc.getHints(),
+                                                plc.getAccessConstraints());
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     }
 
                     @Override
                     public boolean skip(MetaProperty property) {
-                        return !(property.getRange().isClass()
-                                && property.getRange().asClass().getJavaClass().isAssignableFrom(parentEntity.getClass()));
+                        return !(property.getRange().isClass());
                     }
                 };
                 if (value != null) {

@@ -64,6 +64,12 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                 LoadContext lc = new LoadContext(metaClass);
                 lc.setFetchPlan(fetchPlanBuilder.add(propertyName).build());
                 lc.setId(parentEntity.__getEntityEntry().getEntityId());
+                PreservedLoadContext plc = getPreservedLoadContext();
+                lc.setSoftDeletion(plc.isSoftDeletion());
+                lc.setHints(plc.getHints());
+                if (plc.getAccessConstraints() != null && !plc.getAccessConstraints().isEmpty()) {
+                    lc.setAccessConstraints(plc.getAccessConstraints());
+                }
                 JmixEntity result = dataManager.load(lc);
                 this.value = ((IndirectCollection) result.__getEntityEntry().getAttributeValue(propertyName))
                         .getValueHolder()

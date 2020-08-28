@@ -17,9 +17,12 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.impl.OrmLifecycleListener;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.internal.expressions.ExpressionIterator;
@@ -34,13 +37,15 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Basic;
 import javax.persistence.FetchType;
+import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Component(LazyLoadingHelper.NAME)
-public class LazyLoadingHelper {
+public class LazyLoadingHelper implements OrmLifecycleListener {
 
     public static final String NAME = "jmix_LazyLoadingHelper";
 
@@ -57,27 +62,42 @@ public class LazyLoadingHelper {
     @Autowired
     protected BeanFactory beanFactory;
 
-    public void replaceValueHolders(JmixEntity instance, List<FetchPlan> fetchPlans) {
+    @Override
+    public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
+        for (JmixEntity item : entities) {
+            replaceValueHolders(item, loadContext, effectiveFetchPlan);
+        }
+    }
+
+    public void replaceValueHolders(JmixEntity instance, LoadContext loadContext, FetchPlan fetchPlan/*List<FetchPlan> fetchPlans*/) {
         Map<JmixEntity, Set<FetchPlan>> collectedFetchPlans = new HashMap<>();
 
-        for (FetchPlan fetchPlan : fetchPlans) {
+        if (fetchPlan != null) {
             collectFetchPlans(instance, fetchPlan, collectedFetchPlans);
         }
+
+        boolean softDeletion = loadContext.isSoftDeletion();
+        Map<String, Serializable> hints = loadContext.getHints();
+        List<AccessConstraint<?>> constraints = (List<AccessConstraint<?>>) loadContext.getAccessConstraints().stream()
+                .filter(ac -> !(ac instanceof RowLevelConstraint))
+                .collect(Collectors.toList());
 
         for (Map.Entry<JmixEntity, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey().getClass());
             for (MetaProperty property : metaClass.getProperties()) {
                 if (property.getRange().isClass() && !isPropertyContainedInFetchPlans(property, entry.getValue())) {
-                    replaceValueHoldersInternal(entry.getKey(), property);
+                    replaceValueHoldersInternal(entry.getKey(), property, softDeletion, hints, constraints);
                 }
             }
         }
     }
 
-    protected void replaceValueHoldersInternal(JmixEntity instance, MetaProperty property) {
+    protected void replaceValueHoldersInternal(JmixEntity instance, MetaProperty property, boolean softDeletion,
+                                               Map<String, Serializable> hints, List<AccessConstraint<?>> constraints) {
         if (entityStates.isLoaded(instance, property.getName())) {
             return;
         }
+        JmixAbstractValueHolder vh;
         switch (property.getRange().getCardinality()) {
             case ONE_TO_ONE:
                 try {
@@ -108,25 +128,24 @@ public class LazyLoadingHelper {
                         if (idProperty.getJavaType() == UUID.class) {
                             id = UUID.fromString((String) id);
                         }
-
-                        declaredField.set(instance,
-                                new JmixWrappingValueHolder(
-                                        instance,
-                                        property.getJavaType(),
-                                        id,
-                                        dataManager,
-                                        metadata,
-                                        metadataTools));
+                        vh = new JmixWrappingValueHolder(
+                                instance,
+                                property.getJavaType(),
+                                id,
+                                dataManager,
+                                metadata,
+                                metadataTools);
                     } else {
                         MetaProperty inverseProperty = property.getInverse();
-                        declaredField.set(instance,
-                                new JmixSingleValueHolder(inverseProperty.getName(),
-                                        property.getJavaType(),
-                                        instance,
-                                        dataManager,
-                                        metadata,
-                                        metadataTools));
+                        vh = new JmixSingleValueHolder(inverseProperty.getName(),
+                                property.getJavaType(),
+                                instance,
+                                dataManager,
+                                metadata,
+                                metadataTools);
                     }
+                    vh.setPreservedLoadContext(softDeletion, hints, constraints);
+                    declaredField.set(instance, vh);
                     declaredField.setAccessible(accessible);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                 }
@@ -159,15 +178,15 @@ public class LazyLoadingHelper {
                     if (idProperty.getJavaType() == UUID.class) {
                         id = UUID.fromString((String) id);
                     }
-
-                    declaredField.set(instance,
-                            new JmixWrappingValueHolder(
-                                    instance,
-                                    property.getJavaType(),
-                                    id,
-                                    dataManager,
-                                    metadata,
-                                    metadataTools));
+                    vh = new JmixWrappingValueHolder(
+                            instance,
+                            property.getJavaType(),
+                            id,
+                            dataManager,
+                            metadata,
+                            metadataTools);
+                    vh.setPreservedLoadContext(softDeletion, hints, constraints);
+                    declaredField.set(instance, vh);
                     declaredField.setAccessible(accessible);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                 }
@@ -178,13 +197,15 @@ public class LazyLoadingHelper {
                 if (fieldValue == null || fieldValue.getValueHolder() instanceof JmixAbstractValueHolder) {
                     return;
                 }
-                fieldValue.setValueHolder(new JmixCollectionValueHolder(
+                vh = new JmixCollectionValueHolder(
                         property.getName(),
                         instance,
                         dataManager,
                         beanFactory.getBean(FetchPlanBuilder.class, instance.getClass()),
                         metadata,
-                        metadataTools));
+                        metadataTools);
+                vh.setPreservedLoadContext(softDeletion, hints, constraints);
+                fieldValue.setValueHolder(vh);
                 break;
             default:
                 break;

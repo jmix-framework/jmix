@@ -217,7 +217,7 @@ public class OrmDataStore implements DataStore {
                     accessManager.applyConstraints(childEntityContext, accessConstraints);
                     return childEntityContext.isReadPermitted(entity);
                 });
-                fireLoadListeners(Collections.singletonList(result), context);
+                fireLoadListeners(Collections.singletonList(result), context, fetchPlan);
             }
 
             if (context.isJoinTransaction()) {
@@ -311,7 +311,7 @@ public class OrmDataStore implements DataStore {
                     accessManager.applyConstraints(childEntityContext, accessConstraints);
                     return childEntityContext.isReadPermitted(entity);
                 });
-                fireLoadListeners((List<JmixEntity>) resultList, context);
+                fireLoadListeners((List<JmixEntity>) resultList, context, fetchPlan);
             }
 
             if (context.isJoinTransaction()) {
@@ -1146,11 +1146,11 @@ public class OrmDataStore implements DataStore {
         });
     }
 
-    protected void fireLoadListeners(Collection<JmixEntity> entities, LoadContext<?> context) {
+    protected void fireLoadListeners(Collection<JmixEntity> entities, LoadContext<?> context, FetchPlan effectiveFetchPlan) {
         if (ormLifecycleListeners != null) {
             for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
                 //noinspection unchecked
-                lifecycleListener.onLoad(entities, context);
+                lifecycleListener.onLoad(entities, context, effectiveFetchPlan);
             }
         }
     }

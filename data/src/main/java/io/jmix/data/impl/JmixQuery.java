@@ -29,7 +29,6 @@ import io.jmix.data.EntityFetcher;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.impl.entitycache.QueryKey;
-import io.jmix.data.impl.lazyloading.LazyLoadingHelper;
 import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.eclipse.persistence.config.CascadePolicy;
@@ -71,7 +70,6 @@ public class JmixQuery<E> implements TypedQuery<E> {
     protected EntityChangedEventManager entityChangedEventManager;
     protected FetchGroupManager fetchGroupMgr;
     protected EntityFetcher entityFetcher;
-    protected LazyLoadingHelper lazyLoadingHelper;
     protected QueryCacheManager queryCacheMgr;
     protected QueryTransformerFactory queryTransformerFactory;
     protected QueryHintsProcessor hintsProcessor;
@@ -109,7 +107,6 @@ public class JmixQuery<E> implements TypedQuery<E> {
         entityChangedEventManager = (EntityChangedEventManager) beanFactory.getBean(EntityChangedEventManager.NAME);
         fetchGroupMgr = (FetchGroupManager) beanFactory.getBean(FetchGroupManager.NAME);
         entityFetcher = (EntityFetcher) beanFactory.getBean(EntityFetcher.NAME);
-        lazyLoadingHelper = (LazyLoadingHelper) beanFactory.getBean(LazyLoadingHelper.NAME);
         queryCacheMgr = (QueryCacheManager) beanFactory.getBean(QueryCacheManager.NAME);
         queryTransformerFactory = (QueryTransformerFactory) beanFactory.getBean(QueryTransformerFactory.NAME);
         hintsProcessor = (QueryHintsProcessor) beanFactory.getBean(QueryHintsProcessor.NAME);
@@ -136,11 +133,6 @@ public class JmixQuery<E> implements TypedQuery<E> {
                     }
                 }
             }
-            for (Object item : (List) obj) {
-                if (item instanceof JmixEntity) {
-                    lazyLoadingHelper.replaceValueHolders((JmixEntity) item, fetchPlans);
-                }
-            }
         });
         return resultList;
     }
@@ -161,7 +153,6 @@ public class JmixQuery<E> implements TypedQuery<E> {
                 for (FetchPlan fetchPlan : fetchPlans) {
                     entityFetcher.fetch((JmixEntity) obj, fetchPlan);
                 }
-                lazyLoadingHelper.replaceValueHolders((JmixEntity) obj, fetchPlans);
             }
         });
         return result;
@@ -411,7 +402,6 @@ public class JmixQuery<E> implements TypedQuery<E> {
                         for (FetchPlan fetchPlan : fetchPlans) {
                             entityFetcher.fetch((JmixEntity) item, fetchPlan);
                         }
-                        lazyLoadingHelper.replaceValueHolders((JmixEntity) item, fetchPlans);
                     }
                 }
             });

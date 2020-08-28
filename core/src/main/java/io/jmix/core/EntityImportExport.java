@@ -28,8 +28,7 @@ public interface EntityImportExport {
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
      * and packs the JSON file into ZIP archive.</p> <p>Serialization is described in the {@link
-     * EntitySerialization#toJson(Collection)}
-     * method documentation</p>
+     * EntitySerialization#toJson(Collection)} method documentation</p>
      *
      * @param entities a collection of entities to export
      * @return a byte array of zipped JSON file
@@ -38,9 +37,8 @@ public interface EntityImportExport {
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
-     * and packs the JSON file into ZIP archive. Before the serialization entities will be
-     * reloaded with the view passed as method parameter.</p> <p>Serialization is described in the {@link
-     * EntitySerialization#toJson(Collection)}
+     * and packs the JSON file into ZIP archive. Before the serialization entities will be reloaded with the fetch plan
+     * passed as method parameter.</p> <p>Serialization is described in the {@link EntitySerialization#toJson(Collection)}
      * method documentation</p>
      *
      * @param entities  a collection of entities to export
@@ -51,9 +49,8 @@ public interface EntityImportExport {
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.
-     * Before the serialization entities will be reloaded with the view passed as method
-     * parameter.</p> <p>Serialization is described in the {@link EntitySerialization#toJson(Collection)}
-     * method documentation</p>
+     * Before the serialization entities will be reloaded with the fetch plan passed as method parameter.</p>
+     * <p>Serialization is described in the {@link EntitySerialization#toJson(Collection)} method documentation</p>
      *
      * @param entities  a collection of entities to export
      * @param fetchPlan before serialization to JSON entities will be reloaded with this fetch plan
@@ -73,63 +70,63 @@ public interface EntityImportExport {
 
     /**
      * Deserializes the JSON and persists deserialized entities according to the rules, described by the {@code
-     * entityImportView} parameter. If the entity is not present in the database, it will be saved. Otherwise the fields
-     * of the existing entity that are in the {@code entityImportView} will be updated.
+     * importPlan} parameter. If the entity is not present in the database, it will be saved. Otherwise the fields of
+     * the existing entity that are in the {@code importPlan} will be updated.
      *
-     * @param json JSON file containing entities
-     * @param view {@code EntityImportView} with the rules that describes how entities should be persisted.
+     * @param json       JSON file containing entities
+     * @param importPlan {@code EntityImportPlan} with the rules that describes how entities should be persisted.
      * @return a collection of entities that have been imported
-     * @see EntityImportView
+     * @see EntityImportPlan
      */
-    Collection<JmixEntity> importEntitiesFromJson(String json, EntityImportView view);
+    Collection<JmixEntity> importEntitiesFromJson(String json, EntityImportPlan importPlan);
 
     /**
      * Reads a zip archive that contains a JSON file, deserializes the JSON and persists deserialized entities according
-     * to the rules, described by the {@code entityImportView} parameter. If the entity is not present in the database,
-     * it will be saved. Otherwise the fields of the existing entity that are in the {@code entityImportView} will be
-     * updated.
+     * to the rules, described by the {@code importPlan} parameter. If the entity is not present in the database, it
+     * will be saved. Otherwise the fields of the existing entity that are in the {@code importPlan} will be updated.
      *
-     * @param zipBytes         byte array of ZIP archive with JSON file
-     * @param entityImportView {@code EntityImportView} with the rules that describes how entities should be persisted.
+     * @param zipBytes   byte array of ZIP archive with JSON file
+     * @param importPlan {@code EntityImportPlan} with the rules that describes how entities should be persisted.
      * @return a collection of entities that have been imported
-     * @see EntityImportView
+     * @see EntityImportPlan
      */
-    Collection<JmixEntity> importEntitiesFromZIP(byte[] zipBytes, EntityImportView entityImportView);
+    Collection<JmixEntity> importEntitiesFromZIP(byte[] zipBytes, EntityImportPlan importPlan);
 
     /**
-     * See {@link #importEntities(Collection, EntityImportView, boolean)}. The current method doesn't perform bean
+     * See {@link #importEntities(Collection, EntityImportPlan, boolean)}. The current method doesn't perform bean
      * validation
      */
-    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView view);
+    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan);
 
     /**
-     * Persists entities according to the rules, described by the {@code entityImportView} parameter. If the entity is
-     * not present in the database, it will be saved. Otherwise the fields of the existing entity that are in the {@code
-     * entityImportView} will be updated.
+     * Persists entities according to the rules, described by the {@code importPlan} parameter. If the entity is not
+     * present in the database, it will be saved. Otherwise the fields of the existing entity that are in the {@code
+     * importPlan} will be updated.
      * <p>
-     * If the view contains a property for composition attribute then all composition collection members that are absent
-     * in the passed entity will be removed.
+     * If the import plan contains a property for composition attribute then all composition collection members that are
+     * absent in the passed entity will be removed.
      *
-     * @param importView {@code EntityImportView} with the rules that describes how entities should be persisted.
-     * @param validate   whether the passed entities should be validated by the bean validation
-     *                   mechanism before entities are persisted
+     * @param importPlan {@code EntityImportPlan} with the rules that describes how entities should be persisted.
+     * @param validate   whether the passed entities should be validated by the bean validation mechanism before
+     *                   entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView importView, boolean validate);
+    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan, boolean validate);
 
     /**
-     * Persists entities according to the rules, described by the {@code entityImportView} parameter. If the entity is
-     * not present in the database, it will be saved. Otherwise the fields of the existing entity that are in the {@code
-     * entityImportView} will be updated.
+     * Persists entities according to the rules, described by the {@code importPlan} parameter. If the entity is not
+     * present in the database, it will be saved. Otherwise the fields of the existing entity that are in the {@code
+     * importPlan} will be updated.
      * <p>
-     * If the view contains a property for composition attribute then all composition collection members that are absent
-     * in the passed entity will be removed.
+     * If the import plan contains a property for composition attribute then all composition collection members that are
+     * absent in the passed entity will be removed.
      *
-     * @param importView        {@code EntityImportView} with the rules that describes how entities should be persisted.
-     * @param validate          whether the passed entities should be validated by the bean validation
-     *                          mechanism before entities are persisted
+     * @param importPlan        {@link EntityImportPlan} with the rules that describes how entities should be
+     *                          persisted.
+     * @param validate          whether the passed entities should be validated by the bean validation mechanism before
+     *                          entities are persisted
      * @param optimisticLocking whether the passed entities versions should be validated before entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView importView, boolean validate, boolean optimisticLocking);
+    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
 }

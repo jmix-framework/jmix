@@ -83,7 +83,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 //    protected StoreFactory storeFactory;
 
     @Autowired
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     protected ReferenceToEntitySupport referenceToEntitySupport;
@@ -95,8 +95,8 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected AccessConstraintsRegistry accessConstraintsRegistry;
 
     @Override
-    public byte[] exportEntitiesToZIP(Collection<? extends JmixEntity> entities, FetchPlan view) {
-        return exportEntitiesToZIP(reloadEntities(entities, view));
+    public byte[] exportEntitiesToZIP(Collection<? extends JmixEntity> entities, FetchPlan fetchPlan) {
+        return exportEntitiesToZIP(reloadEntities(entities, fetchPlan));
     }
 
     @Override
@@ -122,8 +122,8 @@ public class EntityImportExportImpl implements EntityImportExport {
     }
 
     @Override
-    public String exportEntitiesToJSON(Collection<? extends JmixEntity> entities, FetchPlan view) {
-        return exportEntitiesToJSON(reloadEntities(entities, view));
+    public String exportEntitiesToJSON(Collection<? extends JmixEntity> entities, FetchPlan fetchPlan) {
+        return exportEntitiesToJSON(reloadEntities(entities, fetchPlan));
     }
 
     @Override
@@ -132,17 +132,17 @@ public class EntityImportExportImpl implements EntityImportExport {
                 EntitySerializationOption.COMPACT_REPEATED_ENTITIES, EntitySerializationOption.PRETTY_PRINT);
     }
 
-    protected Collection<? extends JmixEntity> reloadEntities(Collection<? extends JmixEntity> entities, FetchPlan view) {
+    protected Collection<? extends JmixEntity> reloadEntities(Collection<? extends JmixEntity> entities, FetchPlan fetchPlan) {
         List<Object> ids = entities.stream()
                 .map(EntityValues::getId)
                 .collect(Collectors.toList());
 
-        MetaClass metaClass = metadata.getClass(view.getEntityClass());
+        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e where e.id in :ids")
                 .setParameter("ids", ids);
-        LoadContext<? extends JmixEntity> ctx = new LoadContext(metadata.getClass(view.getEntityClass()))
+        LoadContext<? extends JmixEntity> ctx = new LoadContext(metadata.getClass(fetchPlan.getEntityClass()))
                 .setQuery(query)
-                .setFetchPlan(view);
+                .setFetchPlan(fetchPlan);
 
         return dataManager.loadList(ctx);
     }
@@ -158,17 +158,17 @@ public class EntityImportExportImpl implements EntityImportExport {
     }
 
     @Override
-    public Collection<JmixEntity> importEntitiesFromJson(String json, EntityImportView view) {
+    public Collection<JmixEntity> importEntitiesFromJson(String json, EntityImportPlan importPlan) {
         Collection<JmixEntity> result = new ArrayList<>();
         Collection<? extends JmixEntity> entities = entitySerialization.entitiesCollectionFromJson(json,
                 null,
                 EntitySerializationOption.COMPACT_REPEATED_ENTITIES);
-        result.addAll(importEntities(entities, view));
+        result.addAll(importEntities(entities, importPlan));
         return result;
     }
 
     @Override
-    public Collection<JmixEntity> importEntitiesFromZIP(byte[] zipBytes, EntityImportView view) {
+    public Collection<JmixEntity> importEntitiesFromZIP(byte[] zipBytes, EntityImportPlan importPlan) {
         Collection<JmixEntity> result = new ArrayList<>();
         Collection<? extends JmixEntity> entities;
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(zipBytes);
@@ -180,7 +180,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                     entities = entitySerialization.entitiesCollectionFromJson(json,
                             null,
                             EntitySerializationOption.COMPACT_REPEATED_ENTITIES);
-                    result.addAll(importEntities(entities, view));
+                    result.addAll(importEntities(entities, importPlan));
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Exception occurred while importing report", e);
@@ -196,17 +196,17 @@ public class EntityImportExportImpl implements EntityImportExport {
     }
 
     @Override
-    public Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView importView) {
-        return importEntities(entities, importView, false, false);
+    public Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan) {
+        return importEntities(entities, importPlan, false, false);
     }
 
     @Override
-    public Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView importView, boolean validate) {
-        return importEntities(entities, importView, validate, false);
+    public Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan, boolean validate) {
+        return importEntities(entities, importPlan, validate, false);
     }
 
     @Override
-    public Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportView importView, boolean validate, boolean optimisticLocking) {
+    public Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking) {
         List<ReferenceInfo> referenceInfoList = new ArrayList<>();
         SaveContext saveContext = new SaveContext();
         saveContext.setSoftDeletion(false);
@@ -217,18 +217,18 @@ public class EntityImportExportImpl implements EntityImportExport {
         //1. entities that should be persisted are processed first, fields that should be references to existing entities
         //are stored in the referenceInfoList variable
         for (JmixEntity srcEntity : entities) {
-            FetchPlan regularView = constructFetchPlanFromImportView(importView).build();
+            FetchPlan fetchPlan = constructFetchPlanFromImportPlan(importPlan).build();
             //set softDeletion to false because we can import deleted entity, so we'll restore it and update
             //TODO: dynamic attributes
             LoadContext<? extends JmixEntity> ctx = new LoadContext(metadata.getClass(srcEntity.getClass()))
                     .setSoftDeletion(false)
-                    .setFetchPlan(regularView)
+                    .setFetchPlan(fetchPlan)
 //                    .setLoadDynamicAttributes(true)
                     .setId(EntityValues.getId(srcEntity))
                     .setAccessConstraints(accessConstraintsRegistry.getConstraints());
             JmixEntity dstEntity = dataManager.load(ctx);
 
-            importEntity(srcEntity, dstEntity, importView, regularView, saveContext, referenceInfoList, optimisticLocking);
+            importEntity(srcEntity, dstEntity, importPlan, fetchPlan, saveContext, referenceInfoList, optimisticLocking);
         }
 
         //2. references to existing entities are processed
@@ -278,8 +278,8 @@ public class EntityImportExportImpl implements EntityImportExport {
      *
      * @param srcEntity         entity that came to the {@code EntityImportExport} bean
      * @param dstEntity         reloaded srcEntity or null if entity doesn't exist in the database
-     * @param importView        importView used for importing the entity
-     * @param regularView       view that was used for loading dstEntity
+     * @param importPlan        importPlan used for importing the entity
+     * @param fetchPlan         fetchPlan that was used for loading dstEntity
      * @param saveContext       entities that must be commited or deleted will be set to the saveContext
      * @param referenceInfoList list of referenceInfos for further processing
      * @param optimisticLocking whether the passed entity version should be validated before entity is persisted
@@ -287,8 +287,8 @@ public class EntityImportExportImpl implements EntityImportExport {
      */
     protected JmixEntity importEntity(JmixEntity srcEntity,
                                       @Nullable JmixEntity dstEntity,
-                                      EntityImportView importView,
-                                      FetchPlan regularView,
+                                      EntityImportPlan importPlan,
+                                      FetchPlan fetchPlan,
                                       SaveContext saveContext,
                                       Collection<ReferenceInfo> referenceInfoList,
                                       boolean optimisticLocking) {
@@ -301,8 +301,8 @@ public class EntityImportExportImpl implements EntityImportExport {
             createOp = true;
         }
 
-        //we must specify a view here because otherwise we may get UnfetchedAttributeException during merge
-        saveContext.saving(dstEntity, regularView);
+        //we must specify a fetchPlan here because otherwise we may get UnfetchedAttributeException during merge
+        saveContext.saving(dstEntity, fetchPlan);
 
         SecurityState srcSecurityState = new SecurityState();
         //todo persistenceSecurity
@@ -320,8 +320,8 @@ public class EntityImportExportImpl implements EntityImportExport {
 //            }
 //        }
 
-        for (EntityImportViewProperty importViewProperty : importView.getProperties()) {
-            String propertyName = importViewProperty.getName();
+        for (EntityImportPlanProperty importPlanProperty : importPlan.getProperties()) {
+            String propertyName = importPlanProperty.getName();
             MetaProperty metaProperty = metaClass.getProperty(propertyName);
             //todo persistenceSecurity
 //            if (BaseEntityInternalAccess.isHiddenOrReadOnly(dstSecurityState, propertyName)) {
@@ -342,10 +342,10 @@ public class EntityImportExportImpl implements EntityImportExport {
                 EntityValues.setValue(dstEntity, propertyName, EntityValues.getValue(srcEntity, propertyName));
 //                dstEntity.setValue(propertyName, srcEntity.getValue(propertyName));
             } else if (metaProperty.getRange().isClass()) {
-                FetchPlan regularPropertyView = regularView.getProperty(propertyName) != null ? regularView.getProperty(propertyName).getFetchPlan() : null;
+                FetchPlan propertyFetchPlan = fetchPlan.getProperty(propertyName) != null ? fetchPlan.getProperty(propertyName).getFetchPlan() : null;
                 if (metadataTools.isEmbedded(metaProperty)) {
-                    if (importViewProperty.getView() != null) {
-                        JmixEntity embeddedEntity = importEmbeddedAttribute(srcEntity, dstEntity, createOp, importViewProperty, regularPropertyView,
+                    if (importPlanProperty.getPlan() != null) {
+                        JmixEntity embeddedEntity = importEmbeddedAttribute(srcEntity, dstEntity, createOp, importPlanProperty, propertyFetchPlan,
                                 saveContext, referenceInfoList, optimisticLocking);
                         EntityValues.setValue(dstEntity, propertyName, embeddedEntity);
 //                        dstEntity.setValue(propertyName, embeddedEntity);
@@ -354,14 +354,14 @@ public class EntityImportExportImpl implements EntityImportExport {
                     switch (metaProperty.getRange().getCardinality()) {
                         case MANY_TO_MANY:
                             importManyToManyCollectionAttribute(srcEntity, dstEntity, srcSecurityState,
-                                    importViewProperty, regularPropertyView, saveContext, referenceInfoList, optimisticLocking);
+                                    importPlanProperty, propertyFetchPlan, saveContext, referenceInfoList, optimisticLocking);
                             break;
                         case ONE_TO_MANY:
                             importOneToManyCollectionAttribute(srcEntity, dstEntity, srcSecurityState,
-                                    importViewProperty, regularPropertyView, saveContext, referenceInfoList, optimisticLocking);
+                                    importPlanProperty, propertyFetchPlan, saveContext, referenceInfoList, optimisticLocking);
                             break;
                         default:
-                            importReference(srcEntity, dstEntity, importViewProperty, regularPropertyView, saveContext, referenceInfoList, optimisticLocking);
+                            importReference(srcEntity, dstEntity, importPlanProperty, propertyFetchPlan, saveContext, referenceInfoList, optimisticLocking);
                     }
                 }
             }
@@ -389,24 +389,24 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     protected void importReference(JmixEntity srcEntity,
                                    JmixEntity dstEntity,
-                                   EntityImportViewProperty importViewProperty,
-                                   @Nullable FetchPlan regularView,
+                                   EntityImportPlanProperty importPlanProperty,
+                                   @Nullable FetchPlan fetchPlan,
                                    SaveContext saveContext,
                                    Collection<ReferenceInfo> referenceInfoList,
                                    boolean optimisticLocking) {
-        JmixEntity srcPropertyValue = EntityValues.getValue(srcEntity, importViewProperty.getName());
+        JmixEntity srcPropertyValue = EntityValues.getValue(srcEntity, importPlanProperty.getName());
 //        Entity srcPropertyValue = srcEntity.getValue(importViewProperty.getName());
-        JmixEntity dstPropertyValue = EntityValues.getValue(dstEntity, importViewProperty.getName());
+        JmixEntity dstPropertyValue = EntityValues.getValue(dstEntity, importPlanProperty.getName());
 //        Entity dstPropertyValue = dstEntity.getValue(importViewProperty.getName());
-        if (importViewProperty.getView() == null) {
-            ReferenceInfo referenceInfo = new ReferenceInfo(dstEntity, null, importViewProperty, srcPropertyValue, dstPropertyValue);
+        if (importPlanProperty.getPlan() == null) {
+            ReferenceInfo referenceInfo = new ReferenceInfo(dstEntity, null, importPlanProperty, srcPropertyValue, dstPropertyValue);
             referenceInfoList.add(referenceInfo);
         } else {
             dstPropertyValue = srcPropertyValue != null ?
-                    importEntity(srcPropertyValue, dstPropertyValue, importViewProperty.getView(), regularView, saveContext, referenceInfoList,
+                    importEntity(srcPropertyValue, dstPropertyValue, importPlanProperty.getPlan(), fetchPlan, saveContext, referenceInfoList,
                             optimisticLocking) :
                     null;
-            EntityValues.setValue(dstEntity, importViewProperty.getName(), dstPropertyValue);
+            EntityValues.setValue(dstEntity, importPlanProperty.getName(), dstPropertyValue);
 //            dstEntity.setValue(importViewProperty.getName(), dstPropertyValue);
         }
     }
@@ -414,16 +414,16 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected void importOneToManyCollectionAttribute(JmixEntity srcEntity,
                                                       JmixEntity dstEntity,
                                                       @Nullable SecurityState srcSecurityState,
-                                                      EntityImportViewProperty viewProperty,
-                                                      @Nullable FetchPlan regularView,
+                                                      EntityImportPlanProperty importPlanProperty,
+                                                      @Nullable FetchPlan fetchPlan,
                                                       SaveContext saveContext,
                                                       Collection<ReferenceInfo> referenceInfoList,
                                                       boolean optimisticLocking) {
-        Collection<JmixEntity> collectionValue = EntityValues.getValue(srcEntity, viewProperty.getName());
+        Collection<JmixEntity> collectionValue = EntityValues.getValue(srcEntity, importPlanProperty.getName());
 //        Collection<Entity> collectionValue = srcEntity.getValue(viewProperty.getName());
-        Collection<JmixEntity> prevCollectionValue = EntityValues.getValue(dstEntity, viewProperty.getName());
+        Collection<JmixEntity> prevCollectionValue = EntityValues.getValue(dstEntity, importPlanProperty.getName());
 //        Collection<Entity> prevCollectionValue = dstEntity.getValue(viewProperty.getName());
-        MetaProperty metaProperty = metadata.getClass(srcEntity).getProperty(viewProperty.getName());
+        MetaProperty metaProperty = metadata.getClass(srcEntity).getProperty(importPlanProperty.getName());
         MetaProperty inverseMetaProperty = metaProperty.getInverse();
         Collection dstFilteredIds = getFilteredIds(dstEntity, metaProperty.getName());
         Collection srcFilteredIds = getFilteredIds(srcSecurityState, metaProperty.getName());
@@ -431,7 +431,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         CollectionCompare.with()
                 .onCreate(e -> {
                     if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
-                        JmixEntity result = importEntity(e, null, viewProperty.getView(), regularView,
+                        JmixEntity result = importEntity(e, null, importPlanProperty.getPlan(), fetchPlan,
                                 saveContext, referenceInfoList, optimisticLocking);
                         if (inverseMetaProperty != null) {
                             EntityValues.setValue(result, inverseMetaProperty.getName(), dstEntity);
@@ -442,7 +442,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 })
                 .onUpdate((src, dst) -> {
                     if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(src))) {
-                        JmixEntity result = importEntity(src, dst, viewProperty.getView(), regularView,
+                        JmixEntity result = importEntity(src, dst, importPlanProperty.getPlan(), fetchPlan,
                                 saveContext, referenceInfoList, optimisticLocking);
                         if (inverseMetaProperty != null) {
                             EntityValues.setValue(result, inverseMetaProperty.getName(), dstEntity);
@@ -453,7 +453,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 })
                 .onDelete(e -> {
                     Object refId = referenceToEntitySupport.getReferenceId(e);
-                    if (viewProperty.getCollectionImportPolicy() == CollectionImportPolicy.REMOVE_ABSENT_ITEMS) {
+                    if (importPlanProperty.getCollectionImportPolicy() == CollectionImportPolicy.REMOVE_ABSENT_ITEMS) {
                         if (!dstFilteredIds.contains(refId) && !srcFilteredIds.contains(refId)) {
                             saveContext.removing(e);
                         }
@@ -470,32 +470,32 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected void importManyToManyCollectionAttribute(JmixEntity srcEntity,
                                                        JmixEntity dstEntity,
                                                        SecurityState srcSecurityState,
-                                                       EntityImportViewProperty viewProperty,
-                                                       @Nullable FetchPlan regularView,
+                                                       EntityImportPlanProperty importPlanProperty,
+                                                       @Nullable FetchPlan fetchPlan,
                                                        SaveContext saveContext,
                                                        Collection<ReferenceInfo> referenceInfoList,
                                                        boolean optimisticLocking) {
-        Collection<JmixEntity> collectionValue = EntityValues.getValue(srcEntity, viewProperty.getName());
+        Collection<JmixEntity> collectionValue = EntityValues.getValue(srcEntity, importPlanProperty.getName());
 //        Collection<Entity> collectionValue = srcEntity.getValue(viewProperty.getName());
-        Collection<JmixEntity> prevCollectionValue = EntityValues.getValue(dstEntity, viewProperty.getName());
+        Collection<JmixEntity> prevCollectionValue = EntityValues.getValue(dstEntity, importPlanProperty.getName());
 //        Collection<Entity> prevCollectionValue = dstEntity.getValue(viewProperty.getName());
-        MetaProperty metaProperty = metadata.getClass(srcEntity).getProperty(viewProperty.getName());
+        MetaProperty metaProperty = metadata.getClass(srcEntity).getProperty(importPlanProperty.getName());
         Collection dstFilteredIds = getFilteredIds(dstEntity, metaProperty.getName());
         Collection srcFilteredIds = getFilteredIds(dstEntity, metaProperty.getName());
 
-        if (viewProperty.getView() != null) {
+        if (importPlanProperty.getPlan() != null) {
             Collection<JmixEntity> newCollectionValue = createNewCollection(metaProperty);
             CollectionCompare.with()
                     .onCreate(e -> {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
-                            JmixEntity result = importEntity(e, null, viewProperty.getView(), regularView,
+                            JmixEntity result = importEntity(e, null, importPlanProperty.getPlan(), fetchPlan,
                                     saveContext, referenceInfoList, optimisticLocking);
                             newCollectionValue.add(result);
                         }
                     })
                     .onUpdate((src, dst) -> {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(src))) {
-                            JmixEntity result = importEntity(src, dst, viewProperty.getView(), regularView,
+                            JmixEntity result = importEntity(src, dst, importPlanProperty.getPlan(), fetchPlan,
                                     saveContext, referenceInfoList, optimisticLocking);
                             newCollectionValue.add(result);
                         }
@@ -504,7 +504,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
                             if (srcFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
                                 newCollectionValue.add(e);
-                            } else if (viewProperty.getCollectionImportPolicy() == CollectionImportPolicy.KEEP_ABSENT_ITEMS) {
+                            } else if (importPlanProperty.getCollectionImportPolicy() == CollectionImportPolicy.KEEP_ABSENT_ITEMS) {
                                 newCollectionValue.add(e);
                             }
                         }
@@ -514,7 +514,7 @@ public class EntityImportExportImpl implements EntityImportExport {
             //dstEntity.setValue(metaProperty.getName(), newCollectionValue);
         } else {
             //create ReferenceInfo objects - they will be parsed later
-            ReferenceInfo referenceInfo = new ReferenceInfo(dstEntity, srcSecurityState, viewProperty, collectionValue, prevCollectionValue);
+            ReferenceInfo referenceInfo = new ReferenceInfo(dstEntity, srcSecurityState, importPlanProperty, collectionValue, prevCollectionValue);
             referenceInfoList.add(referenceInfo);
         }
     }
@@ -523,12 +523,12 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected JmixEntity importEmbeddedAttribute(JmixEntity srcEntity,
                                                  JmixEntity dstEntity,
                                                  boolean createOp,
-                                                 EntityImportViewProperty importViewProperty,
-                                                 FetchPlan regularView,
+                                                 EntityImportPlanProperty importPlanProperty,
+                                                 FetchPlan fetchPlan,
                                                  SaveContext saveContext,
                                                  Collection<ReferenceInfo> referenceInfoList,
                                                  boolean optimisticLock) {
-        String propertyName = importViewProperty.getName();
+        String propertyName = importPlanProperty.getName();
         MetaProperty metaProperty = metadata.getClass(srcEntity).getProperty(propertyName);
         JmixEntity srcEmbeddedEntity = EntityValues.getValue(srcEntity, propertyName);
         if (srcEmbeddedEntity == null) {
@@ -556,7 +556,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 //            }
 //        }
 
-        for (EntityImportViewProperty vp : importViewProperty.getView().getProperties()) {
+        for (EntityImportPlanProperty vp : importPlanProperty.getPlan().getProperties()) {
             MetaProperty mp = embeddedAttrMetaClass.getProperty(vp.getName());
             //todo persistenceSecurity
 //            if (BaseEntityInternalAccess.isHiddenOrReadOnly(dstSecurityState, mp.getName())) {
@@ -569,15 +569,15 @@ public class EntityImportExportImpl implements EntityImportExport {
                 EntityValues.setValue(dstEmbeddedEntity, vp.getName(), EntityValues.getValue(srcEmbeddedEntity, vp.getName()));
 //                dstEmbeddedEntity.setValue(vp.getName(), srcEmbeddedEntity.getValue(vp.getName()));
             } else if (mp.getRange().isClass()) {
-                FetchPlan propertyRegularView = regularView.getProperty(propertyName) != null ? regularView.getProperty(propertyName).getFetchPlan() : null;
+                FetchPlan fetchPlanProperty = fetchPlan.getProperty(propertyName) != null ? fetchPlan.getProperty(propertyName).getFetchPlan() : null;
                 if (metaProperty.getRange().getCardinality() == Range.Cardinality.ONE_TO_MANY) {
                     importOneToManyCollectionAttribute(srcEmbeddedEntity, dstEmbeddedEntity, srcSecurityState,
-                            vp, propertyRegularView, saveContext, referenceInfoList, optimisticLock);
+                            vp, fetchPlanProperty, saveContext, referenceInfoList, optimisticLock);
                 } else if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_MANY) {
                     importManyToManyCollectionAttribute(srcEmbeddedEntity, dstEmbeddedEntity, srcSecurityState,
-                            vp, propertyRegularView, saveContext, referenceInfoList, optimisticLock);
+                            vp, fetchPlanProperty, saveContext, referenceInfoList, optimisticLock);
                 } else {
-                    importReference(srcEmbeddedEntity, dstEmbeddedEntity, vp, propertyRegularView, saveContext, referenceInfoList, optimisticLock);
+                    importReference(srcEmbeddedEntity, dstEmbeddedEntity, vp, fetchPlanProperty, saveContext, referenceInfoList, optimisticLock);
                 }
             }
         }
@@ -591,8 +591,8 @@ public class EntityImportExportImpl implements EntityImportExport {
      */
     protected void processReferenceInfo(ReferenceInfo referenceInfo, SaveContext saveContext, Set<JmixEntity> loadedEntities) {
         JmixEntity entity = referenceInfo.getEntity();
-        EntityImportViewProperty viewProperty = referenceInfo.getViewProperty();
-        MetaProperty metaProperty = metadata.getClass(entity).getProperty(viewProperty.getName());
+        EntityImportPlanProperty importPlanProperty = referenceInfo.getPlanProperty();
+        MetaProperty metaProperty = metadata.getClass(entity).getProperty(importPlanProperty.getName());
         Collection dstFilteredIds = getFilteredIds(entity, metaProperty.getName());
         Collection srcFilteredIds = getFilteredIds(referenceInfo.getPrevSecurityState(), metaProperty.getName());
 
@@ -610,7 +610,7 @@ public class EntityImportExportImpl implements EntityImportExport {
             CollectionCompare.with()
                     .onCreate(e -> {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
-                            JmixEntity result = findReferenceEntity(e, viewProperty, saveContext, loadedEntities);
+                            JmixEntity result = findReferenceEntity(e, importPlanProperty, saveContext, loadedEntities);
                             if (result != null) {
                                 newCollectionValue.add(result);
                             }
@@ -618,7 +618,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                     })
                     .onUpdate((src, dst) -> {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(dst))) {
-                            JmixEntity result = findReferenceEntity(src, viewProperty, saveContext, loadedEntities);
+                            JmixEntity result = findReferenceEntity(src, importPlanProperty, saveContext, loadedEntities);
                             if (result != null) {
                                 newCollectionValue.add(result);
                             }
@@ -628,7 +628,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                         if (!dstFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
                             if (srcFilteredIds.contains(referenceToEntitySupport.getReferenceId(e))) {
                                 newCollectionValue.add(e);
-                            } else if (viewProperty.getCollectionImportPolicy() == CollectionImportPolicy.KEEP_ABSENT_ITEMS) {
+                            } else if (importPlanProperty.getCollectionImportPolicy() == CollectionImportPolicy.KEEP_ABSENT_ITEMS) {
                                 newCollectionValue.add(e);
                             }
                         }
@@ -654,7 +654,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 }
             } else {
                 if (dstFilteredIds.isEmpty()) {
-                    JmixEntity result = findReferenceEntity(entityValue, viewProperty, saveContext, loadedEntities);
+                    JmixEntity result = findReferenceEntity(entityValue, importPlanProperty, saveContext, loadedEntities);
                     if (result != null) {
                         EntityValues.setValue(entity, metaProperty.getName(), result);
 //                        entity.setValue(metaProperty.getName(), result);
@@ -665,23 +665,23 @@ public class EntityImportExportImpl implements EntityImportExport {
     }
 
     /**
-     * Method constructs {@link FetchPlanBuilder} for a regular {@link FetchPlan} from the {@link EntityImportView}. The regular fetchPlan will include all
-     * properties defined in the import view.
+     * Method constructs {@link FetchPlanBuilder} for a regular {@link FetchPlan} from the {@link EntityImportPlan}. The
+     * regular fetchPlan will include all properties defined in the import plan.
      */
-    protected FetchPlanBuilder constructFetchPlanFromImportView(EntityImportView importView) {
-        FetchPlanBuilder regularViewBuilder = fetchPlans.builder(importView.getEntityClass());
-        MetaClass metaClass = metadata.getClass(importView.getEntityClass());
-        for (EntityImportViewProperty importViewProperty : importView.getProperties()) {
-            EntityImportView importViewPropertyView = importViewProperty.getView();
-            if (importViewPropertyView == null) {
-                MetaProperty metaProperty = metaClass.getProperty(importViewProperty.getName());
+    protected FetchPlanBuilder constructFetchPlanFromImportPlan(EntityImportPlan importPlan) {
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(importPlan.getEntityClass());
+        MetaClass metaClass = metadata.getClass(importPlan.getEntityClass());
+        for (EntityImportPlanProperty importPlanProperty : importPlan.getProperties()) {
+            EntityImportPlan importPlanPropertyPlan = importPlanProperty.getPlan();
+            if (importPlanPropertyPlan == null) {
+                MetaProperty metaProperty = metaClass.getProperty(importPlanProperty.getName());
                 if (metaProperty.isReadOnly()) continue;
-                regularViewBuilder.add(importViewProperty.getName());
+                fetchPlanBuilder.add(importPlanProperty.getName());
             } else {
-                regularViewBuilder.add(importViewProperty.getName(), constructFetchPlanFromImportView(importViewPropertyView));
+                fetchPlanBuilder.add(importPlanProperty.getName(), constructFetchPlanFromImportPlan(importPlanPropertyPlan));
             }
         }
-        return regularViewBuilder;
+        return fetchPlanBuilder;
     }
 
     protected Collection getFilteredIds(JmixEntity entity, String propertyName) {
@@ -725,7 +725,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 //        return globalConfig.getRestRequiresSecurityToken();
 //    }
     @Nullable
-    protected JmixEntity findReferenceEntity(JmixEntity entity, EntityImportViewProperty viewProperty, SaveContext saveContext,
+    protected JmixEntity findReferenceEntity(JmixEntity entity, EntityImportPlanProperty importPlanProperty, SaveContext saveContext,
                                              Set<JmixEntity> loadedEntities) {
         JmixEntity result = Stream.concat(loadedEntities.stream(), saveContext.getEntitiesToSave().stream())
                 .filter(item -> item.equals(entity))
@@ -737,9 +737,9 @@ public class EntityImportExportImpl implements EntityImportExport {
                     .setId(EntityValues.getId(entity));
             result = dataManager.load(ctx);
             if (result == null) {
-                if (viewProperty.getReferenceImportBehaviour() == ReferenceImportBehaviour.ERROR_ON_MISSING) {
+                if (importPlanProperty.getReferenceImportBehaviour() == ReferenceImportBehaviour.ERROR_ON_MISSING) {
                     throw new EntityImportException(String.format("Referenced entity for property '%s' with id = %s is missing",
-                            viewProperty.getName(), EntityValues.getId(entity)));
+                            importPlanProperty.getName(), EntityValues.getId(entity)));
                 }
             } else {
                 loadedEntities.add(result);
@@ -761,20 +761,20 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected static class ReferenceInfo {
         protected JmixEntity entity;
         protected SecurityState prevSecurityState;
-        protected EntityImportViewProperty viewProperty;
+        protected EntityImportPlanProperty planProperty;
         protected Object propertyValue;
         protected Object prevPropertyValue;
 
-        public ReferenceInfo(JmixEntity entity, SecurityState prevSecurityState, EntityImportViewProperty viewProperty, Object propertyValue, Object prevPropertyValue) {
+        public ReferenceInfo(JmixEntity entity, SecurityState prevSecurityState, EntityImportPlanProperty planProperty, Object propertyValue, Object prevPropertyValue) {
             this.entity = entity;
             this.prevSecurityState = prevSecurityState;
-            this.viewProperty = viewProperty;
+            this.planProperty = planProperty;
             this.propertyValue = propertyValue;
             this.prevPropertyValue = prevPropertyValue;
         }
 
-        public EntityImportViewProperty getViewProperty() {
-            return viewProperty;
+        public EntityImportPlanProperty getPlanProperty() {
+            return planProperty;
         }
 
         public Object getPrevPropertyValue() {

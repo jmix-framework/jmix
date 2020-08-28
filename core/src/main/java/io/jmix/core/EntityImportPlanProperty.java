@@ -18,37 +18,37 @@ package io.jmix.core;
 
 import java.io.Serializable;
 
-public class EntityImportViewProperty implements Serializable {
+public class EntityImportPlanProperty implements Serializable {
 
     protected String name;
 
-    protected EntityImportView view;
+    protected EntityImportPlan plan;
 
     protected ReferenceImportBehaviour referenceImportBehaviour;
 
     protected CollectionImportPolicy collectionImportPolicy;
 
-    public EntityImportViewProperty(String name) {
+    public EntityImportPlanProperty(String name) {
         this.name = name;
     }
 
-    public EntityImportViewProperty(String name, EntityImportView view) {
+    public EntityImportPlanProperty(String name, EntityImportPlan plan) {
         this.name = name;
-        this.view = view;
+        this.plan = plan;
     }
 
-    public EntityImportViewProperty(String name, EntityImportView view, CollectionImportPolicy collectionImportPolicy) {
+    public EntityImportPlanProperty(String name, EntityImportPlan plan, CollectionImportPolicy collectionImportPolicy) {
         this.name = name;
-        this.view = view;
+        this.plan = plan;
         this.collectionImportPolicy = collectionImportPolicy;
     }
 
-    public EntityImportViewProperty(String name, ReferenceImportBehaviour referenceImportBehaviour) {
+    public EntityImportPlanProperty(String name, ReferenceImportBehaviour referenceImportBehaviour) {
         this.name = name;
         this.referenceImportBehaviour = referenceImportBehaviour;
     }
 
-    public EntityImportViewProperty(String name, ReferenceImportBehaviour referenceImportBehaviour, CollectionImportPolicy collectionImportPolicy) {
+    public EntityImportPlanProperty(String name, ReferenceImportBehaviour referenceImportBehaviour, CollectionImportPolicy collectionImportPolicy) {
         this.name = name;
         this.referenceImportBehaviour = referenceImportBehaviour;
         this.collectionImportPolicy = collectionImportPolicy;
@@ -62,12 +62,12 @@ public class EntityImportViewProperty implements Serializable {
         this.name = name;
     }
 
-    public EntityImportView getView() {
-        return view;
+    public EntityImportPlan getPlan() {
+        return plan;
     }
 
-    public void setView(EntityImportView view) {
-        this.view = view;
+    public void setPlan(EntityImportPlan plan) {
+        this.plan = plan;
     }
 
     public ReferenceImportBehaviour getReferenceImportBehaviour() {

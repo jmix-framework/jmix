@@ -37,8 +37,8 @@ import java.util.Map;
 /**
  *
  */
-@Component(EntityImportViewJsonBuilder.NAME)
-public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuilder {
+@Component(EntityImportPlanJsonBuilder.NAME)
+public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuilder {
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -50,10 +50,10 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
     protected AccessManager accessManager;
 
     @Autowired
-    protected EntityImportViews entityImportViews;
+    protected EntityImportPlans entityImportPlans;
 
     @Override
-    public EntityImportView buildFromJson(String json, MetaClass metaClass) {
+    public EntityImportPlan buildFromJson(String json, MetaClass metaClass) {
         JsonElement rootElement = JsonParser.parseString(json);
         if (!rootElement.isJsonObject()) {
             throw new RuntimeException("Passed json is not a JSON object");
@@ -61,8 +61,8 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
         return buildFromJsonObject(rootElement.getAsJsonObject(), metaClass);
     }
 
-    protected EntityImportView buildFromJsonObject(JsonObject jsonObject, MetaClass metaClass) {
-        EntityImportViewBuilder viewBuilder = entityImportViews.builder(metaClass.getJavaClass());
+    protected EntityImportPlan buildFromJsonObject(JsonObject jsonObject, MetaClass metaClass) {
+        EntityImportPlanBuilder importPlanBuilder = entityImportPlans.builder(metaClass.getJavaClass());
 
         ImportEntityContext importContext = new ImportEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(importContext);
@@ -75,7 +75,7 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
             Class<?> propertyType = metaProperty.getJavaType();
             if (propertyRange.isDatatype() || propertyRange.isEnum()) {
                 if (importContext.isImportPermitted(propertyName)) {
-                    viewBuilder.addLocalProperty(propertyName);
+                    importPlanBuilder.addLocalProperty(propertyName);
                 }
             } else if (propertyRange.isClass()) {
                 if (JmixEntity.class.isAssignableFrom(propertyType)) {
@@ -86,8 +86,8 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
                             throw new RuntimeException("JsonObject was expected for property " + propertyName);
                         }
                         if (importContext.isImportPermitted(propertyName)) {
-                            EntityImportView propertyImportView = buildFromJsonObject(propertyJsonObject.getAsJsonObject(), propertyMetaClass);
-                            viewBuilder.addEmbeddedProperty(propertyName, propertyImportView);
+                            EntityImportPlan propertyImportPlan = buildFromJsonObject(propertyJsonObject.getAsJsonObject(), propertyMetaClass);
+                            importPlanBuilder.addEmbeddedProperty(propertyName, propertyImportPlan);
                         }
                     } else {
                         MetaClass propertyMetaClass = metadata.getClass(propertyType);
@@ -97,28 +97,28 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
                                 if (propertyJsonObject.isJsonNull()) {
                                     //in case of null we must add such import behavior to update the reference with null value later
                                     if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
-                                        viewBuilder.addManyToOneProperty(propertyName, ReferenceImportBehaviour.IGNORE_MISSING);
+                                        importPlanBuilder.addManyToOneProperty(propertyName, ReferenceImportBehaviour.IGNORE_MISSING);
                                     } else {
-                                        viewBuilder.addOneToOneProperty(propertyName, ReferenceImportBehaviour.IGNORE_MISSING);
+                                        importPlanBuilder.addOneToOneProperty(propertyName, ReferenceImportBehaviour.IGNORE_MISSING);
                                     }
                                 } else {
                                     if (!propertyJsonObject.isJsonObject()) {
                                         throw new RuntimeException("JsonObject was expected for property " + propertyName);
                                     }
-                                    EntityImportView propertyImportView = buildFromJsonObject(propertyJsonObject.getAsJsonObject(), propertyMetaClass);
+                                    EntityImportPlan propertyImportPlan = buildFromJsonObject(propertyJsonObject.getAsJsonObject(), propertyMetaClass);
                                     if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
-                                        viewBuilder.addManyToOneProperty(propertyName, propertyImportView);
+                                        importPlanBuilder.addManyToOneProperty(propertyName, propertyImportPlan);
                                     } else {
-                                        viewBuilder.addOneToOneProperty(propertyName, propertyImportView);
+                                        importPlanBuilder.addOneToOneProperty(propertyName, propertyImportPlan);
                                     }
                                 }
                             }
                         } else {
                             if (importContext.isImportPermitted(propertyName))
                                 if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
-                                    viewBuilder.addManyToOneProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING);
+                                    importPlanBuilder.addManyToOneProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING);
                                 } else {
-                                    viewBuilder.addOneToOneProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING);
+                                    importPlanBuilder.addOneToOneProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING);
                                 }
                         }
                     }
@@ -127,7 +127,7 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
                     switch (metaProperty.getRange().getCardinality()) {
                         case MANY_TO_MANY: {
                             if (importContext.isImportPermitted(propertyName))
-                                viewBuilder.addManyToManyProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING,
+                                importPlanBuilder.addManyToManyProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING,
                                         CollectionImportPolicy.REMOVE_ABSENT_ITEMS);
                             break;
                         }
@@ -137,9 +137,9 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
                                 if (!compositionJsonArray.isJsonArray()) {
                                     throw new RuntimeException("JsonArray was expected for property " + propertyName);
                                 }
-                                EntityImportView propertyImportView = buildFromJsonArray(compositionJsonArray.getAsJsonArray(), propertyMetaClass);
+                                EntityImportPlan propertyImportPlan = buildFromJsonArray(compositionJsonArray.getAsJsonArray(), propertyMetaClass);
                                 if (importContext.isImportPermitted(propertyName))
-                                    viewBuilder.addOneToManyProperty(propertyName, propertyImportView, CollectionImportPolicy.REMOVE_ABSENT_ITEMS);
+                                    importPlanBuilder.addOneToManyProperty(propertyName, propertyImportPlan, CollectionImportPolicy.REMOVE_ABSENT_ITEMS);
                             }
                             break;
                         }
@@ -151,68 +151,68 @@ public class EntityImportViewJsonBuilderImpl implements EntityImportViewJsonBuil
             }
         }
 
-        return viewBuilder.build();
+        return importPlanBuilder.build();
     }
 
     /**
-     * Builds a EntityImportView that contains properties from all collection members.
-     * If the first member contains the property A, and the second one contains a property B then a result view will contain
-     * both properties A and B. Views for nested collections (2nd level compositions) are also merged.
+     * Builds an EntityImportPlan that contains properties from all collection members. If the first member contains the
+     * property A, and the second one contains a property B then a result import plan will contain both properties A and B.
+     * Plans for nested collections (2nd level compositions) are also merged.
      *
      * @param jsonArray a JsonArray
      * @param metaClass a metaClass of entities that are in the jsonArray
-     * @return an EntityImportView
+     * @return an EntityImportPlan
      */
-    protected EntityImportView buildFromJsonArray(JsonArray jsonArray, MetaClass metaClass) {
-        List<EntityImportView> viewsForArrayElements = new ArrayList<>();
+    protected EntityImportPlan buildFromJsonArray(JsonArray jsonArray, MetaClass metaClass) {
+        List<EntityImportPlan> plansArrayElements = new ArrayList<>();
         for (JsonElement arrayElement : jsonArray.getAsJsonArray()) {
-            EntityImportView viewForArrayElement = buildFromJsonObject(arrayElement.getAsJsonObject(), metaClass);
-            viewsForArrayElements.add(viewForArrayElement);
+            EntityImportPlan planForArrayElement = buildFromJsonObject(arrayElement.getAsJsonObject(), metaClass);
+            plansArrayElements.add(planForArrayElement);
         }
-        EntityImportView resultView = viewsForArrayElements.isEmpty() ?
-                new EntityImportView(metaClass.getJavaClass()) :
-                viewsForArrayElements.get(0);
-        if (viewsForArrayElements.size() > 1) {
-            for (int i = 1; i < viewsForArrayElements.size(); i++) {
-                resultView = mergeViews(resultView, viewsForArrayElements.get(i));
+        EntityImportPlan resultPlan = plansArrayElements.isEmpty() ?
+                new EntityImportPlan(metaClass.getJavaClass()) :
+                plansArrayElements.get(0);
+        if (plansArrayElements.size() > 1) {
+            for (int i = 1; i < plansArrayElements.size(); i++) {
+                resultPlan = mergeImportPlans(resultPlan, plansArrayElements.get(i));
             }
         }
-        return resultView;
+        return resultPlan;
     }
 
     /**
-     * Recursively merges two views. The result view will contain all fields that are defined either in view1 or in
-     * view2.
+     * Recursively merges two import plans. The result import plan will contain all fields that are defined either in
+     * plan1 or in plan2.
      */
-    protected EntityImportView mergeViews(@Nullable EntityImportView view1, @Nullable EntityImportView view2) {
-        if (view1 == null) return view2;
-        if (view2 == null) return view1;
-        EntityImportViewBuilder viewBuilder = entityImportViews.builder(view1.getEntityClass());
+    protected EntityImportPlan mergeImportPlans(@Nullable EntityImportPlan plan1, @Nullable EntityImportPlan plan2) {
+        if (plan1 == null) return plan2;
+        if (plan2 == null) return plan1;
+        EntityImportPlanBuilder importPlanBuilder = entityImportPlans.builder(plan1.getEntityClass());
 
-        for (EntityImportViewProperty p1 : view1.getProperties()) {
-            EntityImportViewProperty newProperty = new EntityImportViewProperty(p1.getName());
+        for (EntityImportPlanProperty p1 : plan1.getProperties()) {
+            EntityImportPlanProperty newProperty = new EntityImportPlanProperty(p1.getName());
             newProperty.setReferenceImportBehaviour(p1.getReferenceImportBehaviour());
             newProperty.setCollectionImportPolicy(p1.getCollectionImportPolicy());
-            EntityImportViewProperty p2 = view2.getProperty(p1.getName());
+            EntityImportPlanProperty p2 = plan2.getProperty(p1.getName());
             if (p2 == null) {
-                newProperty.setView(p1.getView());
+                newProperty.setPlan(p1.getPlan());
             } else {
-                newProperty.setView(mergeViews(p1.getView(), p2.getView()));
+                newProperty.setPlan(mergeImportPlans(p1.getPlan(), p2.getPlan()));
             }
-            viewBuilder.addProperty(newProperty);
+            importPlanBuilder.addProperty(newProperty);
         }
 
         //add properties that exist in p2 but not in p1
-        for (EntityImportViewProperty p2 : view2.getProperties()) {
-            if (view1.getProperty(p2.getName()) == null) {
-                EntityImportViewProperty newProperty = new EntityImportViewProperty(p2.getName());
-                newProperty.setView(p2.getView());
+        for (EntityImportPlanProperty p2 : plan2.getProperties()) {
+            if (plan1.getProperty(p2.getName()) == null) {
+                EntityImportPlanProperty newProperty = new EntityImportPlanProperty(p2.getName());
+                newProperty.setPlan(p2.getPlan());
                 newProperty.setReferenceImportBehaviour(p2.getReferenceImportBehaviour());
                 newProperty.setCollectionImportPolicy(p2.getCollectionImportPolicy());
-                viewBuilder.addProperty(newProperty);
+                importPlanBuilder.addProperty(newProperty);
             }
         }
 
-        return viewBuilder.build();
+        return importPlanBuilder.build();
     }
 }

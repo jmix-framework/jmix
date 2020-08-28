@@ -21,20 +21,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Factory for {@link EntityImportViewBuilder}.
+ * Factory for {@link EntityImportPlanBuilder}.
  */
-@Component(EntityImportViews.NAME)
-public class EntityImportViews {
+@Component(EntityImportPlans.NAME)
+public class EntityImportPlans {
 
-    public static final String NAME = "core_EntityImportViews";
+    public static final String NAME = "core_EntityImportPlans";
 
     @Autowired
-    protected ObjectProvider<EntityImportViewBuilder> entityImportViewBuilderProvider;
+    protected ObjectProvider<EntityImportPlanBuilder> entityImportPlanBuilderProvider;
 
     /**
-     * Returns {@link EntityImportViewBuilder} builder for the given entity class.
+     * Returns {@link EntityImportPlanBuilder} builder for the given entity class.
      */
-    public EntityImportViewBuilder builder(Class<? extends JmixEntity> entityClass) {
-        return entityImportViewBuilderProvider.getObject(entityClass);
+    public EntityImportPlanBuilder builder(Class<? extends JmixEntity> entityClass) {
+        return entityImportPlanBuilderProvider.getObject(entityClass);
     }
 }

@@ -17,7 +17,8 @@
 package io.jmix.core;
 
 /**
- * Enum describes the policy of processing collection members when importing the entity with the {@link EntityImportView}
+ * Enum describes the policy of processing collection members when importing the entity with the {@link
+ * EntityImportPlan}
  */
 public enum CollectionImportPolicy {
 

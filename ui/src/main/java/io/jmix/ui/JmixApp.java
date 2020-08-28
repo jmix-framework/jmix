@@ -61,15 +61,9 @@ public class JmixApp extends App {
     @Override
     public OperationResult logout() {
         closeWindowsInternal(true);
-
         removeAllWindows(Collections.singletonList(AppUI.getCurrent()));
-        //todo MG authorities
-        AnonymousAuthenticationToken anonymousToken = new AnonymousAuthenticationToken(
-                coreProperties.getAnonymousAuthenticationTokenKey(),
-                userRepository.getAnonymousUser(),
-                AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
-        SecurityContextHelper.setAuthentication(anonymousToken);
-        initializeUi();
+
+        AppUI.getCurrent().getPage().setLocation("/logout");
         return OperationResult.success();
     }
 

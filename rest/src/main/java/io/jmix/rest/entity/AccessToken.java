@@ -16,18 +16,25 @@
 
 package io.jmix.rest.entity;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.data.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity(name = "sys$AccessToken")
 @Table(name = "SYS_ACCESS_TOKEN")
 @SystemLevel
-public class AccessToken extends BaseUuidEntity {
+public class AccessToken implements JmixEntity {
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
 
     @Column(name = "CREATE_TS")
     protected Date createTs;
@@ -55,6 +62,14 @@ public class AccessToken extends BaseUuidEntity {
 
     @Column(name = "REFRESH_TOKEN_VALUE")
     protected String refreshTokenValue;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getTokenValue() {
         return tokenValue;

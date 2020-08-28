@@ -82,6 +82,7 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
         resources
 //                .tokenServices(tokenServices)
                 .tokenStore(tokenStore);
+
     }
 
     @Override

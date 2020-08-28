@@ -16,8 +16,6 @@
 
 package io.jmix.rest.test.testmodel;
 
-import io.jmix.data.entity.StandardEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -27,7 +25,7 @@ import javax.persistence.Table;
  */
 @Entity(name = "test$LinkedTestEntity")
 @Table(name = "TEST_LINKED_TEST_ENTITY")
-public class LinkedTestEntity extends StandardEntity {
+public class LinkedTestEntity extends BaseEntity {
 
     @Column(name = "anotherName")
     String anotherName;

@@ -16,8 +16,6 @@
 
 package io.jmix.rest.test.testmodel;
 
-import io.jmix.data.entity.StandardEntity;
-
 import javax.persistence.*;
 
 /**
@@ -25,7 +23,7 @@ import javax.persistence.*;
  */
 @Entity(name = "test$TestEntity")
 @Table(name = "TEST_TEST_ENTITY")
-public class TestEntity extends StandardEntity {
+public class TestEntity extends BaseEntity {
 
     @Column(name = "STRING_FIELD")
     protected String stringField;
@@ -81,6 +79,5 @@ public class TestEntity extends StandardEntity {
 
     public void setEnumField(TestEnum enumField) {
         this.enumField = enumField == null ? null : enumField.getId();
-
     }
 }

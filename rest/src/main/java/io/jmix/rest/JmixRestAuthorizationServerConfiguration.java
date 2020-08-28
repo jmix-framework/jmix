@@ -99,13 +99,7 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
-        endpoints
-//                .tokenGranter(new JmixRestTokenGranter(
-//                        authenticationManager,
-//                        endpoints.getTokenServices(),
-//                        endpoints.getClientDetailsService(),
-//                        endpoints.getOAuth2RequestFactory()))
-                .pathMapping("/oauth/token", "/rest/oauth/token")
+        endpoints.pathMapping("/oauth/token", "/rest/oauth/token")
                 .authenticationManager(authenticationManager)
                 .tokenStore(endpoints.getTokenStore() != null ? endpoints.getTokenStore() : tokenStore())
                 .tokenEnhancer(endpoints.getTokenEnhancer() != null ? endpoints.getTokenEnhancer() : tokenEnhancer())

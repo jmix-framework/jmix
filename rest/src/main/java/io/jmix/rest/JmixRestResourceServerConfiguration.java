@@ -110,7 +110,7 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
                 .and()
                 .csrf().disable()
                 .sessionManagement().sessionAuthenticationStrategy(sessionAuthenticationStrategy)
-                .maximumSessions(sessionProperties.getMaximumUserSessions()).sessionRegistry(sessionRegistry)
+                .maximumSessions(sessionProperties.getMaximumSessionsPerUser()).sessionRegistry(sessionRegistry)
                 .and().and()
                 .anonymous(anonymousConfigurer -> {
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());

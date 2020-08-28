@@ -16,6 +16,7 @@
 
 package io.jmix.dynattr.impl;
 
+import io.jmix.core.FetchPlan;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
@@ -37,7 +38,7 @@ public class DynAttrLifecycleListener implements OrmLifecycleListener {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext) {
+    public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
         Map<String, Object> hints = loadContext.getHints();
         if (hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
             //noinspection unchecked

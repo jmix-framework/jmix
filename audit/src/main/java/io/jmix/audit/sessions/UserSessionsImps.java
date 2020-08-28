@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Component(UserSessions.NAME)
 public class UserSessionsImps implements UserSessions {
 
-    @Autowired
+    @Autowired(required = false)
     protected SessionRegistry sessionRegistry;
 
     @Override

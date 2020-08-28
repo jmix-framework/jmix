@@ -20,6 +20,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.Events;
 import io.jmix.core.JmixModules;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.session.SessionProperties;
 import io.jmix.rest.api.auth.JmixRestLastSecurityFilter;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.sys.JmixRestExceptionLoggingFilter;
@@ -28,11 +29,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 
 import java.util.Arrays;
@@ -64,6 +67,15 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
 
     @Autowired
     protected RestProperties restProperties;
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
+
+    @Autowired
+    private SessionAuthenticationStrategy sessionAuthenticationStrategy;
+
+    @Autowired
+    private SessionProperties sessionProperties;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -97,6 +109,9 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
                 .antMatchers(requestMatcherAntPatterns)
                 .and()
                 .csrf().disable()
+                .sessionManagement().sessionAuthenticationStrategy(sessionAuthenticationStrategy)
+                .maximumSessions(sessionProperties.getMaximumSessionsPerUser()).sessionRegistry(sessionRegistry)
+                .and().and()
                 .anonymous(anonymousConfigurer -> {
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
                     anonymousConfigurer.principal(userRepository.getAnonymousUser());

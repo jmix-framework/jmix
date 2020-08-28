@@ -115,7 +115,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
     protected EntityImportExport entityImportExport;
 
     @Autowired
-    protected EntityImportViews entityImportViews;
+    protected EntityImportPlans entityImportPlans;
 
     //TODO filter implementation component (Filter in Table/DataGrid #221)
     protected Component filter;
@@ -314,9 +314,9 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
                 Collection<JmixEntity> importedEntities;
                 if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
                     String content = new String(fileBytes, StandardCharsets.UTF_8);
-                    importedEntities = entityImportExport.importEntitiesFromJson(content, createEntityImportView(selectedMeta));
+                    importedEntities = entityImportExport.importEntitiesFromJson(content, createEntityImportPlan(selectedMeta));
                 } else {
-                    importedEntities = entityImportExport.importEntitiesFromZIP(fileBytes, createEntityImportView(selectedMeta));
+                    importedEntities = entityImportExport.importEntitiesFromZIP(fileBytes, createEntityImportPlan(selectedMeta));
                 }
 
                 notifications.create(Notifications.NotificationType.HUMANIZED)
@@ -374,8 +374,8 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
         return editAction;
     }
 
-    protected EntityImportView createEntityImportView(MetaClass metaClass) {
-        EntityImportViewBuilder viewBuilder = entityImportViews.builder(metaClass.getJavaClass());
+    protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
+        EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             if (!metadataTools.isPersistent(metaProperty)) {
@@ -385,22 +385,22 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
             switch (metaProperty.getType()) {
                 case DATATYPE:
                 case ENUM:
-                    viewBuilder.addLocalProperty(metaProperty.getName());
+                    planBuilder.addLocalProperty(metaProperty.getName());
                     break;
                 case ASSOCIATION:
                 case COMPOSITION:
                     Range.Cardinality cardinality = metaProperty.getRange().getCardinality();
                     if (cardinality == Range.Cardinality.MANY_TO_ONE) {
-                        viewBuilder.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                        planBuilder.addManyToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     } else if (cardinality == Range.Cardinality.ONE_TO_ONE) {
-                        viewBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
+                        planBuilder.addOneToOneProperty(metaProperty.getName(), ReferenceImportBehaviour.IGNORE_MISSING);
                     }
                     break;
                 default:
                     throw new IllegalStateException("unknown property type");
             }
         }
-        return viewBuilder.build();
+        return planBuilder.build();
     }
 
     protected boolean readPermitted(MetaClass metaClass) {

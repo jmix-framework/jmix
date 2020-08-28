@@ -24,6 +24,7 @@ import io.jmix.ui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -56,7 +57,7 @@ public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoa
     protected FetchPlan fetchPlan;
     protected String fetchPlanName;
     protected Sort sort;
-    protected Map<String, Object> hints;
+    protected Map<String, Serializable> hints;
     protected Function<LoadContext<E>, List<E>> delegate;
     protected EventHub events = new EventHub();
 
@@ -249,7 +250,7 @@ public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoa
     }
 
     @Override
-    public void setHint(String hintName, Object value) {
+    public void setHint(String hintName, Serializable value) {
         if (hints == null) {
             hints = new HashMap<>();
         }
@@ -257,7 +258,7 @@ public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoa
     }
 
     @Override
-    public Map<String, Object> getHints() {
+    public Map<String, Serializable> getHints() {
         return hints;
     }
 

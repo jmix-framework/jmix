@@ -24,6 +24,7 @@ import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.EventObject;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -74,13 +75,13 @@ public interface InstanceLoader<E extends JmixEntity> extends DataLoader {
     /**
      * Sets custom hint that should be used by the query for loading data.
      */
-    void setHint(String hintName, Object value);
+    void setHint(String hintName, Serializable value);
 
     /**
      * @return custom hints which are used by the query for loading data.
      */
     @Nullable
-    Map<String, Object> getHints();
+    Map<String, Serializable> getHints();
 
     /**
      * Returns a function which will be used to load data instead of standard implementation.

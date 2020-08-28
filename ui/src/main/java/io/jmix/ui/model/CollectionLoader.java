@@ -16,14 +16,15 @@
 
 package io.jmix.ui.model;
 
+import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
-import io.jmix.core.FetchPlan;
 import io.jmix.ui.screen.InstallSubject;
 import io.jmix.ui.screen.Subscribe;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
@@ -55,13 +56,13 @@ public interface CollectionLoader<E extends JmixEntity> extends BaseCollectionLo
     /**
      * Sets custom hint that should be used by the query for loading data.
      */
-    void setHint(String hintName, Object value);
+    void setHint(String hintName, Serializable value);
 
     /**
      * @return custom hints which are used by the query for loading data.
      */
     @Nullable
-    Map<String, Object> getHints();
+    Map<String, Serializable> getHints();
 
     /**
      * Returns true if the query for loading data is cacheable.
@@ -110,6 +111,7 @@ public interface CollectionLoader<E extends JmixEntity> extends BaseCollectionLo
 
     /**
      * Sets the name of the fetch plan which is used when loading.
+     *
      * @throws IllegalStateException if the fetch plan has already been set by {@link #setFetchPlan(FetchPlan)}
      */
     void setFetchPlan(String fetchPlanName);

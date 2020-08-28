@@ -28,6 +28,7 @@ import io.jmix.ui.model.InstanceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     protected boolean softDeletion = true;
     protected FetchPlan fetchPlan;
     protected String fetchPlanName;
-    protected Map<String, Object> hints;
+    protected Map<String, Serializable> hints;
     protected Function<LoadContext<E>, E> delegate;
     protected EventHub events = new EventHub();
 
@@ -242,7 +243,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     }
 
     @Override
-    public void setHint(String hintName, Object value) {
+    public void setHint(String hintName, Serializable value) {
         if (hints == null) {
             hints = new HashMap<>();
         }
@@ -250,7 +251,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
     }
 
     @Override
-    public Map<String, Object> getHints() {
+    public Map<String, Serializable> getHints() {
         return hints;
     }
 

@@ -52,7 +52,7 @@ class LazyLoadingTest extends DataSpec {
         loadContext.setId(id)
 
         loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToOneFieldEntity.class, "OneToOneFieldEntity"))
-        fieldEntity = dataManager.loadList(loadContext).iterator().next()
+        fieldEntity = dataManager.load(loadContext)
 
         then:
 
@@ -79,7 +79,7 @@ class LazyLoadingTest extends DataSpec {
         loadContext.setId(id)
 
         loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToOneNoFieldEntity.class, "OneToOneNoFieldEntity"))
-        noFieldEntity = dataManager.loadList(loadContext).iterator().next()
+        noFieldEntity = dataManager.load(loadContext)
 
         then:
 
@@ -106,7 +106,7 @@ class LazyLoadingTest extends DataSpec {
         loadContext.setId(id)
 
         loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(ManyToOneEntity.class, "ManyToOneEntity"))
-        manyToOneEntity = dataManager.loadList(loadContext).iterator().next()
+        manyToOneEntity = dataManager.load(loadContext)
 
         then:
 
@@ -138,7 +138,7 @@ class LazyLoadingTest extends DataSpec {
         loadContext.setId(id)
 
         loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToManyEntity.class, "OneToManyEntity"))
-        oneToManyEntity = dataManager.loadList(loadContext).iterator().next()
+        oneToManyEntity = dataManager.load(loadContext)
         then:
 
         oneToManyEntity.getName() == "Name"
@@ -157,12 +157,74 @@ class LazyLoadingTest extends DataSpec {
 
         when:
 
-        ManyToManySecondEntity result = dataManager.loadList(loadContext).iterator().next()
+        ManyToManySecondEntity result = dataManager.load(loadContext)
 
         then:
 
         result.getName() == "Name 1"
         result.getManyToManyFirstEntities().size() == 5
+    }
+
+    def "OneToOne duplicate test"() {
+        setup:
+
+        OneToOneNoFieldEntity noFieldEntity = metadata.create(OneToOneNoFieldEntity.class)
+        noFieldEntity.setName("No field name")
+        dataManager.save(noFieldEntity)
+        UUID idNoField = noFieldEntity.getId()
+
+        OneToOneFieldEntity fieldEntity = metadata.create(OneToOneFieldEntity.class)
+        fieldEntity.setName("Field name")
+        fieldEntity.setOneToOneNoFieldEntity(noFieldEntity)
+        dataManager.save(fieldEntity)
+        UUID idField = fieldEntity.getId()
+
+        when:
+
+        LoadContext loadContext = new LoadContext<>(metadata.getClass(OneToOneFieldEntity.class))
+        loadContext.setId(idField)
+        loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToOneFieldEntity.class, "OneToOneFieldEntity"))
+        fieldEntity = dataManager.load(loadContext)
+
+        loadContext = new LoadContext<>(metadata.getClass(OneToOneNoFieldEntity.class))
+        loadContext.setId(idNoField)
+        loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(OneToOneNoFieldEntity.class, "OneToOneNoFieldEntity"))
+        noFieldEntity = dataManager.load(loadContext)
+
+        then:
+
+        fieldEntity.is(fieldEntity.getOneToOneNoFieldEntity().getOneToOneFieldEntity())
+        noFieldEntity.is(noFieldEntity.getOneToOneFieldEntity().getOneToOneNoFieldEntity())
+    }
+
+    def "ManyToMany duplicate test"() {
+        setup:
+
+        UUID twoId = prepareManyToMany()
+
+        LoadContext<ManyToManySecondEntity> loadContext = new LoadContext<>(metadata.getClass(ManyToManySecondEntity.class))
+        loadContext.setId(twoId)
+
+        loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(ManyToManySecondEntity.class, "ManyToManySecondEntity"))
+
+        when:
+
+        ManyToManySecondEntity result = dataManager.load(loadContext)
+
+        then:
+
+        checkManyToManyDuplicate(result)
+    }
+
+    boolean checkManyToManyDuplicate(ManyToManySecondEntity entity) {
+        boolean contains = false
+        for (ManyToManySecondEntity lazyLoadedEntity : entity.manyToManyFirstEntities.iterator().next().manyToManySecondEntities) {
+            if (entity.is(lazyLoadedEntity)) {
+                contains = true
+                break
+            }
+        }
+        return contains
     }
 
     UUID prepareManyToMany() {

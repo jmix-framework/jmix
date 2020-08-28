@@ -16,73 +16,64 @@
 
 package io.jmix.data.impl.lazyloading;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.eclipse.persistence.expressions.Expression;
-import org.eclipse.persistence.internal.expressions.ExpressionIterator;
-import org.eclipse.persistence.internal.expressions.ParameterExpression;
-import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
-import org.eclipse.persistence.internal.indirection.UnitOfWorkQueryValueHolder;
-import org.eclipse.persistence.mappings.ForeignReferenceMapping;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.io.IOException;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     private static final long serialVersionUID = 8740384435315015951L;
 
-    protected volatile UnitOfWorkQueryValueHolder originalValueHolder;
+    protected JmixEntity parentEntity;
+    protected Object entityId;
+    protected Class valueClass;
+
     protected transient DataManager dataManager;
     protected transient Metadata metadata;
     protected transient MetadataTools metadataTools;
 
-    public JmixWrappingValueHolder(UnitOfWorkQueryValueHolder originalValueHolder, DataManager dataManager,
+    public JmixWrappingValueHolder(JmixEntity parentEntity, Class valueClass, Object entityId, DataManager dataManager,
                                    Metadata metadata, MetadataTools metadataTools) {
-        this.originalValueHolder = originalValueHolder;
+        this.parentEntity = parentEntity;
+        this.valueClass = valueClass;
+        this.entityId = entityId;
         this.dataManager = dataManager;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
+    }
+
+    public Object getEntityId() {
+        return entityId;
     }
 
     @Override
     public Object getValue() {
         if (!isInstantiated) {
             synchronized (this) {
-                if (originalValueHolder.isInstantiated()) {
-                    this.value = originalValueHolder.getValue();
-                } else {
-                    Class refClass = ((ForeignReferenceMapping) originalValueHolder.getMapping()).getReferenceClass();
-                    MetaClass metaClass = metadata.getClass(refClass);
-                    MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-                    LoadContext lc = new LoadContext(metaClass);
-                    AtomicReference<String> fieldName = new AtomicReference<>();
-                    ExpressionIterator iterator = new ExpressionIterator() {
-                        @Override
-                        public void iterate(Expression each) {
-                            if (each instanceof ParameterExpression) {
-                                fieldName.set(((ParameterExpression) each).getField().getQualifiedName());
-                            }
-                        }
-                    };
-                    QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
-                    iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
-                    Object id = originalValueHolder.getRow().get(fieldName.get());
-                    // Since UUID is stored as String
-                    if (idProperty.getJavaType() == UUID.class) {
-                        id = UUID.fromString((String) id);
+                MetaClass metaClass = metadata.getClass(valueClass);
+                LoadContext lc = new LoadContext(metaClass);
+                lc.setId(entityId);
+                value = dataManager.load(lc);
+                EntityAttributeVisitor av = new EntityAttributeVisitor() {
+                    @Override
+                    public void visit(JmixEntity entity, MetaProperty property) {
+                        visitEntity(entity, property, parentEntity);
                     }
-                    lc.setId(id);
-                    value = dataManager.load(lc);
+
+                    @Override
+                    public boolean skip(MetaProperty property) {
+                        return !(property.getRange().isClass()
+                                && property.getRange().asClass().getJavaClass().isAssignableFrom(parentEntity.getClass()));
+                    }
+                };
+                if (value != null) {
+                    metadataTools.traverseAttributes((JmixEntity) value, av);
                 }
-                isInstantiated = true;
             }
+            isInstantiated = true;
         }
         return value;
     }

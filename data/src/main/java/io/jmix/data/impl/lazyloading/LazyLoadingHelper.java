@@ -20,7 +20,11 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.IndirectCollection;
+import org.eclipse.persistence.internal.expressions.ExpressionIterator;
+import org.eclipse.persistence.internal.expressions.ParameterExpression;
+import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
 import org.eclipse.persistence.internal.indirection.UnitOfWorkQueryValueHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +37,7 @@ import javax.persistence.FetchType;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component(LazyLoadingHelper.NAME)
 public class LazyLoadingHelper {
@@ -85,8 +90,30 @@ public class LazyLoadingHelper {
                         return;
                     }
                     if (metadataTools.isOwningSide(property)) {
+                        AtomicReference<String> fieldName = new AtomicReference<>();
+                        ExpressionIterator iterator = new ExpressionIterator() {
+                            @Override
+                            public void iterate(Expression each) {
+                                if (each instanceof ParameterExpression) {
+                                    fieldName.set(((ParameterExpression) each).getField().getQualifiedName());
+                                }
+                            }
+                        };
+                        MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
+                        UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
+                        QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
+                        iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
+                        Object id = wrappedValueHolder.getRow().get(fieldName.get());
+                        // Since UUID is stored as String
+                        if (idProperty.getJavaType() == UUID.class) {
+                            id = UUID.fromString((String) id);
+                        }
+
                         declaredField.set(instance,
-                                new JmixWrappingValueHolder((UnitOfWorkQueryValueHolder) fieldInstance,
+                                new JmixWrappingValueHolder(
+                                        instance,
+                                        property.getJavaType(),
+                                        id,
                                         dataManager,
                                         metadata,
                                         metadataTools));
@@ -95,7 +122,7 @@ public class LazyLoadingHelper {
                         declaredField.set(instance,
                                 new JmixSingleValueHolder(inverseProperty.getName(),
                                         property.getJavaType(),
-                                        instance.__getEntityEntry().getEntityId(),
+                                        instance,
                                         dataManager,
                                         metadata,
                                         metadataTools));
@@ -114,8 +141,30 @@ public class LazyLoadingHelper {
                         declaredField.setAccessible(accessible);
                         return;
                     }
+                    AtomicReference<String> fieldName = new AtomicReference<>();
+                    ExpressionIterator iterator = new ExpressionIterator() {
+                        @Override
+                        public void iterate(Expression each) {
+                            if (each instanceof ParameterExpression) {
+                                fieldName.set(((ParameterExpression) each).getField().getQualifiedName());
+                            }
+                        }
+                    };
+                    MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
+                    UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
+                    QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
+                    iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
+                    Object id = wrappedValueHolder.getRow().get(fieldName.get());
+                    // Since UUID is stored as String
+                    if (idProperty.getJavaType() == UUID.class) {
+                        id = UUID.fromString((String) id);
+                    }
+
                     declaredField.set(instance,
-                            new JmixWrappingValueHolder((UnitOfWorkQueryValueHolder) fieldInstance,
+                            new JmixWrappingValueHolder(
+                                    instance,
+                                    property.getJavaType(),
+                                    id,
                                     dataManager,
                                     metadata,
                                     metadataTools));
@@ -131,11 +180,11 @@ public class LazyLoadingHelper {
                 }
                 fieldValue.setValueHolder(new JmixCollectionValueHolder(
                         property.getName(),
-                        instance.getClass(),
-                        instance.__getEntityEntry().getEntityId(),
+                        instance,
                         dataManager,
                         beanFactory.getBean(FetchPlanBuilder.class, instance.getClass()),
-                        metadata));
+                        metadata,
+                        metadataTools));
                 break;
             default:
                 break;

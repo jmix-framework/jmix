@@ -16,10 +16,14 @@
 
 package io.jmix.data.impl.lazyloading;
 
+import io.jmix.core.JmixEntity;
+import io.jmix.core.metamodel.model.MetaProperty;
+import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.eclipse.persistence.indirection.WeavedAttributeValueHolderInterface;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 public abstract class JmixAbstractValueHolder implements ValueHolderInterface, WeavedAttributeValueHolderInterface,
         Cloneable, Serializable {
@@ -69,5 +73,42 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
     public void setValue(Object value) {
         this.value = value;
         this.isInstantiated = true;
+    }
+
+    protected void visitEntity(JmixEntity entity, MetaProperty property, JmixEntity parentEntity) {
+        switch (property.getRange().getCardinality()) {
+            case ONE_TO_ONE:
+            case MANY_TO_ONE:
+                try {
+                    Field declaredField = entity.getClass().getDeclaredField("_persistence_" + property.getName() + "_vh");
+                    boolean accessible = declaredField.isAccessible();
+                    declaredField.setAccessible(true);
+                    Object fieldInstance = declaredField.get(entity);
+                    if (fieldInstance instanceof JmixSingleValueHolder) {
+                        JmixSingleValueHolder vh = (JmixSingleValueHolder) fieldInstance;
+                        if (vh.getParentEntity() != null && vh.getParentEntity().equals(value)) {
+                            vh.setValue(parentEntity);
+                        }
+                    } else if (fieldInstance instanceof JmixWrappingValueHolder) {
+                        JmixWrappingValueHolder vh = (JmixWrappingValueHolder) fieldInstance;
+                        if (vh.getEntityId() != null && vh.getEntityId().equals(parentEntity.__getEntityEntry().getEntityId())) {
+                            vh.setValue(parentEntity);
+                        }
+                    }
+                    declaredField.setAccessible(accessible);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                }
+                break;
+            case ONE_TO_MANY:
+            case MANY_TO_MANY:
+                IndirectCollection fieldValue = entity.__getEntityEntry().getAttributeValue(property.getName());
+                if (fieldValue != null && fieldValue.getValueHolder() instanceof JmixCollectionValueHolder) {
+                    JmixCollectionValueHolder vh = (JmixCollectionValueHolder) fieldValue.getValueHolder();
+                    vh.setRootEntity(parentEntity);
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

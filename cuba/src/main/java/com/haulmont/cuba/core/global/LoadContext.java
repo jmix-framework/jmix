@@ -197,11 +197,13 @@ public class LoadContext<E extends JmixEntity> extends io.jmix.core.LoadContext<
         return this;
     }
 
-    @Override
-    public LoadContext<E> setHint(String hintName, Object value) {
-        super.setHint(hintName, value);
-        return this;
-    }
+//  TODO Fedorov - fix compilation
+
+//    @Override
+//    public LoadContext<E> setHint(String hintName, Object value) {
+//        super.setHint(hintName, value);
+//        return this;
+//    }
 
     /**
      * Returns true if the entity's dynamic attributes are loaded.

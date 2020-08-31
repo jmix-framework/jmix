@@ -16,18 +16,18 @@
 
 package com.haulmont.cuba.gui.components.data.datagrid;
 
-import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.AggregationInfo;
-import io.jmix.ui.component.data.AggregatableDataGridItems;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
@@ -125,6 +125,12 @@ public class DatasourceDataGridItems<E extends JmixEntity, K>
     @Override
     public E getItem(@Nullable Object itemId) {
         return datasource.getItem((K) itemId);
+    }
+
+    @Nullable
+    @Override
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
+        return EntityValues.getValueEx(datasource.getItemNN((K) itemId), propertyId);
     }
 
     @Override

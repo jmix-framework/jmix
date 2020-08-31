@@ -18,21 +18,26 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeTable;
+import com.haulmont.cuba.gui.components.data.table.AggregatableTableItems;
 import com.haulmont.cuba.gui.presentation.LegacyPresentationsDelegate;
 import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.settings.binder.CubaTreeTableSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
+import com.haulmont.cuba.settings.converter.LegacyTableSettingsConverter;
 import com.haulmont.cuba.web.gui.components.table.TableDelegate;
 import io.jmix.core.JmixEntity;
+import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
-import com.haulmont.cuba.settings.converter.LegacyTableSettingsConverter;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
+import io.jmix.ui.widget.data.AggregationContainer;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 @Deprecated
 public class WebTreeTable<E extends JmixEntity> extends io.jmix.ui.component.impl.WebTreeTable<E> implements TreeTable<E> {
@@ -152,5 +157,42 @@ public class WebTreeTable<E extends JmixEntity> extends io.jmix.ui.component.imp
 
     protected TableDelegate createTableDelegate() {
         return (TableDelegate) applicationContext.getBean(TableDelegate.NAME);
+    }
+
+    @Override
+    protected Map<Object, Object> __aggregateValues(AggregationContainer container, AggregationContainer.Context context) {
+        if (getItems() instanceof AggregatableTableItems) {
+            List<AggregationInfo> aggregationInfos = getAggregationInfos(container);
+
+            Map<AggregationInfo, Object> results = ((AggregatableTableItems<E>) getItems()).aggregateValues(
+                    aggregationInfos.toArray(new AggregationInfo[0]),
+                    context.getItemIds()
+            );
+
+            return convertAggregationKeyMapToColumnIdKeyMap(container, results);
+        } else {
+            return super.__aggregateValues(container, context);
+        }
+    }
+
+    @Override
+    protected Map<Object, Object> __aggregate(AggregationContainer container, AggregationContainer.Context context) {
+        if (getItems() instanceof AggregatableTableItems) {
+            List<AggregationInfo> aggregationInfos = getAggregationInfos(container);
+
+            Map<AggregationInfo, String> results = ((AggregatableTableItems<E>) getItems()).aggregate(
+                    aggregationInfos.toArray(new AggregationInfo[0]),
+                    context.getItemIds()
+            );
+
+            Map<Object, Object> resultsByColumns = convertAggregationKeyMapToColumnIdKeyMap(container, results);
+
+            if (aggregationCells != null) {
+                resultsByColumns = __handleAggregationResults(context, resultsByColumns);
+            }
+            return resultsByColumns;
+        } else {
+            return super.__aggregate(container, context);
+        }
     }
 }

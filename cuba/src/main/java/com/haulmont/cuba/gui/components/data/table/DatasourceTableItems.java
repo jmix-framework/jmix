@@ -25,7 +25,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.AggregationInfo;
-import io.jmix.ui.component.data.AggregatableTableItems;
 import io.jmix.ui.component.data.BindingState;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import io.jmix.ui.component.data.meta.EntityTableItems;
@@ -116,6 +115,11 @@ public class DatasourceTableItems<E extends JmixEntity, K>
     }
 
     @Override
+    public Object getItemValue(Object itemId, MetaPropertyPath propertyId) {
+        return getItemValue(itemId, (Object) propertyId);
+    }
+
+    @Deprecated
     public Object getItemValue(Object itemId, Object propertyId) {
         MetaPropertyPath propertyPath = (MetaPropertyPath) propertyId;
         return EntityValues.getValueEx(datasource.getItemNN(itemId), propertyPath);

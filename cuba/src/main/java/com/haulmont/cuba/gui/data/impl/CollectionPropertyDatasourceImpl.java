@@ -80,7 +80,7 @@ public class CollectionPropertyDatasourceImpl<T extends JmixEntity, K>
     protected void initAggregatableDelegate() {
         aggregatableDelegate = AppBeans.getPrototype(AggregatableDelegate.class);
         aggregatableDelegate.setItemProvider(CollectionPropertyDatasourceImpl.this::getItem);
-        aggregatableDelegate.setItemValueProvider(CollectionPropertyDatasourceImpl.this::getItemValue);
+        aggregatableDelegate.setItemValueProvider((itemId, propertyId) -> getItemValue(propertyId, itemId));
     }
 
     @Override

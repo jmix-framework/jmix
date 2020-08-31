@@ -20,21 +20,16 @@ import com.haulmont.cuba.core.model.Foo
 import io.jmix.core.Sort
 import io.jmix.ui.component.Table
 import io.jmix.ui.component.data.table.ContainerTableItems
-import io.jmix.ui.gui.data.impl.AggregatableDelegate
 import io.jmix.ui.model.CollectionChangeType
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext
 import io.jmix.ui.model.InstanceContainer
-import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.web.UiScreenSpec
 import spock.lang.Ignore
 
 import java.util.function.Consumer
 
 class CollectionContainerUsageTest extends UiScreenSpec {
-
-    @Autowired
-    private AggregatableDelegate aggregatableDelegate;
 
     private CollectionContainer<Foo> container
     private Table<Foo> table
@@ -44,7 +39,7 @@ class CollectionContainerUsageTest extends UiScreenSpec {
 
         table = uiComponents.create(Table)
         table.addColumn(new Table.Column(metadata.getClassNN(Foo).getPropertyPath('name')))
-        table.setItems(new ContainerTableItems(this.container, aggregatableDelegate))
+        table.setItems(new ContainerTableItems(this.container))
     }
 
     def "sort items"() {
@@ -190,7 +185,7 @@ class CollectionContainerUsageTest extends UiScreenSpec {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({e ->
+        context.addPreCommitListener({ e ->
             modified.addAll(e.modifiedInstances)
         })
 
@@ -224,7 +219,7 @@ class CollectionContainerUsageTest extends UiScreenSpec {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({e ->
+        context.addPreCommitListener({ e ->
             modified.addAll(e.modifiedInstances)
         })
 
@@ -259,7 +254,7 @@ class CollectionContainerUsageTest extends UiScreenSpec {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({e ->
+        context.addPreCommitListener({ e ->
             modified.addAll(e.removedInstances)
         })
 
@@ -292,7 +287,7 @@ class CollectionContainerUsageTest extends UiScreenSpec {
 
         def modified = []
         DataContext context = dataComponents.createDataContext()
-        context.addPreCommitListener({e ->
+        context.addPreCommitListener({ e ->
             modified.addAll(e.removedInstances)
         })
 

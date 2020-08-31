@@ -21,6 +21,7 @@ import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.web.model.compositecomponent.Comment;
 import io.jmix.core.MetadataTools;
+import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.VBoxLayout;
@@ -30,11 +31,9 @@ import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.impl.CompositeComponent;
 import io.jmix.ui.component.impl.CompositeDescriptor;
 import io.jmix.ui.component.impl.CompositeWithCaption;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.action.ShowInfoAction;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.function.Function;
 
 @CompositeDescriptor("/spec/cuba/web/components/composite/components/comments/commentary-panel.xml")
@@ -45,8 +44,6 @@ public class TestCommentaryPanel extends CompositeComponent<VBoxLayout> implemen
     /* Beans */
     @Autowired
     private MetadataTools metadataTools;
-    @Autowired
-    private AggregatableDelegate aggregatableDelegate;
 
     /* Nested Components */
     private DataGrid<Comment> commentsDataGrid;
@@ -148,7 +145,7 @@ public class TestCommentaryPanel extends CompositeComponent<VBoxLayout> implemen
     public void setDataContainer(CollectionContainer<Comment> container) {
         this.collectionContainer = container;
 
-        commentsDataGrid.setItems(new ContainerDataGridItems<>(container, aggregatableDelegate));
+        commentsDataGrid.setItems(new ContainerDataGridItems<>(container));
         commentsDataGrid.getColumnNN("comment")
                 .setRenderer(commentsDataGrid.createRenderer(DataGrid.HtmlRenderer.class));
         commentsDataGrid.removeAction(ShowInfoAction.ACTION_ID);

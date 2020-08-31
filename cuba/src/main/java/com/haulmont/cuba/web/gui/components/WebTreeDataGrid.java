@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeDataGrid;
+import com.haulmont.cuba.gui.components.data.datagrid.AggregatableDataGridItems;
 import com.haulmont.cuba.gui.components.valueprovider.DataGridConverterBasedValueProvider;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -37,11 +38,13 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.DataGridEditorFieldFactory;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
+import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.component.formatter.CollectionFormatter;
 import io.jmix.ui.component.formatter.Formatter;
@@ -58,9 +61,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -503,6 +508,50 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
         datasource.setItem(item);
 
         return datasource;
+    }
+
+    @Override
+    protected void updateAggregationRow() {
+        boolean isAggregatable = isAggregatable()
+                && (getItems() instanceof ContainerDataGridItems || getItems() instanceof AggregatableDataGridItems);
+        if (isAggregatable) {
+            Map<String, String> results = __aggregate();
+            fillAggregationRow(results);
+        } else {
+            removeAggregationRow();
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    protected Map<String, String> __aggregate() {
+        if (getItems() instanceof  AggregatableDataGridItems) {
+            List<AggregationInfo> aggregationInfos = getAggregationInfos();
+            Map<AggregationInfo, String> aggregationInfoMap = ((AggregatableDataGridItems) getItems()).aggregate(
+                    aggregationInfos.toArray(new AggregationInfo[0]),
+                    getItems().getItems().map(EntityValues::getId).collect(Collectors.toList())
+            );
+
+            return convertAggregationKeyMapToColumnIdKeyMap(aggregationInfoMap);
+        } else {
+            return super.__aggregate();
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    protected Map<String, Object> __aggregateValues() {
+        if (getItems() instanceof AggregatableDataGridItems) {
+            List<AggregationInfo> aggregationInfos = getAggregationInfos();
+            Map<AggregationInfo, Object> aggregationInfoMap = ((AggregatableDataGridItems) getItems()).aggregateValues(
+                    aggregationInfos.toArray(new AggregationInfo[0]),
+                    getItems().getItems().map(EntityValues::getId).collect(Collectors.toList())
+            );
+
+            return convertAggregationKeyMapToColumnIdKeyMap(aggregationInfoMap);
+        } else {
+            return super.__aggregateValues();
+        }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

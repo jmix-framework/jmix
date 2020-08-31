@@ -30,6 +30,7 @@ import io.jmix.ui.component.dataloadcoordinator.OnFrameOwnerEventLoadTrigger;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.model.impl.DataLoadersHelper;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
@@ -53,7 +54,6 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
 
     private UiControllerReflectionInspector reflectionInspector;
 
-    private static final Pattern PARAM_PATTERN = Pattern.compile(":([\\w$]+)");
     private static final Pattern LIKE_PATTERN = Pattern.compile("\\s+like\\s+:([\\w$]+)");
 
     public WebDataLoadCoordinator(UiControllerReflectionInspector reflectionInspector) {
@@ -124,7 +124,7 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
     }
 
     private void configureAutomatically(DataLoader loader, FrameOwner frameOwner) {
-        List<String> queryParameters = getQueryParameters(loader);
+        List<String> queryParameters = DataLoadersHelper.getQueryParameters(loader);
         List<String> allParameters = new ArrayList<>(queryParameters);
         allParameters.addAll(getConditionParameters(loader));
 
@@ -151,17 +151,6 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
         }
     }
 
-    private List<String> getQueryParameters(DataLoader loader) {
-        List<String> parameters = new ArrayList<>();
-        if (!Strings.isNullOrEmpty(loader.getQuery())) {
-            Matcher matcher = PARAM_PATTERN.matcher(loader.getQuery());
-            while (matcher.find()) {
-                parameters.add(matcher.group(1));
-            }
-        }
-        return parameters;
-    }
-
     private List<String> getConditionParameters(DataLoader loader) {
         List<String> parameters = new ArrayList<>();
         Condition condition = loader.getCondition();
@@ -172,7 +161,7 @@ public class WebDataLoadCoordinator extends WebAbstractFacet implements DataLoad
     }
 
     private String findSingleParam(DataLoader loader) {
-        List<String> parameters = getQueryParameters(loader);
+        List<String> parameters = DataLoadersHelper.getQueryParameters(loader);
         parameters.addAll(getConditionParameters(loader));
         if (parameters.isEmpty()) {
             throw new DevelopmentException("Cannot find a query parameter for onContainerItemChanged load trigger." +

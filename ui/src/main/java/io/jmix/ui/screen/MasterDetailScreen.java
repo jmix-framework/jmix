@@ -33,6 +33,7 @@ import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
 import io.jmix.ui.context.UiEntityContext;
 import io.jmix.ui.model.*;
+import io.jmix.ui.model.impl.DataLoadersHelper;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 
@@ -315,7 +316,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
                     CollectionContainer container = ((ContainerOptions) options).getContainer();
                     if (container instanceof HasLoader) {
                         DataLoader optionsLoader = ((HasLoader) container).getLoader();
-                        if (optionsLoader != null) {
+                        if (optionsLoader != null && DataLoadersHelper.areAllParametersSet(optionsLoader)) {
                             optionsLoader.load();
                         }
                     }

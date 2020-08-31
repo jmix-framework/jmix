@@ -159,8 +159,8 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
 
             cellValue = InstanceUtils.getValueEx(instance, propertyPath.getPath());
 
-            if (column.getFormatter() != null) {
-                cellValue = column.getFormatter().apply(cellValue);
+            if (column.getPresentationProvider() != null) {
+                cellValue = column.getPresentationProvider().apply(cellValue);
             }
         } else if ((generator = dataGrid.getColumnGenerator(column.getId())) != null) {
             DataGrid.ColumnGeneratorEvent event = new DataGrid.ColumnGeneratorEvent(dataGrid, instance,
@@ -170,8 +170,8 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
             cellValue = EntityValues.getValueEx(instance, column.getId());
         }
 
-        if (column.getFormatter() != null) {
-            cellValue = column.getFormatter().apply(cellValue);
+        if (column.getPresentationProvider() != null) {
+            cellValue = column.getPresentationProvider().apply(cellValue);
         }
 
         return cellValue;

@@ -64,7 +64,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
         }
 
         for (JmixSideMenu.MenuItem vMenuItem : component.getMenuItems()) {
-            assignCubaId(((MenuItemWrapper) vMenuItem).getMenuItem());
+            assignJTestId(((MenuItemWrapper) vMenuItem).getMenuItem());
         }
     }
 
@@ -191,20 +191,20 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
         return menuItem;
     }
 
-    protected void assignCubaId(MenuItem menuItem) {
-        AppUI ui = (AppUI) component.getUI();
+    protected void assignJTestId(MenuItem menuItem) {
+        AppUI ui = AppUI.getCurrent();
         if (ui == null || !ui.isTestMode())
             return;
 
-        assignCubaIdInternal(menuItem);
+        assignJTestIdInternal(menuItem);
     }
 
-    protected void assignCubaIdInternal(MenuItem menuItem) {
+    protected void assignJTestIdInternal(MenuItem menuItem) {
         ((MenuItemImpl) menuItem).setJTestId(menuItem.getId());
 
         if (menuItem.hasChildren()) {
             for (MenuItem item : menuItem.getChildren()) {
-                assignCubaIdInternal(item);
+                assignJTestIdInternal(item);
             }
         }
     }
@@ -218,7 +218,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
         component.addMenuItem(((MenuItemImpl) menuItem).getDelegateItem());
         registerMenuItem(menuItem);
 
-        assignCubaId(menuItem);
+        assignJTestId(menuItem);
     }
 
     protected void registerMenuItem(MenuItem menuItem) {
@@ -248,7 +248,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
         component.addMenuItem(((MenuItemImpl) menuItem).getDelegateItem(), index);
         registerMenuItem(menuItem);
 
-        assignCubaId(menuItem);
+        assignJTestId(menuItem);
     }
 
     @Override
@@ -478,8 +478,8 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
             return delegateItem.getJTestId();
         }
 
-        protected void setJTestId(String cubaId) {
-            delegateItem.setJTestId(cubaId);
+        protected void setJTestId(String jTestId) {
+            delegateItem.setJTestId(jTestId);
         }
 
         @Nullable

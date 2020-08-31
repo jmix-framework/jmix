@@ -29,6 +29,7 @@ import com.vaadin.client.ui.Icon;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -380,7 +381,7 @@ public class JmixSideMenuWidget extends FocusableFlowPanel
                     captionAsHtml);
 
             menuItemWidget.setDescription(itemJson.getString("description"));
-            menuItemWidget.setJmixId(itemJson.getString("jmixId"));
+            menuItemWidget.setJTestId(itemJson.getString("jTestId"));
             menuItemWidget.setBadgeText(itemJson.getString("badgeText"));
 
             container.add(menuItemWidget);
@@ -614,9 +615,9 @@ public class JmixSideMenuWidget extends FocusableFlowPanel
             this.description = description;
         }
 
-        public void setJmixId(String jmixId) {
-            if (jmixId != null && !jmixId.isEmpty()) {
-                getElement().setAttribute("j-test-id", jmixId);
+        public void setJTestId(@Nullable String jTestId) {
+            if (jTestId != null && !jTestId.isEmpty()) {
+                getElement().setAttribute("j-test-id", jTestId);
             }
         }
 

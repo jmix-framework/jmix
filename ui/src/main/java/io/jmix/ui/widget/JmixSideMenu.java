@@ -47,7 +47,7 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
     protected static final String MENU_ITEM_ENABLED = "enabled";
     protected static final String MENU_ITEM_EXPANDED = "expanded";
     protected static final String MENU_ITEM_CAPTION_AS_HTML = "captionAsHtml";
-    protected static final String MENU_ITEM_CUBA_ID = "cubaId";
+    protected static final String MENU_ITEM_J_TEST_ID = "jTestId";
     protected static final String MENU_ITEM_ICON = "icon";
     protected static final String MENU_ITEM_BADGE_TEXT = "badgeText";
     protected static final String MENU_ITEM_CHILDREN = "children";
@@ -285,7 +285,7 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
                 }
 
                 if (menuItem.getJTestId() != null) {
-                    item.put(MENU_ITEM_CUBA_ID, Json.create(menuItem.getJTestId()));
+                    item.put(MENU_ITEM_J_TEST_ID, Json.create(menuItem.getJTestId()));
                 }
 
                 if (menuItem.getIcon() != null) {
@@ -348,7 +348,7 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
             case MENU_ITEM_VISIBLE:
             case MENU_ITEM_ENABLED:
             case MENU_ITEM_CAPTION_AS_HTML:
-            case MENU_ITEM_CUBA_ID:
+            case MENU_ITEM_J_TEST_ID:
             case MENU_ITEM_EXPANDED:
                 markMenuStructureAsDirty();
                 break;
@@ -416,7 +416,7 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
         protected boolean expanded = false;
 
         protected String badgeText;
-        protected String cubaId;
+        protected String jTestId;
 
         protected List<String> styles;
 
@@ -560,14 +560,14 @@ public class JmixSideMenu extends AbstractComponent implements Component.Focusab
 
         @Nullable
         public String getJTestId() {
-            return cubaId;
+            return jTestId;
         }
 
-        public void setJTestId(String cubaId) {
-            if (!Objects.equals(this.cubaId, cubaId)) {
-                String oldCubaId = this.cubaId;
-                this.cubaId = cubaId;
-                propertyChangeSupport.firePropertyChange(MENU_ITEM_CUBA_ID, oldCubaId, cubaId);
+        public void setJTestId(String jTestId) {
+            if (!Objects.equals(this.jTestId, jTestId)) {
+                String oldJTestId = this.jTestId;
+                this.jTestId = jTestId;
+                propertyChangeSupport.firePropertyChange(MENU_ITEM_J_TEST_ID, oldJTestId, jTestId);
             }
         }
 

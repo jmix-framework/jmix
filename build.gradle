@@ -112,6 +112,8 @@ dependencies {
 
         api "io.jmix.ui:jmix-ui:${snapshotOr(baseVersion)}"
         api "io.jmix.ui:jmix-ui-data:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-export:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui-export-starter:${snapshotOr(baseVersion)}"
         api "io.jmix.ui:jmix-ui-test-assist:${snapshotOr(baseVersion)}"
         api "io.jmix.ui:jmix-ui-themes:${snapshotOr(baseVersion)}"
         api "io.jmix.ui:jmix-ui-themes-compiled:${snapshotOr(baseVersion)}"

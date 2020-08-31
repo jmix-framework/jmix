@@ -157,7 +157,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         if (column.getPropertyPath() != null) {
             propertyPath = column.getPropertyPath();
 
-            cellValue = InstanceUtils.getValueEx(instance, propertyPath.getPath());
+            cellValue = EntityValues.getValueEx(instance, propertyPath.getPath());
 
             if (column.getPresentationProvider() != null) {
                 cellValue = column.getPresentationProvider().apply(cellValue);

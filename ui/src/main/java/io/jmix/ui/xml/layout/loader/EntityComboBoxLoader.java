@@ -19,13 +19,11 @@ package io.jmix.ui.xml.layout.loader;
 import io.jmix.core.Metadata;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.data.options.ContainerOptions;
-import io.jmix.ui.component.impl.GuiActionSupport;
+import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -50,8 +48,8 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
         loadActions(getResultComponent(), element);
 
         if (getResultComponent().getActions().isEmpty()) {
-            boolean actionsByMetaAnnotations = createActionsByMetaAnnotations();
-            if (!actionsByMetaAnnotations) {
+            boolean added = addGloballyDefaultActions();
+            if (!added) {
                 addDefaultActions();
             }
         }
@@ -72,19 +70,16 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
                 component.setOptions(new ContainerOptions(optionsContainer)));
     }
 
-    protected boolean createActionsByMetaAnnotations() {
-        return getGuiActionSupport().createActionsByMetaAnnotations(getResultComponent());
-    }
-
     protected void addDefaultActions() {
-        Actions actions = getActions();
-
-        getResultComponent().addAction(actions.create(LookupAction.ID));
-        getResultComponent().addAction(actions.create(EntityClearAction.ID));
+        // no actions by default
     }
 
-    protected GuiActionSupport getGuiActionSupport() {
-        return (GuiActionSupport) applicationContext.getBean(GuiActionSupport.NAME);
+    protected boolean addGloballyDefaultActions() {
+        return getEntityFieldCreationSupport().addDefaultActions(getResultComponent());
+    }
+
+    protected EntityFieldCreationSupport getEntityFieldCreationSupport() {
+        return applicationContext.getBean(EntityFieldCreationSupport.class);
     }
 
     protected Actions getActions() {

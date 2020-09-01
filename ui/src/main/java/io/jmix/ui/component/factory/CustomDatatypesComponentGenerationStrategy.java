@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
-import io.jmix.ui.component.impl.GuiActionSupport;
+import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
@@ -42,10 +42,10 @@ public class CustomDatatypesComponentGenerationStrategy extends AbstractComponen
 
     @Autowired
     public CustomDatatypesComponentGenerationStrategy(Messages messages,
-                                                      GuiActionSupport guiActionSupport,
+                                                      EntityFieldCreationSupport entityFieldCreationSupport,
                                                       Metadata metadata,
                                                       MetadataTools metadataTools) {
-        super(messages, guiActionSupport, metadata, metadataTools);
+        super(messages, entityFieldCreationSupport, metadata, metadataTools);
     }
 
     @Autowired

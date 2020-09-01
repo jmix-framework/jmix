@@ -55,7 +55,8 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "List Actions", description = "Edits an entity instance using its editor screen")
 @ActionType(EditAction.ID)
-public class EditAction<E extends JmixEntity> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly {
+public class EditAction<E extends JmixEntity> extends SecuredListAction
+        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction {
 
     public static final String ID = "edit";
 

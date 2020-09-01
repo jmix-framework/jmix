@@ -25,7 +25,9 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "jmix.ui")
 @ConstructorBinding
@@ -81,6 +83,8 @@ public class UiProperties {
     long webJarResourcesCacheTime;
     boolean productionMode;
     String paginationMaxResults;
+    Map<String, String> entityFieldType;
+    Map<String, List<String>> entityFieldActions;
 
     public UiProperties(
             boolean testMode,
@@ -132,8 +136,9 @@ public class UiProperties {
             @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
             @DefaultValue("31536000") long webJarResourcesCacheTime, // 60 * 60 * 24 * 365
             @DefaultValue("true") boolean productionMode,
-            @DefaultValue("20, 50, 100, 500, 1000, 5000") String paginationMaxResults
-    ) {
+            @DefaultValue("20, 50, 100, 500, 1000, 5000") String paginationMaxResults,
+            @Nullable Map<String, String> entityFieldType,
+            @Nullable Map<String, List<String>> entityFieldActions) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
         this.maxUploadSizeMb = maxUploadSizeMb;
@@ -184,6 +189,8 @@ public class UiProperties {
         this.webJarResourcesCacheTime = webJarResourcesCacheTime;
         this.productionMode = productionMode;
         this.paginationMaxResults = paginationMaxResults;
+        this.entityFieldType = entityFieldType == null ? Collections.emptyMap() : entityFieldType;
+        this.entityFieldActions = entityFieldActions == null ? Collections.emptyMap() : entityFieldActions;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -447,5 +454,13 @@ public class UiProperties {
      */
     public String getPaginationMaxResults() {
         return paginationMaxResults;
+    }
+
+    public Map<String, String> getEntityFieldType() {
+        return entityFieldType;
+    }
+
+    public Map<String, List<String>> getEntityFieldActions() {
+        return entityFieldActions;
     }
 }

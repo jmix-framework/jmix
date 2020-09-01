@@ -22,7 +22,7 @@ import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
-import io.jmix.ui.component.impl.GuiActionSupport;
+import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -49,12 +49,12 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
         }
     }
 
-    protected boolean createActionsByMetaAnnotations() {
-        return getGuiActionSupport().createActionsByMetaAnnotations(resultComponent);
+    protected boolean addGloballyDefaultActions() {
+        return getEntityFieldCreationSupport().addDefaultActions(resultComponent);
     }
 
-    protected GuiActionSupport getGuiActionSupport() {
-        return (GuiActionSupport) applicationContext.getBean(GuiActionSupport.NAME);
+    protected EntityFieldCreationSupport getEntityFieldCreationSupport() {
+        return applicationContext.getBean(EntityFieldCreationSupport.class);
     }
 
     protected void loadMetaClass(EntityPicker resultComponent, Element element) {
@@ -70,8 +70,8 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
 
     @Override
     protected void addDefaultActions() {
-        boolean actionsByMetaAnnotations = createActionsByMetaAnnotations();
-        if (!actionsByMetaAnnotations) {
+        boolean added = addGloballyDefaultActions();
+        if (!added) {
             addEntityPickerDefaultActions();
         }
     }

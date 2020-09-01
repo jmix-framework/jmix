@@ -22,6 +22,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.builder.LookupBuilder;
@@ -56,7 +57,8 @@ import java.util.function.Supplier;
  */
 @StudioAction(category = "EntityPicker Actions", description = "Sets an entity to the entity picker using the entity lookup screen")
 @ActionType(LookupAction.ID)
-public class LookupAction<E extends JmixEntity> extends BaseAction implements EntityPicker.EntityPickerAction, InitializingBean {
+public class LookupAction<E extends JmixEntity> extends BaseAction
+        implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean {
 
     public static final String ID = "entity_lookup";
 

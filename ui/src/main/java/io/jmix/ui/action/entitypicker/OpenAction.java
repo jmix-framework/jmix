@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.builder.EditorBuilder;
@@ -57,7 +58,8 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "EntityPicker Actions", description = "Opens an entity using the entity edit screen")
 @ActionType(OpenAction.ID)
-public class OpenAction<E extends JmixEntity> extends BaseAction implements EntityPicker.EntityPickerAction, InitializingBean {
+public class OpenAction<E extends JmixEntity> extends BaseAction
+        implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean {
 
     public static final String ID = "entity_open";
 

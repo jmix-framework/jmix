@@ -26,13 +26,9 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
-import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
-import io.jmix.ui.component.data.Options;
-import io.jmix.ui.component.impl.GuiActionSupport;
+import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
@@ -42,11 +38,7 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.OffsetTime;
+import java.time.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
@@ -58,16 +50,16 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Actions actions;
     protected Messages messages;
     protected UiComponents uiComponents;
-    protected GuiActionSupport guiActionSupport;
+    protected EntityFieldCreationSupport entityFieldCreationSupport;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
 
     public AbstractComponentGenerationStrategy(Messages messages,
-                                               GuiActionSupport guiActionSupport,
+                                               EntityFieldCreationSupport entityFieldCreationSupport,
                                                Metadata metadata,
                                                MetadataTools metadataTools) {
         this.messages = messages;
-        this.guiActionSupport = guiActionSupport;
+        this.entityFieldCreationSupport = entityFieldCreationSupport;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
     }
@@ -346,33 +338,9 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         }
 
         if (!Boolean.parseBoolean(linkAttribute)) {
-            Options options = context.getOptions();
+            EntityPicker entityPicker = entityFieldCreationSupport.createEntityField(mpp, context.getOptions());
 
-            EntityPicker entityPicker;
-            if (options == null) {
-                entityPicker = uiComponents.create(EntityPicker.class);
-                setValueSource(entityPicker, context);
-
-                if (mpp.getMetaProperty().getType() == MetaProperty.Type.ASSOCIATION) {
-                    entityPicker.addAction(actions.create(LookupAction.ID));
-                    boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(entityPicker);
-                    if (!actionsByMetaAnnotations) {
-                        entityPicker.addAction(actions.create(EntityClearAction.ID));
-                    }
-                } else {
-                    entityPicker.addAction(actions.create(OpenAction.ID));
-                    entityPicker.addAction(actions.create(EntityClearAction.ID));
-                }
-            } else {
-                EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);
-
-                setValueSource(entityComboBox, context);
-                entityComboBox.setOptions(options);
-
-                entityPicker = entityComboBox;
-
-                guiActionSupport.createActionsByMetaAnnotations(entityPicker);
-            }
+            setValueSource(entityPicker, context);
 
             if (xmlDescriptor != null) {
                 String captionProperty = xmlDescriptor.attributeValue("captionProperty");

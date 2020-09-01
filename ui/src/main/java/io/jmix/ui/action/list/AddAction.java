@@ -57,7 +57,8 @@ import java.util.function.Supplier;
  */
 @StudioAction(category = "List Actions", description = "Adds entities to the list using a lookup screen")
 @ActionType(AddAction.ID)
-public class AddAction<E extends JmixEntity> extends ListAction implements Action.AdjustWhenScreenReadOnly {
+public class AddAction<E extends JmixEntity> extends ListAction
+        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction {
 
     public static final String ID = "add";
 

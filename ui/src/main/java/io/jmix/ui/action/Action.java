@@ -21,12 +21,16 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.gui.OpenType;
+import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenOptions;
 
 import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * The {@code Action} interface abstracts away a function from a visual component.
@@ -252,6 +256,27 @@ public interface Action {
         default boolean isDisabledWhenScreenReadOnly() {
             return true;
         }
+    }
+
+    /**
+     * Interface to be implemented by actions that open a screen.
+     */
+    interface ScreenOpeningAction {
+
+        OpenMode getOpenMode();
+        void setOpenMode(OpenMode openMode);
+
+        String getScreenId();
+        void setScreenId(String screenId);
+
+        Class getScreenClass();
+        void setScreenClass(Class screenClass);
+
+        void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier);
+
+        void setScreenConfigurer(Consumer<Screen> screenConfigurer);
+
+        void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler);
     }
 
     /**

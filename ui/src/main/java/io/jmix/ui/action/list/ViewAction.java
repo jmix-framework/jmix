@@ -21,6 +21,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.component.Component;
@@ -52,7 +53,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "List Actions", description = "Opens an editor screen for an entity instance in read-only mode")
 @ActionType(ViewAction.ID)
-public class ViewAction<E extends JmixEntity> extends SecuredListAction {
+public class ViewAction<E extends JmixEntity> extends SecuredListAction implements Action.ScreenOpeningAction {
 
     public static final String ID = "view";
 

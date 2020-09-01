@@ -27,7 +27,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.factory.DefaultComponentGenerationStrategy;
-import io.jmix.ui.component.impl.GuiActionSupport;
+import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(CubaDefaultComponentGenerationStrategy.NAME)
@@ -36,10 +36,10 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
 
     @Autowired
     public CubaDefaultComponentGenerationStrategy(Messages messages,
-                                                  GuiActionSupport guiActionSupport,
+                                                  EntityFieldCreationSupport entityFieldCreationSupport,
                                                   Metadata metadata,
                                                   MetadataTools metadataTools) {
-        super(messages, guiActionSupport, metadata, metadataTools);
+        super(messages, entityFieldCreationSupport, metadata, metadataTools);
     }
 
     @Override

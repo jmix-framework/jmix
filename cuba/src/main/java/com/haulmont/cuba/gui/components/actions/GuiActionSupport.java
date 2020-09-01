@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.*;
-import io.jmix.core.entity.annotation.Lookup;
+import com.haulmont.cuba.core.entity.annotation.Lookup;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.ui.Actions;

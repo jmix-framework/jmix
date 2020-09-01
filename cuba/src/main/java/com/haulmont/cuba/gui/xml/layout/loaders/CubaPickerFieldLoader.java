@@ -67,7 +67,7 @@ public class CubaPickerFieldLoader extends EntityPickerLoader {
     }
 
     @Override
-    protected boolean createActionsByMetaAnnotations() {
+    protected boolean addGloballyDefaultActions() {
         GuiActionSupport guiActionSupport = getCubaGuiActionSupport();
         return guiActionSupport.createActionsByMetaAnnotations(getResultComponent());
     }

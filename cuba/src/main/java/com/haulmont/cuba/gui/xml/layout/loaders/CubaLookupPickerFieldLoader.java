@@ -91,7 +91,7 @@ public class CubaLookupPickerFieldLoader extends EntityComboBoxLoader {
     }
 
     @Override
-    protected boolean createActionsByMetaAnnotations() {
+    protected boolean addGloballyDefaultActions() {
         GuiActionSupport guiActionSupport = getCubaGuiActionSupport();
         return guiActionSupport.createActionsByMetaAnnotations(getResultComponent());
     }

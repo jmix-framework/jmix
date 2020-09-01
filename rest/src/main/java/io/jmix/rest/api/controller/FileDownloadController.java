@@ -16,11 +16,9 @@
 
 package io.jmix.rest.api.controller;
 
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageException;
-import io.jmix.core.FileStorageLocator;
-import io.jmix.core.FileTypesHelper;
+import io.jmix.core.*;
 import io.jmix.core.common.util.URLEncodeUtils;
+import io.jmix.data.impl.context.CrudEntityContext;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -30,13 +28,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -53,6 +55,10 @@ public class FileDownloadController {
 
     @Autowired
     protected FileStorageLocator fileStorageLocator;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected AccessManager accessManager;
 
     protected FileStorage<URI, String> fileStorage;
 
@@ -63,6 +69,8 @@ public class FileDownloadController {
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
         }
+
+        checkCanReadFileDescriptor();
 
         //parse file reference
         ResourceUrlProvider urlProvider = (ResourceUrlProvider) request
@@ -128,5 +136,16 @@ public class FileDownloadController {
             return FileTypesHelper.DEFAULT_MIME_TYPE;
         }
         return FileTypesHelper.getMIMEType("." + extension.toLowerCase());
+    }
+
+    protected void checkCanReadFileDescriptor() {
+        CrudEntityContext entityContext = new CrudEntityContext(metadata.getClass(FileDescriptor.class));
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        if (!entityContext.isReadPermitted()) {
+            throw new RestAPIException("Reading forbidden",
+                    "Reading of the sys$FileDescriptor is forbidden",
+                    HttpStatus.FORBIDDEN);
+        }
     }
 }

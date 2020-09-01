@@ -636,7 +636,7 @@ public class EntitiesControllerManager {
 
     protected CrudEntityContext applyEntityConstraints(MetaClass metaClass) {
         CrudEntityContext entityContext = new CrudEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(new CrudEntityContext(metaClass));
+        accessManager.applyRegisteredConstraints(entityContext);
         return entityContext;
     }
 

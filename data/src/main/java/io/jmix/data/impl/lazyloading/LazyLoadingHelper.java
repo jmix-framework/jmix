@@ -110,6 +110,13 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                         return;
                     }
                     if (metadataTools.isOwningSide(property)) {
+                        UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
+                        if (originalValueHolder.getWrappedValueHolder().isInstantiated()
+                                || !(originalValueHolder.getWrappedValueHolder() instanceof QueryBasedValueHolder)) {
+                            declaredField.setAccessible(accessible);
+                            return;
+                        }
+                        QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
                         AtomicReference<String> fieldName = new AtomicReference<>();
                         ExpressionIterator iterator = new ExpressionIterator() {
                             @Override
@@ -120,8 +127,6 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                             }
                         };
                         MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
-                        UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
-                        QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
                         iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
                         Object id = wrappedValueHolder.getRow().get(fieldName.get());
                         // Since UUID is stored as String
@@ -160,6 +165,13 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                         declaredField.setAccessible(accessible);
                         return;
                     }
+                    UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
+                    if (originalValueHolder.getWrappedValueHolder().isInstantiated()
+                            || !(originalValueHolder.getWrappedValueHolder() instanceof QueryBasedValueHolder)) {
+                        declaredField.setAccessible(accessible);
+                        return;
+                    }
+                    QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
                     AtomicReference<String> fieldName = new AtomicReference<>();
                     ExpressionIterator iterator = new ExpressionIterator() {
                         @Override
@@ -170,8 +182,6 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                         }
                     };
                     MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
-                    UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
-                    QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
                     iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
                     Object id = wrappedValueHolder.getRow().get(fieldName.get());
                     // Since UUID is stored as String

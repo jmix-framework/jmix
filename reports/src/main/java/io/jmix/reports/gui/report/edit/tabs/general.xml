@@ -1,0 +1,86 @@
+<!--
+  ~ Copyright (c) 2008-2019 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd">
+
+    <assign name="width" value="250"/>
+    <assign name="widthBig" value="265"/>
+    <assign name="widthTemplate" value="380"/>
+
+    <layout expand="bands" spacing="true" margin="true;true;false;true">
+        <hbox id="reportFields" spacing="true" width="100%" expand="spacer">
+            <fieldGroup id="propertiesFieldGroup" border="hidden" datasource="reportDs" width="AUTO">
+                <column>
+                    <field id="name" required="true" requiredMessage="msg://report.nameMsg" width="${widthTemplate}"/>
+                    <field id="defaultTemplate" required="true" custom="true" width="${widthTemplate}"/>
+                </column>
+                <column>
+                    <field id="group" required="true" optionsDatasource="groupsDs"
+                           requiredMessage="msg://report.reportTypeMsg" width="${width}"/>
+                    <field id="code" width="${width}"/>
+                </column>
+            </fieldGroup>
+            <fieldGroup id="descriptionFieldGroup" border="hidden" datasource="reportDs" width="AUTO">
+                <column>
+                    <field id="description" optionsDatasource="groupsDs" width="${widthBig}" rows="3"/>
+                </column>
+            </fieldGroup>
+            <grid id="settingsGrid" spacing="true">
+                <columns count="2"/>
+                <rows>
+                    <row>
+                        <label value="msg://report.restAccess"/>
+                        <checkBox datasource="reportDs" property="restAccess"/>
+                    </row>
+                    <row>
+                        <label value="msg://report.system"/>
+                        <checkBox datasource="reportDs" property="system"/>
+                    </row>
+                </rows>
+            </grid>
+            <upload id="invisibleFileUpload" dropZone="reportFields" stylename="c-report-upload-invisible"/>
+            <label id="spacer"/>
+        </hbox>
+
+        <vbox id="bands" width="100%" height="100%">
+            <split orientation="horizontal" id="hSplit" pos="30" width="100%" height="100%">
+                <vbox id="treeVBox" margin="false;true;false;false" width="100%" height="100%">
+                    <groupBox id="treeBox" expand="serviceTree" height="100%" width="100%" spacing="true"
+                              caption="msg://report.bands">
+                        <buttonsPanel>
+                            <button id="createBandDefinition" icon="icons/plus-btn.png"/>
+                            <button id="removeBandDefinition"/>
+                            <button id="up" icon="icons/up.png"/>
+                            <button id="down" icon="icons/down.png"/>
+                        </buttonsPanel>
+
+                        <tree id="serviceTree" width="100%" height="100%">
+                            <treechildren datasource="treeDs" captionProperty="name"/>
+                        </tree>
+                    </groupBox>
+                </vbox>
+                <!-- Split -->
+                <vbox id="bandDetailsVBox" margin="false;false;false;true" width="100%" height="100%">
+                    <groupBox id="bandDetailsBox" height="100%" width="100%" caption="msg://report.bandDetails">
+                        <frame src="/com/haulmont/reports/gui/definition/edit/definition-edit.xml" id="bandEditor"
+                               width="100%"
+                               height="100%"/>
+                    </groupBox>
+                </vbox>
+            </split>
+        </vbox>
+    </layout>
+</window>

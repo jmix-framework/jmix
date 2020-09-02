@@ -30,10 +30,16 @@ public class ContainerTreeDataGridItems<E extends JmixEntity>
         implements TreeDataGridItems<E> {
 
     private final String hierarchyProperty;
+    private final boolean showOrphans;
 
-    public ContainerTreeDataGridItems(CollectionContainer<E> container, String hierarchyProperty) {
+    public ContainerTreeDataGridItems(CollectionContainer<E> container, String hierarchyProperty, boolean showOrphans) {
         super(container);
         this.hierarchyProperty = hierarchyProperty;
+        this.showOrphans = showOrphans;
+    }
+
+    public ContainerTreeDataGridItems(CollectionContainer<E> container, String hierarchyProperty) {
+        this(container, hierarchyProperty, true);
     }
 
     @Override
@@ -48,7 +54,7 @@ public class ContainerTreeDataGridItems<E extends JmixEntity>
             return container.getItems().stream()
                     .filter(it -> {
                         E parentItem = EntityValues.getValue(it, hierarchyProperty);
-                        return parentItem == null || (container.getItemOrNull(EntityValues.getId(parentItem)) == null);
+                        return parentItem == null || (showOrphans && container.getItemOrNull(EntityValues.getId(parentItem)) == null);
                     });
         } else {
             return container.getItems().stream()

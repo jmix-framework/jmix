@@ -36,15 +36,21 @@ public class ContainerTreeItems<E extends JmixEntity> implements EntityTreeItems
     protected final CollectionContainer<E> container;
 
     protected final String hierarchyProperty;
+    protected final boolean showOrphans;
 
     protected EventHub events = new EventHub();
 
-    public ContainerTreeItems(CollectionContainer<E> container, String hierarchyProperty) {
+    public ContainerTreeItems(CollectionContainer<E> container, String hierarchyProperty, boolean showOrphans) {
         this.container = container;
         this.hierarchyProperty = hierarchyProperty;
+        this.showOrphans = showOrphans;
         this.container.addItemChangeListener(this::containerItemChanged);
         this.container.addCollectionChangeListener(this::containerCollectionChanged);
         this.container.addItemPropertyChangeListener(this::containerItemPropertyChanged);
+    }
+
+    public ContainerTreeItems(CollectionContainer<E> container, String hierarchyProperty) {
+        this(container, hierarchyProperty, true);
     }
 
     protected void containerItemChanged(CollectionContainer.ItemChangeEvent<E> event) {
@@ -122,7 +128,7 @@ public class ContainerTreeItems<E extends JmixEntity> implements EntityTreeItems
             return container.getItems().stream()
                     .filter(it -> {
                         E parentItem = EntityValues.getValue(it, hierarchyProperty);
-                        return parentItem == null || (container.getItemOrNull(EntityValues.getId(parentItem)) == null);
+                        return parentItem == null || (showOrphans && container.getItemOrNull(EntityValues.getId(parentItem)) == null);
                     });
         } else {
             return container.getItems().stream()

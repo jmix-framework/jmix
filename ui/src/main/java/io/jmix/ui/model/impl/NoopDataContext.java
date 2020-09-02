@@ -20,6 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.ui.model.DataContext;
+import io.jmix.ui.model.MergeOptions;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
@@ -57,8 +58,18 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
+    public <T extends JmixEntity> T merge(T entity, MergeOptions options) {
+        return entity;
+    }
+
+    @Override
     public <T extends JmixEntity> T merge(T entity) {
         return entity;
+    }
+
+    @Override
+    public EntitySet merge(Collection<? extends JmixEntity> entities, MergeOptions options) {
+        return EntitySet.of(entities);
     }
 
     @Override

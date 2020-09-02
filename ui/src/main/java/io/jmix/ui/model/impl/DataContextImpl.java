@@ -25,6 +25,7 @@ import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.model.DataContext;
+import io.jmix.ui.model.MergeOptions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,14 +143,15 @@ public class DataContextImpl implements DataContext {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends JmixEntity> T merge(T entity) {
+    public <T extends JmixEntity> T merge(T entity, MergeOptions options) {
         checkNotNullArgument(entity, "entity is null");
+        checkNotNullArgument(entity, "options object is null");
 
         disableListeners = true;
         T result;
         try {
             Map<JmixEntity, JmixEntity> merged = new IdentityHashMap<>();
-            result = (T) internalMerge(entity, merged, true);
+            result = (T) internalMerge(entity, merged, true, options);
         } finally {
             disableListeners = false;
         }
@@ -157,8 +159,14 @@ public class DataContextImpl implements DataContext {
     }
 
     @Override
-    public EntitySet merge(Collection<? extends JmixEntity> entities) {
+    public <T extends JmixEntity> T merge(T entity) {
+        return merge(entity, new MergeOptions());
+    }
+
+    @Override
+    public EntitySet merge(Collection<? extends JmixEntity> entities, MergeOptions options) {
         checkNotNullArgument(entities, "entity collection is null");
+        checkNotNullArgument(entities, "options object is null");
 
         List<JmixEntity> managedList = new ArrayList<>(entities.size());
         disableListeners = true;
@@ -166,7 +174,7 @@ public class DataContextImpl implements DataContext {
             Map<JmixEntity, JmixEntity> merged = new IdentityHashMap<>();
 
             for (JmixEntity entity : entities) {
-                JmixEntity managed = internalMerge(entity, merged, true);
+                JmixEntity managed = internalMerge(entity, merged, true, options);
                 managedList.add(managed);
             }
         } finally {
@@ -175,7 +183,12 @@ public class DataContextImpl implements DataContext {
         return EntitySet.of(managedList);
     }
 
-    protected JmixEntity internalMerge(JmixEntity entity, Map<JmixEntity, JmixEntity> mergedMap, boolean isRoot) {
+    @Override
+    public EntitySet merge(Collection<? extends JmixEntity> entities) {
+        return merge(entities, new MergeOptions());
+    }
+
+    protected JmixEntity internalMerge(JmixEntity entity, Map<JmixEntity, JmixEntity> mergedMap, boolean isRoot, MergeOptions options) {
         Map<Object, JmixEntity> entityMap = content.computeIfAbsent(entity.getClass(), aClass -> new HashMap<>());
 
         JmixEntity nullIdEntity = nullIdEntitiesMap.get(entity);
@@ -183,7 +196,7 @@ public class DataContextImpl implements DataContext {
             JmixEntity managed = entityMap.get(makeKey(nullIdEntity));
             if (managed != null) {
                 mergedMap.put(entity, managed);
-                mergeState(entity, managed, mergedMap, isRoot);
+                mergeState(entity, managed, mergedMap, isRoot, options);
                 return managed;
             } else {
                 throw new IllegalStateException("No managed instance for " + nullIdEntity);
@@ -206,7 +219,7 @@ public class DataContextImpl implements DataContext {
             entityMap.put(makeKey(managed), managed);
             mergedMap.put(entity, managed);
 
-            mergeState(entity, managed, mergedMap, isRoot);
+            mergeState(entity, managed, mergedMap, isRoot, options);
 
             managed.__getEntityEntry().addPropertyChangeListener(propertyChangeListener);
 
@@ -217,7 +230,7 @@ public class DataContextImpl implements DataContext {
         } else {
             mergedMap.put(entity, managed);
             if (managed != entity) {
-                mergeState(entity, managed, mergedMap, isRoot);
+                mergeState(entity, managed, mergedMap, isRoot, options);
             }
         }
         return managed;
@@ -243,11 +256,12 @@ public class DataContextImpl implements DataContext {
         return dstEntity;
     }
 
-    protected void mergeState(JmixEntity srcEntity, JmixEntity dstEntity, Map<JmixEntity, JmixEntity> mergedMap, boolean isRoot) {
+    protected void mergeState(JmixEntity srcEntity, JmixEntity dstEntity, Map<JmixEntity, JmixEntity> mergedMap,
+                              boolean isRoot, MergeOptions options) {
         boolean srcNew = entityStates.isNew(srcEntity);
         boolean dstNew = entityStates.isNew(dstEntity);
 
-        mergeSystemState(srcEntity, dstEntity, isRoot);
+        mergeSystemState(srcEntity, dstEntity, isRoot, options);
 
         MetaClass metaClass = metadata.getClass(srcEntity.getClass());
 
@@ -260,7 +274,7 @@ public class DataContextImpl implements DataContext {
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities
-                if (!isRoot && value == null) {
+                if (!isRoot && !options.isFresh() && value == null) {
                     continue;
                 }
 
@@ -276,7 +290,7 @@ public class DataContextImpl implements DataContext {
                 Object value = EntityValues.getValue(srcEntity, propertyName);
 
                 // ignore null values in non-root source entities
-                if (!isRoot && value == null) {
+                if (!isRoot && !options.isFresh() && value == null) {
                     continue;
                 }
 
@@ -287,16 +301,16 @@ public class DataContextImpl implements DataContext {
 
                 if (value instanceof Collection) {
                     if (value instanceof List) {
-                        mergeList((List) value, dstEntity, property, isRoot, mergedMap);
+                        mergeList((List) value, dstEntity, property, isRoot, options, mergedMap);
                     } else if (value instanceof Set) {
-                        mergeSet((Set) value, dstEntity, property, isRoot, mergedMap);
+                        mergeSet((Set) value, dstEntity, property, isRoot, options, mergedMap);
                     } else {
                         throw new UnsupportedOperationException("Unsupported collection type: " + value.getClass().getName());
                     }
                 } else {
                     JmixEntity srcRef = (JmixEntity) value;
                     if (!mergedMap.containsKey(srcRef)) {
-                        JmixEntity managedRef = internalMerge(srcRef, mergedMap, false);
+                        JmixEntity managedRef = internalMerge(srcRef, mergedMap, false, options);
                         setPropertyValue(dstEntity, property, managedRef, false);
                         if (metadataTools.isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
@@ -348,18 +362,18 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected void mergeSystemState(JmixEntity srcEntity, JmixEntity dstEntity, boolean isRoot) {
-        if (isRoot) {
+    protected void mergeSystemState(JmixEntity srcEntity, JmixEntity dstEntity, boolean isRoot, MergeOptions options) {
+        if (isRoot || options.isFresh()) {
             entitySystemStateSupport.mergeSystemState(srcEntity, dstEntity);
         }
     }
 
     protected void mergeList(List<JmixEntity> list, JmixEntity managedEntity, MetaProperty property, boolean replace,
-                             Map<JmixEntity, JmixEntity> mergedMap) {
+                             MergeOptions options, Map<JmixEntity, JmixEntity> mergedMap) {
         if (replace) {
             List<JmixEntity> managedRefs = new ArrayList<>(list.size());
             for (JmixEntity entity : list) {
-                JmixEntity managedRef = internalMerge(entity, mergedMap, false);
+                JmixEntity managedRef = internalMerge(entity, mergedMap, false, options);
                 managedRefs.add(managedRef);
             }
             List<JmixEntity> dstList = createObservableList(managedRefs, managedEntity);
@@ -373,11 +387,11 @@ public class DataContextImpl implements DataContext {
             }
             if (dstList.size() == 0) {
                 for (JmixEntity srcRef : list) {
-                    dstList.add(internalMerge(srcRef, mergedMap, false));
+                    dstList.add(internalMerge(srcRef, mergedMap, false, options));
                 }
             } else {
                 for (JmixEntity srcRef : list) {
-                    JmixEntity managedRef = internalMerge(srcRef, mergedMap, false);
+                    JmixEntity managedRef = internalMerge(srcRef, mergedMap, false, options);
                     if (!dstList.contains(managedRef)) {
                         dstList.add(managedRef);
                     }
@@ -387,11 +401,11 @@ public class DataContextImpl implements DataContext {
     }
 
     protected void mergeSet(Set<JmixEntity> set, JmixEntity managedEntity, MetaProperty property, boolean replace,
-                            Map<JmixEntity, JmixEntity> mergedMap) {
+                            MergeOptions options, Map<JmixEntity, JmixEntity> mergedMap) {
         if (replace) {
             Set<JmixEntity> managedRefs = new LinkedHashSet<>(set.size());
             for (JmixEntity entity : set) {
-                JmixEntity managedRef = internalMerge(entity, mergedMap, false);
+                JmixEntity managedRef = internalMerge(entity, mergedMap, false, options);
                 managedRefs.add(managedRef);
             }
             Set<JmixEntity> dstSet = createObservableSet(managedRefs, managedEntity);
@@ -405,11 +419,11 @@ public class DataContextImpl implements DataContext {
             }
             if (dstSet.size() == 0) {
                 for (JmixEntity srcRef : set) {
-                    dstSet.add(internalMerge(srcRef, mergedMap, false));
+                    dstSet.add(internalMerge(srcRef, mergedMap, false, options));
                 }
             } else {
                 for (JmixEntity srcRef : set) {
-                    JmixEntity managedRef = internalMerge(srcRef, mergedMap, false);
+                    JmixEntity managedRef = internalMerge(srcRef, mergedMap, false, options);
                     dstSet.add(managedRef);
                 }
             }

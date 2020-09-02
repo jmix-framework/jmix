@@ -21,10 +21,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.ui.model.DataContext;
-import io.jmix.ui.model.HasLoader;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.InstanceLoader;
+import io.jmix.ui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -105,7 +102,7 @@ public class InstanceLoaderImpl<E extends JmixEntity> implements InstanceLoader<
         }
 
         if (dataContext != null) {
-            entity = dataContext.merge(entity);
+            entity = dataContext.merge(entity, new MergeOptions().setFresh(true));
         }
         container.setItem(entity);
 
